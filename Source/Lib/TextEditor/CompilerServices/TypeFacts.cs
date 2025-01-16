@@ -22,8 +22,6 @@ public static class TypeFacts
         typeof(void),
         null,
         null,
-        null,
-        openBraceToken: default,
         null);
     
     /// <summary>
@@ -57,7 +55,5 @@ public static class TypeFacts
         typeof(void),
         null,
         null,
-        null,
-        openBraceToken: default,
         null);
 }

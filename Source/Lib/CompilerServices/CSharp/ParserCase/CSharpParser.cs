@@ -19,7 +19,22 @@ public static class CSharpParser
 {
     public static void Parse(CSharpCompilationUnit compilationUnit)
     {
-        var globalCodeBlockBuilder = new CSharpCodeBlockBuilder(null, null);
+    	var globalCodeBlockNode = new GlobalCodeBlockNode();
+    	
+    	var globalOpenCodeBlockTextSpan = new TextEditorTextSpan(
+		    0,
+		    1,
+		    decorationByte: default,
+		    compilationUnit.ResourceUri,
+		    string.Empty,
+		    string.Empty);
+    	
+		var globalCodeBlockBuilder = compilationUnit.Binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
+	    	globalCodeBlockNode,
+	        globalCodeBlockNode.GetReturnTypeClauseNode(),
+	        globalOpenCodeBlockTextSpan,
+	        compilationUnit);
+        
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
         var diagnosticBag = new DiagnosticBag();
 
@@ -201,10 +216,15 @@ public static class CSharpParser
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
-				if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+				if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue is not null &&
+					parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+				{
 					deferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+				}
 				else
+				{
 					break;
+				}
 			}
 			
 			if (parserModel.TokenWalker.ConsumeCounter == 0)
@@ -234,14 +254,19 @@ public static class CSharpParser
             // The current token here would be the EOF token.
             compilationUnit.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
         }
-
+		
         var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(
             parserModel.DiagnosticBag.ToArray()
                 .Union(compilationUnit.Binder.DiagnosticsList)
                 .Union(compilationUnit.LexerOutput.DiagnosticBag.ToList())
                 .ToArray());
                 
-		compilationUnit.RootCodeBlockNode = topLevelStatementsCodeBlock;
+        globalCodeBlockNode.SetCodeBlockNode(
+        	topLevelStatementsCodeBlock,
+        	parserModel.DiagnosticBag,
+        	parserModel.TokenWalker);
+                
+		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
 		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
     }
 }

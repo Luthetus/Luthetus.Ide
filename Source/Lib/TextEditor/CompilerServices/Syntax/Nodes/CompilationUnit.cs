@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -13,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class CompilationUnit : ICompilationUnit, ISyntaxNode
 {
     public CompilationUnit(
-        CodeBlockNode? rootCodeBlockNode,
+        ISyntaxNode? rootCodeBlockNode,
         ILexer? lexer,
         IParser? parser,
         IBinder? binder)
@@ -35,7 +36,7 @@ public sealed class CompilationUnit : ICompilationUnit, ISyntaxNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public CodeBlockNode RootCodeBlockNode { get; }
+    public ISyntaxNode RootCodeBlockNode { get; }
     public ILexer Lexer { get; }
     public IParser Parser { get; }
     public IBinder Binder { get; }

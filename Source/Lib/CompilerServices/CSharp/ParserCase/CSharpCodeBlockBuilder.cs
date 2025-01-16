@@ -1,17 +1,27 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public class CSharpCodeBlockBuilder
 {
-    public CSharpCodeBlockBuilder(CSharpCodeBlockBuilder? parent, ICodeBlockOwner? codeBlockOwner)
+    public CSharpCodeBlockBuilder(CSharpCodeBlockBuilder? parent, ICodeBlockOwner codeBlockOwner)
     {
         Parent = parent;
         CodeBlockOwner = codeBlockOwner;
+        
+        if (CodeBlockOwner.ScopeDirectionKind == ScopeDirectionKind.Both)
+        	ParseChildScopeQueue = new();
+        
+        var parentScopeDirection = parent?.CodeBlockOwner.ScopeDirectionKind
+        	?? ScopeDirectionKind.Both;
+        
+        if (parentScopeDirection == ScopeDirectionKind.Both)
+        	PermitCodeBlockParsing = false;
     }
 
     public List<ISyntax> ChildList { get; } = new();
@@ -23,36 +33,48 @@ public class CSharpCodeBlockBuilder
     /// exist in is one which a class owns. Furthermore, I need to verify that the code-block-owner's
     /// Identifier is equal to the constructor's identifier.
     /// </summary>
-    public ICodeBlockOwner? CodeBlockOwner { get; }
+    public ICodeBlockOwner CodeBlockOwner { get; }
     
-    /// <summary>
-    /// Method with generic type constraint:
-    /// ````public void M<T>(T? item) where T : struct { } // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/where-generic-type-constraint
-	///
-	/// Any syntax that goes from parentheses to OpenBraceToken / CloseBraceToken to define a scope:
-	/// ````foreach (var item in list)
-    /// ````{
-	/// ````    Console.WriteLine(item);
-	/// ````}
-	///
-	/// Any syntax that goes from parenthesis to a "single statement body" deliminated by StatementDelimiterToken:
-	/// ````foreach (var item in list)
-	/// ````    Console.WriteLine(item);
-	///
-	/// The idea is that syntax which defines a scope does not necessarily flow
-	/// in a simple way.
-	///
-	/// "Any syntax that goes from parentheses to OpenBraceToken / CloseBraceToken to define a scope"
-	/// is a fairly simple case.
-	/// One could go immediately from the CloseParenthesisToken to the OpenBraceToken.
-	///
-	/// But, if there is any syntax between the syntax that identifies
-	/// a code block owner, and the actual code block itself, things get more complicated.
-    /// </summary>
-    public ICodeBlockOwner? InnerPendingCodeBlockOwner { get; set; }
+    public Queue<CSharpDeferredChildScope>? ParseChildScopeQueue { get; set; }
     
-    public Queue<CSharpDeferredChildScope> ParseChildScopeQueue { get; set; } = new();
-	public bool PermitInnerPendingCodeBlockOwnerToBeParsed { get; set; }
+	public bool PermitCodeBlockParsing { get; set; } = true;
+	
+	/// <summary>
+	/// This belongs on the 'CSharpCodeBlockBuilder', not the 'ICodeBlockOwner'.
+	///
+	/// This is computational state to know whether to search
+	/// for 'StatementDelimiterToken' (if this is true) as the terminator or a 'CloseBraceToken' (if this is false).
+	///
+	/// This is not necessary to disambiguate the SyntaxKind of the text spans that mark
+	/// the start and end of the code block.
+	///
+	/// This is mentioned because that might be an argument for this being moved to 'ICodeBlockOwner'.
+	///
+	/// But, .... interrupting my thought I think I'm wrong hang on....
+	///
+	/// ````public void SomeFunction() => }
+	/// 
+	/// What should the above code snippet parse as?
+	/// Should the '}' be consumed as the closing delimiter token for 'SomeFunction()'?
+	///
+	/// Is it the case that the closing text span of a scope is only
+	/// a 'CloseBracetoken' if the start text span is from an 'OpenBraceToken'?
+	///
+	/// Furthermore, is it true that the start text span is only non-null
+	/// if it is an 'OpenBraceToken' that started the code block?
+	///
+	/// An implicitly opened code block can have its start text span
+	/// retrieved on a 'per ICodeBlockOwner' basis.
+	///
+	/// I am going to decide that:
+	/// ````public void SomeFunction() => }
+	///
+	/// will not consume the 'CloseBraceToken' as its delimiter.
+	/// This matter is open to be changed though,
+	/// this decision is only being made to create consistency.
+	/// </summary>
+	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+	
 	public int? DequeuedIndexForChildList { get; set; }
 
     public CodeBlockNode Build()
