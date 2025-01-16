@@ -523,6 +523,14 @@ public partial class CSharpBinder
 				compilationUnit,
 				ref parserModel);
 		}
+		else if (token.SyntaxKind == SyntaxKind.MinusMinusToken)
+		{
+			var decidedExpression = ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				ambiguousIdentifierExpressionNode,
+				compilationUnit,
+				ref parserModel);
+		}
 		else if (token.SyntaxKind == SyntaxKind.IdentifierToken)
 		{
 			var decidedExpression = ForceDecisionAmbiguousIdentifier(
