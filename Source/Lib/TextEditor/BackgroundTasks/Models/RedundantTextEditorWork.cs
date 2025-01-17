@@ -31,13 +31,16 @@ public struct RedundantTextEditorWork : ITextEditorWork
         string name,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
+        ITextEditorService textEditorService,
         Func<ITextEditorEditContext, Task> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
 
         Name = name;
         ResourceUri = resourceUri;
-        ViewModelKey = ViewModelKey;
+        ViewModelKey = viewModelKey;
+        
+        TextEditorService = textEditorService;
     }
 
 	public string Name { get; set; }
@@ -45,8 +48,9 @@ public struct RedundantTextEditorWork : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; set; }
     public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public ITextEditorService TextEditorService { get; }
 
-	public ITextEditorEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; private set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -70,19 +74,16 @@ public struct RedundantTextEditorWork : ITextEditorWork
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-		try
-		{
-            await _textEditorFunc
-                .Invoke(EditContext)
-                .ConfigureAwait(false);
-                
-            await EditContext.TextEditorService
-            	.FinalizePost(EditContext)
-            	.ConfigureAwait(false);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+    	EditContext = new TextEditorService.TextEditorEditContext(
+            TextEditorService,
+            Luthetus.TextEditor.RazorLib.TextEditorService.AuthenticatedActionKey);
+    
+		await _textEditorFunc
+            .Invoke(EditContext)
+            .ConfigureAwait(false);
+            
+        await EditContext.TextEditorService
+        	.FinalizePost(EditContext)
+        	.ConfigureAwait(false);
     }
 }

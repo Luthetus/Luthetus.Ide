@@ -25,7 +25,7 @@ public struct OnDoubleClick : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnDoubleClick);
     public MouseEventArgs MouseEventArgs { get; }
@@ -33,7 +33,7 @@ public struct OnDoubleClick : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext EditContext { get; set; }
+	public ITextEditorEditContext? EditContext { get; private set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -50,86 +50,83 @@ public struct OnDoubleClick : ITextEditorWork
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-		try
-		{
-            var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
-            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-            var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+    	EditContext = new TextEditorService.TextEditorEditContext(
+            ComponentData.TextEditorViewModelDisplay.TextEditorService,
+            TextEditorService.AuthenticatedActionKey);
+    
+        var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
+        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+            return;
 
-            var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+        var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
-            if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-                return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+        if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+            return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
-            if (MouseEventArgs.ShiftKey)
-                return; // Do not expand selection if user is holding shift
+        if (MouseEventArgs.ShiftKey)
+            return; // Do not expand selection if user is holding shift
 
-			// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
-			// Reason being, these are likely to be huge optimizations (2024-05-29).
-            var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
-					ResourceUri,
-					ViewModelKey,
-					MouseEventArgs,
-					ComponentData,
-					EditContext)
-				.ConfigureAwait(false);
+		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
+		// Reason being, these are likely to be huge optimizations (2024-05-29).
+        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+				ResourceUri,
+				ViewModelKey,
+				MouseEventArgs,
+				ComponentData,
+				EditContext)
+			.ConfigureAwait(false);
 
-            var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+        var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+            rowAndColumnIndex.rowIndex,
+            rowAndColumnIndex.columnIndex,
+            true);
+
+        lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
+            ? 0
+            : lowerColumnIndexExpansion;
+
+        var higherColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+            rowAndColumnIndex.rowIndex,
+            rowAndColumnIndex.columnIndex,
+            false);
+
+        higherColumnIndexExpansion = higherColumnIndexExpansion == -1
+            ? modelModifier.GetLineLength(rowAndColumnIndex.rowIndex)
+            : higherColumnIndexExpansion;
+
+        // Move user's cursor position to the higher expansion
+        {
+            primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
+            primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
+            primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+        }
+
+        // Set text selection ending to higher expansion
+        {
+            var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
                 rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                true);
+                higherColumnIndexExpansion);
 
-            lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
-                ? 0
-                : lowerColumnIndexExpansion;
+            primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
+        }
 
-            var higherColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+        // Set text selection anchor to lower expansion
+        {
+            var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
                 rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                false);
+                lowerColumnIndexExpansion);
 
-            higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-                ? modelModifier.GetLineLength(rowAndColumnIndex.rowIndex)
-                : higherColumnIndexExpansion;
-
-            // Move user's cursor position to the higher expansion
-            {
-                primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
-                primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
-                primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-            }
-
-            // Set text selection ending to higher expansion
-            {
-                var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
-                    rowAndColumnIndex.rowIndex,
-                    higherColumnIndexExpansion);
-
-                primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
-            }
-
-            // Set text selection anchor to lower expansion
-            {
-                var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
-                    rowAndColumnIndex.rowIndex,
-                    lowerColumnIndexExpansion);
-
-                primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
-            }
-            
-            await EditContext.TextEditorService
-				.FinalizePost(EditContext)
-				.ConfigureAwait(false);
-				
-			await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+            primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
+        }
+        
+        await EditContext.TextEditorService
+			.FinalizePost(EditContext)
+			.ConfigureAwait(false);
+			
+		await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

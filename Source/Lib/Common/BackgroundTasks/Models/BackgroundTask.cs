@@ -19,6 +19,11 @@ public class BackgroundTask : IBackgroundTask
         Name = name;
     }
 
+    /// <summary>
+    /// A BackgroundTaskKey of 'Key<IBackgroundTask>.Empty' can be used, but:
+    /// - This disables any tracking.
+    /// - this disables _taskCompletionSourceMap
+    /// </summary>
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }

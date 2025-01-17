@@ -21,14 +21,14 @@ public struct OnWheel : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnWheel);
     public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext EditContext { get; set; }
+	public ITextEditorEditContext? EditContext { get; private set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -66,10 +66,7 @@ public struct OnWheel : ITextEditorWork
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    ViewModelKey)
-						{
-							EditContext = EditContext
-						};
+	                    ViewModelKey);
 	            }
 	            else if (oldEventOnWheel.WheelEventArgs.DeltaX < 0 &&
 	                     WheelEventArgs.DeltaX < 0)
@@ -81,10 +78,7 @@ public struct OnWheel : ITextEditorWork
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    ViewModelKey)
-						{
-							EditContext = EditContext
-						};
+	                    ViewModelKey);
 	            }
 	            else if (oldEventOnWheel.WheelEventArgs.DeltaX == 0 &&
 	                     WheelEventArgs.DeltaX == 0)
@@ -96,10 +90,7 @@ public struct OnWheel : ITextEditorWork
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    ViewModelKey)
-						{
-							EditContext = EditContext
-						};
+	                    ViewModelKey);
 	            }
 			}
 			else if (!oldEventOnWheel.WheelEventArgs.ShiftKey && !WheelEventArgs.ShiftKey)
@@ -114,10 +105,7 @@ public struct OnWheel : ITextEditorWork
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    ViewModelKey)
-						{
-							EditContext = EditContext
-						};
+	                    ViewModelKey);
 	            }
 	            else if (oldEventOnWheel.WheelEventArgs.DeltaY < 0 &&
 	                     WheelEventArgs.DeltaY < 0)
@@ -129,10 +117,7 @@ public struct OnWheel : ITextEditorWork
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    ViewModelKey)
-						{
-							EditContext = EditContext
-						};
+	                    ViewModelKey);
 	            }
 	            else if (oldEventOnWheel.WheelEventArgs.DeltaY == 0 &&
 	                     WheelEventArgs.DeltaY == 0)
@@ -144,10 +129,7 @@ public struct OnWheel : ITextEditorWork
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    ViewModelKey)
-						{
-							EditContext = EditContext
-						};
+	                    ViewModelKey);
 	            }
 			}
         }
@@ -203,41 +185,38 @@ public struct OnWheel : ITextEditorWork
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-		try
-		{
-            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-            if (viewModelModifier is null)
-                return;
+    	EditContext = new TextEditorService.TextEditorEditContext(
+            ComponentData.TextEditorViewModelDisplay.TextEditorService,
+            TextEditorService.AuthenticatedActionKey);
+    
+        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+        if (viewModelModifier is null)
+            return;
 
-			// TODO: Why was this made as 'if' 'else' whereas the OnWheelBatch...
-			//       ...is doing 'if' 'if'.
-			//       |
-			//       The OnWheelBatch doesn't currently batch horizontal with vertical
-			//       the OnWheel events have to be the same axis to batch.
-            if (WheelEventArgs.ShiftKey)
-            {
-                EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
-                	EditContext,
-			        viewModelModifier,
-			        WheelEventArgs.DeltaX);
-            }
-            else
-            {
-                EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-                	EditContext,
-			        viewModelModifier,
-                	WheelEventArgs.DeltaY);
-            }
-            
-            await EditContext.TextEditorService
-            	.FinalizePost(EditContext)
-            	.ConfigureAwait(false);
-            	
-            await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+		// TODO: Why was this made as 'if' 'else' whereas the OnWheelBatch...
+		//       ...is doing 'if' 'if'.
+		//       |
+		//       The OnWheelBatch doesn't currently batch horizontal with vertical
+		//       the OnWheel events have to be the same axis to batch.
+        if (WheelEventArgs.ShiftKey)
+        {
+            EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+            	EditContext,
+		        viewModelModifier,
+		        WheelEventArgs.DeltaX);
+        }
+        else
+        {
+            EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+            	EditContext,
+		        viewModelModifier,
+            	WheelEventArgs.DeltaY);
+        }
+        
+        await EditContext.TextEditorService
+        	.FinalizePost(EditContext)
+        	.ConfigureAwait(false);
+        	
+        await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

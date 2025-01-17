@@ -21,14 +21,14 @@ public struct OnWheelBatch : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; private set; } = nameof(OnWheelBatch);
     public List<WheelEventArgs> WheelEventArgsList { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext EditContext { get; set; }
+	public ITextEditorEditContext? EditContext { get; private set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -37,64 +37,59 @@ public struct OnWheelBatch : ITextEditorWork
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-		try
-		{
-			Name += $"_{WheelEventArgsList.Count}";
+    	EditContext = new TextEditorService.TextEditorEditContext(
+            ComponentData.TextEditorViewModelDisplay.TextEditorService,
+            TextEditorService.AuthenticatedActionKey);
+    
+        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
 
-            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+        if (viewModelModifier is null)
+            return;
 
-            if (viewModelModifier is null)
-                return;
+        double? horizontalMutateScrollPositionByPixels = null;
+        double? verticalMutateScrollPositionByPixels = null;
 
-            double? horizontalMutateScrollPositionByPixels = null;
-            double? verticalMutateScrollPositionByPixels = null;
-
-            foreach (var wheelEventArgs in WheelEventArgsList)
+        foreach (var wheelEventArgs in WheelEventArgsList)
+        {
+            if (wheelEventArgs.ShiftKey)
             {
-                if (wheelEventArgs.ShiftKey)
-                {
-                    horizontalMutateScrollPositionByPixels ??= 0;
-                    horizontalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
-                }
-                else
-                {
-                    verticalMutateScrollPositionByPixels ??= 0;
-                    verticalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
-                }
+                horizontalMutateScrollPositionByPixels ??= 0;
+                horizontalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
             }
-
-			// See this quoted comment from OnWheel.cs
-			// =======================================
-			// 	"TODO: Why was this made as 'if' 'else' whereas the OnWheelBatch...
-			// 	      ...is doing 'if' 'if'.
-			// 	      |
-			// 	      The OnWheelBatch doesn't currently batch horizontal with vertical
-			// 	      the OnWheel events have to be the same axis to batch."
-            if (horizontalMutateScrollPositionByPixels is not null)
+            else
             {
-                EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
-                    EditContext,
-			        viewModelModifier,
-			        horizontalMutateScrollPositionByPixels.Value);
+                verticalMutateScrollPositionByPixels ??= 0;
+                verticalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
             }
+        }
 
-            if (verticalMutateScrollPositionByPixels is not null)
-            {
-                EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-                    EditContext,
-			        viewModelModifier,
-			        verticalMutateScrollPositionByPixels.Value);
-            }
-            
-            await EditContext.TextEditorService
-            	.FinalizePost(EditContext)
-            	.ConfigureAwait(false);
-            	
-            await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+		// See this quoted comment from OnWheel.cs
+		// =======================================
+		// 	"TODO: Why was this made as 'if' 'else' whereas the OnWheelBatch...
+		// 	      ...is doing 'if' 'if'.
+		// 	      |
+		// 	      The OnWheelBatch doesn't currently batch horizontal with vertical
+		// 	      the OnWheel events have to be the same axis to batch."
+        if (horizontalMutateScrollPositionByPixels is not null)
+        {
+            EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+                EditContext,
+		        viewModelModifier,
+		        horizontalMutateScrollPositionByPixels.Value);
+        }
+
+        if (verticalMutateScrollPositionByPixels is not null)
+        {
+            EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                EditContext,
+		        viewModelModifier,
+		        verticalMutateScrollPositionByPixels.Value);
+        }
+        
+        await EditContext.TextEditorService
+        	.FinalizePost(EditContext)
+        	.ConfigureAwait(false);
+        	
+        await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

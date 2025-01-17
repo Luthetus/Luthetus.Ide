@@ -49,7 +49,7 @@ public partial interface ITextEditorService
         
     /// <summary>
     /// This method will create an instance of <see cref="UniqueTextEditorTask"/>,
-    /// and then invoke <see cref="Post(ITextEditorWork)"/><br/><br/>
+    /// and then invoke IBackgroundTaskService.Enqueue(IBackgroundTask backgroundTask)<br/><br/>
     /// </summary>
     public void PostUnique(
         string name,
@@ -57,7 +57,7 @@ public partial interface ITextEditorService
         
     /// <summary>
     /// This method will create an instance of <see cref="RedundantTextEditorTask"/>,
-    /// and then invoke <see cref="Post(ITextEditorWork)"/><br/><br/>
+    /// and then invoke IBackgroundTaskService.Enqueue(IBackgroundTask backgroundTask)<br/><br/>
     /// </summary>
     public void PostRedundant(
         string name,
@@ -66,20 +66,14 @@ public partial interface ITextEditorService
         Func<ITextEditorEditContext, Task> textEditorFunc);
 
     /// <summary>
-    /// This method will set the <see cref="ITextEditorWork.EditContext"/> property.
-    ///
-    /// Within the method
-    /// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTask.HandleEvent"/>,
-    /// invoke <see cref="FinalizePost"/> to finalize any changes.
+    /// This method simply invokes IBackgroundTaskService.Enqueue(IBackgroundTask backgroundTask)
+    /// with the same parameter.
     /// </summary>
     public void Post(ITextEditorWork textEditorWork);
     
     /// <summary>
-    /// This method will set the <see cref="ITextEditorWork.EditContext"/> property.
-    ///
-    /// Within the method
-    /// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTask.HandleEvent"/>,
-    /// invoke <see cref="FinalizePost"/> to finalize any changes.
+    /// This method simply invokes IBackgroundTaskService.EnqueueAsync(IBackgroundTask backgroundTask)
+    /// with the same parameter.
     ///
     /// This async version will block until the background task is completed.
     /// </summary>

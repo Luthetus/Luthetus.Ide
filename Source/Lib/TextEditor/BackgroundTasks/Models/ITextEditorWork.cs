@@ -160,5 +160,13 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </summary>
 public interface ITextEditorWork : IBackgroundTask
 {
-	public ITextEditorEditContext EditContext { get; set; }
+	/// <summary>
+	/// The 'EditContext' is set once the enqueued task is dequeued and
+	/// just prior to the enqueued task starting execution.
+	///
+	/// Within the method
+    /// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTask.HandleEvent"/>,
+    /// invoke <see cref="ITextEditorService.FinalizePost"/> to finalize any changes.
+	/// </summary>
+	public ITextEditorEditContext EditContext { get; }
 }

@@ -26,7 +26,7 @@ public struct OnMouseDown : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnMouseDown);
     public Task? WorkProgress { get; }
@@ -35,7 +35,7 @@ public struct OnMouseDown : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext EditContext { get; set; }
+	public ITextEditorEditContext? EditContext { get; private set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -52,85 +52,82 @@ public struct OnMouseDown : ITextEditorWork
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-		try
+    	EditContext = new TextEditorService.TextEditorEditContext(
+            ComponentData.TextEditorViewModelDisplay.TextEditorService,
+            TextEditorService.AuthenticatedActionKey);
+    
+        var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
+        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+            return;
+
+        viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = false;
+
+        var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+
+        if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+            return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+
+		if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 		{
-            var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
-            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-            var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+			TextEditorCommandDefaultFunctions.RemoveDropdown(
+		        EditContext,
+		        viewModelModifier,
+		        ComponentData.Dispatcher);
+		}
 
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+        // Remember the current cursor position prior to doing anything
+        var inRowIndex = primaryCursorModifier.LineIndex;
+        var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
-            viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = false;
+        // Move the cursor position
+		//
+		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
+		// Reason being, these are likely to be huge optimizations (2024-05-29).
+        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+				ResourceUri,
+				ViewModelKey,
+				MouseEventArgs,
+				ComponentData,
+				EditContext)
+			.ConfigureAwait(false);
 
-            var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
+        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
+        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-            if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
-                return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+        var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
+            rowAndColumnIndex.rowIndex,
+            rowAndColumnIndex.columnIndex,
+            true));
 
-			if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
-			{
-				TextEditorCommandDefaultFunctions.RemoveDropdown(
-			        EditContext,
-			        viewModelModifier,
-			        ComponentData.Dispatcher);
-			}
-
-            // Remember the current cursor position prior to doing anything
-            var inRowIndex = primaryCursorModifier.LineIndex;
-            var inColumnIndex = primaryCursorModifier.ColumnIndex;
-
-            // Move the cursor position
-			//
-			// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
-			// Reason being, these are likely to be huge optimizations (2024-05-29).
-            var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
-					ResourceUri,
-					ViewModelKey,
-					MouseEventArgs,
-					ComponentData,
-					EditContext)
-				.ConfigureAwait(false);
-
-            primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
-            primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-            primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-
-            var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-                rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                true));
-
-            if (MouseEventArgs.ShiftKey)
+        if (MouseEventArgs.ShiftKey)
+        {
+            if (!hasSelectedText)
             {
-                if (!hasSelectedText)
-                {
-                    // If user does not yet have a selection then place the text selection anchor were they were
-                    primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
-                        .GetPositionIndex(inRowIndex, inColumnIndex);
-                }
-
-                // If user ALREADY has a selection then do not modify the text selection anchor
-            }
-            else
-            {
-                primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
+                // If user does not yet have a selection then place the text selection anchor were they were
+                primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
+                    .GetPositionIndex(inRowIndex, inColumnIndex);
             }
 
-            primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
-            
-            EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
-            
-            await EditContext.TextEditorService
-            	.FinalizePost(EditContext)
-            	.ConfigureAwait(false);
-            	
-            await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+            // If user ALREADY has a selection then do not modify the text selection anchor
+        }
+        else
+        {
+            primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
+        }
+
+        primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
+        
+        EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+        
+        await EditContext.TextEditorService
+        	.FinalizePost(EditContext)
+        	.ConfigureAwait(false);
+        	
+        await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

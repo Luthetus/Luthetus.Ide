@@ -130,8 +130,9 @@ public partial class TextEditorService : ITextEditorService
         string name,
         Func<ITextEditorEditContext, Task> textEditorFunc)
     {
-        Post(new UniqueTextEditorWork(
+    	_backgroundTaskService.Enqueue(new UniqueTextEditorWork(
             name,
+            this,
             textEditorFunc));
     }
 
@@ -141,28 +142,21 @@ public partial class TextEditorService : ITextEditorService
         Key<TextEditorViewModel> viewModelKey,
         Func<ITextEditorEditContext, Task> textEditorFunc)
     {
-        Post(new RedundantTextEditorWork(
+    	_backgroundTaskService.Enqueue(new RedundantTextEditorWork(
             name,
 			resourceUri,
             viewModelKey,
+            this,
             textEditorFunc));
     }
 
     public void Post(ITextEditorWork work)
     {
-        work.EditContext = new TextEditorEditContext(
-            this,
-            AuthenticatedActionKey);
-
         _backgroundTaskService.Enqueue(work);
     }
     
     public Task PostAsync(ITextEditorWork work)
     {
-    	work.EditContext = new TextEditorEditContext(
-            this,
-            AuthenticatedActionKey);
-
         return _backgroundTaskService.EnqueueAsync(work);
     }
 
