@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -14,7 +15,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
@@ -50,10 +50,13 @@ public struct OnKeyDownLateBatching : ITextEditorWork
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
-	public ITextEditorEditContext EditContext { get; set; }
+	public ITextEditorEditContext? EditContext { get; private set; }
 	public TextEditorComponentData ComponentData { get; set; }
 	public int BatchLength { get; set; }
 	public bool BatchHasAvailability => BatchLength < MAX_BATCH_SIZE;
+	
+	// TODO: Rewrite this.
+	public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];
 
     public string Name => BatchLength switch
     {
@@ -99,135 +102,178 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-		try
+    	EditContext = new TextEditorService.TextEditorEditContext(
+            ComponentData.TextEditorViewModelDisplay.TextEditorService,
+            TextEditorService.AuthenticatedActionKey);
+
+        var modelModifier = EditContext.GetModelModifier(ResourceUri);
+        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+            return;
+
+		_index = 0;
+
+		for (; _index < BatchLength; _index++)
 		{
-            var modelModifier = EditContext.GetModelModifier(ResourceUri);
-            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-            var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+			var keymapArgs = KeymapArgsList[_index];
 
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+            var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
-			_index = 0;
+            var definiteKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
+                ComponentData,
+				keymapArgs,
+				definiteHasSelection,
+				EditContext.TextEditorService,
+				out var command);
 
-			for (; _index < BatchLength; _index++)
-			{
-				var keymapArgs = KeymapArgsList[_index];
+            var shouldInvokeAfterOnKeyDownAsync = false;
 
-	            var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
-	
-	            var definiteKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
-	                ComponentData,
-					keymapArgs,
-					definiteHasSelection,
-					EditContext.TextEditorService,
-					out var command);
-	
-	            var shouldInvokeAfterOnKeyDownAsync = false;
-	
-	            switch (definiteKeyboardEventArgsKind)
-	            {
-	                case KeymapArgsKind.Command:
-	                    shouldInvokeAfterOnKeyDownAsync = true;
+            switch (definiteKeyboardEventArgsKind)
+            {
+                case KeymapArgsKind.Command:
+                    shouldInvokeAfterOnKeyDownAsync = true;
 
-						var commandArgs = new TextEditorCommandArgs(
-                            modelModifier.ResourceUri,
-                            viewModelModifier.ViewModel.ViewModelKey,
-							ComponentData,
-							EditContext.TextEditorService,
-							ComponentData.ServiceProvider,
-							EditContext);
+					var commandArgs = new TextEditorCommandArgs(
+                        modelModifier.ResourceUri,
+                        viewModelModifier.ViewModel.ViewModelKey,
+						ComponentData,
+						EditContext.TextEditorService,
+						ComponentData.ServiceProvider,
+						EditContext);
 
-                        await command.CommandFunc
-                            .Invoke(commandArgs)
-                            .ConfigureAwait(false);
-	                    break;
-	                case KeymapArgsKind.Movement:
-	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keymapArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keymapArgs.Key) &&
-	                        viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
-	                    {
-	                    	// TODO: Focusing the menu from here isn't working?
-	                    	await EditContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
-	                    		AutocompleteMenu.HTML_ELEMENT_ID,
-	                    		preventScroll: true);
-	                    		
-	                    	ComponentData.MenuShouldTakeFocus = true;
-	                    }
-	                    else
-	                    {
-	                        EditContext.TextEditorService.ViewModelApi.MoveCursor(
-                        		keymapArgs,
-						        EditContext,
-						        modelModifier,
-						        viewModelModifier,
-						        cursorModifierBag);
-						        
-						    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
-						    {
-						    	TextEditorCommandDefaultFunctions.RemoveDropdown(
-							        EditContext,
-							        viewModelModifier,
-							        ComponentData.Dispatcher);
-						    }
-	                    }
-	                    break;
-	                case KeymapArgsKind.ContextMenu:
-	                	TextEditorCommandDefaultFunctions.ShowContextMenu(
+                    await command.CommandFunc
+                        .Invoke(commandArgs)
+                        .ConfigureAwait(false);
+                    break;
+                case KeymapArgsKind.Movement:
+                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keymapArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keymapArgs.Key) &&
+                        viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
+                    {
+                    	// TODO: Focusing the menu from here isn't working?
+                    	await EditContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
+                    		AutocompleteMenu.HTML_ELEMENT_ID,
+                    		preventScroll: true);
+                    		
+                    	ComponentData.MenuShouldTakeFocus = true;
+                    }
+                    else
+                    {
+                        EditContext.TextEditorService.ViewModelApi.MoveCursor(
+                    		keymapArgs,
 					        EditContext,
 					        modelModifier,
 					        viewModelModifier,
-					        cursorModifierBag,
-					        primaryCursorModifier,
-					        ComponentData.Dispatcher,
-					        ComponentData);
-	                    break;
-	                case KeymapArgsKind.Text:
-	                case KeymapArgsKind.Other:
-	                    shouldInvokeAfterOnKeyDownAsync = true;
-	
-	                    if (!EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
-	                    {
-	                        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keymapArgs.Key ||
-	                            KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key ||
-	                            KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key ||
-	                            !KeyboardKeyFacts.IsMetaKey(keymapArgs))
-	                        {
-	                        	if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
-	                        	{
-									TextEditorCommandDefaultFunctions.RemoveDropdown(
-								        EditContext,
-								        viewModelModifier,
-								        ComponentData.Dispatcher);
-								}
-	                        }
-	                    }
-	
-						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-						{
-							TooltipViewModel = null
-						};
+					        cursorModifierBag);
+					        
+					    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+					    {
+					    	TextEditorCommandDefaultFunctions.RemoveDropdown(
+						        EditContext,
+						        viewModelModifier,
+						        ComponentData.Dispatcher);
+					    }
+                    }
+                    break;
+                case KeymapArgsKind.ContextMenu:
+                	TextEditorCommandDefaultFunctions.ShowContextMenu(
+				        EditContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        primaryCursorModifier,
+				        ComponentData.Dispatcher,
+				        ComponentData);
+                    break;
+                case KeymapArgsKind.Text:
+                case KeymapArgsKind.Other:
+                    shouldInvokeAfterOnKeyDownAsync = true;
 
-						if (definiteKeyboardEventArgsKind == KeymapArgsKind.Text)
+                    if (!EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
+                    {
+                        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keymapArgs.Key ||
+                            KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key ||
+                            KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key ||
+                            !KeyboardKeyFacts.IsMetaKey(keymapArgs))
+                        {
+                        	if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+                        	{
+								TextEditorCommandDefaultFunctions.RemoveDropdown(
+							        EditContext,
+							        viewModelModifier,
+							        ComponentData.Dispatcher);
+							}
+                        }
+                    }
+
+					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						TooltipViewModel = null
+					};
+
+					if (definiteKeyboardEventArgsKind == KeymapArgsKind.Text)
+					{
+						// Batch contiguous insertions
+						var contiguousInsertionBuilder = new StringBuilder(keymapArgs.Key);
+						var innerIndex = _index + 1;
+
+						for (; innerIndex < BatchLength; innerIndex++)
 						{
-							// Batch contiguous insertions
-							var contiguousInsertionBuilder = new StringBuilder(keymapArgs.Key);
+							var innerKeyboardEventArgs = KeymapArgsList[innerIndex];
+
+							var innerKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
+								ComponentData,
+								innerKeyboardEventArgs,
+								definiteHasSelection,
+								EditContext.TextEditorService,
+								out _);
+
+							if (innerKeyboardEventArgsKind == KeymapArgsKind.Text)
+							{
+								contiguousInsertionBuilder.Append(innerKeyboardEventArgs.Key);
+								_index++;
+							}
+							else
+							{
+								break;
+							}
+						}
+
+						modelModifier.Insert(
+		                    contiguousInsertionBuilder.ToString(),
+		                    cursorModifierBag,
+		                    cancellationToken: CancellationToken.None);
+					}
+					else
+					{
+						if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
+		                {
+							// Batch contiguous backspace or delete events
+							var eventCounter = 1;
 							var innerIndex = _index + 1;
 
 							for (; innerIndex < BatchLength; innerIndex++)
 							{
-								var innerKeyboardEventArgs = KeymapArgsList[innerIndex];
+								var innerKeymapArgs = KeymapArgsList[innerIndex];
 
-								var innerKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
+								var innerKeymapArgsKind = EventUtils.GetKeymapArgsKind(
 									ComponentData,
-									innerKeyboardEventArgs,
+									innerKeymapArgs,
 									definiteHasSelection,
 									EditContext.TextEditorService,
 									out _);
 
-								if (innerKeyboardEventArgsKind == KeymapArgsKind.Text)
+								// If the user has a text selection, one cannot batch here.
+								//
+								// CtrlKey does not work here as of this comment (2024-05-27).
+								// It should delete-word eventCounter times, but instead it is
+								// doing delete-word 1 time regardless of the counter, and
+								// eats any events attempted to batch as if they never fired.
+								if (!definiteHasSelection && !keymapArgs.CtrlKey && KeyAndModifiersAreEqual(keymapArgs, innerKeymapArgs))
 								{
-									contiguousInsertionBuilder.Append(innerKeyboardEventArgs.Key);
+									eventCounter++;
 									_index++;
 								}
 								else
@@ -236,163 +282,106 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 								}
 							}
 
-							modelModifier.Insert(
-			                    contiguousInsertionBuilder.ToString(),
-			                    cursorModifierBag,
-			                    cancellationToken: CancellationToken.None);
-						}
+		                    if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
+		                    {
+		                        modelModifier.Delete(
+		                            cursorModifierBag,
+		                            eventCounter,
+		                            keymapArgs.CtrlKey,
+		                            TextEditorModelModifier.DeleteKind.Backspace,
+		                            CancellationToken.None);
+		                    }
+		                    else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
+		                    {
+		                        modelModifier.Delete(
+		                            cursorModifierBag,
+		                            eventCounter,
+		                            keymapArgs.CtrlKey,
+		                            TextEditorModelModifier.DeleteKind.Delete,
+		                            CancellationToken.None);
+		                    }
+		                }
 						else
 						{
-							if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
-			                {
-								// Batch contiguous backspace or delete events
-								var eventCounter = 1;
-								var innerIndex = _index + 1;
-	
-								for (; innerIndex < BatchLength; innerIndex++)
-								{
-									var innerKeymapArgs = KeymapArgsList[innerIndex];
-	
-									var innerKeymapArgsKind = EventUtils.GetKeymapArgsKind(
-										ComponentData,
-										innerKeymapArgs,
-										definiteHasSelection,
-										EditContext.TextEditorService,
-										out _);
-	
-									// If the user has a text selection, one cannot batch here.
-									//
-									// CtrlKey does not work here as of this comment (2024-05-27).
-									// It should delete-word eventCounter times, but instead it is
-									// doing delete-word 1 time regardless of the counter, and
-									// eats any events attempted to batch as if they never fired.
-									if (!definiteHasSelection && !keymapArgs.CtrlKey && KeyAndModifiersAreEqual(keymapArgs, innerKeymapArgs))
-									{
-										eventCounter++;
-										_index++;
-									}
-									else
-									{
-										break;
-									}
-								}
-
-			                    if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
-			                    {
-			                        modelModifier.Delete(
-			                            cursorModifierBag,
-			                            eventCounter,
-			                            keymapArgs.CtrlKey,
-			                            TextEditorModelModifier.DeleteKind.Backspace,
-			                            CancellationToken.None);
-			                    }
-			                    else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
-			                    {
-			                        modelModifier.Delete(
-			                            cursorModifierBag,
-			                            eventCounter,
-			                            keymapArgs.CtrlKey,
-			                            TextEditorModelModifier.DeleteKind.Delete,
-			                            CancellationToken.None);
-			                    }
-			                }
-							else
-							{
-								EditContext.TextEditorService.ModelApi.HandleKeyboardEvent(
-									EditContext,
-							        modelModifier,
-							        cursorModifierBag,
-							        keymapArgs,
-							        CancellationToken.None);
-							}
-						}
-	                    break;
-	            }
-	
-	            if (shouldInvokeAfterOnKeyDownAsync)
-	            {
-	                if (command is null ||
-	                    command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView)
-	                {
-	                    viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
-	                }
-	
-					if (ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync is not null)
-			        {
-			            await ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync.Invoke(
-				                EditContext,
-						        modelModifier,
-						        viewModelModifier,
-						        cursorModifierBag,
-						        keymapArgs,
-								ComponentData)
-	                        .ConfigureAwait(false);
-			        }
-					else
-					{
-						await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsync(
+							EditContext.TextEditorService.ModelApi.HandleKeyboardEvent(
 								EditContext,
 						        modelModifier,
-						        viewModelModifier,
 						        cursorModifierBag,
 						        keymapArgs,
-								ComponentData)
-	                        .ConfigureAwait(false);
+						        CancellationToken.None);
+						}
 					}
-	            }
-			}
-			
-			// TODO: Do this code first so the user gets immediate UI feedback in the event that
-			//       their keydown code takes a long time?
-			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
-			
-			// This code is wrong.
-			// It isn't about the line count or the "most characters on a single line"
-			// It simply is whether the maximum scrollLeft or scrollTop has been reduced.
-			// In which case you match the new and smaller maximum.
-			{
-				/*if (modelModifier.LineCount < modelModifier.PreviousLineCount)
+                    break;
+            }
+
+            if (shouldInvokeAfterOnKeyDownAsync)
+            {
+                if (command is null ||
+                    command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView)
+                {
+                    viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+                }
+
+				if (ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync is not null)
+		        {
+		            await ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync.Invoke(
+			                EditContext,
+					        modelModifier,
+					        viewModelModifier,
+					        cursorModifierBag,
+					        keymapArgs,
+							ComponentData)
+                        .ConfigureAwait(false);
+		        }
+				else
 				{
-					var difference = modelModifier.PreviousLineCount - modelModifier.LineCount;
-				
-					EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-			            EditContext,
-				        viewModelModifier,
-				        -1 * difference * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+					await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsync(
+							EditContext,
+					        modelModifier,
+					        viewModelModifier,
+					        cursorModifierBag,
+					        keymapArgs,
+							ComponentData)
+                        .ConfigureAwait(false);
 				}
-				
-				if (modelModifier.MostCharactersOnASingleLineTuple.lineLength < modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength)
-				{
-					var difference = modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength - modelModifier.MostCharactersOnASingleLineTuple.lineLength;
-					
-					EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
-			            EditContext,
-				        viewModelModifier,
-				        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
-				}*/
+            }
+		}
+		
+		// TODO: Do this code first so the user gets immediate UI feedback in the event that
+		//       their keydown code takes a long time?
+		EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+		
+		// This code is wrong.
+		// It isn't about the line count or the "most characters on a single line"
+		// It simply is whether the maximum scrollLeft or scrollTop has been reduced.
+		// In which case you match the new and smaller maximum.
+		{
+			/*if (modelModifier.LineCount < modelModifier.PreviousLineCount)
+			{
+				var difference = modelModifier.PreviousLineCount - modelModifier.LineCount;
+			
+				EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+		            EditContext,
+			        viewModelModifier,
+			        -1 * difference * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
 			}
 			
-			await EditContext.TextEditorService
-				.FinalizePost(EditContext)
-				.ConfigureAwait(false);
+			if (modelModifier.MostCharactersOnASingleLineTuple.lineLength < modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength)
+			{
+				var difference = modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength - modelModifier.MostCharactersOnASingleLineTuple.lineLength;
 				
-			await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
+				EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+		            EditContext,
+			        viewModelModifier,
+			        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+			}*/
 		}
-		catch (Exception e)
-		{
-			// It was found to be the case (2024-08-13)
-			// ========================================
-			// that if an exception is thrown after the partitions were modified,
-			// that the "only 'FinalizePost' if there were no exceptions" idea is not sufficient.
-			// Because the partitions are shared between recreations of the text editor model,
-			// and the corrupt state will be spread.
-			//
-			// So, a follow up idea is that inside the catch, if there is a 'modified' flag on a model,
-			// then presume that the partitions are corrupted?
-			//
-			// Could one then recover from this state?
-			Console.WriteLine(e);
-		}
+		
+		await EditContext.TextEditorService
+			.FinalizePost(EditContext)
+			.ConfigureAwait(false);
+			
+		await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 
     private bool KeyAndModifiersAreEqual(KeymapArgs x, KeymapArgs y)

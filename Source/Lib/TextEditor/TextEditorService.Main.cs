@@ -132,6 +132,7 @@ public partial class TextEditorService : ITextEditorService
     {
         Post(new UniqueTextEditorWork(
             name,
+            this,
             textEditorFunc));
     }
 
@@ -145,24 +146,17 @@ public partial class TextEditorService : ITextEditorService
             name,
 			resourceUri,
             viewModelKey,
+            this,
             textEditorFunc));
     }
 
     public void Post(ITextEditorWork work)
     {
-        work.EditContext = new TextEditorEditContext(
-            this,
-            AuthenticatedActionKey);
-
         _backgroundTaskService.Enqueue(work);
     }
     
     public Task PostAsync(ITextEditorWork work)
     {
-    	work.EditContext = new TextEditorEditContext(
-            this,
-            AuthenticatedActionKey);
-
         return _backgroundTaskService.EnqueueAsync(work);
     }
 
