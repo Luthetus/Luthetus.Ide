@@ -18,11 +18,6 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-/// <summary>
-/// Use an array with a fixed size to optimize this, usually there are only about 3-5 events that end up batched.
-/// To construct a non-struct collection is probably a massive performance hit considering the extremely rapid
-/// turn over of this type while holding down a keyboard key.
-/// </summary>
 public struct OnKeyDownLateBatching : ITextEditorWork
 {
 	public const int MAX_BATCH_SIZE = 8;
@@ -53,7 +48,6 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-	public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public ITextEditorEditContext EditContext { get; set; }
