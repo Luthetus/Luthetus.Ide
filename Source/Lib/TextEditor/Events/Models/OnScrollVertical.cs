@@ -20,7 +20,7 @@ public struct OnScrollVertical : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnScrollVertical);
     public double ScrollTop { get; }

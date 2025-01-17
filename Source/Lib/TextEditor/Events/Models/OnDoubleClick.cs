@@ -25,7 +25,7 @@ public struct OnDoubleClick : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnDoubleClick);
     public MouseEventArgs MouseEventArgs { get; }

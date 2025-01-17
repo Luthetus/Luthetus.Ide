@@ -26,7 +26,7 @@ public struct OnMouseDown : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnMouseDown);
     public Task? WorkProgress { get; }
