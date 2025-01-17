@@ -146,6 +146,7 @@ public class EditorIdeApi
 				
 			var uniqueTextEditorWork = new UniqueTextEditorWork(
 	            nameof(compilerService.ParseAsync),
+	            _textEditorService,
 	            editContext =>
 	            {
 					var modelModifier = editContext.GetModelModifier(resourceUri);

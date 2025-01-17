@@ -123,6 +123,7 @@ public class DisplayTracker : IDisposable
 				
 				var uniqueTextEditorWork = new UniqueTextEditorWork(
 		            nameof(_hasBeenDisplayedAtLeastOnceBefore),
+		            _textEditorService,
 		            editContext =>
 		            {
 						var modelModifier = editContext.GetModelModifier(_resourceUri);

@@ -20,14 +20,14 @@ public struct OnScrollHorizontal : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnScrollHorizontal);
     public double ScrollLeft { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext EditContext { get; set; }
+	public ITextEditorEditContext? EditContext { get; private set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -44,27 +44,24 @@ public struct OnScrollHorizontal : ITextEditorWork
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-		try
-		{
-            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-            if (viewModelModifier is null)
-                return;
+    	EditContext = new TextEditorService.TextEditorEditContext(
+            ComponentData.TextEditorViewModelDisplay.TextEditorService,
+            TextEditorService.AuthenticatedActionKey);
+    
+        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+        if (viewModelModifier is null)
+            return;
 
-            EditContext.TextEditorService.ViewModelApi.SetScrollPosition(
-            	EditContext,
-        		viewModelModifier,
-            	ScrollLeft,
-            	null);
-            	
-            await EditContext.TextEditorService
-            	.FinalizePost(EditContext)
-            	.ConfigureAwait(false);
-            	
-            await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+        EditContext.TextEditorService.ViewModelApi.SetScrollPosition(
+        	EditContext,
+    		viewModelModifier,
+        	ScrollLeft,
+        	null);
+        	
+        await EditContext.TextEditorService
+        	.FinalizePost(EditContext)
+        	.ConfigureAwait(false);
+        	
+        await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }
