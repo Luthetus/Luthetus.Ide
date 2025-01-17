@@ -1,6 +1,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
@@ -18,17 +19,20 @@ public struct UniqueTextEditorWork : ITextEditorWork
 
     public UniqueTextEditorWork(
         string name,
+        ITextEditorService textEditorService,
         Func<ITextEditorEditContext, Task> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
         Name = name;
+        TextEditorService = textEditorService;
     }
 
 	public string Name { get; set; }
     public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public ITextEditorService TextEditorService { get; }
 
-	public ITextEditorEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; private set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -38,19 +42,16 @@ public struct UniqueTextEditorWork : ITextEditorWork
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
-		try
-		{
-            await _textEditorFunc
-                .Invoke(EditContext)
-                .ConfigureAwait(false);
-                
-            await EditContext.TextEditorService
-            	.FinalizePost(EditContext)
-            	.ConfigureAwait(false);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+    	EditContext = new TextEditorService.TextEditorEditContext(
+            TextEditorService,
+            Luthetus.TextEditor.RazorLib.TextEditorService.AuthenticatedActionKey);
+    
+		await _textEditorFunc
+            .Invoke(EditContext)
+            .ConfigureAwait(false);
+            
+        await EditContext.TextEditorService
+        	.FinalizePost(EditContext)
+        	.ConfigureAwait(false);
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -47,6 +48,13 @@ public class BackgroundTaskService : IBackgroundTaskService
     
     public Task EnqueueAsync(IBackgroundTask backgroundTask)
     {
+    	if (backgroundTask.BackgroundTaskKey == Key<IBackgroundTask>.Empty)
+    	{
+    		// TODO: This exception message should be written better.
+    		throw new LuthetusCommonException(
+    			$"{nameof(EnqueueAsync)} cannot be invoked with an {nameof(IBackgroundTask)} that has an 'backgroundTask.BackgroundTaskKey == Key<IBackgroundTask>.Empty' {nameof(_taskCompletionSourceMap)}");
+    	}
+    
         // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
         if (_enqueuesAreDisabled)
             return Task.CompletedTask;
@@ -64,6 +72,8 @@ public class BackgroundTaskService : IBackgroundTaskService
 	        		existingTaskCompletionSource.SetException(new InvalidOperationException("SIMULATED EXCEPTION"));
 	        	}
 	        	
+	        	// Retrospective: Shouldn't this be in an 'else'?
+	        	//
 	        	// The re-use of the key is not an issue, so long as the previous usage has completed
         		_taskCompletionSourceMap[backgroundTask.BackgroundTaskKey] = taskCompletionSource;
 	        }
