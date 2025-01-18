@@ -194,7 +194,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				};
 
 				terminal.EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
 	}
 
@@ -274,7 +274,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				};
 
 				terminal.EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
 	}
 
@@ -319,7 +319,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 						return Task.CompletedTask;
 					});
 
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
 	}
 
@@ -352,7 +352,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				};
 
 				terminal.EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
 	}
 }

@@ -23,14 +23,17 @@ public struct OnWheel : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnWheel);
+    public bool EarlyBatchEnabled { get; set; } = true;
+    public bool LateBatchEnabled { get; set; }
+    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
+    public string Name => "luth_OnWheel";
     public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
 		// Horizontal mouse wheel was not working on Linux.
 		// Prior to the fix that was just made, only the 'WheelEventArgs.DeltaY'
@@ -52,8 +55,10 @@ public struct OnWheel : ITextEditorWork
         // If the two individuals, or a batch and an individual are both positive,
         // then batch them, etc... for negative and 0
 
-        if (oldEvent is OnWheel oldEventOnWheel)
+        if (oldEvent.Name == Name)
         {
+        	var oldEventOnWheel = (OnWheel)oldEvent;
+        	
 			if (oldEventOnWheel.WheelEventArgs.ShiftKey && WheelEventArgs.ShiftKey)
 			{
 	            if (oldEventOnWheel.WheelEventArgs.DeltaX > 0 &&
@@ -133,8 +138,7 @@ public struct OnWheel : ITextEditorWork
 	            }
 			}
         }
-
-        if (oldEvent is OnWheelBatch oldEventOnWheelBatch)
+        else if (oldEvent is OnWheelBatch oldEventOnWheelBatch)
         {
 			if (oldEventOnWheelBatch.WheelEventArgsList.Last().ShiftKey && WheelEventArgs.ShiftKey)
 			{
@@ -182,8 +186,13 @@ public struct OnWheel : ITextEditorWork
 
         return null;
     }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+    	return null;
+    }
 
-    public async Task HandleEvent(CancellationToken cancellationToken)
+    public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	EditContext = new TextEditorService.TextEditorEditContext(
             ComponentData.TextEditorViewModelDisplay.TextEditorService,
@@ -217,6 +226,6 @@ public struct OnWheel : ITextEditorWork
         	.FinalizePost(EditContext)
         	.ConfigureAwait(false);
         	
-        await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
+        // await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

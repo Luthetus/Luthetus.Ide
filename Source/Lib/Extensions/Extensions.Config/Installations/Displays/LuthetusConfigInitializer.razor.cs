@@ -55,7 +55,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
 			() =>
 			{
 				InitializeFooterJustifyEndComponents();
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
 			
 		base.OnInitialized();

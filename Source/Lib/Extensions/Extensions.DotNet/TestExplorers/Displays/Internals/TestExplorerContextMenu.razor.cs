@@ -233,7 +233,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 								fullyQualifiedName,
 								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value);
 
-							return Task.CompletedTask;
+							return ValueTask.CompletedTask;
 						});
 				}
 

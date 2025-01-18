@@ -30,17 +30,24 @@ public struct UniqueTextEditorWork : ITextEditorWork
 	public string Name { get; set; }
     public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
     public ITextEditorService TextEditorService { get; }
 
 	public ITextEditorEditContext EditContext { get; private set; }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
         // Keep both events
         return null;
     }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
 
-    public async Task HandleEvent(CancellationToken cancellationToken)
+    public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	EditContext = new TextEditorService.TextEditorEditContext(
             TextEditorService,

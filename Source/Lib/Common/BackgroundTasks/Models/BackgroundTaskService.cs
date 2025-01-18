@@ -41,7 +41,7 @@ public class BackgroundTaskService : IBackgroundTaskService
 			.Enqueue(backgroundTask);
     }
 
-    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
+    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
     {
         Enqueue(new BackgroundTask(taskKey, queueKey, name, runFunc));
     }
@@ -89,7 +89,7 @@ public class BackgroundTaskService : IBackgroundTaskService
 		return taskCompletionSource.Task;
     }
 
-    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
+    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
     {
         return EnqueueAsync(new BackgroundTask(taskKey, queueKey, name, runFunc));
     }
@@ -123,7 +123,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         CancellationToken cancellationToken)
     {
         var queue = _queueContainerMap[queueKey];
-		await queue.DequeueSemaphoreSlim.WaitAsync();
+		await queue.DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
         return queue.DequeueOrDefault();
     }
 

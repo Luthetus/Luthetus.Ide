@@ -34,7 +34,7 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
             () =>
             {
                 InitializePanelTabs();
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
             
         base.OnInitialized();

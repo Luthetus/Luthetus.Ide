@@ -4,13 +4,13 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class BackgroundTask : IBackgroundTask
 {
-    private readonly Func<Task> _runFunc;
+    private readonly Func<ValueTask> _runFunc;
 
     public BackgroundTask(
         Key<IBackgroundTask> backgroundTaskKey,
         Key<IBackgroundTaskQueue> queueKey,
         string name,
-        Func<Task> runFunc)
+        Func<ValueTask> runFunc)
     {
         _runFunc = runFunc;
 
@@ -27,13 +27,20 @@ public class BackgroundTask : IBackgroundTask
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
 
-	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+	
+	public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
 	{
 		return null;
 	}
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         return _runFunc.Invoke();
     }

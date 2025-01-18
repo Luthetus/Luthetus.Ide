@@ -36,11 +36,13 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton(sp => new ContinuousBackgroundTaskWorker(
             sp.GetRequiredService<IBackgroundTaskService>(),
-            sp.GetRequiredService<ILoggerFactory>()));
+            sp.GetRequiredService<ILoggerFactory>(),
+            hostingInformation.LuthetusHostingKind));
 
         services.AddSingleton(sp => new BlockingBackgroundTaskWorker(
             sp.GetRequiredService<IBackgroundTaskService>(),
-            sp.GetRequiredService<ILoggerFactory>()));
+            sp.GetRequiredService<ILoggerFactory>(),
+            hostingInformation.LuthetusHostingKind));
             
         if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -12,16 +13,19 @@ public class BackgroundTaskWorker : BackgroundService
     public BackgroundTaskWorker(
         Key<IBackgroundTaskQueue> queueKey,
         IBackgroundTaskService backgroundTaskService,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        LuthetusHostingKind luthetusHostingKind)
     {
         QueueKey = queueKey;
         BackgroundTaskService = backgroundTaskService;
         _logger = loggerFactory.CreateLogger<BackgroundTaskWorker>();
+        LuthetusHostingKind = luthetusHostingKind;
     }
 
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public IBackgroundTaskService BackgroundTaskService { get; }
     public Task? StartAsyncTask { get; internal set; }
+    public LuthetusHostingKind LuthetusHostingKind { get; }
 
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -42,7 +46,58 @@ public class BackgroundTaskWorker : BackgroundService
                     _hasActiveExecutionActive = true;
 
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, backgroundTask);
+                    
+                    await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
+                    await Task.Yield();
+                    
+                    /*
+                    (2025-01-17)
+                    ============
+                    
+                    I think it is a joint effort between the "producer" and "consumer".
+                    
+                    Blazor WASM perhaps can have the UI freeze due to SynchronizationContext issues.
+                    
+                    But at the moment, I think the remaining issues
+                    are regarding the UI events "yielding" / 'await Task.Yield();'.
+                    
+                    Because if I hold down the 'j' key,
+                    it seems that the WASM UI will just continue 'producing' more 'j' events.
+                    
+                    But never actually 'consume' them.
+                    
+                    So I suppose the question is if these 'j' events are ever being dequeued,
+                    or if the UI code is running nonstop due to a high load of something?
+                    
+                    Maybe it is a SynchronizationContext issue...
+                    
+                    But even in this class, not having 'await Task.Yield();'
+                    will result in WASM just handling the background tasks and never updating
+                    the UI (if there is a high enough background task load).
+                    
+                    The multi-threaded UI experience seems greatly improved
+                    from today's changes,
+                    
+                    which is odd cause I was trying to improve single threaded.
+                    
+                    will continue tomorrow.
+                    
+                    I wanna type this though
+                    I don't wanna just put 'await Task.Yield();'
+                    everywhere just for WASM's sake though right?
+                    Is that going to slow down a multi-threaded runtime?
+                    
+                    Anyways.
+                    */
+                    
+                    //await backgroundTask.HandleEvent(cancellationToken);
+                    
+                    /*if (LuthetusHostingKind == LuthetusHostingKind.Wasm)
+                    {
+                    	await Task.Yield();
+                    }*/
 
+					/*
 					// TODO: Should Task.WhenAll be used here so the delay runs concurrently...
 					// ...with the 'HandleEvent'?
 					//
@@ -61,8 +116,9 @@ public class BackgroundTaskWorker : BackgroundService
 					{
 						await task.ConfigureAwait(false);
 					}
+					*/
 					
-					BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
+					
                 }
                 catch (Exception ex)
                 {
@@ -75,6 +131,7 @@ public class BackgroundTaskWorker : BackgroundService
                 }
                 finally
                 {
+                	BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, null);
                     
                     _hasActiveExecutionActive = false;
