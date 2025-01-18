@@ -8,6 +8,10 @@ public interface IBackgroundTask
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
     public bool EarlyBatchEnabled { get; set; }
+    
+    /// <summary>
+    /// This is never used. TODO: late batching
+    /// </summary>
     public bool LateBatchEnabled { get; set; }
 
     /// <summary>
@@ -27,6 +31,9 @@ public interface IBackgroundTask
     /// </summary>
 	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent);
 	
+	/// <summary>
+    /// This is never used. TODO: late batching
+    /// </summary>
 	public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent);
 	
 	/// <summary>
