@@ -329,7 +329,7 @@ public partial class GitDiffDisplay : ComponentBase
             			if (modelModifier is null || viewModelModifier is null)
             			{
             				Console.WriteLine("modelModifier is null || viewModelModifier is null");
-            				return Task.CompletedTask;
+            				return ValueTask.CompletedTask;
             			}
             				
             			editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
@@ -344,7 +344,7 @@ public partial class GitDiffDisplay : ComponentBase
 			            if (outPresentationModel.PendingCalculation is null)
 			            {
 			            	Console.WriteLine("outPresentationModel.PendingCalculation is null");
-			                return Task.CompletedTask;
+			                return ValueTask.CompletedTask;
 			            }
 			            
 			            var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
@@ -372,7 +372,7 @@ public partial class GitDiffDisplay : ComponentBase
 			                outResultTextSpanList.ToImmutableArray());
 			            Console.WriteLine("modelModifier.CompletePendingCalculatePresentationModel");
             			
-            			return Task.CompletedTask;
+            			return ValueTask.CompletedTask;
             		});
             		
             	return Task.CompletedTask;

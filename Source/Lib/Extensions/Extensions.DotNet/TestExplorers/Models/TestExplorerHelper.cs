@@ -19,7 +19,7 @@ public static class TestExplorerHelper
 	/// TODO: D.R.Y.: This method is copy and pasted, then altered a bit, from
 	/// <see cref="TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.GoToDefinitionFactory"/>.
 	/// </summary>
-	public static Func<ITextEditorEditContext, Task> ShowTestInEditorFactory(
+	public static Func<ITextEditorEditContext, ValueTask> ShowTestInEditorFactory(
 		string className,
 		string methodName,
 		ICommonComponentRenderers commonComponentRenderers,
@@ -44,7 +44,7 @@ public static class TestExplorerHelper
 					dispatcher,
 					TimeSpan.FromSeconds(5));
 
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			}
 
 			var cSharpCompilerService = (CSharpCompilerService)possibleCSharpCompilerService;
@@ -65,7 +65,7 @@ public static class TestExplorerHelper
 					dispatcher,
 					TimeSpan.FromSeconds(5));
 
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			}
 
 			var typeDefinitionNode = typeDefinitionNodeList.First().Value;
@@ -121,7 +121,7 @@ public static class TestExplorerHelper
 					dispatcher,
 					TimeSpan.FromSeconds(5));
 
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			}
 
 			var definitionModel = textEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
@@ -144,7 +144,7 @@ public static class TestExplorerHelper
 							dispatcher,
 							TimeSpan.FromSeconds(5));
 
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 					}
 				}
 				else
@@ -156,7 +156,7 @@ public static class TestExplorerHelper
 						dispatcher,
 						TimeSpan.FromSeconds(5));
 
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				}
 			}
 
@@ -184,7 +184,7 @@ public static class TestExplorerHelper
 							dispatcher,
 							TimeSpan.FromSeconds(5));
 
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 					}
 				}
 				else
@@ -196,7 +196,7 @@ public static class TestExplorerHelper
 						dispatcher,
 						TimeSpan.FromSeconds(5));
 
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				}
 			}
 
@@ -215,7 +215,7 @@ public static class TestExplorerHelper
 					dispatcher,
 					TimeSpan.FromSeconds(5));
 
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			}
 
 			var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
@@ -244,7 +244,7 @@ public static class TestExplorerHelper
 					TimeSpan.FromSeconds(5));
 			}
 			
-			return Task.CompletedTask;
+			return ValueTask.CompletedTask;
 		};
 	}
 }

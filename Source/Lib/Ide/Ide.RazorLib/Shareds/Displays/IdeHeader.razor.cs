@@ -444,7 +444,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 					MetaKey = false,
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
-		        new CommonCommand("Open File Dropdown", "open-file-dropdown", false, _ => RenderFileDropdownOnClick()));
+		        new CommonCommand("Open File Dropdown", "open-file-dropdown", false, async _ => await RenderFileDropdownOnClick()));
 		        
 		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 		        new KeymapArgs
@@ -457,7 +457,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 					MetaKey = false,
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
-		        new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, _ => RenderToolsDropdownOnClick()));
+		        new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, async _ => await RenderToolsDropdownOnClick()));
 		        	
 		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 		        new KeymapArgs
@@ -470,7 +470,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 					MetaKey = false,
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
-		        new CommonCommand("Open View Dropdown", "open-view-dropdown", false, _ => RenderViewDropdownOnClick()));
+		        new CommonCommand("Open View Dropdown", "open-view-dropdown", false, async _ => await RenderViewDropdownOnClick()));
 
 		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 	        new KeymapArgs
@@ -483,7 +483,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 				MetaKey = false,
 				LayerKey = Key<KeymapLayer>.Empty,
 			},
-	        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, _ => RenderRunDropdownOnClick()));
+	        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await RenderRunDropdownOnClick()));
 	}
 	
 	private Task RenderFileDropdownOnClick()

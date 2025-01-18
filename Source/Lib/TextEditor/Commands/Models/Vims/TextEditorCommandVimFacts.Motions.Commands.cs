@@ -18,7 +18,7 @@ public static partial class TextEditorCommandVimFacts
                 var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                     
                 Word(
 	            	commandArgs.EditContext,
@@ -26,7 +26,7 @@ public static partial class TextEditorCommandVimFacts
 			        viewModelModifier,
 			        cursorModifierBag,
 			        commandArgs);
-			    return Task.CompletedTask;
+			    return ValueTask.CompletedTask;
             });
 
         public static readonly TextEditorCommand EndCommand = new(
@@ -41,7 +41,7 @@ public static partial class TextEditorCommandVimFacts
                 var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                     
                 End(
 	            	commandArgs.EditContext,
@@ -49,7 +49,7 @@ public static partial class TextEditorCommandVimFacts
 			        viewModelModifier,
 			        cursorModifierBag,
 			        commandArgs);
-			    return Task.CompletedTask;
+			    return ValueTask.CompletedTask;
             });
 
         public static readonly TextEditorCommand BackCommand = new(
@@ -64,7 +64,7 @@ public static partial class TextEditorCommandVimFacts
                 var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                     
                 Back(
 	            	commandArgs.EditContext,
@@ -72,7 +72,7 @@ public static partial class TextEditorCommandVimFacts
 			        viewModelModifier,
 			        cursorModifierBag,
 			        commandArgs);
-			    return Task.CompletedTask;
+			    return ValueTask.CompletedTask;
             });
 
         public static TextEditorCommand GetVisualFactory(
@@ -92,7 +92,7 @@ public static partial class TextEditorCommandVimFacts
 	                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 	
 	                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-	                    return Task.CompletedTask;
+	                    return ValueTask.CompletedTask;
 	                    
 	                return Visual(
 		            	commandArgs.EditContext,
@@ -120,7 +120,7 @@ public static partial class TextEditorCommandVimFacts
 	                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 	
 	                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-	                    return Task.CompletedTask;
+	                    return ValueTask.CompletedTask;
 	                    
 	                return VisualLine(
 		            	commandArgs.EditContext,

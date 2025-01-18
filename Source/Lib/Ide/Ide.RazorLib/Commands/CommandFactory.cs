@@ -340,7 +340,7 @@ public class CommandFactory : ICommandFactory
 	            commandArgs => 
 				{
 					_textEditorService.OptionsApi.ShowFindAllDialog();
-		            return Task.CompletedTask;
+		            return ValueTask.CompletedTask;
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -378,15 +378,15 @@ public class CommandFactory : ICommandFactory
                     {
                     	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
 	                    if (group is null)
-	                        return Task.CompletedTask;
+	                        return ValueTask.CompletedTask;
 	
 	                    var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
 	                    if (activeViewModel is null)
-	                        return Task.CompletedTask;
+	                        return ValueTask.CompletedTask;
                     
 			            var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.ViewModelKey);
 			            if (viewModelModifier is null)
-			                return Task.CompletedTask;
+			                return ValueTask.CompletedTask;
 			
 						// If the user has an active text selection,
 						// then populate the code search with their selection.
@@ -396,11 +396,11 @@ public class CommandFactory : ICommandFactory
 			            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 			
 			            if (modelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-			                return Task.CompletedTask;
+			                return ValueTask.CompletedTask;
 			
 			            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
 						if (selectedText is null)
-							return Task.CompletedTask;
+							return ValueTask.CompletedTask;
 						
 						_dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
 						{
@@ -409,10 +409,10 @@ public class CommandFactory : ICommandFactory
 			
 						_dispatcher.Dispatch(new CodeSearchState.SearchEffect());
 						
-						return  Task.CompletedTask;
+						return  ValueTask.CompletedTask;
                     });
                     
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -527,7 +527,7 @@ public class CommandFactory : ICommandFactory
                         cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;");
 
                     _dispatcher.Dispatch(new WidgetState.SetWidgetAction(_commandBarWidget));
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
 				});
 		
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(

@@ -128,7 +128,7 @@ public partial class TextEditorService : ITextEditorService
 
     public void PostUnique(
         string name,
-        Func<ITextEditorEditContext, Task> textEditorFunc)
+        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
     {
     	_backgroundTaskService.Enqueue(new UniqueTextEditorWork(
             name,
@@ -140,7 +140,7 @@ public partial class TextEditorService : ITextEditorService
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        Func<ITextEditorEditContext, Task> textEditorFunc)
+        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
     {
     	_backgroundTaskService.Enqueue(new RedundantTextEditorWork(
             name,
@@ -160,7 +160,7 @@ public partial class TextEditorService : ITextEditorService
         return _backgroundTaskService.EnqueueAsync(work);
     }
 
-	public async Task FinalizePost(ITextEditorEditContext editContext)
+	public async ValueTask FinalizePost(ITextEditorEditContext editContext)
 	{
 		var modelModifierNeedRenderList = new List<TextEditorModelModifier>();
 		var viewModelModifierNeedRenderList = new List<TextEditorViewModelModifier>();
@@ -506,7 +506,7 @@ public partial class TextEditorService : ITextEditorService
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 			
 				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
 					
@@ -514,7 +514,7 @@ public partial class TextEditorService : ITextEditorService
 				primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
 				
 				viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
 		}
 		catch (Exception e)
@@ -562,7 +562,7 @@ public partial class TextEditorService : ITextEditorService
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 			
 				if (lineIndex is not null)
 					primaryCursorModifier.LineIndex = lineIndex.Value;
@@ -579,7 +579,7 @@ public partial class TextEditorService : ITextEditorService
 					
 				viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 				
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
 		}
 		catch (Exception e)

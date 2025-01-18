@@ -192,7 +192,7 @@ public static partial class TextEditorCommandVimFacts
                 primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
         }
 
-        public static async Task Visual(
+        public static async ValueTask Visual(
         	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -232,7 +232,7 @@ public static partial class TextEditorCommandVimFacts
             }
         }
 
-        public static async Task VisualLine(
+        public static async ValueTask VisualLine(
         	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,

@@ -154,14 +154,14 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             : _textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
     }
 
-    public async Task<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
+    public async ValueTask<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
     {
         return await _textEditorService.JsRuntimeTextEditorApi
             .GetTextEditorMeasurementsInPixelsById(elementId)
             .ConfigureAwait(false);
     }
 
-    public async Task<CharAndLineMeasurements> MeasureCharacterWidthAndLineHeightAsync(
+    public async ValueTask<CharAndLineMeasurements> MeasureCharacterWidthAndLineHeightAsync(
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters)
     {
@@ -288,9 +288,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             scrollTop);
     }
 
-    public async Task FocusPrimaryCursorAsync(string primaryCursorContentId)
+    public ValueTask FocusPrimaryCursorAsync(string primaryCursorContentId)
     {
-        await _jsRuntime.GetLuthetusCommonApi()
+    	// Why is GetLuthetusCommonApi() not cached? (2025-01-18)
+        return _jsRuntime.GetLuthetusCommonApi()
             .FocusHtmlElementById(primaryCursorContentId, preventScroll: true);
     }
 
@@ -1097,7 +1098,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 		}
     }
 
-    public async Task RemeasureAsync(
+    public async ValueTask RemeasureAsync(
         ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,

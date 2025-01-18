@@ -99,7 +99,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 	
 	            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-	                return Task.CompletedTask;
+	                return ValueTask.CompletedTask;
 	            
 	            _lineIndexPrevious = primaryCursorModifier.LineIndex;
 	            _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
@@ -134,7 +134,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				if (targetScope is null)
 				{
 					Console.WriteLine("aaa if (targetScope is null)");
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				}
 	    
 	    		var textSpanStart = new TextEditorTextSpan(
@@ -167,12 +167,12 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 					_shouldRender = true;
 				}
 		
-	    		return Task.CompletedTask;
+	    		return ValueTask.CompletedTask;
 	    	}
 	    	catch (Exception e)
 	    	{
 	    		Console.WriteLine(e);
-	    		return Task.CompletedTask;
+	    		return ValueTask.CompletedTask;
 	    	}
     	});
     }

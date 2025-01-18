@@ -13,7 +13,7 @@ public static partial class TextEditorCommandVimFacts
 {
     public static partial class Verbs
     {
-        public static Task DeleteLine(
+        public static ValueTask DeleteLine(
         	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -28,7 +28,7 @@ public static partial class TextEditorCommandVimFacts
 		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
         }
 
-        public static async Task ChangeLine(
+        public static async ValueTask ChangeLine(
         	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -50,7 +50,7 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static async Task DeleteMotion(
+        public static async ValueTask DeleteMotion(
         	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -100,7 +100,7 @@ public static partial class TextEditorCommandVimFacts
                 CancellationToken.None);
         }
 
-        public static async Task ChangeMotion(
+        public static async ValueTask ChangeMotion(
         	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -117,7 +117,7 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static async Task ChangeSelection(
+        public static async ValueTask ChangeSelection(
         	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -132,7 +132,7 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static async Task YankAsync(
+        public static async ValueTask YankAsync(
         	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
