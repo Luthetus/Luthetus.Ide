@@ -401,7 +401,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 			.FinalizePost(EditContext)
 			.ConfigureAwait(false);
 			
-		await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
+		// await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 
     private bool KeyAndModifiersAreEqual(KeymapArgs x, KeymapArgs y)

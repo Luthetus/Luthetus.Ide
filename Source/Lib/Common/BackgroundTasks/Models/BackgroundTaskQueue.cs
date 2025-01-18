@@ -71,7 +71,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     {
 		lock (_modifyQueueLock)
 		{
-			if (_queue.Count > 0)
+			if ( _queue.Count > 0)
 			{
 				var upstreamEvent = _queue.Last.Value;
 				// TODO: Rename 'BatchOrDefault' to 'TryMergeIntoUpstream'
