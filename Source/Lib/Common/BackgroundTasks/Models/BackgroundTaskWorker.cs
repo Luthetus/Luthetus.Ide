@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -12,16 +13,19 @@ public class BackgroundTaskWorker : BackgroundService
     public BackgroundTaskWorker(
         Key<IBackgroundTaskQueue> queueKey,
         IBackgroundTaskService backgroundTaskService,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        LuthetusHostingKind luthetusHostingKind)
     {
         QueueKey = queueKey;
         BackgroundTaskService = backgroundTaskService;
         _logger = loggerFactory.CreateLogger<BackgroundTaskWorker>();
+        LuthetusHostingKind = luthetusHostingKind;
     }
 
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public IBackgroundTaskService BackgroundTaskService { get; }
     public Task? StartAsyncTask { get; internal set; }
+    public LuthetusHostingKind LuthetusHostingKind { get; }
 
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -42,7 +46,16 @@ public class BackgroundTaskWorker : BackgroundService
                     _hasActiveExecutionActive = true;
 
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, backgroundTask);
+                    
+                    //await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
+                    await backgroundTask.HandleEvent(cancellationToken);
+                    
+                    /*if (LuthetusHostingKind == LuthetusHostingKind.Wasm)
+                    {
+                    	await Task.Yield();
+                    }*/
 
+					/*
 					// TODO: Should Task.WhenAll be used here so the delay runs concurrently...
 					// ...with the 'HandleEvent'?
 					//
@@ -61,8 +74,9 @@ public class BackgroundTaskWorker : BackgroundService
 					{
 						await task.ConfigureAwait(false);
 					}
+					*/
 					
-					BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
+					
                 }
                 catch (Exception ex)
                 {
@@ -75,6 +89,7 @@ public class BackgroundTaskWorker : BackgroundService
                 }
                 finally
                 {
+                	BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, null);
                     
                     _hasActiveExecutionActive = false;
