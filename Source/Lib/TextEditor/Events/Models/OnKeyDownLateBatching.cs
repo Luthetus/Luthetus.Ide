@@ -88,7 +88,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 	public bool BatchHasAvailability => BatchLength < MAX_BATCH_SIZE;
 	
 	// TODO: Rewrite this.
-	public KeymapArgs[]? KeymapArgsList { get; set; }// = new KeymapArgs[MAX_BATCH_SIZE];
+	public KeymapArgs[]? KeymapArgsList { get; set; }
 
     // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
     public string Name => "luth_OnKeyDownLateBatching";
@@ -101,8 +101,11 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
 	public void AddToBatch(KeymapArgs keymapArgs)
 	{
-		if (!BatchHasAvailability)
-			throw new LuthetusTextEditorException($"{nameof(BatchLength)} >= {nameof(MAX_BATCH_SIZE)}");
+		if (KeymapArgsList is null)
+		{
+			KeymapArgsList = new KeymapArgs[MAX_BATCH_SIZE];
+			AddToBatch(KeymapArgs);
+		}
 
 		KeymapArgsList[BatchLength] = keymapArgs;
         BatchLength++;
@@ -113,16 +116,15 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 		if (upstreamEvent.Name == Name)
 		{
 			var upstreamOnKeyDownLateBatching = (OnKeyDownLateBatching)upstreamEvent;
-			
-			if (upstreamOnKeyDownLateBatching.KeymapArgsList is null)
-				upstreamOnKeyDownLateBatching.KeymapArgsList = new KeymapArgs[MAX_BATCH_SIZE];
 		
 			if (BatchLength == 0 && upstreamOnKeyDownLateBatching.BatchHasAvailability)
-				upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgsList[0]);
-
-            return upstreamOnKeyDownLateBatching;
+			{
+				upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgs);
+	            return upstreamOnKeyDownLateBatching;
+            }
 		}
 		
+		// Keep both events.
 		return null;
     }
     
@@ -151,8 +153,6 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 		
 		if (BatchLength == 0)
 			batchLengthFake = 1;
-		else
-			Console.WriteLine($"aaa BatchLength: {BatchLength}");
 
 		for (; _index < batchLengthFake; _index++)
 		{
