@@ -53,6 +53,8 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 /// You don't need to make the List until dequeueing
 /// and you find that the "next up" is the same name.
 /// 
+/// Optimistic vs Pessimistic batching?
+/// Early vs Late batching?
 /// </summary>
 public struct OnKeyDownLateBatching : ITextEditorWork
 {
