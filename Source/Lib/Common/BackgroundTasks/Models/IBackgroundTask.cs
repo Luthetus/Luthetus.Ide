@@ -7,6 +7,8 @@ public interface IBackgroundTask
     public Key<IBackgroundTask> BackgroundTaskKey { get; }
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
 
     /// <summary>
     /// Before a throttle event is enqueued, this method is invoked.
@@ -23,7 +25,9 @@ public interface IBackgroundTask
     /// Returning null means enqueue the recentEvent without any batching,
     /// (leave the old event as it was within the queue)
     /// </summary>
-	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent, );
+	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent);
+	
+	public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent);
 	
 	/// <summary>
     /// This method is the actual work item that gets awaited in order to handle the event.

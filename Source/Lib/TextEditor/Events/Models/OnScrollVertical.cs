@@ -22,6 +22,8 @@ public struct OnScrollVertical : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
     public string Name { get; } = nameof(OnScrollVertical);
     public double ScrollTop { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -29,7 +31,7 @@ public struct OnScrollVertical : ITextEditorWork
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent is OnScrollVertical)
 		{
@@ -40,6 +42,11 @@ public struct OnScrollVertical : ITextEditorWork
         
 		// Keep both events, because they are not able to be batched.
 		return null;
+    }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+    	return null;
     }
 
     public async Task HandleEvent(CancellationToken cancellationToken)

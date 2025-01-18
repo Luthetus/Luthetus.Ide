@@ -23,6 +23,8 @@ public struct OnWheel : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
     public string Name { get; } = nameof(OnWheel);
     public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -30,7 +32,7 @@ public struct OnWheel : ITextEditorWork
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
 		// Horizontal mouse wheel was not working on Linux.
 		// Prior to the fix that was just made, only the 'WheelEventArgs.DeltaY'
@@ -181,6 +183,11 @@ public struct OnWheel : ITextEditorWork
         }
 
         return null;
+    }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+    	return null;
     }
 
     public async Task HandleEvent(CancellationToken cancellationToken)

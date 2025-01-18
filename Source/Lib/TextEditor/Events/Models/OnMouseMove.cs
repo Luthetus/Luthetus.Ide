@@ -26,6 +26,8 @@ public struct OnMouseMove : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
     public string Name { get; } = nameof(OnMouseMove);
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
@@ -34,7 +36,7 @@ public struct OnMouseMove : ITextEditorWork
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent is OnMouseMove)
 		{
@@ -45,6 +47,11 @@ public struct OnMouseMove : ITextEditorWork
         
 		// Keep both events, because they are not able to be batched.
 		return null;
+    }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+    	return null;
     }
 
     public async Task HandleEvent(CancellationToken cancellationToken)

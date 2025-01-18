@@ -27,8 +27,15 @@ public class BackgroundTask : IBackgroundTask
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
 
-	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+	
+	public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
 	{
 		return null;
 	}

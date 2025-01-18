@@ -66,7 +66,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
     {
         ComponentData = componentData;
 
-		AddToBatch(keymapArgs);
+		KeymapArgs = keymapArgs;
 
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
@@ -74,6 +74,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
+    public KeymapArgs KeymapArgs { get; set; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public ITextEditorEditContext? EditContext { get; private set; }
@@ -87,17 +90,18 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 	/// </summary>
 	private int _index;
 
-	public void AddToBatch(KeymapArgs keymapArgs)
+	/*public void AddToBatch(KeymapArgs keymapArgs)
 	{
 		if (!BatchHasAvailability)
 			throw new LuthetusTextEditorException($"{nameof(BatchLength)} >= {nameof(MAX_BATCH_SIZE)}");
 
 		KeymapArgsList[BatchLength] = keymapArgs;
         BatchLength++;
-    }
+    }*/
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask upstreamEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask upstreamEvent)
     {
+    	/*
     	// TODO: What is the overhead of this 'is' cast versus something like an enum, or string?
 		if (upstreamEvent is OnKeyDownLateBatching upstreamOnKeyDownLateBatching)
 		{
@@ -106,8 +110,14 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
             return upstreamOnKeyDownLateBatching;
 		}
-
+		*/
+		
 		return null;
+    }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+    	return null;
     }
 
     public async Task HandleEvent(CancellationToken cancellationToken)
@@ -126,9 +136,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
 		_index = 0;
 
-		for (; _index < BatchLength; _index++)
+		for (; _index < 1; _index++)
 		{
-			var keymapArgs = KeymapArgsList[_index];
+			var keymapArgs = KeymapArgs;
 
             var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
@@ -229,9 +239,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 						var contiguousInsertionBuilder = new StringBuilder(keymapArgs.Key);
 						var innerIndex = _index + 1;
 
-						for (; innerIndex < BatchLength; innerIndex++)
+						for (; innerIndex < 0; innerIndex++)
 						{
-							var innerKeyboardEventArgs = KeymapArgsList[innerIndex];
+							var innerKeyboardEventArgs = KeymapArgs;//List[innerIndex];
 
 							var innerKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
 								ComponentData,
@@ -264,9 +274,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 							var eventCounter = 1;
 							var innerIndex = _index + 1;
 
-							for (; innerIndex < BatchLength; innerIndex++)
+							for (; innerIndex < 1; innerIndex++)
 							{
-								var innerKeymapArgs = KeymapArgsList[innerIndex];
+								var innerKeymapArgs = KeymapArgs;//List[innerIndex];
 
 								var innerKeymapArgsKind = EventUtils.GetKeymapArgsKind(
 									ComponentData,

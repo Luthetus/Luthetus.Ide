@@ -27,6 +27,8 @@ public struct OnDoubleClick : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public bool EarlyBatchEnabled { get; set; }
+    public bool LateBatchEnabled { get; set; }
     public string Name { get; } = nameof(OnDoubleClick);
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
@@ -35,7 +37,7 @@ public struct OnDoubleClick : ITextEditorWork
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
 		if (oldEvent is OnDoubleClick)
 		{
@@ -46,6 +48,11 @@ public struct OnDoubleClick : ITextEditorWork
         
 		// Keep both events, because they are not able to be batched.
 		return null;
+    }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+    	return null;
     }
 
     public async Task HandleEvent(CancellationToken cancellationToken)
