@@ -87,7 +87,7 @@ public class ThrottleEventQueueAsync
 			{
 				var upstreamEvent = _queue.Last.Value;
 				// TODO: Rename 'BatchOrDefault' to 'TryMergeIntoUpstream'
-				var batchEvent = downstreamEvent.BatchOrDefault(upstreamEvent);
+				var batchEvent = downstreamEvent.EarlyBatchOrDefault(upstreamEvent);
 
 				if (batchEvent is not null)
                 {
@@ -148,7 +148,7 @@ public class ThrottleEventQueueAsync
                     Keys.Models.Key<IBackgroundTask>.NewKey(),
                     ContinuousBackgroundTaskWorker.GetQueueKey(),
                     "I'm going to eat this exception for a moment.",
-                    () => Task.CompletedTask);
+                    () => ValueTask.CompletedTask);
             }
             
             // throw;

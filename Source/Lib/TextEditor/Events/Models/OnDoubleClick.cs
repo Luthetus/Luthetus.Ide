@@ -27,7 +27,10 @@ public struct OnDoubleClick : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; } = nameof(OnDoubleClick);
+    public bool EarlyBatchEnabled { get; set; } = true;
+    public bool LateBatchEnabled { get; set; }
+    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
+    public string Name => "luth_OnDoubleClick";
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -35,9 +38,9 @@ public struct OnDoubleClick : ITextEditorWork
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
-		if (oldEvent is OnDoubleClick)
+		if (oldEvent.Name == Name)
 		{
 			// Replace the upstream event with this one,
 			// because unhandled-consecutive events of this type are redundant.
@@ -47,8 +50,13 @@ public struct OnDoubleClick : ITextEditorWork
 		// Keep both events, because they are not able to be batched.
 		return null;
     }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+    	return null;
+    }
 
-    public async Task HandleEvent(CancellationToken cancellationToken)
+    public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	EditContext = new TextEditorService.TextEditorEditContext(
             ComponentData.TextEditorViewModelDisplay.TextEditorService,
@@ -127,6 +135,6 @@ public struct OnDoubleClick : ITextEditorWork
 			.FinalizePost(EditContext)
 			.ConfigureAwait(false);
 			
-		await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
+		// await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

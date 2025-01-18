@@ -18,19 +18,47 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
+/// <summary>
+/// Allocating an array 'public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];'
+/// for every 'OnKeyDownLateBatching' instance, sounds like a bad idea.
+///
+/// The IBackgroundTaskQueue should have allocated at all times,
+/// an array of objects.
+///
+/// Then this type can add to that always allocated array.
+///
+/// There would need to be a way to identify
+/// what type each object is.
+///
+/// If many 'OnKeyDownLateBatching' events are coming in
+/// and they build up in the queue.
+///
+/// Then a 'string BatchTag' could be set to 'luth_OnKeyDownLateBatching_KeymapArgs'.
+///
+/// This way a new 'OnKeyDownLateBatching' can see that there is a batch being built
+/// of similar events, and add its 'KeymapArgs' to the 'object[]'.
+///
+/// This manipulation of the 'object[]'
+/// can likely be done from within 'IBackgroundTask.BatchOrDefault(IBackgroundTask upstreamEvent)'
+/// in order to ensure thread safety.
+///
+/// If it is decided to go with a 'List<object>',
+/// consider if it is possible that a batch of events
+/// results in a list of extremely high capacity.
+///
+/// Just for on average the capacity is low.
+/// (i.e.: some outlier batch sizes cause high allocation for the List
+///        just for that capacity to go un-used in the future).
+///
+/// You don't need to make the List until dequeueing
+/// and you find that the "next up" is the same name.
+/// 
+/// Optimistic vs Pessimistic batching?
+/// Early vs Late batching?
+/// </summary>
 public struct OnKeyDownLateBatching : ITextEditorWork
 {
 	public const int MAX_BATCH_SIZE = 8;
-	public const string NAME_ZERO = $"{nameof(OnKeyDownLateBatching)}_0";
-	public const string NAME_ONE = $"{nameof(OnKeyDownLateBatching)}_1";
-	public const string NAME_TWO = $"{nameof(OnKeyDownLateBatching)}_2";
-	public const string NAME_THREE = $"{nameof(OnKeyDownLateBatching)}_3";
-	public const string NAME_FOUR = $"{nameof(OnKeyDownLateBatching)}_4";
-	public const string NAME_FIVE = $"{nameof(OnKeyDownLateBatching)}_5";
-	public const string NAME_SIX = $"{nameof(OnKeyDownLateBatching)}_6";
-	public const string NAME_SEVEN = $"{nameof(OnKeyDownLateBatching)}_7";
-	public const string NAME_EIGHT = $"{nameof(OnKeyDownLateBatching)}_8";
-	public const string NAME_DEFAULT = nameof(OnKeyDownLateBatching);
 
 	public OnKeyDownLateBatching(
 		TextEditorComponentData componentData,
@@ -40,7 +68,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
     {
         ComponentData = componentData;
 
-		AddToBatch(keymapArgs);
+		KeymapArgs = keymapArgs;
 
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
@@ -48,29 +76,22 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public bool EarlyBatchEnabled { get; set; } = true;
+    public bool LateBatchEnabled { get; set; }
+    public KeymapArgs KeymapArgs { get; set; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public ITextEditorEditContext? EditContext { get; private set; }
 	public TextEditorComponentData ComponentData { get; set; }
+	
 	public int BatchLength { get; set; }
 	public bool BatchHasAvailability => BatchLength < MAX_BATCH_SIZE;
 	
 	// TODO: Rewrite this.
-	public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];
+	public KeymapArgs[]? KeymapArgsList { get; set; }
 
-    public string Name => BatchLength switch
-    {
-		0 => NAME_ZERO,
-        1 => NAME_ONE,
-        2 => NAME_TWO,
-		3 => NAME_THREE,
-		4 => NAME_FOUR,
-		5 => NAME_FIVE,
-		6 => NAME_SIX,
-		7 => NAME_SEVEN,
-		8 => NAME_EIGHT,
-		_ => NAME_DEFAULT
-    };
+    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
+    public string Name => "luth_OnKeyDownLateBatching";
 
 	/// <summary>
 	/// Global variable used during <see cref="HandleEvent"/> to
@@ -80,27 +101,39 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
 	public void AddToBatch(KeymapArgs keymapArgs)
 	{
-		if (!BatchHasAvailability)
-			throw new LuthetusTextEditorException($"{nameof(BatchLength)} >= {nameof(MAX_BATCH_SIZE)}");
+		if (KeymapArgsList is null)
+		{
+			KeymapArgsList = new KeymapArgs[MAX_BATCH_SIZE];
+			AddToBatch(KeymapArgs);
+		}
 
 		KeymapArgsList[BatchLength] = keymapArgs;
         BatchLength++;
     }
 
-    public IBackgroundTask? BatchOrDefault(IBackgroundTask upstreamEvent)
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask upstreamEvent)
     {
-		if (upstreamEvent is OnKeyDownLateBatching upstreamOnKeyDownLateBatching)
+		if (upstreamEvent.Name == Name)
 		{
-			if (BatchLength == 1 && upstreamOnKeyDownLateBatching.BatchHasAvailability)
-				upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgsList[0]);
-
-            return upstreamOnKeyDownLateBatching;
+			var upstreamOnKeyDownLateBatching = (OnKeyDownLateBatching)upstreamEvent;
+		
+			if (BatchLength == 0 && upstreamOnKeyDownLateBatching.BatchHasAvailability)
+			{
+				upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgs);
+	            return upstreamOnKeyDownLateBatching;
+            }
 		}
-
+		
+		// Keep both events.
 		return null;
     }
+    
+    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    {
+    	return null;
+    }
 
-    public async Task HandleEvent(CancellationToken cancellationToken)
+    public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	EditContext = new TextEditorService.TextEditorEditContext(
             ComponentData.TextEditorViewModelDisplay.TextEditorService,
@@ -115,10 +148,20 @@ public struct OnKeyDownLateBatching : ITextEditorWork
             return;
 
 		_index = 0;
+		
+		var batchLengthFake = BatchLength;
+		
+		if (BatchLength == 0)
+			batchLengthFake = 1;
 
-		for (; _index < BatchLength; _index++)
+		for (; _index < batchLengthFake; _index++)
 		{
-			var keymapArgs = KeymapArgsList[_index];
+			KeymapArgs keymapArgs;
+			
+			if (BatchLength == 0)
+				keymapArgs = KeymapArgs;
+			else
+				keymapArgs = KeymapArgsList[_index];
 
             var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
@@ -381,7 +424,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 			.FinalizePost(EditContext)
 			.ConfigureAwait(false);
 			
-		await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
+		// await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 
     private bool KeyAndModifiersAreEqual(KeymapArgs x, KeymapArgs y)

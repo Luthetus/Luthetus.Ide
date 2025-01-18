@@ -92,7 +92,7 @@ public class TerminalWebsite : ITerminal
     	});
     }
 
-    private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
+    private async ValueTask HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
     	TerminalOutput.ClearHistoryWhenExistingOutputTooLong();
     

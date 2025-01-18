@@ -22,7 +22,7 @@ public partial record OutputState
 		{
 			_ = dispatcher; // Suppress unused parameter
 
-			_throttleCreateTreeView.Run(_ => _dotNetBackgroundTaskApi.Output.Task_ConstructTreeView());
+			_throttleCreateTreeView.Run(async _ => await _dotNetBackgroundTaskApi.Output.Task_ConstructTreeView());
             return Task.CompletedTask;
 		}
 	}
