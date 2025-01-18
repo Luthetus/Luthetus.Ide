@@ -48,7 +48,7 @@ public struct RedundantTextEditorWork : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; set; }
     public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public bool EarlyBatchEnabled { get; set; }
+    public bool EarlyBatchEnabled { get; set; } = true;
     public bool LateBatchEnabled { get; set; }
     public ITextEditorService TextEditorService { get; }
 

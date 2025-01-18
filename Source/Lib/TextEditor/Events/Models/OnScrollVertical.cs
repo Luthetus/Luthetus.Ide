@@ -22,9 +22,10 @@ public struct OnScrollVertical : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public bool EarlyBatchEnabled { get; set; }
+    public bool EarlyBatchEnabled { get; set; } = true;
     public bool LateBatchEnabled { get; set; }
-    public string Name { get; } = nameof(OnScrollVertical);
+    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
+    public string Name => "luth_OnScrollVertical";
     public double ScrollTop { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
@@ -33,7 +34,7 @@ public struct OnScrollVertical : ITextEditorWork
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is OnScrollVertical)
+        if (oldEvent.Name == Name)
 		{
 			// Replace the upstream event with this one,
 			// because unhandled-consecutive events of this type are redundant.
