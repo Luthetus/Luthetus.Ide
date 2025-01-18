@@ -134,6 +134,6 @@ public struct OnDoubleClick : ITextEditorWork
 			.FinalizePost(EditContext)
 			.ConfigureAwait(false);
 			
-		await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
+		// await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }
