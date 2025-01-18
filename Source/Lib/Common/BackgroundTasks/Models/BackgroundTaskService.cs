@@ -123,7 +123,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         CancellationToken cancellationToken)
     {
         var queue = _queueContainerMap[queueKey];
-		await queue.DequeueSemaphoreSlim.WaitAsync();//.ConfigureAwait(false);
+		await queue.DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
         return queue.DequeueOrDefault();
     }
 

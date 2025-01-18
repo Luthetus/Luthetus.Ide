@@ -47,8 +47,50 @@ public class BackgroundTaskWorker : BackgroundService
 
                     BackgroundTaskService.SetExecutingBackgroundTask(QueueKey, backgroundTask);
                     
-                    //await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
-                    await backgroundTask.HandleEvent(cancellationToken);
+                    await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
+                    await Task.Yield();
+                    
+                    /*
+                    (2025-01-17)
+                    ============
+                    
+                    I think it is a joint effort between the "producer" and "consumer".
+                    
+                    Blazor WASM perhaps can have the UI freeze due to SynchronizationContext issues.
+                    
+                    But at the moment, I think the remaining issues
+                    are regarding the UI events "yielding" / 'await Task.Yield();'.
+                    
+                    Because if I hold down the 'j' key,
+                    it seems that the WASM UI will just continue 'producing' more 'j' events.
+                    
+                    But never actually 'consume' them.
+                    
+                    So I suppose the question is if these 'j' events are ever being dequeued,
+                    or if the UI code is running nonstop due to a high load of something?
+                    
+                    Maybe it is a SynchronizationContext issue...
+                    
+                    But even in this class, not having 'await Task.Yield();'
+                    will result in WASM just handling the background tasks and never updating
+                    the UI (if there is a high enough background task load).
+                    
+                    The multi-threaded UI experience seems greatly improved
+                    from today's changes,
+                    
+                    which is odd cause I was trying to improve single threaded.
+                    
+                    will continue tomorrow.
+                    
+                    I wanna type this though
+                    I don't wanna just put 'await Task.Yield();'
+                    everywhere just for WASM's sake though right?
+                    Is that going to slow down a multi-threaded runtime?
+                    
+                    Anyways.
+                    */
+                    
+                    //await backgroundTask.HandleEvent(cancellationToken);
                     
                     /*if (LuthetusHostingKind == LuthetusHostingKind.Wasm)
                     {
