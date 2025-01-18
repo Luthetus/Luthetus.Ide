@@ -60,7 +60,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 				if (modelModifier is null ||
 					modelModifier.GetAllText() != modelText)
 				{
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 }
 
 				var rowInfo = modelModifier.GetLineInformationFromPositionIndex(
@@ -92,7 +92,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 				modelModifier.CompilerService.ResourceWasModified(
 					_textSpanTuple.TextEditorTextSpan.ResourceUri,
 					ImmutableArray<TextEditorTextSpan>.Empty);
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
 	}
 }

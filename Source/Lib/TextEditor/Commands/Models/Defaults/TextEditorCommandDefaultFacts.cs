@@ -15,7 +15,7 @@ public static class TextEditorCommandDefaultFacts
 {
     public static readonly TextEditorCommand DoNothingDiscard = new(
         "DoNothingDiscard", "defaults_do-nothing-discard", false, false, TextEditKind.None, null,
-        interfaceCommandArgs => Task.CompletedTask);
+        interfaceCommandArgs => ValueTask.CompletedTask);
 
     public static readonly TextEditorCommand Copy = new(
         "Copy", "defaults_copy", false, false, TextEditKind.None, null,
@@ -29,7 +29,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             return TextEditorCommandDefaultFunctions.CopyAsync(
             	commandArgs.EditContext,
@@ -51,7 +51,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             return TextEditorCommandDefaultFunctions.CutAsync(
             	commandArgs.EditContext,
@@ -73,7 +73,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             return TextEditorCommandDefaultFunctions.PasteAsync(
             	commandArgs.EditContext,
@@ -95,7 +95,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.TriggerSave(
             	commandArgs.EditContext,
@@ -103,7 +103,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-	        return Task.CompletedTask;
+	        return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand SelectAll = new(
@@ -118,7 +118,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.SelectAll(
             	commandArgs.EditContext,
@@ -126,7 +126,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand Undo = new(
@@ -141,7 +141,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.Undo(
             	commandArgs.EditContext,
@@ -149,7 +149,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand Redo = new(
@@ -164,7 +164,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.Redo(
             	commandArgs.EditContext,
@@ -172,7 +172,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand Remeasure = new(
@@ -187,13 +187,13 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.TriggerRemeasure(
             	commandArgs.EditContext,
 		        viewModelModifier,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand RefreshSyntaxHighlighting = new(
@@ -208,12 +208,12 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             modelModifier.CompilerService.ResourceWasModified(
 				modelModifier.ResourceUri,
 				ImmutableArray<TextEditorTextSpan>.Empty);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollLineDown = new(
@@ -228,7 +228,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.ScrollLineDown(
             	commandArgs.EditContext,
@@ -236,7 +236,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollLineUp = new(
@@ -251,7 +251,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.ScrollLineUp(
             	commandArgs.EditContext,
@@ -259,7 +259,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollPageDown = new(
@@ -274,7 +274,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.ScrollPageDown(
             	commandArgs.EditContext,
@@ -282,7 +282,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollPageUp = new(
@@ -297,7 +297,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.ScrollPageUp(
             	commandArgs.EditContext,
@@ -305,7 +305,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand CursorMovePageBottom = new(
@@ -320,7 +320,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.CursorMovePageBottom(
             	commandArgs.EditContext,
@@ -328,7 +328,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand CursorMovePageTop = new(
@@ -343,7 +343,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.CursorMovePageTop(
             	commandArgs.EditContext,
@@ -351,7 +351,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand Duplicate = new(
@@ -366,7 +366,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.Duplicate(
             	commandArgs.EditContext,
@@ -374,7 +374,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand IndentMore = new(
@@ -389,7 +389,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.IndentMore(
             	commandArgs.EditContext,
@@ -397,7 +397,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand IndentLess = new(
@@ -412,7 +412,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.IndentLess(
             	commandArgs.EditContext,
@@ -420,7 +420,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand ClearTextSelection = new(
@@ -435,7 +435,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.ClearTextSelection(
             	commandArgs.EditContext,
@@ -443,7 +443,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand NewLineBelow = new(
@@ -458,7 +458,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.NewLineBelow(
             	commandArgs.EditContext,
@@ -466,7 +466,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand NewLineAbove = new(
@@ -481,7 +481,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.NewLineAbove(
             	commandArgs.EditContext,
@@ -489,7 +489,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
     
     public static readonly TextEditorCommand MoveLineDown = new(
@@ -504,7 +504,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.MoveLineDown(
             	commandArgs.EditContext,
@@ -512,7 +512,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
     
     public static readonly TextEditorCommand MoveLineUp = new(
@@ -527,7 +527,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.MoveLineUp(
             	commandArgs.EditContext,
@@ -535,7 +535,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static TextEditorCommand GoToMatchingCharacterFactory(bool shouldSelectText) => new(
@@ -551,7 +551,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.GoToMatchingCharacter(
             	commandArgs.EditContext,
@@ -559,7 +559,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand RelatedFilesQuickPick = new(
@@ -574,7 +574,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             return TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
             	commandArgs.EditContext,
@@ -596,7 +596,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             return TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
             	commandArgs.EditContext,
@@ -618,7 +618,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             
             TextEditorCommandDefaultFunctions.ShowAutocompleteMenu(
         		commandArgs.EditContext,
@@ -629,7 +629,7 @@ public static class TextEditorCommandDefaultFacts
 		        commandArgs.ComponentData.Dispatcher,
 		        commandArgs.ComponentData);
 		    
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
     
     public static readonly TextEditorCommand GoToDefinition = new(
@@ -644,7 +644,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.GoToDefinition(
             	commandArgs.EditContext,
@@ -652,7 +652,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     public static readonly TextEditorCommand ShowFindAllDialog = new(
@@ -667,7 +667,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             TextEditorCommandDefaultFunctions.ShowFindAllDialog(
             	commandArgs.EditContext,
@@ -675,7 +675,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 
     /// <summary>
@@ -694,7 +694,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             return TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
             	commandArgs.EditContext,
@@ -825,7 +825,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             modelModifier.Insert(
             	"\n",
@@ -833,7 +833,7 @@ public static class TextEditorCommandDefaultFacts
 		        
 		    throw new LuthetusTextEditorException(nameof(DEBUG_BreakLineEndings));
 		        
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
     
     public static readonly TextEditorCommand DEBUG_BreakLineEndings = new(
@@ -848,7 +848,7 @@ public static class TextEditorCommandDefaultFacts
             var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
                 
             modelModifier.Insert(
             	"\r\n",
@@ -857,6 +857,6 @@ public static class TextEditorCommandDefaultFacts
 		        
 		    throw new LuthetusTextEditorException(nameof(DEBUG_BreakLineEndings));
 		        
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         });
 }

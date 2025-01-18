@@ -121,7 +121,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     ActiveVimMode = VimMode.Insert;
 	                _ = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
                 });
 
             _map.Add(new KeymapArgs()
@@ -148,14 +148,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
 
                     if (ActiveVimMode == VimMode.Visual)
                     {
                         ActiveVimMode = VimMode.Normal;
 
                         TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(interfaceCommandArgs);
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
                     }
 
                     ActiveVimMode = VimMode.Visual;
@@ -167,7 +167,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     primaryCursorModifier.SelectionAnchorPositionIndex = positionIndex;
                     primaryCursorModifier.SelectionEndingPositionIndex = positionIndex + 1;
 
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
 
             _map.Add(new KeymapArgs()
@@ -194,14 +194,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
 
                     if (ActiveVimMode == VimMode.VisualLine)
                     {
                         ActiveVimMode = VimMode.Normal;
 
                         TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(interfaceCommandArgs);
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
                     }
 
                     ActiveVimMode = VimMode.VisualLine;
@@ -216,7 +216,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         .EndPositionIndexExclusive;
 
                     primaryCursorModifier.SelectionEndingPositionIndex = endOfRowPositionIndexExclusive;
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
 
             _map.Add(new KeymapArgs()
@@ -244,14 +244,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                     {
                         ShowCommandBar = true
                     };
 
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
 
             _map.Add(new KeymapArgs()
@@ -279,7 +279,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
 
                     commandArgs.TextEditorService.ModelApi.UndoEdit(
                     	commandArgs.EditContext,
@@ -288,7 +288,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     commandArgs.EditContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
                         commandArgs.EditContext,
                     	modelModifier);
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
 
             _map.Add(new KeymapArgs()
@@ -315,7 +315,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                     if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
 
                     commandArgs.TextEditorService.ModelApi.RedoEdit(
                     	commandArgs.EditContext,
@@ -324,7 +324,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     commandArgs.EditContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
                         commandArgs.EditContext,
                     	modelModifier);
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
 
             _map.Add(new KeymapArgs()
@@ -852,7 +852,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                 ActiveVimMode = VimMode.Normal;
                 _ = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
 
         _map.Add(new KeymapArgs()
@@ -955,14 +955,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 	            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-	                return Task.CompletedTask;
+	                return ValueTask.CompletedTask;
 
                 var success = VimSentence.TryLex(this, keymapArgument, TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier), out var lexCommand);
 
                 if (success && lexCommand is not null)
                     return lexCommand.CommandFunc.Invoke(commandArgs);
 
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
     }
 
@@ -1008,7 +1008,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 				            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 				
 				            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-				                return Task.CompletedTask;
+				                return ValueTask.CompletedTask;
 
                             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                                 new KeymapArgs
@@ -1021,7 +1021,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 						        modelModifier,
 						        viewModelModifier,
 						        cursorModifierBag);
-                            return Task.CompletedTask;
+                            return ValueTask.CompletedTask;
                         });
 
                     TextEditorCommand finalCommand = modifiedCommand;
@@ -1035,7 +1035,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     return finalCommand.CommandFunc.Invoke(commandArgs);
                 }
 
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
     }
 

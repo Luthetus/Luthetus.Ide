@@ -53,7 +53,7 @@ public partial interface ITextEditorService
     /// </summary>
     public void PostUnique(
         string name,
-        Func<ITextEditorEditContext, Task> textEditorFunc);
+        Func<ITextEditorEditContext, ValueTask> textEditorFunc);
         
     /// <summary>
     /// This method will create an instance of <see cref="RedundantTextEditorTask"/>,
@@ -63,7 +63,7 @@ public partial interface ITextEditorService
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        Func<ITextEditorEditContext, Task> textEditorFunc);
+        Func<ITextEditorEditContext, ValueTask> textEditorFunc);
 
     /// <summary>
     /// This method simply invokes IBackgroundTaskService.Enqueue(IBackgroundTask backgroundTask)
@@ -83,7 +83,7 @@ public partial interface ITextEditorService
 	/// This method writes any mutated data within the <see cref="ITextEditorWork.EditContext"/>
 	/// to the <see cref="TextEditorState"/>, and afterwards causes a UI render.
 	/// </summary>
-	public Task FinalizePost(ITextEditorEditContext editContext);
+	public ValueTask FinalizePost(ITextEditorEditContext editContext);
 	
 	public Task OpenInEditorAsync(
 		string absolutePath,

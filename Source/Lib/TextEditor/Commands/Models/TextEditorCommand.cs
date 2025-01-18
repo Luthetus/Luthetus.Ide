@@ -13,7 +13,7 @@ public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
             bool shouldScrollCursorIntoView,
             TextEditKind textEditKind,
             string? otherTextEditKindIdentifier,
-            Func<ICommandArgs, Task> commandFunc)
+            Func<ICommandArgs, ValueTask> commandFunc)
         : base(displayName, internalIdentifier, shouldBubble, commandFunc)
     {
         if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)

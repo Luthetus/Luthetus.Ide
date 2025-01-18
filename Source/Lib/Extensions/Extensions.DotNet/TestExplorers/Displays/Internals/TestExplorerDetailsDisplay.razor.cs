@@ -129,7 +129,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
 					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 
 					modelModifier.SetContent(newContent ?? string.Empty);
 					primaryCursorModifier.LineIndex = 0;
@@ -150,7 +150,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 					}
 
 					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				});
 		}
 	}

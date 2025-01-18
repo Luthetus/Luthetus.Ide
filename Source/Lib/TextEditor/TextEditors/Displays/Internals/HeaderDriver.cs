@@ -303,7 +303,7 @@ public class HeaderDriver
 		            	editContext.TextEditorService.ViewModelApi.Dispose(viewModel.ViewModelKey);
 		            	_root.Dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(model.ResourceUri));
 		            	editContext.TextEditorService.ModelApi.Dispose(model.ResourceUri);
-		            	return Task.CompletedTask;
+		            	return ValueTask.CompletedTask;
 		            });
 		    	return Task.CompletedTask;
 		    }));

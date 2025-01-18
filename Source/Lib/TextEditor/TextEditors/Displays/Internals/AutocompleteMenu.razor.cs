@@ -85,11 +85,11 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 		return Task.CompletedTask;
     }
 
-    private Task ReturnFocusToThisAsync()
+    private async Task ReturnFocusToThisAsync()
     {
     	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
     	if (renderBatch is null)
-    		return Task.CompletedTask;
+    		return;
     		
         try
         {
@@ -107,10 +107,10 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 					        Dispatcher);
 					}
 
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				});
 				
-			return renderBatch.ViewModel.FocusAsync();
+			await renderBatch.ViewModel.FocusAsync();
         }
         catch (Exception e)
         {
@@ -205,11 +205,11 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         }
     }
 
-    private Task SelectMenuOption(Func<Task> menuOptionAction)
+    private async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
     	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
     	if (renderBatch is null)
-    		return Task.CompletedTask;
+    		return;
     
         _ = Task.Run(async () =>
         {
@@ -240,17 +240,17 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             }
         }, CancellationToken.None);
 
-        return renderBatch.ViewModel.FocusAsync();
+        await renderBatch.ViewModel.FocusAsync();
     }
 
-    private Task InsertAutocompleteMenuOption(
+    private async Task InsertAutocompleteMenuOption(
         string word,
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
     	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
     	if (renderBatch is null)
-    		return Task.CompletedTask;
+    		return;
     
         TextEditorService.PostUnique(
             nameof(InsertAutocompleteMenuOption),
@@ -262,7 +262,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
             
             	TextEditorService.ModelApi.InsertText(
             		editContext,
@@ -274,7 +274,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 	            return renderBatch.ViewModel.FocusAsync();
             });
 		
-		return renderBatch.ViewModel.FocusAsync();
+		await renderBatch.ViewModel.FocusAsync();
     }
     
     public void Dispose()

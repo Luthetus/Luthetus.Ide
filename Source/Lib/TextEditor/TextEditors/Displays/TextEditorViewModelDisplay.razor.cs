@@ -341,16 +341,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
     }
 
-  public Task FocusTextEditorAsync()
+  public async Task FocusTextEditorAsync()
   {
   	var localTextEditorViewModelKey = TextEditorViewModelKey;
 
       var nextViewModel = TextEditorStateWrap.Value.ViewModelGetOrDefault(localTextEditorViewModelKey);
       
       if (nextViewModel is not null)
-      	return nextViewModel.FocusAsync();
-            
-    return Task.CompletedTask;
+      	await nextViewModel.FocusAsync();
   }
 
     private string GetGlobalHeightInPixelsStyling()
@@ -407,7 +405,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         		var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
 				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursor is null)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				TextEditorCommandDefaultFunctions.ShowContextMenu(
 			        editContext,
@@ -418,7 +416,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			        Dispatcher,
 			        ComponentData);
 				
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
 
@@ -515,14 +513,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 								var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
                                 if (viewModelModifier is null)
-                                    return Task.CompletedTask;
+                                    return ValueTask.CompletedTask;
 
                                 viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
 								{
 									TooltipViewModel = null
 								};
 
-								return Task.CompletedTask;
+								return ValueTask.CompletedTask;
 							});
                     }
                 });
@@ -551,7 +549,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 			
 			                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-			                    return Task.CompletedTask;
+			                    return ValueTask.CompletedTask;
 						
 							return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(
 								editContext,
@@ -650,7 +648,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 				var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
 				
 				if (viewModelModifier is null)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				
                 TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
                 	editContext,
@@ -662,7 +660,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			        viewModelModifier,
                 	diffY);
                 	
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 			});
 
         _previousTouchEventArgs = touchEventArgs;
@@ -724,7 +722,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
 				if (viewModelModifier is null)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
             	return TextEditorService.ViewModelApi.RemeasureAsync(
             		editContext,
@@ -760,14 +758,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
 				if (modelModifier is null || viewModelModifier is null)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
             	
             	TextEditorService.ViewModelApi.CalculateVirtualizationResult(
             		editContext,
 			        modelModifier,
 			        viewModelModifier,
 			        CancellationToken.None);
-			    return Task.CompletedTask;
+			    return ValueTask.CompletedTask;
             });
     }
 

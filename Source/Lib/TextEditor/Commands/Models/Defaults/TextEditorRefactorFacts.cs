@@ -28,7 +28,7 @@ public class TextEditorRefactorFacts
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 			
 			TextEditorRefactorFunctions.GenerateConstructor(
 				unsafeTypeDefinitionNode,
@@ -39,7 +39,7 @@ public class TextEditorRefactorFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        primaryCursorModifier);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
 		});
     }
 }

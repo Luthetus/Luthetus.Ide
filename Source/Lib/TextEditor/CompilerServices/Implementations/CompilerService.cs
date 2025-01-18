@@ -128,7 +128,7 @@ public class CompilerService : ICompilerService
 				var modelModifier = editContext.GetModelModifier(resourceUri);
 
 				if (modelModifier is null)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
             });
@@ -143,7 +143,7 @@ public class CompilerService : ICompilerService
         return _emptyAutocompleteEntryList;
     }
     
-    public virtual Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    public virtual ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
 	{
 		_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
 			editContext,
@@ -158,7 +158,7 @@ public class CompilerService : ICompilerService
 			throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
 		if (_compilerServiceOptions.GetLexerFunc is null)
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
             
         var resourceUri = modelModifier.ResourceUri;
 
@@ -166,7 +166,7 @@ public class CompilerService : ICompilerService
 		lock (_resourceMapLock)
 		{
 			if (!_resourceMap.ContainsKey(resourceUri))
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 
 			var resource = _resourceMap[resourceUri];
 			lexer = _compilerServiceOptions.GetLexerFunc.Invoke(resource, presentationModel.PendingCalculation.ContentAtRequest);
@@ -176,7 +176,7 @@ public class CompilerService : ICompilerService
 		lock (_resourceMapLock)
 		{
 			if (!_resourceMap.ContainsKey(resourceUri))
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             var resource = _resourceMap[resourceUri];
 			_compilerServiceOptions.OnAfterLexAction?.Invoke(resource, lexer);
@@ -188,13 +188,13 @@ public class CompilerService : ICompilerService
 		try
 		{
 			if (_compilerServiceOptions.GetParserFunc is null || Binder is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             IParser parser;
 			lock (_resourceMapLock)
 			{
 				if (!_resourceMap.ContainsKey(resourceUri))
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var resource = _resourceMap[resourceUri];
 				parser = _compilerServiceOptions.GetParserFunc.Invoke(resource, lexer);
@@ -235,7 +235,7 @@ public class CompilerService : ICompilerService
 			OnResourceParsed();
         }
 
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
 	}
 
     public virtual void DisposeResource(ResourceUri resourceUri)

@@ -207,7 +207,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						x => x.Name == nameof(TerminalOutputFormatterExpand));
 						
 					if (formatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 					
 					var modelModifier = editContext.GetModelModifier(terminalOutputFormatterExpand.TextEditorModelResourceUri);
 					var viewModelModifier = editContext.GetViewModelModifier(terminalOutputFormatterExpand.TextEditorViewModelKey);
@@ -215,7 +215,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
 					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 
 					var localTerminal = Terminal;
 
@@ -267,7 +267,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 							outputFormatted.TextSpanList);
 					}
 					
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				});
 			return Task.CompletedTask;
         });

@@ -129,7 +129,7 @@ public class DisplayTracker : IDisposable
 						var modelModifier = editContext.GetModelModifier(_resourceUri);
 		
 						if (modelModifier is null)
-							return Task.CompletedTask;
+							return ValueTask.CompletedTask;
 						
 						// If this 'ApplySyntaxHighlighting(...)' isn't redundantly invoked prior to
 						// the upcoming 'ResourceWasModified(...)' invocation,
@@ -151,7 +151,7 @@ public class DisplayTracker : IDisposable
 						if (modelModifier.CompilerService is not null)	
 							modelModifier.CompilerService.ResourceWasModified(_resourceUri, Array.Empty<TextEditorTextSpan>());
 
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 		            });
 				
 				_textEditorService.Post(uniqueTextEditorWork);

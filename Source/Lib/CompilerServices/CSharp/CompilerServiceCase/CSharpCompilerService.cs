@@ -58,12 +58,12 @@ public sealed class CSharpCompilerService : CompilerService
     	DiagnosticRendererType = diagnosticRendererType;
     }
     
-    public override Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    public override ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
 	{
 		var resourceUri = modelModifier.ResourceUri;
 	
 		if (!_resourceMap.ContainsKey(resourceUri))
-			return Task.CompletedTask;
+			return ValueTask.CompletedTask;
 	
 		_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
 			editContext,
@@ -120,7 +120,7 @@ public sealed class CSharpCompilerService : CompilerService
 			OnResourceParsed();
         }
 		
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
 	}
 
     public override List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
@@ -370,7 +370,7 @@ public sealed class CSharpCompilerService : CompilerService
 	            var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
 	
 	            if (modelModifier is null)
-	                return Task.CompletedTask;
+	                return ValueTask.CompletedTask;
 	
 	            var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
 	            
@@ -378,7 +378,7 @@ public sealed class CSharpCompilerService : CompilerService
 	            	?? viewModelList.FirstOrDefault();
 	            
 	            if (viewModel is null)
-	            	return Task.CompletedTask;
+	            	return ValueTask.CompletedTask;
 	            	
 	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
 
@@ -386,7 +386,7 @@ public sealed class CSharpCompilerService : CompilerService
 	            	editContext.GetCursorModifierBag(viewModelModifier?.ViewModel));
 	            
 	            if (viewModelModifier is null || primaryCursorModifier is null)
-	            	return Task.CompletedTask;
+	            	return ValueTask.CompletedTask;
 	
 	            var cursorModifierBag = new CursorModifierBagTextEditor(
 	                Key<TextEditorViewModel>.Empty,
@@ -420,7 +420,7 @@ public sealed class CSharpCompilerService : CompilerService
 	            	modelModifier.ResourceUri,
 	            	ImmutableArray<TextEditorTextSpan>.Empty);
 	            	
-	            return Task.CompletedTask;
+	            return ValueTask.CompletedTask;
 	        });
 	        
 	    return Task.CompletedTask;
