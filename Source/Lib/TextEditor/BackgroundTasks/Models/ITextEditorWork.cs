@@ -167,6 +167,14 @@ public interface ITextEditorWork : IBackgroundTask
 	/// Within the method
     /// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTask.HandleEvent"/>,
     /// invoke <see cref="ITextEditorService.FinalizePost"/> to finalize any changes.
+    ///
+    /// TODO: All the implementations of 'ITextEditorWork' had...
+    /// ...a try catch in the 'HandleEvent' method.
+    /// But, this 'HandleEvent' method is invoked from within
+    /// a BackgroundTaskWorker's try catch.
+    /// So it was thought the 'HandleEvent' one could be remove
+    /// and the error would still be log'd (in this case it was Console.WriteLine()'ing the error).
+    /// But, the errors aren't being log'd anymore for some reason?
 	/// </summary>
 	public ITextEditorEditContext EditContext { get; }
 }

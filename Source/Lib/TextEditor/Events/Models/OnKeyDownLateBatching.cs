@@ -18,6 +18,39 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
+/// <summary>
+/// Allocating an array 'public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];'
+/// for every 'OnKeyDownLateBatching' instance, sounds like a bad idea.
+///
+/// The IBackgroundTaskQueue should have allocated at all times,
+/// an array of objects.
+///
+/// Then this type can add to that always allocated array.
+///
+/// There would need to be a way to identify
+/// what type each object is.
+///
+/// If many 'OnKeyDownLateBatching' events are coming in
+/// and they build up in the queue.
+///
+/// Then a 'string BatchTag' could be set to 'luth_OnKeyDownLateBatching_KeymapArgs'.
+///
+/// This way a new 'OnKeyDownLateBatching' can see that there is a batch being built
+/// of similar events, and add its 'KeymapArgs' to the 'object[]'.
+///
+/// This manipulation of the 'object[]'
+/// can likely be done from within 'IBackgroundTask.BatchOrDefault(IBackgroundTask upstreamEvent)'
+/// in order to ensure thread safety.
+///
+/// If it is decided to go with a 'List<object>',
+/// consider if it is possible that a batch of events
+/// results in a list of extremely high capacity.
+///
+/// Just for on average the capacity is low.
+/// (i.e.: some outlier batch sizes cause high allocation for the List
+///        just for that capacity to go un-used in the future).
+///
+/// </summary>
 public struct OnKeyDownLateBatching : ITextEditorWork
 {
 	public const int MAX_BATCH_SIZE = 8;
