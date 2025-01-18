@@ -55,7 +55,7 @@ public struct OnMouseMove : ITextEditorWork
     	return null;
     }
 
-    public async Task HandleEvent(CancellationToken cancellationToken)
+    public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	EditContext = new TextEditorService.TextEditorEditContext(
             ComponentData.TextEditorViewModelDisplay.TextEditorService,

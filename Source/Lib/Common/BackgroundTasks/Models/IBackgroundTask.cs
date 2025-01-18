@@ -32,5 +32,5 @@ public interface IBackgroundTask
 	/// <summary>
     /// This method is the actual work item that gets awaited in order to handle the event.
     /// </summary>
-	public Task HandleEvent(CancellationToken cancellationToken);
+	public ValueTask HandleEvent(CancellationToken cancellationToken);
 }

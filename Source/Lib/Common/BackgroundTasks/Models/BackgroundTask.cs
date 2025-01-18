@@ -4,13 +4,13 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class BackgroundTask : IBackgroundTask
 {
-    private readonly Func<Task> _runFunc;
+    private readonly Func<ValueTask> _runFunc;
 
     public BackgroundTask(
         Key<IBackgroundTask> backgroundTaskKey,
         Key<IBackgroundTaskQueue> queueKey,
         string name,
-        Func<Task> runFunc)
+        Func<ValueTask> runFunc)
     {
         _runFunc = runFunc;
 
@@ -40,7 +40,7 @@ public class BackgroundTask : IBackgroundTask
 		return null;
 	}
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         return _runFunc.Invoke();
     }

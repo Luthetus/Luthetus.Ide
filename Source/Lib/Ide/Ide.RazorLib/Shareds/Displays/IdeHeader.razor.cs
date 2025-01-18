@@ -99,7 +99,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 				InitializeMenuView();
 				
 				AddAltKeymap();
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
 
         base.OnInitialized();

@@ -112,7 +112,7 @@ public class DotNetSolutionIdeApi
 			() => SetDotNetSolutionAsync(inSolutionAbsolutePath));
 	}
 
-	private async Task SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
+	private async ValueTask SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
 	{
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 

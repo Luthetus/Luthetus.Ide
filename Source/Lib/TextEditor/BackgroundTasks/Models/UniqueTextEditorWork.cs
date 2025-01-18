@@ -47,7 +47,7 @@ public struct UniqueTextEditorWork : ITextEditorWork
         return null;
     }
 
-    public async Task HandleEvent(CancellationToken cancellationToken)
+    public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	EditContext = new TextEditorService.TextEditorEditContext(
             TextEditorService,

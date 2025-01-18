@@ -148,7 +148,7 @@ public class ThrottleEventQueueAsync
                     Keys.Models.Key<IBackgroundTask>.NewKey(),
                     ContinuousBackgroundTaskWorker.GetQueueKey(),
                     "I'm going to eat this exception for a moment.",
-                    () => Task.CompletedTask);
+                    () => ValueTask.CompletedTask);
             }
             
             // throw;

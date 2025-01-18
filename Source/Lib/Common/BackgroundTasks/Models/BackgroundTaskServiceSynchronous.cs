@@ -25,9 +25,9 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
 
         SetExecutingBackgroundTask(backgroundTask.QueueKey, backgroundTask);
 
-        backgroundTask
-            .HandleEvent(CancellationToken.None)
-            .Wait();
+		// TODO: This is probably a bad idea, but I don't know if BackgroundTaskServiceSynchronous is even used anymore...
+		//       ...and it is currently stopping the build so I'm doing this for now. (2025-01-18)
+        _ = Task.Run(async () => await backgroundTask.HandleEvent(CancellationToken.None));
 
 		// Don't await Task.Delay(backgroundTask.ThrottleTimeSpan) for
 		// this BackgroundTaskServiceSynchronous implementation.
@@ -35,7 +35,7 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
         SetExecutingBackgroundTask(backgroundTask.QueueKey, null);
     }
 
-    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
+    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
     {
         Enqueue(new BackgroundTask(taskKey, queueKey, name, runFunc));
     }
@@ -46,7 +46,7 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
     	return Task.CompletedTask;
     }
     
-    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
+    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
     {
     	return EnqueueAsync(new BackgroundTask(taskKey, queueKey, name, runFunc));
     }

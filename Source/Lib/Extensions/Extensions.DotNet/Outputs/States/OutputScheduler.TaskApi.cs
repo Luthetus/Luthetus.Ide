@@ -10,7 +10,7 @@ namespace Luthetus.Extensions.DotNet.Outputs.States;
 
 public partial class OutputScheduler
 {
-	public Task Task_ConstructTreeView()
+	public ValueTask Task_ConstructTreeView()
     {
     	var dotNetRunParseResult = _dotNetCliOutputParser.GetDotNetRunParseResult();
     	
@@ -140,6 +140,6 @@ public partial class OutputScheduler
         }
 
         _dispatcher.Dispatch(new OutputState.StateHasChangedAction(dotNetRunParseResult.Id));
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 }

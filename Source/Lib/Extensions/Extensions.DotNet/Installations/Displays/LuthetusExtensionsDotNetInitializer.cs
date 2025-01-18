@@ -94,7 +94,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				
 				DotNetCommandFactory.Initialize();
 				
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
 			
 		base.OnInitialized();
@@ -178,7 +178,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 					
 					TextEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.TextEditorCompilerServiceHeaderDisplay));
 					
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
 		}
 	}
