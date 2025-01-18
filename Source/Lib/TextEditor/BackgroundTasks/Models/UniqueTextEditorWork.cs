@@ -15,12 +15,12 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </remarks>
 public struct UniqueTextEditorWork : ITextEditorWork
 {
-    private readonly Func<ITextEditorEditContext, Task> _textEditorFunc;
+    private readonly Func<ITextEditorEditContext, ValueTask> _textEditorFunc;
 
     public UniqueTextEditorWork(
         string name,
         ITextEditorService textEditorService,
-        Func<ITextEditorEditContext, Task> textEditorFunc)
+        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
         Name = name;

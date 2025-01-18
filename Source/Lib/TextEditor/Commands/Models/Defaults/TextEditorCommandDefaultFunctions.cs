@@ -41,7 +41,7 @@ public class TextEditorCommandDefaultFunctions
         return;
     }
 
-    public static async Task CopyAsync(
+    public static async ValueTask CopyAsync(
 	    ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -57,7 +57,7 @@ public class TextEditorCommandDefaultFunctions
         await viewModelModifier.ViewModel.FocusAsync().ConfigureAwait(false);
     }
 
-    public static async Task CutAsync(
+    public static async ValueTask CutAsync(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -86,7 +86,7 @@ public class TextEditorCommandDefaultFunctions
             CancellationToken.None);
     }
 
-    public static async Task PasteAsync(
+    public static async ValueTask PasteAsync(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -762,7 +762,7 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
     }
 
-    public static async Task RelatedFilesQuickPick(
+    public static async ValueTask RelatedFilesQuickPick(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -848,7 +848,7 @@ public class TextEditorCommandDefaultFunctions
 			// TODO: this callback when the dropdown closes is suspect.
 			//       The editContext is supposed to live the lifespan of the
 			//       Post. But what if the Post finishes before the dropdown is closed?
-			() => 
+			async () => 
 			{
 				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
 				//       ...I'm too tired at the moment, need to make this sensible.
@@ -865,17 +865,17 @@ public class TextEditorCommandDefaultFunctions
 					var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
 					if (activeViewModel is not null)
-						return activeViewModel.FocusAsync();
+						await activeViewModel.FocusAsync();
 				}
 				
-				return viewModelModifier.ViewModel.FocusAsync();
+				await viewModelModifier.ViewModel.FocusAsync();
 			});
 
 		var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
         dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
     
-    public static async Task QuickActionsSlashRefactor(
+    public static async ValueTask QuickActionsSlashRefactor(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -997,7 +997,7 @@ public class TextEditorCommandDefaultFunctions
 			// TODO: this callback when the dropdown closes is suspect.
 			//       The editContext is supposed to live the lifespan of the
 			//       Post. But what if the Post finishes before the dropdown is closed?
-			() => 
+			async () => 
 			{
 				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
 				//       ...I'm too tired at the moment, need to make this sensible.
@@ -1014,10 +1014,10 @@ public class TextEditorCommandDefaultFunctions
 					var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
 					if (activeViewModel is not null)
-						return activeViewModel.FocusAsync();
+						await activeViewModel.FocusAsync();
 				}
 				
-				return viewModelModifier.ViewModel.FocusAsync();
+				await viewModelModifier.ViewModel.FocusAsync();
 			});
 
 		var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
@@ -1130,7 +1130,7 @@ public class TextEditorCommandDefaultFunctions
         commandArgs.TextEditorService.OptionsApi.ShowFindAllDialog();
     }
 
-    public static async Task ShowTooltipByCursorPositionAsync(
+    public static async ValueTask ShowTooltipByCursorPositionAsync(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -1163,7 +1163,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
 	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
-	public static async Task HandleAfterOnKeyDownAsync(
+	public static async ValueTask HandleAfterOnKeyDownAsync(
 		ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -1240,7 +1240,7 @@ public class TextEditorCommandDefaultFunctions
 	/// Therefore, the syntax highlighting was erroneously not refreshed due to batching.
 	/// This method is intended to solve this problem, but it was forgotten at some point.
 	/// </summary>
-	public static async Task HandleAfterOnKeyDownRangeAsync(
+	public static async ValueTask HandleAfterOnKeyDownRangeAsync(
 		ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -1323,7 +1323,7 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-	public static async Task HandleMouseStoppedMovingEventAsync(
+	public static async ValueTask HandleMouseStoppedMovingEventAsync(
 		ITextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
@@ -1481,7 +1481,7 @@ public class TextEditorCommandDefaultFunctions
 			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectTop + topOffset.Value,
 			componentType,
 			componentParameters,
-			viewModelModifier.ViewModel.FocusAsync)
+			async () => await viewModelModifier.ViewModel.FocusAsync())
 		{
 			ShouldShowOutOfBoundsClickDisplay = false
 		};

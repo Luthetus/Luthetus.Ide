@@ -173,17 +173,17 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             {
                 var modelModifier = editContext.GetModelModifier(model.ResourceUri);
                 if (modelModifier is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                     
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
 		        if (viewModelModifier is null)
-		            return Task.CompletedTask;
+		            return ValueTask.CompletedTask;
 
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
 
                 _textEditorService.ViewModelApi.MoveCursor(
                     new KeymapArgs
@@ -199,7 +199,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
 
                 terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
                     0,
@@ -213,7 +213,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
                     modelModifier,
                     terminalResource.GetTokenTextSpans());
 
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
     }
     

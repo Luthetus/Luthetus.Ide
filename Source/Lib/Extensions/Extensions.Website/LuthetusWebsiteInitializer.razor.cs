@@ -210,7 +210,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 					var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
 
 					if (modelModifier is null)
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 
 					TextEditorService.ModelApi.AddPresentationModel(
                         editContext,
@@ -235,7 +235,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                     textEditorModel.CompilerService.RegisterResource(
                     	textEditorModel.ResourceUri,
                     	shouldTriggerResourceWasModified: true);
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				});
         }
     }

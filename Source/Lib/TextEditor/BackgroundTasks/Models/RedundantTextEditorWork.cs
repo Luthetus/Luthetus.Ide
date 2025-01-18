@@ -25,14 +25,14 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </remarks>
 public struct RedundantTextEditorWork : ITextEditorWork
 {
-    private readonly Func<ITextEditorEditContext, Task> _textEditorFunc;
+    private readonly Func<ITextEditorEditContext, ValueTask> _textEditorFunc;
 
     public RedundantTextEditorWork(
         string name,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService,
-        Func<ITextEditorEditContext, Task> textEditorFunc)
+        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
 

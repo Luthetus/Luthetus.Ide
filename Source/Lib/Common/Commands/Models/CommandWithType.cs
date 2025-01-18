@@ -6,7 +6,7 @@ public abstract class CommandWithType<T> : CommandNoType where T : notnull
             string displayName,
             string internalIdentifier,
             bool shouldBubble,
-            Func<ICommandArgs, Task> commandFunc) 
+            Func<ICommandArgs, ValueTask> commandFunc) 
         : base(displayName, internalIdentifier, shouldBubble, commandFunc)
     {
     }

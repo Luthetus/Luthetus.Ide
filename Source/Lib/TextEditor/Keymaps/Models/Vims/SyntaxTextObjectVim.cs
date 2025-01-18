@@ -50,7 +50,7 @@ public static class SyntaxTextObjectVim
         return false;
     }
 
-    public static Func<ITextEditorEditContext, Task> MoveCursorOneColumnLeftFactory(
+    public static Func<ITextEditorEditContext, ValueTask> MoveCursorOneColumnLeftFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
@@ -63,7 +63,7 @@ public static class SyntaxTextObjectVim
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
         		new KeymapArgs
@@ -75,11 +75,11 @@ public static class SyntaxTextObjectVim
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag);
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         };
     }
 
-    public static Func<ITextEditorEditContext, Task> MoveCursorOneRowDownFactory(
+    public static Func<ITextEditorEditContext, ValueTask> MoveCursorOneRowDownFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
@@ -92,7 +92,7 @@ public static class SyntaxTextObjectVim
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
             	new KeymapArgs
@@ -104,11 +104,11 @@ public static class SyntaxTextObjectVim
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         };
     }
 
-    public static Func<ITextEditorEditContext, Task> MoveCursorOneRowUpFactory(
+    public static Func<ITextEditorEditContext, ValueTask> MoveCursorOneRowUpFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
@@ -121,7 +121,7 @@ public static class SyntaxTextObjectVim
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                 new KeymapArgs
@@ -133,11 +133,11 @@ public static class SyntaxTextObjectVim
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         };
     }
 
-    public static Func<ITextEditorEditContext, Task> MoveCursorOneColumnRightFactory(
+    public static Func<ITextEditorEditContext, ValueTask> MoveCursorOneColumnRightFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
@@ -150,7 +150,7 @@ public static class SyntaxTextObjectVim
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                 new KeymapArgs
@@ -162,11 +162,11 @@ public static class SyntaxTextObjectVim
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         };
     }
 
-    public static Func<ITextEditorEditContext, Task> MoveCursorEndCurrentLineFactory(
+    public static Func<ITextEditorEditContext, ValueTask> MoveCursorEndCurrentLineFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
@@ -179,7 +179,7 @@ public static class SyntaxTextObjectVim
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                 new KeymapArgs
@@ -191,11 +191,11 @@ public static class SyntaxTextObjectVim
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         };
     }
 
-    public static Func<ITextEditorEditContext, Task> MoveCursorStartCurrentLineFactory(
+    public static Func<ITextEditorEditContext, ValueTask> MoveCursorStartCurrentLineFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
@@ -208,7 +208,7 @@ public static class SyntaxTextObjectVim
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
                 new KeymapArgs
@@ -220,7 +220,7 @@ public static class SyntaxTextObjectVim
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag);
-		    return Task.CompletedTask;
+		    return ValueTask.CompletedTask;
         };
     }
 
@@ -265,7 +265,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
-								return Task.CompletedTask;
+								return ValueTask.CompletedTask;
                             });
 
                         return true;
@@ -286,7 +286,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
-								return Task.CompletedTask;
+								return ValueTask.CompletedTask;
                             });
 
                         return true;
@@ -307,7 +307,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
-								return Task.CompletedTask;
+								return ValueTask.CompletedTask;
                             });
 
                         return true;
@@ -328,7 +328,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
-								return Task.CompletedTask;
+								return ValueTask.CompletedTask;
                             });
 
                         return true;
@@ -355,7 +355,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
-								return Task.CompletedTask;
+								return ValueTask.CompletedTask;
                             });
 
                         return true;
@@ -376,7 +376,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
-								return Task.CompletedTask;
+								return ValueTask.CompletedTask;
                             });
 
                         return true;
