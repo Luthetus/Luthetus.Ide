@@ -54,16 +54,6 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 public struct OnKeyDownLateBatching : ITextEditorWork
 {
 	public const int MAX_BATCH_SIZE = 8;
-	public const string NAME_ZERO = $"{nameof(OnKeyDownLateBatching)}_0";
-	public const string NAME_ONE = $"{nameof(OnKeyDownLateBatching)}_1";
-	public const string NAME_TWO = $"{nameof(OnKeyDownLateBatching)}_2";
-	public const string NAME_THREE = $"{nameof(OnKeyDownLateBatching)}_3";
-	public const string NAME_FOUR = $"{nameof(OnKeyDownLateBatching)}_4";
-	public const string NAME_FIVE = $"{nameof(OnKeyDownLateBatching)}_5";
-	public const string NAME_SIX = $"{nameof(OnKeyDownLateBatching)}_6";
-	public const string NAME_SEVEN = $"{nameof(OnKeyDownLateBatching)}_7";
-	public const string NAME_EIGHT = $"{nameof(OnKeyDownLateBatching)}_8";
-	public const string NAME_DEFAULT = nameof(OnKeyDownLateBatching);
 
 	public OnKeyDownLateBatching(
 		TextEditorComponentData componentData,
@@ -91,19 +81,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 	// TODO: Rewrite this.
 	public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];
 
-    public string Name => BatchLength switch
-    {
-		0 => NAME_ZERO,
-        1 => NAME_ONE,
-        2 => NAME_TWO,
-		3 => NAME_THREE,
-		4 => NAME_FOUR,
-		5 => NAME_FIVE,
-		6 => NAME_SIX,
-		7 => NAME_SEVEN,
-		8 => NAME_EIGHT,
-		_ => NAME_DEFAULT
-    };
+    public string Name => nameof(OnKeyDownLateBatching);
 
 	/// <summary>
 	/// Global variable used during <see cref="HandleEvent"/> to

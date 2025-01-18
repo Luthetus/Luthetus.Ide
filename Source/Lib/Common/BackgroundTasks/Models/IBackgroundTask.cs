@@ -23,7 +23,7 @@ public interface IBackgroundTask
     /// Returning null means enqueue the recentEvent without any batching,
     /// (leave the old event as it was within the queue)
     /// </summary>
-	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent);
+	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent, );
 	
 	/// <summary>
     /// This method is the actual work item that gets awaited in order to handle the event.
