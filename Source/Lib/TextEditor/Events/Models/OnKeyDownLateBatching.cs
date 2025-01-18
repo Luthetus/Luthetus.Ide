@@ -50,11 +50,12 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 /// (i.e.: some outlier batch sizes cause high allocation for the List
 ///        just for that capacity to go un-used in the future).
 ///
+/// You don't need to make the List until dequeueing
+/// and you find that the "next up" is the same name.
+/// 
 /// </summary>
 public struct OnKeyDownLateBatching : ITextEditorWork
 {
-	public const int MAX_BATCH_SIZE = 8;
-
 	public OnKeyDownLateBatching(
 		TextEditorComponentData componentData,
 	    KeymapArgs keymapArgs,
@@ -75,11 +76,6 @@ public struct OnKeyDownLateBatching : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public ITextEditorEditContext? EditContext { get; private set; }
 	public TextEditorComponentData ComponentData { get; set; }
-	public int BatchLength { get; set; }
-	public bool BatchHasAvailability => BatchLength < MAX_BATCH_SIZE;
-	
-	// TODO: Rewrite this.
-	public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];
 
     public string Name => nameof(OnKeyDownLateBatching);
 
@@ -100,6 +96,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask upstreamEvent)
     {
+    	// TODO: What is the overhead of this 'is' cast versus something like an enum, or string?
 		if (upstreamEvent is OnKeyDownLateBatching upstreamOnKeyDownLateBatching)
 		{
 			if (BatchLength == 1 && upstreamOnKeyDownLateBatching.BatchHasAvailability)
