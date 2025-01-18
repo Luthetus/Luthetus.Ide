@@ -8,10 +8,10 @@ public interface IBackgroundTaskService
     public ImmutableArray<IBackgroundTaskQueue> Queues { get; }
 
     public void Enqueue(IBackgroundTask backgroundTask);
-    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc);
+    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc);
     
     public Task EnqueueAsync(IBackgroundTask backgroundTask);
-    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc);
+    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc);
 
 	public void CompleteTaskCompletionSource(Key<IBackgroundTask> taskKey);
 

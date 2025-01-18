@@ -71,11 +71,11 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     {
 		lock (_modifyQueueLock)
 		{
-			if (_queue.Count > 0)
+			if (downstreamEvent.EarlyBatchEnabled && _queue.Count > 0)
 			{
 				var upstreamEvent = _queue.Last.Value;
 				// TODO: Rename 'BatchOrDefault' to 'TryMergeIntoUpstream'
-				var batchEvent = downstreamEvent.BatchOrDefault(upstreamEvent);
+				var batchEvent = downstreamEvent.EarlyBatchOrDefault(upstreamEvent);
 
 				if (batchEvent is not null)
                 {

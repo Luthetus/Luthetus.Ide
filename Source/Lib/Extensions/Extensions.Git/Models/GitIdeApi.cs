@@ -66,7 +66,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
                 var gitStatusDashUCommand = $"{GitCliFacts.STATUS_COMMAND} -u";
                 var formattedCommand = new FormattedCommand(
@@ -94,7 +94,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
             });
     }
 
@@ -117,7 +117,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var terminalCommandArgs = $"branch --show-current";
                 var formattedCommand = new FormattedCommand(
@@ -143,7 +143,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
 
@@ -158,7 +158,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var terminalCommandArgs = $"config --get remote.origin.url";
                 var formattedCommand = new FormattedCommand(
@@ -184,7 +184,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 		});
     }
 
@@ -199,7 +199,7 @@ public class GitIdeApi
 				var localGitState = _gitStateWrap.Value;
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var filesBuilder =  new StringBuilder();
 		
@@ -243,7 +243,7 @@ public class GitIdeApi
             	};
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
 	
@@ -258,7 +258,7 @@ public class GitIdeApi
 				var localGitState = _gitStateWrap.Value;
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var filesBuilder =  new StringBuilder();
 		
@@ -302,7 +302,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
 	
@@ -317,7 +317,7 @@ public class GitIdeApi
 				var localGitState = _gitStateWrap.Value;
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var argumentsString = $"commit -m \"{commitSummary}\"";
 
@@ -348,7 +348,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
 
@@ -366,7 +366,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var argumentsString = "checkout -b " + branchName;
 
@@ -389,7 +389,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
 
@@ -404,7 +404,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var argumentsString = "branch -a";
 
@@ -431,7 +431,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
     
@@ -446,7 +446,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
 
                 var argumentsString = $"checkout {branchName}";
 
@@ -470,7 +470,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
     
@@ -485,7 +485,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				// This command will push to origin, and then set the upstream variable
 				// (unsure if this is the correct description)
@@ -511,7 +511,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
 
@@ -526,7 +526,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var argumentsString = $"pull";
 
@@ -550,7 +550,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
     
@@ -565,7 +565,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var argumentsString = $"fetch";
 
@@ -589,7 +589,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
     
@@ -607,7 +607,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var terminalCommandArgs = $"log -p {relativePathToFile}";
                 var formattedCommand = new FormattedCommand(
@@ -631,7 +631,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
     
@@ -649,7 +649,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				// Example output:
 				/*
@@ -707,7 +707,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(logTerminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
     
@@ -792,7 +792,7 @@ public class GitIdeApi
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 
 				var terminalCommandArgs = $"diff -p {relativePathToFile}";
                 var formattedCommand = new FormattedCommand(
@@ -819,7 +819,7 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
     }
 }

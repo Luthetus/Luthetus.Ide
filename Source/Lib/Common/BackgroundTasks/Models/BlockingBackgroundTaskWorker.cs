@@ -1,5 +1,6 @@
-using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.Logging;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -16,8 +17,9 @@ public class BlockingBackgroundTaskWorker : BackgroundTaskWorker
 
     public BlockingBackgroundTaskWorker(
             IBackgroundTaskService backgroundTaskService,
-            ILoggerFactory loggerFactory)
-        : base(_queueKey, backgroundTaskService, loggerFactory)
+            ILoggerFactory loggerFactory,
+        	LuthetusHostingKind luthetusHostingKind)
+        : base(_queueKey, backgroundTaskService, loggerFactory, luthetusHostingKind)
     {
     }
 

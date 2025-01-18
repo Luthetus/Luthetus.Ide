@@ -12,7 +12,7 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.States;
 
 public partial class TestExplorerScheduler
 {
-    public async Task Task_ConstructTreeView()
+    public async ValueTask Task_ConstructTreeView()
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
