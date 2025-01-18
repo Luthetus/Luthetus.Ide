@@ -103,7 +103,7 @@ public interface ICompilerService
     /// </summary>
     public List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan);
 
-	public Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
+	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
 
     /// <summary>Expected to be concurrency safe with <see cref="RegisterResource"/></summary>
     public void DisposeResource(ResourceUri resourceUri);

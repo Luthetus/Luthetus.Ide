@@ -134,7 +134,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 					FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
 				};
 				
-				return Task.CompletedTask;
+				return ValueTask.CompletedTask;
 			});
 	}
 	

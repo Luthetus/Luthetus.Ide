@@ -62,7 +62,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         var viewModelModifier = editContext.GetViewModelModifier(InViewModelKey);
 
                         if (viewModelModifier is null)
-                            return Task.CompletedTask;
+                            return ValueTask.CompletedTask;
 
                         var presentationKeys = new[]
                         {
@@ -74,7 +74,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                             FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
                         };
                         
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
                     });
             }
             
@@ -111,7 +111,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
 
                         if (viewModelModifier is null)
-                            return Task.CompletedTask;
+                            return ValueTask.CompletedTask;
 
                         var presentationKeys = new[]
                         {
@@ -123,7 +123,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                             FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
                         };
 
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
                     });
             }
 

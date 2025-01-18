@@ -67,7 +67,7 @@ public partial class WidgetLayerDisplay : ComponentBase
     				WidgetBlockList = viewModelModifier.ViewModel.WidgetBlockList.Remove(widget)
     			};
     			
-    			return Task.CompletedTask;
+    			return ValueTask.CompletedTask;
     		});
     }
 }

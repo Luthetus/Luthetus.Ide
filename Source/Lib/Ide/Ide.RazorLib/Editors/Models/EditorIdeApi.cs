@@ -152,7 +152,7 @@ public class EditorIdeApi
 					var modelModifier = editContext.GetModelModifier(resourceUri);
 	
 					if (modelModifier is null)
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 	
 					return compilerService.ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: false);
 	            });
@@ -247,13 +247,13 @@ public class EditorIdeApi
 	                            {
 	                            	var modelModifier = editContext.GetModelModifier(innerTextEditor.ResourceUri);
 	                            	if (modelModifier is null)
-	                            		return Task.CompletedTask;
+	                            		return ValueTask.CompletedTask;
 	                            
 	                            	_textEditorService.ModelApi.SetResourceData(
 	                            		editContext,
 		                                modelModifier,
 		                                writtenDateTime.Value);
-	                                return Task.CompletedTask;
+	                                return ValueTask.CompletedTask;
 	                            });
 	                    }
 	
@@ -374,7 +374,7 @@ public class EditorIdeApi
                                                 {
                                                 	var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
                                                 	if (modelModifier is null)
-                                                		return Task.CompletedTask;
+                                                		return ValueTask.CompletedTask;
                                                 
                                                     _textEditorService.ModelApi.Reload(
                                                     	editContext,
@@ -385,7 +385,7 @@ public class EditorIdeApi
                                                     editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
                                                     	editContext,
                                                         modelModifier);
-                                                	return Task.CompletedTask;
+                                                	return ValueTask.CompletedTask;
                                                 });
                                         });
 								return Task.CompletedTask;

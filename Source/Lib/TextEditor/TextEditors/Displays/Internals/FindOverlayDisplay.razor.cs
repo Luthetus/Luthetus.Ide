@@ -59,7 +59,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 
                         if (viewModelModifier is null)
-                            return Task.CompletedTask;
+                            return ValueTask.CompletedTask;
 
                         var localInputValue = _inputValue;
 
@@ -71,7 +71,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
 
                         if (modelModifier is null)
-                            return Task.CompletedTask;
+                            return ValueTask.CompletedTask;
 
                         ImmutableArray<TextEditorTextSpan> textSpanMatches = ImmutableArray<TextEditorTextSpan>.Empty;
 
@@ -97,7 +97,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
                         _activeIndexMatchedTextSpan = null;
                         _decorationByteChangedTargetTextSpan = null;
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
                     });
 				return Task.CompletedTask;
             });
@@ -158,7 +158,7 @@ public partial class FindOverlayDisplay : ComponentBase
                     var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 
                     if (viewModelModifier is null)
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                     {
@@ -168,7 +168,7 @@ public partial class FindOverlayDisplay : ComponentBase
                     var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
 
                     if (modelModifier is null)
-                        return Task.CompletedTask;
+                        return ValueTask.CompletedTask;
 
                     TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
                 		editContext,
@@ -186,7 +186,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         FindOverlayPresentationFacts.PresentationKey,
                         FindOverlayPresentationFacts.EmptyPresentationModel,
                         ImmutableArray<TextEditorTextSpan>.Empty);
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
         }
     }
@@ -280,17 +280,17 @@ public partial class FindOverlayDisplay : ComponentBase
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
                 if (localActiveIndexMatchedTextSpan is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
 
                 var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 
                 if (viewModelModifier is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
 
                 if (modelModifier is null)
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
 
                 var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -352,7 +352,7 @@ public partial class FindOverlayDisplay : ComponentBase
 					}
 				}
 				
-                return Task.CompletedTask;
+                return ValueTask.CompletedTask;
             });
 		return Task.CompletedTask;
     }

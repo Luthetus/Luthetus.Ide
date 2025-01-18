@@ -54,13 +54,13 @@ public class FooterDriver
                 	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
                 	
                 	if (modelModifier is null)
-                		return Task.CompletedTask;
+                		return ValueTask.CompletedTask;
                 	
                 	_root.TextEditorService.ModelApi.SetUsingLineEndKind(
                 		editContext,
 	                    modelModifier,
 	                    rowEndingKind);
-	                return Task.CompletedTask;
+	                return ValueTask.CompletedTask;
 	            });
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Commands.Models;
+namespace Luthetus.Common.RazorLib.Commands.Models;
 
 public class CommonCommand : CommandWithType<CommonCommandArgs>
 {
@@ -6,13 +6,13 @@ public class CommonCommand : CommandWithType<CommonCommandArgs>
         "Do Nothing",
         "do-nothing",
         false,
-        _ => Task.CompletedTask);
+        _ => ValueTask.CompletedTask);
 
     public CommonCommand(
             string displayName,
             string internalIdentifier,
             bool shouldBubble,
-            Func<ICommandArgs, Task> commandFunc)
+            Func<ICommandArgs, ValueTask> commandFunc)
         : base(displayName, internalIdentifier, shouldBubble, commandFunc)
     {
     }

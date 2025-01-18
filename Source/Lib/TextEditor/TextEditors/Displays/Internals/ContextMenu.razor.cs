@@ -92,7 +92,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					        Dispatcher);
 					}
 
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				});
         }
     }
@@ -119,7 +119,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					        Dispatcher);
 					}
 
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				});
 			return Task.CompletedTask;
         }
@@ -179,7 +179,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						        Dispatcher);
 						}
 
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 					});
 
                 await menuOptionAction.Invoke().ConfigureAwait(false);
@@ -269,7 +269,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
                 var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
         		
         		if (viewModelModifier is null)
-        			return Task.CompletedTask;
+        			return ValueTask.CompletedTask;
                 
                 viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
                 

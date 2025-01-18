@@ -29,9 +29,9 @@ public interface ITextEditorViewModelApi
     /// </summary>
     public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> GetViewModels();
     public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey);
-    public Task<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId);
+    public ValueTask<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId);
 
-    public Task<CharAndLineMeasurements> MeasureCharacterWidthAndLineHeightAsync(
+    public ValueTask<CharAndLineMeasurements> MeasureCharacterWidthAndLineHeightAsync(
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters);
 
@@ -67,7 +67,7 @@ public interface ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         double pixels);
 
-    public Task FocusPrimaryCursorAsync(string primaryCursorContentId);
+    public ValueTask FocusPrimaryCursorAsync(string primaryCursorContentId);
 
     public void MoveCursor(
     	KeymapArgs keymapArgs,
@@ -151,7 +151,7 @@ public interface ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken);
 
-    public Task RemeasureAsync(
+    public ValueTask RemeasureAsync(
         ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,

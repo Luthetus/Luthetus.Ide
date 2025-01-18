@@ -755,14 +755,14 @@ Execution Terminal"));
 				{
 					var modelModifier = editContext.GetModelModifier(solutionTextEditorModel.ResourceUri);
 					if (modelModifier is null)
-						return Task.CompletedTask;
+						return ValueTask.CompletedTask;
 				
 					_textEditorService.ModelApi.Reload(
 						editContext,
 				        modelModifier,
 				        outDotNetSolutionModel.SolutionFileContents,
 				        DateTime.UtcNow);
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				});
 		}
 

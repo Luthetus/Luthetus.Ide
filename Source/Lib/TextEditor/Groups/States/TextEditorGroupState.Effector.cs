@@ -58,10 +58,10 @@ public partial class TextEditorGroupState
 				{
 					var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 		            if (viewModelModifier is null)
-		                return Task.CompletedTask;
+		                return ValueTask.CompletedTask;
 
         			viewModelModifier.ScrollWasModified = true;
-					return Task.CompletedTask;
+					return ValueTask.CompletedTask;
 				});
 		}
 	}

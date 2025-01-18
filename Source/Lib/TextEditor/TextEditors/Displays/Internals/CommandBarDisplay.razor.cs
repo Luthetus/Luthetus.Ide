@@ -61,7 +61,7 @@ public partial class CommandBarDisplay : FluxorComponent
 		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 		            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-		                return Task.CompletedTask;
+		                return ValueTask.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                     {
@@ -69,7 +69,7 @@ public partial class CommandBarDisplay : FluxorComponent
                         ShowCommandBar = false
                     };
 
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
@@ -84,7 +84,7 @@ public partial class CommandBarDisplay : FluxorComponent
 		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 		            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-		                return Task.CompletedTask;
+		                return ValueTask.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                     {
@@ -92,7 +92,7 @@ public partial class CommandBarDisplay : FluxorComponent
                         ShowCommandBar = false
                     };
 
-                    return Task.CompletedTask;
+                    return ValueTask.CompletedTask;
                 });
         }
     }
