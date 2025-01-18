@@ -83,7 +83,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 	public TextEditorComponentData ComponentData { get; set; }
 
     // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
-    public string Name => $"luth_OnKeyDownLateBatching";
+    public string Name => "luth_OnKeyDownLateBatching";
 
 	/// <summary>
 	/// Global variable used during <see cref="HandleEvent"/> to
