@@ -41,7 +41,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
 
 	public ImmutableArray<IBackgroundTask> BackgroundTaskList => _queue.ToImmutableArray();
 
-    public SemaphoreSlim DequeueSemaphoreSlim { get; } = new(0);
+    public SemaphoreSlim __DequeueSemaphoreSlim { get; } = new(0);
 
     /// <summary>
     /// When enqueueing an event, a batchFunc is also provided.<br/><br/>
@@ -81,14 +81,14 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
 
 			// The batching was NOT successful so add to the queue.
 			_queue.AddLast(downstreamEvent);
-			DequeueSemaphoreSlim.Release();
+			__DequeueSemaphoreSlim.Release();
 		}
     }
     
     /// <summary>
     /// Returns the first entry in the queue, according to 'first in first out'
     /// </summary>
-    public IBackgroundTask? DequeueOrDefault()
+    public IBackgroundTask? __DequeueOrDefault()
     {
 		lock (_modifyQueueLock)
 		{

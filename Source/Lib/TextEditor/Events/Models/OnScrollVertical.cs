@@ -23,7 +23,7 @@ public struct OnScrollVertical : ITextEditorWork
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
     public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public bool EarlyBatchEnabled { get; set; } = true;
-    public bool LateBatchEnabled { get; set; }
+    public bool __TaskCompletionSourceWasCreated { get; set; }
     // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
     public string Name => "luth_OnScrollVertical";
     public double ScrollTop { get; }

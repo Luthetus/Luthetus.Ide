@@ -34,6 +34,8 @@ public class BackgroundTaskService : IBackgroundTaskService
     
     public Task EnqueueAsync(IBackgroundTask backgroundTask)
     {
+    	backgroundTask.__TaskCompletionSourceWasCreated = true;
+    	
     	if (backgroundTask.BackgroundTaskKey == Key<IBackgroundTask>.Empty)
     	{
     		throw new LuthetusCommonException(
@@ -95,7 +97,7 @@ public class BackgroundTaskService : IBackgroundTaskService
 	public IBackgroundTask? Dequeue(Key<IBackgroundTaskQueue> queueKey)
     {
         var queue = _queueContainerMap[queueKey];
-        return queue.DequeueOrDefault();
+        return queue.__DequeueOrDefault();
     }
 
     public async Task<IBackgroundTask?> DequeueAsync(
@@ -103,8 +105,8 @@ public class BackgroundTaskService : IBackgroundTaskService
         CancellationToken cancellationToken)
     {
         var queue = _queueContainerMap[queueKey];
-		await queue.DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-        return queue.DequeueOrDefault();
+		await queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+        return queue.__DequeueOrDefault();
     }
 
     public void RegisterQueue(IBackgroundTaskQueue queue)

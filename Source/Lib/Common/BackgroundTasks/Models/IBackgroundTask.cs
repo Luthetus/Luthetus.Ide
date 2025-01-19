@@ -10,9 +10,18 @@ public interface IBackgroundTask
     public bool EarlyBatchEnabled { get; set; }
     
     /// <summary>
-    /// This is never used. TODO: late batching
+    /// Optimize 'IBackgroundTaskService.CompleteTaskCompletionSource(Key<IBackgroundTask> taskKey);'
+    ///
+    /// Which is ran after every dequeued background task finishes.
+    /// Instead of having to
+    /// - Enter a 'lock (...) {...}
+    /// - Check if an entry exists with the BackgroundTaskKey
+    ///
+    /// Just check if this bool is true,
+    /// if it then you should invoke the method and
+    /// do the lock and check entry exists etc...
     /// </summary>
-    public bool LateBatchEnabled { get; set; }
+    public bool __TaskCompletionSourceWasCreated { get; set; }
 
     /// <summary>
     /// Before a throttle event is enqueued, this method is invoked.
@@ -30,11 +39,6 @@ public interface IBackgroundTask
     /// (leave the old event as it was within the queue)
     /// </summary>
 	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent);
-	
-	/// <summary>
-    /// This is never used. TODO: late batching
-    /// </summary>
-	public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent);
 	
 	/// <summary>
     /// This method is the actual work item that gets awaited in order to handle the event.

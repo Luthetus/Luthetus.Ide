@@ -46,9 +46,8 @@ public class BackgroundTaskWorker : BackgroundService
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var backgroundTask = await BackgroundTaskService
-                .DequeueAsync(Queue.Key, cancellationToken)
-                .ConfigureAwait(false);
+        	await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+        	var backgroundTask = Queue.__DequeueOrDefault();
 
             if (backgroundTask is not null)
             {
@@ -70,7 +69,9 @@ public class BackgroundTaskWorker : BackgroundService
                 }
                 finally
                 {
-                	BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
+                	if (backgroundTask.__TaskCompletionSourceWasCreated)
+                		BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
+                	
                     ExecutingBackgroundTask = null;
                 }
             }
