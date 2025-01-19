@@ -54,16 +54,20 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
     	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
+    	
+    private CancellationTokenSource _cancellationTokenSource = new();
 
 	protected override void OnInitialized()
 	{
+		var token = _cancellationTokenSource.Token;
+	
 		BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
-			() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(CancellationToken.None),
-			CancellationToken.None);
+			() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
+			token);
 		
 		BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
-			() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(CancellationToken.None),
-			CancellationToken.None);
+			() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
+			token);
 		
 		BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -176,5 +180,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     public void Dispose()
     {
     	BrowserResizeInterop.DisposeWindowSizeChanged(JsRuntimeCommonApi);
+    	_cancellationTokenSource.Cancel();
+    	_cancellationTokenSource.Dispose();
     }
 }
