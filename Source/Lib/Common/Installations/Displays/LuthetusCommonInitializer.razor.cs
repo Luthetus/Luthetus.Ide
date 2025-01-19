@@ -47,6 +47,8 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
+    [Inject]
+    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -54,7 +56,11 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
     	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
-    	
+    
+    /// <summary>
+    /// This is to say that the order of the <Luthetus...Initializer/> components
+    /// in the markup matters?
+    /// </summary>
     private CancellationTokenSource _cancellationTokenSource = new();
 
 	protected override void OnInitialized()
@@ -65,9 +71,12 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 			() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
 			token);
 		
-		BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
-			() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
-			token);
+		if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
+		{
+			BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
+				() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
+				token);
+		}
 		
 		BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
