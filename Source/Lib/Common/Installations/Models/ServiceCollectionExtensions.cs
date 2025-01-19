@@ -46,13 +46,13 @@ public static class ServiceCollectionExtensions
             {
 				hostingInformation.BackgroundTaskService.SetContinuousTaskWorker(new BackgroundTaskWorker(
 				    continuousQueue,
-				    sp.GetRequiredService<IBackgroundTaskService>(),
+					hostingInformation.BackgroundTaskService,
 				    sp.GetRequiredService<ILoggerFactory>(),
 				    hostingInformation.LuthetusHostingKind));
 
 				hostingInformation.BackgroundTaskService.SetIndefiniteTaskWorker(new BackgroundTaskWorker(
 				    indefiniteQueue,
-				    sp.GetRequiredService<IBackgroundTaskService>(),
+					hostingInformation.BackgroundTaskService,
 				    sp.GetRequiredService<ILoggerFactory>(),
 				    hostingInformation.LuthetusHostingKind));
 

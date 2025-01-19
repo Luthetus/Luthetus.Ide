@@ -57,6 +57,14 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
+		BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
+			() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(CancellationToken.None),
+			CancellationToken.None);
+		
+		BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
+			() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(CancellationToken.None),
+			CancellationToken.None);
+		
 		BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskService.ContinuousTaskWorker.Queue.Key,
