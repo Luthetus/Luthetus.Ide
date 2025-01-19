@@ -532,6 +532,44 @@ public class ScopeTests
     }
     
     [Fact]
+    public void GlobalScope_TypeDefinitionNode_Inheritance()
+    {
+    	var test = new Test(@"public class Person : OtherType { }");
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(35, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				var typeDefinitionNode = typeDefinitionScope.CodeBlockOwner;
+				
+				Assert.Equal(1, typeDefinitionNode.ScopeIndexKey);
+				
+				Assert.Equal(32, typeDefinitionNode.OpenCodeBlockTextSpan.Value.StartingIndexInclusive);
+				Assert.Equal(33, typeDefinitionNode.OpenCodeBlockTextSpan.Value.EndingIndexExclusive);
+				
+				Assert.Equal(34, typeDefinitionNode.CloseCodeBlockTextSpan.Value.StartingIndexInclusive);
+				Assert.Equal(35, typeDefinitionNode.CloseCodeBlockTextSpan.Value.EndingIndexExclusive);
+			}
+	    }
+    }
+    
+    [Fact]
     public void GlobalScope_FunctionDefinitionNode()
     {
     	var test = new Test(@"public void MyMethod() { }");
