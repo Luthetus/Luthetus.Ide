@@ -6,6 +6,19 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 public interface IBackgroundTaskService
 {
     public ImmutableArray<IBackgroundTaskQueue> Queues { get; }
+    
+    /// <summary>
+	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
+	///
+	/// Similarly: If you think the task you are enqueueing will result in the previous statement being untrue, then you should use the IndefiniteTaskWorker.
+	/// </summary>
+	public BackgroundTaskWorker ContinuousTaskWorker { get; }
+	/// <summary>
+	/// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
+	///
+	/// Similarly: If you think the task you are enqueueing will finish "immediately" then you should use the ContinuousTaskWorker.
+	/// </summary>
+    public BackgroundTaskWorker IndefiniteTaskWorker { get; }
 
     public void Enqueue(IBackgroundTask backgroundTask);
     public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc);
@@ -23,11 +36,8 @@ public interface IBackgroundTaskService
         Key<IBackgroundTaskQueue> queueKey,
         CancellationToken cancellationToken);
 
-    public void SetExecutingBackgroundTask(
-        Key<IBackgroundTaskQueue> queueKey,
-        IBackgroundTask? backgroundTask);
-
     public IBackgroundTaskQueue GetQueue(Key<IBackgroundTaskQueue> queueKey);
-
-    public Task StopAsync(CancellationToken cancellationToken);
+    
+    public void SetContinuousTaskWorker(BackgroundTaskWorker continuousTaskWorker);
+    public void SetIndefiniteTaskWorker(BackgroundTaskWorker indefiniteTaskWorker);
 }

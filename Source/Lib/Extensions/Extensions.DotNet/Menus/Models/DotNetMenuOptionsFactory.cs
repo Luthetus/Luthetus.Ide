@@ -176,7 +176,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Remove C# Project Reference from Solution Action",
 			() =>
 			{
@@ -254,7 +254,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Remove Project Reference to Project",
 			() =>
 			{
@@ -288,7 +288,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Move Project to Solution Folder",
 			() =>
 			{
@@ -332,7 +332,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Remove NuGet Package Reference from Project",
 			() =>
 			{

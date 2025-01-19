@@ -27,20 +27,12 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
         DisplayName = displayName;
     }
 
-	private IBackgroundTask? _executingBackgroundTask;
+	
 
 	public Key<IBackgroundTaskQueue> Key { get; }
     public string DisplayName { get; }
-
-	public IBackgroundTask? ExecutingBackgroundTask
-    {
-        get => _executingBackgroundTask;
-        set
-        {
-            _executingBackgroundTask = value;
-            ExecutingBackgroundTaskChanged?.Invoke();
-        }
-    }
+    
+    
 
     /// <summary>
     /// Returns the amount of <see cref="IBackgroundTask"/>(s) in the queue.
@@ -50,8 +42,6 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
 	public ImmutableArray<IBackgroundTask> BackgroundTaskList => _queue.ToImmutableArray();
 
     public SemaphoreSlim DequeueSemaphoreSlim { get; } = new(0);
-
-	public event Action? ExecutingBackgroundTaskChanged;
 
     /// <summary>
     /// When enqueueing an event, a batchFunc is also provided.<br/><br/>

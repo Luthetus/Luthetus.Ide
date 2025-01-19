@@ -50,7 +50,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
 	{
 		BackgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			nameof(LuthetusConfigInitializer),
 			() =>
 			{

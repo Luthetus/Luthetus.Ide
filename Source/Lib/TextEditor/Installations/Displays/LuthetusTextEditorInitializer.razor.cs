@@ -51,7 +51,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     {
     	BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             nameof(LuthetusCommonInitializer),
             async () =>
             {

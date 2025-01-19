@@ -59,7 +59,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 	{
 		BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskService.ContinuousTaskWorker.Queue.Key,
             nameof(LuthetusCommonInitializer),
             async () =>
             {

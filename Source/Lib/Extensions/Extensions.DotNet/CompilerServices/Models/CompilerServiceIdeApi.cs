@@ -56,7 +56,7 @@ public class CompilerServiceIdeApi
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Set CompilerServiceExplorer TreeView",
 			async () =>
 			{

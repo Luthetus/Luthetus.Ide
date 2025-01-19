@@ -44,6 +44,7 @@ public record LuthetusHostingInformation
 
     public void StartBackgroundTaskWorkers(IServiceProvider serviceProvider)
     {
+    	/*
     	if (LuthetusHostingKind == LuthetusHostingKind.ServerSide)
     	{
     		throw new LuthetusFatalException(
@@ -53,23 +54,25 @@ public record LuthetusHostingInformation
     			" 'services.AddHostedService(sp => sp.GetRequiredService<ContinuousBackgroundTaskWorker>());' and etc...," +
     			"within the '{nameof(AddLuthetusCommonServices)}' method, automatically.");
     	}
+    	
+    	var backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
     
 		var continuousCtsUp = new CancellationTokenSource();
         var continuousCtsDown = new CancellationTokenSource();
-        var continuousBtw = serviceProvider.GetRequiredService<ContinuousBackgroundTaskWorker>();
+        var continuousBtw = backgroundTaskService.ContinuousTaskWorker;
         continuousBtw.StartAsyncTask = continuousBtw.StartAsync(continuousCtsUp.Token);
         Task continuousTaskDown;
 
-		CancellationTokenSource? blockingCtsUp = null;
-		CancellationTokenSource? blockingCtsDown = null;
-		BlockingBackgroundTaskWorker? blockingBtw = null;
-		Task? blockingTaskDown = null;
+		CancellationTokenSource? indefiniteCtsUp = null;
+		CancellationTokenSource? indefiniteCtsDown = null;
+		BackgroundTaskWorker? indefiniteBtw = null;
+		Task? indefiniteTaskDown = null;
 		if (LuthetusPurposeKind == LuthetusPurposeKind.Ide)
 		{
-			blockingCtsUp = new CancellationTokenSource();
-	        blockingCtsDown = new CancellationTokenSource();
-	        blockingBtw = serviceProvider.GetRequiredService<BlockingBackgroundTaskWorker>();
-	        blockingBtw.StartAsyncTask = blockingBtw.StartAsync(blockingCtsUp.Token);
+			indefiniteCtsUp = new CancellationTokenSource();
+	        indefiniteCtsDown = new CancellationTokenSource();
+	        indefiniteBtw = backgroundTaskService.IndefiniteTaskWorker;
+	        indefiniteBtw.StartAsyncTask = indefiniteBtw.StartAsync(indefiniteCtsUp.Token);
 		}
 
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
@@ -77,11 +80,11 @@ public record LuthetusHostingInformation
             continuousCtsUp.Cancel();
             continuousTaskDown = continuousBtw.StopAsync(continuousCtsDown.Token);
             
-            if (blockingCtsUp is not null)
-            	blockingCtsUp.Cancel();
+            if (indefiniteCtsUp is not null)
+            	indefiniteCtsUp.Cancel();
             
-            if (blockingBtw is not null)
-        		blockingTaskDown = blockingBtw.StopAsync(blockingCtsDown.Token);
+            if (indefiniteBtw is not null)
+        		indefiniteTaskDown = indefiniteBtw.StopAsync(indefiniteCtsDown.Token);
         };
 
         AppDomain.CurrentDomain.ProcessExit += (sender, error) =>
@@ -89,11 +92,12 @@ public record LuthetusHostingInformation
             continuousCtsUp.Cancel();
             continuousCtsDown.Cancel();
             
-            if (blockingCtsUp is not null)
-            	blockingCtsUp.Cancel();
+            if (indefiniteCtsUp is not null)
+            	indefiniteCtsUp.Cancel();
 
-            if (blockingCtsDown is not null)
-	            blockingCtsDown.Cancel();
+            if (indefiniteCtsDown is not null)
+	            indefiniteCtsDown.Cancel();
         };
+        */
     }
 }

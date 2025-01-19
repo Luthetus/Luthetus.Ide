@@ -90,7 +90,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	
 		BackgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			nameof(IdeHeader),
 			() =>
 			{

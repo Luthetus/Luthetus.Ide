@@ -149,7 +149,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         BackgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Tab.ManuallyPropagateOnContextMenu",
 			async () => await localHandleTabButtonOnContextMenu
 				.Invoke(new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync))

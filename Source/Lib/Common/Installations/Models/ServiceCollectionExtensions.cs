@@ -26,38 +26,38 @@ public static class ServiceCollectionExtensions
         if (configure is not null)
             commonConfig = configure.Invoke(commonConfig);
 
-        hostingInformation.BackgroundTaskService.RegisterQueue(new BackgroundTaskQueue(
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            ContinuousBackgroundTaskWorker.QUEUE_DISPLAY_NAME));
-
-        hostingInformation.BackgroundTaskService.RegisterQueue(new BackgroundTaskQueue(
-            BlockingBackgroundTaskWorker.GetQueueKey(),
-            BlockingBackgroundTaskWorker.QUEUE_DISPLAY_NAME));
-
-        services.AddSingleton(sp => new ContinuousBackgroundTaskWorker(
-            sp.GetRequiredService<IBackgroundTaskService>(),
-            sp.GetRequiredService<ILoggerFactory>(),
-            hostingInformation.LuthetusHostingKind));
-
-        services.AddSingleton(sp => new BlockingBackgroundTaskWorker(
-            sp.GetRequiredService<IBackgroundTaskService>(),
-            sp.GetRequiredService<ILoggerFactory>(),
-            hostingInformation.LuthetusHostingKind));
+		var continuousQueue = new BackgroundTaskQueue(
+            BackgroundTaskFacts.ContinuousQueueKey,
+            "Continuous");
             
-        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
-        {
-            services.AddHostedService(sp => sp.GetRequiredService<ContinuousBackgroundTaskWorker>());
+        var indefiniteQueue = new BackgroundTaskQueue(
+            BackgroundTaskFacts.IndefiniteQueueKey,
+            "Blocking");
             
-            if (hostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
-	            services.AddHostedService(sp => sp.GetRequiredService<BlockingBackgroundTaskWorker>());
-        }
-
+        hostingInformation.BackgroundTaskService.RegisterQueue(continuousQueue);
+        hostingInformation.BackgroundTaskService.RegisterQueue(indefiniteQueue);
+            
         services
             .AddSingleton(commonConfig)
             .AddSingleton(hostingInformation)
-            .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
-            .AddCommonFactories(hostingInformation, commonConfig)
+			.AddCommonFactories(hostingInformation, commonConfig)
+			.AddScoped<IBackgroundTaskService>(sp => 
+            {
+				hostingInformation.BackgroundTaskService.SetContinuousTaskWorker(new BackgroundTaskWorker(
+				    continuousQueue,
+				    sp.GetRequiredService<IBackgroundTaskService>(),
+				    sp.GetRequiredService<ILoggerFactory>(),
+				    hostingInformation.LuthetusHostingKind));
+
+				hostingInformation.BackgroundTaskService.SetIndefiniteTaskWorker(new BackgroundTaskWorker(
+				    indefiniteQueue,
+				    sp.GetRequiredService<IBackgroundTaskService>(),
+				    sp.GetRequiredService<ILoggerFactory>(),
+				    hostingInformation.LuthetusHostingKind));
+
+				return hostingInformation.BackgroundTaskService;
+			})
             .AddScoped<CommonBackgroundTaskApi>()
             .AddScoped<BrowserResizeInterop>();
 

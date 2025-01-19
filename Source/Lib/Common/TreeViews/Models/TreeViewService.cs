@@ -142,7 +142,7 @@ public class TreeViewService : ITreeViewService
             {
                 var backgroundTask = new BackgroundTask(
                     Key<IBackgroundTask>.NewKey(),
-                    ContinuousBackgroundTaskWorker.GetQueueKey(),
+                    BackgroundTaskFacts.ContinuousQueueKey,
                     "TreeView.LoadChildListAsync()",
                     async () =>
                     {

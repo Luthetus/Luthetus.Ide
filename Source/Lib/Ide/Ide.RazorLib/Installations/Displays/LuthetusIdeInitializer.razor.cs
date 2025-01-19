@@ -66,7 +66,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 	{
 		BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             nameof(LuthetusIdeInitializer),
             async () =>
             {

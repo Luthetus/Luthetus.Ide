@@ -109,7 +109,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         {
             BackgroundTaskService.Enqueue(
                 Key<IBackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
+                BackgroundTaskFacts.ContinuousQueueKey,
         	    "TreeView.HandleExpansionChevronOnMouseDown",
 			    async () => 
 			    {
@@ -143,7 +143,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
     	    "TreeView.ManuallyPropagateOnContextMenu",
 		    async () => await HandleTreeViewOnContextMenu.Invoke(
                     mouseEventArgs,

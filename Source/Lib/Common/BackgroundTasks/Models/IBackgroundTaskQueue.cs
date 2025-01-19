@@ -9,7 +9,4 @@ public interface IBackgroundTaskQueue
     public string DisplayName { get; }
     public int Count { get; }
 	public ImmutableArray<IBackgroundTask> BackgroundTaskList { get; }
-    public IBackgroundTask? ExecutingBackgroundTask { get; }
-
-    public event Action? ExecutingBackgroundTaskChanged;
 }
