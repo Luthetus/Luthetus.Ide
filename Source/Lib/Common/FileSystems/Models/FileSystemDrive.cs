@@ -1,6 +1,6 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
-public class FileSystemDrive : IFileSystemDrive
+public struct FileSystemDrive : IFileSystemDrive
 {
     public FileSystemDrive(
         string driveNameAsIdentifier,

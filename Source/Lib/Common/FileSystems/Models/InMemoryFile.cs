@@ -1,6 +1,6 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
-public record InMemoryFile(
+public record struct InMemoryFile(
     string Data,
     IAbsolutePath AbsolutePath,
     DateTime LastModifiedDateTime,

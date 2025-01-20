@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.FileSystems.Models;
 /// This class allows for tracking of ancestor directories efficiently,
 /// and if there is one of interest, then choose to create an <see cref="IAbsolutePath"/> from it.
 /// </summary>
-public class AncestorDirectory
+public struct AncestorDirectory
 {
     public AncestorDirectory(
         string nameNoExtension,
