@@ -162,17 +162,12 @@ public partial class TextEditorService : ITextEditorService
 
 	public async ValueTask FinalizePost(ITextEditorEditContext editContext)
 	{
-		var modelModifierNeedRenderList = new List<TextEditorModelModifier>();
-		var viewModelModifierNeedRenderList = new List<TextEditorViewModelModifier>();
-
 		if (editContext.ModelCache is not null)
 		{
 	        foreach (var modelModifier in editContext.ModelCache.Values)
 	        {
 	            if (modelModifier is null || !modelModifier.WasModified)
 	                continue;
-	
-				modelModifierNeedRenderList.Add(modelModifier);
 	
 	            var viewModelBag = editContext.TextEditorService.ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
 	
@@ -202,8 +197,6 @@ public partial class TextEditorService : ITextEditorService
 	            if (viewModelModifier is null || !viewModelModifier.WasModified)
 	                return;
 	
-				viewModelModifierNeedRenderList.Add(viewModelModifier);
-				
 				bool successCursorModifierBag = false;
 				CursorModifierBagTextEditor? cursorModifierBag = null;
 				
@@ -343,8 +336,8 @@ public partial class TextEditorService : ITextEditorService
 	    _dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(
 	        editContext.AuthenticatedActionKey,
 	        editContext,
-	        modelModifierNeedRenderList,
-			viewModelModifierNeedRenderList));
+	        editContext.ModelCache,
+			editContext.ViewModelCache));
 	}
 	
 	/// <summary>
