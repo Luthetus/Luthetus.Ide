@@ -404,7 +404,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
         		var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursor is null)
+				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursor is null)
 					return ValueTask.CompletedTask;
 
 				TextEditorCommandDefaultFunctions.ShowContextMenu(
@@ -548,7 +548,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 			                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 			
-			                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+			                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 			                    return ValueTask.CompletedTask;
 						
 							return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(

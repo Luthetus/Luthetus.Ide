@@ -60,7 +60,7 @@ public partial class CommandBarDisplay : FluxorComponent
 		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
-		            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+		            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 		                return ValueTask.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
@@ -83,7 +83,7 @@ public partial class CommandBarDisplay : FluxorComponent
 		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
-		            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+		            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 		                return ValueTask.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with

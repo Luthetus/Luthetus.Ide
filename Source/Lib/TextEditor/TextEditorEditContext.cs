@@ -12,7 +12,7 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
     public Dictionary<ResourceUri, TextEditorModelModifier?>? ModelCache { get; private set; }
     public Dictionary<Key<TextEditorViewModel>, ResourceUri?>? ViewModelToModelResourceUriCache { get; private set; }
     public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? ViewModelCache { get; private set; }
-    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?>? CursorModifierBagCache { get; private set; }
+    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor>? CursorModifierBagCache { get; private set; }
     public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?>? DiffModelCache { get; private set; }
 
     public TextEditorEditContext(ITextEditorService textEditorService)
@@ -92,7 +92,7 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
         return null;
     }
     
-    public CursorModifierBagTextEditor? GetCursorModifierBag(TextEditorViewModel? viewModel)
+    public CursorModifierBagTextEditor GetCursorModifierBag(TextEditorViewModel? viewModel)
     {
     	CursorModifierBagCache ??= new();
     	
@@ -110,14 +110,14 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
             return cursorModifierBag;
         }
 
-        return null;
+        return default(CursorModifierBagTextEditor);
     }
 
-    public TextEditorCursorModifier? GetPrimaryCursorModifier(CursorModifierBagTextEditor? cursorModifierBag)
+    public TextEditorCursorModifier? GetPrimaryCursorModifier(CursorModifierBagTextEditor cursorModifierBag)
     {
         var primaryCursor = (TextEditorCursorModifier?)null;
 
-        if (cursorModifierBag is not null)
+        if (cursorModifierBag.ConstructorWasInvoked)
             primaryCursor = cursorModifierBag.List.FirstOrDefault(x => x.IsPrimaryCursor);
 
         return primaryCursor;

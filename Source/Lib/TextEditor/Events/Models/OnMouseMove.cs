@@ -64,7 +64,7 @@ public struct OnMouseMove : ITextEditorWork
         var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
         var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+        if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.

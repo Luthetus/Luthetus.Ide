@@ -206,7 +206,7 @@ public static class TestExplorerHelper
 			var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier?.ViewModel);
 			var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
 
-			if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
+			if (definitionViewModelModifier is null || !definitionCursorModifierBag.ConstructorWasInvoked || definitionPrimaryCursorModifier is null)
 			{
 				NotificationHelper.DispatchInformative(
 					nameof(TestExplorerTreeViewMouseEventHandler),

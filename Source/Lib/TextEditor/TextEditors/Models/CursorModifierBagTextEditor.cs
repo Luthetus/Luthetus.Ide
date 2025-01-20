@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public sealed class CursorModifierBagTextEditor
+public struct CursorModifierBagTextEditor
 {
     public CursorModifierBagTextEditor(
         Key<TextEditorViewModel> viewModelKey,
@@ -11,6 +11,8 @@ public sealed class CursorModifierBagTextEditor
     {
         List = cursorModifierList;
         ViewModelKey = viewModelKey;
+        
+        ConstructorWasInvoked = true;
     }
 
     /// <summary>
@@ -18,4 +20,5 @@ public sealed class CursorModifierBagTextEditor
     /// </summary>
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public List<TextEditorCursorModifier> List { get; }
+    public bool ConstructorWasInvoked { get; }
 }
