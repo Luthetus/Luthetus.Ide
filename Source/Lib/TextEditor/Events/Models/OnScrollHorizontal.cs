@@ -52,7 +52,7 @@ public struct OnScrollHorizontal : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorService.TextEditorEditContext(
+    	EditContext = new TextEditorEditContext(
             ComponentData.TextEditorViewModelDisplay.TextEditorService,
             TextEditorService.AuthenticatedActionKey);
     

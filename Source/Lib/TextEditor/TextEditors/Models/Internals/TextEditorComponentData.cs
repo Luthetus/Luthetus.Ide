@@ -23,7 +23,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// this class, then the valid events are passed along to result in the <see cref="TextEditorViewModel.TooltipViewModel"/>
 /// being set.
 /// </summary>
-public class TextEditorComponentData
+public sealed class TextEditorComponentData
 {
 	private readonly Throttle _throttleApplySyntaxHighlighting = new(TimeSpan.FromMilliseconds(500));
 

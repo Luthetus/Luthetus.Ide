@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public record TextEditorRenderBatchUnsafe(
+public sealed record TextEditorRenderBatchUnsafe(
         TextEditorModel? Model,
         TextEditorViewModel? ViewModel,
         TextEditorOptions? Options,

@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public class ViewModelDisplayOptions
+public sealed class ViewModelDisplayOptions
 {
     public string WrapperStyleCssString { get; set; } = string.Empty;
     public string WrapperClassCssString { get; set; } = string.Empty;

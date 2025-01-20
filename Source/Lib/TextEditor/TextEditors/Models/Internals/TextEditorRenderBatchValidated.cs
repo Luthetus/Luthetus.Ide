@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public class TextEditorRenderBatchValidated : ITextEditorRenderBatch
+public sealed class TextEditorRenderBatchValidated : ITextEditorRenderBatch
 {
     public TextEditorRenderBatchValidated(TextEditorRenderBatchUnsafe textEditorRenderBatchUnsafe)
     {

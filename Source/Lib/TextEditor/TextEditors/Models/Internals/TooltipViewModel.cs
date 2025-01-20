@@ -1,8 +1,8 @@
-﻿using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public record TooltipViewModel(
+public sealed record TooltipViewModel(
     Type RendererType,
     Dictionary<string, object?>? ParameterMap,
     RelativeCoordinates RelativeCoordinates,
