@@ -51,8 +51,8 @@ public partial record TextEditorState
 		public SetModelAndViewModelRangeAction(
 			Key<TextEditorAuthenticatedAction> authenticatedActionKey,
 			ITextEditorEditContext editContext,
-			List<TextEditorModelModifier> modelModifierList,
-			List<TextEditorViewModelModifier> viewModelModifierList)
+			Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
+			Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList)
 		{
 			if (authenticatedActionKey != TextEditorService.AuthenticatedActionKey)
 	            throw new LuthetusTextEditorException($"Only edits made via the {nameof(ITextEditorService)}.{nameof(ITextEditorService.Post)}(...) method may modify state.");
@@ -80,7 +80,7 @@ public partial record TextEditorState
 		public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 		
         public ITextEditorEditContext EditContext { get; }
-        public List<TextEditorModelModifier> ModelModifierList { get; }
-		public List<TextEditorViewModelModifier> ViewModelModifierList { get; }
+        public Dictionary<ResourceUri, TextEditorModelModifier?>? ModelModifierList { get; }
+		public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? ViewModelModifierList { get; }
 	}
 }

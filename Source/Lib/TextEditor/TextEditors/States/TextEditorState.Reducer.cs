@@ -169,31 +169,43 @@ public partial record TextEditorState
             SetModelAndViewModelRangeAction setModelAndViewModelRangeAction)
         {
     		// Models
-			foreach (var modelModifier in setModelAndViewModelRangeAction.ModelModifierList)
-			{
-				// Enumeration was modified shouldn't occur here because only the reducer
-				// should be adding or removing, and the reducer is thread safe.
-				var exists = inState._modelMap.TryGetValue(
-	        		modelModifier.ResourceUri, out var inModel);
-	
-	            if (!exists)
-	                continue;
-	                
-				inState._modelMap[modelModifier.ResourceUri] = modelModifier.ToModel();
+    		if (setModelAndViewModelRangeAction.ModelModifierList is not null)
+    		{
+				foreach (var kvpModelModifier in setModelAndViewModelRangeAction.ModelModifierList)
+				{
+					if (!kvpModelModifier.Value.WasModified)
+						continue;
+					
+					// Enumeration was modified shouldn't occur here because only the reducer
+					// should be adding or removing, and the reducer is thread safe.
+					var exists = inState._modelMap.TryGetValue(
+		        		kvpModelModifier.Value.ResourceUri, out var inModel);
+		
+		            if (!exists)
+		                continue;
+		                
+					inState._modelMap[kvpModelModifier.Value.ResourceUri] = kvpModelModifier.Value.ToModel();
+				}
 			}
 			
 			// ViewModels
-			foreach (var viewModelModifier in setModelAndViewModelRangeAction.ViewModelModifierList)
+			if (setModelAndViewModelRangeAction.ViewModelModifierList is not null)
 			{
-				// Enumeration was modified shouldn't occur here because only the reducer
-				// should be adding or removing, and the reducer is thread safe.
-				var exists = inState._viewModelMap.TryGetValue(
-	        		viewModelModifier.ViewModel.ViewModelKey, out var inViewModel);
-	        		
-	        	if (!exists)
-	                continue;
-	
-                inState._viewModelMap[viewModelModifier.ViewModel.ViewModelKey] = viewModelModifier.ViewModel;
+				foreach (var kvpViewModelModifier in setModelAndViewModelRangeAction.ViewModelModifierList)
+				{
+					if (!kvpViewModelModifier.Value.WasModified)
+						continue;
+						
+					// Enumeration was modified shouldn't occur here because only the reducer
+					// should be adding or removing, and the reducer is thread safe.
+					var exists = inState._viewModelMap.TryGetValue(
+		        		kvpViewModelModifier.Value.ViewModel.ViewModelKey, out var inViewModel);
+		        		
+		        	if (!exists)
+		                continue;
+		
+	                inState._viewModelMap[kvpViewModelModifier.Value.ViewModel.ViewModelKey] = kvpViewModelModifier.Value.ViewModel;
+				}
 			}
 
             return inState with {};
