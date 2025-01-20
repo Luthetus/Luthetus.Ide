@@ -68,29 +68,6 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		var token = _cancellationTokenSource.Token;
-	
-		if (BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask is null)
-		{
-			_hasStartedContinuousWorker = true;
-			
-			BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
-				() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
-				token);
-		}
-		
-		if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
-		{
-			if (BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask is null)
-			{
-				_hasStartedIndefiniteWorker = true;
-				
-				BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
-					() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
-					token);
-			}
-		}
-		
 		BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskService.ContinuousTaskWorker.Queue.Key,
@@ -190,13 +167,38 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 	
 		base.OnInitialized();
 	}
-	
-	protected override async Task OnAfterRenderAsync(bool firstRender)
+
+	protected override void OnAfterRender(bool firstRender)
 	{
 		if (firstRender)
 		{
+			var token = _cancellationTokenSource.Token;
+
+			if (BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask is null)
+			{
+				_hasStartedContinuousWorker = true;
+
+				BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
+					() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
+					token);
+			}
+
+			if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
+			{
+				if (BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask is null)
+				{
+					_hasStartedIndefiniteWorker = true;
+
+					BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
+						() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
+						token);
+				}
+			}
+
 			BrowserResizeInterop.SubscribeWindowSizeChanged(JsRuntimeCommonApi);
 		}
+
+		base.OnAfterRender(firstRender);
 	}
     
     public void Dispose()
