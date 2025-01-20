@@ -165,187 +165,186 @@ public partial class TextEditorService : ITextEditorService
 		var modelModifierNeedRenderList = new List<TextEditorModelModifier>();
 		var viewModelModifierNeedRenderList = new List<TextEditorViewModelModifier>();
 
-        foreach (var modelModifier in editContext.ModelCache.Values)
-        {
-            if (modelModifier is null || !modelModifier.WasModified)
-                continue;
-
-			modelModifierNeedRenderList.Add(modelModifier);
-
-            var viewModelBag = editContext.TextEditorService.ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
-
-            foreach (var viewModel in viewModelBag)
-            {
-                // Invoking 'GetViewModelModifier' marks the view model to be updated.
-                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
-
-				if (!viewModelModifier.ShouldReloadVirtualizationResult)
-					viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
-            }
-
-            if (modelModifier.WasDirty != modelModifier.IsDirty)
-            {
-                if (modelModifier.IsDirty)
-                    _dispatcher.Dispatch(new DirtyResourceUriState.AddDirtyResourceUriAction(modelModifier.ResourceUri));
-                else
-                    _dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(modelModifier.ResourceUri));
-            }
-        }
-
-        foreach (var viewModelModifier in editContext.ViewModelCache.Values)
-        {
-            if (viewModelModifier is null || !viewModelModifier.WasModified)
-                return;
-
-			viewModelModifierNeedRenderList.Add(viewModelModifier);
-			
-            var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
-                viewModelModifier.ViewModel.ViewModelKey,
-                out var cursorModifierBag);
-
-            if (successCursorModifierBag && cursorModifierBag is not null)
-            {
-                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                {
-                    CursorList = cursorModifierBag.List
-                        .Select(x => x.ToCursor())
-                        .ToImmutableArray()
-                };
-            }
-            
-            if (viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
-            {
-            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
-            	cursorModifierBag ??= editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-            	var cursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-            	
-            	if (modelModifier is not null)
-            	{
-            		ViewModelApi.RevealCursor(
-	            		editContext,
-				        modelModifier,
-				        viewModelModifier,
-				        cursorModifierBag,
-				        cursorModifier);
-            	}
-            }
-            
-            // This if expression exists below, to check if 'CalculateVirtualizationResult(...)' should be invoked.
-            //
-            // But, note that these cannot be combined at the bottom, we need to check if an edit
-            // reduced the scrollWidth or scrollHeight of the editor's content.
-            // 
-            // This is done here, so that the 'ScrollWasModified' bool can be set, and downstream if statements will be entered,
-            // which go on to scroll the editor.
-            if (viewModelModifier.ShouldReloadVirtualizationResult)
-			{
-				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: false);
-			}
-
-            if (viewModelModifier.ScrollWasModified)
-            {
-            	// TODO: If the API is self validating then this explicit final validation wouldn't be needed?
-            	/*
-            	var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
-            
-            	validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions.WithSetScrollLeft(
-        			(int)validateScrollbarDimensions.ScrollLeft,
-        			viewModelModifier.ViewModel.TextEditorDimensions);
-            			
-            	validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
-        			(int)validateScrollbarDimensions.ScrollTop,
-        			viewModelModifier.ViewModel.TextEditorDimensions);
-        			
-            	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		if (editContext.ModelCache is not null)
+		{
+	        foreach (var modelModifier in editContext.ModelCache.Values)
+	        {
+	            if (modelModifier is null || !modelModifier.WasModified)
+	                continue;
+	
+				modelModifierNeedRenderList.Add(modelModifier);
+	
+	            var viewModelBag = editContext.TextEditorService.ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
+	
+	            foreach (var viewModel in viewModelBag)
+	            {
+	                // Invoking 'GetViewModelModifier' marks the view model to be updated.
+	                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+	
+					if (!viewModelModifier.ShouldReloadVirtualizationResult)
+						viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
+	            }
+	
+	            if (modelModifier.WasDirty != modelModifier.IsDirty)
+	            {
+	                if (modelModifier.IsDirty)
+	                    _dispatcher.Dispatch(new DirtyResourceUriState.AddDirtyResourceUriAction(modelModifier.ResourceUri));
+	                else
+	                    _dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(modelModifier.ResourceUri));
+	            }
+	        }
+		}
+		
+		if (editContext.ViewModelCache is not null)
+		{
+	        foreach (var viewModelModifier in editContext.ViewModelCache.Values)
+	        {
+	            if (viewModelModifier is null || !viewModelModifier.WasModified)
+	                return;
+	
+				viewModelModifierNeedRenderList.Add(viewModelModifier);
+				
+				bool successCursorModifierBag = false;
+				CursorModifierBagTextEditor? cursorModifierBag = null;
+				
+				if (editContext.CursorModifierBagCache is null)
 				{
-					ScrollbarDimensions = validateScrollbarDimensions
-				};
-				*/
-            
-                await JsRuntimeTextEditorApi
-		            .SetScrollPosition(
-		                viewModelModifier.ViewModel.BodyElementId,
-		                viewModelModifier.ViewModel.GutterElementId,
-		                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft,
-		                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop)
-		            .ConfigureAwait(false);
-            }
-            
-            if (!viewModelModifier.ShouldReloadVirtualizationResult &&
-            	viewModelModifier.ScrollWasModified)
-            {
-            	// If not already going to reload virtualization result,
-            	// then check if the virtualization needs to be refreshed due to a
-            	// change in scroll position.
-            	//
-            	// This code only needs to run if the scrollbar was modified.
-            	
-            	if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Length > 0)
-            	{
-            		var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
-            		var firstEntryTop = firstEntry.LineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
-            		
-            		if (viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop < firstEntryTop)
-            		{
-            			viewModelModifier.ShouldReloadVirtualizationResult = true;
-            		}
-            		else
-            		{
-            			var bigTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop +
-            				viewModelModifier.ViewModel.TextEditorDimensions.Height;
-            				
-            			var imaginaryLastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
-            			var imaginaryLastEntryTop = (imaginaryLastEntry.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
-            				
-            			if (bigTop > imaginaryLastEntryTop)
-            				viewModelModifier.ShouldReloadVirtualizationResult = true;
-            		}
-            	}
-            	
-            	// A check for horizontal virtualization still needs to be done.
-            	//
-            	// If we didn't already determine the necessity of calculating the virtualization
-            	// result when checking the vertical virtualization, then we check horizontal.
-            	if (!viewModelModifier.ShouldReloadVirtualizationResult)
-            	{
-            		// low end plus width of it
-            	
-            		var leftBoundary = viewModelModifier.ViewModel.VirtualizationResult.LeftVirtualizationBoundary;
-            		var scrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
-            		
-            		if (scrollLeft < (leftBoundary.LeftInPixels + leftBoundary.WidthInPixels))
-            		{
-            			viewModelModifier.ShouldReloadVirtualizationResult = true;
-            		}
-            		else
-            		{
-            			var rightBoundary = viewModelModifier.ViewModel.VirtualizationResult.RightVirtualizationBoundary;
-						var bigLeft = scrollLeft + viewModelModifier.ViewModel.TextEditorDimensions.Width;
-            			
-            			if (bigLeft > rightBoundary.LeftInPixels)
-            			{
-            				viewModelModifier.ShouldReloadVirtualizationResult = true;
-            			}
-            		}
-            	}
-            }
-
-			if (viewModelModifier.ShouldReloadVirtualizationResult)
-			{			
-				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
-	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
-	            	editContext,
-	            	editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri),
-			        viewModelModifier,
-			        CancellationToken.None);
-			}
-            
-			_dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(
-                editContext.AuthenticatedActionKey,
-                editContext,
-                modelModifierNeedRenderList,
-				viewModelModifierNeedRenderList));
-        }
+					successCursorModifierBag = false;
+					cursorModifierBag = null;
+				}
+				else
+				{
+		            successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
+		                viewModelModifier.ViewModel.ViewModelKey,
+		                out cursorModifierBag);
+		        }
+	
+	            if (successCursorModifierBag && cursorModifierBag is not null)
+	            {
+	                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+	                {
+	                    CursorList = cursorModifierBag.List
+	                        .Select(x => x.ToCursor())
+	                        .ToImmutableArray()
+	                };
+	            }
+	            
+	            if (viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
+	            {
+	            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+	            	cursorModifierBag ??= editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+	            	var cursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+	            	
+	            	if (modelModifier is not null)
+	            	{
+	            		ViewModelApi.RevealCursor(
+		            		editContext,
+					        modelModifier,
+					        viewModelModifier,
+					        cursorModifierBag,
+					        cursorModifier);
+	            	}
+	            }
+	            
+	            // This if expression exists below, to check if 'CalculateVirtualizationResult(...)' should be invoked.
+	            //
+	            // But, note that these cannot be combined at the bottom, we need to check if an edit
+	            // reduced the scrollWidth or scrollHeight of the editor's content.
+	            // 
+	            // This is done here, so that the 'ScrollWasModified' bool can be set, and downstream if statements will be entered,
+	            // which go on to scroll the editor.
+	            if (viewModelModifier.ShouldReloadVirtualizationResult)
+				{
+					ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: false);
+				}
+	
+	            if (viewModelModifier.ScrollWasModified)
+	            {
+	                await JsRuntimeTextEditorApi
+			            .SetScrollPosition(
+			                viewModelModifier.ViewModel.BodyElementId,
+			                viewModelModifier.ViewModel.GutterElementId,
+			                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft,
+			                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop)
+			            .ConfigureAwait(false);
+	            }
+	            
+	            if (!viewModelModifier.ShouldReloadVirtualizationResult &&
+	            	viewModelModifier.ScrollWasModified)
+	            {
+	            	// If not already going to reload virtualization result,
+	            	// then check if the virtualization needs to be refreshed due to a
+	            	// change in scroll position.
+	            	//
+	            	// This code only needs to run if the scrollbar was modified.
+	            	
+	            	if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Length > 0)
+	            	{
+	            		var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
+	            		var firstEntryTop = firstEntry.LineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+	            		
+	            		if (viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop < firstEntryTop)
+	            		{
+	            			viewModelModifier.ShouldReloadVirtualizationResult = true;
+	            		}
+	            		else
+	            		{
+	            			var bigTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop +
+	            				viewModelModifier.ViewModel.TextEditorDimensions.Height;
+	            				
+	            			var imaginaryLastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
+	            			var imaginaryLastEntryTop = (imaginaryLastEntry.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+	            				
+	            			if (bigTop > imaginaryLastEntryTop)
+	            				viewModelModifier.ShouldReloadVirtualizationResult = true;
+	            		}
+	            	}
+	            	
+	            	// A check for horizontal virtualization still needs to be done.
+	            	//
+	            	// If we didn't already determine the necessity of calculating the virtualization
+	            	// result when checking the vertical virtualization, then we check horizontal.
+	            	if (!viewModelModifier.ShouldReloadVirtualizationResult)
+	            	{
+	            		// low end plus width of it
+	            	
+	            		var leftBoundary = viewModelModifier.ViewModel.VirtualizationResult.LeftVirtualizationBoundary;
+	            		var scrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
+	            		
+	            		if (scrollLeft < (leftBoundary.LeftInPixels + leftBoundary.WidthInPixels))
+	            		{
+	            			viewModelModifier.ShouldReloadVirtualizationResult = true;
+	            		}
+	            		else
+	            		{
+	            			var rightBoundary = viewModelModifier.ViewModel.VirtualizationResult.RightVirtualizationBoundary;
+							var bigLeft = scrollLeft + viewModelModifier.ViewModel.TextEditorDimensions.Width;
+	            			
+	            			if (bigLeft > rightBoundary.LeftInPixels)
+	            			{
+	            				viewModelModifier.ShouldReloadVirtualizationResult = true;
+	            			}
+	            		}
+	            	}
+	            }
+	
+				if (viewModelModifier.ShouldReloadVirtualizationResult)
+				{			
+					// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
+		            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+		            	editContext,
+		            	editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri),
+				        viewModelModifier,
+				        CancellationToken.None);
+				}
+	        }
+	    }
+	    
+	    _dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(
+	        editContext.AuthenticatedActionKey,
+	        editContext,
+	        modelModifierNeedRenderList,
+			viewModelModifierNeedRenderList));
 	}
 	
 	/// <summary>
