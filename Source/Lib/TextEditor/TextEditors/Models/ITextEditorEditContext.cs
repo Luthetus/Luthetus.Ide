@@ -17,10 +17,11 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public interface ITextEditorEditContext
 {
-	public Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache { get; }
-    public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; }
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache { get; }
-    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?> CursorModifierBagCache { get; }
+	public Dictionary<ResourceUri, TextEditorModelModifier?>? ModelCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, ResourceUri?>? ViewModelToModelResourceUriCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? ViewModelCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?>? CursorModifierBagCache { get; }
+    public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?>? DiffModelCache { get; }
 
     public ITextEditorService TextEditorService { get; }
     public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
