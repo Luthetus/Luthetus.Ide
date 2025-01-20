@@ -58,9 +58,7 @@ public struct OnDoubleClick : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorEditContext(
-            ComponentData.TextEditorViewModelDisplay.TextEditorService,
-            TextEditorService.AuthenticatedActionKey);
+    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
         var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
         var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);

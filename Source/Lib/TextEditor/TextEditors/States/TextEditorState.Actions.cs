@@ -8,76 +8,118 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
+/// <summary>Do not use any of these actions directly.</summary>
 public partial record TextEditorState
 {
-	public record RegisterModelAction(
-            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            TextEditorModel Model)
-        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
+	public struct RegisterModelAction
+	{
+		public RegisterModelAction(TextEditorModel model)
+		{
+			Model = model;
+		}
+	
+		public TextEditorModel Model { get; }
+	}
 
-    public record DisposeModelAction(
-            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            ResourceUri ResourceUri)
-        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
+	public struct DisposeModelAction
+	{
+		public DisposeModelAction(ResourceUri resourceUri)
+		{
+			ResourceUri = resourceUri;
+		}
+		
+		public ResourceUri ResourceUri { get; }
+	}
 
-    public record SetModelAction(
-            Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            ITextEditorEditContext EditContext,
-            TextEditorModelModifier ModelModifier)
-        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
+    public struct SetModelAction
+    {
+    	public SetModelAction(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier)
+    	{
+    		EditContext = editContext;
+    		ModelModifier = modelModifier;
+    	}
+    	
+        public ITextEditorEditContext EditContext { get; }
+        public TextEditorModelModifier ModelModifier { get; }
+    }
 
-	public record RegisterViewModelAction(
-        Key<TextEditorViewModel> ViewModelKey,
-        ResourceUri ResourceUri,
-        Category Category,
-        ITextEditorService TextEditorService,
-        IDispatcher Dispatcher,
-        IDialogService DialogService,
-        IJSRuntime JsRuntime);
+	public struct RegisterViewModelAction
+	{
+		public RegisterViewModelAction(
+			Key<TextEditorViewModel> viewModelKey,
+	        ResourceUri resourceUri,
+	        Category category,
+	        ITextEditorService textEditorService,
+	        IDispatcher dispatcher,
+	        IDialogService dialogService,
+	        IJSRuntime jsRuntime)
+		{
+			ViewModelKey = viewModelKey;
+	        ResourceUri = resourceUri;
+	        Category = category;
+	        TextEditorService = textEditorService;
+	        Dispatcher = dispatcher;
+	        DialogService = dialogService;
+	        DialogService = dialogService;
+		}
+		
+        public Key<TextEditorViewModel> ViewModelKey { get; }
+        public ResourceUri ResourceUri { get; }
+        public Category Category { get; }
+        public ITextEditorService TextEditorService { get; }
+        public IDispatcher Dispatcher { get; }
+        public IDialogService DialogService { get; }
+        public IJSRuntime JsRuntime { get; }
+    }
         
-    public record RegisterViewModelExistingAction(TextEditorViewModel ViewModel);
+    public struct RegisterViewModelExistingAction
+    {
+    	public RegisterViewModelExistingAction(TextEditorViewModel viewModel)
+    	{
+    		ViewModel = viewModel;
+    	}
+    	
+    	public TextEditorViewModel ViewModel { get; }
+    }
 
-    public record DisposeViewModelAction(Key<TextEditorViewModel> ViewModelKey);
+    public struct DisposeViewModelAction
+    {
+    	public DisposeViewModelAction(Key<TextEditorViewModel> viewModelKey)
+    	{
+    		ViewModelKey = viewModelKey;
+    	}
+    	
+    	public Key<TextEditorViewModel> ViewModelKey { get; }
+    }
 
-    public record SetViewModelWithAction(
-        	Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            ITextEditorEditContext EditContext,
-            Key<TextEditorViewModel> ViewModelKey,
-            Func<TextEditorViewModel, TextEditorViewModel> WithFunc)
-        : TextEditorAuthenticatedAction(AuthenticatedActionKey);
+    public struct SetViewModelWithAction
+    {
+    	public SetViewModelWithAction(
+    		ITextEditorEditContext editContext,
+	        Key<TextEditorViewModel> viewModelKey,
+	        Func<TextEditorViewModel, TextEditorViewModel> withFunc)
+	    {
+	    	EditContext = editContext;
+	        ViewModelKey = viewModelKey;
+	        WithFunc = withFunc;
+    	}
+    	
+        public ITextEditorEditContext EditContext { get; }
+        public Key<TextEditorViewModel> ViewModelKey { get; }
+        public Func<TextEditorViewModel, TextEditorViewModel> WithFunc { get; }
+    }
 
 	public struct SetModelAndViewModelRangeAction
 	{
 		public SetModelAndViewModelRangeAction(
-			Key<TextEditorAuthenticatedAction> authenticatedActionKey,
 			ITextEditorEditContext editContext,
 			Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
 			Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList)
 		{
-			if (authenticatedActionKey != TextEditorService.AuthenticatedActionKey)
-	            throw new LuthetusTextEditorException($"Only edits made via the {nameof(ITextEditorService)}.{nameof(ITextEditorService.Post)}(...) method may modify state.");
-		
-			AuthenticatedActionKey = authenticatedActionKey;
 			EditContext = editContext;
 			ModelModifierList = modelModifierList;
 			ViewModelModifierList = viewModelModifierList;
 		}
-		
-		/// <summary>
-		/// It used to be the case that the class 'TextEditorAuthenticatedAction' was being
-		/// inherited, in order to not repeat the assertion that this property ==
-		/// <see cref="TextEditorService.AuthenticatedActionKey"/>.
-		///
-		/// But, this action Type in particular is a very hot path, so
-		/// some experimental changes are being made to see the impact on performance.
-		///
-		/// The idea is, with this firing 20+ times every second during a continued mousemovement event,
-		/// that perhaps making this into a struct could avoid some garbage collection overhead.
-		///
-		/// Not only is it being done for the performance sake, but this Type also lends itself to a
-		/// struct, since it is scoped to the function that invoked the 'Dispatcher.Dispatch(object action)'.
-		/// </summary>
-		public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 		
         public ITextEditorEditContext EditContext { get; }
         public Dictionary<ResourceUri, TextEditorModelModifier?>? ModelModifierList { get; }

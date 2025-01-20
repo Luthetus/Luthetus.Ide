@@ -24,7 +24,6 @@ public interface ITextEditorEditContext
     public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?>? DiffModelCache { get; }
 
     public ITextEditorService TextEditorService { get; }
-    public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 
     /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorModelModifier? GetModelModifier(ResourceUri modelResourceUri, bool isReadonly = false);

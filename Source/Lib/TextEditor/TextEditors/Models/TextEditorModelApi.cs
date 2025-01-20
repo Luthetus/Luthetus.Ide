@@ -37,9 +37,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     #region CREATE_METHODS
     public void RegisterCustom(TextEditorModel model)
     {
-        _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(
-            TextEditorService.AuthenticatedActionKey,
-            model));
+        _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(model));
     }
 
     public void RegisterTemplated(
@@ -57,9 +55,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
             _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
             _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
 
-        _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(
-            TextEditorService.AuthenticatedActionKey,
-            model));
+        _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(model));
     }
     #endregion
 
@@ -298,9 +294,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     #region DELETE_METHODS
     public void Dispose(ResourceUri resourceUri)
     {
-        _dispatcher.Dispatch(new TextEditorState.DisposeModelAction(
-            TextEditorService.AuthenticatedActionKey,
-            resourceUri));
+        _dispatcher.Dispatch(new TextEditorState.DisposeModelAction(resourceUri));
     }
     #endregion
 }

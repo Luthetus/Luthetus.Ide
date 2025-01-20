@@ -45,9 +45,7 @@ public struct OnWheelBatch : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorEditContext(
-            ComponentData.TextEditorViewModelDisplay.TextEditorService,
-            TextEditorService.AuthenticatedActionKey);
+    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
         var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
 

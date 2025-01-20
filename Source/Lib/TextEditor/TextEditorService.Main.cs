@@ -30,11 +30,6 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public partial class TextEditorService : ITextEditorService
 {
-    /// <summary>
-    /// See explanation of this field at: <see cref="TextEditorAuthenticatedAction"/>
-    /// </summary>
-    public static readonly Key<TextEditorAuthenticatedAction> AuthenticatedActionKey = new(Guid.Parse("13831968-9b10-46d1-8d47-842b78238d6a"));
-
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
@@ -334,7 +329,6 @@ public partial class TextEditorService : ITextEditorService
 	    }
 	    
 	    _dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(
-	        editContext.AuthenticatedActionKey,
 	        editContext,
 	        editContext.ModelCache,
 			editContext.ViewModelCache));

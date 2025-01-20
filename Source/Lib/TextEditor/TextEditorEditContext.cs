@@ -15,16 +15,12 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
     public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?>? CursorModifierBagCache { get; private set; }
     public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?>? DiffModelCache { get; private set; }
 
-    public TextEditorEditContext(
-        ITextEditorService textEditorService,
-        Key<TextEditorAuthenticatedAction> authenticatedActionKey)
+    public TextEditorEditContext(ITextEditorService textEditorService)
     {
         TextEditorService = textEditorService;
-        AuthenticatedActionKey = authenticatedActionKey;
     }
 
     public ITextEditorService TextEditorService { get; }
-    public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 
     public TextEditorModelModifier? GetModelModifier(
         ResourceUri modelResourceUri,
