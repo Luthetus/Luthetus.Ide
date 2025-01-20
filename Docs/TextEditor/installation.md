@@ -1,4 +1,4 @@
-# Luthetus.TextEditor (v2.1.0)
+# Luthetus.TextEditor (v3.8.0)
 
 ## Installation
 
