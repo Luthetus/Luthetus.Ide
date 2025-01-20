@@ -86,7 +86,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	{
 		BackgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			nameof(LuthetusExtensionsDotNetInitializer),
 			() =>
 			{
@@ -106,7 +106,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 		{
 			BackgroundTaskService.Enqueue(
 				Key<IBackgroundTask>.NewKey(),
-				ContinuousBackgroundTaskWorker.GetQueueKey(),
+				BackgroundTaskFacts.ContinuousQueueKey,
 				nameof(LuthetusExtensionsDotNetInitializer),
 				() =>
 				{

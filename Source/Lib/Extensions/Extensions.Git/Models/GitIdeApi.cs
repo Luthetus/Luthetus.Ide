@@ -59,7 +59,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git status -u",
             () =>
             {
@@ -110,7 +110,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git get active branch name",
             () =>
             {
@@ -151,7 +151,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git get origin name",
             () =>
             {
@@ -192,7 +192,7 @@ public class GitIdeApi
     {
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
             "git add",
             () =>
 			{
@@ -251,7 +251,7 @@ public class GitIdeApi
     {
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
             "git unstage",
             () =>
 			{
@@ -310,7 +310,7 @@ public class GitIdeApi
     {
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
             "git commit",
             () =>
 			{
@@ -359,7 +359,7 @@ public class GitIdeApi
 
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git new branch",
             () =>
             {
@@ -397,7 +397,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git branch -a",
             () =>
             {
@@ -439,7 +439,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             $"git checkout {branchName}",
             () =>
             {
@@ -478,7 +478,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git push -u origin {branchName will go here}",
             () =>
             {
@@ -519,7 +519,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git pull",
             () =>
             {
@@ -558,7 +558,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git fetch",
             () =>
             {
@@ -600,7 +600,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git log file",
             () =>
             {
@@ -642,7 +642,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git show file",
             () =>
             {
@@ -785,7 +785,7 @@ public class GitIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "git diff file",
             () =>
             {

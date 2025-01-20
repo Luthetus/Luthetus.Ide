@@ -130,10 +130,10 @@
 		BackgroundTaskWorkers:
 		<div>
 			<div>
-				ContinuousBackgroundTaskWorker: @(ContinuousBackgroundTaskWorker.ExecuteTask?.Status.ToString() ?? "null")
+				ContinuousBackgroundTaskWorker: @(BackgroundTaskService.ContinuousTaskWorker.ExecuteTask?.Status.ToString() ?? "null")
 			</div>
 			<div>
-				BlockingBackgroundTaskWorker: @(BlockingBackgroundTaskWorker.ExecuteTask?.Status.ToString() ?? "null")
+				BlockingBackgroundTaskWorker: @(BackgroundTaskService.IndefiniteTaskWorker.ExecuteTask?.Status.ToString() ?? "null")
 			</div>
 		</div>
 	</div>
@@ -172,6 +172,12 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.7.19 </em> (WIP_DATE)</div>
+                <ul>
+                	<li>Large re-work of 'IBackgroundService'.</li>
+                </ul>
+            </div>
+            <div>
                 <div>v <em class="luth_em">0.9.7.18 </em> (2025-01-18)</div>
                 <ul>
                 	<li>CommandNoType: ValueTask instead of Task</li>

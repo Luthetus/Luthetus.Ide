@@ -47,6 +47,8 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
+    [Inject]
+    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -54,12 +56,21 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
     	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
+    
+    /// <summary>
+    /// This is to say that the order of the <Luthetus...Initializer/> components
+    /// in the markup matters?
+    /// </summary>
+    private CancellationTokenSource _cancellationTokenSource = new();
+    
+    private bool _hasStartedContinuousWorker = false;
+    private bool _hasStartedIndefiniteWorker = false;
 
 	protected override void OnInitialized()
 	{
 		BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskService.ContinuousTaskWorker.Queue.Key,
             nameof(LuthetusCommonInitializer),
             async () =>
             {
@@ -156,17 +167,50 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 	
 		base.OnInitialized();
 	}
-	
-	protected override async Task OnAfterRenderAsync(bool firstRender)
+
+	protected override void OnAfterRender(bool firstRender)
 	{
 		if (firstRender)
 		{
+			var token = _cancellationTokenSource.Token;
+
+			if (BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask is null)
+			{
+				_hasStartedContinuousWorker = true;
+
+				BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
+					() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
+					token);
+			}
+
+			if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
+			{
+				if (BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask is null)
+				{
+					_hasStartedIndefiniteWorker = true;
+
+					BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
+						() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
+						token);
+				}
+			}
+
 			BrowserResizeInterop.SubscribeWindowSizeChanged(JsRuntimeCommonApi);
 		}
+
+		base.OnAfterRender(firstRender);
 	}
     
     public void Dispose()
     {
     	BrowserResizeInterop.DisposeWindowSizeChanged(JsRuntimeCommonApi);
+    	_cancellationTokenSource.Cancel();
+    	_cancellationTokenSource.Dispose();
+    	
+    	if (_hasStartedContinuousWorker)
+    		BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = null;
+    		
+    	if (_hasStartedIndefiniteWorker)
+    		BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = null;
     }
 }

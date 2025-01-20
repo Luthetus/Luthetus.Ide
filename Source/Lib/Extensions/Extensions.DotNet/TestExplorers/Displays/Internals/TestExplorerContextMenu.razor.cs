@@ -224,7 +224,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				{
 					BackgroundTaskService.Enqueue(
 						Key<IBackgroundTask>.NewKey(),
-						BlockingBackgroundTaskWorker.GetQueueKey(),
+						BackgroundTaskFacts.IndefiniteQueueKey,
 						"RunTestByFullyQualifiedName",
 						() =>
 						{

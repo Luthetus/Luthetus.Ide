@@ -95,7 +95,7 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 
 			BackgroundTaskService.Enqueue(
 				Key<IBackgroundTask>.NewKey(),
-				ContinuousBackgroundTaskWorker.GetQueueKey(),
+				BackgroundTaskFacts.ContinuousQueueKey,
 				"Submit NuGet Query",
 				async () =>
 				{

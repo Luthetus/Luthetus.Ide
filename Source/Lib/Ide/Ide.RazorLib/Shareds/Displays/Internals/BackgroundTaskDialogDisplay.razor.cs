@@ -19,15 +19,14 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        _continuousBackgroundTaskWorker = (BackgroundTaskQueue)BackgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
-        _continuousBackgroundTaskWorker.ExecutingBackgroundTaskChanged += ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
+        BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTaskChanged += ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
 
         base.OnInitialized();
     }
 
     private void ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged()
     {
-        var executingBackgroundTask = _continuousBackgroundTaskWorker.ExecutingBackgroundTask;
+        var executingBackgroundTask = BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTask;
         
         if (executingBackgroundTask is not null)
         {
@@ -60,6 +59,6 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        _continuousBackgroundTaskWorker.ExecutingBackgroundTaskChanged -= ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
+        BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTaskChanged -= ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
     }
 }

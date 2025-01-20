@@ -1,4 +1,4 @@
-# Luthetus.TextEditor (v2.1.0)
+# Luthetus.TextEditor (v3.8.0)
 
 ## Installation
 
@@ -47,23 +47,6 @@ services.AddLuthetusTextEditor(hostingInformation);
 services.AddFluxor(options => options.ScanAssemblies(
     typeof(LuthetusCommonConfig).Assembly,
     typeof(LuthetusTextEditorConfig).Assembly));
-
-// If NOT running ServerSide then one needs to run:
-// 'hostingInformation.StartBackgroundTaskWorkers(host.Services);'
-//
-// Some builders have 'Build()' invoked then fluent API into their 'Run()' or 'RunAsync()'.
-// This might require one to capture the 'Build()' result
-//
-// This can be done anywhere, so long as the services have been built
-// (by "can be done anywhere" this includes even after the app rendered,
-//  I wonder if you could tie it to the lifecycle of a Blazor component with IDisposable?)
-
-/*
-var host = builder.Build();
-hostingInformation.StartBackgroundTaskWorkers(host.Services);
-
-await host.RunAsync();
-*/
 ```
 
 - Reference the `CSS`

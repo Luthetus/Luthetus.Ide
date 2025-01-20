@@ -107,7 +107,7 @@ public class DotNetSolutionIdeApi
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Set .NET Solution",
 			() => SetDotNetSolutionAsync(inSolutionAbsolutePath));
 	}
@@ -562,7 +562,7 @@ Execution Terminal"));
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Set .NET Solution TreeView",
 			async () => await SetDotNetSolutionTreeViewAsync(dotNetSolutionModelKey).ConfigureAwait(false));
 	}
@@ -692,7 +692,7 @@ Execution Terminal"));
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.ContinuousQueueKey,
 			"Add Existing-Project To Solution",
 			async () => await Website_AddExistingProjectToSolutionAsync(
 				dotNetSolutionModelKey,

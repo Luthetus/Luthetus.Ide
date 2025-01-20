@@ -7,38 +7,24 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 public class BackgroundTaskService : IBackgroundTaskService
 {
 	private readonly Dictionary<Key<IBackgroundTaskQueue>, BackgroundTaskQueue> _queueContainerMap = new();
-	
-	/// <summary>
-	/// Add async blocking enqueue (2024-08-06)
-	/// =======================================
-	/// The thought here is that the async blocking enqueue could
-	/// be done generally two different ways.
-	///
-	/// Way 1: If async enqueue then store in a Dictionary<Key<IBackgroundTask>, TaskCompletionSource>
-	///        Once the 'HandleEvent' is completed then check if there is an entry in the dictionary.
-	///        If there is, then complete it.
-	///
-	/// Way 2: Every BackgroundTask gets a 'TaskCompletionSource?' property which is nullable.
-	///        Once the 'HandleEvent' is completed, then check if the 'TaskCompletionSource?' property
-	///        is non-null.
-	///        If it is non-null, then complete it.
-	/// </summary>
     private readonly Dictionary<Key<IBackgroundTask>, TaskCompletionSource> _taskCompletionSourceMap = new();
     
     private readonly object _taskCompletionSourceLock = new();
-
-    private bool _enqueuesAreDisabled;
-
+    
     public ImmutableArray<IBackgroundTaskQueue> Queues => _queueContainerMap.Values.Select(x => (IBackgroundTaskQueue)x).ToImmutableArray();
+
+	/// <summary>
+	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
+	/// </summary>
+	public BackgroundTaskWorker ContinuousTaskWorker { get; private set; }
+	/// <summary>
+	/// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
+	/// </summary>
+    public BackgroundTaskWorker IndefiniteTaskWorker { get; private set; }
 
     public void Enqueue(IBackgroundTask backgroundTask)
     {
-        // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
-        if (_enqueuesAreDisabled)
-            return;
-
-        _queueContainerMap[backgroundTask.QueueKey]
-			.Enqueue(backgroundTask);
+        _queueContainerMap[backgroundTask.QueueKey].Enqueue(backgroundTask);
     }
 
     public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
@@ -48,17 +34,14 @@ public class BackgroundTaskService : IBackgroundTaskService
     
     public Task EnqueueAsync(IBackgroundTask backgroundTask)
     {
+    	backgroundTask.__TaskCompletionSourceWasCreated = true;
+    	
     	if (backgroundTask.BackgroundTaskKey == Key<IBackgroundTask>.Empty)
     	{
-    		// TODO: This exception message should be written better.
     		throw new LuthetusCommonException(
-    			$"{nameof(EnqueueAsync)} cannot be invoked with an {nameof(IBackgroundTask)} that has an 'backgroundTask.BackgroundTaskKey == Key<IBackgroundTask>.Empty' {nameof(_taskCompletionSourceMap)}");
+    			$"{nameof(EnqueueAsync)} cannot be invoked with an {nameof(IBackgroundTask)} that has a 'BackgroundTaskKey == Key<IBackgroundTask>.Empty'. An empty key disables tracking, and task completion source. The non-async Enqueue(...) will still work however.");
     	}
-    
-        // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
-        if (_enqueuesAreDisabled)
-            return Task.CompletedTask;
-            
+
         TaskCompletionSource taskCompletionSource = new();
             
 		lock (_taskCompletionSourceLock)
@@ -83,8 +66,7 @@ public class BackgroundTaskService : IBackgroundTaskService
 	        }
 		}
 
-        _queueContainerMap[backgroundTask.QueueKey]
-			.Enqueue(backgroundTask);
+        _queueContainerMap[backgroundTask.QueueKey].Enqueue(backgroundTask);
 			
 		return taskCompletionSource.Task;
     }
@@ -115,7 +97,7 @@ public class BackgroundTaskService : IBackgroundTaskService
 	public IBackgroundTask? Dequeue(Key<IBackgroundTaskQueue> queueKey)
     {
         var queue = _queueContainerMap[queueKey];
-        return queue.DequeueOrDefault();
+        return queue.__DequeueOrDefault();
     }
 
     public async Task<IBackgroundTask?> DequeueAsync(
@@ -123,8 +105,8 @@ public class BackgroundTaskService : IBackgroundTaskService
         CancellationToken cancellationToken)
     {
         var queue = _queueContainerMap[queueKey];
-		await queue.DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-        return queue.DequeueOrDefault();
+		await queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+        return queue.__DequeueOrDefault();
     }
 
     public void RegisterQueue(IBackgroundTaskQueue queue)
@@ -132,28 +114,18 @@ public class BackgroundTaskService : IBackgroundTaskService
         _queueContainerMap.Add(queue.Key, (BackgroundTaskQueue)queue);
     }
 
-    public void SetExecutingBackgroundTask(
-        Key<IBackgroundTaskQueue> queueKey,
-        IBackgroundTask? backgroundTask)
-    {
-        var queue = _queueContainerMap[queueKey];
-
-        queue.ExecutingBackgroundTask = backgroundTask;
-    }
-    
     public IBackgroundTaskQueue GetQueue(Key<IBackgroundTaskQueue> queueKey)
     {
         return _queueContainerMap[queueKey];
     }
-
-    public async Task StopAsync(CancellationToken cancellationToken)
+    
+    public void SetContinuousTaskWorker(BackgroundTaskWorker continuousTaskWorker)
     {
-        _enqueuesAreDisabled = true;
-
-        // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
-        while (_queueContainerMap.Values.SelectMany(x => x.BackgroundTaskList).Any())
-        {
-            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
-        }
+    	ContinuousTaskWorker = continuousTaskWorker;
+    }
+    
+    public void SetIndefiniteTaskWorker(BackgroundTaskWorker indefiniteTaskWorker)
+    {
+    	IndefiniteTaskWorker = indefiniteTaskWorker;
     }
 }

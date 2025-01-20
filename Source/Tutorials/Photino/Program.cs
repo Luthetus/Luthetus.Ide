@@ -51,8 +51,6 @@ class Program
             app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
         };
         
-        hostingInformation.StartBackgroundTaskWorkers(app.Services);
-        
         app.Run();
     }
 }
