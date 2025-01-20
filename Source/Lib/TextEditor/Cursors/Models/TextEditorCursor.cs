@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 
-public record TextEditorCursor(
+public record struct TextEditorCursor(
     int LineIndex,
     int ColumnIndex,
     int PreferredColumnIndex,
