@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// <param name="ScrollWidth">The unit of measurement is Pixels (px)</param>
 /// <param name="ScrollHeight">The unit of measurement is Pixels (px)</param>
 /// <param name="MarginScrollHeight">The unit of measurement is Pixels (px)</param>
-public record ScrollbarDimensions(
+public sealed record ScrollbarDimensions(
 	double ScrollLeft,
     double ScrollTop,
     double ScrollWidth,

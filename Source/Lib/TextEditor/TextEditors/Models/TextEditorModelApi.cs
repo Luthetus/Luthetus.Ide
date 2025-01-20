@@ -12,7 +12,7 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class TextEditorModelApi : ITextEditorModelApi
+public sealed class TextEditorModelApi : ITextEditorModelApi
 {
     private readonly ITextEditorService _textEditorService;
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;

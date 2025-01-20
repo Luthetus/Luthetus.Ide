@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// <param name="Height">The unit of measurement is Pixels (px)</param>
 /// <param name="BoundingClientRectLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="BoundingClientRectTop">The unit of measurement is Pixels (px)</param>
-public record TextEditorDimensions(
+public sealed record TextEditorDimensions(
     double Width,
     double Height,
 	double BoundingClientRectLeft,

@@ -20,7 +20,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// <br/><br/>
 /// <inheritdoc cref="ITextEditorModel"/>
 /// </summary>
-public partial class TextEditorModelModifier : ITextEditorModel
+public sealed partial class TextEditorModelModifier : ITextEditorModel
 {
     /// <summary>
     /// <see cref="__SplitIntoTwoPartitions(int)"/> will divide by 2 and give the first split the remainder,

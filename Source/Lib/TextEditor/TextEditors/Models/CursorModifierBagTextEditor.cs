@@ -1,9 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class CursorModifierBagTextEditor
+public sealed class CursorModifierBagTextEditor
 {
     public CursorModifierBagTextEditor(
         Key<TextEditorViewModel> viewModelKey,
