@@ -49,7 +49,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
             textEditorGroupKey,
             Key<TextEditorViewModel>.Empty,
             ImmutableList<Key<TextEditorViewModel>>.Empty,
-            category,
+            category.Value,
             _textEditorService,
             _dispatcher,
             _dialogService,
