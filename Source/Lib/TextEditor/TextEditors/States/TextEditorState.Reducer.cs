@@ -202,7 +202,7 @@ public partial record TextEditorState
 	    		{
 					foreach (var kvpModelModifier in setModelAndViewModelRangeAction.ModelModifierList)
 					{
-						if (kvpModelModifier is null || !kvpModelModifier.Value.WasModified)
+						if (kvpModelModifier.Value is null || !kvpModelModifier.Value.WasModified)
 							continue;
 						
 						// Enumeration was modified shouldn't occur here because only the reducer
@@ -222,7 +222,7 @@ public partial record TextEditorState
 				{
 					foreach (var kvpViewModelModifier in setModelAndViewModelRangeAction.ViewModelModifierList)
 					{
-						if (kvpViewModelModifier is null || !kvpViewModelModifier.Value.WasModified)
+						if (kvpViewModelModifier.Value is null || !kvpViewModelModifier.Value.WasModified)
 							continue;
 							
 						// Enumeration was modified shouldn't occur here because only the reducer
