@@ -1,5 +1,5 @@
-﻿namespace Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+namespace Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 
-public record ElementPositionInPixels(
+public record struct ElementPositionInPixels(
     double Left,
     double Top);

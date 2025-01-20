@@ -15,7 +15,7 @@ namespace Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 /// <br/>
 /// <see cref="TopPositionInPixels"/> == element.getBoundingClientRect().top + element.getBoundingClientRect().height
 /// </summary>
-public record ContextMenuFixedPosition(
+public record struct ContextMenuFixedPosition(
     bool OccurredDueToMouseEvent,
     double LeftPositionInPixels,
     double TopPositionInPixels);

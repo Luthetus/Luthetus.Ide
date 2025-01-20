@@ -1,6 +1,6 @@
 namespace Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 
-public record RelativeCoordinates(
+public record struct RelativeCoordinates(
     double RelativeX,
     double RelativeY,
     double RelativeScrollLeft,
