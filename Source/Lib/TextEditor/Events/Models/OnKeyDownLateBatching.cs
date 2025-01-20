@@ -75,9 +75,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
     }
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public bool EarlyBatchEnabled { get; set; } = true;
-    public bool LateBatchEnabled { get; set; }
+    public bool __TaskCompletionSourceWasCreated { get; set; }
     public KeymapArgs KeymapArgs { get; set; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }

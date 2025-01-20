@@ -48,7 +48,7 @@ public class FolderExplorerIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Set FolderExplorer State",
             async () => await SetFolderExplorerAsync(folderAbsolutePath).ConfigureAwait(false));
     }
@@ -57,7 +57,7 @@ public class FolderExplorerIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Set FolderExplorer TreeView",
             async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false));
     }

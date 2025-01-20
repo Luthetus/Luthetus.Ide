@@ -49,10 +49,6 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
-    [Inject]
-    private ContinuousBackgroundTaskWorker ContinuousBackgroundTaskWorker { get; set; } = null!;
-    [Inject]
-    private BlockingBackgroundTaskWorker BlockingBackgroundTaskWorker { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -68,7 +64,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         {
             BackgroundTaskService.Enqueue(
                 Key<IBackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
+                BackgroundTaskFacts.ContinuousQueueKey,
                 "Initialize Website",
                 async () =>
                 {

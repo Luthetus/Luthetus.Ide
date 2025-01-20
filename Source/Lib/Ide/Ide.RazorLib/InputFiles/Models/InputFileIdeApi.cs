@@ -39,7 +39,7 @@ public class InputFileIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Request InputFileState Form",
             async () => await HandleRequestInputFileStateFormActionAsync(
                     message,

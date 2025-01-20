@@ -194,7 +194,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "New File Action",
             async () =>
             {
@@ -242,7 +242,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "New Directory Action",
             async () =>
             {
@@ -259,7 +259,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Delete File Action",
             async () =>
             {
@@ -284,7 +284,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Copy File Action",
             async () =>
             {
@@ -304,7 +304,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Cut File Action",
             async () =>
             {
@@ -322,7 +322,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Paste File Action",
             async () =>
             {

@@ -54,7 +54,7 @@ public class TerminalWebsite : ITerminal
     {
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
-			BlockingBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
 			() => HandleCommand(terminalCommandRequest));
     }
@@ -63,7 +63,7 @@ public class TerminalWebsite : ITerminal
     {
 		return _backgroundTaskService.EnqueueAsync(
 			Key<IBackgroundTask>.NewKey(),
-			BlockingBackgroundTaskWorker.GetQueueKey(),
+			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
 			() => HandleCommand(terminalCommandRequest));
     }

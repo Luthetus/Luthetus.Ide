@@ -20,7 +20,7 @@ public class StorageCommonApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "WriteToStorage",
             async () =>
             {

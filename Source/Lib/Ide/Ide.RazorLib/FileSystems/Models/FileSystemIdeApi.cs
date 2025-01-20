@@ -38,7 +38,7 @@ public class FileSystemIdeApi
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Save File",
             async () => await SaveFileAsync(
                     absolutePath,

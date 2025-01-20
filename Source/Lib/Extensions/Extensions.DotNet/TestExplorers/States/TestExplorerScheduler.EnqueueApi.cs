@@ -9,7 +9,7 @@ public partial class TestExplorerScheduler
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             "Refresh TestExplorer",
             Task_ConstructTreeView);
     }

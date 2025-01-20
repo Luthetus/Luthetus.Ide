@@ -357,7 +357,7 @@ public class EditorIdeApi
                             {
                                 _backgroundTaskService.Enqueue(
                                         Key<IBackgroundTask>.NewKey(),
-                                        ContinuousBackgroundTaskWorker.GetQueueKey(),
+                                        BackgroundTaskFacts.ContinuousQueueKey,
                                         "Check If Contexts Were Modified",
                                         async () =>
                                         {
