@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// That is to say, if a ViewModel has its underlying Model change, BUT the ViewModel is not currently being rendered.
 /// Then that ViewModel does not react to the Model having changed.
 /// </summary>
-public class DisplayTracker : IDisposable
+public sealed class DisplayTracker : IDisposable
 {
     private readonly object _linksLock = new();
     private readonly ITextEditorService _textEditorService;

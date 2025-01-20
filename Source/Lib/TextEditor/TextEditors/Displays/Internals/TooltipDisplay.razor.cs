@@ -6,5 +6,5 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class TooltipDisplay : ComponentBase
 {
 	[Parameter, EditorRequired]
-    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
+    public TextEditorRenderBatch? RenderBatch { get; set; }
 }

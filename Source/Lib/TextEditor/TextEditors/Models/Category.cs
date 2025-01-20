@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
 /// An optional distinction between many <see cref="TextEditorViewModel"/>(s) which
@@ -12,4 +12,14 @@
 /// <param name="Value">
 /// The category string value itself.
 /// </param>
-public record Category(string Value);
+public record struct Category
+{
+	public static readonly Category Empty = new(string.Empty);
+
+	public Category(string value)
+	{
+		Value = value;
+	}
+
+	public string Value { get; }
+}

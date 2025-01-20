@@ -58,7 +58,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 
 	private async void OnRenderBatchChanged()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	
     	if (renderBatch is null)
     		return;
@@ -85,7 +85,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private void UpdateUi()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return;
     	
@@ -98,7 +98,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 	            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 	
-	            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+	            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 	                return ValueTask.CompletedTask;
 	            
 	            _lineIndexPrevious = primaryCursorModifier.LineIndex;

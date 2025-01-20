@@ -1,6 +1,6 @@
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class TextEditorViewModelModifier
+public sealed class TextEditorViewModelModifier
 {
     public TextEditorViewModelModifier(TextEditorViewModel viewModel)
     {

@@ -15,9 +15,9 @@ public class BodyDriver
 	}
 
 	// Odd public but am middle of thinking
-	public TextEditorRenderBatchValidated _renderBatch;
+	public TextEditorRenderBatch _renderBatch;
 
-	public void GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public void GetRenderFragment(TextEditorRenderBatch renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;
@@ -28,7 +28,7 @@ public class BodyDriver
     
     // public CursorDisplay? CursorDisplayComponent { get; set; }
 
-    public string GetBodyStyleCss(TextEditorRenderBatchValidated renderBatchLocal)
+    public string GetBodyStyleCss(TextEditorRenderBatch renderBatchLocal)
     {
         var gutterWidthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
 
@@ -39,7 +39,7 @@ public class BodyDriver
     }
     
     /* RowSection.razor Open */
-    public string RowSection_GetRowStyleCss(TextEditorRenderBatchValidated renderBatchLocal, int index, double? virtualizedRowLeftInPixels)
+    public string RowSection_GetRowStyleCss(TextEditorRenderBatch renderBatchLocal, int index, double? virtualizedRowLeftInPixels)
     {
         var charMeasurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
 
@@ -56,7 +56,7 @@ public class BodyDriver
     }
 
     public void RowSection_AppendTextEscaped(
-    	TextEditorRenderBatchValidated renderBatchLocal,
+    	TextEditorRenderBatch renderBatchLocal,
         StringBuilder spanBuilder,
         RichCharacter richCharacter,
         string tabKeyOutput,

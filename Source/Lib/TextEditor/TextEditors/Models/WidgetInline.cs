@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// This type takes up some amount of width of a text editor row,
 /// and therefore shifts any the left position of any columns that follow.
 /// </summary>
-public record WidgetInline(
+public sealed record WidgetInline(
     Key<WidgetInline> Key,
     string Title,
     string HtmlElementId,

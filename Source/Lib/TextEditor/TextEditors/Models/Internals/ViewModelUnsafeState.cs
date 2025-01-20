@@ -16,7 +16,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// 
 /// By object-boxing the value types, the hack is more reliable.<br/><br/>
 /// </summary>
-public class ViewModelUnsafeState
+public sealed class ViewModelUnsafeState
 {
     /// <summary>
     /// If one opens a file with the 'Enter' key, they might want focus to then be set on that

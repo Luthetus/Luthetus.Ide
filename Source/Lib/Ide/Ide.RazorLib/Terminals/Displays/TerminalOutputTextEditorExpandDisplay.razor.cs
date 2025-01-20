@@ -214,7 +214,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 						return ValueTask.CompletedTask;
 
 					var localTerminal = Terminal;

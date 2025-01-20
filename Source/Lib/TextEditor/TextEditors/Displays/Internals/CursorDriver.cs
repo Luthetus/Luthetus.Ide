@@ -18,9 +18,9 @@ public class CursorDriver
 	}
 
 	// Odd public but am middle of thinking
-	public TextEditorRenderBatchValidated _renderBatch;
+	public TextEditorRenderBatch _renderBatch;
 
-	public void GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public void GetRenderFragment(TextEditorRenderBatch renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;
@@ -42,17 +42,17 @@ public class CursorDriver
     public string _previouslyObservedCursorDisplayId = string.Empty;
     public double _leftRelativeToParentInPixels;
         
-    public bool GetIncludeContextMenuHelperComponent(TextEditorRenderBatchValidated renderBatchLocal)
+    public bool GetIncludeContextMenuHelperComponent(TextEditorRenderBatch renderBatchLocal)
     {
     	return renderBatchLocal.ViewModelDisplayOptions.IncludeContextMenuHelperComponent;
     }
 
-	public string GetScrollableContainerId(TextEditorRenderBatchValidated renderBatchLocal)
+	public string GetScrollableContainerId(TextEditorRenderBatch renderBatchLocal)
 	{ 
 		return renderBatchLocal.ViewModel.BodyElementId;
 	}
 
-    public string GetCursorDisplayId(TextEditorRenderBatchValidated renderBatchLocal)
+    public string GetCursorDisplayId(TextEditorRenderBatch renderBatchLocal)
     {
     	return renderBatchLocal.ViewModel.PrimaryCursor.IsPrimaryCursor
 	        ? renderBatchLocal?.ViewModel?.PrimaryCursorContentId ?? string.Empty
@@ -267,7 +267,7 @@ public class CursorDriver
         return false;
     }
 
-    public int GetTabIndex(TextEditorRenderBatchValidated renderBatchLocal)
+    public int GetTabIndex(TextEditorRenderBatch renderBatchLocal)
     {
         if (!IsFocusTarget)
             return -1;

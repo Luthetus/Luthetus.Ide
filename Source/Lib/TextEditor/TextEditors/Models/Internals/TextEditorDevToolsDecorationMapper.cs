@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public class TextEditorDevToolsDecorationMapper : IDecorationMapper
+public sealed class TextEditorDevToolsDecorationMapper : IDecorationMapper
 {
     public string Map(byte decorationByte)
     {
