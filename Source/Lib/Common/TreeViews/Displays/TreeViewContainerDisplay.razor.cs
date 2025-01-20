@@ -192,7 +192,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 		{
             BackgroundTaskService.Enqueue(
                 Key<IBackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
+                BackgroundTaskFacts.ContinuousQueueKey,
         	    "TreeView.HandleTreeViewOnContextMenu",
 			    async () => await OnContextMenuFunc
                     .Invoke(_treeViewContextMenuCommandArgs)

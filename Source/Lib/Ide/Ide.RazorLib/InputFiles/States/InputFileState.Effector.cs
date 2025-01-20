@@ -21,7 +21,7 @@ public partial record InputFileState
             {
                 openParentDirectoryAction.BackgroundTaskService.Enqueue(
                     Key<IBackgroundTask>.NewKey(),
-                    ContinuousBackgroundTaskWorker.GetQueueKey(),
+                    BackgroundTaskFacts.ContinuousQueueKey,
                     "Open Parent Directory",
                     async () =>
                     {
@@ -47,7 +47,7 @@ public partial record InputFileState
 
                 refreshCurrentSelectionAction.BackgroundTaskService.Enqueue(
                     Key<IBackgroundTask>.NewKey(),
-                    ContinuousBackgroundTaskWorker.GetQueueKey(),
+                    BackgroundTaskFacts.ContinuousQueueKey,
                     "Refresh Current Selection",
                     async () =>
                     {

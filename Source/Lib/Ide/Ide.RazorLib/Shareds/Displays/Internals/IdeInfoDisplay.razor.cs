@@ -9,9 +9,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class IdeInfoDisplay : ComponentBase
 {
 	[Inject]
-	private ContinuousBackgroundTaskWorker ContinuousBackgroundTaskWorker { get; set; } = null!;
-	[Inject]
-	private BlockingBackgroundTaskWorker BlockingBackgroundTaskWorker { get; set; } = null!;
+	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 

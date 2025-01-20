@@ -29,7 +29,7 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
 	{
 		BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            BackgroundTaskFacts.ContinuousQueueKey,
             nameof(LuthetusExtensionsGitInitializer),
             () =>
             {

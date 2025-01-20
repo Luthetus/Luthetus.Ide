@@ -210,7 +210,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 							BackgroundTaskService.Enqueue(
 								Key<IBackgroundTask>.NewKey(),
-								ContinuousBackgroundTaskWorker.GetQueueKey(),
+								BackgroundTaskFacts.ContinuousQueueKey,
 								"SolutionExplorer_TreeView_MultiSelect_DeleteFiles",
 								async () =>
 								{
