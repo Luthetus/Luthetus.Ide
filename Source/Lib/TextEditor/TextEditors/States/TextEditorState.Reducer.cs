@@ -184,6 +184,9 @@ public partial record TextEditorState
 			so I will put a try-catch here.
 			
 			I'd as well like to figure out what the issue is but it isn't obvious and this is too risky of a thing to mess up.
+			
+		    Additional note: this was happening during the solution wide parse.
+		    It was just "random" while I was using the IDE during the solution wide parse, sometimes it happened sometimes it didn't.
         	*/
         	try
         	{
