@@ -11,11 +11,11 @@ public partial class TextEditorService : ITextEditorService
 {
     public record TextEditorEditContext : ITextEditorEditContext
     {
-        public Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache { get; } = new();
-        public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; } = new();
-        public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache { get; } = new();
-        public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?> CursorModifierBagCache { get; } = new();
-        public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> DiffModelCache { get; } = new();
+        public Dictionary<ResourceUri, TextEditorModelModifier?>? ModelCache { get; private set; }
+        public Dictionary<Key<TextEditorViewModel>, ResourceUri?>? ViewModelToModelResourceUriCache { get; private set; }
+        public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? ViewModelCache { get; private set; }
+        public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?>? CursorModifierBagCache { get; private set; }
+        public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?>? DiffModelCache { get; private set; }
 
         public TextEditorEditContext(
             ITextEditorService textEditorService,
@@ -32,6 +32,8 @@ public partial class TextEditorService : ITextEditorService
             ResourceUri modelResourceUri,
             bool isReadonly = false)
         {
+        	ModelCache ??= new();
+        
         	if (modelResourceUri == ResourceUri.Empty)
         		return null;
         
@@ -53,6 +55,8 @@ public partial class TextEditorService : ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             bool isReadonly = false)
         {
+        	ViewModelToModelResourceUriCache ??= new();
+        	
             if (viewModelKey != Key<TextEditorViewModel>.Empty)
             {
                 if (!ViewModelToModelResourceUriCache.TryGetValue(viewModelKey, out var modelResourceUri))
@@ -73,6 +77,8 @@ public partial class TextEditorService : ITextEditorService
             Key<TextEditorViewModel> viewModelKey,
             bool isReadonly = false)
         {
+        	ViewModelCache ??= new();
+        
             if (viewModelKey != Key<TextEditorViewModel>.Empty)
             {
                 if (!ViewModelCache.TryGetValue(viewModelKey, out var viewModelModifier))
@@ -94,6 +100,8 @@ public partial class TextEditorService : ITextEditorService
         
         public CursorModifierBagTextEditor? GetCursorModifierBag(TextEditorViewModel? viewModel)
         {
+        	CursorModifierBagCache ??= new();
+        	
             if (viewModel is not null)
             {
                 if (!CursorModifierBagCache.TryGetValue(viewModel.ViewModelKey, out var cursorModifierBag))
@@ -125,6 +133,8 @@ public partial class TextEditorService : ITextEditorService
             Key<TextEditorDiffModel> diffModelKey,
             bool isReadonly = false)
         {
+        	DiffModelCache ??= new();
+        	
             if (diffModelKey != Key<TextEditorDiffModel>.Empty)
             {
                 if (!DiffModelCache.TryGetValue(diffModelKey, out var diffModelModifier))
