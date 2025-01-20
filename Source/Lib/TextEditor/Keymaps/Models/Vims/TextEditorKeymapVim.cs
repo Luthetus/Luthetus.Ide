@@ -147,7 +147,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
                         return ValueTask.CompletedTask;
 
                     if (ActiveVimMode == VimMode.Visual)
@@ -193,7 +193,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
                         return ValueTask.CompletedTask;
 
                     if (ActiveVimMode == VimMode.VisualLine)
@@ -243,7 +243,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
                         return ValueTask.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
@@ -278,7 +278,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
                         return ValueTask.CompletedTask;
 
                     commandArgs.TextEditorService.ModelApi.UndoEdit(
@@ -314,7 +314,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 		            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 		            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
                         return ValueTask.CompletedTask;
 
                     commandArgs.TextEditorService.ModelApi.RedoEdit(
@@ -954,7 +954,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 	            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 	            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 	                return ValueTask.CompletedTask;
 
                 var success = VimSentence.TryLex(this, keymapArgument, TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier), out var lexCommand);
@@ -1007,7 +1007,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 				            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 				            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 				
-				            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 				                return ValueTask.CompletedTask;
 
                             commandArgs.TextEditorService.ViewModelApi.MoveCursor(

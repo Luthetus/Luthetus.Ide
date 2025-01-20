@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class TextEditorHeaderRegistry : ITextEditorHeaderRegistry
+public sealed class TextEditorHeaderRegistry : ITextEditorHeaderRegistry
 {
 	/// <summary>
 	/// Map an 'extensionNoPeriod' to a 'Type' that inherits 'ComponentBase'.

@@ -23,7 +23,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// If the index is greater than the count of lines,
 /// then the index is taken to be the count of lines instead.
 /// </param>
-public record WidgetBlock(
+public sealed record WidgetBlock(
     Key<WidgetBlock> Key,
     string Title,
     string HtmlElementId,

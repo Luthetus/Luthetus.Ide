@@ -24,8 +24,10 @@ public partial class TextEditorOptionsState
             false,
             null,
             DEFAULT_CURSOR_WIDTH_IN_PIXELS,
-            TextEditorKeymapFacts.DefaultKeymap,
-            true);
+            true)
+        {
+        	Keymap = TextEditorKeymapFacts.DefaultKeymap,
+        };
     }
 
     public const int DEFAULT_FONT_SIZE_IN_PIXELS = 20;

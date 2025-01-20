@@ -57,16 +57,14 @@ public struct OnMouseMove : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorService.TextEditorEditContext(
-            ComponentData.TextEditorViewModelDisplay.TextEditorService,
-            TextEditorService.AuthenticatedActionKey);
+    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
         var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
         var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
         var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
         var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+        if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.

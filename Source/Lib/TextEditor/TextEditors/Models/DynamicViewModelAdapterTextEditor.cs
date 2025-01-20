@@ -20,7 +20,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// <summary>
 /// This type contains all data, and logic, necessary to render a text editor from within a dialog, a panel tab, or a text editor group tab.
 /// </summary>
-public class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDialog, IDrag
+public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDialog, IDrag
 {
     private readonly Type _dragTabComponentType;
     private readonly Dictionary<string, object?>? _dragTabComponentParameterMap;

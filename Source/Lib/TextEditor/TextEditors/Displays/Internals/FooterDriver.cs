@@ -19,9 +19,9 @@ public class FooterDriver
 	}
 
 	// Odd public but am middle of thinking
-	public TextEditorRenderBatchValidated _renderBatch;
+	public TextEditorRenderBatch _renderBatch;
 
-	public void GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public void GetRenderFragment(TextEditorRenderBatch renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;

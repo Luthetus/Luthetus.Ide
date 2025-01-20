@@ -1099,7 +1099,7 @@ public class TextEditorCommandDefaultFunctions
         var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier?.ViewModel);
         var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
 
-        if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
+        if (definitionViewModelModifier is null || !definitionCursorModifierBag.ConstructorWasInvoked || definitionPrimaryCursorModifier is null)
             return;
 
         var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.Value.StartingIndexInclusive);
