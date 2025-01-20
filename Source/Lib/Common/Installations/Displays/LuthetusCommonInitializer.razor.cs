@@ -62,20 +62,33 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     /// in the markup matters?
     /// </summary>
     private CancellationTokenSource _cancellationTokenSource = new();
+    
+    private bool _hasStartedContinuousWorker = false;
+    private bool _hasStartedIndefiniteWorker = false;
 
 	protected override void OnInitialized()
 	{
 		var token = _cancellationTokenSource.Token;
 	
-		BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
-			() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
-			token);
+		if (BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask is null)
+		{
+			_hasStartedContinuousWorker = true;
+			
+			BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
+				() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
+				token);
+		}
 		
 		if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
 		{
-			BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
-				() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
-				token);
+			if (BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask is null)
+			{
+				_hasStartedIndefiniteWorker = true;
+				
+				BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
+					() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
+					token);
+			}
 		}
 		
 		BackgroundTaskService.Enqueue(
@@ -191,5 +204,11 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     	BrowserResizeInterop.DisposeWindowSizeChanged(JsRuntimeCommonApi);
     	_cancellationTokenSource.Cancel();
     	_cancellationTokenSource.Dispose();
+    	
+    	if (_hasStartedContinuousWorker)
+    		BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = null;
+    		
+    	if (_hasStartedIndefiniteWorker)
+    		BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = null;
     }
 }
