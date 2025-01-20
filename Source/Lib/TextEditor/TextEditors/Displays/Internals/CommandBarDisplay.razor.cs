@@ -12,7 +12,7 @@ public partial class CommandBarDisplay : FluxorComponent
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
+    public TextEditorRenderBatch? RenderBatch { get; set; }
 
     private ElementReference? _commandBarDisplayElementReference;
 

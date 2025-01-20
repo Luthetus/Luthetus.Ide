@@ -21,7 +21,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
+    public TextEditorRenderBatch? RenderBatch { get; set; }
 
 	/// <summary>
 	/// Unit of measurement is pixels (px).

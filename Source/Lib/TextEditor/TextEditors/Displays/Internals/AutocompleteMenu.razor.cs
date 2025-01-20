@@ -75,7 +75,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     
@@ -87,7 +87,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private async Task ReturnFocusToThisAsync()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return;
     		
@@ -121,7 +121,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private MenuRecord GetMenuRecord()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return NoResultsMenuRecord;
     
@@ -207,7 +207,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return;
     
@@ -248,7 +248,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return;
     

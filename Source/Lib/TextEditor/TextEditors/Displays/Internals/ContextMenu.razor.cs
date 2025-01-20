@@ -57,7 +57,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatchValidated renderBatch)
+    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatch renderBatch)
     {
         var cursorSnapshotsList = new TextEditorCursor[] { renderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
 
@@ -72,7 +72,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return;
     	
@@ -99,7 +99,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private Task ReturnFocusToThisAsync()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
@@ -157,7 +157,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
@@ -197,7 +197,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private Task CutMenuOption()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
@@ -216,7 +216,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private Task CopyMenuOption()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     	
@@ -235,7 +235,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private Task PasteMenuOption()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
@@ -254,7 +254,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private Task GoToDefinitionOption()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
@@ -281,7 +281,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     private Task QuickActionsSlashRefactors()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     	

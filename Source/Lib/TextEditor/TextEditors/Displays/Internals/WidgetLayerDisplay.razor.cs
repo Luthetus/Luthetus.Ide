@@ -15,13 +15,13 @@ public partial class WidgetLayerDisplay : ComponentBase
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	
     [Parameter, EditorRequired]
-    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
+    public TextEditorRenderBatch? RenderBatch { get; set; }
     
     /// <summary>
     /// This does not change per WidgetBlock rendered.
     /// So, it should be invoked once and then re-used.
     /// </summary>
-    private string GetBlockWidth(TextEditorRenderBatchValidated localRenderBatch)
+    private string GetBlockWidth(TextEditorRenderBatch localRenderBatch)
     {    	
     	var widthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
@@ -33,7 +33,7 @@ public partial class WidgetLayerDisplay : ComponentBase
     }
     
     private string GetBlockCssStyle(
-    	TextEditorRenderBatchValidated localRenderBatch,
+    	TextEditorRenderBatch localRenderBatch,
     	int lineIndex)
     {
     	var topInPixels = lineIndex * localRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
@@ -54,7 +54,7 @@ public partial class WidgetLayerDisplay : ComponentBase
     ///       ...so long as the amount of widgets rendered isn't large
     ///       this shouldn't be an issue.
     /// </summary>
-    private void CloseWidgetOnClick(TextEditorRenderBatchValidated localRenderBatch, WidgetBlock widget)
+    private void CloseWidgetOnClick(TextEditorRenderBatch localRenderBatch, WidgetBlock widget)
     {
     	TextEditorService.PostUnique(
     		nameof(CloseWidgetOnClick),

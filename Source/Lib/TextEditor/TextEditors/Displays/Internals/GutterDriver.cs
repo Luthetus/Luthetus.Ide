@@ -17,9 +17,9 @@ public class GutterDriver
 	}
 
 	// Odd public but am middle of thinking
-	public TextEditorRenderBatchValidated _renderBatch;
+	public TextEditorRenderBatch _renderBatch;
 
-	public RenderFragment GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public RenderFragment GetRenderFragment(TextEditorRenderBatch renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;
