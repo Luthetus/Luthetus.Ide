@@ -29,7 +29,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
+    public TextEditorRenderBatch? RenderBatch { get; set; }
 
     private bool _lastSeenShowFindOverlayValue = false;
     private bool _lastFindOverlayValueExternallyChangedMarker = false;

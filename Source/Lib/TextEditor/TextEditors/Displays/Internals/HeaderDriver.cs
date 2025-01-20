@@ -34,9 +34,9 @@ public class HeaderDriver
 	}
 
 	// Odd public but am middle of thinking
-	public TextEditorRenderBatchValidated _renderBatch;
+	public TextEditorRenderBatch _renderBatch;
 
-	public void GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public void GetRenderFragment(TextEditorRenderBatch renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;
@@ -44,7 +44,7 @@ public class HeaderDriver
 
 	public string _reloadButtonHtmlElementId = "luth_te_text-editor-header-reload-button";
 	
-    public TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatchValidated renderBatchLocal)
+    public TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatch renderBatchLocal)
     {
         var cursorSnapshotsList = new TextEditorCursor[] { renderBatchLocal.ViewModel.PrimaryCursor }.ToImmutableArray();
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
@@ -340,8 +340,8 @@ public class HeaderDriver
 
         var watchWindowObject = new WatchWindowObject(
             renderBatchLocal,
-            typeof(TextEditorRenderBatchValidated),
-            nameof(TextEditorRenderBatchValidated),
+            typeof(TextEditorRenderBatch),
+            nameof(TextEditorRenderBatch),
             true);
 
         var dialogRecord = new DialogViewModel(

@@ -31,7 +31,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IText
 	
 	private async void OnRenderBatchChanged()
     {
-    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	
     	var fileExtensionLocal = renderBatch is null
     		? string.Empty

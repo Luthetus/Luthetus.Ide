@@ -18,7 +18,7 @@ using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public class TextEditorViewModelApi : ITextEditorViewModelApi
+public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 {
     private readonly ITextEditorService _textEditorService;
     private readonly IBackgroundTaskService _backgroundTaskService;

@@ -30,11 +30,6 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public partial class TextEditorService : ITextEditorService
 {
-    /// <summary>
-    /// See explanation of this field at: <see cref="TextEditorAuthenticatedAction"/>
-    /// </summary>
-    public static readonly Key<TextEditorAuthenticatedAction> AuthenticatedActionKey = new(Guid.Parse("13831968-9b10-46d1-8d47-842b78238d6a"));
-
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
@@ -197,13 +192,13 @@ public partial class TextEditorService : ITextEditorService
 	            if (viewModelModifier is null || !viewModelModifier.WasModified)
 	                return;
 	
-				bool successCursorModifierBag = false;
-				CursorModifierBagTextEditor? cursorModifierBag = null;
+				bool successCursorModifierBag;
+				CursorModifierBagTextEditor cursorModifierBag;
 				
 				if (editContext.CursorModifierBagCache is null)
 				{
 					successCursorModifierBag = false;
-					cursorModifierBag = null;
+					cursorModifierBag = default;
 				}
 				else
 				{
@@ -212,7 +207,7 @@ public partial class TextEditorService : ITextEditorService
 		                out cursorModifierBag);
 		        }
 	
-	            if (successCursorModifierBag && cursorModifierBag is not null)
+	            if (successCursorModifierBag && cursorModifierBag.ConstructorWasInvoked)
 	            {
 	                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 	                {
@@ -225,7 +220,10 @@ public partial class TextEditorService : ITextEditorService
 	            if (viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
 	            {
 	            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
-	            	cursorModifierBag ??= editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+	            	
+	            	if (!cursorModifierBag.ConstructorWasInvoked)
+	            		cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+	            	
 	            	var cursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 	            	
 	            	if (modelModifier is not null)
@@ -334,7 +332,6 @@ public partial class TextEditorService : ITextEditorService
 	    }
 	    
 	    _dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(
-	        editContext.AuthenticatedActionKey,
 	        editContext,
 	        editContext.ModelCache,
 			editContext.ViewModelCache));
@@ -497,7 +494,7 @@ public partial class TextEditorService : ITextEditorService
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
-				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 					return ValueTask.CompletedTask;
 			
 				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
@@ -553,7 +550,7 @@ public partial class TextEditorService : ITextEditorService
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
-				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 					return ValueTask.CompletedTask;
 			
 				if (lineIndex is not null)

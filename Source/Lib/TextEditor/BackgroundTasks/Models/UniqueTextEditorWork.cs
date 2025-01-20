@@ -49,9 +49,7 @@ public struct UniqueTextEditorWork : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorService.TextEditorEditContext(
-            TextEditorService,
-            Luthetus.TextEditor.RazorLib.TextEditorService.AuthenticatedActionKey);
+    	EditContext = new TextEditorEditContext(TextEditorService);
     
 		await _textEditorFunc
             .Invoke(EditContext)

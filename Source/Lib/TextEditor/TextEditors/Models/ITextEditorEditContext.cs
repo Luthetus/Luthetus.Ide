@@ -20,11 +20,10 @@ public interface ITextEditorEditContext
 	public Dictionary<ResourceUri, TextEditorModelModifier?>? ModelCache { get; }
     public Dictionary<Key<TextEditorViewModel>, ResourceUri?>? ViewModelToModelResourceUriCache { get; }
     public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? ViewModelCache { get; }
-    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?>? CursorModifierBagCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor>? CursorModifierBagCache { get; }
     public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?>? DiffModelCache { get; }
 
     public ITextEditorService TextEditorService { get; }
-    public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 
     /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorModelModifier? GetModelModifier(ResourceUri modelResourceUri, bool isReadonly = false);
@@ -35,14 +34,21 @@ public interface ITextEditorEditContext
     /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorViewModelModifier? GetViewModelModifier(Key<TextEditorViewModel> viewModelKey, bool isReadonly = false);
     
+    /// <summary>
+    /// Will return 'default(CursorModifierBagTextEditor)' if not found.
+    /// Check the bool 'CursorModifierBagTextEditor.ConstructorWasInvoked'
+    /// If false, then it was not found. If true, then it was found.
+    ///
+    /// ----
     /// <inheritdoc cref="ITextEditorEditContext"/>
-    public CursorModifierBagTextEditor? GetCursorModifierBag(TextEditorViewModel? viewModel);
+    ///</summary>
+    public CursorModifierBagTextEditor GetCursorModifierBag(TextEditorViewModel? viewModel);
 
     /// <summary>
     /// TODO: Caching for this method?<br/>
     /// <inheritdoc cref="ITextEditorEditContext"/>
     /// </summary>
-    public TextEditorCursorModifier? GetPrimaryCursorModifier(CursorModifierBagTextEditor? cursorModifierBag);
+    public TextEditorCursorModifier? GetPrimaryCursorModifier(CursorModifierBagTextEditor cursorModifierBag);
 
     /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorDiffModelModifier? GetDiffModelModifier(Key<TextEditorDiffModel> diffModelKey, bool isReadonly = false);
