@@ -30,54 +30,70 @@ public class Restoration
 	/// </summary>
 	[Theory]
     // - string.Empty
-	[InlineData(string.Empty, isDirectory: false)]
-	[InlineData(string.Empty, isDirectory: true)]
+	[InlineData("", false)]
+	[InlineData("", true)]
 	// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-	[InlineData(@"/", isDirectory: false)]
-	[InlineData(@"/" isDirectory: true)]
+	[InlineData(@"/", false)]
+	[InlineData(@"/", true)]
 	[InlineData(@"\", false)]
 	[InlineData(@"\", true)]
-	[InlineData(@"//", isDirectory: false)]
-	[InlineData(@"//", isDirectory: true)]
-	[InlineData(@"\\", isDirectory: false)]
-	[InlineData(@"\\", isDirectory: true)]
-	[InlineData(@"///", isDirectory: false)]
-	[InlineData(@"///", isDirectory: true)]
-	[InlineData(@"\\\", isDirectory: false)]
-	[InlineData(@"\\\", isDirectory: true)]
+	[InlineData(@"//", false)]
+	[InlineData(@"//", true)]
+	[InlineData(@"\\", false)]
+	[InlineData(@"\\", true)]
+	[InlineData(@"///", false)]
+	[InlineData(@"///", true)]
+	[InlineData(@"\\\", false)]
+	[InlineData(@"\\\", true)]
 	// - (1, 2, 3) * "C:"
-	[InlineData("C:", isDirectory: false)]
-	[InlineData("C:", isDirectory: true)]
-	[InlineData("C:C:", isDirectory: false)]
-	[InlineData("C:C:", isDirectory: true)]
-	[InlineData("C:C:C:", isDirectory: false)]
-	[InlineData("C:C:C:", isDirectory: true)]
+	[InlineData("C:", false)]
+	[InlineData("C:", true)]
+	[InlineData("C:C:", false)]
+	[InlineData("C:C:", true)]
+	[InlineData("C:C:C:", false)]
+	[InlineData("C:C:C:", true)]
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
-	[InlineData("C:" + '/', isDirectory: false)]
-	[InlineData("C:" + '/', isDirectory: true)]
-	[InlineData("C:" + "\\", isDirectory: false)]
-	[InlineData("C:" + "\\", isDirectory: true)]
+	[InlineData("C:" + "/", false)]
+	[InlineData("C:" + "/", true)]
+	[InlineData("C:" + "\\", false)]
+	[InlineData("C:" + "\\", true)]
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
-	[InlineData('/' + "C:", isDirectory: false)]
-	[InlineData('/' + "C:", isDirectory: true)]
-	[InlineData("\\" + "C:", isDirectory: false)]
-	[InlineData("\\" + "C:", isDirectory: true)]
+	[InlineData("/" + "C:", false)]
+	[InlineData("/" + "C:", true)]
+	[InlineData("\\" + "C:", false)]
+	[InlineData("\\" + "C:", true)]
 	// - "C:abc.txt"
-	[InlineData("C:abc.txt", isDirectory: false)]
-	[InlineData("C:abc.txt", isDirectory: true)]
+	[InlineData("C:abc.txt", false)]
+	[InlineData("C:abc.txt", true)]
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
-	[InlineData("C:" + '/' + "abc.txt", isDirectory: false)]
-	[InlineData("C:" + '/' + "abc.txt", isDirectory: true)]
-	[InlineData("C:" + "\\" + "abc.txt", isDirectory: false)]
-	[InlineData("C:" + "\\" + "abc.txt", isDirectory: true)]
+	[InlineData("C:" + "/" + "abc.txt", false)]
+	[InlineData("C:" + "/" + "abc.txt", true)]
+	[InlineData("C:" + "\\" + "abc.txt", false)]
+	[InlineData("C:" + "\\" + "abc.txt", true)]
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
-	[InlineData('/' + "C:" + "abc.txt", isDirectory: false)]
-	[InlineData('/' + "C:" + "abc.txt", isDirectory: true)]
-	[InlineData("\\" + "C:" + "abc.txt", isDirectory: false)]
-	[InlineData("\\" + "C:" + "abc.txt", isDirectory: true)]
+	[InlineData("/" + "C:" + "abc.txt", false)]
+	[InlineData("/" + "C:" + "abc.txt", true)]
+	[InlineData("\\" + "C:" + "abc.txt", false)]
+	[InlineData("\\" + "C:" + "abc.txt", true)]
 	public void Root_Directory(string absolutePathString, bool isDirectory)
 	{
-		IEnvironmentProvider environmentProvider = new InMemoryEnvironmentProvider();
+		var environmentProvider = new InMemoryEnvironmentProvider();
+		
+		var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
+		
+		
+        Assert.Null(absolutePath.ParentDirectory);
+        Assert.Equal(string.Empty, absolutePath.ExactInput);
+        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
+        Assert.False(absolutePath.IsDirectory);
+        Assert.NotNull(absolutePath.EnvironmentProvider);
+        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
+        Assert.Equal(string.Empty, absolutePath.ExtensionNoPeriod);
+        Assert.Null(absolutePath.RootDrive);
+        Assert.Equal(string.Empty, absolutePath.Value);
+        Assert.Equal(string.Empty, absolutePath.NameWithExtension);
+        Assert.False(absolutePath.IsRootDirectory);
+        Assert.Equal(0, absolutePath.GetAncestorDirectoryList().Count);
 		
 		throw new NotImplementedException();
 	}
