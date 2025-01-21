@@ -32,6 +32,9 @@ public class Restoration
 		// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
 		// - "C:abc.txt"
 		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
+		// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
+		//
+		// TODO: This could probably be made into a scripting language that generates unit tests.
 	
 		IEnvironmentProvider environmentProvider = new InMemoryEnvironmentProvider();
 		
@@ -54,34 +57,48 @@ public class Restoration
 		// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
 		{
 			// - 1 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-			absolutePathString = string.Empty;
 			{
-				isDirectory = false;
-				throw new NotImplementedException();
+				// - 1 * DirectorySeparatorChar)
+				absolutePathString = string.Empty;
+				{
+					isDirectory = false;
+					throw new NotImplementedException();
+				}
+				// - 1 * AltDirectorySeparatorChar
+				{
+					isDirectory = true;
+					throw new NotImplementedException();
+				}
 			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
+			
 			// - 2 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-			absolutePathString = string.Empty;
 			{
-				isDirectory = false;
-				throw new NotImplementedException();
+				// - 2 * DirectorySeparatorChar
+				absolutePathString = string.Empty;
+				{
+					isDirectory = false;
+					throw new NotImplementedException();
+				}
+				// - 2 * AltDirectorySeparatorChar
+				{
+					isDirectory = true;
+					throw new NotImplementedException();
+				}
 			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
+			
 			// - 3 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-			absolutePathString = string.Empty;
 			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
+				// - 3 * DirectorySeparatorChar
+				absolutePathString = string.Empty;
+				{
+					isDirectory = false;
+					throw new NotImplementedException();
+				}
+				// - 3 * AltDirectorySeparatorChar
+				{
+					isDirectory = true;
+					throw new NotImplementedException();
+				}
 			}
 		}
 		
@@ -193,6 +210,30 @@ public class Restoration
 				throw new NotImplementedException();
 			}
 			// - "C:" + AltDirectorySeparatorChar + "abc.txt"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+		}
+		
+		// (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
+		{
+			// DirectorySeparatorChar + "C:" + "abc.txt"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+			// AltDirectorySeparatorChar + "C:" + "abc.txt"
 			absolutePathString = string.Empty;
 			{
 				isDirectory = false;
