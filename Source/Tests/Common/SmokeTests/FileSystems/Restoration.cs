@@ -75,26 +75,48 @@ public class Restoration
 	[InlineData("/" + "C:" + "abc.txt", true)]
 	[InlineData("\\" + "C:" + "abc.txt", false)]
 	[InlineData("\\" + "C:" + "abc.txt", true)]
-	public void Root_Directory(string absolutePathString, bool isDirectory)
+	public void Root_Directory(
+		string absolutePathString,
+		bool isDirectory,
+		string expectedNameNoExtension,
+		string expectedExtensionNoPeriod,
+		string expectedValue,
+		string expectedNameWithExtension,
+		int ancestoryDirectoryListCount,
+		bool parentDirectoryShouldBeNull,
+		bool rootDriveShouldBeNull,
+		bool shouldBeRootDirectory)
 	{
 		var environmentProvider = new InMemoryEnvironmentProvider();
 		
 		var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
-		
-		
-        Assert.Null(absolutePath.ParentDirectory);
-        Assert.Equal(string.Empty, absolutePath.ExactInput);
-        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-        Assert.False(absolutePath.IsDirectory);
-        Assert.NotNull(absolutePath.EnvironmentProvider);
-        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-        Assert.Equal(string.Empty, absolutePath.ExtensionNoPeriod);
-        Assert.Null(absolutePath.RootDrive);
-        Assert.Equal(string.Empty, absolutePath.Value);
-        Assert.Equal(string.Empty, absolutePath.NameWithExtension);
-        Assert.False(absolutePath.IsRootDirectory);
-        Assert.Equal(0, absolutePath.GetAncestorDirectoryList().Count);
-		
-		throw new NotImplementedException();
+
+        Assert.Equal(expectedNameNoExtension, absolutePath.NameNoExtension);
+        Assert.Equal(expectedExtensionNoPeriod, absolutePath.ExtensionNoPeriod);
+        Assert.Equal(expectedValue, absolutePath.Value);
+        Assert.Equal(expectedNameWithExtension, absolutePath.NameWithExtension);
+        Assert.Equal(ancestoryDirectoryListCount, absolutePath.GetAncestorDirectoryList().Count);
+
+		if (parentDirectoryShouldBeNull)
+			Assert.Null(absolutePath.ParentDirectory);
+		else
+			Assert.NotNull(absolutePath.ParentDirectory);
+
+		if (rootDriveShouldBeNull)
+			Assert.Null(absolutePath.RootDrive);
+		else
+			Assert.NotNull(absolutePath.RootDrive);
+
+		if (shouldBeRootDirectory)
+			Assert.True(absolutePath.IsRootDirectory);
+		else
+			Assert.False(absolutePath.IsRootDirectory);
+
+		Assert.Equal(isDirectory, absolutePath.IsDirectory);
+
+		// Insignificant assertions.
+		Assert.NotNull(absolutePath.EnvironmentProvider);
+		Assert.Equal(absolutePathString, absolutePath.ExactInput);
+		Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
 	}
 }
