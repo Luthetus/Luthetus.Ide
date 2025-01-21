@@ -27,80 +27,111 @@ public class Restoration
 	/// - "C:abc.txt"
 	/// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
 	/// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
+	/// 
+	/// Passing in the expected values is a pain:
+	/// ````[InlineData("", false, "expectedNameNoExtension", "expectedExtensionNoPeriod", "expectedValue", "expectedNameWithExtension", ancestoryDirectoryListCount, parentDirectoryShouldBeNull, rootDriveShouldBeNull, shouldBeRootDirectory)]
 	/// </summary>
 	[Theory]
-    // - string.Empty
-	[InlineData("", false)]
-	[InlineData("", true)]
+
+	// - string.Empty
+	//
+	[InlineData(/*absolutePathString*/"", /*isDirectory*/false, /*expectedNameNoExtension*/"", /*expectedExtensionNoPeriod*/"", /*expectedValue*/"", /*expectedNameWithExtension*/"", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, true, true)]
+	[InlineData(/*absolutePathString*/"", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	
 	// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-	[InlineData(@"/", false)]
-	[InlineData(@"/", true)]
-	[InlineData(@"\", false)]
-	[InlineData(@"\", true)]
-	[InlineData(@"//", false)]
-	[InlineData(@"//", true)]
-	[InlineData(@"\\", false)]
-	[InlineData(@"\\", true)]
-	[InlineData(@"///", false)]
-	[InlineData(@"///", true)]
-	[InlineData(@"\\\", false)]
-	[InlineData(@"\\\", true)]
+	//
+	[InlineData(/*absolutePathString*/@"/", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"/", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"\", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"\", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"//", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"//", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"\\", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"\\", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"///", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"///", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"\\\", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/@"\\\", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - (1, 2, 3) * "C:"
-	[InlineData("C:", false)]
-	[InlineData("C:", true)]
-	[InlineData("C:C:", false)]
-	[InlineData("C:C:", true)]
-	[InlineData("C:C:C:", false)]
-	[InlineData("C:C:C:", true)]
+	//
+	[InlineData(/*absolutePathString*/"C:", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:C:", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:C:", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:C:C:", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:C:C:", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
-	[InlineData("C:" + "/", false)]
-	[InlineData("C:" + "/", true)]
-	[InlineData("C:" + "\\", false)]
-	[InlineData("C:" + "\\", true)]
+	//
+	[InlineData(/*absolutePathString*/"C:" + "/", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "/", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "\\", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "\\", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
-	[InlineData("/" + "C:", false)]
-	[InlineData("/" + "C:", true)]
-	[InlineData("\\" + "C:", false)]
-	[InlineData("\\" + "C:", true)]
+	//
+	[InlineData(/*absolutePathString*/"/" + "C:", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"/" + "C:", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"\\" + "C:", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"\\" + "C:", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - "C:abc.txt"
-	[InlineData("C:abc.txt", false)]
-	[InlineData("C:abc.txt", true)]
+	//
+	[InlineData(/*absolutePathString*/"C:abc.txt", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:abc.txt", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - "C:abc."
-	[InlineData("C:abc.", false)]
-	[InlineData("C:abc.", true)]
+	//
+	[InlineData(/*absolutePathString*/"C:abc.", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:abc.", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - "C:abc"
-	[InlineData("C:abc", false)]
-	[InlineData("C:abc", true)]
+	//
+	[InlineData(/*absolutePathString*/"C:abc", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:abc", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
-	[InlineData("C:" + "/" + "abc.txt", false)]
-	[InlineData("C:" + "/" + "abc.txt", true)]
-	[InlineData("C:" + "\\" + "abc.txt", false)]
-	[InlineData("C:" + "\\" + "abc.txt", true)]
+	//
+	[InlineData(/*absolutePathString*/"C:" + "/" + "abc.txt", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "/" + "abc.txt", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "\\" + "abc.txt", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "\\" + "abc.txt", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc."
-	[InlineData("C:" + "/" + "abc.", false)]
-	[InlineData("C:" + "/" + "abc.", true)]
-	[InlineData("C:" + "\\" + "abc.", false)]
-	[InlineData("C:" + "\\" + "abc.", true)]
+	//
+	[InlineData(/*absolutePathString*/"C:" + "/" + "abc.", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "/" + "abc.", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "\\" + "abc.", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "\\" + "abc.", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc"
-	[InlineData("C:" + "/" + "abc", false)]
-	[InlineData("C:" + "/" + "abc", true)]
-	[InlineData("C:" + "\\" + "abc", false)]
-	[InlineData("C:" + "\\" + "abc", true)]
+	//
+	[InlineData(/*absolutePathString*/"C:" + "/" + "abc", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "/" + "abc", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "\\" + "abc", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"C:" + "\\" + "abc", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
-	[InlineData("/" + "C:" + "abc.txt", false)]
-	[InlineData("/" + "C:" + "abc.txt", true)]
-	[InlineData("\\" + "C:" + "abc.txt", false)]
-	[InlineData("\\" + "C:" + "abc.txt", true)]
+	//
+	[InlineData(/*absolutePathString*/"/" + "C:" + "abc.txt", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"/" + "C:" + "abc.txt", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"\\" + "C:" + "abc.txt", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"\\" + "C:" + "abc.txt", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc."
-	[InlineData("/" + "C:" + "abc.", false)]
-	[InlineData("/" + "C:" + "abc.", true)]
-	[InlineData("\\" + "C:" + "abc.", false)]
-	[InlineData("\\" + "C:" + "abc.", true)]
+	//
+	[InlineData(/*absolutePathString*/"/" + "C:" + "abc.", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"/" + "C:" + "abc.", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"\\" + "C:" + "abc.", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"\\" + "C:" + "abc.", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc"
-	[InlineData("/" + "C:" + "abc", false)]
-	[InlineData("/" + "C:" + "abc", true)]
-	[InlineData("\\" + "C:" + "abc", false)]
-	[InlineData("\\" + "C:" + "abc", true)]
+	//
+	[InlineData(/*absolutePathString*/"/" + "C:" + "abc", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"/" + "C:" + "abc", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"\\" + "C:" + "abc", /*isDirectory*/false, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
+	[InlineData(/*absolutePathString*/"\\" + "C:" + "abc", /*isDirectory*/true, /*expectedNameNoExtension*/"expectedNameNoExtension", /*expectedExtensionNoPeriod*/"expectedExtensionNoPeriod", /*expectedValue*/"expectedValue", /*expectedNameWithExtension*/"expectedNameWithExtension", /*ancestoryDirectoryListCount*/ancestoryDirectoryListCount, /*parentDirectoryShouldBeNull*/parentDirectoryShouldBeNull, /*rootDriveShouldBeNull*/rootDriveShouldBeNull, /*shouldBeRootDirectory*/shouldBeRootDirectory)]
 	public void Root_Directory(
 		string absolutePathString,
 		bool isDirectory,
