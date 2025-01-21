@@ -33,23 +33,30 @@ public class Restoration
 	/// </summary>
 	[Theory]
 
+	#region DONE
+
 	// - string.Empty
 	//
 	[InlineData(/*absolutePathString*/"", /*isDirectory*/false, /*expectedNameNoExtension*/"", /*expectedExtensionNoPeriod*/"",  /*expectedValue*/"",  /*expectedNameWithExtension*/"",  /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/"", /*isDirectory*/true,  /*expectedNameNoExtension*/"", /*expectedExtensionNoPeriod*/"/", /*expectedValue*/"/", /*expectedNameWithExtension*/"/", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
+	[InlineData(/*absolutePathString*/"", /*isDirectory*/true,  /*expectedNameNoExtension*/"", /*expectedExtensionNoPeriod*/"/", /*expectedValue*/"/", /*expectedNameWithExtension*/"/", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
 	
 	// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
 	//
-	[InlineData(/*absolutePathString*/@"/",   /*isDirectory*/false, /*expectedNameNoExtension*/@"/", /*expectedExtensionNoPeriod*/@"/", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"/", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"/",   /*isDirectory*/true,  /*expectedNameNoExtension*/@"/", /*expectedExtensionNoPeriod*/@"/", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"/", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"\",   /*isDirectory*/false, /*expectedNameNoExtension*/@"\", /*expectedExtensionNoPeriod*/@"\", /*expectedValue*/@"\", /*expectedNameWithExtension*/@"\", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"\",   /*isDirectory*/true,  /*expectedNameNoExtension*/@"\", /*expectedExtensionNoPeriod*/@"\", /*expectedValue*/@"\", /*expectedNameWithExtension*/@"\", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"//",  /*isDirectory*/false, /*expectedNameNoExtension*/@"//", /*expectedExtensionNoPeriod*/@"//", /*expectedValue*/@"//", /*expectedNameWithExtension*/@"//", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"//",  /*isDirectory*/true,  /*expectedNameNoExtension*/@"//", /*expectedExtensionNoPeriod*/@"//", /*expectedValue*/@"//", /*expectedNameWithExtension*/@"//", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"\\",  /*isDirectory*/false, /*expectedNameNoExtension*/@"\\", /*expectedExtensionNoPeriod*/@"\\", /*expectedValue*/@"\\", /*expectedNameWithExtension*/@"\\", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"\\",  /*isDirectory*/true,  /*expectedNameNoExtension*/@"\\", /*expectedExtensionNoPeriod*/@"\\", /*expectedValue*/@"\\", /*expectedNameWithExtension*/@"\\", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"///", /*isDirectory*/false, /*expectedNameNoExtension*/@"///", /*expectedExtensionNoPeriod*/@"///", /*expectedValue*/@"///", /*expectedNameWithExtension*/@"///", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
-	[InlineData(/*absolutePathString*/@"///", /*isDirectory*/true,  /*expectedNameNoExtension*/@"///", /*expectedExtensionNoPeriod*/@"///", /*expectedValue*/@"///", /*expectedNameWithExtension*/@"///", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
+	[InlineData(/*absolutePathString*/@"/",   /*isDirectory*/false, /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	[InlineData(/*absolutePathString*/@"/",   /*isDirectory*/true,  /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"/", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"/", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	[InlineData(/*absolutePathString*/@"//",  /*isDirectory*/false, /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	[InlineData(/*absolutePathString*/@"//",  /*isDirectory*/true,  /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"/", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"/", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	[InlineData(/*absolutePathString*/@"///", /*isDirectory*/false, /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"", /*expectedValue*/@"///", /*expectedNameWithExtension*/@"", /*ancestoryDirectoryListCount*/3, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	[InlineData(/*absolutePathString*/@"///", /*isDirectory*/true,  /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"/", /*expectedValue*/@"///", /*expectedNameWithExtension*/@"/", /*ancestoryDirectoryListCount*/2, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	[InlineData(/*absolutePathString*/@"\",   /*isDirectory*/false, /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	[InlineData(/*absolutePathString*/@"\",   /*isDirectory*/true,  /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"/", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"/", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	[InlineData(/*absolutePathString*/@"\\",  /*isDirectory*/false, /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+
+	#endregion
+
+	[InlineData(/*absolutePathString*/@"\\",  /*isDirectory*/true,  /*expectedNameNoExtension*/@"", /*expectedExtensionNoPeriod*/@"/", /*expectedValue*/@"/", /*expectedNameWithExtension*/@"/", /*ancestoryDirectoryListCount*/1, /*parentDirectoryShouldBeNull*/false, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/false)]
+	
+	#region TODO
 	[InlineData(/*absolutePathString*/@"\\\", /*isDirectory*/false, /*expectedNameNoExtension*/@"\\\", /*expectedExtensionNoPeriod*/@"\\\", /*expectedValue*/@"\\\", /*expectedNameWithExtension*/@"\\\", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
 	[InlineData(/*absolutePathString*/@"\\\", /*isDirectory*/true,  /*expectedNameNoExtension*/@"\\\", /*expectedExtensionNoPeriod*/@"\\\", /*expectedValue*/@"\\\", /*expectedNameWithExtension*/@"\\\", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
 
@@ -132,6 +139,7 @@ public class Restoration
 	[InlineData(/*absolutePathString*/"/" + "C:" + "abc",  /*isDirectory*/true,  /*expectedNameNoExtension*/"/" + "C:" + "abc", /*expectedExtensionNoPeriod*/"/" + "C:" + "abc", /*expectedValue*/"/" + "C:" + "abc", /*expectedNameWithExtension*/"/" + "C:" + "abc", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
 	[InlineData(/*absolutePathString*/"\\" + "C:" + "abc", /*isDirectory*/false, /*expectedNameNoExtension*/"\\" + "C:" + "abc", /*expectedExtensionNoPeriod*/"\\" + "C:" + "abc", /*expectedValue*/"\\" + "C:" + "abc", /*expectedNameWithExtension*/"\\" + "C:" + "abc", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
 	[InlineData(/*absolutePathString*/"\\" + "C:" + "abc", /*isDirectory*/true,  /*expectedNameNoExtension*/"\\" + "C:" + "abc", /*expectedExtensionNoPeriod*/"\\" + "C:" + "abc", /*expectedValue*/"\\" + "C:" + "abc", /*expectedNameWithExtension*/"\\" + "C:" + "abc", /*ancestoryDirectoryListCount*/0, /*parentDirectoryShouldBeNull*/true, /*rootDriveShouldBeNull*/true, /*shouldBeRootDirectory*/true)]
+	#endregion
 	public void Root_Directory(
 		string absolutePathString,
 		bool isDirectory,
