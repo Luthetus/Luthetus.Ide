@@ -65,7 +65,7 @@ public partial interface IEnvironmentProvider
                 	RootDrive = new FileSystemDrive(tokenBuilder.ToString(), EnvironmentProvider);
             		tokenBuilder.Clear();
             		
-            		formattedBuilder.Append(RootDrive.DriveNameAsPath);
+            		//formattedBuilder.Append(RootDrive.DriveNameAsPath);
                 }
                 else
                 {

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
@@ -8,22 +8,6 @@ namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
 /// </summary>
 public class AbsolutePathTests
 {
-    /// <summary>
-    /// <see cref="AbsolutePath(string, bool, IEnvironmentProvider)"/>
-    /// <br/>----<br/>
-    /// <see cref="AbsolutePath.ParentDirectory"/>
-    /// <see cref="AbsolutePath.ExactInput"/>
-    /// <see cref="AbsolutePath.PathType"/>
-    /// <see cref="AbsolutePath.IsDirectory"/>
-    /// <see cref="AbsolutePath.EnvironmentProvider"/>
-    /// <see cref="AbsolutePath.AncestorDirectoryList"/>
-    /// <see cref="AbsolutePath.NameNoExtension"/>
-    /// <see cref="AbsolutePath.ExtensionNoPeriod"/>
-    /// <see cref="AbsolutePath.RootDrive"/>
-    /// <see cref="AbsolutePath.Value"/>
-    /// <see cref="AbsolutePath.NameWithExtension"/>
-    /// <see cref="AbsolutePath.IsRootDirectory"/>
-    /// </summary>
     [Fact]
     public void Constructor()
     {
