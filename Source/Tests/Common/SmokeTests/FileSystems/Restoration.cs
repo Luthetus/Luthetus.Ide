@@ -17,454 +17,75 @@ public class Restoration
 	///       So the assertion needs to be made, "what do we do in this scenario".
 	///
 	/// Sort of a snapshot test to check for consistency.
+	///
+	/// Foreach case do both 'isDirectory: false' and 'isDirectory: true':
+	/// - string.Empty
+	/// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
+	/// - (1, 2, 3) * "C:"
+	/// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
+	/// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
+	/// - "C:abc.txt"
+	/// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
+	/// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
 	/// </summary>
-	[Fact]
+	[Theory]
+    // - string.Empty
+	[InlineData(string.Empty, isDirectory: false)]
+	[InlineData(string.Empty, isDirectory: true)]
+	// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
+	[InlineData("1 * DirectorySeparatorChar", isDirectory: false)]
+	[InlineData("1 * DirectorySeparatorChar" isDirectory: true)]
+	[InlineData("1 * AltDirectorySeparatorChar", false)]
+	[InlineData("1 * AltDirectorySeparatorChar", true)]
+	[InlineData("2 * DirectorySeparatorChar", isDirectory: false)]
+	[InlineData("2 * DirectorySeparatorChar", isDirectory: true)]
+	[InlineData("2 * AltDirectorySeparatorChar", isDirectory: false)]
+	[InlineData("2 * AltDirectorySeparatorChar", isDirectory: true)]
+	[InlineData("3 * DirectorySeparatorChar", isDirectory: false)]
+	[InlineData("3 * DirectorySeparatorChar", isDirectory: true)]
+	[InlineData("3 * AltDirectorySeparatorChar", isDirectory: false)]
+	[InlineData("3 * AltDirectorySeparatorChar", isDirectory: true)]
+	// - (1, 2, 3) * "C:"
+	[InlineData(1 * "C:", isDirectory: false)]
+	[InlineData(1 * "C:", isDirectory: true)]
+	[InlineData(2 * "C:", isDirectory: false)]
+	[InlineData(2 * "C:", isDirectory: true)]
+	[InlineData(3 * "C:", isDirectory: false)]
+	[InlineData(3 * "C:", isDirectory: true)]
+	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
+	[InlineData("C:" + DirectorySeparatorChar, isDirectory: false)]
+	[InlineData("C:" + DirectorySeparatorChar, isDirectory: true)]
+	[InlineData("C:" + AltDirectorySeparatorChar, isDirectory: false)]
+	[InlineData("C:" + AltDirectorySeparatorChar, isDirectory: true)]
+	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
+	[InlineData(DirectorySeparatorChar + "C:", isDirectory: false)]
+	[InlineData(DirectorySeparatorChar + "C:", isDirectory: true)]
+	[InlineData(AltDirectorySeparatorChar + "C:", isDirectory: false)]
+	[InlineData(AltDirectorySeparatorChar + "C:", isDirectory: true)]
+	// - "C:abc.txt"
+	[InlineData("C:abc.txt", isDirectory: false)]
+	[InlineData("C:abc.txt", isDirectory: true)]
+	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
+	[InlineData("C:" + DirectorySeparatorChar + "abc.txt", isDirectory: false)]
+	[InlineData("C:" + DirectorySeparatorChar + "abc.txt", isDirectory: true)]
+	[InlineData("C:" + AltDirectorySeparatorChar + "abc.txt", isDirectory: false)]
+	[InlineData("C:" + AltDirectorySeparatorChar + "abc.txt", isDirectory: true)]
+	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
+	[InlineData(DirectorySeparatorChar + "C:" + "abc.txt", isDirectory: false)]
+	[InlineData(DirectorySeparatorChar + "C:" + "abc.txt", isDirectory: true)]
+	[InlineData(AltDirectorySeparatorChar + "C:" + "abc.txt", isDirectory: false)]
+	[InlineData(AltDirectorySeparatorChar + "C:" + "abc.txt", isDirectory: true)]
+    
 	public void Root_Directory()
 	{
-		// This list is unreliable since it is a comment,
-		// but it helps visualize the cases in this single '[Fact]' since collapsible lines in the editor isn't implemented yet.
-		// 
-		// Foreach case do both 'isDirectory: false' and 'isDirectory: true':
-		// - string.Empty
-		// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-		// - (1, 2, 3) * "C:"
-		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
-		// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
-		// - "C:abc.txt"
-		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
-		// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
-		//
-		// TODO: This could probably be made into a scripting language that generates unit tests.
-	
 		IEnvironmentProvider environmentProvider = new InMemoryEnvironmentProvider();
 		
 		string absolutePathString;
 		bool isDirectory;
 		
-		// - string.Empty
-		{
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-		}
 		
-		// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-		{
-			// - 1 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-			{
-				// - 1 * DirectorySeparatorChar)
-				absolutePathString = string.Empty;
-				{
-					isDirectory = false;
-					throw new NotImplementedException();
-				}
-				// - 1 * AltDirectorySeparatorChar
-				{
-					isDirectory = true;
-					throw new NotImplementedException();
-				}
-			}
-			
-			// - 2 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-			{
-				// - 2 * DirectorySeparatorChar
-				absolutePathString = string.Empty;
-				{
-					isDirectory = false;
-					throw new NotImplementedException();
-				}
-				// - 2 * AltDirectorySeparatorChar
-				{
-					isDirectory = true;
-					throw new NotImplementedException();
-				}
-			}
-			
-			// - 3 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-			{
-				// - 3 * DirectorySeparatorChar
-				absolutePathString = string.Empty;
-				{
-					isDirectory = false;
-					throw new NotImplementedException();
-				}
-				// - 3 * AltDirectorySeparatorChar
-				{
-					isDirectory = true;
-					throw new NotImplementedException();
-				}
-			}
-		}
 		
-		// - (1, 2, 3) * "C:"
-		{
-			// - 1 * "C:"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-			// - 2 * "C:"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-			// - 3 * "C:"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-		}
 		
-		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
-		{
-			// - "C:" + DirectorySeparatorChar
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-			// - "C:" + AltDirectorySeparatorChar
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-		}
-		
-		// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
-		{
-			// - DirectorySeparatorChar + "C:"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-			// - AltDirectorySeparatorChar + "C:"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-		}
-		
-		// - "C:abc.txt"
-		{
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-		}
-		
-		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
-		{
-			// - "C:" + DirectorySeparatorChar + "abc.txt"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-			// - "C:" + AltDirectorySeparatorChar + "abc.txt"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-		}
-		
-		// (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
-		{
-			// DirectorySeparatorChar + "C:" + "abc.txt"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-			// AltDirectorySeparatorChar + "C:" + "abc.txt"
-			absolutePathString = string.Empty;
-			{
-				isDirectory = false;
-				throw new NotImplementedException();
-			}
-			{
-				isDirectory = true;
-				throw new NotImplementedException();
-			}
-		}
-		
-		// ==================================================
-		// ==================================================
-		absolutePathString = string.Empty;
-		{
-			isDirectory = false;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.False(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal(string.Empty, absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal(string.Empty, absolutePath.Value);
-	        Assert.Equal(string.Empty, absolutePath.NameWithExtension);
-	        Assert.False(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-		{
-			isDirectory = true;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString: string.Empty, isDirectory: true, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.True(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal("/", absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal("/", absolutePath.Value);
-	        Assert.Equal("/", absolutePath.NameWithExtension);
-	        Assert.True(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-        
-        // ==================================================
-		// ==================================================
-		absolutePathString = environmentProvider.DirectorySeparatorChar;
-		{
-			isDirectory = false;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.False(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal(string.Empty, absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal(string.Empty, absolutePath.Value);
-	        Assert.Equal(string.Empty, absolutePath.NameWithExtension);
-	        Assert.False(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-		{
-			isDirectory = true;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString: string.Empty, isDirectory: true, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.True(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal("/", absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal("/", absolutePath.Value);
-	        Assert.Equal("/", absolutePath.NameWithExtension);
-	        Assert.True(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-        
-        // ==================================================
-		// ==================================================
-		absolutePathString = environmentProvider.AltDirectorySeparatorChar;
-		{
-			isDirectory = false;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.False(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal(string.Empty, absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal(string.Empty, absolutePath.Value);
-	        Assert.Equal(string.Empty, absolutePath.NameWithExtension);
-	        Assert.False(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-		{
-			isDirectory = true;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString: string.Empty, isDirectory: true, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.True(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal("/", absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal("/", absolutePath.Value);
-	        Assert.Equal("/", absolutePath.NameWithExtension);
-	        Assert.True(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-		
-		// ==================================================
-		// ==================================================
-		absolutePathString = "C:";
-		{
-			isDirectory = false;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.False(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal(string.Empty, absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal(string.Empty, absolutePath.Value);
-	        Assert.Equal(string.Empty, absolutePath.NameWithExtension);
-	        Assert.False(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-		{
-			isDirectory = true;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString: string.Empty, isDirectory: true, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.True(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal("/", absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal("/", absolutePath.Value);
-	        Assert.Equal("/", absolutePath.NameWithExtension);
-	        Assert.True(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-        
-        // ==================================================
-		// ==================================================
-		var absolutePathString = "C:" + environmentProvider.DirectorySeparatorChar;
-		bool isDirectory;
-		{
-			isDirectory = false;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.False(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal(string.Empty, absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal(string.Empty, absolutePath.Value);
-	        Assert.Equal(string.Empty, absolutePath.NameWithExtension);
-	        Assert.False(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-		{
-			isDirectory = true;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString: string.Empty, isDirectory: true, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.True(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal("/", absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal("/", absolutePath.Value);
-	        Assert.Equal("/", absolutePath.NameWithExtension);
-	        Assert.True(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-        
-        // ==================================================
-		// ==================================================
-		absolutePathString = "C:" + environmentProvider.AltDirectorySeparatorChar;
-		{
-			isDirectory = false;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.False(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal(string.Empty, absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal(string.Empty, absolutePath.Value);
-	        Assert.Equal(string.Empty, absolutePath.NameWithExtension);
-	        Assert.False(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-		{
-			isDirectory = true;
-			var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString: string.Empty, isDirectory: true, environmentProvider);
-	        Assert.Null(absolutePath.ParentDirectory);
-	        Assert.Equal(string.Empty, absolutePath.ExactInput);
-	        Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
-	        Assert.True(absolutePath.IsDirectory);
-	        Assert.NotNull(absolutePath.EnvironmentProvider);
-	        Assert.Equal(string.Empty, absolutePath.NameNoExtension);
-	        Assert.Equal("/", absolutePath.ExtensionNoPeriod);
-	        Assert.Null(absolutePath.RootDrive);
-	        Assert.Equal("/", absolutePath.Value);
-	        Assert.Equal("/", absolutePath.NameWithExtension);
-	        Assert.True(absolutePath.IsRootDirectory);
-	        Assert.Count(0, absolutePath.GetAncestorDirectoryList());
-		}
-            
-        Assert.Equal("/test.txt", absolutePath.Value);
-        
-        Assert.Null(absolutePath.ParentDirectory);
     		
 		throw new NotImplementedException();
 	}
