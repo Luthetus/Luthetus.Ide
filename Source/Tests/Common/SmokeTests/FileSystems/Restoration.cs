@@ -33,60 +33,52 @@ public class Restoration
 	[InlineData(string.Empty, isDirectory: false)]
 	[InlineData(string.Empty, isDirectory: true)]
 	// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-	[InlineData("1 * DirectorySeparatorChar", isDirectory: false)]
-	[InlineData("1 * DirectorySeparatorChar" isDirectory: true)]
-	[InlineData("1 * AltDirectorySeparatorChar", false)]
-	[InlineData("1 * AltDirectorySeparatorChar", true)]
-	[InlineData("2 * DirectorySeparatorChar", isDirectory: false)]
-	[InlineData("2 * DirectorySeparatorChar", isDirectory: true)]
-	[InlineData("2 * AltDirectorySeparatorChar", isDirectory: false)]
-	[InlineData("2 * AltDirectorySeparatorChar", isDirectory: true)]
-	[InlineData("3 * DirectorySeparatorChar", isDirectory: false)]
-	[InlineData("3 * DirectorySeparatorChar", isDirectory: true)]
-	[InlineData("3 * AltDirectorySeparatorChar", isDirectory: false)]
-	[InlineData("3 * AltDirectorySeparatorChar", isDirectory: true)]
+	[InlineData(@"/", isDirectory: false)]
+	[InlineData(@"/" isDirectory: true)]
+	[InlineData(@"\", false)]
+	[InlineData(@"\", true)]
+	[InlineData(@"//", isDirectory: false)]
+	[InlineData(@"//", isDirectory: true)]
+	[InlineData(@"\\", isDirectory: false)]
+	[InlineData(@"\\", isDirectory: true)]
+	[InlineData(@"///", isDirectory: false)]
+	[InlineData(@"///", isDirectory: true)]
+	[InlineData(@"\\\", isDirectory: false)]
+	[InlineData(@"\\\", isDirectory: true)]
 	// - (1, 2, 3) * "C:"
-	[InlineData(1 * "C:", isDirectory: false)]
-	[InlineData(1 * "C:", isDirectory: true)]
-	[InlineData(2 * "C:", isDirectory: false)]
-	[InlineData(2 * "C:", isDirectory: true)]
-	[InlineData(3 * "C:", isDirectory: false)]
-	[InlineData(3 * "C:", isDirectory: true)]
+	[InlineData("C:", isDirectory: false)]
+	[InlineData("C:", isDirectory: true)]
+	[InlineData("C:C:", isDirectory: false)]
+	[InlineData("C:C:", isDirectory: true)]
+	[InlineData("C:C:C:", isDirectory: false)]
+	[InlineData("C:C:C:", isDirectory: true)]
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
-	[InlineData("C:" + DirectorySeparatorChar, isDirectory: false)]
-	[InlineData("C:" + DirectorySeparatorChar, isDirectory: true)]
-	[InlineData("C:" + AltDirectorySeparatorChar, isDirectory: false)]
-	[InlineData("C:" + AltDirectorySeparatorChar, isDirectory: true)]
+	[InlineData("C:" + '/', isDirectory: false)]
+	[InlineData("C:" + '/', isDirectory: true)]
+	[InlineData("C:" + "\\", isDirectory: false)]
+	[InlineData("C:" + "\\", isDirectory: true)]
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
-	[InlineData(DirectorySeparatorChar + "C:", isDirectory: false)]
-	[InlineData(DirectorySeparatorChar + "C:", isDirectory: true)]
-	[InlineData(AltDirectorySeparatorChar + "C:", isDirectory: false)]
-	[InlineData(AltDirectorySeparatorChar + "C:", isDirectory: true)]
+	[InlineData('/' + "C:", isDirectory: false)]
+	[InlineData('/' + "C:", isDirectory: true)]
+	[InlineData("\\" + "C:", isDirectory: false)]
+	[InlineData("\\" + "C:", isDirectory: true)]
 	// - "C:abc.txt"
 	[InlineData("C:abc.txt", isDirectory: false)]
 	[InlineData("C:abc.txt", isDirectory: true)]
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
-	[InlineData("C:" + DirectorySeparatorChar + "abc.txt", isDirectory: false)]
-	[InlineData("C:" + DirectorySeparatorChar + "abc.txt", isDirectory: true)]
-	[InlineData("C:" + AltDirectorySeparatorChar + "abc.txt", isDirectory: false)]
-	[InlineData("C:" + AltDirectorySeparatorChar + "abc.txt", isDirectory: true)]
+	[InlineData("C:" + '/' + "abc.txt", isDirectory: false)]
+	[InlineData("C:" + '/' + "abc.txt", isDirectory: true)]
+	[InlineData("C:" + "\\" + "abc.txt", isDirectory: false)]
+	[InlineData("C:" + "\\" + "abc.txt", isDirectory: true)]
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
-	[InlineData(DirectorySeparatorChar + "C:" + "abc.txt", isDirectory: false)]
-	[InlineData(DirectorySeparatorChar + "C:" + "abc.txt", isDirectory: true)]
-	[InlineData(AltDirectorySeparatorChar + "C:" + "abc.txt", isDirectory: false)]
-	[InlineData(AltDirectorySeparatorChar + "C:" + "abc.txt", isDirectory: true)]
-    
-	public void Root_Directory()
+	[InlineData('/' + "C:" + "abc.txt", isDirectory: false)]
+	[InlineData('/' + "C:" + "abc.txt", isDirectory: true)]
+	[InlineData("\\" + "C:" + "abc.txt", isDirectory: false)]
+	[InlineData("\\" + "C:" + "abc.txt", isDirectory: true)]
+	public void Root_Directory(string absolutePathString, bool isDirectory)
 	{
 		IEnvironmentProvider environmentProvider = new InMemoryEnvironmentProvider();
 		
-		string absolutePathString;
-		bool isDirectory;
-		
-		
-		
-		
-    		
 		throw new NotImplementedException();
 	}
 }
