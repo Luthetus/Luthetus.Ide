@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -23,10 +24,6 @@ public class CSharpBinderSession : IBinderSession
         int globalScopeIndexKey,
         NamespaceStatementNode topLevelNamespaceStatementNode)
     {
-    	#if DEBUG
-    	++LuthetusDebugSomething.BinderSession_ConstructorInvocationCount;
-    	#endif
-    
     	ResourceUri = resourceUri;
         Binder = binder;
         CurrentScopeIndexKey = globalScopeIndexKey;

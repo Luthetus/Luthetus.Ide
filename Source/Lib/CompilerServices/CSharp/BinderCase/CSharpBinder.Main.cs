@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
@@ -41,10 +42,6 @@ public partial class CSharpBinder : IBinder
     
     public CSharpBinder()
     {
-    	#if DEBUG
-    	++LuthetusDebugSomething.Binder_ConstructorInvocationCount;
-    	#endif
-
     	//var globalBinderSession = StartBinderSession(ResourceUri.Empty);
     	//globalBinderSession.ScopeList.Add(_globalScope);
     	//FinalizeBinderSession(globalBinderSession);

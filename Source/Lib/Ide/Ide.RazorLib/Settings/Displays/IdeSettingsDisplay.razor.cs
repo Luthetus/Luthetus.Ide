@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 
@@ -14,10 +15,13 @@ public partial class IdeSettingsDisplay : ComponentBase
 	
 	private void WriteLuthetusDebugSomethingToConsole()
 	{
+		Console.WriteLine(LuthetusDebugSomething.CreateText());
+		/*
 		#if DEBUG
 		Console.WriteLine(LuthetusDebugSomething.CreateText());
 		#else
 		Console.WriteLine($"Must run in debug mode to see {nameof(WriteLuthetusDebugSomethingToConsole)}");
 		#endif
+		*/
 	}
 }

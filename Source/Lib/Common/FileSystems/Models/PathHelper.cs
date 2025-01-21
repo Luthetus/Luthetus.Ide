@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
@@ -71,7 +71,7 @@ public static class PathHelper
 
         if (moveUpDirectoryCount > 0)
         {
-            var sharedAncestorDirectories = absolutePath.AncestorDirectoryList
+            var sharedAncestorDirectories = absolutePath.GetAncestorDirectoryList()
                 .SkipLast(moveUpDirectoryCount)
                 .ToArray();
         
@@ -124,7 +124,11 @@ public static class PathHelper
         IEnvironmentProvider environmentProvider)
     {
         var pathBuilder = new StringBuilder();
-        var commonPath = startingPath.AncestorDirectoryList.First().Value;
+        
+        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList();
+        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList();
+        
+        var commonPath = startingPathAncestorDirectoryList.First().Value;
 
         if ((startingPath.ParentDirectory?.Value ?? string.Empty) ==
             (endingPath.ParentDirectory?.Value ?? string.Empty))
@@ -134,25 +138,25 @@ public static class PathHelper
             // Use './' because they share the same parent directory.
             pathBuilder.Append($".{environmentProvider.DirectorySeparatorChar}");
 
-            commonPath = startingPath.AncestorDirectoryList.Last().Value;
+            commonPath = startingPath.ParentDirectory.Value;
         }
         else
         {
             // Use '../' but first calculate how many UpDir(s) are needed
             int limitingIndex = Math.Min(
-                startingPath.AncestorDirectoryList.Count,
-                endingPath.AncestorDirectoryList.Count);
+                startingPathAncestorDirectoryList.Count,
+                endingPathAncestorDirectoryList.Count);
 
             var i = 0;
 
             for (; i < limitingIndex; i++)
             {
                 var startingPathAncestor = environmentProvider.AbsolutePathFactory(
-                    startingPath.AncestorDirectoryList[i].Value,
+                    startingPathAncestorDirectoryList[i].Value,
                     true);
 
                 var endingPathAncestor = environmentProvider.AbsolutePathFactory(
-                    endingPath.AncestorDirectoryList[i].Value,
+                    endingPathAncestorDirectoryList[i].Value,
                     true);
 
                 if (startingPathAncestor.NameWithExtension == endingPathAncestor.NameWithExtension)
@@ -161,7 +165,7 @@ public static class PathHelper
                     break;
             }
 
-            var upDirCount = startingPath.AncestorDirectoryList.Count - i;
+            var upDirCount = startingPathAncestorDirectoryList.Count - i;
 
             for (int appendUpDir = 0; appendUpDir < upDirCount; appendUpDir++)
             {

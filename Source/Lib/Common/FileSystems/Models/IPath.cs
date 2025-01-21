@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 /// <summary>
 /// A side comment: Windows allow both '\\' and '/' as file delimiters.
@@ -49,6 +49,5 @@ public interface IPath
     /// </summary>
     public string Value { get; }
     public AncestorDirectory? ParentDirectory { get; }
-    public List<AncestorDirectory> AncestorDirectoryList { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 }

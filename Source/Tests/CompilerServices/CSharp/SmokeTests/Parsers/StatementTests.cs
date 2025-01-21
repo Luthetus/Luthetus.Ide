@@ -1,4 +1,5 @@
 using System.Text;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -1065,6 +1066,22 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
     	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void CommonTest()
+    {
+    	IEnvironmentProvider environmentProvider = new InMemoryEnvironmentProvider();
+    	
+    	var absolutePath = new IEnvironmentProvider.AbsolutePath(
+            "test.txt",
+            false,
+            environmentProvider,
+            ancestorDirectoryList: null);
+            
+        Assert.Equal("test.txt", absolutePath.Value);
+    		
+    	throw new NotImplementedException("See CommonTest");
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
