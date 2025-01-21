@@ -65,16 +65,42 @@ public class Restoration
 	// - "C:abc.txt"
 	[InlineData("C:abc.txt", false)]
 	[InlineData("C:abc.txt", true)]
+	// - "C:abc."
+	[InlineData("C:abc.", false)]
+	[InlineData("C:abc.", true)]
+	// - "C:abc"
+	[InlineData("C:abc", false)]
+	[InlineData("C:abc", true)]
 	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
 	[InlineData("C:" + "/" + "abc.txt", false)]
 	[InlineData("C:" + "/" + "abc.txt", true)]
 	[InlineData("C:" + "\\" + "abc.txt", false)]
 	[InlineData("C:" + "\\" + "abc.txt", true)]
+	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc."
+	[InlineData("C:" + "/" + "abc.", false)]
+	[InlineData("C:" + "/" + "abc.", true)]
+	[InlineData("C:" + "\\" + "abc.", false)]
+	[InlineData("C:" + "\\" + "abc.", true)]
+	// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc"
+	[InlineData("C:" + "/" + "abc", false)]
+	[InlineData("C:" + "/" + "abc", true)]
+	[InlineData("C:" + "\\" + "abc", false)]
+	[InlineData("C:" + "\\" + "abc", true)]
 	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
 	[InlineData("/" + "C:" + "abc.txt", false)]
 	[InlineData("/" + "C:" + "abc.txt", true)]
 	[InlineData("\\" + "C:" + "abc.txt", false)]
 	[InlineData("\\" + "C:" + "abc.txt", true)]
+	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc."
+	[InlineData("/" + "C:" + "abc.", false)]
+	[InlineData("/" + "C:" + "abc.", true)]
+	[InlineData("\\" + "C:" + "abc.", false)]
+	[InlineData("\\" + "C:" + "abc.", true)]
+	// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc"
+	[InlineData("/" + "C:" + "abc", false)]
+	[InlineData("/" + "C:" + "abc", true)]
+	[InlineData("\\" + "C:" + "abc", false)]
+	[InlineData("\\" + "C:" + "abc", true)]
 	public void Root_Directory(
 		string absolutePathString,
 		bool isDirectory,
