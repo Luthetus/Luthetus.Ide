@@ -9,21 +9,200 @@ namespace Luthetus.Common.Tests.SmokeTests.FileSystems;
 public class Restoration
 {
 	/// <summary>
-	/// In mass write assertions for 'Assert.Null(absolutePath.ParentDirectory);' cases.
+	/// In mass write assertions for input that deals largely with the 'root directory'.
+	/// i.e.: input that results in 0 or 1 parent directories.
 	///
-	/// Note: "test.txt" is included here, because for an absolute path, while we can presume
+	/// Note: "test.txt" with 'isDirectory: false' is included here, because for an absolute path, while we can presume
 	///       that the parent directory is "/", this would make it a relative path.
 	///       So the assertion needs to be made, "what do we do in this scenario".
 	///
 	/// Sort of a snapshot test to check for consistency.
 	/// </summary>
 	[Fact]
-	public void Null_ParentDirectory()
+	public void Root_Directory()
 	{
+		// This list is unreliable since it is a comment,
+		// but it helps visualize the cases in this single '[Fact]' since collapsible lines in the editor isn't implemented yet.
+		// 
+		// Foreach case do both 'isDirectory: false' and 'isDirectory: true':
+		// - string.Empty
+		// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
+		// - (1, 2, 3) * "C:"
+		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
+		// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
+		// - "C:abc.txt"
+		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
+	
 		IEnvironmentProvider environmentProvider = new InMemoryEnvironmentProvider();
 		
 		string absolutePathString;
 		bool isDirectory;
+		
+		// - string.Empty
+		{
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+		}
+		
+		// - (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
+		{
+			// - 1 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+			// - 2 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+			// - 3 * (DirectorySeparatorChar/AltDirectorySeparatorChar)
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+		}
+		
+		// - (1, 2, 3) * "C:"
+		{
+			// - 1 * "C:"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+			// - 2 * "C:"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+			// - 3 * "C:"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+		}
+		
+		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
+		{
+			// - "C:" + DirectorySeparatorChar
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+			// - "C:" + AltDirectorySeparatorChar
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+		}
+		
+		// - (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
+		{
+			// - DirectorySeparatorChar + "C:"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+			// - AltDirectorySeparatorChar + "C:"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+		}
+		
+		// - "C:abc.txt"
+		{
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+		}
+		
+		// - "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
+		{
+			// - "C:" + DirectorySeparatorChar + "abc.txt"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+			// - "C:" + AltDirectorySeparatorChar + "abc.txt"
+			absolutePathString = string.Empty;
+			{
+				isDirectory = false;
+				throw new NotImplementedException();
+			}
+			{
+				isDirectory = true;
+				throw new NotImplementedException();
+			}
+		}
 		
 		// ==================================================
 		// ==================================================
