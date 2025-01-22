@@ -194,72 +194,156 @@ public class AbsolutePathTests_Snapshot
 	string.Empty
 	============
 	
-	Directory (InMemoryFileSystemProvider) API
-	{
-		// await fileSystemProvider.Directory.CreateDirectoryAsync(absolutePathString);
-		// existsBefore -> false
-		// existsAfter -> false
-		
-		// await fileSystemProvider.Directory.DeleteAsync(absolutePathString, false);
-		// System.NullReferenceException : Object reference not set to an instance of an object.
-		
-		// await fileSystemProvider.Directory.CopyAsync(absolutePathString, "/");
-		// existsBefore -> false
-		// existsAfter -> false
-		
-		// await fileSystemProvider.Directory.MoveAsync(absolutePathString, "/");
-		// System.NullReferenceException : Object reference not set to an instance of an object.
-		
-		// var directoryList = await fileSystemProvider.Directory.GetDirectoriesAsync(absolutePathString);
-		// existsBefore -> false 
-		// Console.WriteLine(directoryList.Length); -> 0
-		// existsAfter -> false
-		
-		// var fileList = await fileSystemProvider.Directory.GetFilesAsync(absolutePathString);
-		// existsBefore -> false 
-		// Console.WriteLine(fileList.Length); -> 0
-		// existsAfter -> false
-		
-		// var fileSystemEntryList = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(absolutePathString);
-		// existsBefore -> false
-		// Console.WriteLine(fileSystemEntryList.Count()); -> 0
-		// existsAfter -> false
-	}
+	The local filesystem was used
 	
-	File (InMemoryFileSystemProvider) API
-	{
-		// await fileSystemProvider.File.DeleteAsync(absolutePathString);
-		// System.NullReferenceException : Object reference not set to an instance of an object.
+		// Directory
+		{
+			// var existsBefore = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsBefore: {existsBefore}");
 		
-		// var destination = "/A.txt";
-		// await fileSystemProvider.File.CopyAsync(absolutePathString, destination);
-	    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
-		// Console.WriteLine($"existsDestination: {existsDestination}");
-	    // System.NullReferenceException : Object reference not set to an instance of an object.
-	    
-	    // var destination = "/A.txt";
-	    // await fileSystemProvider.File.MoveAsync(absolutePathString, destination);
-	    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
-	    // Console.WriteLine($"existsDestination: {existsDestination}");
-	    // System.NullReferenceException : Object reference not set to an instance of an object.
-	    
-	    // var dateTime = await fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
-	    // Console.WriteLine(dateTime);
-	    // -> existsBefore: False
-		// 1/1/0001 12:00:00 AM
-		// existsAfter: False
+			// await fileSystemProvider.Directory.CreateDirectoryAsync(absolutePathString);
+			// System.ArgumentException : The value cannot be an empty string. (Parameter 'path')
+			
+			// await fileSystemProvider.Directory.DeleteAsync(absolutePathString, false);
+			// System.NullReferenceException : Object reference not set to an instance of an object.
+			
+			// await fileSystemProvider.Directory.CopyAsync(absolutePathString, "/");
+			// System.NotImplementedException : The method or operation is not implemented.
+			
+			// await fileSystemProvider.Directory.MoveAsync(absolutePathString, "/");
+			// System.NullReferenceException : Object reference not set to an instance of an object.
+			
+			// var directoryList = await fileSystemProvider.Directory.GetDirectoriesAsync(absolutePathString);
+			// Console.WriteLine(directoryList.Length);
+			// System.ArgumentException : The path is empty. (Parameter 'path')
+			
+			// var fileList = await fileSystemProvider.Directory.GetFilesAsync(absolutePathString);
+			// System.ArgumentException : The path is empty. (Parameter 'path')
+			
+			// var fileSystemEntryList = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(absolutePathString);
+			// Console.WriteLine(fileSystemEntryList.Count());
+			// System.ArgumentException : The path is empty. (Parameter 'path')
+			
+			// var existsAfter = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsAfter: {existsAfter}");
+		}
 		
-		// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
-		// Console.WriteLine(text);
-		// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException : File with path: '' was not found.
+		// File
+		{
+			var existsBefore = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			Console.WriteLine($"existsBefore: {existsBefore}");
 		
-		// await fileSystemProvider.File.WriteAllTextAsync(absolutePathString, "apple");
-		// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
-		// Console.WriteLine(text);
-		// -> existsBefore: False
-		// apple
-		// existsAfter: True
-	}
+			// await fileSystemProvider.File.DeleteAsync(absolutePathString);
+			// System.NullReferenceException : Object reference not set to an instance of an object.
+			
+			// var destination = "/A.txt";
+			// await fileSystemProvider.File.CopyAsync(absolutePathString, destination);
+		    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
+			// Console.WriteLine($"existsDestination: {existsDestination}");
+		    // System.ArgumentException : The value cannot be an empty string. (Parameter 'sourceFileName')
+		    
+		    // var destination = "/A.txt";
+		    // await fileSystemProvider.File.MoveAsync(absolutePathString, destination);
+		    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
+		    // Console.WriteLine($"existsDestination: {existsDestination}");
+		    // System.NullReferenceException : Object reference not set to an instance of an object.
+		    
+		    // var dateTime = await fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
+		    // Console.WriteLine(dateTime);
+		    // System.ArgumentException : The path is empty. (Parameter 'path')
+			
+			// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+			// Console.WriteLine(text);
+			// System.ArgumentException : The value cannot be an empty string. (Parameter 'path')
+			
+			// await fileSystemProvider.File.WriteAllTextAsync(absolutePathString, "apple");
+			// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+			// Console.WriteLine(text);
+			// System.NullReferenceException : Object reference not set to an instance of an object.
+		        
+		    // var existsAfter = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsAfter: {existsAfter}");
+		}
+		
+		====================== "/"
+		
+		// Directory
+		{
+			// var existsBefore = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsBefore: {existsBefore}");
+		
+			// await fileSystemProvider.Directory.CreateDirectoryAsync(absolutePathString);
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException : The directory with path: '/' already exists
+			
+			// await fileSystemProvider.Directory.DeleteAsync(absolutePathString, false);
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException: FILE_PERMISSION_ERROR: The directory with path '/' was not permitted to be deleted.
+			
+			// await fileSystemProvider.Directory.CopyAsync(absolutePathString, "/");
+			// System.NotImplementedException : The method or operation is not implemented.
+			
+			// await fileSystemProvider.Directory.MoveAsync(absolutePathString, "/");
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException: FILE_PERMISSION_ERROR: The directory with path '/' was not permitted to be deleted.
+			
+			// var directoryList = await fileSystemProvider.Directory.GetDirectoriesAsync(absolutePathString);
+			// Console.WriteLine(directoryList.Length);
+			// existsBefore: True
+			// 20
+			// existsAfter: True
+			
+			// var fileList = await fileSystemProvider.Directory.GetFilesAsync(absolutePathString);
+			// Console.WriteLine(fileList.Count());
+			// existsBefore: True
+			// 7
+			// existsAfter: True
+			
+			// var fileSystemEntryList = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(absolutePathString);
+			// Console.WriteLine(fileSystemEntryList.Count());
+			// existsBefore: True
+			// 27
+			// existsAfter: True
+			
+			// var existsAfter = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsAfter: {existsAfter}");
+		}
+		
+		// File
+		{
+			var existsBefore = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			Console.WriteLine($"existsBefore: {existsBefore}");
+		
+			// await fileSystemProvider.File.DeleteAsync(absolutePathString);
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException: FILE_PERMISSION_ERROR: The directory with path '/' was not permitted to be deleted.
+			
+			// var destination = "/A.txt";
+			// await fileSystemProvider.File.CopyAsync(absolutePathString, destination);
+		    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
+			// Console.WriteLine($"existsDestination: {existsDestination}");
+		    // System.IO.DirectoryNotFoundException : Could not find a part of the path 'C:\'.
+		    
+		    // var destination = "/A.txt";
+		    // await fileSystemProvider.File.MoveAsync(absolutePathString, destination);
+		    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
+		    // Console.WriteLine($"existsDestination: {existsDestination}");
+		    // Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException: FILE_PERMISSION_ERROR: The directory with path '/' was not permitted to be deleted.
+		    
+		    // var dateTime = await fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
+		    // Console.WriteLine(dateTime);
+		    // existsBefore: False
+			// 1/21/2025 10:30:45 AM
+			// existsAfter: False
+			
+			// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+			// Console.WriteLine(text);
+			// System.UnauthorizedAccessException : Access to the path 'C:\' is denied.
+			
+			// await fileSystemProvider.File.WriteAllTextAsync(absolutePathString, "apple");
+			// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+			// Console.WriteLine(text);
+			// System.UnauthorizedAccessException: Access to the path 'C:\' is denied.
+		        
+		    var existsAfter = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			Console.WriteLine($"existsAfter: {existsAfter}");
+		}
 	*/
 	
 	/// <summary>
@@ -315,6 +399,8 @@ public class AbsolutePathTests_Snapshot
 		// I will test these with my own file system too not just the InMemory.
 		// Need to do it in a way that it never gets committed I don't want any tests to have side effects.
 		
+		// Going to change the instances to local versions, run through these scenarios and see the outcomes.
+		// will change back to in memory after.
 		var environmentProvider = new InMemoryEnvironmentProvider();
 		
 		var fileSystemProvider = new InMemoryFileSystemProvider(
@@ -322,44 +408,40 @@ public class AbsolutePathTests_Snapshot
 		
 		var absolutePathString = string.Empty;
 		
-		environmentProvider.ProtectedPathsRegister(new SimplePath(absolutePathString, false));
-		
 		// Directory
 		{
 			// var existsBefore = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
 			// Console.WriteLine($"existsBefore: {existsBefore}");
 		
 			// await fileSystemProvider.Directory.CreateDirectoryAsync(absolutePathString);
-			// existsBefore -> false
-			// existsAfter -> false
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException : The directory with path: '/' already exists
 			
 			// await fileSystemProvider.Directory.DeleteAsync(absolutePathString, false);
-			// System.NullReferenceException : Object reference not set to an instance of an object.
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException: FILE_PERMISSION_ERROR: The directory with path '/' was not permitted to be deleted.
 			
 			// await fileSystemProvider.Directory.CopyAsync(absolutePathString, "/");
-			// existsBefore -> false
-			// existsAfter -> false
+			// System.NotImplementedException : The method or operation is not implemented.
 			
 			// await fileSystemProvider.Directory.MoveAsync(absolutePathString, "/");
-			// System.NullReferenceException : Object reference not set to an instance of an object.
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException: FILE_PERMISSION_ERROR: The directory with path '/' was not permitted to be deleted.
 			
 			// var directoryList = await fileSystemProvider.Directory.GetDirectoriesAsync(absolutePathString);
 			// Console.WriteLine(directoryList.Length);
-			// existsBefore -> false 
-			// Console.WriteLine(directoryList.Length); -> 0
-			// existsAfter -> false
+			// existsBefore: True
+			// 20
+			// existsAfter: True
 			
 			// var fileList = await fileSystemProvider.Directory.GetFilesAsync(absolutePathString);
-			// Console.WriteLine(fileList.Length);
-			// existsBefore -> false 
-			// Console.WriteLine(fileList.Length); -> 0
-			// existsAfter -> false
+			// Console.WriteLine(fileList.Count());
+			// existsBefore: True
+			// 7
+			// existsAfter: True
 			
 			// var fileSystemEntryList = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(absolutePathString);
 			// Console.WriteLine(fileSystemEntryList.Count());
-			// existsBefore -> false
-			// Console.WriteLine(fileSystemEntryList.Count()); -> 0
-			// existsAfter -> false
+			// existsBefore: True
+			// 27
+			// existsAfter: True
 			
 			// var existsAfter = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
 			// Console.WriteLine($"existsAfter: {existsAfter}");
@@ -367,43 +449,41 @@ public class AbsolutePathTests_Snapshot
 		
 		// File
 		{
-			// var existsBefore = await fileSystemProvider.File.ExistsAsync(absolutePathString);
-			// Console.WriteLine($"existsBefore: {existsBefore}");
+			var existsBefore = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			Console.WriteLine($"existsBefore: {existsBefore}");
 		
 			// await fileSystemProvider.File.DeleteAsync(absolutePathString);
-			// System.NullReferenceException : Object reference not set to an instance of an object.
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException: FILE_PERMISSION_ERROR: The directory with path '/' was not permitted to be deleted.
 			
 			// var destination = "/A.txt";
 			// await fileSystemProvider.File.CopyAsync(absolutePathString, destination);
 		    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
 			// Console.WriteLine($"existsDestination: {existsDestination}");
-		    // System.NullReferenceException : Object reference not set to an instance of an object.
+		    // System.IO.DirectoryNotFoundException : Could not find a part of the path 'C:\'.
 		    
 		    // var destination = "/A.txt";
 		    // await fileSystemProvider.File.MoveAsync(absolutePathString, destination);
 		    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
 		    // Console.WriteLine($"existsDestination: {existsDestination}");
-		    // System.NullReferenceException : Object reference not set to an instance of an object.
+		    // Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException: FILE_PERMISSION_ERROR: The directory with path '/' was not permitted to be deleted.
 		    
 		    // var dateTime = await fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
 		    // Console.WriteLine(dateTime);
-		    // -> existsBefore: False
-			// 1/1/0001 12:00:00 AM
+		    // existsBefore: False
+			// 1/21/2025 10:30:45 AM
 			// existsAfter: False
 			
 			// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
 			// Console.WriteLine(text);
-			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException : File with path: '' was not found.
+			// System.UnauthorizedAccessException : Access to the path 'C:\' is denied.
 			
 			// await fileSystemProvider.File.WriteAllTextAsync(absolutePathString, "apple");
 			// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
 			// Console.WriteLine(text);
-			// -> existsBefore: False
-			// apple
-			// existsAfter: True
+			// System.UnauthorizedAccessException: Access to the path 'C:\' is denied.
 		        
-		    // var existsAfter = await fileSystemProvider.File.ExistsAsync(absolutePathString);
-			// Console.WriteLine($"existsAfter: {existsAfter}");
+		    var existsAfter = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			Console.WriteLine($"existsAfter: {existsAfter}");
 		}
 	}
 }
