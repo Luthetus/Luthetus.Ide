@@ -1961,19 +1961,7 @@ public partial class CSharpBinder : IBinder
     
     public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-    	{
-    		var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
-    		
-    		if (typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode is not null)
-	    	{
-	    		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-		    	{
-		    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
-		    	}
-	    	}
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+    	if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
     	{
     		var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
     		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();

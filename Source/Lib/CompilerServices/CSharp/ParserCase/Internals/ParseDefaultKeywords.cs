@@ -902,6 +902,14 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
+    
+    	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+    	{
+    		ParseTypes.HandlePrimaryConstructorDefinition(
+		        typeDefinitionNode,
+		        compilationUnit,
+		        ref parserModel);
+    	}
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
