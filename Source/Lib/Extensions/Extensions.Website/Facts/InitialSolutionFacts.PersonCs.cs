@@ -25,8 +25,11 @@ public class Person : IPerson
 
 public interface IPerson { }
 
-public record PersonRecord(string FirstName, string LastName) // : IPerson; TODO: Inheritance here isn't working
+public record PersonRecord(string FirstName, string LastName) : IPerson
 {
+	// Comments need to be moved to some "trivia" like thing.
+	// I fixed primary constructor syntax then published but "// : IPerson; TODO: Inheritance here isn't working"
+	// was an older comment I had after the primary constructor syntax but before the OpenBraceToken and it broke the file.
 	public string DisplayName => $"{FirstName} {LastName}";
 }
 
