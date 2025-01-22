@@ -225,11 +225,70 @@ public class AbsolutePathTests_Snapshot
 		// Console.WriteLine(fileSystemEntryList.Count()); -> 0
 		// existsAfter -> false
 	}
+	
+	File (InMemoryFileSystemProvider) API
+	{
+		// await fileSystemProvider.File.DeleteAsync(absolutePathString);
+		// System.NullReferenceException : Object reference not set to an instance of an object.
+		
+		// var destination = "/A.txt";
+		// await fileSystemProvider.File.CopyAsync(absolutePathString, destination);
+	    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
+		// Console.WriteLine($"existsDestination: {existsDestination}");
+	    // System.NullReferenceException : Object reference not set to an instance of an object.
+	    
+	    // var destination = "/A.txt";
+	    // await fileSystemProvider.File.MoveAsync(absolutePathString, destination);
+	    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
+	    // Console.WriteLine($"existsDestination: {existsDestination}");
+	    // System.NullReferenceException : Object reference not set to an instance of an object.
+	    
+	    // var dateTime = await fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
+	    // Console.WriteLine(dateTime);
+	    // -> existsBefore: False
+		// 1/1/0001 12:00:00 AM
+		// existsAfter: False
+		
+		// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+		// Console.WriteLine(text);
+		// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException : File with path: '' was not found.
+		
+		// await fileSystemProvider.File.WriteAllTextAsync(absolutePathString, "apple");
+		// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+		// Console.WriteLine(text);
+		// -> existsBefore: False
+		// apple
+		// existsAfter: True
+	}
 	*/
 	
 	/// <summary>
 	/// Only can run [Theory] [InlineData(...)] as the entire batch at the moment,
 	/// so I am going to copy some cases into here 1 by 1 to investigate how they should be handled.
+	/// 
+	/// From the perspective of the 'IFileSystemProvider',
+	/// what I need to test is:
+	/// - string.Empty
+	///   - Delete permitted
+	///     - Protected
+	///     - NOT_protected
+	///   - NOT_delete-permitted
+	///     - Protected
+	///     - NOT_protected
+	/// - file that exists
+	///   - Delete permitted
+	///     - Protected
+	///     - NOT_protected
+	///   - NOT_delete-permitted
+	///     - Protected
+	///     - NOT_protected
+	/// - file that does not exist
+	///   - Delete permitted
+	///     - Protected
+	///     - NOT_protected
+	///   - NOT_delete-permitted
+	///     - Protected
+	///     - NOT_protected
 	/// </summary>
 	[Fact]
 	public async Task SingleOut()
@@ -303,38 +362,43 @@ public class AbsolutePathTests_Snapshot
 		
 		// File
 		{
-			/*
-			public Task<bool> ExistsAsync(
-		        string absolutePathString,
-		        CancellationToken cancellationToken = default);
+			var existsBefore = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			Console.WriteLine($"existsBefore: {existsBefore}");
 		
-		    public Task DeleteAsync(
-		        string absolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task CopyAsync(
-		        string sourceAbsolutePathString,
-		        string destinationAbsolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task MoveAsync(
-		        string sourceAbsolutePathString,
-		        string destinationAbsolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task<DateTime> GetLastWriteTimeAsync(
-		        string absolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task<string> ReadAllTextAsync(
-		        string absolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task WriteAllTextAsync(
-		        string absolutePathString,
-		        string contents,
-		        CancellationToken cancellationToken = default);
-		    */
+			// await fileSystemProvider.File.DeleteAsync(absolutePathString);
+			// System.NullReferenceException : Object reference not set to an instance of an object.
+			
+			// var destination = "/A.txt";
+			// await fileSystemProvider.File.CopyAsync(absolutePathString, destination);
+		    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
+			// Console.WriteLine($"existsDestination: {existsDestination}");
+		    // System.NullReferenceException : Object reference not set to an instance of an object.
+		    
+		    // var destination = "/A.txt";
+		    // await fileSystemProvider.File.MoveAsync(absolutePathString, destination);
+		    // var existsDestination = await fileSystemProvider.File.ExistsAsync(destination);
+		    // Console.WriteLine($"existsDestination: {existsDestination}");
+		    // System.NullReferenceException : Object reference not set to an instance of an object.
+		    
+		    // var dateTime = await fileSystemProvider.File.GetLastWriteTimeAsync(absolutePathString);
+		    // Console.WriteLine(dateTime);
+		    // -> existsBefore: False
+			// 1/1/0001 12:00:00 AM
+			// existsAfter: False
+			
+			// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+			// Console.WriteLine(text);
+			// Luthetus.Common.RazorLib.Exceptions.LuthetusCommonException : File with path: '' was not found.
+			
+			// await fileSystemProvider.File.WriteAllTextAsync(absolutePathString, "apple");
+			// var text = await fileSystemProvider.File.ReadAllTextAsync(absolutePathString);
+			// Console.WriteLine(text);
+			// -> existsBefore: False
+			// apple
+			// existsAfter: True
+		        
+		    var existsAfter = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			Console.WriteLine($"existsAfter: {existsAfter}");
 		}
 	}
 }
