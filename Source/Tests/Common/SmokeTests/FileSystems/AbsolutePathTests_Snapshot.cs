@@ -191,95 +191,11 @@ public class AbsolutePathTests_Snapshot
 	}
 	
 	/// <summary>
-	/// I think I want the test above this: 'Root_Directory(...)'
-	/// to be an exhaustive approach to the problem.
-	///
-	/// But, I'd still like to "single out" some of these cases.
-	///
-	/// I think the most "value" is to pick 1 '[InlineData(...)]'
-	/// from each "group" and look into how it acts.
+	/// Only can run [Theory] [InlineData(...)] as the entire batch at the moment,
+	/// so I am going to copy some cases into here 1 by 1 to investigate how they should be handled.
 	/// </summary>
 	[Fact]
-	public void Root_Directory_Group1()
+	public void SingleOut()
 	{
-		// 1- string.Empty
-	}
-	
-	[Fact]
-	public void Root_Directory_Group2()
-	{
-		// 2- (1, 2, 3) * (DirectorySeparatorChar/AltDirectorySeparatorChar)
-	}
-	
-	[Fact]
-	public void Root_Directory_Group3()
-	{
-		// 3- (1, 2, 3) * "C:"
-	}
-	
-	[Fact]
-	public void Root_Directory_Group4()
-	{
-		// 4- "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar)
-	}
-	
-	[Fact]
-	public void Root_Directory_Group5()
-	{
-		// 5- (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:"
-	}
-	
-	[Fact]
-	public void Root_Directory_Group6()
-	{
-		// 6- "C:abc.txt"
-	}
-	
-	[Fact]
-	public void Root_Directory_Group7()
-	{
-		// 7- "C:abc."
-	}
-	
-	[Fact]
-	public void Root_Directory_Group8()
-	{
-		// 8- "C:abc"
-	}
-	
-	[Fact]
-	public void Root_Directory_Group9()
-	{
-		// 9- "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc.txt"
-	}
-	
-	[Fact]
-	public void Root_Directory_Group10()
-	{
-		// 10- "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc."
-	}
-	
-	[Fact]
-	public void Root_Directory_Group11()
-	{
-		// 11- "C:" + (DirectorySeparatorChar/AltDirectorySeparatorChar) + "abc"
-	}
-	
-	[Fact]
-	public void Root_Directory_Group12()
-	{
-		// 12- (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc.txt"
-	}
-	
-	[Fact]
-	public void Root_Directory_Group13()
-	{
-		// 13- (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc."
-	}
-	
-	[Fact]
-	public void Root_Directory_Group14()
-	{
-		// 14- (DirectorySeparatorChar/AltDirectorySeparatorChar) + "C:" + "abc"
 	}
 }
