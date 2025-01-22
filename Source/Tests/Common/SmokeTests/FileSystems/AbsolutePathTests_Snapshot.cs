@@ -268,27 +268,27 @@ public class AbsolutePathTests_Snapshot
 	/// 
 	/// From the perspective of the 'IFileSystemProvider',
 	/// what I need to test is:
-	/// - string.Empty
-	///   - Delete permitted
-	///     - Protected
-	///     - NOT_protected
-	///   - NOT_delete-permitted
-	///     - Protected
-	///     - NOT_protected
-	/// - file that exists
-	///   - Delete permitted
-	///     - Protected
-	///     - NOT_protected
-	///   - NOT_delete-permitted
-	///     - Protected
-	///     - NOT_protected
-	/// - file that does not exist
-	///   - Delete permitted
-	///     - Protected
-	///     - NOT_protected
-	///   - NOT_delete-permitted
-	///     - Protected
-	///     - NOT_protected
+	/// - [ ] string.Empty
+	///   - [ ] Delete permitted
+	///     - [ ] Protected
+	///     - [ ] NOT_protected
+	///   - [X] NOT_delete-permitted
+	///     - [X] Protected
+	///     - [X] NOT_protected
+	/// - [ ] file that exists
+	///   - [ ] Delete permitted
+	///     - [ ] Protected
+	///     - [ ] NOT_protected
+	///   - [ ] NOT_delete-permitted
+	///     - [ ] Protected
+	///     - [ ] NOT_protected
+	/// - [ ] file that does not exist
+	///   - [ ] Delete permitted
+	///     - [ ] Protected
+	///     - [ ] NOT_protected
+	///   - [ ] NOT_delete-permitted
+	///     - [ ] Protected
+	///     - [ ] NOT_protected
 	/// </summary>
 	[Fact]
 	public async Task SingleOut()
@@ -322,6 +322,8 @@ public class AbsolutePathTests_Snapshot
 		
 		var absolutePathString = string.Empty;
 		
+		environmentProvider.ProtectedPathsRegister(new SimplePath(absolutePathString, false));
+		
 		// Directory
 		{
 			// var existsBefore = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
@@ -342,16 +344,19 @@ public class AbsolutePathTests_Snapshot
 			// System.NullReferenceException : Object reference not set to an instance of an object.
 			
 			// var directoryList = await fileSystemProvider.Directory.GetDirectoriesAsync(absolutePathString);
+			// Console.WriteLine(directoryList.Length);
 			// existsBefore -> false 
 			// Console.WriteLine(directoryList.Length); -> 0
 			// existsAfter -> false
 			
 			// var fileList = await fileSystemProvider.Directory.GetFilesAsync(absolutePathString);
+			// Console.WriteLine(fileList.Length);
 			// existsBefore -> false 
 			// Console.WriteLine(fileList.Length); -> 0
 			// existsAfter -> false
 			
 			// var fileSystemEntryList = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(absolutePathString);
+			// Console.WriteLine(fileSystemEntryList.Count());
 			// existsBefore -> false
 			// Console.WriteLine(fileSystemEntryList.Count()); -> 0
 			// existsAfter -> false
@@ -362,8 +367,8 @@ public class AbsolutePathTests_Snapshot
 		
 		// File
 		{
-			var existsBefore = await fileSystemProvider.File.ExistsAsync(absolutePathString);
-			Console.WriteLine($"existsBefore: {existsBefore}");
+			// var existsBefore = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsBefore: {existsBefore}");
 		
 			// await fileSystemProvider.File.DeleteAsync(absolutePathString);
 			// System.NullReferenceException : Object reference not set to an instance of an object.
@@ -397,8 +402,8 @@ public class AbsolutePathTests_Snapshot
 			// apple
 			// existsAfter: True
 		        
-		    var existsAfter = await fileSystemProvider.File.ExistsAsync(absolutePathString);
-			Console.WriteLine($"existsAfter: {existsAfter}");
+		    // var existsAfter = await fileSystemProvider.File.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsAfter: {existsAfter}");
 		}
 	}
 }
