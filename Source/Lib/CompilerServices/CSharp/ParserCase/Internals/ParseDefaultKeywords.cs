@@ -902,6 +902,8 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
+	        
+	    parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = false;
     
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
     	{
@@ -910,6 +912,24 @@ public class ParseDefaultKeywords
 		        compilationUnit,
 		        ref parserModel);
     	}
+    	
+    	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+    	{
+    		_ = parserModel.TokenWalker.Consume(); // Consume the ColonToken
+            var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel);
+            compilationUnit.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit);
+			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
+            parserModel.SyntaxStack.Push(typeDefinitionNode);
+    	}
+    	
+    	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
+    	{
+    		parserModel.ExpressionList.Add((SyntaxKind.OpenBraceToken, null));
+			var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+    	}
+    	
+    	if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+			parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

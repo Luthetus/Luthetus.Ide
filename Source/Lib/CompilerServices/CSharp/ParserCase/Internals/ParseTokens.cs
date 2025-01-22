@@ -240,22 +240,7 @@ public static class ParseTokens
     public static void ParseColonToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var colonToken = (ColonToken)parserModel.TokenWalker.Consume();
-    
-        if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-        {
-            var typeDefinitionNode = (TypeDefinitionNode)parserModel.SyntaxStack.Pop();
-            var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel);
-
-            compilationUnit.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit);
-
-			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
-
-            parserModel.SyntaxStack.Push(typeDefinitionNode);
-        }
-        else
-        {
-            parserModel.DiagnosticBag.ReportTodoException(colonToken.TextSpan, "Colon is in unexpected place.");
-        }
+        parserModel.DiagnosticBag.ReportTodoException(colonToken.TextSpan, "Colon is in unexpected place.");
     }
 
 	/// <summary>
