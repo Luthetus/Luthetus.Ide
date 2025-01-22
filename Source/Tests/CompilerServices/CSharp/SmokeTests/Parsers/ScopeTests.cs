@@ -220,6 +220,49 @@ public class ScopeTests
     }
     
     [Fact]
+    public void GlobalScope_TypeDefinitionNode_WithPrimaryConstructorSyntax_ImplicitStartCodeBlock()
+    {
+    	var test = new Test(@"public class Person(string FirstName, string LastName);");
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(19, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(54, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				var typeDefinitionNode = typeDefinitionScope.CodeBlockOwner;
+				
+				Assert.Equal(1, typeDefinitionNode.ScopeIndexKey);
+				
+				Assert.Null(typeDefinitionNode.OpenCodeBlockTextSpan);
+				
+				Assert.Equal(54, typeDefinitionNode.CloseCodeBlockTextSpan.Value.StartingIndexInclusive);
+				Assert.Equal(55, typeDefinitionNode.CloseCodeBlockTextSpan.Value.EndingIndexExclusive);
+			}
+	    }
+    }
+    
+    [Fact]
+    public void GlobalScope_TypeDefinitionNode_WithPrimaryConstructorSyntax_ExplicitStartCodeBlock()
+    {
+    	var test = new Test(@"public class Person(string FirstName, string LastName) { }");
+    }
+    
+    [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_ConstructorDefinitionNode()
     {
     	var test = new Test(@"public class Person { public Person() { } }");
