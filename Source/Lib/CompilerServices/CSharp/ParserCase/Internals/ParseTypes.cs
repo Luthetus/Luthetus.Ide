@@ -186,9 +186,18 @@ public static class ParseTypes
 
     public static void HandlePrimaryConstructorDefinition(
         TypeDefinitionNode typeDefinitionNode,
-        OpenParenthesisToken consumedOpenParenthesisToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
+    	var functionArgumentsListingNode = ParseFunctions.HandleFunctionArguments(compilationUnit, ref parserModel);
+    	typeDefinitionNode.SetPrimaryConstructorFunctionArgumentsListingNode(functionArgumentsListingNode);
+    	
+    	if (typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode is not null)
+    	{
+    		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    	{
+	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+	    	}
+    	}
     }
 }
