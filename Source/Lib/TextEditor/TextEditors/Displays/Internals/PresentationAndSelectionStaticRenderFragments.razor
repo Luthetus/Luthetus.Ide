@@ -19,38 +19,10 @@
 	    {
 	        var completedCalculation = presentationLayer.CompletedCalculation;
 	
-			// (2025-01-25)
-			// ============
-			// ToImmutableArray() is a bad idea,
-			// TextEditorTextSpan is a struct, yet immutable datatypes
-			// are often a Tree datastructure thus requiring nodes,
-			// thus requiring an object for the node
-			// that contains the struct.
-	        var textSpansList = completedCalculation?.TextSpanList
-	            ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray();
+			var textSpansList = completedCalculation?.TextSpanList
+	            ?? Array.Empty<TextEditorTextSpan>();
 	
-			// (2025-01-25)
-			// ============
-			// ToArray() is a bad idea,
-			// This is being ran on a List that is public throughout the application.
-			//
-			// Step 1: allocate an array with capacity == 'TextModificationsSinceRequestList',
-			// Step 1.5: someone adds to 'TextModificationsSinceRequestList'
-			// Step 2: array not large enough exception.
-			//
-			// ToList() seems to not throw this exception (from quickly looking around stack overflow).
-			// It presumably has an implementation detail that extends the destination.
-			// 
-			// Destination array was not long enough. Check the destination index, length, and the array's lower bounds. (Parameter 'destinationArray')
-			// 	at System.Array.CopyImpl(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
-			// 	at System.Array.Copy(Array sourceArray, Array destinationArray, Int32 length)
-			// 	at System.Collections.Generic.List`1.ToArray()
-			// 	at Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.PresentationAndSelectionStaticRenderFragments.<>c__DisplayClass3_0.<.cctor>b__1(RenderTreeBuilder __builder2) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\PresentationAndSelectionStaticRenderFragments.razor:line 25
-			// 	at Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder.AddContent(Int32 sequence, RenderFragment fragment)
-			// 	at Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\TextEditorViewModelDisplay.razor:line 91
-			// 	at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
-			// 
-	        var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
+	        IReadOnlyList<TextEditorTextModification> textModificationList = ((IReadOnlyList<TextEditorTextModification>?)completedCalculation?.TextModificationsSinceRequestList)
 	            ?? Array.Empty<TextEditorTextModification>();
 	
 	        @if (completedCalculation is not null)
@@ -134,11 +106,11 @@
 	    @foreach (var presentationLayer in LAST_presentationLayerOrderedByRankAscending)
 	    {
 	        var completedCalculation = presentationLayer.CompletedCalculation;
-	
+	        
 	        var textSpansList = completedCalculation?.TextSpanList
-	            ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray();
+	            ?? Array.Empty<TextEditorTextSpan>();
 	
-	        var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
+	        IReadOnlyList<TextEditorTextModification> textModificationList = ((IReadOnlyList<TextEditorTextModification>?)completedCalculation?.TextModificationsSinceRequestList)
 	            ?? Array.Empty<TextEditorTextModification>();
 	
 	        @if (completedCalculation is not null)

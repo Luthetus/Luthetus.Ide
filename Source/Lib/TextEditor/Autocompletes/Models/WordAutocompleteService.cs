@@ -3,6 +3,7 @@ namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 public class WordAutocompleteService : IAutocompleteService
 {
     private readonly WordAutocompleteIndexer _wordAutocompleteIndexer;
+    private readonly List<string> _emptyResult = new();
 
     public WordAutocompleteService(WordAutocompleteIndexer wordAutocompleteIndexer)
     {
@@ -21,8 +22,15 @@ public class WordAutocompleteService : IAutocompleteService
 		// 	at Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass33_0.<BuildRenderTree>b__1(RenderTreeBuilder __builder2)
 		// 	at Microsoft.AspNetCore.Components.CascadingValue`1.Render(RenderTreeBuilder builder)
 		// 	at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
-    	
-        var indexedStrings = _wordAutocompleteIndexer.IndexedStringsList;
-        return new List<string>(indexedStrings.Where(x => x.StartsWith(word)).Take(5));
+    	try
+    	{
+	        var indexedStrings = _wordAutocompleteIndexer.IndexedStringsList;
+	        return new List<string>(indexedStrings.Where(x => x.StartsWith(word)).Take(5));
+        }
+        catch (Exception e)
+        {
+        	Console.WriteLine(e);
+        	return _emptyResult;
+        }
     }
 }

@@ -243,7 +243,14 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 				// System.NullReferenceException: Object reference not set to an instance of an object.
 				//    at Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
 				// PS C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Host.Photino\bin\Release\net8.0\publish>
-                await menuOptionAction.Invoke().ConfigureAwait(false);
+				try
+				{
+					await menuOptionAction.Invoke().ConfigureAwait(false);
+				}
+                catch (Exception e)
+                {
+                	Console.WriteLine(e);
+                }
             }
             catch (Exception e)
             {
