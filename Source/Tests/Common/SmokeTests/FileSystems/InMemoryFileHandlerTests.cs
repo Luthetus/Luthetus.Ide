@@ -1,9 +1,9 @@
-/*using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
 using static Luthetus.Common.RazorLib.FileSystems.Models.InMemoryFileSystemProvider;
-using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
+using static Luthetus.Common.Tests.SmokeTests.FileSystems.FileSystemsTestsHelper;
 
-namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+namespace Luthetus.Common.Tests.SmokeTests.FileSystems;
 
 /// <summary>
 /// <see cref="InMemoryFileSystemProvider.File"/>
@@ -13,11 +13,6 @@ public class InMemoryFileHandlerTests
     [Fact]
     public void Constructor()
     {
-        /*
-        public InMemoryFileHandler(
-            InMemoryFileSystemProvider inMemoryFileSystemProvider, IEnvironmentProvider environmentProvider)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -31,11 +26,6 @@ public class InMemoryFileHandlerTests
     [Fact]
     public async Task ExistsAsync()
     {
-        /*
-        public Task<bool> ExistsAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -52,11 +42,6 @@ public class InMemoryFileHandlerTests
     [Fact]
     public async Task DeleteAsync()
     {
-        /*
-        public async Task DeleteAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -72,11 +57,6 @@ public class InMemoryFileHandlerTests
     [Fact]
     public async Task CopyAsync()
     {
-        /*
-        public async Task CopyAsync(
-            string sourceAbsolutePathString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -106,11 +86,6 @@ public class InMemoryFileHandlerTests
     [Fact]
     public async Task MoveAsync()
     {
-        /*
-        public async Task MoveAsync(
-            string sourceAbsolutePathString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -142,11 +117,6 @@ public class InMemoryFileHandlerTests
     [Fact]
     public async Task GetLastWriteTimeAsync()
     {
-        /*
-        public async Task<DateTime> GetLastWriteTimeAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -163,11 +133,6 @@ public class InMemoryFileHandlerTests
     [Fact]
     public async Task ReadAllTextAsync()
     {
-        /*
-        public async Task<string> ReadAllTextAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -181,11 +146,6 @@ public class InMemoryFileHandlerTests
     [Fact]
     public async Task WriteAllTextAsync()
     {
-        /*
-        public async Task WriteAllTextAsync(
-            string absolutePathString, string contents, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -203,4 +163,4 @@ public class InMemoryFileHandlerTests
             newText,
             await fileSystemProvider.File.ReadAllTextAsync(WellKnownPaths.Files.AdditionTxt));
     }
-}*/
+}

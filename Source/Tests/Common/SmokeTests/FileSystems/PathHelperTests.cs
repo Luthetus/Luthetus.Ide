@@ -1,12 +1,9 @@
-/*using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
-using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using static Luthetus.Common.Tests.SmokeTests.FileSystems.FileSystemsTestsHelper;
 
-namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+namespace Luthetus.Common.Tests.SmokeTests.FileSystems;
 
-/// <summary>
-/// <see cref="PathHelper"/>
-/// </summary>
 public class PathHelperTests
 {
     /// <summary>
@@ -265,4 +262,3 @@ public class PathHelperTests
             true));
     }
 }
-*/

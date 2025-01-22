@@ -1,22 +1,12 @@
-/*using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using static Luthetus.Common.RazorLib.FileSystems.Models.InMemoryFileSystemProvider;
-using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
+using static Luthetus.Common.Tests.SmokeTests.FileSystems.FileSystemsTestsHelper;
 
-namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+namespace Luthetus.Common.Tests.SmokeTests.FileSystems;
 
-/// <summary>
-/// <see cref="InMemoryFileSystemProvider"/>
-/// </summary>
 public partial class InMemoryFileSystemProviderTests
 {
-    /// <summary>
-    /// <see cref="InMemoryFileSystemProvider(IEnvironmentProvider)"/>
-    /// <br/>----<br/>
-    /// <see cref="InMemoryFileSystemProvider.File"/>
-    /// <see cref="InMemoryFileSystemProvider.Directory"/>
-    /// <see cref="InMemoryFileSystemProvider.Files"/>
-    /// </summary>
     [Fact]
     public void Constructor()
     {
@@ -32,4 +22,4 @@ public partial class InMemoryFileSystemProviderTests
         Assert.Contains(fileSystemProvider.Files, x => x.AbsolutePath.Value == WellKnownPaths.Directories.Biology);
         Assert.Contains(fileSystemProvider.Files, x => x.AbsolutePath.Value == WellKnownPaths.Files.NervousSystemTxt);
     }
-}*/
+}

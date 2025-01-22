@@ -1,27 +1,11 @@
-/*using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
-using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using static Luthetus.Common.Tests.SmokeTests.FileSystems.FileSystemsTestsHelper;
 
-namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+namespace Luthetus.Common.Tests.SmokeTests.FileSystems;
 
-/// <summary>
-/// <see cref="RelativePath"/>
-/// </summary>
 public class RelativePathTests
 {
-    /// <summary>
-    /// <see cref="RelativePath(string, bool, IEnvironmentProvider)"/>
-    /// <see cref="RelativePath.PathType"/>
-    /// <see cref="RelativePath.IsDirectory"/>
-    /// <see cref="RelativePath.EnvironmentProvider"/>
-    /// <see cref="RelativePath.AncestorDirectoryList"/>
-    /// <see cref="RelativePath.NameNoExtension"/>
-    /// <see cref="RelativePath.ExtensionNoPeriod"/>
-    /// <see cref="RelativePath.UpDirDirectiveCount"/>
-    /// <see cref="RelativePath.ExactInput"/>
-    /// <see cref="RelativePath.Value"/>
-    /// <see cref="RelativePath.NameWithExtension"/>
-    /// </summary>
     [Fact]
     public void Constructor()
     {
@@ -49,7 +33,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("Math/", relativePath.NameWithExtension);
 
-            var homeworkDirectory = relativePath.AncestorDirectoryList[0];
+            var homeworkDirectory = relativePath.GetAncestorDirectoryList()[0];
             var homeworkDirectoryRelativePath = environmentProvider.RelativePathFactory(homeworkDirectory.Value, true);
             Assert.Equal("Homework", homeworkDirectoryRelativePath.NameNoExtension);
         }
@@ -68,7 +52,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("addition.txt", relativePath.NameWithExtension);
 
-            var mathDirectory = relativePath.AncestorDirectoryList[0];
+            var mathDirectory = relativePath.GetAncestorDirectoryList()[0];
             var mathDirectoryRelativePath = environmentProvider.RelativePathFactory(mathDirectory.Value, true);
             Assert.Equal("Math", mathDirectoryRelativePath.NameNoExtension);
         }
@@ -87,7 +71,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("skeletalSystem.txt", relativePath.NameWithExtension);
 
-            Assert.Empty(relativePath.AncestorDirectoryList);
+            Assert.Empty(relativePath.GetAncestorDirectoryList());
         }
 
         {
@@ -104,7 +88,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("/", relativePath.NameWithExtension);
 
-            Assert.Empty(relativePath.AncestorDirectoryList);
+            Assert.Empty(relativePath.GetAncestorDirectoryList());
         }
 
         {
@@ -121,7 +105,7 @@ public class RelativePathTests
             Assert.Equal(relativePathString, relativePath.Value);
             Assert.Equal("/", relativePath.NameWithExtension);
 
-            Assert.Empty(relativePath.AncestorDirectoryList);
+            Assert.Empty(relativePath.GetAncestorDirectoryList());
         }
     }
-}*/
+}

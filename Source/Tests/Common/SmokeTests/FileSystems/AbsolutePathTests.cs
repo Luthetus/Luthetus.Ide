@@ -1,14 +1,11 @@
-/*using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
-namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+namespace Luthetus.Common.Tests.SmokeTests.FileSystems;
 
-/// <summary>
-/// <see cref="AbsolutePath"/>
-/// </summary>
 public class AbsolutePathTests
 {
-    [Fact]
+	[Fact]
     public void Constructor()
     {
         FileSystemsTestsHelper.InitializeFileSystemsTests(
@@ -33,7 +30,7 @@ public class AbsolutePathTests
                 Assert.Equal(PathType.AbsolutePath, dirAbsolutePath.PathType);
                 Assert.Equal(isDirectory, dirAbsolutePath.IsDirectory);
                 Assert.Equal(environmentProvider, dirAbsolutePath.EnvironmentProvider);
-                Assert.Single(dirAbsolutePath.AncestorDirectoryList);
+                Assert.Single(dirAbsolutePath.GetAncestorDirectoryList());
                 Assert.Equal(dirName, dirAbsolutePath.NameNoExtension);
 
                 Assert.Equal(
@@ -70,7 +67,7 @@ public class AbsolutePathTests
                 Assert.Equal(PathType.AbsolutePath, fileAbsolutePath.PathType);
                 Assert.Equal(isDirectory, fileAbsolutePath.IsDirectory);
                 Assert.Equal(environmentProvider, fileAbsolutePath.EnvironmentProvider);
-                Assert.Equal(2, fileAbsolutePath.AncestorDirectoryList.Count);
+                Assert.Equal(2, fileAbsolutePath.GetAncestorDirectoryList().Count);
                 Assert.Equal(fileName, fileAbsolutePath.NameNoExtension);
                 Assert.Equal(fileExtension, fileAbsolutePath.ExtensionNoPeriod);
                 Assert.Null(fileAbsolutePath.RootDrive);
@@ -97,4 +94,4 @@ public class AbsolutePathTests
         var isDirectory = true;
         var dirAbsolutePath = environmentProvider.AbsolutePathFactory(path, isDirectory);
     }
-}*/
+}

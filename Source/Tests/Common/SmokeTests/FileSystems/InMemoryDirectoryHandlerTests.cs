@@ -1,23 +1,15 @@
-/*using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
 using static Luthetus.Common.RazorLib.FileSystems.Models.InMemoryFileSystemProvider;
-using static Luthetus.Common.Tests.Basis.FileSystems.FileSystemsTestsHelper;
+using static Luthetus.Common.Tests.SmokeTests.FileSystems.FileSystemsTestsHelper;
 
-namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+namespace Luthetus.Common.Tests.SmokeTests.FileSystems;
 
-/// <summary>
-/// <see cref="InMemoryFileSystemProvider.Directory"/>
-/// </summary>
 public class InMemoryDirectoryHandlerTests
 {
     [Fact]
     public void Constructor()
     {
-        /*
-        public InMemoryDirectoryHandler(
-            InMemoryFileSystemProvider inMemoryFileSystemProvider, IEnvironmentProvider environmentProvider)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -31,11 +23,6 @@ public class InMemoryDirectoryHandlerTests
     [Fact]
     public async Task ExistsAsync()
     {
-        /*
-        public Task<bool> ExistsAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -52,11 +39,6 @@ public class InMemoryDirectoryHandlerTests
     [Fact]
     public async Task CreateDirectoryAsync()
     {
-        /*
-        public async Task CreateDirectoryAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -78,11 +60,6 @@ public class InMemoryDirectoryHandlerTests
     [Fact]
     public async Task DeleteAsync()
     {
-        /*
-        public async Task DeleteAsync(
-            string absolutePathString, bool recursive, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -136,11 +113,6 @@ public class InMemoryDirectoryHandlerTests
     [Fact]
     public async Task CopyAsync()
     {
-        /*
-        public async Task CopyAsync(
-            string sourceAbsoluteFileString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -219,11 +191,6 @@ public class InMemoryDirectoryHandlerTests
     [Fact]
     public async Task MoveAsync()
     {
-        /*
-        public async Task MoveAsync(
-            string sourceAbsolutePathString, string destinationAbsolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -302,11 +269,6 @@ public class InMemoryDirectoryHandlerTests
     [Fact]
     public async Task GetDirectoriesAsync()
     {
-        /*
-        public Task<string[]> GetDirectoriesAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -346,11 +308,6 @@ public class InMemoryDirectoryHandlerTests
     [Fact]
     public async Task GetFilesAsync()
     {
-        /*
-        public Task<string[]> GetFilesAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -377,18 +334,9 @@ public class InMemoryDirectoryHandlerTests
         }
     }
 
-    /// <summary>
-    /// TODO: Create a case where there exists both a directory and a file.
-    /// </summary>
-    /// <returns></returns>
     [Fact]
     public async Task EnumerateFileSystemEntriesAsync()
     {
-        /*
-        public async Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
-            string absolutePathString, CancellationToken cancellationToken = default)
-         *//*
-
         InitializeFileSystemsTests(
             out InMemoryEnvironmentProvider environmentProvider,
             out InMemoryFileSystemProvider fileSystemProvider,
@@ -436,4 +384,4 @@ public class InMemoryDirectoryHandlerTests
             Assert.DoesNotContain(childPaths, x => x == WellKnownPaths.Files.SkeletalSystemTxt);
         }
     }
-}*/
+}

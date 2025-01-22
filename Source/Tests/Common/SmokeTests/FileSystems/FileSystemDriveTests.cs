@@ -1,20 +1,10 @@
-/*using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
-namespace Luthetus.Common.Tests.Basis.FileSystems.Models;
+namespace Luthetus.Common.Tests.SmokeTests.FileSystems;
 
-/// <summary>
-/// <see cref="FileSystemDrive"/>
-/// </summary>
 public class FileSystemDriveTests
 {
-    /// <summary>
-    /// <see cref="FileSystemDrive(string, IEnvironmentProvider)"/>
-    /// <br/>----<br/>
-    /// <see cref="FileSystemDrive.DriveNameAsIdentifier"/>
-    /// <see cref="FileSystemDrive.DriveNameAsPath"/>
-    /// <see cref="FileSystemDrive.EnvironmentProvider"/>
-    /// </summary>
     [Fact]
     public void Constructor()
     {
@@ -72,4 +62,4 @@ public class FileSystemDriveTests
             }
         }
     }
-}*/
+}

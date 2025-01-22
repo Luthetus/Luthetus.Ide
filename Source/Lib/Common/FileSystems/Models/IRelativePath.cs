@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 /// <summary>
 /// Given an <see cref="IRelativePath"/> then <see cref="AncestorDirectoryList"/> refers to the "../Todos/" in "../Todos/myFile.cs".
@@ -15,6 +15,12 @@ public interface IRelativePath : IPath
     /// Given "../../../Homework/math.txt". The count is 3.
     /// </summary>
     public int UpDirDirectiveCount { get; }
+
+	/// <summary>
+    /// The IAbsolutePath version was optimized,
+    /// the IRelativePath still needs to be optimized.
+    /// </summary>
+    public List<AncestorDirectory> GetAncestorDirectoryList();
 
     /// <summary>
     /// One might prefer <see cref="IEnvironmentProvider.RelativePathFactory(string, bool)"/> instead
