@@ -195,7 +195,109 @@ public class AbsolutePathTests_Snapshot
 	/// so I am going to copy some cases into here 1 by 1 to investigate how they should be handled.
 	/// </summary>
 	[Fact]
-	public void SingleOut()
+	public async Task SingleOut()
 	{
+		// string.Empty in 'new file' / 'new directory' ->
+		// ===============================================
+		//
+		// isDirectory: false ->
+		//     (this exception was caught)
+		//     ERROR: System.IO.DirectoryNotFoundException:
+		//     Could not find a part of the path 'C:\Users\hunte\Repos\Demos\BlazorCrudApp\BlazorCrudApp.ServerSide\Tests\'.
+		//     at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+		//     at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+		//     at System.IO.File.OpenHandle(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize) at System.IO.File.WriteToFileAsync(String path, FileMode mode, String contents, Encoding encoding, CancellationToken cancellationToken)
+		//     at Luthetus.Common.RazorLib.FileSystems.Models.LocalFileHandler.WriteAllTextAsync(String absolutePathString, String contents, CancellationToken cancellationToken)
+		//     in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\FileSystems\Models\LocalFileHandler.cs:line 121
+		//
+		// isDirectory: true ->
+		//     ???
+		//     Seemingly nothing happened.
+		//
+		// 
+		
+		// I will test these with my own file system too not just the InMemory.
+		// Need to do it in a way that it never gets committed I don't want any tests to have side effects.
+		
+		var environmentProvider = new InMemoryEnvironmentProvider();
+		
+		var fileSystemProvider = new InMemoryFileSystemProvider(
+			environmentProvider, null, null);
+		
+		var absolutePathString = string.Empty;
+		
+		// Directory
+		{
+			var exists = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
+		
+			await fileSystemProvider.Directory.CreateDirectoryAsync(absolutePathString);
+		
+		    /*public Task DeleteAsync(
+		        string absolutePathString,
+		        bool recursive,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task<bool> ExistsAsync(
+		        string absolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task CopyAsync(
+		        string sourceAbsolutePathString,
+		        string destinationAbsolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task MoveAsync(
+		        string sourceAbsolutePathString,
+		        string destinationAbsolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task<string[]> GetDirectoriesAsync(
+		        string absolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task<string[]> GetFilesAsync(
+		        string absolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
+		        string absolutePathString,
+		        CancellationToken cancellationToken = default);*/
+		}
+		
+		// File
+		{
+			/*
+			public Task<bool> ExistsAsync(
+		        string absolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task DeleteAsync(
+		        string absolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task CopyAsync(
+		        string sourceAbsolutePathString,
+		        string destinationAbsolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task MoveAsync(
+		        string sourceAbsolutePathString,
+		        string destinationAbsolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task<DateTime> GetLastWriteTimeAsync(
+		        string absolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task<string> ReadAllTextAsync(
+		        string absolutePathString,
+		        CancellationToken cancellationToken = default);
+		
+		    public Task WriteAllTextAsync(
+		        string absolutePathString,
+		        string contents,
+		        CancellationToken cancellationToken = default);
+		    */
+		}
 	}
 }
