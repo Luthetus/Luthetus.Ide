@@ -19,10 +19,10 @@
 	    {
 	        var completedCalculation = presentationLayer.CompletedCalculation;
 	
-	        var textSpansList = completedCalculation?.TextSpanList
-	            ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray();
+			var textSpansList = completedCalculation?.TextSpanList
+	            ?? Array.Empty<TextEditorTextSpan>();
 	
-	        var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
+	        IReadOnlyList<TextEditorTextModification> textModificationList = ((IReadOnlyList<TextEditorTextModification>?)completedCalculation?.TextModificationsSinceRequestList)
 	            ?? Array.Empty<TextEditorTextModification>();
 	
 	        @if (completedCalculation is not null)
@@ -106,11 +106,11 @@
 	    @foreach (var presentationLayer in LAST_presentationLayerOrderedByRankAscending)
 	    {
 	        var completedCalculation = presentationLayer.CompletedCalculation;
-	
+	        
 	        var textSpansList = completedCalculation?.TextSpanList
-	            ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray();
+	            ?? Array.Empty<TextEditorTextSpan>();
 	
-	        var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
+	        IReadOnlyList<TextEditorTextModification> textModificationList = ((IReadOnlyList<TextEditorTextModification>?)completedCalculation?.TextModificationsSinceRequestList)
 	            ?? Array.Empty<TextEditorTextModification>();
 	
 	        @if (completedCalculation is not null)

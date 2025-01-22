@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Installations.Models;
+
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 /// <summary>
@@ -10,11 +12,18 @@ namespace Luthetus.Common.RazorLib.FileSystems.Models;
 /// </summary>
 public class AncestorDirectory
 {
+	~AncestorDirectory()  // finalizer
+    {
+        --LuthetusDebugSomething.AncestorDirectory_ConstructorCount;
+    }
+
     public AncestorDirectory(
         string nameNoExtension,
         string value,
         IEnvironmentProvider environmentProvider)
     {
+    	++LuthetusDebugSomething.AncestorDirectory_ConstructorCount;
+    
         NameNoExtension = nameNoExtension;
         Value = value;
         EnvironmentProvider = environmentProvider;

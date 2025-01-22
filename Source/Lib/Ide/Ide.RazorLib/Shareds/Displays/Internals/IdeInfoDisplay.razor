@@ -174,10 +174,46 @@
 			<div>
                 <div>v <em class="luth_em">0.9.7.19 </em> (WIP_DATE)</div>
                 <ul>
-                	<li>Draft PR</li>
-                	<li>EditContext lazy cache.</li>
-                	<li>Iterate cache directly when writing changes.</li>
-                	<li>Large re-work of 'IBackgroundService'.</li>
+                	<li>Draft PR 3</li>
+					<li>
+						TextEditorCursor and TextEditorSelection -> record struct
+					</li>
+					<li>
+						TextEditorTextModification -> record struct
+					</li>
+					<li>
+						CharAndLineMeasurements -> record struct
+					</li>
+					<li>
+						sealed: Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+					</li>
+					<li>
+						sealed: Luthetus.TextEditor.RazorLib.TextEditors.Models; (tons of rec… 
+					</li>
+					<li>
+						All text editor actions are now structs
+					</li>
+					<li>
+						Category -> record struct from sealed record
+					</li>
+					<li>
+						CursorModifierBagTextEditor to struct from sealed class
+					</li>
+					<li>
+						ScrollBarDimensions and TextEditorDimensions changed to 'record struct'
+					</li>
+					<li>
+						Optimize: ITextEditorRenderBatch
+					</li>
+                	<li>
+                		EditContext lazy cache.
+                	</li>
+                	<li>
+                		Iterate cache directly when writing changes.
+                	</li>
+                	<li>
+                		Large re-work of 'IBackgroundService'.
+                	</li>
                 </ul>
             </div>
             <div>

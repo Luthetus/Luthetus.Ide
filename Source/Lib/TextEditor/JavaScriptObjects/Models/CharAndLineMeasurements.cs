@@ -5,6 +5,6 @@ namespace Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 /// </summary>
 /// <param name="CharacterWidth">The unit of measurement is Pixels (px)</param>
 /// <param name="RowHeight">The unit of measurement is Pixels (px)</param>
-public record CharAndLineMeasurements(
+public record struct CharAndLineMeasurements(
     double CharacterWidth,
     double LineHeight);

@@ -88,7 +88,24 @@ public partial class TestExplorerScheduler
 							// THINKING_ABOUT_TREE_VIEW();
 							{
 								var splitOutputList = (treeViewProjectTestModel.Item.TestNameFullyQualifiedList ?? new())
-									.Select(x => x.Split('.'));
+									.Select(x =>
+									{
+										// Theory, InlineData
+										// ------------------
+										// I don't have it in me to fix this at the moment.
+										// Need to handle these differently.
+										//
+										// Going to just take the non-argumented version
+										// for now.
+										//
+										// It will run all the [InlineData] in one go
+										// but can't single out yet. (2025-01-25)
+										var openParenthesisIndex = x.IndexOf("(");
+										if (openParenthesisIndex != -1)
+											x = x[..openParenthesisIndex];
+										
+										return x.Split('.');
+									});
 
 								var rootMap = new Dictionary<string, StringFragment>();
 

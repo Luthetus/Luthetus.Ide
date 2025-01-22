@@ -27,12 +27,8 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
         DisplayName = displayName;
     }
 
-	
-
 	public Key<IBackgroundTaskQueue> Key { get; }
     public string DisplayName { get; }
-    
-    
 
     /// <summary>
     /// Returns the amount of <see cref="IBackgroundTask"/>(s) in the queue.
