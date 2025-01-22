@@ -190,6 +190,43 @@ public class AbsolutePathTests_Snapshot
 		Assert.Equal(PathType.AbsolutePath, absolutePath.PathType);
 	}
 	
+	/*
+	string.Empty
+	============
+	
+	Directory (InMemoryFileSystemProvider) API
+	{
+		// await fileSystemProvider.Directory.CreateDirectoryAsync(absolutePathString);
+		// existsBefore -> false
+		// existsAfter -> false
+		
+		// await fileSystemProvider.Directory.DeleteAsync(absolutePathString, false);
+		// System.NullReferenceException : Object reference not set to an instance of an object.
+		
+		// await fileSystemProvider.Directory.CopyAsync(absolutePathString, "/");
+		// existsBefore -> false
+		// existsAfter -> false
+		
+		// await fileSystemProvider.Directory.MoveAsync(absolutePathString, "/");
+		// System.NullReferenceException : Object reference not set to an instance of an object.
+		
+		// var directoryList = await fileSystemProvider.Directory.GetDirectoriesAsync(absolutePathString);
+		// existsBefore -> false 
+		// Console.WriteLine(directoryList.Length); -> 0
+		// existsAfter -> false
+		
+		// var fileList = await fileSystemProvider.Directory.GetFilesAsync(absolutePathString);
+		// existsBefore -> false 
+		// Console.WriteLine(fileList.Length); -> 0
+		// existsAfter -> false
+		
+		// var fileSystemEntryList = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(absolutePathString);
+		// existsBefore -> false
+		// Console.WriteLine(fileSystemEntryList.Count()); -> 0
+		// existsAfter -> false
+	}
+	*/
+	
 	/// <summary>
 	/// Only can run [Theory] [InlineData(...)] as the entire batch at the moment,
 	/// so I am going to copy some cases into here 1 by 1 to investigate how they should be handled.
@@ -228,40 +265,40 @@ public class AbsolutePathTests_Snapshot
 		
 		// Directory
 		{
-			var exists = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
+			// var existsBefore = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsBefore: {existsBefore}");
 		
-			await fileSystemProvider.Directory.CreateDirectoryAsync(absolutePathString);
-		
-		    /*public Task DeleteAsync(
-		        string absolutePathString,
-		        bool recursive,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task<bool> ExistsAsync(
-		        string absolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task CopyAsync(
-		        string sourceAbsolutePathString,
-		        string destinationAbsolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task MoveAsync(
-		        string sourceAbsolutePathString,
-		        string destinationAbsolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task<string[]> GetDirectoriesAsync(
-		        string absolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task<string[]> GetFilesAsync(
-		        string absolutePathString,
-		        CancellationToken cancellationToken = default);
-		
-		    public Task<IEnumerable<string>> EnumerateFileSystemEntriesAsync(
-		        string absolutePathString,
-		        CancellationToken cancellationToken = default);*/
+			// await fileSystemProvider.Directory.CreateDirectoryAsync(absolutePathString);
+			// existsBefore -> false
+			// existsAfter -> false
+			
+			// await fileSystemProvider.Directory.DeleteAsync(absolutePathString, false);
+			// System.NullReferenceException : Object reference not set to an instance of an object.
+			
+			// await fileSystemProvider.Directory.CopyAsync(absolutePathString, "/");
+			// existsBefore -> false
+			// existsAfter -> false
+			
+			// await fileSystemProvider.Directory.MoveAsync(absolutePathString, "/");
+			// System.NullReferenceException : Object reference not set to an instance of an object.
+			
+			// var directoryList = await fileSystemProvider.Directory.GetDirectoriesAsync(absolutePathString);
+			// existsBefore -> false 
+			// Console.WriteLine(directoryList.Length); -> 0
+			// existsAfter -> false
+			
+			// var fileList = await fileSystemProvider.Directory.GetFilesAsync(absolutePathString);
+			// existsBefore -> false 
+			// Console.WriteLine(fileList.Length); -> 0
+			// existsAfter -> false
+			
+			// var fileSystemEntryList = await fileSystemProvider.Directory.EnumerateFileSystemEntriesAsync(absolutePathString);
+			// existsBefore -> false
+			// Console.WriteLine(fileSystemEntryList.Count()); -> 0
+			// existsAfter -> false
+			
+			// var existsAfter = await fileSystemProvider.Directory.ExistsAsync(absolutePathString);
+			// Console.WriteLine($"existsAfter: {existsAfter}");
 		}
 		
 		// File
