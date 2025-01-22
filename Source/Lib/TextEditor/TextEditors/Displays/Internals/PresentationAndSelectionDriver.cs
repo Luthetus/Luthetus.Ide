@@ -159,9 +159,16 @@ public class PresentationAndSelectionDriver
     }
 
     public IReadOnlyList<TextEditorTextSpan> PresentationVirtualizeAndShiftTextSpans(
-        TextEditorTextModification[] textModifications,
+        IReadOnlyList<TextEditorTextModification> textModifications,
         IReadOnlyList<TextEditorTextSpan> inTextSpanList)
     {
+    	// (2025-01-22)
+    	// ============
+    	// The text spans need to be tied to the partitions they reside in
+    	// (careful of a textspan that overlaps two partitions).
+    	//
+    	// This shouldn't be done here, it should be done during the editContext.
+    	
     	var renderBatchLocal = _renderBatch;
     	if (renderBatchLocal is null)
     		return Array.Empty<TextEditorTextSpan>();
@@ -178,8 +185,13 @@ public class PresentationAndSelectionDriver
                 var lowerLine = renderBatchLocal.Model.GetLineInformation(lowerLineIndexInclusive);
                 var upperLine = renderBatchLocal.Model.GetLineInformation(upperLineIndexInclusive);
 
-                foreach (var textSpan in inTextSpanList)
+				// Awkward enumeration was modified 'for loop' (2025-01-22)
+				// Also, this shouldn't be done here, it should be done during the editContext.
+				var count = inTextSpanList.Count;
+                for (int i = 0; i < count; i++)
                 {
+                	var textSpan = inTextSpanList[i];
+                	
                     if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
                         upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
                     {
@@ -201,8 +213,13 @@ public class PresentationAndSelectionDriver
                     var startingIndexInclusive = textSpan.StartingIndexInclusive;
                     var endingIndexExclusive = textSpan.EndingIndexExclusive;
 
-                    foreach (var textModification in textModifications)
+					// Awkward enumeration was modified 'for loop' (2025-01-22)
+					// Also, this shouldn't be done here, it should be done during the editContext.
+					var count = textModifications.Count;
+                    for (int i = 0; i < count; i++)
                     {
+                    	var textModification = textModifications[i];
+                    
                         if (textModification.WasInsertion)
                         {
                             if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)

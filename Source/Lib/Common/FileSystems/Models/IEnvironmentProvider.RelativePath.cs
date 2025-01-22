@@ -130,6 +130,8 @@ public partial interface IEnvironmentProvider
         public string Value => _value ??= CalculateValue();
         public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
 
+		public List<AncestorDirectory> GetAncestorDirectoryList() => AncestorDirectoryList;
+
         private void ConsumeTokenAsDirectory()
         {
             var nameNoExtension = _tokenBuilder.ToString();

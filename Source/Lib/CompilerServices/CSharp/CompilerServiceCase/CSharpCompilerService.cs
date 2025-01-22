@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
@@ -29,10 +30,6 @@ public sealed class CSharpCompilerService : CompilerService
     public CSharpCompilerService(ITextEditorService textEditorService)
         : base(textEditorService)
     {
-    	#if DEBUG
-    	++LuthetusDebugSomething.CompilerService_ConstructorInvocationCount;
-    	#endif
-    	
     	Binder = CSharpBinder;
     
         _compilerServiceOptions = new()

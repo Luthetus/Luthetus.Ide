@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.States;
@@ -91,9 +91,9 @@ public partial record InputFileState
             TreeViewAbsolutePath? parentDirectoryTreeViewModel = null;
 
             // If has a ParentDirectory select it
-            if (currentSelection.Item.AncestorDirectoryList.Any())
+            if (currentSelection.Item.ParentDirectory is not null)
             {
-                var parentDirectory = currentSelection.Item.AncestorDirectoryList.Last();
+                var parentDirectory = currentSelection.Item.ParentDirectory;
 
                 var parentDirectoryAbsolutePath = openParentDirectoryAction.EnvironmentProvider.AbsolutePathFactory(
                     parentDirectory.Value,

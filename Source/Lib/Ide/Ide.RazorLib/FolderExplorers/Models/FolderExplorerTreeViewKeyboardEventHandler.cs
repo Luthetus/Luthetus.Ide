@@ -161,7 +161,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         }
         else
         {
-            var parentDirectory = treeViewAbsolutePath.Item.AncestorDirectoryList.Last();
+            var parentDirectory = treeViewAbsolutePath.Item.ParentDirectory;
 
             var parentDirectoryAbsolutePath = _environmentProvider.AbsolutePathFactory(
                 parentDirectory.Value,

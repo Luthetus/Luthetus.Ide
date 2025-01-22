@@ -18,7 +18,7 @@ public class TreeViewHelperRazorMarkup
 		if (razorMarkupTreeView.Item is null)
 			return new();
 
-		var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
+		var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.ParentDirectory;
 		var ancestorDirectory = parentDirectoryOfRazorMarkup;
 
 		var filePathStringsList = await razorMarkupTreeView.FileSystemProvider.Directory
