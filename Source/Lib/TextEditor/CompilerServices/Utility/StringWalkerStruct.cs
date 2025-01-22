@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -14,11 +15,7 @@ public struct StringWalkerStruct
     /// <summary>Pass in the <see cref="ResourceUri"/> of a file, and its text. One can pass in <see cref="string.Empty"/> for the <see cref="ResourceUri"/> if they are only working with the text itself.</summary>
     public StringWalkerStruct(ResourceUri resourceUri, string sourceText)
     {
-    	#if DEBUG
-    	++LuthetusDebugSomething.StringWalker_ConstructorInvocationCount;
-    	#endif
-    
-        ResourceUri = resourceUri;
+    	ResourceUri = resourceUri;
         SourceText = sourceText;
     }
 

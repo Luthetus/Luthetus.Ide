@@ -1,3 +1,4 @@
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
@@ -24,11 +25,7 @@ public struct CSharpParserModel
         CSharpCodeBlockBuilder globalCodeBlockBuilder,
         CSharpCodeBlockBuilder currentCodeBlockBuilder)
     {
-    	#if DEBUG
-    	++LuthetusDebugSomething.ParserModel_ConstructorInvocationCount;
-    	#endif
-    
-        TokenWalker = tokenWalker;
+    	TokenWalker = tokenWalker;
         SyntaxStack = syntaxStack;
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;

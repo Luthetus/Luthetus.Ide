@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -15,10 +16,6 @@ public class TokenWalker
 
     public TokenWalker(List<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
     {
-    	#if DEBUG
-    	++LuthetusDebugSomething.TokenWalker_ConstructorInvocationCount;
-    	#endif
-    
     	if (tokenList.Count > 0 &&
     		tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
     	{

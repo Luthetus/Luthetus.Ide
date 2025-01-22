@@ -187,6 +187,13 @@ public partial record TextEditorState
 			
 		    Additional note: this was happening during the solution wide parse.
 		    It was just "random" while I was using the IDE during the solution wide parse, sometimes it happened sometimes it didn't.
+		    
+			-----------------------
+			
+			I think I get what is happening. For some reason a null is being added to the
+			setModelAndViewModelRangeAction.ModelModifierList.
+			
+			I added 'if (null) continue;' sort of code but I will keep the 'try' 'catch'.
         	*/
         	try
         	{
@@ -195,7 +202,7 @@ public partial record TextEditorState
 	    		{
 					foreach (var kvpModelModifier in setModelAndViewModelRangeAction.ModelModifierList)
 					{
-						if (!kvpModelModifier.Value.WasModified)
+						if (kvpModelModifier.Value is null || !kvpModelModifier.Value.WasModified)
 							continue;
 						
 						// Enumeration was modified shouldn't occur here because only the reducer
@@ -215,7 +222,7 @@ public partial record TextEditorState
 				{
 					foreach (var kvpViewModelModifier in setModelAndViewModelRangeAction.ViewModelModifierList)
 					{
-						if (!kvpViewModelModifier.Value.WasModified)
+						if (kvpViewModelModifier.Value is null || !kvpViewModelModifier.Value.WasModified)
 							continue;
 							
 						// Enumeration was modified shouldn't occur here because only the reducer
