@@ -19,9 +19,28 @@
 	    {
 	        var completedCalculation = presentationLayer.CompletedCalculation;
 	
+			// (2025-01-25)
+			// ============
+			// ToImmutableArray() is a bad idea,
+			// TextEditorTextSpan is a struct, yet immutable datatypes
+			// are often a Tree datastructure thus requiring nodes,
+			// thus requiring an object for the node
+			// that contains the struct.
 	        var textSpansList = completedCalculation?.TextSpanList
 	            ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray();
 	
+			// (2025-01-25)
+			// ============
+			// ToArray() is a bad idea,
+			// This is being ran on a List that is public throughout the application.
+			//
+			// Step 1: allocate an array with capacity == 'TextModificationsSinceRequestList',
+			// Step 1.5: someone adds to 'TextModificationsSinceRequestList'
+			// Step 2: array not large enough exception.
+			//
+			// ToList() seems to not throw this exception (from quickly looking around stack overflow).
+			// It presumably has an implementation detail that extends the destination.
+			// 
 	        var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
 	            ?? Array.Empty<TextEditorTextModification>();
 	
