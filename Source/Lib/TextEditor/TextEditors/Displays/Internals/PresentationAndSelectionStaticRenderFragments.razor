@@ -41,6 +41,15 @@
 			// ToList() seems to not throw this exception (from quickly looking around stack overflow).
 			// It presumably has an implementation detail that extends the destination.
 			// 
+			// Destination array was not long enough. Check the destination index, length, and the array's lower bounds. (Parameter 'destinationArray')
+			// 	at System.Array.CopyImpl(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+			// 	at System.Array.Copy(Array sourceArray, Array destinationArray, Int32 length)
+			// 	at System.Collections.Generic.List`1.ToArray()
+			// 	at Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.PresentationAndSelectionStaticRenderFragments.<>c__DisplayClass3_0.<.cctor>b__1(RenderTreeBuilder __builder2) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\PresentationAndSelectionStaticRenderFragments.razor:line 25
+			// 	at Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder.AddContent(Int32 sequence, RenderFragment fragment)
+			// 	at Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\TextEditorViewModelDisplay.razor:line 91
+			// 	at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
+			// 
 	        var textModificationList = completedCalculation?.TextModificationsSinceRequestList.ToArray()
 	            ?? Array.Empty<TextEditorTextModification>();
 	
