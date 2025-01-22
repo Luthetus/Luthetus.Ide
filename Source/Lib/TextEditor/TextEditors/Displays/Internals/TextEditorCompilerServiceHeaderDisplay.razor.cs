@@ -137,13 +137,28 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 					return ValueTask.CompletedTask;
 				}
 	    
-	    		var textSpanStart = new TextEditorTextSpan(
-		            targetScope.StartingIndexInclusive,
-		            targetScope.StartingIndexInclusive + 1,
-				    (byte)TextEditorDevToolsDecorationKind.Scope,
-				    resourceUri,
-				    sourceText: string.Empty,
-				    getTextPrecalculatedResult: string.Empty);
+				TextEditorTextSpan textSpanStart;
+	    		
+	    		if (targetScope.CodeBlockOwner.OpenCodeBlockTextSpan is null)
+	    		{
+	    			textSpanStart = new TextEditorTextSpan(
+			            targetScope.StartingIndexInclusive,
+			            targetScope.StartingIndexInclusive + 1,
+					    (byte)TextEditorDevToolsDecorationKind.Scope,
+					    resourceUri,
+					    sourceText: string.Empty,
+					    getTextPrecalculatedResult: string.Empty);
+	    		}
+	    		else
+	    		{
+	    			textSpanStart = new TextEditorTextSpan(
+			            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive,
+			            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive + 1,
+					    (byte)TextEditorDevToolsDecorationKind.Scope,
+					    resourceUri,
+					    sourceText: string.Empty,
+					    getTextPrecalculatedResult: string.Empty);
+	    		}
 	    		
 				var textSpanEnd = new TextEditorTextSpan(
 		            (targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length) - 1,
