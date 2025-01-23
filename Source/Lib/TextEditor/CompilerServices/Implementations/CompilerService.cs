@@ -121,6 +121,18 @@ public class CompilerService : ICompilerService
 
     public virtual void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
+    	// (2025-01-23)
+    	// ============
+    	// ERROR on _hasBeenDisplayedAtLeastOnceBefore: System.NullReferenceException: Object reference not set to an instance of an object.
+		//   at Luthetus.TextEditor.RazorLib.CompilerServices.Implementations.CompilerService.ResourceWasModified(ResourceUri resourceUri, IReadOnlyList`1 editTextSpansList)
+		//   in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\CompilerServices\Implementations\CompilerService.cs:line 124
+		// 
+		// This occurred when I opened the solution in text editor by right clicking the .sln tree view node.
+		// I did this either during the solution wide parse or immediately after it finished,
+		//
+		// But the take away is that sometimes the solution will open in the text editor with
+		// syntax highlighting and sometimes it won't (per app session).
+		// 
         _textEditorService.PostUnique(
             nameof(CompilerService),
             editContext =>
