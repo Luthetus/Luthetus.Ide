@@ -128,7 +128,7 @@ public class CompilerService : ICompilerService
 		//   in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\CompilerServices\Implementations\CompilerService.cs:line 124
 		// 
 		// This occurred when I opened the solution in text editor by right clicking the .sln tree view node.
-		// I did this either during the solution wide parse or immediately after it finished,
+		// I did this either during the solution wide parse or immediately after it finished (I'm not sure).
 		//
 		// But the take away is that sometimes the solution will open in the text editor with
 		// syntax highlighting and sometimes it won't (per app session).
