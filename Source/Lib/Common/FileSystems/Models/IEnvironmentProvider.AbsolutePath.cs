@@ -1,4 +1,5 @@
 using System.Text;
+using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
@@ -15,6 +16,8 @@ public partial interface IEnvironmentProvider
             IEnvironmentProvider environmentProvider,
             List<string>? ancestorDirectoryList = null)
         {
+        	LuthetusDebugSomething.AbsolutePathCount++;
+        
             ExactInput = absolutePathString;
             IsDirectory = isDirectory;
             EnvironmentProvider = environmentProvider;
@@ -35,6 +38,7 @@ public partial interface IEnvironmentProvider
             var formattedBuilder = new StringBuilder();
             
             int position = 0;
+            int parentDirectoryEndExclusiveIndex = -1;
 
             while (position < lengthAbsolutePathString)
             {
@@ -49,10 +53,13 @@ public partial interface IEnvironmentProvider
 		            
 		            tokenBuilder.Clear();
 		            
-		            ParentDirectory = formattedBuilder.ToString();
+		            parentDirectoryEndExclusiveIndex = formattedBuilder.Length;
 		            
 		            if (ancestorDirectoryList is not null)
-		            	ancestorDirectoryList.Add(ParentDirectory);
+		            {
+		            	LuthetusDebugSomething.WastefulStringCountAbsolutePath++;
+		            	ancestorDirectoryList.Add(formattedBuilder.ToString());
+		            }
                 }
                 else if (currentCharacter == ':' && RootDrive is null && ParentDirectory is null)
                 {
@@ -137,6 +144,12 @@ public partial interface IEnvironmentProvider
             	}
             }
 
+			if (parentDirectoryEndExclusiveIndex != -1)
+			{
+				LuthetusDebugSomething.ParentStringCountAbsolutePath++;
+				ParentDirectory = formattedString[..parentDirectoryEndExclusiveIndex];
+			}
+            
             Value = formattedString;
         }
 
