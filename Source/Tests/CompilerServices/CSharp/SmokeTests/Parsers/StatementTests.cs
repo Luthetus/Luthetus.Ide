@@ -441,6 +441,13 @@ finally
     	      - I can probably get the tooltip working the same way.
     	        In the tooltip UI if I see 'var', check if its expression were assigned yet
     	        and if so, use its return type clause node instead of 'var'.
+    	  - I see the issue, I don't actually have the assigned expression on the variable declaration node.
+    	    - Okay, I could try to forget 'hovering var and it saying an int tooltip' for now.
+    	        Because, I don't want to add another property to 'VariableDeclarationNode'
+    	        which is 'ImplicitTypeClauseNode'.
+    	        - Well wait I can still do the int tooltip by making the symbol text span
+    	          map to the text 'var' so you hover it and see a symbol for 'int' rather than 'var'.
+    	          - I'm getting a bit lost in the weeds at this point I need to just try something.
     	*/
     	var test = new Test(@"var aaa = 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
