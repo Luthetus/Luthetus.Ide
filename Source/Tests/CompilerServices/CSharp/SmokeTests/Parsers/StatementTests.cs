@@ -448,6 +448,11 @@ finally
     	        - Well wait I can still do the int tooltip by making the symbol text span
     	          map to the text 'var' so you hover it and see a symbol for 'int' rather than 'var'.
     	          - I'm getting a bit lost in the weeds at this point I need to just try something.
+    	- Nested arbitrary code block nodes
+    	- PositionIndex 0 arbitrary code block node.
+    	- "bubble up" the statements if the delimiter of an outer statement is found within
+    	  a code block that does not it as its own delimiter.
+    	- "bubble up" implicit open code blocks that are nested when encountering a semicolon.
     	*/
     	var test = new Test(@"var aaa = 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;

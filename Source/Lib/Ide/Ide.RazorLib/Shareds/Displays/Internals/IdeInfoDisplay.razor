@@ -175,7 +175,30 @@
                 <div>v <em class="luth_em">0.9.7.20 </em> (WIP_DATE)</div>
                 <ul>
                 	<li>
-                        WIP_DESCRIPTION
+                        Implicit type inference progress
+<pre>
+var x = "apple";
+// x is a 'string' TypeClauseNode.
+
+var person = new Person();
+// person is a 'Person' TypeClauseNode.
+</pre>
+                    </li>
+                    <li>
+                        Bubble up scope ending for nested "single statement body" code blocks.
+<pre>
+for (int i = 0; i &lt; 5; i++)
+	for (int q; q %lt; 5; q++)
+		for (int z; z &lt; 5; z++)
+			Console.WriteLine("Abc123");
+</pre>
+                    </li>
+                    <li>
+                    	Don't include comments in the TokenWalker.
+                    	
+                    	(Probably long term there is a better solution but
+                    	 previously comments being in 'various spots'
+                    	 would break the parser).
                     </li>
                 </ul>
             </div>
