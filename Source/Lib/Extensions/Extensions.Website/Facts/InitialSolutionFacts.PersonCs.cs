@@ -25,7 +25,8 @@ public class Person : IPerson
 
 public interface IPerson { }
 
-public record PersonRecord /**/ (string FirstName, string LastName) /**/ : /**/ IPerson /**/
+															  // Comments don't break syntax.
+public record PersonRecord(string FirstName, string LastName) /**/ : /**/ IPerson
 {
 	public string DisplayName => $"{FirstName} {LastName}";
 }
@@ -52,6 +53,9 @@ public class PersonRepository
 		Person person = new(
 			firstName: firstName,
 			lastName: lastName);
+		
+		// Hover 'personImplicitType' and the tooltip shows 'Person', not 'var'.
+		var personImplicitType = new Person(firstName, lastName);
 		
 		person.FirstName;
 		//     ^ hover mouse here for member access tooltip.
