@@ -121,16 +121,16 @@ public partial interface IEnvironmentProvider
         public PathType PathType { get; } = PathType.RelativePath;
         public bool IsDirectory { get; protected set; }
         public IEnvironmentProvider EnvironmentProvider { get; }
-        public List<AncestorDirectory> AncestorDirectoryList { get; } = new();
+        public List<(string NameWithExtension, string Path)> AncestorDirectoryList { get; } = new();
         public string NameNoExtension { get; protected set; }
         public string ExtensionNoPeriod { get; protected set; }
         public int UpDirDirectiveCount { get; }
-        public AncestorDirectory? ParentDirectory => AncestorDirectoryList.LastOrDefault();
+        public string? ParentDirectory => AncestorDirectoryList.LastOrDefault().Path;
         public string? ExactInput { get; }
         public string Value => _value ??= CalculateValue();
         public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
 
-		public List<AncestorDirectory> GetAncestorDirectoryList() => AncestorDirectoryList;
+		public List<(string NameWithExtension, string Path)> GetAncestorDirectoryList() => AncestorDirectoryList;
 
         private void ConsumeTokenAsDirectory()
         {
@@ -139,10 +139,7 @@ public partial interface IEnvironmentProvider
 
             _parentDirectoriesBuilder.Append(nameWithExtension);
 
-            AncestorDirectoryList.Add(new AncestorDirectory(
-                nameNoExtension,
-                _parentDirectoriesBuilder.ToString(),
-                EnvironmentProvider));
+            AncestorDirectoryList.Add((nameNoExtension + EnvironmentProvider.DirectorySeparatorChar, _parentDirectoriesBuilder.ToString()));
 
             _tokenBuilder.Clear();
         }
@@ -166,10 +163,9 @@ public partial interface IEnvironmentProvider
                 relativePathStringBuilder.Append(currentDirectoryToken);
             }
 
-            foreach (var directory in AncestorDirectoryList)
+            foreach (var ancestorDirectory in AncestorDirectoryList)
             {
-                var ancestorPath = new RelativePath(directory.Value, true, EnvironmentProvider);
-                relativePathStringBuilder.Append(ancestorPath.NameWithExtension);
+                relativePathStringBuilder.Append(ancestorDirectory.NameWithExtension);
             }
 
             relativePathStringBuilder.Append(NameWithExtension);

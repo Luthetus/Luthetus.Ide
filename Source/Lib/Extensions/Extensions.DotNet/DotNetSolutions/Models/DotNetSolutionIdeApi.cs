@@ -224,28 +224,28 @@ public class DotNetSolutionIdeApi
 
 		if (parentDirectory is not null)
 		{
-			_environmentProvider.DeletionPermittedRegister(new(parentDirectory.Value, true));
+			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
 
 			_dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(
-				parentDirectory.Value));
+				parentDirectory));
 
 			_dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
 			{
-				StartingAbsolutePathForSearch = parentDirectory.Value
+				StartingAbsolutePathForSearch = parentDirectory
 			}));
 
 			// Set 'generalTerminal' working directory
 			{
 				var terminalCommandRequest = new TerminalCommandRequest(
 		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetSolutionIdeApi),
-		        	parentDirectory.Value)
+		        	parentDirectory)
 		        {
 		        	BeginWithFunc = parsedCommand =>
 		        	{
 		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
-Sln-Directory: '{parentDirectory.Value}'
+Sln-Directory: '{parentDirectory}'
 General Terminal"));
 		        		return Task.CompletedTask;
 		        	}
@@ -258,14 +258,14 @@ General Terminal"));
 			{
 				var terminalCommandRequest = new TerminalCommandRequest(
 		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetSolutionIdeApi),
-		        	parentDirectory.Value)
+		        	parentDirectory)
 		        {
 		        	BeginWithFunc = parsedCommand =>
 		        	{
 		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
-Sln-Directory: '{parentDirectory.Value}'
+Sln-Directory: '{parentDirectory}'
 Execution Terminal"));
 		        		return Task.CompletedTask;
 		        	}
@@ -463,7 +463,7 @@ Execution Terminal"));
 		if (parentDirectory is null)
 			return;
 
-		var startingAbsolutePathForSearch = parentDirectory.Value;
+		var startingAbsolutePathForSearch = parentDirectory;
 		var discoveredFileList = new List<string>();
 
 		progressThrottle.Run((ParseSolutionStageKind.D, null, null, "discovering files"));
@@ -643,7 +643,7 @@ Execution Terminal"));
             
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	ancestorDirectory.Value,
+        	ancestorDirectory,
         	_newDotNetSolutionTerminalCommandRequestKey)
         {
         	BeginWithFunc = parsedCommand =>

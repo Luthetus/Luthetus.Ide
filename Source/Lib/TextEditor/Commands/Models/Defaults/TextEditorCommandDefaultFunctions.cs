@@ -779,7 +779,7 @@ public class TextEditorCommandDefaultFunctions
         var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
         
 		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
-		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory.Value, true);
+		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
 	
 		var fileSystemProvider = commandArgs.ServiceProvider.GetRequiredService<IFileSystemProvider>();
 		
@@ -892,7 +892,7 @@ public class TextEditorCommandDefaultFunctions
         var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
         
 		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
-		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory.Value, true);
+		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
 	
 		var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		var compilerService = modelModifier.CompilerService;

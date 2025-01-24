@@ -425,7 +425,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
 
         var sourceAbsolutePathString = sourceAbsolutePath.Value;
-        var parentOfSource = sourceAbsolutePath.ParentDirectory.Value;
+        var parentOfSource = sourceAbsolutePath.ParentDirectory;
         var destinationAbsolutePathString = parentOfSource + nextName;
 
         try

@@ -65,7 +65,7 @@ public partial class GitAddRepoDisplay : ComponentBase
                         }
 
                         absolutePath = EnvironmentProvider.AbsolutePathFactory(
-                            absolutePath.ParentDirectory.Value,
+                            absolutePath.ParentDirectory,
                             true);
                     }
 

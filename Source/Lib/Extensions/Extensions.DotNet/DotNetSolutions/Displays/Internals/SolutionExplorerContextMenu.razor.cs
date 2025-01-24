@@ -179,7 +179,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				if (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
 					getFileOptions = false;
 				else if (getFileOptions)
-					filenameList.Add(treeViewNamespacePath.Item.AbsolutePath.NameWithExtension + " __FROM__ " + (treeViewNamespacePath.Item.AbsolutePath.ParentDirectory?.Value ?? "null"));
+					filenameList.Add(treeViewNamespacePath.Item.AbsolutePath.NameWithExtension + " __FROM__ " + (treeViewNamespacePath.Item.AbsolutePath.ParentDirectory ?? "null"));
 			}
 			else
 			{
@@ -327,7 +327,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				return Array.Empty<MenuOptionRecord>();
 		}
 
-		var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true);
+		var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
 
 		return new[]
 		{

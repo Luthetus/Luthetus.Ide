@@ -22,7 +22,7 @@ public class TreeViewHelperRazorMarkup
 		var ancestorDirectory = parentDirectoryOfRazorMarkup;
 
 		var filePathStringsList = await razorMarkupTreeView.FileSystemProvider.Directory
-			.GetFilesAsync(ancestorDirectory.Value)
+			.GetFilesAsync(ancestorDirectory)
 			.ConfigureAwait(false);
 
 		var childFileTreeViewModels = filePathStringsList

@@ -188,7 +188,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 
 				var terminalCommandRequest = new TerminalCommandRequest(
 					formattedCommand.Value,
-					workingDirectory.Value)
+					workingDirectory)
 				{
 					ContinueWithFunc = parsedCommand => onAfterCompletion.Invoke()
 				};

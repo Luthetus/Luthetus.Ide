@@ -23,7 +23,7 @@ public interface IAbsolutePath : IPath
     /// I have a "poor mans" count of the amount of AncestorDirectory instances prior to the change,
     /// so I'll have to see if this is any bit effective.
     /// </summary>
-    public List<AncestorDirectory> GetAncestorDirectoryList();
+    public List<string> GetAncestorDirectoryList();
 
     /// <summary>
     /// One might prefer <see cref="IEnvironmentProvider.AbsolutePathFactory(string, bool)"/> instead

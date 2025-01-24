@@ -413,7 +413,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value)
+        	localParentDirectory)
         {
         	BeginWithFunc = parsedCommand =>
         	{
@@ -445,7 +445,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value)
+        	localParentDirectory)
         {
         	BeginWithFunc = parsedCommand =>
         	{
@@ -477,7 +477,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value)
+        	localParentDirectory)
         {
         	BeginWithFunc = parsedCommand =>
         	{
@@ -509,7 +509,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value)
+        	localParentDirectory)
         {
         	BeginWithFunc = parsedCommand =>
         	{

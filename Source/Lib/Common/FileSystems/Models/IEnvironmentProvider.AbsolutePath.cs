@@ -7,13 +7,13 @@ public partial interface IEnvironmentProvider
     public class AbsolutePath : IAbsolutePath
     {
         private string? _nameWithExtension;
-        private List<AncestorDirectory>? _ancestorDirectoryList;
+        private List<string>? _ancestorDirectoryList;
         
 		public AbsolutePath(
             string absolutePathString,
             bool isDirectory,
             IEnvironmentProvider environmentProvider,
-            List<AncestorDirectory> ancestorDirectoryList = null)
+            List<string>? ancestorDirectoryList = null)
         {
             ExactInput = absolutePathString;
             IsDirectory = isDirectory;
@@ -43,29 +43,22 @@ public partial interface IEnvironmentProvider
                 if (EnvironmentProvider.IsDirectorySeparator(currentCharacter))
                 {
                     // ConsumeTokenAsDirectory
-                    var nameNoExtension = tokenBuilder.ToString();
-		
 		            formattedBuilder
-		            	.Append(nameNoExtension)
+		            	.Append(tokenBuilder.ToString())
 		            	.Append(EnvironmentProvider.DirectorySeparatorChar);
-		
-		            ParentDirectory = new AncestorDirectory(
-		                nameNoExtension,
-		                formattedBuilder.ToString(),
-		                EnvironmentProvider);
-		                
+		            
+		            tokenBuilder.Clear();
+		            
+		            ParentDirectory = formattedBuilder.ToString();
+		            
 		            if (ancestorDirectoryList is not null)
 		            	ancestorDirectoryList.Add(ParentDirectory);
-		
-		            tokenBuilder.Clear();
                 }
                 else if (currentCharacter == ':' && RootDrive is null && ParentDirectory is null)
                 {
                 	// ConsumeTokenAsRootDrive
                 	RootDrive = new FileSystemDrive(tokenBuilder.ToString(), EnvironmentProvider);
             		tokenBuilder.Clear();
-            		
-            		//formattedBuilder.Append(RootDrive.DriveNameAsPath);
                 }
                 else
                 {
@@ -147,7 +140,7 @@ public partial interface IEnvironmentProvider
             Value = formattedString;
         }
 
-        public AncestorDirectory? ParentDirectory { get; private set; }
+        public string? ParentDirectory { get; private set; }
         public string? ExactInput { get; }
         public PathType PathType { get; } = PathType.AbsolutePath;
         public bool IsDirectory { get; protected set; }
@@ -166,7 +159,7 @@ public partial interface IEnvironmentProvider
         public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
         public bool IsRootDirectory => ParentDirectory is null;
         
-        public List<AncestorDirectory> GetAncestorDirectoryList()
+        public List<string> GetAncestorDirectoryList()
         {
         	return _ancestorDirectoryList ??= new AbsolutePath(
 	        		Value,

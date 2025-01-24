@@ -20,7 +20,7 @@ public interface IRelativePath : IPath
     /// The IAbsolutePath version was optimized,
     /// the IRelativePath still needs to be optimized.
     /// </summary>
-    public List<AncestorDirectory> GetAncestorDirectoryList();
+    public List<(string NameWithExtension, string Path)> GetAncestorDirectoryList();
 
     /// <summary>
     /// One might prefer <see cref="IEnvironmentProvider.RelativePathFactory(string, bool)"/> instead

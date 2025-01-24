@@ -48,6 +48,6 @@ public interface IPath
     /// to be <see cref="IEnvironmentProvider.DirectorySeparatorChar"/>.
     /// </summary>
     public string Value { get; }
-    public AncestorDirectory? ParentDirectory { get; }
+    public string? ParentDirectory { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 }

@@ -53,7 +53,7 @@ public partial class OutputScheduler
 				true,
 				groupEnumerated.Any(x => ((TreeViewDiagnosticLine)x).Item.DiagnosticLineKind == DiagnosticLineKind.Error))
 			{
-				TitleText = absolutePath.ParentDirectory?.Value ?? $"{nameof(IAbsolutePath.ParentDirectory)} was null"
+				TitleText = absolutePath.ParentDirectory ?? $"{nameof(IAbsolutePath.ParentDirectory)} was null"
 			};
 
 			treeViewGroup.ChildList = groupEnumerated;
@@ -73,7 +73,7 @@ public partial class OutputScheduler
 						true,
 						true)
 					{
-						TitleText = absolutePath.ParentDirectory?.Value ?? $"{nameof(IAbsolutePath.ParentDirectory)} was null"
+						TitleText = absolutePath.ParentDirectory ?? $"{nameof(IAbsolutePath.ParentDirectory)} was null"
 					};
 				
 					projectManualGrouping.Add(projectText, treeViewGroupProject);

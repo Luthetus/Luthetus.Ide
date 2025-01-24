@@ -231,7 +231,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 							RunTestByFullyQualifiedName(
 								treeViewStringFragment,
 								fullyQualifiedName,
-								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value);
+								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory);
 
 							return ValueTask.CompletedTask;
 						});
