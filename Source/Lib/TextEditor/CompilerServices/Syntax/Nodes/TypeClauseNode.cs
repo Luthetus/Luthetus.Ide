@@ -66,7 +66,7 @@ public sealed class TypeClauseNode : IExpressionNode
     /// </summary>
     public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
     
-    public bool IsKeywordType { get; } = false;
+    public bool IsKeywordType { get; init; }
     
     public bool IsTuple { get; }
     

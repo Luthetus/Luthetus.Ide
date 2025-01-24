@@ -11,10 +11,15 @@ public struct CSharpLexerOutput
     {
     	SyntaxTokenList = new();
     	EscapeCharacterList = new();
+    	CommentList = new();
     	DiagnosticBag = new();
     }
     
     public List<ISyntaxToken> SyntaxTokenList { get; }
     public List<TextEditorTextSpan> EscapeCharacterList { get; }
+    
+    /// <summary>TODO: Combine the 'EscapeCharacterList' and the 'CommentList'?</summary>
+    public List<TextEditorTextSpan> CommentList { get; }
+    
     public DiagnosticBag DiagnosticBag { get; }
 }

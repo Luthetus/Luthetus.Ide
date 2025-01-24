@@ -853,7 +853,7 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.SyntaxTokenList.Add(new CommentSingleLineToken(textSpan));
+        lexerOutput.CommentList.Add(textSpan);
     }
     
     public static void LexCommentMultiLineToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
@@ -895,7 +895,7 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.SyntaxTokenList.Add(new CommentMultiLineToken(textSpan));
+        lexerOutput.CommentList.Add(textSpan);
     }
     
     public static void LexPreprocessorDirectiveToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)

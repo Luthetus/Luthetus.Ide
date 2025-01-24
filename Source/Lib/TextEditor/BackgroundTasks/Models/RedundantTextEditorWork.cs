@@ -51,8 +51,7 @@ public struct RedundantTextEditorWork : ITextEditorWork
     public bool EarlyBatchEnabled { get; set; } = true;
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public ITextEditorService TextEditorService { get; }
-
-	public ITextEditorEditContext EditContext { get; private set; }
+    public ITextEditorEditContext? EditContext { get; private set; }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
