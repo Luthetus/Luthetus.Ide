@@ -54,7 +54,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
     
-    public VariableDeclarationNode SetTypeClauseNode(TypeClauseNode typeClauseNode)
+    public IVariableDeclarationNode SetTypeClauseNode(TypeClauseNode typeClauseNode)
     {
     	TypeClauseNode = typeClauseNode;
     	return this;
