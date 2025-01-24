@@ -16,9 +16,7 @@ public partial interface IEnvironmentProvider
             IEnvironmentProvider environmentProvider,
             List<string>? ancestorDirectoryList = null)
         {
-        	LuthetusDebugSomething.AbsolutePathCount++;
-        
-            ExactInput = absolutePathString;
+        	ExactInput = absolutePathString;
             IsDirectory = isDirectory;
             EnvironmentProvider = environmentProvider;
             _ancestorDirectoryList = ancestorDirectoryList;
@@ -56,10 +54,7 @@ public partial interface IEnvironmentProvider
 		            parentDirectoryEndExclusiveIndex = formattedBuilder.Length;
 		            
 		            if (ancestorDirectoryList is not null)
-		            {
-		            	LuthetusDebugSomething.WastefulStringCountAbsolutePath++;
 		            	ancestorDirectoryList.Add(formattedBuilder.ToString());
-		            }
                 }
                 else if (currentCharacter == ':' && RootDrive is null && ParentDirectory is null)
                 {
@@ -145,10 +140,7 @@ public partial interface IEnvironmentProvider
             }
 
 			if (parentDirectoryEndExclusiveIndex != -1)
-			{
-				LuthetusDebugSomething.ParentStringCountAbsolutePath++;
 				ParentDirectory = formattedString[..parentDirectoryEndExclusiveIndex];
-			}
             
             Value = formattedString;
         }
