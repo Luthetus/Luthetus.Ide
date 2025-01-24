@@ -25,11 +25,9 @@ public class Person : IPerson
 
 public interface IPerson { }
 
-public record PersonRecord(string FirstName, string LastName) : IPerson
+															  // Comments don't break syntax.
+public record PersonRecord(string FirstName, string LastName) /**/ : /**/ IPerson
 {
-	// Comments need to be moved to some "trivia" like thing.
-	// I fixed primary constructor syntax then published but "// : IPerson; TODO: Inheritance here isn't working"
-	// was an older comment I had after the primary constructor syntax but before the OpenBraceToken and it broke the file.
 	public string DisplayName => $"{FirstName} {LastName}";
 }
 
@@ -55,6 +53,9 @@ public class PersonRepository
 		Person person = new(
 			firstName: firstName,
 			lastName: lastName);
+		
+		// Hover 'personImplicitType' and the tooltip shows 'Person', not 'var'.
+		var personImplicitType = new Person(firstName, lastName);
 		
 		person.FirstName;
 		//     ^ hover mouse here for member access tooltip.
@@ -150,6 +151,12 @@ public partial class Counter : ComponentBase
 			if (stringList[i] == stringToRemove)
 				stringList.RemoveAt(i);
 		}
+		
+		// Bubble up scope ending for nested "single statement body" code blocks.
+		for (int i = 0; i < 5; i++)
+			for (int q; q < 5; q++)
+				for (int z; z < 5; z++)
+					Console.WriteLine("Abc123");
 	}
 	
 	public void ThrowException()

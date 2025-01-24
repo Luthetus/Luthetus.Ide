@@ -76,6 +76,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
 	public int? ScopeIndexKey { get; set; }
+	
+	public bool IsKeywordType { get; init; }
 
     public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
     {
@@ -109,7 +111,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return _toTypeClauseNodeResult ??= new TypeClauseNode(
             TypeIdentifierToken,
             ValueType,
-            null);
+            null)
+	        {
+	        	IsKeywordType = IsKeywordType
+	        };
     }
     
 	#region ICodeBlockOwner_Methods

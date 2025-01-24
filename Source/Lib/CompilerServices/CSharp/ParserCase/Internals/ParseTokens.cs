@@ -481,6 +481,7 @@ public static class ParseTokens
     		return;
     	}
 		
+		// Would prefer to parse this from within 'MoveToHandleVariableDeclarationNode(...)'? (2025-01-23)
 		if (parserModel.StatementBuilder.TryPeek(out var syntax) &&
 			syntax.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
@@ -489,10 +490,16 @@ public static class ParseTokens
 			parserModel.TokenWalker.Backtrack();
 			var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 			
-			if (expression.SyntaxKind != SyntaxKind.VariableAssignmentExpressionNode)
+			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText() ==
+			        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText())
 			{
-				// TODO: Report a diagnostic
-				return;
+				if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+				{
+					var binaryExpressionNode = (BinaryExpressionNode)expression;
+					
+					if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
+						variableDeclarationNode.SetTypeClauseNode(binaryExpressionNode.RightExpressionNode.ResultTypeClauseNode);
+				}
 			}
 			
 			parserModel.StatementBuilder.ChildList.Add(expression);
@@ -525,11 +532,14 @@ public static class ParseTokens
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
                 compilationUnit);
         }
-        else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
-        		 parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+        else 
         {
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-	        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
+        	while (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
+        		   parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+        	{
+        		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
+	        	compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
+        	}
         }
     }
 
