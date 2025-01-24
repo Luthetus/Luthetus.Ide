@@ -48,7 +48,7 @@ public partial class GitAddRepoDisplay : ComponentBase
                 "Git Repo",
                 async absolutePath =>
                 {
-                    if (absolutePath is null)
+                    if (absolutePath.ExactInput is null)
                         return;
 
                     if (absolutePath.NameNoExtension == ".git")
@@ -74,7 +74,7 @@ public partial class GitAddRepoDisplay : ComponentBase
                 },
                 absolutePath =>
                 {
-                    if (absolutePath is null || !absolutePath.IsDirectory)
+                    if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
                         return Task.FromResult(false);
 
                     return Task.FromResult(true);

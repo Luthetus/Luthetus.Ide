@@ -28,7 +28,7 @@ public static class PathHelper
     ///      parent directory of the parent directory in which the file is contained.<br/><br/>
     /// </summary>
     public static string GetAbsoluteFromAbsoluteAndRelative(
-        IAbsolutePath absolutePath,
+        AbsolutePath absolutePath,
         string relativePathString,
         IEnvironmentProvider environmentProvider)
     {
@@ -119,8 +119,8 @@ public static class PathHelper
     /// be returned as a string.
     /// </summary>
     public static string GetRelativeFromTwoAbsolutes(
-        IAbsolutePath startingPath,
-        IAbsolutePath endingPath,
+        AbsolutePath startingPath,
+        AbsolutePath endingPath,
         IEnvironmentProvider environmentProvider)
     {
         var pathBuilder = new StringBuilder();

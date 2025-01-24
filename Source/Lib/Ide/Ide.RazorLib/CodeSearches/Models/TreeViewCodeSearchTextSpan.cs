@@ -22,7 +22,7 @@ public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
 	
 	public IEnvironmentProvider EnvironmentProvider { get; }
 	public IFileSystemProvider FileSystemProvider { get; }
-	public IAbsolutePath AbsolutePath { get; }
+	public AbsolutePath AbsolutePath { get; }
 	
 	public override bool Equals(object? obj)
 	{

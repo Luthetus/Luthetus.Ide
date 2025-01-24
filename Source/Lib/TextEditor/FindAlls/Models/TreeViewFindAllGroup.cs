@@ -8,7 +8,7 @@ public class TreeViewFindAllGroup : TreeViewWithType<List<TreeViewFindAllTextSpa
 {
 	public TreeViewFindAllGroup(
 			List<TreeViewFindAllTextSpan> treeViewFindAllTextSpanList,
-			IAbsolutePath absolutePath,
+			AbsolutePath absolutePath,
 			bool isExpandable,
 			bool isExpanded)
 		: base(treeViewFindAllTextSpanList, isExpandable, isExpanded)
@@ -16,7 +16,7 @@ public class TreeViewFindAllGroup : TreeViewWithType<List<TreeViewFindAllTextSpa
 		AbsolutePath = absolutePath;
 	}
 	
-	public IAbsolutePath AbsolutePath { get; }
+	public AbsolutePath AbsolutePath { get; }
 	
 	public override bool Equals(object? obj)
 	{

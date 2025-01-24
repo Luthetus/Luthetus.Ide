@@ -43,13 +43,13 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
-    public RenderFragment<IAbsolutePath?>? HeaderRenderFragment { get; set; }
+    public RenderFragment<AbsolutePath?>? HeaderRenderFragment { get; set; }
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as
     /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
-    public RenderFragment<IAbsolutePath?>? FooterRenderFragment { get; set; }
+    public RenderFragment<AbsolutePath?>? FooterRenderFragment { get; set; }
     /// <summary>
     /// One would likely use <see cref="BodyClassCssString"/> in the case where
     /// either <see cref="HeaderRenderFragment"/> or <see cref="FooterRenderFragment"/>
@@ -76,7 +76,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private readonly ElementDimensions _sidebarElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
 
-    private IAbsolutePath? _selectedAbsolutePath;
+    private AbsolutePath? _selectedAbsolutePath;
     private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
     private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
     private InputFileTopNavBar? _inputFileTopNavBarComponent;
@@ -179,7 +179,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// <summary>
     /// TODO: This code should be moved to an Effect, of which is throttled. (2024-05-03)
     /// </summary>
-    private async Task SetInputFileContentTreeViewRootFunc(IAbsolutePath absolutePath)
+    private async Task SetInputFileContentTreeViewRootFunc(AbsolutePath absolutePath)
     {
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,

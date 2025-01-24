@@ -7,10 +7,10 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
-public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
+public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
 {
     public TreeViewAbsolutePath(
-            IAbsolutePath absolutePath,
+            AbsolutePath absolutePath,
             IIdeComponentRenderers ideComponentRenderers,
             ICommonComponentRenderers commonComponentRenderers,
             IFileSystemProvider fileSystemProvider,

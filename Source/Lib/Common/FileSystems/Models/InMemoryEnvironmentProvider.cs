@@ -58,12 +58,12 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public IAbsolutePath RootDirectoryAbsolutePath { get; }
-    public IAbsolutePath HomeDirectoryAbsolutePath { get; }
-    public IAbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
-    public IAbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
-    public IAbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
-    public IAbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath RootDirectoryAbsolutePath { get; }
+    public AbsolutePath HomeDirectoryAbsolutePath { get; }
+    public AbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
     public string DriveExecutingFromNoDirectorySeparator { get; } = string.Empty;
     public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
     public ImmutableHashSet<SimplePath> ProtectedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
@@ -137,7 +137,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public IAbsolutePath AbsolutePathFactory(string path, bool isDirectory)
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory)
     {
         return new AbsolutePath(path, isDirectory, this);
     }

@@ -11,12 +11,12 @@ namespace Luthetus.Common.RazorLib.Namespaces.Models;
 /// </summary>
 public class NamespacePath
 {
-    public NamespacePath(string namespaceString, IAbsolutePath absolutePath)
+    public NamespacePath(string namespaceString, AbsolutePath absolutePath)
     {
         Namespace = namespaceString;
         AbsolutePath = absolutePath;
     }
 
     public string Namespace { get; set; }
-    public IAbsolutePath AbsolutePath { get; set; }
+    public AbsolutePath AbsolutePath { get; set; }
 }

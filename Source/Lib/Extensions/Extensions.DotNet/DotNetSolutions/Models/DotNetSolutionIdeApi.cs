@@ -103,7 +103,7 @@ public class DotNetSolutionIdeApi
 		_serviceProvider = serviceProvider;
 	}
 
-	public void SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
+	public void SetDotNetSolution(AbsolutePath inSolutionAbsolutePath)
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
@@ -112,7 +112,7 @@ public class DotNetSolutionIdeApi
 			() => SetDotNetSolutionAsync(inSolutionAbsolutePath));
 	}
 
-	private async ValueTask SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
+	private async ValueTask SetDotNetSolutionAsync(AbsolutePath inSolutionAbsolutePath)
 	{
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
@@ -688,7 +688,7 @@ Execution Terminal"));
 		Key<DotNetSolutionModel> dotNetSolutionModelKey,
 		string projectTemplateShortName,
 		string cSharpProjectName,
-		IAbsolutePath cSharpProjectAbsolutePath)
+		AbsolutePath cSharpProjectAbsolutePath)
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
@@ -705,7 +705,7 @@ Execution Terminal"));
 		Key<DotNetSolutionModel> dotNetSolutionModelKey,
 		string projectTemplateShortName,
 		string cSharpProjectName,
-		IAbsolutePath cSharpProjectAbsolutePath)
+		AbsolutePath cSharpProjectAbsolutePath)
 	{
 		var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -255,7 +256,7 @@ public class DotNetSolutionParser : IParser
                                 projectIdGuid,
                                 builtGroup.OpenAssociatedGroupToken,
                                 builtGroup.CloseAssociatedGroupToken,
-                                null);
+                                default(AbsolutePath));
                         }
                         else
                         {
@@ -266,7 +267,7 @@ public class DotNetSolutionParser : IParser
                                 projectIdGuid,
                                 builtGroup.OpenAssociatedGroupToken,
                                 builtGroup.CloseAssociatedGroupToken,
-                                null);
+                                default(AbsolutePath));
                         }
 
                         _dotNetProjectList.Add(dotNetProject);

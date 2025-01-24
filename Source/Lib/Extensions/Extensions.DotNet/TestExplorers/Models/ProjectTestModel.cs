@@ -9,7 +9,7 @@ public class ProjectTestModel
 {
 	public ProjectTestModel(
 		Guid projectIdGuid,
-		IAbsolutePath absolutePath,
+		AbsolutePath absolutePath,
 		Func<Func<Dictionary<string, StringFragment>, Task>, Task> enqueueDiscoverTestsFunc,
 		Action<TreeViewNoType> reRenderNodeAction)
 	{
@@ -29,7 +29,7 @@ public class ProjectTestModel
 	public Dictionary<string, StringFragment> RootStringFragmentMap { get; set; } = new();
 
 	public Guid ProjectIdGuid { get; }
-	public IAbsolutePath AbsolutePath { get; }
+	public AbsolutePath AbsolutePath { get; }
 	public TerminalCommandRequest? TerminalCommandRequest { get; set; }
 	public TerminalCommandParsed? TerminalCommandParsed { get; set; }
 	public Key<TerminalCommandRequest> DotNetTestListTestsTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();

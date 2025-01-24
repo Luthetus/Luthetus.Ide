@@ -520,7 +520,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			"Existing C# Project to add to solution",
 			absolutePath =>
 			{
-				if (absolutePath is null)
+				if (absolutePath.ExactInput is null)
 					return Task.CompletedTask;
 
 				var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
@@ -543,7 +543,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			},
 			absolutePath =>
 			{
-				if (absolutePath is null || absolutePath.IsDirectory)
+				if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));

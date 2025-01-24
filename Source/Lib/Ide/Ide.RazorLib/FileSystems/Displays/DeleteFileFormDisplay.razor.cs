@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -16,20 +16,20 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
 
     [Parameter, EditorRequired]
-    public IAbsolutePath AbsolutePath { get; set; } = null!;
+    public AbsolutePath AbsolutePath { get; set; }
     [Parameter, EditorRequired]
     public bool IsDirectory { get; set; }
     [Parameter, EditorRequired]
-    public Func<IAbsolutePath, Task> OnAfterSubmitFunc { get; set; } = null!;
+    public Func<AbsolutePath, Task> OnAfterSubmitFunc { get; set; } = null!;
 
-    private IAbsolutePath? _previousAbsolutePath;
+    private AbsolutePath _previousAbsolutePath = default;
 
     private int? _countOfImmediateChildren;
     private ElementReference? _cancelButtonElementReference;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_previousAbsolutePath is null ||
+        if (_previousAbsolutePath.ExactInput is null ||
             _previousAbsolutePath.Value !=
             AbsolutePath.Value)
         {

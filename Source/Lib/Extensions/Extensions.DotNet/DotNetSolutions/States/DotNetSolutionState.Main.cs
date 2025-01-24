@@ -34,14 +34,14 @@ public partial record DotNetSolutionState(
             "Solution Explorer",
             absolutePath =>
             {
-                if (absolutePath is not null)
+                if (absolutePath.ExactInput is not null)
                     compilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(absolutePath);
 
 				return Task.CompletedTask;
             },
             absolutePath =>
             {
-                if (absolutePath is null || absolutePath.IsDirectory)
+                if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(
