@@ -21,8 +21,11 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
+	
+	private TypeClauseNode _typeClauseNode;
 
-    public TypeClauseNode TypeClauseNode { get; }
+    public TypeClauseNode TypeClauseNode { get; private set; }
+    
     public IdentifierToken IdentifierToken { get; }
     /// <summary>
     /// TODO: Remove the 'set;' on this property
@@ -50,6 +53,12 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
+    
+    public VariableDeclarationNode SetTypeClauseNode(TypeClauseNode typeClauseNode)
+    {
+    	TypeClauseNode = typeClauseNode;
+    	return this;
+    }
     
     public ISyntax[] GetChildList()
     {
