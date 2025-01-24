@@ -51,6 +51,7 @@ public struct RedundantTextEditorWork : ITextEditorWork
     public bool EarlyBatchEnabled { get; set; } = true;
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public ITextEditorService TextEditorService { get; }
+    public ITextEditorEditContext? EditContext { get; private set; }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -79,14 +80,14 @@ public struct RedundantTextEditorWork : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	var editContext = new TextEditorEditContext(TextEditorService);
+    	EditContext = new TextEditorEditContext(TextEditorService);
     
 		await _textEditorFunc
-            .Invoke(editContext)
+            .Invoke(EditContext)
             .ConfigureAwait(false);
             
-        await editContext.TextEditorService
-        	.FinalizePost(editContext)
+        await EditContext.TextEditorService
+        	.FinalizePost(EditContext)
         	.ConfigureAwait(false);
     }
 }

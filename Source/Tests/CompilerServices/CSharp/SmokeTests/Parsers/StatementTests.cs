@@ -318,12 +318,121 @@ finally
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
     }
     
+    /// <summary>
+    /// Implicit type inference - "simple" case.
+    /// </summary>
     [Fact]
     public void VariableDeclarationNodeAndAssignment_Var_Test()
     {
+    	/*
+    	// Talking to myself.
+    	- Color code property initialization syntax
+	    	{
+	    		PROPERTY = EXPRESSION,
+	    		PROPERTY = EXPRESSION...
+	    	}
+	    	// Meaning, 'PROPERTY' should be a different color from 'EXPRESSION'
+	    	// and neither should have the color of plain text.
+	    	//
+	    	// Just do this to show what the current code is achieving,
+	    	// because there is some code for this but how well it works is unknown.
+	    	//
+	    	// An issue relates to the Binder. I don't know the type of everything yet,
+	    	// so I can't always bind the 'PROPERTY' properly.
+	    	//
+	    	// But in the case that I do know the type, I should try to bind it.
+	    - Color code collection initialization syntax
+	    	{
+	    		ITEM_1,
+	    		ITEM_2...
+	    	}
+	    	// Consider a collection that is tuple / key value pair, I think there is a special syntax.
+	    	var dictionary = new Dictionary<int, bool>()
+	    	{
+	    		{ 0, false },
+	    		{ 1, true }...
+	    	}
+	    	// I'm quite certain this goes to an arbitrary amount of entries in the tuple / kvp.
+	    	// This upcoming example is quite nonsensical but I think there is syntax for something like this:
+	    	var dictionary = new Dictionary<int, bool, string>()
+	    	{
+	    		{ 0, false, "false" ... },
+	    		{ 1, true, "true" ...  }...
+	    	}
+    	- Member access autocompletion
+    		Some code exists for this, but I've never seen it work "out in the wild".
+    		Not referring to member access tooltips here, specifically the autocompletion.
+    	- Implicit type inference
+    		- 'var aaa = 2;'
+    		// The above statement should be
+    		// "easy enough" to do tonight.
+    		//
+    		// If I hover 'aaa', I'd like to see 'int'.
+    		// Currently, it would say 'var'.
+    		//
+    		// Extra points for today would be if hovering 'var'
+    		// in that declaration showed 'int' tooltip,
+    		//
+    		// and that 'goto-definition' on that 'var'
+    		// takes you to 'int' source code definition.
+    		//
+    		// (can't go to 'int' definition at the moment,
+    		//  but if it works for one you have the source code
+    		//  that you can 'goto-definition' on via the 'var'
+    		//  that'd be nice).
+    	- Parse lambda expression - statement code blocks.
+    		- Use deferred parsing, as I said I think I only have to acknowledge
+    		  the existence of the lambda expression while in the 'expression' loop.
+    		- Then, once I finish parsing the 'expressions' I can
+    		  ask the 'statement' loop to 'rewind' the TokenIndex and
+    		  parse the lambda expression's statement code block.
+    	- Parse the interpolated string's expressions.
+    	- Comments need to be moved out of the TokenWalker?
+    		- Maybe I just need to use more 'Match(...)' invocations
+    		    because then internally to that method if current token is
+    		    a comment, I can just skip over it.
+    	- Explicit namespace qualification.
+    	- Diagnostics don't render anymore, why?
+    		- I think I changed the last few lines of
+    		    CSharpParser's Parse(...) method and
+    		    missed a part about the diangostics.
+    		- When you do add them back,
+    		    only use the ones that are accurate.
+    		    It is very obnoxious when erroneous diagnostic
+    		    errors are being shown all over the code.
+    	- In this method, the type 'Test' is being used.
+    	  And when member accessed, the tooltips are not working.
+    	  Is this because it is a Type which is defined within another Type?
+    	  This shouldn't be an issue, just use the fully
+    	  qualified name as if the outer Type were a namespace.
+    	- When hovering a TypeClauseNode which is a ValueTuple,
+    	  each member of the ValueTuple should have its corresponding parts
+    	  rendered respectively.
+    	  - At the moment the entirety of '(int Aaa, bool Bbb)' is being colored
+    	    'blue' which is the color given to Types.
+    	    - Do this by having an 'int' index on TypeClauseNode
+    	      that accesses meta-deta (or just "extra information").
+    	- Keyword "functions?".
+    	    - 'nameof(topCodeBlock)'
+    	    - 'sizeof(Test)'
+    	- Enums
+    	    - I think the big reason I keep putting off doing this
+    	      is that I don't know what node type to make
+    	      the enum members.
+    	    - They aren't a property, field, local?
+    	    - I can probably make it a variable declaration node,
+    	      but just add another 'VariableKind.Enum'.
+    	- It has been icy / snow-y outside lately.
+    	  And so, I haven't been going for a walk.
+    	  I think this is having a negative effect on my mood.
+    	  If I don't want to go for a walk outside because of weather,
+    	  I can still do something.
+    	  Even if it is "just" squats with my bodyweight.
+    	*/
     	var test = new Test(@"var aaa = 2;");
-
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
