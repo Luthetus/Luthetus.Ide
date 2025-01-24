@@ -19,7 +19,10 @@ public partial class CSharpFacts
             typeof(void),
             null,
             null,
-            null);
+            null)
+            {
+            	IsKeywordType = true
+            };
 
         public static readonly TypeDefinitionNode Int = new(
             AccessModifierKind.Public,
@@ -29,7 +32,10 @@ public partial class CSharpFacts
             typeof(int),
             null,
             null,
-            null);
+            null)
+            {
+            	IsKeywordType = true
+            };
 
         public static readonly TypeDefinitionNode Char = new(
             AccessModifierKind.Public,
@@ -39,7 +45,10 @@ public partial class CSharpFacts
             typeof(char),
             null,
             null,
-            null);
+            null)
+            {
+            	IsKeywordType = true
+            };
 
         public static readonly TypeDefinitionNode String = new(
             AccessModifierKind.Public,
@@ -49,7 +58,10 @@ public partial class CSharpFacts
             typeof(string),
             null,
             null,
-            null);
+            null)
+            {
+            	IsKeywordType = true
+            };
 
         public static readonly TypeDefinitionNode Bool = new(
             AccessModifierKind.Public,
@@ -59,7 +71,10 @@ public partial class CSharpFacts
             typeof(bool),
             null,
             null,
-            null);
+            null)
+            {
+            	IsKeywordType = true
+            };
 
         public static readonly TypeDefinitionNode Var = new(
             AccessModifierKind.Public,
@@ -69,7 +84,10 @@ public partial class CSharpFacts
             typeof(void),
             null,
             null,
-            null);
+            null)
+            {
+            	IsKeywordType = true
+            };
 
         public static readonly ImmutableArray<TypeDefinitionNode> TypeDefinitionNodes = new[]
         {

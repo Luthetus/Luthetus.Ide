@@ -1256,6 +1256,17 @@ public class Aaa
 			}
 		}
     }
+    
+    [Fact]
+    public void Nested_For_Loops_SingleStatementBody()
+    {
+    	var test = new Test(
+@"
+for (int i = 0; i < 5; i++)
+	for (int q; q < 5; q++)
+		Console.WriteLine(""Abc123"");
+".ReplaceLineEndings("\n"));
+    }
 	
 	private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
