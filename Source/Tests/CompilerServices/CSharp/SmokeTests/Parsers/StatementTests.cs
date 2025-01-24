@@ -428,6 +428,19 @@ finally
     	  If I don't want to go for a walk outside because of weather,
     	  I can still do something.
     	  Even if it is "just" squats with my bodyweight.
+    	- I feel anxious and like I want to procrastinate
+    	  when I think about 'Implicit type inference'.
+    	  - I wonder why I feel this way though.
+    	  - I might worried about how a 'var aaa' variable declaration node
+    	    would be "told" about its implicit type.
+    	    - But, the variable declaration node already has
+    	      the assigned expression as a property.
+    	    - And this expression has a return type clause node.
+    	    - So, if I see 'a' has a TypeClauseNode of 'var'
+    	      I can check the return type clause node of the assigned expression.
+    	      - I can probably get the tooltip working the same way.
+    	        In the tooltip UI if I see 'var', check if its expression were assigned yet
+    	        and if so, use its return type clause node instead of 'var'.
     	*/
     	var test = new Test(@"var aaa = 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
