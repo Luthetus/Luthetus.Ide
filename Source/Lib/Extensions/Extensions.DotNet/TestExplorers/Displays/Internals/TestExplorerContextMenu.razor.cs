@@ -431,7 +431,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(contextRecord.ContextKey));
 	
-		if (contextRecord is not null)
+		if (contextRecord != default)
 		{
 			var command = ContextHelper.ConstructFocusContextElementCommand(
 		        contextRecord,

@@ -20,7 +20,7 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ContextRecord ContextRecord { get; set; } = null!;
+    public ContextRecord ContextRecord { get; set; } = default!;
     [Parameter, EditorRequired]
     public Func<List<Key<ContextRecord>>> GetContextBoundaryHeirarchy { get; set; } = null!;
 

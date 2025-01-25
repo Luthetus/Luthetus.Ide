@@ -35,18 +35,14 @@ public partial record CodeSearchState(
 
 			topContentHeight.DimensionUnitList.AddRange(new[]
 			{
-				new DimensionUnit
-				{
-					Value = 40,
-					DimensionUnitKind = DimensionUnitKind.Percentage
-				},
-				new DimensionUnit
-	            {
-	                Value = 0,
-	                DimensionUnitKind = DimensionUnitKind.Pixels,
-	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-	                Purpose = DimensionUnitFacts.Purposes.OFFSET,
-	            },
+				new DimensionUnit(
+					40,
+					DimensionUnitKind.Percentage),
+				new DimensionUnit(
+					0,
+					DimensionUnitKind.Pixels,
+					DimensionOperatorKind.Subtract,
+					DimensionUnitFacts.Purposes.OFFSET),
 			});
         }
 
@@ -57,18 +53,14 @@ public partial record CodeSearchState(
 
 			bottomContentHeight.DimensionUnitList.AddRange(new[]
 			{
-				new DimensionUnit
-				{
-					Value = 60,
-					DimensionUnitKind = DimensionUnitKind.Percentage
-				},
-				new DimensionUnit
-	            {
-	                Value = 0,
-	                DimensionUnitKind = DimensionUnitKind.Pixels,
-	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-	                Purpose = DimensionUnitFacts.Purposes.OFFSET,
-	            },
+				new DimensionUnit(
+					60,
+					DimensionUnitKind.Percentage),
+				new DimensionUnit(
+					0,
+					DimensionUnitKind.Pixels,
+					DimensionOperatorKind.Subtract,
+					DimensionUnitFacts.Purposes.OFFSET),
 			});
         }
     }

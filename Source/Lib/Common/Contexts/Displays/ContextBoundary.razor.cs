@@ -28,7 +28,7 @@ public partial class ContextBoundary : ComponentBase
     public ContextBoundary? ParentContextBoundary { get; set; }
 
     [Parameter, EditorRequired]
-    public ContextRecord ContextRecord { get; set; } = null!;
+    public ContextRecord ContextRecord { get; set; } = default!;
     [Parameter, EditorRequired]
     public RenderFragment ChildContent { get; set; } = null!;
 

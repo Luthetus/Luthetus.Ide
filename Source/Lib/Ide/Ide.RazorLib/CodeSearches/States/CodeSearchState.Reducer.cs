@@ -82,11 +82,11 @@ public partial record CodeSearchState
             	var heightDimensionAttribute = inState.TopContentElementDimensions.DimensionAttributeList.FirstOrDefault(
             		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
             		
-            	if (heightDimensionAttribute is null)
+            	if (heightDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
             	var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
             	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
@@ -97,11 +97,11 @@ public partial record CodeSearchState
             	var heightDimensionAttribute = inState.BottomContentElementDimensions.DimensionAttributeList.FirstOrDefault(
             		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
             		
-            	if (heightDimensionAttribute is null)
+            	if (heightDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
             	var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
             	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);

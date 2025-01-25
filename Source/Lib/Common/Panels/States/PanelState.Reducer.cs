@@ -196,11 +196,11 @@ public partial record PanelState
             	var heightDimensionAttribute = inPanelGroup.ElementDimensions.DimensionAttributeList.FirstOrDefault(
             		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
             		
-            	if (heightDimensionAttribute is null)
+            	if (heightDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
 				var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
             	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
@@ -210,11 +210,11 @@ public partial record PanelState
             	var widthDimensionAttribute = inPanelGroup.ElementDimensions.DimensionAttributeList.FirstOrDefault(
             		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
             		
-            	if (widthDimensionAttribute is null)
+            	if (widthDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
             	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
             	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);

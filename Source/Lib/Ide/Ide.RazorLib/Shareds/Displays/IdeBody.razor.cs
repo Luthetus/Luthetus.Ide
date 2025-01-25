@@ -30,17 +30,13 @@ public partial class IdeBody : ComponentBase
 
         editorWidth.DimensionUnitList.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 33.3333,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+            new DimensionUnit(
+            	33.3333,
+            	DimensionUnitKind.Percentage),
+            new DimensionUnit(
+            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract)
         });
 
         base.OnInitialized();

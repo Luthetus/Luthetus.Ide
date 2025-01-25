@@ -27,7 +27,7 @@ public partial class PanelGroupDisplay : FluxorComponent
     [Parameter, EditorRequired]
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
     [Parameter, EditorRequired]
-    public ElementDimensions AdjacentElementDimensions { get; set; } = null!;
+    public ElementDimensions AdjacentElementDimensions { get; set; }
     [Parameter, EditorRequired]
     public DimensionAttributeKind DimensionAttributeKind { get; set; }
     [Parameter, EditorRequired]
@@ -110,13 +110,11 @@ public partial class PanelGroupDisplay : FluxorComponent
                 var panelGroupPercentageSize = panelGroupSizeDimensionsAttribute.DimensionUnitList.First(
                     x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
 
-                adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-                {
-                    Value = panelGroupPercentageSize.Value,
-                    DimensionUnitKind = panelGroupPercentageSize.DimensionUnitKind,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    Purpose = DimensionAttributeModificationPurpose
-                });
+                adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                	panelGroupPercentageSize.Value,
+                	panelGroupPercentageSize.DimensionUnitKind,
+                	DimensionOperatorKind.Add,
+                	DimensionAttributeModificationPurpose));
 
                 await ReRenderSelfAndAdjacentElementDimensionsFunc
                     .Invoke()

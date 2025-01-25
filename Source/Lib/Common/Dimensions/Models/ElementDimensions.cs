@@ -8,12 +8,12 @@ public class ElementDimensions
     {
         DimensionAttributeList.AddRange(new[]
         {
-            new DimensionAttribute { DimensionAttributeKind = DimensionAttributeKind.Width },
-            new DimensionAttribute { DimensionAttributeKind = DimensionAttributeKind.Height },
-            new DimensionAttribute { DimensionAttributeKind = DimensionAttributeKind.Left },
-            new DimensionAttribute { DimensionAttributeKind = DimensionAttributeKind.Right },
-            new DimensionAttribute { DimensionAttributeKind = DimensionAttributeKind.Top },
-            new DimensionAttribute { DimensionAttributeKind = DimensionAttributeKind.Bottom }
+            new DimensionAttribute(DimensionAttributeKind.Width),
+            new DimensionAttribute(DimensionAttributeKind.Height),
+            new DimensionAttribute(DimensionAttributeKind.Left),
+            new DimensionAttribute(DimensionAttributeKind.Right),
+            new DimensionAttribute(DimensionAttributeKind.Top),
+            new DimensionAttribute(DimensionAttributeKind.Bottom)
         });
     }
 

@@ -317,7 +317,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						
 						var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 						
-						if (contextRecord is not null)
+						if (contextRecord != default)
 						{
 							var command = ContextHelper.ConstructFocusContextElementCommand(
 						        contextRecord,
@@ -349,7 +349,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 							
 							var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 						
-							if (contextRecord is not null)
+							if (contextRecord != default)
 							{
 								var command = ContextHelper.ConstructFocusContextElementCommand(
 							        contextRecord,

@@ -3,10 +3,19 @@ using System.Text;
 
 namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
-public class DimensionAttribute
+/// <summary>
+/// default: 'DimensionUnitList is null'
+/// </summary>
+public struct DimensionAttribute
 {
-    public List<DimensionUnit> DimensionUnitList { get; } = new();
-    public DimensionAttributeKind DimensionAttributeKind { get; set; }
+	public DimensionAttribute(DimensionAttributeKind dimensionAttributeKind)
+	{
+        DimensionAttributeKind = dimensionAttributeKind;
+	    DimensionUnitList = new();
+	}
+
+    public List<DimensionUnit> DimensionUnitList { get; }
+    public DimensionAttributeKind DimensionAttributeKind { get; }
     public string StyleString => GetStyleString();
 
     private string GetStyleString()

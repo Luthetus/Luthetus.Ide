@@ -87,13 +87,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 }
                 
                 Dispatcher.Dispatch(new CodeSearchState.InitializeResizeHandleDimensionUnitAction(
-					new DimensionUnit
-		            {
-		                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
-		                DimensionUnitKind = DimensionUnitKind.Pixels,
-		                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-		                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW,
-		            }));
+					new DimensionUnit(
+						() => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+						DimensionUnitKind.Pixels,
+						DimensionOperatorKind.Subtract,
+						DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)));
 
 				InitializePanelResizeHandleDimensionUnit();
                 InitializePanelTabs();
@@ -126,13 +124,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 		
 			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
 				leftPanel.Key,
-				new DimensionUnit
-	            {
-	                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-	                DimensionUnitKind = DimensionUnitKind.Pixels,
-	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-	                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN,
-	            }));
+				new DimensionUnit(
+					() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+					DimensionUnitKind.Pixels,
+					DimensionOperatorKind.Subtract,
+					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
 		}
 		
 		// Right
@@ -142,13 +138,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 		
 			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
 				rightPanel.Key,
-				new DimensionUnit
-	            {
-	                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-	                DimensionUnitKind = DimensionUnitKind.Pixels,
-	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-	                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN,
-	            }));
+				new DimensionUnit(
+					() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+					DimensionUnitKind.Pixels,
+					DimensionOperatorKind.Subtract,
+					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
 		}
 		
 		// Bottom
@@ -158,13 +152,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 		
 			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
 				bottomPanel.Key,
-				new DimensionUnit
-	            {
-	                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
-	                DimensionUnitKind = DimensionUnitKind.Pixels,
-	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-	                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW,
-	            }));
+				new DimensionUnit(
+					() => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+					DimensionUnitKind.Pixels,
+					DimensionOperatorKind.Subtract,
+					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)));
 		}
 	}
 
@@ -224,13 +216,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
 		// This UI has resizable parts that need to be initialized.
         Dispatcher.Dispatch(new TerminalGroupState.InitializeResizeHandleDimensionUnitAction(
-            new DimensionUnit
-            {
-                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN,
-            }));
+            new DimensionUnit(
+            	() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract,
+            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
 
 		// activeContextsPanel
         var activeContextsPanel = new Panel(

@@ -129,11 +129,9 @@ public record Panel : IPanelTab, IDialog, IDrag
 					x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
 
 				widthDimensionAttribute.DimensionUnitList.Clear();
-				widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-				{
-					Value = measuredHtmlElementDimensions.WidthInPixels,
-					DimensionUnitKind = DimensionUnitKind.Pixels
-				});
+				widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+					measuredHtmlElementDimensions.WidthInPixels,
+					DimensionUnitKind.Pixels));
 			}
 
 			// Height
@@ -142,11 +140,9 @@ public record Panel : IPanelTab, IDialog, IDrag
 					x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
 
 				heightDimensionAttribute.DimensionUnitList.Clear();
-				heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-				{
-					Value = measuredHtmlElementDimensions.HeightInPixels,
-					DimensionUnitKind = DimensionUnitKind.Pixels
-				});
+				heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+					measuredHtmlElementDimensions.HeightInPixels,
+					DimensionUnitKind.Pixels));
 			}
 
 			// Left
@@ -155,11 +151,9 @@ public record Panel : IPanelTab, IDialog, IDrag
 					x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
 				leftDimensionAttribute.DimensionUnitList.Clear();
-				leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-				{
-					Value = measuredHtmlElementDimensions.LeftInPixels,
-					DimensionUnitKind = DimensionUnitKind.Pixels
-				});
+				leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+					measuredHtmlElementDimensions.LeftInPixels,
+					DimensionUnitKind.Pixels));
 			}
 
 			// Top
@@ -168,11 +162,9 @@ public record Panel : IPanelTab, IDialog, IDrag
 					x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 
 				topDimensionAttribute.DimensionUnitList.Clear();
-				topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-				{
-					Value = measuredHtmlElementDimensions.TopInPixels,
-					DimensionUnitKind = DimensionUnitKind.Pixels
-				});
+				topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+					measuredHtmlElementDimensions.TopInPixels,
+					DimensionUnitKind.Pixels));
 			}
 
 			dropzoneList.Add(new PanelGroupDropzone(
@@ -265,11 +257,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
 
 			widthDimensionAttribute.DimensionUnitList.Clear();
-			widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-			{
-				Value = 100,
-				DimensionUnitKind = DimensionUnitKind.ViewportWidth
-			});
+			widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(100, DimensionUnitKind.ViewportWidth));
 		}
 
 		// Height
@@ -278,11 +266,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
 
 			heightDimensionAttribute.DimensionUnitList.Clear();
-			heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-			{
-				Value = 100,
-				DimensionUnitKind = DimensionUnitKind.ViewportHeight
-			});
+			heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(100, DimensionUnitKind.ViewportHeight));
 		}
 
 		// Left
@@ -291,11 +275,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 
 			leftDimensionAttribute.DimensionUnitList.Clear();
-			leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-			{
-				Value = 0,
-				DimensionUnitKind = DimensionUnitKind.Pixels
-			});
+			leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(0, DimensionUnitKind.Pixels));
 		}
 
 		// Top
@@ -304,11 +284,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 
 			topDimensionAttribute.DimensionUnitList.Clear();
-			topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-			{
-				Value = 0,
-				DimensionUnitKind = DimensionUnitKind.Pixels
-			});
+			topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(0, DimensionUnitKind.Pixels));
 		}
 
 		dropzoneList.Add(new PanelGroupDropzone(

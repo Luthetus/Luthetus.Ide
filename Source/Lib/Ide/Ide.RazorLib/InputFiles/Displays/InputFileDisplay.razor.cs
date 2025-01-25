@@ -144,17 +144,13 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         navMenuWidth.DimensionUnitList.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 40,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+            new DimensionUnit(
+            	40,
+            	DimensionUnitKind.Percentage),
+            new DimensionUnit(
+            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract)
         });
 
         var contentWidth = _contentElementDimensions.DimensionAttributeList
@@ -162,17 +158,13 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         contentWidth.DimensionUnitList.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 60,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+            new DimensionUnit(
+            	60,
+            	DimensionUnitKind.Percentage),
+            new DimensionUnit(
+            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract)
         });
     }
 

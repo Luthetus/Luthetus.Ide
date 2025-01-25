@@ -205,11 +205,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
 	
 				widthDimensionAttribute.DimensionUnitList.Clear();
-	            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-	            {
-	                Value = measuredHtmlElementDimensions.WidthInPixels,
-	                DimensionUnitKind = DimensionUnitKind.Pixels
-	            });
+	            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+	            	measuredHtmlElementDimensions.WidthInPixels,
+	            	DimensionUnitKind.Pixels));
 			}
 
 			// Height
@@ -218,11 +216,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
 	
 				heightDimensionAttribute.DimensionUnitList.Clear();
-	            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-	            {
-	                Value = measuredHtmlElementDimensions.HeightInPixels,
-	                DimensionUnitKind = DimensionUnitKind.Pixels
-	            });
+	            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+	            	measuredHtmlElementDimensions.HeightInPixels,
+	            	DimensionUnitKind.Pixels));
 			}
 
 			// Left
@@ -231,11 +227,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
 	
 	            leftDimensionAttribute.DimensionUnitList.Clear();
-	            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-	            {
-	                Value = mouseEventArgs.ClientX,
-	                DimensionUnitKind = DimensionUnitKind.Pixels
-	            });
+	            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+	            	mouseEventArgs.ClientX,
+	            	DimensionUnitKind.Pixels));
 			}
 
 			// Top
@@ -244,11 +238,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
 	
 	            topDimensionAttribute.DimensionUnitList.Clear();
-	            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-	            {
-	                Value = mouseEventArgs.ClientY,
-	                DimensionUnitKind = DimensionUnitKind.Pixels
-	            });
+	            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+	            	mouseEventArgs.ClientY,
+	            	DimensionUnitKind.Pixels));
 			}
 
             draggable.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;

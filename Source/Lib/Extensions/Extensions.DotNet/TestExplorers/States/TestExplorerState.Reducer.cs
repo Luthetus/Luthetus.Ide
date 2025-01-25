@@ -28,11 +28,11 @@ public partial record TestExplorerState
             	var widthDimensionAttribute = inState.TreeViewElementDimensions.DimensionAttributeList.FirstOrDefault(
             		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
             		
-            	if (widthDimensionAttribute is null)
+            	if (widthDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
             	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
             	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
@@ -43,11 +43,11 @@ public partial record TestExplorerState
             	var widthDimensionAttribute = inState.DetailsElementDimensions.DimensionAttributeList.FirstOrDefault(
             		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
             		
-            	if (widthDimensionAttribute is null)
+            	if (widthDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
             	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
             	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
