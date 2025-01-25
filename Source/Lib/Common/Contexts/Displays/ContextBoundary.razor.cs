@@ -86,6 +86,19 @@ public partial class ContextBoundary : ComponentBase
         return HandleKeymapArgumentAsync(new (keyboardEventArgs));
     }
 
+	/// <summary>
+	/// (2025-01-24)
+	/// ============
+	/// Much of Luthetus.Common was looked at for optimization.
+	///
+	/// Mostly excessive garbage collector overhead was looked for,
+	/// class -> struct, kind of things.
+	///
+	/// But, after having finished, the next thing that stands out the most
+	/// is this 'HandleKeymapArgumentAsync'.
+	///
+	/// Is it possible to 'short circuit' by caching known no-op keymap arguments?
+	/// </summary>
     public async Task HandleKeymapArgumentAsync(KeymapArgs keymapArgs)
     {
         var success = ContextRecord.Keymap.MapFirstOrDefault(keymapArgs, out var command);
