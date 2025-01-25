@@ -192,6 +192,110 @@ public class ScopeTests
     }
     
     [Fact]
+    public void GlobalScope_ArbitraryScope_Depth_ArbitraryScope()
+    {
+    	// Position index 0 arbitrary code block nodes do not parse properly at the time of this test being written.
+    	// That being said this test is for something different, "nested arbitrary code block nodes".
+    	var test = new Test(
+@" {
+	{
+	}
+}
+".ReplaceLineEndings("\n"));
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		IScope arbitraryScope;
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Arbitrary scope
+			    arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(1, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(9, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			    
+			    { // Arbitrary scope
+				    arbitraryScope = binderSession.ScopeList[2];
+					Assert.Equal(2, arbitraryScope.IndexKey);
+				    Assert.Equal(1, arbitraryScope.ParentIndexKey);
+				    Assert.Equal(4, arbitraryScope.StartingIndexInclusive);
+				    Assert.Equal(7, arbitraryScope.EndingIndexExclusive);
+			    	Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+				}
+		    }
+	    }
+    }
+    
+    [Fact]
+    public void GlobalScope_FunctionDefinitionNode_Depth_ArbitraryScope_Depth_ArbitraryScope()
+    {
+    	// Position index 0 arbitrary code block nodes do not parse properly at the time of this test being written.
+    	// That being said this test is for something different, "nested arbitrary code block nodes".
+    	var test = new Test(
+@"void Aaa()
+{
+	 {
+		{
+		}
+	}
+
+}".ReplaceLineEndings("\n"));
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
+		    
+		    IScope arbitraryScope;
+		    
+		    { // Function definition node
+			    var functionDefinitionNodeScope = binderSession.ScopeList[1];
+				Assert.Equal(1, functionDefinitionNodeScope.IndexKey);
+			    Assert.Equal(0, functionDefinitionNodeScope.ParentIndexKey);
+			    Assert.Equal(11, functionDefinitionNodeScope.StartingIndexInclusive);
+			    Assert.Equal(29, functionDefinitionNodeScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNodeScope.CodeBlockOwner.SyntaxKind);
+			    
+			    { // Arbitrary scope
+				    arbitraryScope = binderSession.ScopeList[2];
+					Assert.Equal(2, arbitraryScope.IndexKey);
+				    Assert.Equal(1, arbitraryScope.ParentIndexKey);
+				    Assert.Equal(15, arbitraryScope.StartingIndexInclusive);
+				    Assert.Equal(26, arbitraryScope.EndingIndexExclusive);
+			    	Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			    	
+			    	{ // Arbitrary scope
+					    arbitraryScope = binderSession.ScopeList[2];
+						Assert.Equal(3, arbitraryScope.IndexKey);
+					    Assert.Equal(2, arbitraryScope.ParentIndexKey);
+					    Assert.Equal(19, arbitraryScope.StartingIndexInclusive);
+					    Assert.Equal(23, arbitraryScope.EndingIndexExclusive);
+				    	Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+					}
+				}
+		    }
+	    }
+    }
+    
+    [Fact]
     public void GlobalScope_TypeDefinitionNode()
     {
     	var test = new Test(@"public class Person { }");
