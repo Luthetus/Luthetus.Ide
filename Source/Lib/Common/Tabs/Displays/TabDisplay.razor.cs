@@ -201,44 +201,32 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 			// Width
 			{
-				var widthDimensionAttribute = draggable.DragElementDimensions.DimensionAttributeList.First(
-	                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-	
-				widthDimensionAttribute.DimensionUnitList.Clear();
-	            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+				draggable.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+	            draggable.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
 	            	measuredHtmlElementDimensions.WidthInPixels,
 	            	DimensionUnitKind.Pixels));
 			}
 
 			// Height
 			{
-				var heightDimensionAttribute = draggable.DragElementDimensions.DimensionAttributeList.First(
-	                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-	
-				heightDimensionAttribute.DimensionUnitList.Clear();
-	            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+				draggable.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
+	            draggable.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
 	            	measuredHtmlElementDimensions.HeightInPixels,
 	            	DimensionUnitKind.Pixels));
 			}
 
 			// Left
 			{
-				var leftDimensionAttribute = draggable.DragElementDimensions.DimensionAttributeList.First(
-	                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-	
-	            leftDimensionAttribute.DimensionUnitList.Clear();
-	            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+				draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+	            draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
 	            	mouseEventArgs.ClientX,
 	            	DimensionUnitKind.Pixels));
 			}
 
 			// Top
 			{
-				var topDimensionAttribute = draggable.DragElementDimensions.DimensionAttributeList.First(
-	                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-	
-	            topDimensionAttribute.DimensionUnitList.Clear();
-	            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+				draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+	            draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
 	            	mouseEventArgs.ClientY,
 	            	DimensionUnitKind.Pixels));
 			}

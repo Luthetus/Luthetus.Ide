@@ -139,10 +139,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private void InitializeElementDimensions()
     {
-        var navMenuWidth = _sidebarElementDimensions.DimensionAttributeList
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-        navMenuWidth.DimensionUnitList.AddRange(new[]
+        _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(
             	40,
@@ -153,10 +150,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             	DimensionOperatorKind.Subtract)
         });
 
-        var contentWidth = _contentElementDimensions.DimensionAttributeList
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-        contentWidth.DimensionUnitList.AddRange(new[]
+        _contentElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(
             	60,

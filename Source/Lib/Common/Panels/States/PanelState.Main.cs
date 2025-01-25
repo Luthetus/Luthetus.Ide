@@ -39,10 +39,7 @@ public partial record PanelState(
             new ElementDimensions(),
             ImmutableArray<IPanelTab>.Empty);
 
-        var leftPanelGroupWidth = leftPanelGroup.ElementDimensions.DimensionAttributeList
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-        leftPanelGroupWidth.DimensionUnitList.AddRange(new[]
+        leftPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(33.3333, DimensionUnitKind.Percentage),
             new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitFacts.Purposes.OFFSET)
@@ -59,10 +56,7 @@ public partial record PanelState(
             new ElementDimensions(),
             ImmutableArray<IPanelTab>.Empty);
 
-        var rightPanelGroupWidth = rightPanelGroup.ElementDimensions.DimensionAttributeList
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-        rightPanelGroupWidth.DimensionUnitList.AddRange(new[]
+        rightPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(33.3333, DimensionUnitKind.Percentage),
             new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitFacts.Purposes.OFFSET),
@@ -79,10 +73,7 @@ public partial record PanelState(
             new ElementDimensions(),
             ImmutableArray<IPanelTab>.Empty);
 
-        var bottomPanelGroupHeight = bottomPanelGroup.ElementDimensions.DimensionAttributeList
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-        bottomPanelGroupHeight.DimensionUnitList.AddRange(new[]
+        bottomPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(22, DimensionUnitKind.Percentage),
             new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitFacts.Purposes.OFFSET),

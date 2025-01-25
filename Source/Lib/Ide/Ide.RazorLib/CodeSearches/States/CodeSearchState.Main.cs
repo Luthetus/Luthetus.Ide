@@ -30,10 +30,7 @@ public partial record CodeSearchState(
     {
 		// topContentHeight
         {
-			var topContentHeight = TopContentElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-			topContentHeight.DimensionUnitList.AddRange(new[]
+			TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
 			{
 				new DimensionUnit(
 					40,
@@ -48,10 +45,7 @@ public partial record CodeSearchState(
 
         // bottomContentHeight
         {
-            var bottomContentHeight = BottomContentElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-			bottomContentHeight.DimensionUnitList.AddRange(new[]
+            BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
 			{
 				new DimensionUnit(
 					60,

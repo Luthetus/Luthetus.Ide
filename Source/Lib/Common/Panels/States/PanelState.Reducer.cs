@@ -193,31 +193,29 @@ public partial record PanelState
                 
 			if (initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
             {
-            	var heightDimensionAttribute = inPanelGroup.ElementDimensions.DimensionAttributeList.FirstOrDefault(
-            		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-            		
-            	if (heightDimensionAttribute.DimensionUnitList is null)
+            	if (inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
-				var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+				var existingDimensionUnit = inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList
+					.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+					
 	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
-            	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            	inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
             }
             else if (initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
             {
-            	var widthDimensionAttribute = inPanelGroup.ElementDimensions.DimensionAttributeList.FirstOrDefault(
-            		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-            		
-            	if (widthDimensionAttribute.DimensionUnitList is null)
+            	if (inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
-            	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+            	var existingDimensionUnit = inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList
+            		.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+	            
 	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
-            	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            	inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
             }
             
             return inState;

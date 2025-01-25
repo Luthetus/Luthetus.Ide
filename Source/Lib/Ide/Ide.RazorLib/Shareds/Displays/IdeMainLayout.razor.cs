@@ -59,10 +59,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         IdeMainLayoutStateWrap.StateChanged += IdeMainLayoutStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
 
-        var bodyHeight = _bodyElementDimensions.DimensionAttributeList.Single(
-            da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-        bodyHeight.DimensionUnitList.AddRange(new[]
+        _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),
             new DimensionUnit(

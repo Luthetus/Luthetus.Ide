@@ -26,10 +26,7 @@ public partial record TestExplorerState(
     {
     	// TreeView ElementDimensions
 		{
-			var treeViewWidth = TreeViewElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-			treeViewWidth.DimensionUnitList.AddRange(new[]
+			TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
 			{
 				new DimensionUnit(
 					50,
@@ -44,10 +41,7 @@ public partial record TestExplorerState(
 
 		// Details ElementDimensions
 		{
-			var detailsWidth = DetailsElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-			detailsWidth.DimensionUnitList.AddRange(new[]
+			DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
 			{
 				new DimensionUnit(
 					50,

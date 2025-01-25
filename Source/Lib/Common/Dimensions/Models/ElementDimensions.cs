@@ -4,20 +4,13 @@ namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
 public class ElementDimensions
 {
-    public ElementDimensions()
-    {
-        DimensionAttributeList.AddRange(new[]
-        {
-            new DimensionAttribute(DimensionAttributeKind.Width),
-            new DimensionAttribute(DimensionAttributeKind.Height),
-            new DimensionAttribute(DimensionAttributeKind.Left),
-            new DimensionAttribute(DimensionAttributeKind.Right),
-            new DimensionAttribute(DimensionAttributeKind.Top),
-            new DimensionAttribute(DimensionAttributeKind.Bottom)
-        });
-    }
-
-    public List<DimensionAttribute> DimensionAttributeList { get; } = new();
+    public DimensionAttribute WidthDimensionAttribute { get; set; } = new(DimensionAttributeKind.Width);
+    public DimensionAttribute HeightDimensionAttribute { get; set; } = new(DimensionAttributeKind.Height);
+    public DimensionAttribute LeftDimensionAttribute { get; set; } = new(DimensionAttributeKind.Left);
+    public DimensionAttribute RightDimensionAttribute { get; set; } = new(DimensionAttributeKind.Right);
+    public DimensionAttribute TopDimensionAttribute { get; set; } = new(DimensionAttributeKind.Top);
+    public DimensionAttribute BottomDimensionAttribute { get; set; } = new(DimensionAttributeKind.Bottom);
+    
     public ElementPositionKind ElementPositionKind { get; set; } = ElementPositionKind.Static;
     public string StyleString => GetStyleString();
 
@@ -27,10 +20,12 @@ public class ElementDimensions
 
         styleBuilder.Append($"position: {ElementPositionKind.ToString().ToLower()}; ");
 
-        foreach (var dimensionAttribute in DimensionAttributeList)
-        {
-            styleBuilder.Append(dimensionAttribute.StyleString);
-        }
+        styleBuilder.Append(WidthDimensionAttribute.StyleString);
+        styleBuilder.Append(HeightDimensionAttribute.StyleString);
+        styleBuilder.Append(LeftDimensionAttribute.StyleString);
+        styleBuilder.Append(RightDimensionAttribute.StyleString);
+        styleBuilder.Append(TopDimensionAttribute.StyleString);
+        styleBuilder.Append(BottomDimensionAttribute.StyleString);
 
         return styleBuilder.ToString();
     }

@@ -13,10 +13,7 @@ public partial record TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
     {
         // _bodyElementDimensions
         {
-            var widthDimensionAttribute = BodyElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-            widthDimensionAttribute.DimensionUnitList.AddRange(new[]
+            BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
             {
                 new DimensionUnit(
                 	80,
@@ -31,10 +28,7 @@ public partial record TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
 
         // _tabsElementDimensions
         {
-            var widthDimensionAttribute = TabsElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-            widthDimensionAttribute.DimensionUnitList.AddRange(new[]
+            TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
             {
                 new DimensionUnit(
                 	20,

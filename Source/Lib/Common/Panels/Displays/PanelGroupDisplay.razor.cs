@@ -88,7 +88,11 @@ public partial class PanelGroupDisplay : FluxorComponent
 
     private async Task PassAlongSizeIfNoActiveTab()
     {
-        var panelState = PanelStateWrap.Value;
+    	// TODO: 'PassAlongSizeIfNoActiveTab()' (2025-01-24)
+    	Console.WriteLine("TODO: 'PassAlongSizeIfNoActiveTab()' (2025-01-24)");
+    	return;
+    
+        /*var panelState = PanelStateWrap.Value;
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is not null)
@@ -128,7 +132,7 @@ public partial class PanelGroupDisplay : FluxorComponent
                     .Invoke()
                     .ConfigureAwait(false);
             }
-        }
+        }*/
     }
 
     private string GetElementDimensionsStyleString(PanelGroup? panelGroup, IPanelTab? activePanelTab)

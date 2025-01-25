@@ -79,32 +79,28 @@ public partial record CodeSearchState
             
             // TopContentElementDimensions
             {
-            	var heightDimensionAttribute = inState.TopContentElementDimensions.DimensionAttributeList.FirstOrDefault(
-            		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-            		
-            	if (heightDimensionAttribute.DimensionUnitList is null)
+            	if (inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
-            	var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+            	var existingDimensionUnit = inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
+            		.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+            		
 	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
-            	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            	inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
             }
             
             // BottomContentElementDimensions
             {
-            	var heightDimensionAttribute = inState.BottomContentElementDimensions.DimensionAttributeList.FirstOrDefault(
-            		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-            		
-            	if (heightDimensionAttribute.DimensionUnitList is null)
+            	if (inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
-            	var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+            	var existingDimensionUnit = inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
 	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
-            	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            	inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
             }
             
             return inState;
