@@ -8,14 +8,18 @@ namespace Luthetus.Common.RazorLib.Installations.Models;
 /// </summary>
 public static class LuthetusDebugSomething
 {
-	public static int AncestorDirectory_ConstructorCount { get; set; }
+	public static int WastefulStringCountAbsolutePath { get; set; }
+	public static int ParentStringCountAbsolutePath { get; set; }
+	public static int AbsolutePathCount { get; set; }
 	
 	public static string CreateText()
 	{
 		var builder = new StringBuilder();
 		
 		builder.AppendLine();
-		builder.AppendLine($"{nameof(AncestorDirectory_ConstructorCount)}: {AncestorDirectory_ConstructorCount:N0}");
+		builder.AppendLine($"{nameof(WastefulStringCountAbsolutePath)}: {WastefulStringCountAbsolutePath:N0}");
+		builder.AppendLine($"{nameof(ParentStringCountAbsolutePath)}: {ParentStringCountAbsolutePath:N0}");
+		builder.AppendLine($"{nameof(AbsolutePathCount)}: {AbsolutePathCount:N0}");
 		builder.AppendLine();
 		
 		return builder.ToString();

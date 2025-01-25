@@ -18,7 +18,7 @@ public class TreeViewHelperCSharpProject
 		var hiddenFiles = HiddenFileFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
 		var directoryPathStringsList = await cSharpProjectTreeView.FileSystemProvider.Directory
-			.GetDirectoriesAsync(ancestorDirectory.Value)
+			.GetDirectoriesAsync(ancestorDirectory)
 			.ConfigureAwait(false);
 
 		var childDirectoryTreeViewModelsList = directoryPathStringsList
@@ -58,7 +58,7 @@ public class TreeViewHelperCSharpProject
 		foundDefaultDirectories = foundDefaultDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
 
 		var filePathStringsList = await cSharpProjectTreeView.FileSystemProvider.Directory
-			.GetFilesAsync(ancestorDirectory.Value)
+			.GetFilesAsync(ancestorDirectory)
 			.ConfigureAwait(false);
 
 		var childFileTreeViewModels = filePathStringsList

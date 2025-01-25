@@ -22,6 +22,6 @@ public interface IDotNetProject
     /// <summary>
     /// TODO: Remove the "set;" hack.
     /// </summary>
-    public IAbsolutePath AbsolutePath { get; set; }
+    public AbsolutePath AbsolutePath { get; set; }
     public DotNetProjectKind DotNetProjectKind { get; }
 }

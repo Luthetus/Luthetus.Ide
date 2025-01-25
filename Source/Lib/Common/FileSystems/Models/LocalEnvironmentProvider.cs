@@ -114,12 +114,12 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public IAbsolutePath RootDirectoryAbsolutePath { get; }
-    public IAbsolutePath HomeDirectoryAbsolutePath { get; }
-	public IAbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
-	public IAbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
-	public IAbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
-	public IAbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath RootDirectoryAbsolutePath { get; }
+    public AbsolutePath HomeDirectoryAbsolutePath { get; }
+	public AbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
+	public AbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
+	public AbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
+	public AbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
 
     public string DriveExecutingFromNoDirectorySeparator { get; }
 
@@ -194,12 +194,12 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public IAbsolutePath AbsolutePathFactory(string path, bool isDirectory)
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory)
     {
         return new AbsolutePath(path, isDirectory, this);
     }
 
-    public IRelativePath RelativePathFactory(string path, bool isDirectory)
+    public RelativePath RelativePathFactory(string path, bool isDirectory)
     {
         return new RelativePath(path, isDirectory, this);
     }

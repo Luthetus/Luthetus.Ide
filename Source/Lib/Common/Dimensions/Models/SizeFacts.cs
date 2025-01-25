@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Dimensions.Models;
+namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
 /// <summary>
 /// TODO: SphagettiCode - I don't like this file (2023-09-19)
@@ -10,11 +10,7 @@ public static class SizeFacts
     {
         public static class Header
         {
-            public static readonly DimensionUnit Height = new()
-            {
-                Value = 3,
-                DimensionUnitKind = DimensionUnitKind.RootCharacterHeight
-            };
+            public static readonly DimensionUnit Height = new(3, DimensionUnitKind.RootCharacterHeight);
         }
     }
 }

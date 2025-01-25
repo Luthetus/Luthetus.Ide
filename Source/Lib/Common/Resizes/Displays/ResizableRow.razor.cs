@@ -19,9 +19,9 @@ public partial class ResizableRow : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ElementDimensions TopElementDimensions { get; set; } = null!;
+    public ElementDimensions TopElementDimensions { get; set; }
     [Parameter, EditorRequired]
-    public ElementDimensions BottomElementDimensions { get; set; } = null!;
+    public ElementDimensions BottomElementDimensions { get; set; }
     [Parameter, EditorRequired]
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
 

@@ -43,13 +43,13 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
-    public RenderFragment<IAbsolutePath?>? HeaderRenderFragment { get; set; }
+    public RenderFragment<AbsolutePath?>? HeaderRenderFragment { get; set; }
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as
     /// a parameter to the <see cref="RenderFragment"/>
     /// </summary>
     [Parameter]
-    public RenderFragment<IAbsolutePath?>? FooterRenderFragment { get; set; }
+    public RenderFragment<AbsolutePath?>? FooterRenderFragment { get; set; }
     /// <summary>
     /// One would likely use <see cref="BodyClassCssString"/> in the case where
     /// either <see cref="HeaderRenderFragment"/> or <see cref="FooterRenderFragment"/>
@@ -76,7 +76,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private readonly ElementDimensions _sidebarElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
 
-    private IAbsolutePath? _selectedAbsolutePath;
+    private AbsolutePath? _selectedAbsolutePath;
     private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
     private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
     private InputFileTopNavBar? _inputFileTopNavBarComponent;
@@ -139,47 +139,33 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private void InitializeElementDimensions()
     {
-        var navMenuWidth = _sidebarElementDimensions.DimensionAttributeList
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-        navMenuWidth.DimensionUnitList.AddRange(new[]
+        _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 40,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+            new DimensionUnit(
+            	40,
+            	DimensionUnitKind.Percentage),
+            new DimensionUnit(
+            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract)
         });
 
-        var contentWidth = _contentElementDimensions.DimensionAttributeList
-            .Single(da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-        contentWidth.DimensionUnitList.AddRange(new[]
+        _contentElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 60,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+            new DimensionUnit(
+            	60,
+            	DimensionUnitKind.Percentage),
+            new DimensionUnit(
+            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract)
         });
     }
 
     /// <summary>
     /// TODO: This code should be moved to an Effect, of which is throttled. (2024-05-03)
     /// </summary>
-    private async Task SetInputFileContentTreeViewRootFunc(IAbsolutePath absolutePath)
+    private async Task SetInputFileContentTreeViewRootFunc(AbsolutePath absolutePath)
     {
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,

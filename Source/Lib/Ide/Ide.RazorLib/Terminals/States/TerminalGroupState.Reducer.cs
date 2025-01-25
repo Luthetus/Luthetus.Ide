@@ -28,32 +28,30 @@ public partial record class TerminalGroupState
             
             // BodyElementDimensions
             {
-            	var widthDimensionAttribute = inState.BodyElementDimensions.DimensionAttributeList.FirstOrDefault(
-            		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-            		
-            	if (widthDimensionAttribute is null)
+            	if (inState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
-            	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+            	var existingDimensionUnit = inState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList
+            		.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+            		
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
-            	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            	inState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
             }
             
             // TabsElementDimensions
             {
-            	var widthDimensionAttribute = inState.TabsElementDimensions.DimensionAttributeList.FirstOrDefault(
-            		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-            		
-            	if (widthDimensionAttribute is null)
+            	if (inState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
-            	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+            	var existingDimensionUnit = inState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList
+            		.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+            		
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
-            	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            	inState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
             }
             
             return inState;

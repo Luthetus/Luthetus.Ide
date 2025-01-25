@@ -44,7 +44,7 @@ public class FolderExplorerIdeApi
         _dispatcher = dispatcher;
     }
 
-    public void SetFolderExplorerState(IAbsolutePath folderAbsolutePath)
+    public void SetFolderExplorerState(AbsolutePath folderAbsolutePath)
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -53,7 +53,7 @@ public class FolderExplorerIdeApi
             async () => await SetFolderExplorerAsync(folderAbsolutePath).ConfigureAwait(false));
     }
 
-    public void SetFolderExplorerTreeView(IAbsolutePath folderAbsolutePath)
+    public void SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -68,12 +68,12 @@ public class FolderExplorerIdeApi
             "Folder Explorer",
             async absolutePath =>
             {
-                if (absolutePath is not null)
+                if (absolutePath.ExactInput is not null)
                     await SetFolderExplorerAsync(absolutePath).ConfigureAwait(false);
             },
             absolutePath =>
             {
-                if (absolutePath is null || !absolutePath.IsDirectory)
+                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
@@ -84,7 +84,7 @@ public class FolderExplorerIdeApi
             }.ToImmutableArray());
     }
 
-    private async Task SetFolderExplorerAsync(IAbsolutePath folderAbsolutePath)
+    private async Task SetFolderExplorerAsync(AbsolutePath folderAbsolutePath)
     {
         _dispatcher.Dispatch(new FolderExplorerState.WithAction(
             inFolderExplorerState => inFolderExplorerState with
@@ -95,7 +95,7 @@ public class FolderExplorerIdeApi
         await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false);
     }
 
-    private async Task SetFolderExplorerTreeViewAsync(IAbsolutePath folderAbsolutePath)
+    private async Task SetFolderExplorerTreeViewAsync(AbsolutePath folderAbsolutePath)
     {
         _dispatcher.Dispatch(new FolderExplorerState.WithAction(inFolderExplorerState => inFolderExplorerState with
         {

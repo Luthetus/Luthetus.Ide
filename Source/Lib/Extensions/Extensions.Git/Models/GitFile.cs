@@ -3,7 +3,7 @@ using Luthetus.Ide.RazorLib.Exceptions;
 
 namespace Luthetus.Extensions.Git.Models;
 
-public record GitFile(IAbsolutePath AbsolutePath, string RelativePathString, GitDirtyReason GitDirtyReason)
+public record GitFile(AbsolutePath AbsolutePath, string RelativePathString, GitDirtyReason GitDirtyReason)
 {
     public bool IsDirty => GitDirtyReason switch
     {

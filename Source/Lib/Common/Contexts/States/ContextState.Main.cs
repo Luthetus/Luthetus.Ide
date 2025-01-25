@@ -15,15 +15,15 @@ public partial record ContextState(
 {
     public ContextState() : this(
         ImmutableArray<ContextRecord>.Empty,
-        new(ImmutableArray<Key<ContextRecord>>.Empty),
+        new(new List<Key<ContextRecord>>()),
         null,
         ImmutableArray<InspectableContext>.Empty,
         false)
     {
-        FocusedContextHeirarchy = new ContextHeirarchy(new[]
+        FocusedContextHeirarchy = new ContextHeirarchy(new List<Key<ContextRecord>>
         {
             ContextFacts.GlobalContext.ContextKey
-        }.ToImmutableArray());
+        });
 
         AllContextsList = ContextFacts.AllContextsList;
     }

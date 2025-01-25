@@ -26,45 +26,31 @@ public partial record TestExplorerState(
     {
     	// TreeView ElementDimensions
 		{
-			var treeViewWidth = TreeViewElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-			treeViewWidth.DimensionUnitList.AddRange(new[]
+			TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
 			{
-				new DimensionUnit
-                {
-                    Value = 50,
-                    DimensionUnitKind = DimensionUnitKind.Percentage,
-                },
-                new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    DimensionOperatorKind = DimensionOperatorKind.Subtract,
-                    Purpose = DimensionUnitFacts.Purposes.OFFSET,
-                },
+				new DimensionUnit(
+					50,
+					DimensionUnitKind.Percentage),
+                new DimensionUnit(
+                	0,
+                	DimensionUnitKind.Pixels,
+                	DimensionOperatorKind.Subtract,
+                	DimensionUnitFacts.Purposes.OFFSET),
 			});
 		}
 
 		// Details ElementDimensions
 		{
-			var detailsWidth = DetailsElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-			detailsWidth.DimensionUnitList.AddRange(new[]
+			DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
 			{
-				new DimensionUnit
-                {
-                    Value = 50,
-                    DimensionUnitKind = DimensionUnitKind.Percentage,
-                },
-                new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionUnitKind = DimensionUnitKind.Pixels,
-                    DimensionOperatorKind = DimensionOperatorKind.Subtract,
-                    Purpose = DimensionUnitFacts.Purposes.OFFSET,
-                },
+				new DimensionUnit(
+					50,
+					DimensionUnitKind.Percentage),
+                new DimensionUnit(
+                	0,
+                	DimensionUnitKind.Pixels,
+                	DimensionOperatorKind.Subtract,
+                	DimensionUnitFacts.Purposes.OFFSET),
 			});
 		}
     }

@@ -14,48 +14,18 @@ public class ResizeHelper
 
         // Height
         {
-            var height = elementDimensions.DimensionAttributeList.Single(
-                da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-            var heightOffsetInPixels = height.DimensionUnitList.FirstOrDefault(
-                du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
-
-            if (heightOffsetInPixels is null)
-            {
-                heightOffsetInPixels = new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                };
-
-                height.DimensionUnitList.Add(heightOffsetInPixels);
-            }
-
-            heightOffsetInPixels.Value -= deltaY;
+        	elementDimensions.HeightDimensionAttribute.Decrement(
+        		deltaY,
+        		DimensionUnitKind.Pixels,
+        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
 
         // Top
         {
-            var top = elementDimensions.DimensionAttributeList.Single(
-                da => da.DimensionAttributeKind == DimensionAttributeKind.Top);
-
-            var topOffsetInPixels = top.DimensionUnitList.FirstOrDefault(
-                du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
-
-            if (topOffsetInPixels is null)
-            {
-                topOffsetInPixels = new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                };
-
-                top.DimensionUnitList.Add(topOffsetInPixels);
-            }
-
-            topOffsetInPixels.Value += deltaY;
+            elementDimensions.TopDimensionAttribute.Increment(
+        		deltaY,
+        		DimensionUnitKind.Pixels,
+        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 
@@ -68,25 +38,10 @@ public class ResizeHelper
 
         // Width
         {
-            var width = elementDimensions.DimensionAttributeList.Single(
-                da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-            var widthOffsetInPixels = width.DimensionUnitList.FirstOrDefault(
-                du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
-
-            if (widthOffsetInPixels is null)
-            {
-                widthOffsetInPixels = new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                };
-
-                width.DimensionUnitList.Add(widthOffsetInPixels);
-            }
-
-            widthOffsetInPixels.Value += deltaX;
+            elementDimensions.WidthDimensionAttribute.Increment(
+        		deltaX,
+        		DimensionUnitKind.Pixels,
+        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 
@@ -99,25 +54,10 @@ public class ResizeHelper
 
         // Height
         {
-            var height = elementDimensions.DimensionAttributeList.Single(
-                da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-            var heightOffsetInPixels = height.DimensionUnitList.FirstOrDefault(
-                du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
-
-            if (heightOffsetInPixels is null)
-            {
-                heightOffsetInPixels = new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                };
-
-                height.DimensionUnitList.Add(heightOffsetInPixels);
-            }
-
-            heightOffsetInPixels.Value += deltaY;
+            elementDimensions.HeightDimensionAttribute.Increment(
+        		deltaY,
+        		DimensionUnitKind.Pixels,
+        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 
@@ -130,48 +70,18 @@ public class ResizeHelper
 
         // Width
         {
-            var width = elementDimensions.DimensionAttributeList.Single(
-                da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-            var widthOffsetInPixels = width.DimensionUnitList.FirstOrDefault(
-                du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
-
-            if (widthOffsetInPixels is null)
-            {
-                widthOffsetInPixels = new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                };
-
-                width.DimensionUnitList.Add(widthOffsetInPixels);
-            }
-
-            widthOffsetInPixels.Value -= deltaX;
+            elementDimensions.WidthDimensionAttribute.Decrement(
+        		deltaX,
+        		DimensionUnitKind.Pixels,
+        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
 
         // Left
         {
-            var left = elementDimensions.DimensionAttributeList.Single(
-                da => da.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-            var leftOffsetInPixels = left.DimensionUnitList.FirstOrDefault(
-                du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
-
-            if (leftOffsetInPixels is null)
-            {
-                leftOffsetInPixels = new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                };
-
-                left.DimensionUnitList.Add(leftOffsetInPixels);
-            }
-
-            leftOffsetInPixels.Value += deltaX;
+            elementDimensions.LeftDimensionAttribute.Increment(
+        		deltaX,
+        		DimensionUnitKind.Pixels,
+        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 
@@ -221,48 +131,18 @@ public class ResizeHelper
 
         // Top
         {
-            var top = elementDimensions.DimensionAttributeList.Single(
-                da => da.DimensionAttributeKind == DimensionAttributeKind.Top);
-
-            var topOffsetInPixels = top.DimensionUnitList.FirstOrDefault(
-                du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
-
-            if (topOffsetInPixels is null)
-            {
-                topOffsetInPixels = new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                };
-
-                top.DimensionUnitList.Add(topOffsetInPixels);
-            }
-
-            topOffsetInPixels.Value += deltaY;
+            elementDimensions.TopDimensionAttribute.Increment(
+        		deltaY,
+        		DimensionUnitKind.Pixels,
+        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
 
         // Left
         {
-            var left = elementDimensions.DimensionAttributeList.Single(
-                da => da.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-            var leftOffsetInPixels = left.DimensionUnitList.FirstOrDefault(
-                du => du.DimensionUnitKind == DimensionUnitKind.Pixels);
-
-            if (leftOffsetInPixels is null)
-            {
-                leftOffsetInPixels = new DimensionUnit
-                {
-                    Value = 0,
-                    DimensionOperatorKind = DimensionOperatorKind.Add,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                };
-
-                left.DimensionUnitList.Add(leftOffsetInPixels);
-            }
-
-            leftOffsetInPixels.Value += deltaX;
+            elementDimensions.LeftDimensionAttribute.Increment(
+        		deltaX,
+        		DimensionUnitKind.Pixels,
+        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 }

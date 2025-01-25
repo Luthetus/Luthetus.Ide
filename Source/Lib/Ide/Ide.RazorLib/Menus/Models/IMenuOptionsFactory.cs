@@ -7,19 +7,19 @@ namespace Luthetus.Ide.RazorLib.Menus.Models;
 
 public interface IMenuOptionsFactory
 {
-    public MenuOptionRecord NewEmptyFile(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion);
+    public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion);
     public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion);
-    public MenuOptionRecord NewDirectory(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion);
-    public MenuOptionRecord DeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
-    public MenuOptionRecord CopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
-    public MenuOptionRecord CutFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion);
+    public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion);
+    public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion);
+    public MenuOptionRecord CopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion);
+    public MenuOptionRecord CutFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RenameFile(
-        IAbsolutePath sourceAbsolutePath,
+        AbsolutePath sourceAbsolutePath,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord PasteClipboard(
-        IAbsolutePath directoryAbsolutePath,
+        AbsolutePath directoryAbsolutePath,
         Func<Task> onAfterCompletion);
 }

@@ -6,10 +6,10 @@ namespace Luthetus.Common.RazorLib.Contexts.States;
 
 public partial record ContextState
 {
-    public record SetFocusedContextHeirarchyAction(ContextHeirarchy FocusedContextHeirarchy);
-    public record ToggleSelectInspectedContextHeirarchyAction;
-    public record IsSelectingInspectableContextHeirarchyAction(bool Value);
-    public record SetInspectedContextHeirarchyAction(ContextHeirarchy? InspectedContextHeirarchy);
-    public record AddInspectableContextAction(InspectableContext InspectableContext);
-    public record SetContextKeymapAction(Key<ContextRecord> ContextKey, IKeymap Keymap);
+    public record struct SetFocusedContextHeirarchyAction(ContextHeirarchy FocusedContextHeirarchy);
+    public record struct ToggleSelectInspectedContextHeirarchyAction;
+    public record struct IsSelectingInspectableContextHeirarchyAction(bool Value);
+    public record struct SetInspectedContextHeirarchyAction(ContextHeirarchy? InspectedContextHeirarchy);
+    public record struct AddInspectableContextAction(InspectableContext InspectableContext);
+    public record struct SetContextKeymapAction(Key<ContextRecord> ContextKey, IKeymap Keymap);
 }

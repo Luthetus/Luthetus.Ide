@@ -175,54 +175,34 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
 
         // Width
         {
-            var widthDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-            widthDimensionAttribute.DimensionUnitList.Clear();
-            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = measuredHtmlElementDimensions.WidthInPixels,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+            elementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+            elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	measuredHtmlElementDimensions.WidthInPixels,
+            	DimensionUnitKind.Pixels));
         }
 
         // Height
         {
-            var heightDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-            heightDimensionAttribute.DimensionUnitList.Clear();
-            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = measuredHtmlElementDimensions.HeightInPixels,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+            elementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
+            elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	measuredHtmlElementDimensions.HeightInPixels,
+            	DimensionUnitKind.Pixels));
         }
 
         // Left
         {
-            var leftDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-            leftDimensionAttribute.DimensionUnitList.Clear();
-            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = measuredHtmlElementDimensions.LeftInPixels,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+            elementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+            elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	measuredHtmlElementDimensions.LeftInPixels,
+            	DimensionUnitKind.Pixels));
         }
 
         // Top
         {
-            var topDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-
-            topDimensionAttribute.DimensionUnitList.Clear();
-            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = measuredHtmlElementDimensions.TopInPixels,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+            elementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+            elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	measuredHtmlElementDimensions.TopInPixels,
+            	DimensionUnitKind.Pixels));
         }
 
         dropzoneList.Add(new TextEditorGroupDropzone(
@@ -369,54 +349,34 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
 
         // Width
         {
-            var widthDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-            widthDimensionAttribute.DimensionUnitList.Clear();
-            widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 100,
-                DimensionUnitKind = DimensionUnitKind.ViewportWidth
-            });
+            fallbackElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+            fallbackElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	100,
+            	DimensionUnitKind.ViewportWidth));
         }
 
         // Height
         {
-            var heightDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-            heightDimensionAttribute.DimensionUnitList.Clear();
-            heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 100,
-                DimensionUnitKind = DimensionUnitKind.ViewportHeight
-            });
+            fallbackElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
+            fallbackElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	100,
+            	DimensionUnitKind.ViewportHeight));
         }
 
         // Left
         {
-            var leftDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-            leftDimensionAttribute.DimensionUnitList.Clear();
-            leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 0,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+            fallbackElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+            fallbackElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	0,
+            	DimensionUnitKind.Pixels));
         }
 
         // Top
         {
-            var topDimensionAttribute = fallbackElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-
-            topDimensionAttribute.DimensionUnitList.Clear();
-            topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 0,
-                DimensionUnitKind = DimensionUnitKind.Pixels
-            });
+            fallbackElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+            fallbackElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	0,
+            	DimensionUnitKind.Pixels));
         }
 
         dropzoneList.Add(new TextEditorGroupDropzone(
@@ -454,54 +414,34 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
 
             // Width
             {
-                var widthDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                    x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-                widthDimensionAttribute.DimensionUnitList.Clear();
-                widthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-                {
-                    Value = measuredHtmlElementDimensions.WidthInPixels,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                });
+                elementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+                elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                	measuredHtmlElementDimensions.WidthInPixels,
+                	DimensionUnitKind.Pixels));
             }
 
             // Height
             {
-                var heightDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                    x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-                heightDimensionAttribute.DimensionUnitList.Clear();
-                heightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-                {
-                    Value = measuredHtmlElementDimensions.HeightInPixels,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                });
+                elementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
+                elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                	measuredHtmlElementDimensions.HeightInPixels,
+                	DimensionUnitKind.Pixels));
             }
 
             // Left
             {
-                var leftDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                    x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-                leftDimensionAttribute.DimensionUnitList.Clear();
-                leftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-                {
-                    Value = measuredHtmlElementDimensions.LeftInPixels,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                });
+                elementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+                elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                	measuredHtmlElementDimensions.LeftInPixels,
+                	DimensionUnitKind.Pixels));
             }
 
             // Top
             {
-                var topDimensionAttribute = elementDimensions.DimensionAttributeList.First(
-                    x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-
-                topDimensionAttribute.DimensionUnitList.Clear();
-                topDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-                {
-                    Value = measuredHtmlElementDimensions.TopInPixels,
-                    DimensionUnitKind = DimensionUnitKind.Pixels
-                });
+                elementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+                elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                	measuredHtmlElementDimensions.TopInPixels,
+                	DimensionUnitKind.Pixels));
             }
 
             dropzoneList.Add(new PanelGroupDropzone(

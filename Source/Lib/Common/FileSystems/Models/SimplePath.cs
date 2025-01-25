@@ -1,6 +1,6 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
-public record SimplePath
+public record struct SimplePath
 {
     public SimplePath(string absolutePath, bool isDirectory)
     {

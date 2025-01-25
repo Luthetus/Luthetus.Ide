@@ -10,7 +10,7 @@ public partial class IdePromptOpenSolutionDisplay : ComponentBase
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public IAbsolutePath AbsolutePath { get; set; } = null!;
+	public AbsolutePath AbsolutePath { get; set; }
 
 	private void OpenSolutionOnClick()
 	{
