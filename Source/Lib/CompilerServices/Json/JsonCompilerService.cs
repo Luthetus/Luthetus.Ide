@@ -13,8 +13,6 @@ public sealed class JsonCompilerService : CompilerService
         {
             RegisterResourceFunc = resourceUri => new JsonResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new TextEditorJsonLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new Parser(lexer),
-            GetBinderFunc = (resource, parser) => Binder
         };
     }
 }
