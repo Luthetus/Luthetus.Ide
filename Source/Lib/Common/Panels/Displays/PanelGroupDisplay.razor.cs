@@ -88,29 +88,52 @@ public partial class PanelGroupDisplay : FluxorComponent
 
     private async Task PassAlongSizeIfNoActiveTab()
     {
-    	// TODO: 'PassAlongSizeIfNoActiveTab()' (2025-01-24)
-    	Console.WriteLine("TODO: 'PassAlongSizeIfNoActiveTab()' (2025-01-24)");
-    	return;
-    
-        /*var panelState = PanelStateWrap.Value;
+        var panelState = PanelStateWrap.Value;
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is not null)
         {
             var activePanelTab = panelGroup.TabList.FirstOrDefault(
                 x => x.Key == panelGroup.ActiveTabKey);
-
-            var adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind);
-
+            
+            DimensionAttribute adjacentElementSizeDimensionAttribute;
+            DimensionAttribute panelGroupSizeDimensionsAttribute;
+            
+            switch (DimensionAttributeKind)
+            {
+            	case DimensionAttributeKind.Width:
+            		adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.WidthDimensionAttribute;
+            		panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.WidthDimensionAttribute;
+            		break;
+			    case DimensionAttributeKind.Height:
+            		adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.HeightDimensionAttribute;
+            		panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.HeightDimensionAttribute;
+            		break;
+			    case DimensionAttributeKind.Left:
+            		adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.LeftDimensionAttribute;
+            		panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.LeftDimensionAttribute;
+            		break;
+			    case DimensionAttributeKind.Right:
+            		adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.RightDimensionAttribute;
+            		panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.RightDimensionAttribute;
+            		break;
+			    case DimensionAttributeKind.Top:
+            		adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.TopDimensionAttribute;
+            		panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.TopDimensionAttribute;
+            		break;
+			    case DimensionAttributeKind.Bottom:
+            		adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.BottomDimensionAttribute;
+            		panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.BottomDimensionAttribute;
+            		break;
+			    default:
+			    	return;
+            }
+            
             var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
                 x => x.Purpose == DimensionAttributeModificationPurpose);
 
             if (activePanelTab is null && indexOfPreviousPassAlong == -1)
             {
-                var panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.DimensionAttributeList.First(
-                    x => x.DimensionAttributeKind == DimensionAttributeKind);
-
                 var panelGroupPercentageSize = panelGroupSizeDimensionsAttribute.DimensionUnitList.First(
                     x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
 
@@ -132,7 +155,7 @@ public partial class PanelGroupDisplay : FluxorComponent
                     .Invoke()
                     .ConfigureAwait(false);
             }
-        }*/
+        }
     }
 
     private string GetElementDimensionsStyleString(PanelGroup? panelGroup, IPanelTab? activePanelTab)
