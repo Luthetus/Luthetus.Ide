@@ -300,7 +300,19 @@ public static class ParseTokens
 			they will disambiguate with the EqualsCloseAngleBracketToken ('=>').
 		*/
 		
-    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.ArbitraryCodeBlockNode &&
+		// (2025-01-25)
+		// ============
+		// Am removing '//parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.ArbitraryCodeBlockNode &&'
+		// from the below if.
+		//
+		// But it is so confusing as to why it was there is the first place that I feel a need
+		// to leave a comment here for now
+		// 
+		// Issue:
+		// ````{{}}
+		// 
+		// Nesting arbitrary code block nodes was impossible with that as part of the if statement.
+    	if (
     		(parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
     		 	parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan is not null))
 		{
