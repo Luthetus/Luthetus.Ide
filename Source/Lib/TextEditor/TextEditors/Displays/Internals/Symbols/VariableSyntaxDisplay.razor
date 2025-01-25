@@ -30,6 +30,8 @@
 			textCssClass = "luth_te_field";
 		else if (variableDeclarationNode.VariableKind == VariableKind.Property)
 			textCssClass = "luth_te_property";
+		else if (variableDeclarationNode.VariableKind == VariableKind.EnumMember)
+			textCssClass = "luth_te_property";
 		else
 			textCssClass = "luth_te_variable";
 		
@@ -45,7 +47,8 @@
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
 			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
 			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FieldSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.PropertySymbol))
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.PropertySymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.EnumMemberSymbol))
 	{
 		prefixText = "(symbol)";
 		text = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();

@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -198,6 +199,71 @@ public static class ParseTypes
 	    	{
 	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 	    	}
+    	}
+    }
+    
+    public static void HandleEnumDefinitionNode(
+        TypeDefinitionNode typeDefinitionNode,
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
+    {
+    	while (!parserModel.TokenWalker.IsEof)
+    	{
+    		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+    			break;
+    			
+    		_ = parserModel.TokenWalker.Consume();
+    	}
+    	
+    	parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
+    	
+    	parserModel.StatementBuilder.FinishStatement(compilationUnit, ref parserModel);
+					
+		#if DEBUG
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		#endif
+		
+		var openBraceToken = (OpenBraceToken)parserModel.TokenWalker.Consume();
+		
+		#if DEBUG
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		#endif
+		
+        ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
+        
+        var shouldFindIdentifier = true;
+        
+        while (!parserModel.TokenWalker.IsEof)
+    	{
+    		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+    			break;
+    			
+    		var token = parserModel.TokenWalker.Consume();
+    		
+    		if (shouldFindIdentifier)
+    		{
+    			if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))
+				{
+					var identifierToken = UtilityApi.ConvertToIdentifierToken(token, compilationUnit, ref parserModel);
+					
+					var variableDeclarationNode = new VariableDeclarationNode(
+				        typeDefinitionNode.ToTypeClause(),
+				        identifierToken,
+				        VariableKind.EnumMember,
+				        false);
+				        
+				    parserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+				        
+				    compilationUnit.Binder.BindEnumMember(variableDeclarationNode, compilationUnit, ref parserModel);
+					
+					shouldFindIdentifier = !shouldFindIdentifier;
+	    		}
+    		}
+    		else
+    		{
+    			if (token.SyntaxKind == SyntaxKind.CommaToken)
+    				shouldFindIdentifier = !shouldFindIdentifier;
+    		}
     	}
     }
 }

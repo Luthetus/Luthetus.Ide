@@ -262,6 +262,7 @@ public enum SyntaxKind
     VariableSymbol,
     FieldSymbol,
     PropertySymbol,
+    EnumMemberSymbol,
     StringInterpolationSymbol,
     StringVerbatimSymbol,
     NamespaceSymbol,
