@@ -57,7 +57,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				},
 				{
 					nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
-					new Func<IAbsolutePath, Task>(
+					new Func<AbsolutePath, Task>(
 						_ =>
 						{
 							PerformRemoveCSharpProjectReferenceFromSolution(
@@ -188,7 +188,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 
 				var terminalCommandRequest = new TerminalCommandRequest(
 					formattedCommand.Value,
-					workingDirectory.Value)
+					workingDirectory)
 				{
 					ContinueWithFunc = parsedCommand => onAfterCompletion.Invoke()
 				};
@@ -209,7 +209,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 			$"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
 			referencedProject =>
 			{
-				if (referencedProject is null)
+				if (referencedProject.ExactInput is null)
 					return Task.CompletedTask;
 
 				var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
@@ -232,7 +232,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 			},
 			absolutePath =>
 			{
-				if (absolutePath is null || absolutePath.IsDirectory)
+				if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(

@@ -14,16 +14,16 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
 	public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
 
 	[Parameter, EditorRequired]
-	public IAbsolutePath AbsolutePath { get; set; } = null!;
+	public AbsolutePath AbsolutePath { get; set; }
 	[Parameter, EditorRequired]
-	public Func<IAbsolutePath, Task> OnAfterSubmitFunc { get; set; } = null!;
+	public Func<AbsolutePath, Task> OnAfterSubmitFunc { get; set; } = null!;
 
-	private IAbsolutePath? _previousAbsolutePath;
+	private AbsolutePath _previousAbsolutePath = default;
 	private ElementReference? _cancelButtonElementReference;
 
 	protected override Task OnParametersSetAsync()
 	{
-		if (_previousAbsolutePath is null ||
+		if (_previousAbsolutePath.ExactInput is null ||
 			_previousAbsolutePath.Value != AbsolutePath.Value)
 		{
 			_previousAbsolutePath = AbsolutePath;

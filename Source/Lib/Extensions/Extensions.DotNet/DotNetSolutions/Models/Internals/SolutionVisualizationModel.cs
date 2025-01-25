@@ -16,14 +16,14 @@ public class SolutionVisualizationModel
 
 	private readonly Action _onStateChangedAction;
 
-	public SolutionVisualizationModel(IAbsolutePath? solutionAbsolutePath, Action onStateChangedAction)
+	public SolutionVisualizationModel(AbsolutePath? solutionAbsolutePath, Action onStateChangedAction)
 	{
 		SolutionAbsolutePath = solutionAbsolutePath;
 		_onStateChangedAction = onStateChangedAction;
 		Dimensions = new(_onStateChangedAction);
 	}
 
-	public IAbsolutePath? SolutionAbsolutePath { get; set; }
+	public AbsolutePath? SolutionAbsolutePath { get; set; }
 	public SolutionVisualizationDimensions Dimensions { get; set; }
 	public List<ISolutionVisualizationDrawing> SolutionVisualizationDrawingList { get; set; } = new();
 	public List<List<ISolutionVisualizationDrawing>> SolutionVisualizationDrawingRenderCycleList { get; set; } = new();
@@ -52,11 +52,11 @@ public class SolutionVisualizationModel
 		// Do not clear the 'ParentMap', it will stop the connections from project to class.
 		// localSolutionVisualizationModel.ParentMap.Clear();
 
-		if (SolutionAbsolutePath is null)
+		if (SolutionAbsolutePath?.ExactInput is null)
 			return localSolutionVisualizationModel;
 
 		var dotNetSolutionResource = dotNetSolutionCompilerService.CompilerServiceResources.FirstOrDefault(
-			x => x.ResourceUri.Value == SolutionAbsolutePath.Value);
+			x => x.ResourceUri.Value == SolutionAbsolutePath.Value.Value);
 
 		if (dotNetSolutionResource is null)
 			return localSolutionVisualizationModel;

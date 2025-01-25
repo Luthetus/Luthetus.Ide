@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Contexts.Models;
@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Models;
 /// at index 1. This pattern follows for 'parent of parent' until there is no parent.
 /// Each parent getting the next index in list to store their key.
 /// </param>
-public record ContextHeirarchy(ImmutableArray<Key<ContextRecord>> KeyList)
+public record struct ContextHeirarchy(List<Key<ContextRecord>> KeyList)
 {
     /// <summary>
     /// The key of the nearest-ancestor <see cref="Displays.ContextBoundary"/> ContextRecord in question

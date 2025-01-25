@@ -453,6 +453,10 @@ finally
     	- "bubble up" the statements if the delimiter of an outer statement is found within
     	  a code block that does not it as its own delimiter.
     	- "bubble up" implicit open code blocks that are nested when encountering a semicolon.
+    	- Array indexing as an expression
+    	  (for some reason the statement loop seems to bind all the variables).
+    	  (the expression loop seems to return 'BadExpressionNode'? (not confirmed just is plain text syntax highlighting though))
+    	  (but the final answer is probably that it would only be parsed by the expression loop.)
     	*/
     	var test = new Test(@"var aaa = 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;

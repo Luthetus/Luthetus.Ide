@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-public class BackgroundTask : IBackgroundTask
+public struct BackgroundTask : IBackgroundTask
 {
     private readonly Func<ValueTask> _runFunc;
 
@@ -27,7 +27,7 @@ public class BackgroundTask : IBackgroundTask
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
-    public bool EarlyBatchEnabled { get; set; }
+    public bool EarlyBatchEnabled { get; init; }
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
 	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)

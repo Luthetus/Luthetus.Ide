@@ -12,7 +12,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
 	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 

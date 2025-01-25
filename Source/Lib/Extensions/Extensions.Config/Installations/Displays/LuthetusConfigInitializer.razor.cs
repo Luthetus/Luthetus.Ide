@@ -93,7 +93,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
         if (parentDirectory is not null)
         {
             var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
-                parentDirectory.Value,
+                parentDirectory,
                 true);
 
             var pseudoRootNode = new TreeViewAbsolutePath(

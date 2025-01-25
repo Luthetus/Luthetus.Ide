@@ -33,8 +33,8 @@ public class InputFileIdeApi
 
     public void RequestInputFileStateForm(
         string message,
-        Func<IAbsolutePath?, Task> onAfterSubmitFunc,
-        Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
+        Func<AbsolutePath, Task> onAfterSubmitFunc,
+        Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns)
     {
         _backgroundTaskService.Enqueue(
@@ -51,8 +51,8 @@ public class InputFileIdeApi
 
     private Task HandleRequestInputFileStateFormActionAsync(
         string message,
-        Func<IAbsolutePath?, Task> onAfterSubmitFunc,
-        Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
+        Func<AbsolutePath, Task> onAfterSubmitFunc,
+        Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatternsList)
     {
         _dispatcher.Dispatch(new StartInputFileStateFormAction(

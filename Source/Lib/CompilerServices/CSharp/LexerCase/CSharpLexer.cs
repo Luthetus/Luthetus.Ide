@@ -15,7 +15,15 @@ public static class CSharpLexer
     public static CSharpLexerOutput Lex(ResourceUri resourceUri, string sourceText)
     {
     	var stringWalker = new StringWalkerStruct(resourceUri, sourceText);
-    	var decorationByteLastEscapeCharacter = (byte)GenericDecorationKind.None;
+    	
+    	var previousEscapeCharacterTextSpan = new TextEditorTextSpan(
+    		0,
+		    0,
+		    (byte)GenericDecorationKind.None,
+		    ResourceUri.Empty,
+		    string.Empty,
+		    string.Empty);
+		    
     	var lexerOutput = new CSharpLexerOutput();
     	
         while (!stringWalker.IsEof)
@@ -96,7 +104,7 @@ public static class CSharpLexer
                     LexCharLiteralToken(ref lexerOutput, ref stringWalker);
                     break;
                 case '"':
-                	LexString(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, countDollarSign: 0, useVerbatim: false);
+                	LexString(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 0, useVerbatim: false);
                     break;
                 case '/':
                     if (stringWalker.PeekCharacter(1) == '/')
@@ -349,11 +357,11 @@ public static class CSharpLexer
                 case '$':
                 	if (stringWalker.NextCharacter == '"')
                 	{
-                		LexString(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, countDollarSign: 1, useVerbatim: false);
+                		LexString(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: false);
 					}
 					else if (stringWalker.PeekCharacter(1) == '@' && stringWalker.PeekCharacter(2) == '"')
 					{
-						LexString(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, countDollarSign: 1, useVerbatim: true);
+						LexString(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: true);
                 	}
                 	else if (stringWalker.NextCharacter == '$')
                 	{
@@ -382,7 +390,7 @@ public static class CSharpLexer
                 		_ = stringWalker.BacktrackCharacter();
                 		
                 		if (stringWalker.NextCharacter == '"')
-	                		LexString(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, countDollarSign: countDollarSign, useVerbatim: false);
+	                		LexString(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: countDollarSign, useVerbatim: false);
                 	}
                 	else
                 	{
@@ -396,11 +404,11 @@ public static class CSharpLexer
                 case '@':
                 	if (stringWalker.NextCharacter == '"')
                 	{
-                		LexString(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, countDollarSign: 0, useVerbatim: true);
+                		LexString(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 0, useVerbatim: true);
 					}
 					else if (stringWalker.PeekCharacter(1) == '$' && stringWalker.PeekCharacter(2) == '"')
 					{
-						LexString(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, countDollarSign: 1, useVerbatim: true);
+						LexString(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: true);
       			  }
                 	else
                 	{
@@ -462,7 +470,7 @@ public static class CSharpLexer
     /// The reason being: you don't know if it is a string until you've read all of the '$' (dollar sign characters).
     /// So in order to invoke this method the invoker had to have counted them.
     /// </summary>
-    private static void LexString(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref byte decorationByteLastEscapeCharacter, int countDollarSign, bool useVerbatim)
+    private static void LexString(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, int countDollarSign, bool useVerbatim)
     {
     	var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -517,7 +525,7 @@ public static class CSharpLexer
 				}
 				else if (useVerbatim && stringWalker.NextCharacter == '\"')
 				{
-					EscapeCharacterListAdd(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, new TextEditorTextSpan(
+					EscapeCharacterListAdd(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
 				    	stringWalker.PositionIndex,
 				        stringWalker.PositionIndex + 2,
 				        (byte)GenericDecorationKind.EscapeCharacterPrimary,
@@ -534,7 +542,7 @@ public static class CSharpLexer
 			}
 			else if (!useVerbatim && stringWalker.CurrentCharacter == '\\')
 			{
-				EscapeCharacterListAdd(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, new TextEditorTextSpan(
+				EscapeCharacterListAdd(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
 		            stringWalker.PositionIndex,
 		            stringWalker.PositionIndex + 2,
 		            (byte)GenericDecorationKind.EscapeCharacterPrimary,
@@ -665,14 +673,13 @@ public static class CSharpLexer
 		_ = stringWalker.ReadCharacter();
     }
     
-    private static void EscapeCharacterListAdd(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref byte decorationByteLastEscapeCharacter, TextEditorTextSpan textSpan)
+    private static void EscapeCharacterListAdd(
+    	ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, TextEditorTextSpan textSpan)
     {
-    	if (lexerOutput.EscapeCharacterList.Count > 0)
+    	if (lexerOutput.MiscTextSpanList.Count > 0)
     	{
-    		var lastEntry = lexerOutput.EscapeCharacterList[^1];
-    		
-    		if (lastEntry.EndingIndexExclusive == textSpan.StartingIndexInclusive &&
-    			decorationByteLastEscapeCharacter == (byte)GenericDecorationKind.EscapeCharacterPrimary)
+    		if (previousEscapeCharacterTextSpan.EndingIndexExclusive == textSpan.StartingIndexInclusive &&
+    			previousEscapeCharacterTextSpan.DecorationByte == (byte)GenericDecorationKind.EscapeCharacterPrimary)
     		{
     			textSpan = textSpan with
     			{
@@ -681,8 +688,8 @@ public static class CSharpLexer
     		}
     	}
     	
-    	decorationByteLastEscapeCharacter = textSpan.DecorationByte;
-    	lexerOutput.EscapeCharacterList.Add(textSpan);
+    	previousEscapeCharacterTextSpan = textSpan;
+    	lexerOutput.MiscTextSpanList.Add(textSpan);
     }
     
     public static void LexIdentifierOrKeywordOrKeywordContextual(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
@@ -796,7 +803,7 @@ public static class CSharpLexer
 			}
 			else if (stringWalker.CurrentCharacter == escapeCharacter)
 			{
-				lexerOutput.EscapeCharacterList.Add(new TextEditorTextSpan(
+				lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
 		            stringWalker.PositionIndex,
 		            stringWalker.PositionIndex + 2,
 		            (byte)GenericDecorationKind.EscapeCharacterPrimary,
@@ -853,7 +860,7 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.CommentList.Add(textSpan);
+        lexerOutput.MiscTextSpanList.Add(textSpan);
     }
     
     public static void LexCommentMultiLineToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
@@ -895,7 +902,7 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.CommentList.Add(textSpan);
+        lexerOutput.MiscTextSpanList.Add(textSpan);
     }
     
     public static void LexPreprocessorDirectiveToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)

@@ -100,7 +100,7 @@ public partial record ContextState
             var inContextRecord = inContextStates.AllContextsList.FirstOrDefault(
                 x => x.ContextKey == setContextKeymapAction.ContextKey);
 
-            if (inContextRecord is null)
+            if (inContextRecord != default)
                 return inContextStates;
 
             var outList = inContextStates.AllContextsList.Replace(inContextRecord, inContextRecord with

@@ -39,7 +39,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         _backgroundTaskService = backgroundTaskService;
     }
 
-    public MenuOptionRecord NewEmptyFile(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
+    public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
             WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
@@ -91,7 +91,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    public MenuOptionRecord NewDirectory(IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
+    public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
             WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
@@ -111,7 +111,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    public MenuOptionRecord DeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+    public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
             WidgetRendererType: _ideComponentRenderers.DeleteFileFormRendererType,
@@ -121,7 +121,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IDeleteFileFormRendererType.IsDirectory), true },
                 {
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<IAbsolutePath, Task>(
+                    new Func<AbsolutePath, Task>(
 						x => 
 						{
 							PerformDeleteFile(x, onAfterCompletion);
@@ -131,7 +131,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    public MenuOptionRecord RenameFile(IAbsolutePath sourceAbsolutePath, IDispatcher dispatcher, Func<Task> onAfterCompletion)
+    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, IDispatcher dispatcher, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
             WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
@@ -155,7 +155,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    public MenuOptionRecord CopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+    public MenuOptionRecord CopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Copy", MenuOptionKind.Update,
             OnClickFunc: () =>
@@ -165,7 +165,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 			});
     }
 
-    public MenuOptionRecord CutFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+    public MenuOptionRecord CutFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Cut", MenuOptionKind.Update,
             OnClickFunc: () =>
@@ -175,7 +175,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 			});
     }
 
-    public MenuOptionRecord PasteClipboard(IAbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
+    public MenuOptionRecord PasteClipboard(AbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Paste", MenuOptionKind.Update,
             OnClickFunc: () =>
@@ -235,7 +235,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private void PerformNewDirectory(string directoryName, IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
+    private void PerformNewDirectory(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.Value + directoryName;
         var directoryAbsolutePath = _environmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
@@ -255,7 +255,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private void PerformDeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+    private void PerformDeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -280,7 +280,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private void PerformCopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+    private void PerformCopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -299,7 +299,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     }
 
     private void PerformCutFile(
-        IAbsolutePath absolutePath,
+        AbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
         _backgroundTaskService.Enqueue(
@@ -318,7 +318,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private void PerformPasteFile(IAbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
+    private void PerformPasteFile(AbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -336,7 +336,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
                             clipboardPhrase.Command == ClipboardFacts.CutCommand)
                         {
-                            IAbsolutePath? clipboardAbsolutePath = null;
+                            AbsolutePath clipboardAbsolutePath = default;
 
                             // Should the if and else if be kept as inline awaits?
                             // If kept as inline awaits then the else if won't execute if the first one succeeds.
@@ -353,7 +353,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                     false);
                             }
 
-                            if (clipboardAbsolutePath is not null)
+                            if (clipboardAbsolutePath.ExactInput is not null)
                             {
                                 var successfullyPasted = true;
 
@@ -400,7 +400,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private IAbsolutePath? PerformRename(IAbsolutePath sourceAbsolutePath, string nextName, IDispatcher dispatcher, Func<Task> onAfterCompletion)
+    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, IDispatcher dispatcher, Func<Task> onAfterCompletion)
     {
         // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
@@ -413,10 +413,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 dispatcher,
                 () => Task.CompletedTask);
 
-            if (temporaryRenameResult is null)
+            if (temporaryRenameResult.ExactInput is null)
             {
                 onAfterCompletion.Invoke();
-                return null;
+                return default;
             }
             else
             {
@@ -425,7 +425,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
 
         var sourceAbsolutePathString = sourceAbsolutePath.Value;
-        var parentOfSource = sourceAbsolutePath.ParentDirectory.Value;
+        var parentOfSource = sourceAbsolutePath.ParentDirectory;
         var destinationAbsolutePathString = parentOfSource + nextName;
 
         try
@@ -439,7 +439,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         {
             NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(14));
             onAfterCompletion.Invoke();
-            return null;
+            return default;
         }
 
         onAfterCompletion.Invoke();

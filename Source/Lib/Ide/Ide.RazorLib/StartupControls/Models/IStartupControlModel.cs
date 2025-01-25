@@ -17,7 +17,7 @@ public interface IStartupControlModel
 	/// </summary>
 	public string TitleVerbose { get; }
 	
-	public IAbsolutePath StartupProjectAbsolutePath { get; }
+	public AbsolutePath StartupProjectAbsolutePath { get; }
 	
 	/// <summary>
 	/// If more than a 'start button' is necessary, one can provide a Blazor component,

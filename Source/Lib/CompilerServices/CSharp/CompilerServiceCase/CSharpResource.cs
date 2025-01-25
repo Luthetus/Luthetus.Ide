@@ -18,8 +18,7 @@ public sealed class CSharpResource : ICompilerServiceResource
     public ICompilerService CompilerService { get; }
 	public CSharpCompilationUnit? CompilationUnit { get; set; }
 	public IReadOnlyList<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
-	public IReadOnlyList<TextEditorTextSpan> EscapeCharacterList { get; internal set; }
-	public IReadOnlyList<TextEditorTextSpan> CommentList { get; internal set; }
+	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; internal set; }
 	
 	ICompilationUnit? ICompilerServiceResource.CompilationUnit => CompilationUnit;
     
@@ -33,8 +32,7 @@ public sealed class CSharpResource : ICompilerServiceResource
 		var tokenTextSpanList = new List<TextEditorTextSpan>();
 
         tokenTextSpanList.AddRange(SyntaxTokenList.Select(st => st.TextSpan));
-		tokenTextSpanList.AddRange(EscapeCharacterList);
-		tokenTextSpanList.AddRange(CommentList);
+		tokenTextSpanList.AddRange(MiscTextSpanList);
 
 		return tokenTextSpanList;
     }

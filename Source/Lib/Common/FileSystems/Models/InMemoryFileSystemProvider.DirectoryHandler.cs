@@ -173,7 +173,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 f.AbsolutePath.Value == absolutePathString &&
                 f.IsDirectory);
 
-            if (existingFile is not null)
+            if (existingFile.Data is not null)
                 return Task.CompletedTask;
 
             var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, true);
@@ -340,7 +340,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 f.AbsolutePath.Value == absolutePathString &&
                 f.IsDirectory);
 
-            if (existingFile is null)
+            if (existingFile.Data is null)
                 return Task.FromResult(Array.Empty<string>());
 
             var childrenFromAllGenerationsList = _inMemoryFileSystemProvider._files.Where(
@@ -373,7 +373,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 f.AbsolutePath.Value == absolutePathString &&
                 f.IsDirectory);
 
-            if (existingFile is null)
+            if (existingFile.Data is null)
                 return Task.FromResult(Array.Empty<string>());
 
             var childrenFromAllGenerationsList = _inMemoryFileSystemProvider._files.Where(

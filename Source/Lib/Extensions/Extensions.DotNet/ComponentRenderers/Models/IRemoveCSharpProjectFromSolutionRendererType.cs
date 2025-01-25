@@ -4,6 +4,6 @@ namespace Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 public interface IRemoveCSharpProjectFromSolutionRendererType
 {
-	public IAbsolutePath AbsolutePath { get; set; }
-	public Func<IAbsolutePath, Task> OnAfterSubmitFunc { get; set; }
+	public AbsolutePath AbsolutePath { get; set; }
+	public Func<AbsolutePath, Task> OnAfterSubmitFunc { get; set; }
 }

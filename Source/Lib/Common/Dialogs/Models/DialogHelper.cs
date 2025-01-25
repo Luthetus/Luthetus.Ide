@@ -11,53 +11,17 @@ public static class DialogHelper
             ElementPositionKind = ElementPositionKind.Fixed
         };
 
-        // Width
-        {
-            var width = elementDimensions.DimensionAttributeList.Single(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+        elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(
+        	new DimensionUnit(60, DimensionUnitKind.ViewportWidth));
 
-            width.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 60,
-                DimensionUnitKind = DimensionUnitKind.ViewportWidth
-            });
-        }
+        elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(
+        	new DimensionUnit(60, DimensionUnitKind.ViewportHeight));
 
-        // Height
-        {
-            var height = elementDimensions.DimensionAttributeList.Single(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+        elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(
+        	new DimensionUnit(20, DimensionUnitKind.ViewportWidth));
 
-            height.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 60,
-                DimensionUnitKind = DimensionUnitKind.ViewportHeight
-            });
-        }
-
-        // Left
-        {
-            var left = elementDimensions.DimensionAttributeList.Single(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-            left.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 20,
-                DimensionUnitKind = DimensionUnitKind.ViewportWidth
-            });
-        }
-
-        // Top
-        {
-            var top = elementDimensions.DimensionAttributeList.Single(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-
-            top.DimensionUnitList.Add(new DimensionUnit
-            {
-                Value = 20,
-                DimensionUnitKind = DimensionUnitKind.ViewportHeight
-            });
-        }
+        elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(
+        	new DimensionUnit(20, DimensionUnitKind.ViewportHeight));
 
         return elementDimensions;
 	}

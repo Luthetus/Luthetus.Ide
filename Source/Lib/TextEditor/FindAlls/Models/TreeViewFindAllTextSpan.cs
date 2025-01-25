@@ -9,7 +9,7 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<TextEditorTextSpan>
 {
 	public TreeViewFindAllTextSpan(
 			TextEditorTextSpan textSpan,
-			IAbsolutePath absolutePath,
+			AbsolutePath absolutePath,
 			bool isExpandable,
 			bool isExpanded)
 		: base(textSpan, isExpandable, isExpanded)
@@ -17,7 +17,7 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<TextEditorTextSpan>
 		AbsolutePath = absolutePath;
 	}
 	
-	public IAbsolutePath AbsolutePath { get; }
+	public AbsolutePath AbsolutePath { get; }
 	public string? PreviewEarlierNearbyText { get; set; }
 	public string? PreviewLaterNearbyText { get; set; }
 	

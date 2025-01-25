@@ -28,7 +28,7 @@ public partial class ContextBoundary : ComponentBase
     public ContextBoundary? ParentContextBoundary { get; set; }
 
     [Parameter, EditorRequired]
-    public ContextRecord ContextRecord { get; set; } = null!;
+    public ContextRecord ContextRecord { get; set; } = default!;
     [Parameter, EditorRequired]
     public RenderFragment ChildContent { get; set; } = null!;
 
@@ -46,7 +46,7 @@ public partial class ContextBoundary : ComponentBase
         if (ParentContextBoundary is not null)
             ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyList);
         else
-            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList.ToImmutableArray())));
+            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList)));
     }
     
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
@@ -86,6 +86,19 @@ public partial class ContextBoundary : ComponentBase
         return HandleKeymapArgumentAsync(new (keyboardEventArgs));
     }
 
+	/// <summary>
+	/// (2025-01-24)
+	/// ============
+	/// Much of Luthetus.Common was looked at for optimization.
+	///
+	/// Mostly excessive garbage collector overhead was looked for,
+	/// class -> struct, kind of things.
+	///
+	/// But, after having finished, the next thing that stands out the most
+	/// is this 'HandleKeymapArgumentAsync'.
+	///
+	/// Is it possible to 'short circuit' by caching known no-op keymap arguments?
+	/// </summary>
     public async Task HandleKeymapArgumentAsync(KeymapArgs keymapArgs)
     {
         var success = ContextRecord.Keymap.MapFirstOrDefault(keymapArgs, out var command);
@@ -96,13 +109,13 @@ public partial class ContextBoundary : ComponentBase
             await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgs).ConfigureAwait(false);
     }
 
-    public ImmutableArray<Key<ContextRecord>> GetContextBoundaryHeirarchy(List<Key<ContextRecord>> contextRecordKeyList)
+    public List<Key<ContextRecord>> GetContextBoundaryHeirarchy(List<Key<ContextRecord>> contextRecordKeyList)
     {
         contextRecordKeyList.Add(ContextRecord.ContextKey);
 
         if (ParentContextBoundary is not null)
             return ParentContextBoundary.GetContextBoundaryHeirarchy(contextRecordKeyList);
         else
-            return contextRecordKeyList.ToImmutableArray();
+            return contextRecordKeyList;
     }
 }

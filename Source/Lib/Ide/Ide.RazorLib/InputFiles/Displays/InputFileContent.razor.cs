@@ -16,7 +16,7 @@ public partial class InputFileContent : ComponentBase
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
-    public Func<IAbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
+    public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
     public InputFileTreeViewMouseEventHandler InputFileTreeViewMouseEventHandler { get; set; } = null!;
     [CascadingParameter]
@@ -27,7 +27,7 @@ public partial class InputFileContent : ComponentBase
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<IAbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
+    public Action<AbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
     public static readonly Key<TreeViewContainer> TreeViewContainerKey = Key<TreeViewContainer>.NewKey();
 

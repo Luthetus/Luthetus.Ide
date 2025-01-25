@@ -25,32 +25,30 @@ public partial record TestExplorerState
             
             // TreeViewElementDimensions
             {
-            	var widthDimensionAttribute = inState.TreeViewElementDimensions.DimensionAttributeList.FirstOrDefault(
-            		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-            		
-            	if (widthDimensionAttribute is null)
+            	if (inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
-            	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+            	var existingDimensionUnit = inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList
+            		.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+            		
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
-            	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            	inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
             }
             
             // DetailsElementDimensions
             {
-            	var widthDimensionAttribute = inState.DetailsElementDimensions.DimensionAttributeList.FirstOrDefault(
-            		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-            		
-            	if (widthDimensionAttribute is null)
+            	if (inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
             		return inState;
             		
-            	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
-	            if (existingDimensionUnit is not null)
+            	var existingDimensionUnit = inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList
+            		.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+            		
+	            if (existingDimensionUnit.Purpose is not null)
 	            	return inState;
             		
-            	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            	inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
             }
             
             return inState;

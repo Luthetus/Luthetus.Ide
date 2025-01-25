@@ -31,7 +31,7 @@ public class FileSystemIdeApi
     }
 
     public void SaveFile(
-        IAbsolutePath absolutePath,
+        AbsolutePath absolutePath,
         string content,
         Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
         CancellationToken cancellationToken = default)
@@ -49,7 +49,7 @@ public class FileSystemIdeApi
     }
 
     private async Task SaveFileAsync(
-        IAbsolutePath absolutePath,
+        AbsolutePath absolutePath,
         string content,
         Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
         CancellationToken cancellationToken = default)

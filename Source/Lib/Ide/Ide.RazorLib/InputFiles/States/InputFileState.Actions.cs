@@ -41,7 +41,7 @@ public partial record InputFileState
 
     public record StartInputFileStateFormAction(
         string Message,
-        Func<IAbsolutePath?, Task> OnAfterSubmitFunc,
-        Func<IAbsolutePath?, Task<bool>> SelectionIsValidFunc,
+        Func<AbsolutePath, Task> OnAfterSubmitFunc,
+        Func<AbsolutePath, Task<bool>> SelectionIsValidFunc,
         ImmutableArray<InputFilePattern> InputFilePatterns);
 }

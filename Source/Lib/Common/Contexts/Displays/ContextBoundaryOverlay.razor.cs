@@ -11,11 +11,11 @@ public partial class ContextBoundaryOverlay : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public InspectableContext InspectableContext { get; set; } = null!;
+    public InspectableContext InspectableContext { get; set; } = default!;
 
     private string GetCssStyleString()
     {
-        if (InspectableContext is null)
+        if (InspectableContext.TargetContextRecordMeasuredHtmlElementDimensions is null)
         {
             /*
              Null reference exception was encountered (2024-05-07)

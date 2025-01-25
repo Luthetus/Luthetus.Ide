@@ -9,7 +9,7 @@ namespace Luthetus.CompilerServices.DotNetSolution.Models;
 public interface IDotNetSolution
 {
     public Key<DotNetSolutionModel> Key { get; init; }
-    public IAbsolutePath AbsolutePath { get; init; }
+    public AbsolutePath AbsolutePath { get; init; }
     public DotNetSolutionHeader DotNetSolutionHeader { get; init; }
     public ImmutableArray<IDotNetProject> DotNetProjectList { get; }
     public ImmutableArray<SolutionFolder> SolutionFolderList { get; init; }
@@ -18,6 +18,4 @@ public interface IDotNetSolution
     public string SolutionFileContents { get; }
 
     public NamespacePath NamespacePath => new(string.Empty, AbsolutePath);
-
-    
 }

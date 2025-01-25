@@ -24,7 +24,7 @@ public partial class GitChangesContextMenu : ComponentBase
     public DropdownRecord? Dropdown { get; set; }
 
 	[Parameter, EditorRequired]
-    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 

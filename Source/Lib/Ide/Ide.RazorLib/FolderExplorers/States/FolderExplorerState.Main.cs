@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.States;
 
 [FeatureState]
 public partial record FolderExplorerState(
-    IAbsolutePath? AbsolutePath,
+    AbsolutePath? AbsolutePath,
     bool IsLoadingFolderExplorer)
 {
     public static readonly Key<TreeViewContainer> TreeViewContentStateKey = Key<TreeViewContainer>.NewKey();
