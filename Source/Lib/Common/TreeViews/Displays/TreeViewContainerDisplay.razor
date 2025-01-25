@@ -37,7 +37,7 @@
 }
 
 @if (OnContextMenuRenderFragment is not null &&
-     _treeViewContextMenuCommandArgs is not null)
+     _treeViewContextMenuCommandArgs.TreeViewService is not null)
 {
     <div class="luth_context-menu luth_set-selectable"
          style="@GetContextMenuCssStyleString()"

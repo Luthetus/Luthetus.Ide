@@ -25,4 +25,6 @@ public interface IVariableDeclarationNode : IExpressionNode
     /// TODO: Remove the 'set;' on this property
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
+    
+    public IVariableDeclarationNode SetTypeClauseNode(TypeClauseNode typeClauseNode);
 }

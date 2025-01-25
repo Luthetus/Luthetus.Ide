@@ -15,7 +15,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
     private readonly object _tokensLock = new();
 
     public DotNetSolutionModelBuilder(
-        IAbsolutePath absolutePath,
+        AbsolutePath absolutePath,
         DotNetSolutionHeader dotNetSolutionHeader,
         ImmutableArray<IDotNetProject> dotNetProjectList,
         ImmutableArray<SolutionFolder> solutionFolderList,
@@ -44,7 +44,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
     }
 
     public Key<DotNetSolutionModel> Key { get; init; }
-    public IAbsolutePath AbsolutePath { get; init; }
+    public AbsolutePath AbsolutePath { get; init; }
     public DotNetSolutionHeader DotNetSolutionHeader { get; init; }
     public ImmutableArray<IDotNetProject> DotNetProjectList { get; private set; }
     public ImmutableArray<SolutionFolder> SolutionFolderList { get; init; }

@@ -31,7 +31,7 @@
         <em class="luth_em">
             @if (contextRecord is not null)
             {
-                @: @contextRecord.DisplayNameFriendly
+                @: @contextRecord.Value.DisplayNameFriendly
                 
             }
             else
@@ -44,7 +44,7 @@
     <div class="luth_ide_active-context-body">
         @if (_isExpanded && contextRecord is not null)
         {
-            <KeymapDisplay Keymap="contextRecord.Keymap" />
+            <KeymapDisplay Keymap="contextRecord.Value.Keymap" />
         }
     </div>
 </div>

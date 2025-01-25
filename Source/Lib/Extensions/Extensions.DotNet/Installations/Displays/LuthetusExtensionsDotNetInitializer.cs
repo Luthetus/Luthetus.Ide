@@ -285,13 +285,11 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
         // This UI has resizable parts that need to be initialized.
         Dispatcher.Dispatch(new TestExplorerState.InitializeResizeHandleDimensionUnitAction(
-            new DimensionUnit
-            {
-                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN,
-            }));
+            new DimensionUnit(
+            	() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract,
+            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
 
         // nuGetPanel
         var nuGetPanel = new Panel(
@@ -413,7 +411,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value)
+        	localParentDirectory)
         {
         	BeginWithFunc = parsedCommand =>
         	{
@@ -445,7 +443,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value)
+        	localParentDirectory)
         {
         	BeginWithFunc = parsedCommand =>
         	{
@@ -477,7 +475,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value)
+        	localParentDirectory)
         {
         	BeginWithFunc = parsedCommand =>
         	{
@@ -509,7 +507,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value)
+        	localParentDirectory)
         {
         	BeginWithFunc = parsedCommand =>
         	{

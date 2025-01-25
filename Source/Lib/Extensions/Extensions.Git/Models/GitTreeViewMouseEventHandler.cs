@@ -52,34 +52,18 @@ public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
         // Set a large width for this dialog since it requires two editors to render side by side.
         {
-            var widthAttribute = dialogViewModel.DialogElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
-            var widthViewportValue = widthAttribute.DimensionUnitList.First(
-                x => x.DimensionUnitKind == DimensionUnitKind.ViewportWidth);
-            widthViewportValue.Value = 95;
+        	dialogViewModel.DialogElementDimensions.WidthDimensionAttribute.Set(95, DimensionUnitKind.ViewportWidth);
 
             // Since the width is changed, one must update the left respectively.
-            var leftAttribute = dialogViewModel.DialogElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-            var leftViewportValue = leftAttribute.DimensionUnitList.First(
-                x => x.DimensionUnitKind == DimensionUnitKind.ViewportWidth);
-            leftViewportValue.Value = 2.5;
+            dialogViewModel.DialogElementDimensions.LeftDimensionAttribute.Set(2.5, DimensionUnitKind.ViewportWidth);
         }
 
         // Set a large height for this dialog since it requires two editors to render side by side.
         {
-            var heightAttribute = dialogViewModel.DialogElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
-            var heightViewportValue = heightAttribute.DimensionUnitList.First(
-                x => x.DimensionUnitKind == DimensionUnitKind.ViewportHeight);
-            heightViewportValue.Value = 95;
+        	dialogViewModel.DialogElementDimensions.HeightDimensionAttribute.Set(95, DimensionUnitKind.ViewportHeight);
 
             // Since the height is changed, one must update the top respectively.
-            var topAttribute = dialogViewModel.DialogElementDimensions.DimensionAttributeList.First(
-                x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-            var topViewportValue = topAttribute.DimensionUnitList.First(
-                x => x.DimensionUnitKind == DimensionUnitKind.ViewportHeight);
-            topViewportValue.Value = 2.5;
+            dialogViewModel.DialogElementDimensions.TopDimensionAttribute.Set(2.5, DimensionUnitKind.ViewportHeight);
         }
 
         _dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));

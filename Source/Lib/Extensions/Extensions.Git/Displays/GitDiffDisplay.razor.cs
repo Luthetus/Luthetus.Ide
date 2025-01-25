@@ -195,7 +195,7 @@ public partial class GitDiffDisplay : ComponentBase
 		return true;
 	}
 	
-	private async Task<bool> TryCreateEditorOut(ResourceUri originalResourceUri, IAbsolutePath originalAbsolutePath)
+	private async Task<bool> TryCreateEditorOut(ResourceUri originalResourceUri, AbsolutePath originalAbsolutePath)
 	{
 		// Create Model
 		var originalModel = TextEditorService.ModelApi.GetOrDefault(originalResourceUri);

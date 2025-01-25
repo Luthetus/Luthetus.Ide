@@ -90,7 +90,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			message,
 			async absolutePath =>
 			{
-				if (absolutePath is null)
+				if (absolutePath.ExactInput is null)
 					return;
 
 				_viewModel.ParentDirectoryNameValue = absolutePath.Value;
@@ -98,7 +98,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			},
 			absolutePath =>
 			{
-				if (absolutePath is null || !absolutePath.IsDirectory)
+				if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(true);

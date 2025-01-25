@@ -37,13 +37,13 @@ public partial class InputFileBottomControls : ComponentBase
         if (selectedAbsolutePath is null)
             return "Selection is null";
 
-        return selectedAbsolutePath.Value;
+        return selectedAbsolutePath.Value.Value;
     }
 
     private async Task FireOnAfterSubmit()
     {
         var valid = await InputFileState.SelectionIsValidFunc
-            .Invoke(InputFileState.SelectedTreeViewModel?.Item)
+            .Invoke(InputFileState.SelectedTreeViewModel?.Item ?? default)
             .ConfigureAwait(false);
 
         if (valid)
@@ -52,14 +52,14 @@ public partial class InputFileBottomControls : ComponentBase
                 Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
             await InputFileState.OnAfterSubmitFunc
-                .Invoke(InputFileState.SelectedTreeViewModel?.Item)
+                .Invoke(InputFileState.SelectedTreeViewModel?.Item ?? default)
                 .ConfigureAwait(false);
         }
     }
 
     private bool OnAfterSubmitIsDisabled()
     {
-        return !InputFileState.SelectionIsValidFunc.Invoke(InputFileState.SelectedTreeViewModel?.Item)
+        return !InputFileState.SelectionIsValidFunc.Invoke(InputFileState.SelectedTreeViewModel?.Item ?? default)
             .Result;
     }
 

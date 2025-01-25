@@ -29,7 +29,7 @@ public partial class InputFileTopNavBar : ComponentBase
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
-    public Func<IAbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
+    public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
     public InputFileState InputFileState { get; set; } = null!;
     

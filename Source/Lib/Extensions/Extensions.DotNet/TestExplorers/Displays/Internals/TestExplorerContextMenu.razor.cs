@@ -45,7 +45,7 @@ public partial class TestExplorerContextMenu : ComponentBase
     public DropdownRecord? Dropdown { get; set; }
 
 	[Parameter, EditorRequired]
-	public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
+	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
 	public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 	public static readonly Key<TerminalCommandRequest> DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
@@ -231,7 +231,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 							RunTestByFullyQualifiedName(
 								treeViewStringFragment,
 								fullyQualifiedName,
-								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value);
+								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory);
 
 							return ValueTask.CompletedTask;
 						});
@@ -431,7 +431,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(contextRecord.ContextKey));
 	
-		if (contextRecord is not null)
+		if (contextRecord != default)
 		{
 			var command = ContextHelper.ConstructFocusContextElementCommand(
 		        contextRecord,

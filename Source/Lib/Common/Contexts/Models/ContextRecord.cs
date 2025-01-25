@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Models;
 
-public record ContextRecord(
+public record struct ContextRecord(
     Key<ContextRecord> ContextKey,
     string DisplayNameFriendly,
     string ContextNameInternal,

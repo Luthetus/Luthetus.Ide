@@ -5,59 +5,59 @@ namespace Luthetus.Common.RazorLib.TreeViews.States;
 
 public partial record TreeViewState
 {
-    public record RegisterContainerAction(TreeViewContainer Container);
-    public record DisposeContainerAction(Key<TreeViewContainer> ContainerKey);
-    public record WithRootNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
-    public record TryGetContainerAction(Key<TreeViewContainer> ContainerKey);
-    public record ReplaceContainerAction(Key<TreeViewContainer> ContainerKey, TreeViewContainer Container);
+    public record struct RegisterContainerAction(TreeViewContainer Container);
+    public record struct DisposeContainerAction(Key<TreeViewContainer> ContainerKey);
+    public record struct WithRootNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
+    public record struct TryGetContainerAction(Key<TreeViewContainer> ContainerKey);
+    public record struct ReplaceContainerAction(Key<TreeViewContainer> ContainerKey, TreeViewContainer Container);
 
-    public record AddChildNodeAction(
+    public record struct AddChildNodeAction(
         Key<TreeViewContainer> ContainerKey, TreeViewNoType ParentNode, TreeViewNoType ChildNode);
 
-    public record ReRenderNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
+    public record struct ReRenderNodeAction(Key<TreeViewContainer> ContainerKey, TreeViewNoType Node);
     
-	public record SetActiveNodeAction(
+	public record struct SetActiveNodeAction(
 		Key<TreeViewContainer> ContainerKey,
 		TreeViewNoType? NextActiveNode,
 		bool AddSelectedNodes,
 		bool SelectNodesBetweenCurrentAndNextActiveNode);
 	
-	public record RemoveSelectedNodeAction(
+	public record struct RemoveSelectedNodeAction(
 		Key<TreeViewContainer> ContainerKey,
         Key<TreeViewNoType> KeyOfNodeToRemove);
 
-    public record MoveLeftAction(
+    public record struct MoveLeftAction(
 		Key<TreeViewContainer> ContainerKey,
 		bool AddSelectedNodes,
 		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
-    public record MoveDownAction(
+    public record struct MoveDownAction(
 		Key<TreeViewContainer> ContainerKey,
 		bool AddSelectedNodes,
 		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
-    public record MoveUpAction(
+    public record struct MoveUpAction(
 		Key<TreeViewContainer> ContainerKey,
 		bool AddSelectedNodes,
 		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
-    public record MoveRightAction(
+    public record struct MoveRightAction(
         Key<TreeViewContainer> ContainerKey,
 		bool AddSelectedNodes,
 		bool SelectNodesBetweenCurrentAndNextActiveNode,
 		Action<TreeViewNoType> LoadChildListAction);
 
-    public record MoveHomeAction(
+    public record struct MoveHomeAction(
 		Key<TreeViewContainer> ContainerKey,
 		bool AddSelectedNodes,
 		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
-    public record MoveEndAction(
+    public record struct MoveEndAction(
 		Key<TreeViewContainer> ContainerKey,
 		bool AddSelectedNodes,
 		bool SelectNodesBetweenCurrentAndNextActiveNode);
 
-    public record LoadChildListAction(
+    public record struct LoadChildListAction(
 		Key<TreeViewContainer> ContainerKey,
 		TreeViewNoType Node);
 }

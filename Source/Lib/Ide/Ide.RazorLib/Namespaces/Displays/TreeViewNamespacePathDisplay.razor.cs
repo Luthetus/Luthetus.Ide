@@ -17,7 +17,7 @@ public partial class TreeViewNamespacePathDisplay : ComponentBase, ITreeViewName
     public int? LuthetusCommonIconHeightOverride { get; set; }
 
 	[Parameter, EditorRequired]
-    public NamespacePath NamespacePath { get; set; } = null!;
+    public NamespacePath NamespacePath { get; set; }
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
     

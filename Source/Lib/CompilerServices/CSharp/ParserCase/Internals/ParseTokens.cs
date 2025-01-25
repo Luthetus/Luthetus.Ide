@@ -143,13 +143,34 @@ public static class ParseTokens
         parserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 		parserModel.StatementBuilder.ChildList.Add(variableDeclarationNode);
 		
-		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-		{
-			ParsePropertyDefinition(compilationUnit, variableDeclarationNode, ref parserModel);
-		}
-		else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
 		{
 			ParsePropertyDefinition_ExpressionBound(compilationUnit, ref parserModel);
+		}
+		else
+		{
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+				ParsePropertyDefinition(compilationUnit, variableDeclarationNode, ref parserModel);
+			
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+			{
+				parserModel.TokenWalker.Backtrack();
+				var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+				
+				if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText() ==
+				        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText())
+				{
+					if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+					{
+						var binaryExpressionNode = (BinaryExpressionNode)expression;
+						
+						if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
+							variableDeclarationNode.SetTypeClauseNode(binaryExpressionNode.RightExpressionNode.ResultTypeClauseNode);
+					}
+				}
+				
+				parserModel.StatementBuilder.ChildList.Add(expression);
+			}
 		}
     }
     
@@ -475,35 +496,7 @@ public static class ParseTokens
 
     public static void ParseEqualsToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (parserModel.StatementBuilder.ChildList.Count == 0)
-    	{
-    		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
-    		return;
-    	}
-		
-		// Would prefer to parse this from within 'MoveToHandleVariableDeclarationNode(...)'? (2025-01-23)
-		if (parserModel.StatementBuilder.TryPeek(out var syntax) &&
-			syntax.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-		{
-			var variableDeclarationNode = (VariableDeclarationNode)syntax;
-			
-			parserModel.TokenWalker.Backtrack();
-			var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-			
-			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText() ==
-			        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText())
-			{
-				if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
-				{
-					var binaryExpressionNode = (BinaryExpressionNode)expression;
-					
-					if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
-						variableDeclarationNode.SetTypeClauseNode(binaryExpressionNode.RightExpressionNode.ResultTypeClauseNode);
-				}
-			}
-			
-			parserModel.StatementBuilder.ChildList.Add(expression);
-		}
+    	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
 	}
 
     public static void ParseMemberAccessToken(

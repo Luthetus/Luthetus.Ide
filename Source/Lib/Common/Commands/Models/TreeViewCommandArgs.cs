@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.Commands.Models;
 
-public class TreeViewCommandArgs : ICommandArgs
+/// <summary>
+/// Verify that 'TreeViewService is not null' to know this was constructed rather than default.
+/// </summary>
+public record struct TreeViewCommandArgs : ICommandArgs
 {
     public TreeViewCommandArgs(
         ITreeViewService treeViewService,

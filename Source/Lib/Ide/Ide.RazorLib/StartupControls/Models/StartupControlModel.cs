@@ -10,7 +10,7 @@ public class StartupControlModel : IStartupControlModel
 		Key<IStartupControlModel> key,
 		string title,
 		string titleVerbose,
-		IAbsolutePath startupProjectAbsolutePath,
+		AbsolutePath startupProjectAbsolutePath,
 		Type? componentType,
 		Dictionary<string, object?>? componentParameterMap,
 		Func<IStartupControlModel, Task> startButtonOnClickTask,
@@ -31,7 +31,7 @@ public class StartupControlModel : IStartupControlModel
 	public Key<IStartupControlModel> Key { get; }
 	public string Title { get; }
 	public string TitleVerbose { get; }
-	public IAbsolutePath StartupProjectAbsolutePath { get; }
+	public AbsolutePath StartupProjectAbsolutePath { get; }
 	public TerminalCommandRequest? ExecutingTerminalCommandRequest { get; set; }
 	public Type? ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; }

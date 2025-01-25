@@ -91,7 +91,7 @@ public class EditorIdeApi
             },
             absolutePath =>
             {
-                if (absolutePath is null || absolutePath.IsDirectory)
+                if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);

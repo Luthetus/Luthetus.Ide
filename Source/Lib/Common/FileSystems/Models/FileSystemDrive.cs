@@ -1,16 +1,14 @@
-﻿namespace Luthetus.Common.RazorLib.FileSystems.Models;
+namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
-public class FileSystemDrive : IFileSystemDrive
+public struct FileSystemDrive
 {
-    public FileSystemDrive(
-        string driveNameAsIdentifier,
-        IEnvironmentProvider environmentProvider)
+	private string? _driveNameAsPath;
+
+    public FileSystemDrive(string driveNameAsIdentifier)
     {
         DriveNameAsIdentifier = driveNameAsIdentifier;
-        EnvironmentProvider = environmentProvider;
     }
     
-    public string DriveNameAsIdentifier { get; }
-    public string DriveNameAsPath => $"{DriveNameAsIdentifier}:";
-    public IEnvironmentProvider EnvironmentProvider { get; }
+    public string? DriveNameAsIdentifier { get; }
+    public string? DriveNameAsPath => _driveNameAsPath ??= $"{DriveNameAsIdentifier}:";
 }

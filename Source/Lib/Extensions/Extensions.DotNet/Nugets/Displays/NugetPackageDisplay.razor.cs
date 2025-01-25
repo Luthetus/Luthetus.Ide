@@ -97,7 +97,7 @@ public partial class NugetPackageDisplay : FluxorComponent
 
 		var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	parentDirectory.Value,
+        	parentDirectory,
         	AddNugetPackageTerminalCommandRequestKey)
         {
         	ContinueWithFunc = parsedCommand =>

@@ -11,12 +11,12 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly IDispatcher _dispatcher;
-    private readonly Func<IAbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
+    private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
 
     public InputFileTreeViewMouseEventHandler(
         ITreeViewService treeViewService,
         IDispatcher dispatcher,
-        Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
+        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 		IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)
     {

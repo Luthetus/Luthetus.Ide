@@ -25,22 +25,15 @@ public partial class IdeBody : ComponentBase
 
     protected override void OnInitialized()
     {
-        var editorWidth = _editorElementDimensions.DimensionAttributeList.Single(
-            da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-        editorWidth.DimensionUnitList.AddRange(new[]
+        _editorElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 33.3333,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+            new DimensionUnit(
+            	33.3333,
+            	DimensionUnitKind.Percentage),
+            new DimensionUnit(
+            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract)
         });
 
         base.OnInitialized();

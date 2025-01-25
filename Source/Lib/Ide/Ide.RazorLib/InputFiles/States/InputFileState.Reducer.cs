@@ -96,7 +96,7 @@ public partial record InputFileState
                 var parentDirectory = currentSelection.Item.ParentDirectory;
 
                 var parentDirectoryAbsolutePath = openParentDirectoryAction.EnvironmentProvider.AbsolutePathFactory(
-                    parentDirectory.Value,
+                    parentDirectory,
                     true);
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(

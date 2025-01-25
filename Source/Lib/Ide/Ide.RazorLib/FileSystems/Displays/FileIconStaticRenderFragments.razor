@@ -4,7 +4,7 @@
 @using Luthetus.Ide.RazorLib.FileSystems.Models
 
 @code {
-	public static RenderFragment<(IconDriver IconDriver, IAbsolutePath AbsolutePath)> GetRenderFragment = tuple => 
+	public static RenderFragment<(IconDriver IconDriver, AbsolutePath AbsolutePath)> GetRenderFragment = tuple => 
 	@<span class="luth_ide_solution-explorer-icon-display">
     @if (tuple.AbsolutePath.IsDirectory)
     {

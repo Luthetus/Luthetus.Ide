@@ -4,21 +4,21 @@ namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public partial interface IEnvironmentProvider
 {
-    public IAbsolutePath HomeDirectoryAbsolutePath { get; }
-    public IAbsolutePath RootDirectoryAbsolutePath { get; }
+    public AbsolutePath HomeDirectoryAbsolutePath { get; }
+    public AbsolutePath RootDirectoryAbsolutePath { get; }
     
     /// <summary>
     /// The <see cref="ActualRoamingApplicationDataDirectoryAbsolutePath"/>
     /// but with "/Luthetus/" appended.
     /// </summary>
-    public IAbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
     /// <summary>
     /// The <see cref="ActualLocalApplicationDataDirectoryAbsolutePath"/>
     /// but with "/Luthetus/" appended.
     /// </summary>
-    public IAbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
-    public IAbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
-    public IAbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
     /// <summary>
     /// If one is executing the program from the absolute path "C:\Programs\..." then this is "C:".
     /// This property is needed in order to disambiguate when given:<br/>
@@ -74,8 +74,8 @@ public partial interface IEnvironmentProvider
 
     public bool IsDirectorySeparator(char input);
     public string GetRandomFileName();
-    public IAbsolutePath AbsolutePathFactory(string path, bool isDirectory);
-    public IRelativePath RelativePathFactory(string path, bool isDirectory);
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory);
+    public RelativePath RelativePathFactory(string path, bool isDirectory);
     /// <summary>
     /// Takes two absolute file path strings and makes
     /// one singular string with the <see cref="DirectorySeparatorChar"/> between the two.

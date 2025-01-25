@@ -19,9 +19,9 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ElementDimensions LeftElementDimensions { get; set; } = null!;
+    public ElementDimensions LeftElementDimensions { get; set; }
     [Parameter, EditorRequired]
-    public ElementDimensions RightElementDimensions { get; set; } = null!;
+    public ElementDimensions RightElementDimensions { get; set; }
     [Parameter, EditorRequired]
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
 

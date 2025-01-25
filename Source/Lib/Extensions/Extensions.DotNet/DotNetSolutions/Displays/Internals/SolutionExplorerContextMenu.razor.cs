@@ -73,7 +73,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
+	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
 	private static readonly Key<IDynamicViewModel> _solutionEditorDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newCSharpProjectDialogKey = Key<IDynamicViewModel>.NewKey();
@@ -179,7 +179,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				if (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.C_SHARP_PROJECT)
 					getFileOptions = false;
 				else if (getFileOptions)
-					filenameList.Add(treeViewNamespacePath.Item.AbsolutePath.NameWithExtension + " __FROM__ " + (treeViewNamespacePath.Item.AbsolutePath.ParentDirectory?.Value ?? "null"));
+					filenameList.Add(treeViewNamespacePath.Item.AbsolutePath.NameWithExtension + " __FROM__ " + (treeViewNamespacePath.Item.AbsolutePath.ParentDirectory ?? "null"));
 			}
 			else
 			{
@@ -327,7 +327,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				return Array.Empty<MenuOptionRecord>();
 		}
 
-		var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(parentDirectory.Value, true);
+		var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
 
 		return new[]
 		{
@@ -520,7 +520,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			"Existing C# Project to add to solution",
 			absolutePath =>
 			{
-				if (absolutePath is null)
+				if (absolutePath.ExactInput is null)
 					return Task.CompletedTask;
 
 				var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
@@ -543,7 +543,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			},
 			absolutePath =>
 			{
-				if (absolutePath is null || absolutePath.IsDirectory)
+				if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));

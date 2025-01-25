@@ -20,9 +20,9 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ContextRecord ContextRecord { get; set; } = null!;
+    public ContextRecord ContextRecord { get; set; } = default!;
     [Parameter, EditorRequired]
-    public Func<ImmutableArray<Key<ContextRecord>>> GetContextBoundaryHeirarchy { get; set; } = null!;
+    public Func<List<Key<ContextRecord>>> GetContextBoundaryHeirarchy { get; set; } = null!;
 
     private bool _previousIsSelectingInspectionTarget;
 
@@ -54,7 +54,7 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
 
                 measuredHtmlElementDimensions = measuredHtmlElementDimensions with
                 {
-                    ZIndex = contextBoundaryHeirarchy.Length
+                    ZIndex = contextBoundaryHeirarchy.Count
                 };
 
                 Dispatcher.Dispatch(new ContextState.AddInspectableContextAction(

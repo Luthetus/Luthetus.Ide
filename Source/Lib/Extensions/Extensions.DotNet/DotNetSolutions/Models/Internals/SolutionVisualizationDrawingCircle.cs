@@ -140,7 +140,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		if (parentDirectory is null)
 			return;
 
-		var startingAbsolutePathForSearch = parentDirectory.Value;
+		var startingAbsolutePathForSearch = parentDirectory;
 
 		var discoveredFileList = new List<string>();
 

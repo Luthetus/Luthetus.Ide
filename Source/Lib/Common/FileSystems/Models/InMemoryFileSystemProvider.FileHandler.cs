@@ -241,7 +241,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 f.AbsolutePath.Value == absolutePathString &&
                 !f.IsDirectory);
 
-            if (existingFile is null)
+            if (existingFile.Data is null)
                 return Task.FromResult(default(DateTime));
 
             return Task.FromResult(existingFile.LastModifiedDateTime);
@@ -255,7 +255,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 f.AbsolutePath.Value == absolutePathString &&
                 !f.IsDirectory);
 
-            if (existingFile is null)
+            if (existingFile.Data is null)
             	throw new LuthetusCommonException($"File with path: '{absolutePathString}' was not found.");
 
             return Task.FromResult(existingFile.Data);

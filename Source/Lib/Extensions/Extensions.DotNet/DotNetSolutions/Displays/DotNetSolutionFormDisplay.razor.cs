@@ -67,7 +67,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 			"Directory for new .NET Solution",
 			async absolutePath =>
 			{
-				if (absolutePath is null)
+				if (absolutePath.ExactInput is null)
 					return;
 
 				_parentDirectoryName = absolutePath.Value;
@@ -75,7 +75,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 			},
 			absolutePath =>
 			{
-				if (absolutePath is null || !absolutePath.IsDirectory)
+				if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(true);

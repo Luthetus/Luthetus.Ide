@@ -59,28 +59,17 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         IdeMainLayoutStateWrap.StateChanged += IdeMainLayoutStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
 
-        var bodyHeight = _bodyElementDimensions.DimensionAttributeList.Single(
-            da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
-
-        bodyHeight.DimensionUnitList.AddRange(new[]
+        _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
-            new DimensionUnit
-            {
-                Value = 78,
-                DimensionUnitKind = DimensionUnitKind.Percentage
-            },
-            new DimensionUnit
-            {
-                Value = AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
-                DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            },
-            new DimensionUnit
-            {
-                Value = SizeFacts.Ide.Header.Height.Value / 2,
-                DimensionUnitKind = SizeFacts.Ide.Header.Height.DimensionUnitKind,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+            new DimensionUnit(78, DimensionUnitKind.Percentage),
+            new DimensionUnit(
+            	AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract),
+            new DimensionUnit(
+            	SizeFacts.Ide.Header.Height.Value / 2,
+            	SizeFacts.Ide.Header.Height.DimensionUnitKind,
+            	DimensionOperatorKind.Subtract)
         });
 
         base.OnInitialized();

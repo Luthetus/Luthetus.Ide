@@ -47,7 +47,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
     [Parameter]
     public Func<TreeViewCommandArgs, Task>? OnContextMenuFunc { get; set; }
 
-    private TreeViewCommandArgs? _treeViewContextMenuCommandArgs;
+    private TreeViewCommandArgs _treeViewContextMenuCommandArgs;
     private ElementReference? _treeViewStateDisplayElementReference;
 
     protected override void OnInitialized()
@@ -77,7 +77,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
             null,
             async () =>
             {
-                _treeViewContextMenuCommandArgs = null;
+                _treeViewContextMenuCommandArgs = default;
                 await InvokeAsync(StateHasChanged);
 
                 var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
@@ -162,7 +162,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
             contextMenuTargetTreeViewNoType,
             async () =>
             {
-                _treeViewContextMenuCommandArgs = null;
+                _treeViewContextMenuCommandArgs = default;
                 await InvokeAsync(StateHasChanged);
 
                 var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
@@ -212,7 +212,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
     private string GetContextMenuCssStyleString()
     {
-        if (_treeViewContextMenuCommandArgs?.ContextMenuFixedPosition is null)
+        if (_treeViewContextMenuCommandArgs.TreeViewService is null || _treeViewContextMenuCommandArgs.ContextMenuFixedPosition is null)
         {
             // This should never happen.
             return "display: none;";

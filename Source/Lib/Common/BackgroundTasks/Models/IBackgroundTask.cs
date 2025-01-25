@@ -7,7 +7,7 @@ public interface IBackgroundTask
     public Key<IBackgroundTask> BackgroundTaskKey { get; }
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
-    public bool EarlyBatchEnabled { get; set; }
+    public bool EarlyBatchEnabled { get; }
     
     /// <summary>
     /// Optimize 'IBackgroundTaskService.CompleteTaskCompletionSource(Key<IBackgroundTask> taskKey);'
