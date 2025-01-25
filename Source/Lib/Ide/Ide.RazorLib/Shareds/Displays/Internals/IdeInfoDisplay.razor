@@ -174,7 +174,18 @@
 			<div>
                 <div>v <em class="luth_em">0.9.7.20 </em> (WIP_DATE)</div>
                 <ul>
-                	<li>Draft PR</li>
+                	<li>
+                		Luthetus.Common had many classes re-written as structs,
+                		to lessen the garbage collection load.
+                		
+                		(high "turnover" types were the focus).
+                		
+                		Frequent constructor invocation just to quickly stop using the reference
+                		and then construct another one kind of things.
+                	</li>
+                	<li>
+                		Combine EscapeCharacterList and CommentList
+                	</li>
                 	<li>
                         Implicit type inference progress
 <pre>
