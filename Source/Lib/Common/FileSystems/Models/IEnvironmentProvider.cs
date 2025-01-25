@@ -75,7 +75,7 @@ public partial interface IEnvironmentProvider
     public bool IsDirectorySeparator(char input);
     public string GetRandomFileName();
     public AbsolutePath AbsolutePathFactory(string path, bool isDirectory);
-    public IRelativePath RelativePathFactory(string path, bool isDirectory);
+    public RelativePath RelativePathFactory(string path, bool isDirectory);
     /// <summary>
     /// Takes two absolute file path strings and makes
     /// one singular string with the <see cref="DirectorySeparatorChar"/> between the two.

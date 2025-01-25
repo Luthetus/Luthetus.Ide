@@ -142,7 +142,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         return new AbsolutePath(path, isDirectory, this);
     }
 
-    public IRelativePath RelativePathFactory(string path, bool isDirectory)
+    public RelativePath RelativePathFactory(string path, bool isDirectory)
     {
         return new RelativePath(path, isDirectory, this);
     }
