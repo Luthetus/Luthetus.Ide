@@ -252,6 +252,8 @@ public static class ParseTypes
 				        VariableKind.EnumMember,
 				        false);
 				        
+				    parserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+				        
 				    compilationUnit.Binder.BindEnumMember(variableDeclarationNode, compilationUnit, ref parserModel);
 					
 					shouldFindIdentifier = !shouldFindIdentifier;
