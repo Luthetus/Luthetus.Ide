@@ -45,7 +45,7 @@ public partial class TestExplorerContextMenu : ComponentBase
     public DropdownRecord? Dropdown { get; set; }
 
 	[Parameter, EditorRequired]
-	public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
+	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
 	public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 	public static readonly Key<TerminalCommandRequest> DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();

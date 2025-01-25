@@ -25,7 +25,7 @@ public partial class InputFileContextMenu : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
     public static readonly Key<DropdownRecord> ContextMenuKey = Key<DropdownRecord>.NewKey();
 

@@ -73,7 +73,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
+	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
 	private static readonly Key<IDynamicViewModel> _solutionEditorDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newCSharpProjectDialogKey = Key<IDynamicViewModel>.NewKey();
