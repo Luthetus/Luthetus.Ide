@@ -83,7 +83,7 @@ public partial class TextEditorService : ITextEditorService
 		AutocompleteIndexer = autocompleteIndexer;
 		AutocompleteService = autocompleteService;
 
-        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap.DecorationMapperRegistry, _textEditorRegistryWrap.CompilerServiceRegistry, _backgroundTaskService, _dispatcher);
+        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService, _dispatcher);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, TextEditorStateWrap, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);

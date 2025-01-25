@@ -22,14 +22,14 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Extensions.Config.CompilerServices;
 
-public class CompilerServiceRegistry : ICompilerServiceRegistry
+public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
 {
     private readonly Dictionary<string, ICompilerService> _map = new();
 
     public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
     public ImmutableList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToImmutableList();
 
-    public CompilerServiceRegistry(
+    public ConfigCompilerServiceRegistry(
         ITextEditorService textEditorService,
         IEnvironmentProvider environmentProvider,
         IState<TerminalState> terminalStateWrap)

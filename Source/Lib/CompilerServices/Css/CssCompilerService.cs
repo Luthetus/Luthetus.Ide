@@ -13,8 +13,6 @@ public sealed class CssCompilerService : CompilerService
         {
             RegisterResourceFunc = resourceUri => new CssResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new TextEditorCssLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new Parser(lexer),
-            GetBinderFunc = (resource, parser) => Binder
         };
     }
 }

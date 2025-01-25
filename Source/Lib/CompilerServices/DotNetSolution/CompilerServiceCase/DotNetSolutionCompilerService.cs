@@ -14,7 +14,6 @@ public sealed class DotNetSolutionCompilerService : CompilerService
             RegisterResourceFunc = resourceUri => new DotNetSolutionResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new DotNetSolutionLexer(resource.ResourceUri, sourceText),
             GetParserFunc = (resource, lexer) => new DotNetSolutionParser((DotNetSolutionLexer)lexer),
-            GetBinderFunc = (resource, parser) => Binder
         };
     }
 }
