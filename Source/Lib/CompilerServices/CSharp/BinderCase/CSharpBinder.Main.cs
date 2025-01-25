@@ -426,6 +426,14 @@ public partial class CSharpBinder : IBinder
 
         return new InheritanceStatementNode(typeClauseNode);
     }
+    
+    public void BindEnumMember(
+        VariableDeclarationNode variableDeclarationNode,
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
+    {
+    	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+    }
 
 	void IBinder.BindVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, IParserModel parserModel) =>
 		BindVariableDeclarationNode(variableDeclarationNode, compilationUnit: null);
@@ -1054,6 +1062,16 @@ public partial class CSharpBinder : IBinder
 		                }),
 	                compilationUnit);
                 break;
+            case VariableKind.EnumMember:
+            	AddSymbolDefinition(
+                	new EnumMemberSymbol(
+                		symbolId,
+                		identifierToken.TextSpan with
+		                {
+		                    DecorationByte = (byte)GenericDecorationKind.Property
+		                }),
+	                compilationUnit);
+            	break;
             case VariableKind.Local:
                 goto default;
             case VariableKind.Closure:

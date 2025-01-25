@@ -904,6 +904,12 @@ public class ParseDefaultKeywords
 	        ref parserModel);
 	        
 	    parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = false;
+	    
+	    if (storageModifierKind == StorageModifierKind.Enum)
+	    {
+	    	ParseTypes.HandleEnumDefinitionNode(typeDefinitionNode, compilationUnit, ref parserModel);
+	    	return;
+	    }
     
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
     	{

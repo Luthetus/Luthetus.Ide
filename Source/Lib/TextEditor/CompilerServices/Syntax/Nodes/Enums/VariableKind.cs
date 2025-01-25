@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 
 public enum VariableKind
 {
@@ -6,4 +6,5 @@ public enum VariableKind
     Field,
     Property,
     Closure,
+    EnumMember,
 }
