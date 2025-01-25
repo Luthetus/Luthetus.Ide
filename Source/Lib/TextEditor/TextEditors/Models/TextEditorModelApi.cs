@@ -15,21 +15,18 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 public sealed class TextEditorModelApi : ITextEditorModelApi
 {
     private readonly ITextEditorService _textEditorService;
-    private readonly IDecorationMapperRegistry _decorationMapperRegistry;
-    private readonly ICompilerServiceRegistry _compilerServiceRegistry;
+    private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
     public TextEditorModelApi(
         ITextEditorService textEditorService,
-        IDecorationMapperRegistry decorationMapperRegistry,
-        ICompilerServiceRegistry compilerServiceRegistry,
+        ITextEditorRegistryWrap textEditorRegistryWrap,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {
         _textEditorService = textEditorService;
-        _decorationMapperRegistry = decorationMapperRegistry;
-        _compilerServiceRegistry = compilerServiceRegistry;
+        _textEditorRegistryWrap = textEditorRegistryWrap;
         _backgroundTaskService = backgroundTaskService;
         _dispatcher = dispatcher;
     }
@@ -46,14 +43,14 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         DateTime resourceLastWriteTime,
         string initialContent,
         string? overrideDisplayTextForFileExtension = null)
-    {
+    {    
         var model = new TextEditorModel(
             resourceUri,
             resourceLastWriteTime,
             overrideDisplayTextForFileExtension ?? extensionNoPeriod,
             initialContent,
-            _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
-            _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
+            _textEditorRegistryWrap.DecorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
+            _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod));
 
         _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(model));
     }

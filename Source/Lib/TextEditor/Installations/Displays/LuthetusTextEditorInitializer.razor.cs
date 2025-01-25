@@ -10,12 +10,14 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
+using Luthetus.Common.RazorLib.Keymaps.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Common.RazorLib.Keymaps.States;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 
@@ -44,11 +46,20 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    public ITextEditorRegistryWrap TextEditorRegistryWrap { get; set; } = null!;
+    [Inject]
+    public ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+    [Inject]
+    public IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
     protected override void OnInitialized()
     {
+    	TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
+    	TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
+    
     	BackgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,

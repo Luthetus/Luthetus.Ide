@@ -13,8 +13,6 @@ public sealed class FSharpCompilerService : CompilerService
         {
             RegisterResourceFunc = resourceUri => new FSharpResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new TextEditorFSharpLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new Parser(lexer),
-            GetBinderFunc = (resource, parser) => Binder
         };
     }
 }
