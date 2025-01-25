@@ -46,7 +46,7 @@ public partial class ContextBoundary : ComponentBase
         if (ParentContextBoundary is not null)
             ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyList);
         else
-            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList.ToImmutableArray())));
+            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList)));
     }
     
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
@@ -96,13 +96,13 @@ public partial class ContextBoundary : ComponentBase
             await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgs).ConfigureAwait(false);
     }
 
-    public ImmutableArray<Key<ContextRecord>> GetContextBoundaryHeirarchy(List<Key<ContextRecord>> contextRecordKeyList)
+    public List<Key<ContextRecord>> GetContextBoundaryHeirarchy(List<Key<ContextRecord>> contextRecordKeyList)
     {
         contextRecordKeyList.Add(ContextRecord.ContextKey);
 
         if (ParentContextBoundary is not null)
             return ParentContextBoundary.GetContextBoundaryHeirarchy(contextRecordKeyList);
         else
-            return contextRecordKeyList.ToImmutableArray();
+            return contextRecordKeyList;
     }
 }
