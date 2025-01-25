@@ -15,7 +15,7 @@ public class TreeViewHelperRazorMarkup
 	/// </summary>
 	public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath razorMarkupTreeView)
 	{
-		if (razorMarkupTreeView.Item is null)
+		if (razorMarkupTreeView.Item.Namespace is null)
 			return new();
 
 		var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.ParentDirectory;
@@ -70,7 +70,12 @@ public class TreeViewHelperRazorMarkup
 				x.UntypedItem is NamespacePath namespacePath &&
 				matches.Contains(namespacePath.AbsolutePath.NameWithExtension))
 			.OrderBy(x =>
-				(x.UntypedItem as NamespacePath)?.AbsolutePath.NameWithExtension ?? string.Empty)
+			{
+				if (x.UntypedItem is NamespacePath namespacePath)
+					return namespacePath.AbsolutePath.NameWithExtension ?? string.Empty;
+				else
+					return string.Empty;
+			})
 			.ToArray();
 
 		if (!relatedFiles.Any())
