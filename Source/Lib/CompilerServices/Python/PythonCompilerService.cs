@@ -12,8 +12,6 @@ public sealed class PythonCompilerService : CompilerService
         {
             RegisterResourceFunc = resourceUri => new PythonResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new PythonLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new Parser(lexer),
-            GetBinderFunc = (resource, parser) => Binder
         };
     }
 }

@@ -14,6 +14,27 @@ public interface ITextEditorModelApi
     /// <summary>It is recommended to use the <see cref="RegisterTemplated" /> method as it will internally reference the <see cref="ITextEditorLexer" /> and <see cref="IDecorationMapper" /> that correspond to the desired text editor.</summary>
     public void RegisterCustom(TextEditorModel model);
     /// <summary>
+    /// (2025-01-25)
+    /// TODO: This is extremely confusing. The 'ICompilerService' implementations sometimes require...
+    /// ...the 'ITextEditorService' itself.
+    /// This causes a dependency "circular reference" or some such wording.
+    /// |
+    /// Thus, at some point the 'ITextEditorRegistryWrap' was made so that the
+    /// 'ITextEditorService' could dependency inject a "wrapper" that contains
+    /// the properties for 'ICompilerServiceRegistry' and 'IDecorationMapperRegistry'.
+    /// |
+    /// But, this is done via some hacky 'setters' on the properties.
+    /// |
+    /// You have to set the 'ITextEditorRegistryWrap'.CompilerServiceRegistry and
+    /// 'ITextEditorRegistryWrap'.DecorationMapperRegistry after the service provider
+    /// was built.
+    /// |
+    /// I "fixed" this by adding to 'LuthetusTextEditorInitializer' 'OnInitialized(...)'
+    /// blazor lifecycle method the 'set' expressions.
+    /// |
+    /// All in all this is just an odd thing to do.
+    /// ============================================================================================
+    /// 
     /// Plain Text Editor: one would pass in an <see cref="extensionNoPeriod"/>
     /// of "txt" or the constant varible: <see cref="ExtensionNoPeriodFacts.TXT"/>.<br /><br />
     /// 

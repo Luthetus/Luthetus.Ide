@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
         return services
             .AddLuthetusExtensionsDotNetServices(hostingInformation, configure)
             .AddLuthetusExtensionsGitServices(hostingInformation, configure)
-            .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
+            .AddScoped<ICompilerServiceRegistry, ConfigCompilerServiceRegistry>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>();
     }
 }

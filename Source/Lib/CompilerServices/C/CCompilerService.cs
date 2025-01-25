@@ -12,8 +12,6 @@ public sealed class CCompilerService : CompilerService
         {
             RegisterResourceFunc = resourceUri => new CResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new CLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new Parser(lexer),
-            GetBinderFunc = (resource, parser) => Binder
         };
     }
 }
