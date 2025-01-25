@@ -72,7 +72,7 @@ public struct DimensionUnit
     		else
     			return localValueFunc.Invoke();
     	}
-    	set
+    	init
     	{
     		var localValueFunc = ValueFunc;
     		

@@ -17,6 +17,59 @@ public struct DimensionAttribute
     public List<DimensionUnit> DimensionUnitList { get; }
     public DimensionAttributeKind DimensionAttributeKind { get; }
     public string StyleString => GetStyleString();
+    
+    public void Increment(double amount, DimensionUnitKind dimensionUnitKind, DimensionUnit defaultIfNotExists)
+    {
+    	var index = DimensionUnitList.FindIndex(
+            du => du.DimensionUnitKind == dimensionUnitKind);
+
+        if (index == -1)
+        {
+        	// TODO: This is extremely thread unsafe.
+        	index = DimensionUnitList.Count;
+        	DimensionUnitList.Add(defaultIfNotExists);
+        }
+        
+        var dimensionUnit = DimensionUnitList[index];
+        DimensionUnitList[index] = dimensionUnit with
+        {
+        	Value = dimensionUnit.Value + amount
+        };
+    }
+    
+    public void Decrement(double amount, DimensionUnitKind dimensionUnitKind, DimensionUnit defaultIfNotExists)
+    {
+        var index = DimensionUnitList.FindIndex(
+            du => du.DimensionUnitKind == dimensionUnitKind);
+
+        if (index == -1)
+        {
+        	// TODO: This is extremely thread unsafe.
+        	index = DimensionUnitList.Count;
+        	DimensionUnitList.Add(defaultIfNotExists);
+        }
+        
+        var dimensionUnit = DimensionUnitList[index];
+        DimensionUnitList[index] = dimensionUnit with
+        {
+        	Value = dimensionUnit.Value - amount
+        };
+    }
+    
+    public void Set(double amount, DimensionUnitKind dimensionUnitKind)
+    {
+        var index = DimensionUnitList.FindIndex(
+            du => du.DimensionUnitKind == dimensionUnitKind);
+
+        if (index == -1)
+        	return;
+        
+        var dimensionUnit = DimensionUnitList[index];
+        DimensionUnitList[index] = dimensionUnit with
+        {
+        	Value = amount
+        };
+    }
 
     private string GetStyleString()
     {
