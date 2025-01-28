@@ -47,6 +47,7 @@ public class TokenWalker
     public ISyntaxToken Previous => Peek(-1);
     public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
     public int Index => _index;
+    public TextEditorTextSpan CurrentTrivia => GetCurrentTrivia();
 
     /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
     private ISyntaxToken EOF => TokenList.Count > 0
@@ -249,13 +250,34 @@ public class TokenWalker
     /// </summary>
     public TextEditorTextSpan? ConsumeTrivia(int startInclusivePositionIndex, int endExclusivePositionIndex)
     {
-    	throw new NotImplementedException();
-    
-    	if (_indexTrivia >= TokenList.Count)
-            return EOF;
-            
-        var consumedTrivia = TriviaList[_indexTrivia++];
+    	if (TriviaList is null || _indexTrivia >= TriviaList.Count)
+            return null;
         
-        return consumedTrivia;
+        // Find surveying area start.
+        while (_indexTrivia < TriviaList.Count)
+    	{
+    		if (TriviaList[_indexTrivia].StartingIndexInclusive >= startInclusivePositionIndex)
+	        	break;
+	        	
+			_indexTrivia++;
+    	}
+        
+        var trivia = TriviaList[_indexTrivia];
+        
+        if (trivia.EndingIndexExclusive >= endExclusivePositionIndex)
+        	return null;
+        
+        _indexTrivia++;
+        return trivia;
+    }
+    
+    public TextEditorTextSpan? GetCurrentTrivia(int startInclusivePositionIndex, int endExclusivePositionIndex)
+    {
+    	var originalIndexTrivia = _indexTrivia;
+    
+    	var trivia = ConsumeTrivia(startInclusivePositionIndex, endExclusivePositionIndex);
+    	_indexTrivia = originalIndexTrivia;
+    	
+    	return trivia;
     }
 }
