@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.CompilerServices.CSharp.Facts;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -86,6 +87,15 @@ public class ParseFunctions
 	    			compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 	    	}
         }
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+        {
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        
+        	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
+        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+        }
     }
 
     public static void HandleConstructorDefinition(
@@ -118,21 +128,6 @@ public class ParseFunctions
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// 
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
-		//
-		// - PermitInnerPendingCodeBlockOwnerToBeParsed needs to move
-		//   to the ICodeBlockOwner itself.
-		// 
-		// - 'parserModel.SyntaxStack.Push(PendingCodeBlockOwner);' is unnecessary because
-		//   the CodeBlockBuilder and Scope will be active.
-		//
-		// - '...InnerPendingCodeBlockOwner = PendingCodeBlockOwner;' needs to change
-		//   to 'set active code block builder' and 'set active scope'.
 
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
@@ -151,17 +146,74 @@ public class ParseFunctions
         	
         	while (!parserModel.TokenWalker.IsEof)
             {
-            	// TODO: This won't work because an OpenBraceToken can appear inside the "other constructor invocation"...
-            	// 	  ...If one were to skip over this syntax for the time being, it should be done by counting the
-            	//       matched OpenParenthesisToken and CloseParenthesisToken until it evens out.
-                if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-                    parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+            	// "short circuit"
+            	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                    parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken ||
+                    parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketEqualsToken ||
+                    parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
                 {
                     break;
+                }
+                
+                // Good case
+                if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                {
+                	break;
                 }
 
                 _ = parserModel.TokenWalker.Consume();
             }
+            
+            var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+            
+            // Parse secondary syntax ': base(myVariable, 7)'
+            if (!openParenthesisToken.IsFabricated)
+            {
+            	var functionParametersListingNode = new FunctionParametersListingNode(
+					openParenthesisToken,
+			        new List<FunctionParameterEntryNode>(),
+			        closeParenthesisToken: default);
+			
+				var functionInvocationNode = new FunctionInvocationNode(
+					consumedIdentifierToken,
+			        functionDefinitionNode: null,
+			        genericParametersListingNode: null,
+			        functionParametersListingNode,
+			        CSharpFacts.Types.Void.ToTypeClause());
+			        
+			    parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionParametersListingNode));
+				parserModel.ExpressionList.Add((SyntaxKind.ColonToken, functionParametersListingNode));
+				
+				// TODO: The 'ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(...)' code needs to be invoked...
+				// ...from within the expression loop.
+				// But, as of this comment a way to do so does not exist.
+				//
+				// Therefore, if the secondary constructor invocation were ': base(person: new Person())'
+				// then the first named parameter would not parse correctly.
+				//
+				// If the second or onwards parameters were named they would be parsed correctly.
+				//
+				// So, explicitly adding this invocation so that the first named parameter parses correctly.
+				//
+				_ = compilationUnit.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel);
+				
+				// This invocation will parse all of the parameters because the 'parserModel.ExpressionList'
+				// contains (SyntaxKind.CommaToken, functionParametersListingNode).
+				//
+				// Upon encountering a CommaToken the expression loop will set 'functionParametersListingNode'
+				// to the primary expression, then return an EmptyExpressionNode in order to parse the next parameter.
+				_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+            }
+        }
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+        {
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        
+        	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
+        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
         }
     }
 

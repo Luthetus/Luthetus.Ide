@@ -744,6 +744,34 @@ public class ScopeTests
 	    }
     }
     
+    [Fact]
+    public void FunctionDefinitionNode_ExpressionBound()
+    {
+    	var test = new Test(@"public int Cba(int aaa) => aaa; ");
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
+		    
+		    { // Function definition
+			    var functionDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, functionDefinitionScope.IndexKey);
+			    Assert.Equal(0, functionDefinitionScope.ParentIndexKey);
+			    Assert.Equal(24, functionDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(31, functionDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionScope.CodeBlockOwner.SyntaxKind);
+			}
+	    }
+	}
+    
     /// <summary>
     /// A constructor is only sensible when defined within a type.
     /// 
@@ -781,9 +809,9 @@ public class ScopeTests
 			}
 	    }
     }
-    
-    [Fact]
-    public void GlobalScope_FunctionDefinitionNode_Depth_ArbitraryCodeBlock()
+	
+	[Fact]
+	public void GlobalScope_FunctionDefinitionNode_Depth_ArbitraryCodeBlock()
     {
     	var test = new Test(@"public void MyMethod() { { } }");
 		

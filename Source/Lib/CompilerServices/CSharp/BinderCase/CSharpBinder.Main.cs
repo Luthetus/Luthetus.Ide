@@ -739,9 +739,9 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        #if DEBUG
+        /*#if DEBUG
     	Console.Write($"NewSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#endif
+    	#endif*/
     
     	if (codeBlockOwner.ScopeIndexKey is not null)
     	{
@@ -769,9 +769,9 @@ public partial class CSharpBinder : IBinder
         
         compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserModel);
         
-        #if DEBUG
+        /*#if DEBUG
     	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#endif
+    	#endif*/
     }
     
     /// <summary>
@@ -815,9 +815,9 @@ public partial class CSharpBinder : IBinder
     public void SetCurrentScopeAndBuilder(
     	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	#if DEBUG
+    	/*#if DEBUG
     	Console.Write($"SetSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#endif
+    	#endif*/
     
     	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
     		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is null. Invoke {NewScopeAndBuilderFromOwner}?");
@@ -825,9 +825,9 @@ public partial class CSharpBinder : IBinder
 		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
 		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
 		
-		#if DEBUG
+		/*#if DEBUG
     	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#endif
+    	#endif*/
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserModel) =>
@@ -862,9 +862,9 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	#if DEBUG
+    	/*#if DEBUG
     	Console.Write($"{nameof(CloseScope)}: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#endif
+    	#endif*/
     
     	// Check if it is the global scope, if so return early.
     	if (compilationUnit.BinderSession.CurrentScopeIndexKey == 0)
@@ -913,9 +913,9 @@ public partial class CSharpBinder : IBinder
 			}
 		}
 		
-		#if DEBUG
+		/*#if DEBUG
     	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#endif
+    	#endif*/
     }
 
     public void BindTypeDefinitionNode(
@@ -1652,6 +1652,8 @@ public partial class CSharpBinder : IBinder
 
         if (scope is null)
             return null;
+            
+        var externalSyntaxKind = SyntaxKind.VariableDeclarationNode;
         
         switch (syntaxKind)
         {
@@ -1661,6 +1663,7 @@ public partial class CSharpBinder : IBinder
         	case SyntaxKind.VariableSymbol:
         	case SyntaxKind.PropertySymbol:
         	case SyntaxKind.FieldSymbol:
+        	case SyntaxKind.EnumMemberSymbol:
         	{
         		if (TryGetVariableDeclarationHierarchically(
         				compilationUnit,
@@ -1673,28 +1676,8 @@ public partial class CSharpBinder : IBinder
 		            return variableDeclarationStatementNode;
 		        }
 		        
-		        if (symbol is not null)
-		        {
-			        if (TryGetBinderSession(compilationUnit, textSpan.ResourceUri, out var targetBinderSession))
-			        {
-			        	if (((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.SymbolId, out var definitionTuple))
-			        	{
-			        		return GetDefinitionNode(
-			        			compilationUnit,
-			        			new TextEditorTextSpan(
-						            definitionTuple.StartInclusiveIndex,
-								    definitionTuple.StartInclusiveIndex + 1,
-								    default,
-								    definitionTuple.ResourceUri,
-								    string.Empty,
-								    string.Empty),
-			        			SyntaxKind.VariableDeclarationNode,
-			        			getTextResult: textSpan.GetText());
-			        	}
-			        }
-		        }
-		        
-		        return null;
+		        externalSyntaxKind = SyntaxKind.VariableDeclarationNode;
+		        break;
         	}
         	case SyntaxKind.FunctionInvocationNode:
         	case SyntaxKind.FunctionDefinitionNode:
@@ -1711,7 +1694,8 @@ public partial class CSharpBinder : IBinder
 		            return functionDefinitionNode;
 		        }
 		        
-		        return null;
+		        externalSyntaxKind = SyntaxKind.FunctionDefinitionNode;
+		        break;
 	        }
 	        case SyntaxKind.TypeClauseNode:
 	        case SyntaxKind.TypeDefinitionNode:
@@ -1729,7 +1713,29 @@ public partial class CSharpBinder : IBinder
 		            return typeDefinitionNode;
 		        }
 		        
-		        return null;
+		        externalSyntaxKind = SyntaxKind.TypeDefinitionNode;
+		        break;
+	        }
+        }
+
+		if (symbol is not null)
+        {
+	        if (TryGetBinderSession(compilationUnit, textSpan.ResourceUri, out var targetBinderSession))
+	        {
+	        	if (((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.SymbolId, out var definitionTuple))
+	        	{
+	        		return GetDefinitionNode(
+	        			compilationUnit,
+	        			new TextEditorTextSpan(
+				            definitionTuple.StartInclusiveIndex,
+						    definitionTuple.StartInclusiveIndex + 1,
+						    default,
+						    definitionTuple.ResourceUri,
+						    string.Empty,
+						    string.Empty),
+	        			externalSyntaxKind,
+	        			getTextResult: textSpan.GetText());
+	        	}
 	        }
         }
 
@@ -1968,9 +1974,9 @@ public partial class CSharpBinder : IBinder
     		}
     		default:
     		{
-    			#if DEBUG
+    			/*#if DEBUG
     			Console.WriteLine($"method: '{nameof(GetNodePositionIndices)}' The {nameof(SyntaxKind)}: '{syntaxNode}' defaulted in switch statement.");
-    			#endif
+    			#endif*/
     			
     			return (-1, -1);
     		}
