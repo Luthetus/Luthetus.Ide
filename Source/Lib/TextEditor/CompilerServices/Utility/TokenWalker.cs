@@ -12,6 +12,7 @@ public class TokenWalker
     private readonly DiagnosticBag _diagnosticBag;
 
     private int _index;
+    private int _indexTrivia;
 	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
 
     public TokenWalker(List<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
@@ -25,6 +26,12 @@ public class TokenWalker
         TokenList = tokenList;
         _diagnosticBag = diagnosticBag;
     }
+    
+    public TokenWalker(List<ISyntaxToken> tokenList, List<TextEditorTextSpan> triviaList, DiagnosticBag diagnosticBag)
+    	: base(tokenList, diagnosticBag)
+    {
+    	TriviaList = triviaList;
+    }
 
 	public int ConsumeCounter { get; private set; }
 	
@@ -34,6 +41,7 @@ public class TokenWalker
 	#endif
 	
     public List<ISyntaxToken> TokenList { get; }
+    public List<TextEditorTextSpan>? TriviaList { get; }
     public ISyntaxToken Current => Peek(0);
     public ISyntaxToken Next => Peek(1);
     public ISyntaxToken Previous => Peek(-1);
@@ -167,4 +175,87 @@ public class TokenWalker
 	}
 
     private BadToken GetBadToken() => new BadToken(new(0, 0, 0, ResourceUri.Empty, string.Empty));
+    
+    /// <summary>
+    /// Going to do an odd implementation of this to start.
+    /// Then as the 'trivia' code gets more fleshed out then will improve this.
+    ///
+    /// -----------------------
+    ///
+    /// The '_indexTrivia' cannot go backwards, it can only go forwards.
+    ///
+    /// A token can provide its text span's position indices in order to create
+    /// a "surveying area".
+    ///
+    /// The '_indexTrivia' is then set to whichever entry of 'TriviaList' is first to
+    /// exist in that "surveying area" sorted by position index.
+    ///
+    /// After 'ConsumeTrivia(...)' then the _indexTrivia will point at the next "trivia" within
+    /// the "surveying area".
+    ///
+    /// Then, 'ConsumeTrivia' will return non-null if there is an entry that has not yet been consumed within those indices,
+    /// the "surveying area".
+    /// 
+    /// -----------------------
+    ///
+    /// So, this implementation feels quite odd / unnecessarily "complex/confusing".
+    ///
+    /// But, I think this is a good "stepping stone solution".
+    ///
+    /// In essence I view the "trivia" as providing additional details about an ISyntaxToken (or whitespace/etc...).
+    ///
+    /// This solution permits a token to tell the 'TokenWalker' what position indices it spans,
+    /// then within that boundary, ask for the additional information that is stored.
+    ///
+    /// As well, this avoids every token instance instantiating their own list where
+    /// there exists an arbitrary amount of syntax.
+    ///
+    /// They all just share the same list, then say the position indices that they're allowed to read from.
+    /// Something along these lines.
+    ///
+    /// -----------------------
+    ///
+    /// This implementation as well is expected to "fast" since it does a
+    /// linear search for the position indices, but will remember its last index and pick back up from it on the next invocation.
+    ///
+    /// With this code only being used by the parser, when going from the first ISyntaxToken in the file to the last,
+    /// then this should be a a "fast" enough "stepping stone solution".
+    ///
+    /// -----------------------
+    ///
+    /// I think if an interpolated string has an expression that itself contains yet again another interpolated string,
+    /// that the outer and inner interpolated strings will have their "surveying area" overlap,
+    /// and that the outer interpolated string will consume the inner interpolated string's trivia.
+    ///
+    /// I'm not sure, but I don't think this implementation is perfect, I just need to wrap my head around
+    /// what I'm trying to do here.
+    ///
+    /// -----------------------
+    ///
+    /// My first guess is that the interpolated expressions are 'trivia' because the alternative
+    /// would be instantiating a list on the 'StringInterpolatedToken'.
+    ///
+    /// But, to instantiate a list on every 'StringInterpolatedToken' sounds
+    /// like a very bad idea for performance / memory / garbage collection overhead.
+    ///
+    /// So by having all instances of 'StringInterpolatedToken' within the same
+    /// file share the same List, it reduces the amount of allocations.
+    ///
+    /// -----------------------
+    ///
+    /// The trivia probably shouldn't be 'TextEditorTextSpan' but instead an 'ISyntaxToken'
+    /// but I just want to focus on the interpolated expressions,
+    /// then I'll better understand what I'm trying to even do here.
+    /// </summary>
+    public TextEditorTextSpan? ConsumeTrivia(int startInclusivePositionIndex, int endExclusivePositionIndex)
+    {
+    	throw new NotImplementedException();
+    
+    	if (_indexTrivia >= TokenList.Count)
+            return EOF;
+            
+        var consumedTrivia = TriviaList[_indexTrivia++];
+        
+        return consumedTrivia;
+    }
 }
