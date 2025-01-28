@@ -87,6 +87,15 @@ public class ParseFunctions
 	    			compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 	    	}
         }
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+        {
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        
+        	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
+        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+        }
     }
 
     public static void HandleConstructorDefinition(
@@ -196,6 +205,15 @@ public class ParseFunctions
 				// to the primary expression, then return an EmptyExpressionNode in order to parse the next parameter.
 				_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
             }
+        }
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+        {
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        
+        	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
+        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
         }
     }
 

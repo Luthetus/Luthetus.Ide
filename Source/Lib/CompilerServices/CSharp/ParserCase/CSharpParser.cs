@@ -158,6 +158,7 @@ public static class CSharpParser
                 case SyntaxKind.EqualsToken:
                     ParseTokens.ParseEqualsToken(compilationUnit, ref parserModel);
                     break;
+                // TODO: SyntaxKind.EqualsCloseAngleBracketToken
                 case SyntaxKind.StatementDelimiterToken:
                 	parserModel.StatementBuilder.FinishStatement(compilationUnit, ref parserModel);
 					
