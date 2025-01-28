@@ -126,9 +126,9 @@ public static class ParseOthers
     	{
     		expressionNode = ParseExpression(compilationUnit, ref parserModel);
     		
-    		#if DEBUG
+    		/*#if DEBUG
     		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
-    		#endif
+    		#endif*/
     		
     		if (parserModel.TryParseExpressionSyntaxKindList.Count == 0)
     			return true;
@@ -171,9 +171,9 @@ public static class ParseOthers
 	/// </summary>
 	public static IExpressionNode ParseExpression(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	#if DEBUG
+    	/*#if DEBUG
     	Console.WriteLine("\nParseExpression(...)");
-    	#endif
+    	#endif*/
     
     	var expressionPrimary = parserModel.ForceParseExpressionInitialPrimaryExpression;
     	var indexToken = parserModel.TokenWalker.Index;
@@ -184,9 +184,9 @@ public static class ParseOthers
     	
     	while (true)
         {
-        	#if DEBUG
+        	/*#if DEBUG
         	WriteExpressionList(parserModel.ExpressionList);
-        	#endif
+        	#endif*/
         
         	var tokenCurrent = parserModel.TokenWalker.Current;
     		
@@ -230,9 +230,9 @@ public static class ParseOthers
 			
     		expressionPrimary = compilationUnit.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, compilationUnit, ref parserModel);
     		
-    		#if DEBUG
+    		/*#if DEBUG
     		Console.WriteLine($"\t=> {expressionPrimary.SyntaxKind}");
-    		#endif
+    		#endif*/
     		
     		if (parserModel.TokenWalker.Index == indexToken)
     			_ = parserModel.TokenWalker.Consume();
@@ -292,10 +292,10 @@ public static class ParseOthers
 	    			
 		    		forceExit = true;
 		    		
-		    		#if DEBUG
+		    		/*#if DEBUG
 		    		WriteExpressionList(parserModel.ExpressionList);
 		    		Console.WriteLine("----TryParseExpressionSyntaxKindList");
-		    		#endif
+		    		#endif*/
     			}
     		}
     		
@@ -318,9 +318,9 @@ public static class ParseOthers
 				ref parserModel);
     	}
     	
-    	#if DEBUG
+    	/*#if DEBUG
     	Console.WriteLine();
-    	#endif
+    	#endif*/
     	
     	return expressionPrimary;
     }
@@ -351,10 +351,10 @@ public static class ParseOthers
     	
     	var initialExpressionListCount = parserModel.ExpressionList.Count;
     	
-    	#if DEBUG
+    	/*#if DEBUG
     	var nullNodeSyntaxKindText = "null";
 		Console.WriteLine($"BREAK_({triggeredDelimiterTuple.DelimiterSyntaxKind}, {triggeredDelimiterTuple.ExpressionNode?.SyntaxKind.ToString() ?? nullNodeSyntaxKindText})");
-		#endif
+		#endif*/
 		
 		for (int i = initialExpressionListCount - 1; i > indexTriggered - 1; i--)
 		{

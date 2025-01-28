@@ -25,12 +25,24 @@ public sealed class FunctionInvocationNode : IExpressionNode
 
     public IdentifierToken FunctionInvocationIdentifierToken { get; }
     public FunctionDefinitionNode? FunctionDefinitionNode { get; }
-    public GenericParametersListingNode? GenericParametersListingNode { get; }
-    public FunctionParametersListingNode FunctionParametersListingNode { get; }
+    public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
+    public FunctionParametersListingNode FunctionParametersListingNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
+    
+    public FunctionInvocationNode SetGenericParametersListingNode(GenericParametersListingNode genericParametersListingNode)
+    {
+    	GenericParametersListingNode = genericParametersListingNode;
+    	return this;
+    }
+    
+    public FunctionInvocationNode SetFunctionParametersListingNode(FunctionParametersListingNode functionParametersListingNode)
+    {
+    	FunctionParametersListingNode = functionParametersListingNode;
+    	return this;
+    }
 
     public ISyntax[] GetChildList()
     {
