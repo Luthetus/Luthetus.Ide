@@ -579,6 +579,17 @@ public static class CSharpLexer
 		    				}
 		    				else
 		    				{
+		    					// Retrospective:
+		    					// ==============
+		    					// Would storing a single text span for the entirety of the string literal
+		    					// with 'GenericDecorationKind.StringLiteral',
+		    					//
+		    					// then store the interpolated expressions in a separate List
+		    					// of which has its decorations applied after that of the TokenWalker's list?
+		    					// 
+		    					// Otherwise every interpolated expression requires swapping twice,
+		    					// rather than just having the singular string literal, then decorating over it after.
+		    					// 
 		    					var innerTextSpan = new TextEditorTextSpan(
 						            entryPositionIndex,
 						            interpolationTemporaryPositionIndex,
