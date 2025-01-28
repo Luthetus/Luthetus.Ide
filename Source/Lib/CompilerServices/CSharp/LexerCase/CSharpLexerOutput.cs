@@ -11,6 +11,7 @@ public struct CSharpLexerOutput
     {
     	SyntaxTokenList = new();
     	MiscTextSpanList = new();
+    	TriviaTextSpanList = new();
     	DiagnosticBag = new();
     }
     

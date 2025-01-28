@@ -579,32 +579,12 @@ public static class CSharpLexer
 		    				}
 		    				else
 		    				{
-		    					// Retrospective:
-		    					// ==============
-		    					// Would storing a single text span for the entirety of the string literal
-		    					// with 'GenericDecorationKind.StringLiteral',
-		    					//
-		    					// then store the interpolated expressions in a separate List
-		    					// of which has its decorations applied after that of the TokenWalker's list?
-		    					// 
-		    					// Otherwise every interpolated expression requires swapping twice,
-		    					// rather than just having the singular string literal, then decorating over it after.
-		    					// 
-		    					var innerTextSpan = new TextEditorTextSpan(
-						            entryPositionIndex,
-						            interpolationTemporaryPositionIndex,
-						            (byte)GenericDecorationKind.StringLiteral,
-						            stringWalker.ResourceUri,
-						            stringWalker.SourceText);
-						        lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
-							
-								// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
+		    					// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
 								// Thus, if this while loop were to consume, it would skip the
 								// closing double quotes if the expression were the last thing in the string.
 								//
 								// So, a backtrack is done.
-								LexInterpolatedExpression(ref lexerOutput, ref stringWalker, countDollarSign);
-								entryPositionIndex = stringWalker.PositionIndex;
+								LexInterpolatedExpression(ref lexerOutput, ref stringWalker, startInclusiveOpenDelimiter: interpolationTemporaryPositionIndex, countDollarSign: countDollarSign);
 								stringWalker.BacktrackCharacter();
 		    				}
 		    			}
@@ -618,19 +598,10 @@ public static class CSharpLexer
 					}
 					else
 					{
-						var innerTextSpan = new TextEditorTextSpan(
-				            entryPositionIndex,
-				            stringWalker.PositionIndex,
-				            (byte)GenericDecorationKind.StringLiteral,
-				            stringWalker.ResourceUri,
-				            stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
-					
 						// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
 						// Thus, if this while loop were to consume, it would skip the
 						// closing double quotes if the expression were the last thing in the string.
-						LexInterpolatedExpression(ref lexerOutput, ref stringWalker, countDollarSign);
-						entryPositionIndex = stringWalker.PositionIndex;
+						LexInterpolatedExpression(ref lexerOutput, ref stringWalker, startInclusiveOpenDelimiter: stringWalker.PositionIndex, countDollarSign: countDollarSign);
 						continue;
 					}
 				}
@@ -651,11 +622,19 @@ public static class CSharpLexer
         lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(textSpan));
     }
     
-    private static void LexInterpolatedExpression(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, int countDollarSign)
+    /// <summary>
+    /// 'startInclusiveFirstOpenDelimiter' refers to:
+    ///     $"Hello, {name}"
+    ///
+    /// how there is a '{' that deliminates the start of the interpolated expression.
+    /// at what position index does it lie at?
+    ///
+    /// In the case of raw strings, the start-inclusive of the multi-character open delimiter is what needs to be provided.
+    /// </summary>
+    private static void LexInterpolatedExpression(
+    	ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, int startInclusiveOpenDelimiter, int countDollarSign)
     {
-    	var entryPositionIndex = stringWalker.PositionIndex;
-		
-		if (stringWalker.CurrentCharacter == '{')
+    	if (stringWalker.CurrentCharacter == '{')
 		{
 			// The normal interpolation will invoke this method with '{' as the current character.
 			//
@@ -663,6 +642,14 @@ public static class CSharpLexer
 			// deliminates the start of the interpolated expression.
         	_ = stringWalker.ReadCharacter();
         }
+        
+        // TODO: Don't commit this code without ensuring '{{...}}' colors the '{{' and '}}' as no decoration.
+        //
+        // TODO: Can interpolated expressions contain '{' or '}'?...
+        // ...bringing this up because it would mean the start position index would need to be passed to this method,
+        // because it would be very confusing to try and 'Backtrack' while at '{' because what if '{' is part of the expression itself.
+        // Because it is desired that the interpolated expression's delimiters be syntax highlighted as a 'none decoration'.
+        var entryPositionIndex = stringWalker.PositionIndex;
         
     	var unmatchedBraceCounter = countDollarSign;
 		
@@ -680,8 +667,17 @@ public static class CSharpLexer
 
 			_ = stringWalker.ReadCharacter();
 		}
-
-		_ = stringWalker.ReadCharacter();
+		
+		_ = stringWalker.ReadCharacter(); // This consumes the final '}'.
+		
+		// TODO: Again, watch out for the ending delimiter too: Don't commit this code without ensuring '{{...}}' colors the '{{' and '}}' as no decoration.
+		var textSpan = new TextEditorTextSpan(
+            startInclusiveOpenDelimiter,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+        lexerOutput.TriviaTextSpanList.Add(textSpan);
     }
     
     private static void EscapeCharacterListAdd(
