@@ -1746,6 +1746,65 @@ public partial class CSharpBinder
 	{
 		switch (token.SyntaxKind)
 		{
+			case SyntaxKind.OpenAngleBracketToken:
+				if (functionInvocationNode.FunctionParametersListingNode is null)
+				{
+					// Note: non member access function invocation takes the path:
+					//       AmbiguousIdentifierExpressionNode -> FunctionInvocationNode
+					//
+					// ('AmbiguousIdentifierExpressionNode' converts when it sees 'OpenParenthesisToken')
+					//
+					//
+					// But, member access will determine that an identifier is a function
+					// prior to seeing the 'OpenAngleBracketToken' or the 'OpenParenthesisToken'.
+					//
+					// These paths would preferably be combined into a less "hacky" two way path.
+					// Until then these 'if (functionInvocationNode.FunctionParametersListingNode is null)'
+					// statements will be here.
+					
+					if (functionInvocationNode.GenericParametersListingNode is not null)
+						goto default;
+					
+					functionInvocationNode.SetGenericParametersListingNode(
+						new GenericParametersListingNode(
+							(OpenAngleBracketToken)token,
+					        new List<GenericParameterEntryNode>(),
+					        closeAngleBracketToken: default));
+					
+				    parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, functionInvocationNode));
+					parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.GenericParametersListingNode));
+					return EmptyExpressionNode.Empty;
+				}
+				
+				goto default;
+			case SyntaxKind.OpenParenthesisToken:
+				if (functionInvocationNode.FunctionParametersListingNode is null)
+				{
+					// Note: non member access function invocation takes the path:
+					//       AmbiguousIdentifierExpressionNode -> FunctionInvocationNode
+					//
+					// ('AmbiguousIdentifierExpressionNode' converts when it sees 'OpenParenthesisToken')
+					//
+					//
+					// But, member access will determine that an identifier is a function
+					// prior to seeing the 'OpenAngleBracketToken' or the 'OpenParenthesisToken'.
+					//
+					// These paths would preferably be combined into a less "hacky" two way path.
+					// Until then these 'if (functionInvocationNode.FunctionParametersListingNode is null)'
+					// statements will be here.
+					
+					var functionParametersListingNode = new FunctionParametersListingNode(
+						(OpenParenthesisToken)token,
+				        new List<FunctionParameterEntryNode>(),
+				        closeParenthesisToken: default);
+				
+					functionInvocationNode.SetFunctionParametersListingNode(functionParametersListingNode);
+					
+					return ParseFunctionParametersListingNode(
+						functionInvocationNode, functionInvocationNode.FunctionParametersListingNode, compilationUnit, ref parserModel);
+				}
+
+				goto default;
 			case SyntaxKind.CloseParenthesisToken:
 				functionInvocationNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 				return functionInvocationNode;
