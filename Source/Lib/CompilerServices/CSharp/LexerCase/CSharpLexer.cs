@@ -619,7 +619,10 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(textSpan));
+		if (useInterpolation)
+			lexerOutput.SyntaxTokenList.Add(new StringInterpolatedToken(textSpan, countDollarSign));
+		else
+        	lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(textSpan));
     }
     
     /// <summary>

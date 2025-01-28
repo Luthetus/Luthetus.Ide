@@ -39,7 +39,7 @@ public static class CSharpParser
         var diagnosticBag = new DiagnosticBag();
 
         var parserModel = new CSharpParserModel(
-            new TokenWalker(compilationUnit.LexerOutput.SyntaxTokenList, diagnosticBag),
+            new TokenWalker(compilationUnit.LexerOutput.SyntaxTokenList, compilationUnit.LexerOutput.TriviaTextSpanList, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
@@ -64,6 +64,7 @@ public static class CSharpParser
                 case SyntaxKind.NumericLiteralToken:
                 case SyntaxKind.CharLiteralToken:
 				case SyntaxKind.StringLiteralToken:
+				case SyntaxKind.StringInterpolatedToken:
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusToken:

@@ -501,6 +501,43 @@ public partial class ExpressionAsStatementTests
     }
     
     [Fact]
+    public void String_Interpolated_Aaa()
+    {
+    	var aaa = 2;
+    	var bbb = $"abc {aaa} 123";
+    
+    	var test = new Test(
+@"
+$""abc {aaa} 123"";
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		// var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
+		// Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+    }
+    
+    [Fact]
+    public void String_Interpolated_More()
+    {
+    	var aaa = 2;
+    	var bbb = $"abc {aaa} 123";
+    
+    	var test = new Test(
+@"
+var aaa = 2;
+var bbb = $""abc {aaa} 123"";
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		// var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
+		// Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+    }
+    
+    [Fact]
     public void String_Verbatim()
     {
     	var test = new Test("@\"asd\"");

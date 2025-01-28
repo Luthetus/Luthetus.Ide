@@ -28,7 +28,7 @@ public class TokenWalker
     }
     
     public TokenWalker(List<ISyntaxToken> tokenList, List<TextEditorTextSpan> triviaList, DiagnosticBag diagnosticBag)
-    	: base(tokenList, diagnosticBag)
+    	: this(tokenList, diagnosticBag)
     {
     	TriviaList = triviaList;
     }
@@ -47,7 +47,6 @@ public class TokenWalker
     public ISyntaxToken Previous => Peek(-1);
     public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
     public int Index => _index;
-    public TextEditorTextSpan CurrentTrivia => GetCurrentTrivia();
 
     /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
     private ISyntaxToken EOF => TokenList.Count > 0

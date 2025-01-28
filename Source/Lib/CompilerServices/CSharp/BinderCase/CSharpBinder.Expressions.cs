@@ -693,6 +693,7 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.NumericLiteralToken:
 			case SyntaxKind.StringLiteralToken:
+			case SyntaxKind.StringInterpolatedToken:
 			case SyntaxKind.CharLiteralToken:
 			case SyntaxKind.FalseTokenKeyword:
 			case SyntaxKind.TrueTokenKeyword:
@@ -700,7 +701,7 @@ public partial class CSharpBinder
 				
 				if (token.SyntaxKind == SyntaxKind.NumericLiteralToken)
 					tokenTypeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
-				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken)
+				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken || token.SyntaxKind == SyntaxKind.StringInterpolatedToken)
 					tokenTypeClauseNode = CSharpFacts.Types.String.ToTypeClause();
 				else if (token.SyntaxKind == SyntaxKind.CharLiteralToken)
 					tokenTypeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
@@ -716,6 +717,8 @@ public partial class CSharpBinder
 					goto default;
 			
 				var rightExpressionNode = new LiteralExpressionNode(token, tokenTypeClauseNode);
+				Hack_LiteralExpressionNode(rightExpressionNode, compilationUnit, ref parserModel);
+				
 				binaryExpressionNode.SetRightExpressionNode(rightExpressionNode);
 				return binaryExpressionNode;
 			case SyntaxKind.PlusToken:
@@ -1072,6 +1075,7 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.NumericLiteralToken:
 			case SyntaxKind.StringLiteralToken:
+			case SyntaxKind.StringInterpolatedToken:
 			case SyntaxKind.CharLiteralToken:
 			case SyntaxKind.FalseTokenKeyword:
 			case SyntaxKind.TrueTokenKeyword:
@@ -1079,7 +1083,7 @@ public partial class CSharpBinder
 				
 				if (token.SyntaxKind == SyntaxKind.NumericLiteralToken)
 					tokenTypeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
-				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken)
+				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken || token.SyntaxKind == SyntaxKind.StringInterpolatedToken)
 					tokenTypeClauseNode = CSharpFacts.Types.String.ToTypeClause();
 				else if (token.SyntaxKind == SyntaxKind.CharLiteralToken)
 					tokenTypeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
@@ -1088,7 +1092,9 @@ public partial class CSharpBinder
 				else
 					goto default;
 					
-				return new LiteralExpressionNode(token, tokenTypeClauseNode);
+				var literalExpressionNode = new LiteralExpressionNode(token, tokenTypeClauseNode);
+				Hack_LiteralExpressionNode(literalExpressionNode, compilationUnit, ref parserModel);
+				return literalExpressionNode;
 			case SyntaxKind.OpenParenthesisToken:
 			
 				if (!UtilityApi.IsConvertibleToTypeClauseNode(parserModel.TokenWalker.Next.SyntaxKind))
@@ -2567,5 +2573,40 @@ public partial class CSharpBinder
 		}
 		
 		return EmptyExpressionNode.Empty;
+	}
+	
+	/// <summary>
+	/// Am working on the first implementation of parsing interpolated strings.
+	/// Need a way for a 'StringInterpolatedToken' to trigger the new code.
+	///
+	/// Currently there are 2 'LiteralExpressionNode' constructor invocations,
+	/// so under each of them I've invoked this method.
+	///
+	/// Will see where things go from here, TODO: don't do this long term.
+	///
+	/// --------------------------------
+	///
+	/// Interpolated strings might not actually be "literal expressions"
+	/// but I think this is a good path to investigate that will lead to understanding the correct answer.
+	/// </summary>
+	public void Hack_LiteralExpressionNode(LiteralExpressionNode literalExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (literalExpressionNode.LiteralSyntaxToken.SyntaxKind != SyntaxKind.StringInterpolatedToken)
+			return;
+			
+		Console.WriteLine("aaa Hack_LiteralExpressionNode");
+		
+		var trivia = parserModel.TokenWalker.GetCurrentTrivia(
+			literalExpressionNode.LiteralSyntaxToken.TextSpan.StartingIndexInclusive,
+			literalExpressionNode.LiteralSyntaxToken.TextSpan.EndingIndexExclusive);
+			
+		if (trivia is null)
+		{
+			Console.WriteLine("aaa trivia is null");
+		}
+		else
+		{
+			Console.WriteLine($"aaa trivia.GetText(): {trivia.Value.GetText()}");
+		}
 	}
 }
