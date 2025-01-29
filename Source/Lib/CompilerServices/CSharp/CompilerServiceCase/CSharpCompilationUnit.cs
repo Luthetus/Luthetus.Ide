@@ -23,7 +23,7 @@ public sealed class CSharpCompilationUnit : ICompilationUnit
 	}
 
 	public ResourceUri ResourceUri { get; set; }
-    public CSharpLexerOutput LexerOutput { get; set; }
+    
     public CSharpBinder Binder { get; set; }
     public CSharpBinderSession BinderSession { get; set; }
     public ISyntaxNode RootCodeBlockNode { get; set; }

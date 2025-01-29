@@ -15,12 +15,10 @@ public struct CSharpLexerOutput
     }
     
     /// <summary>If not 'DEBUG' then these are set to null after the compilation unit is finished.</summary>
-    public List<ISyntaxToken>? SyntaxTokenList { get; }
+    public List<ISyntaxToken> SyntaxTokenList { get; }
     /// <summary>
     /// MiscTextSpanList contains the comments and the escape characters.
-    /// 
-    /// If not 'DEBUG' then these are set to null after the compilation unit is finished.
     /// </summary>
-    public List<TextEditorTextSpan>? MiscTextSpanList { get; }
+    public List<TextEditorTextSpan> MiscTextSpanList { get; }
     public DiagnosticBag DiagnosticBag { get; }
 }
