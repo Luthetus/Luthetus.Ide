@@ -50,6 +50,13 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 
+// VirtualizationDriver.cs
+using System.Text;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
@@ -110,8 +117,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private TextEditorViewModel? _linkedViewModel;
     
-    public VirtualizationDriver _gutterVirtualizationDriver;
-    public VirtualizationDriver _bodyVirtualizationDriver;
     // TODO: awkward public
     public PresentationAndSelectionDriver _presentationAndSelectionDriver;
     
@@ -152,15 +157,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     			this
     		}
     	};
-    
-    	_gutterVirtualizationDriver = new(
-    		this,
-    		useHorizontalVirtualization: false,
-    		useVerticalVirtualization: true);
-    	_bodyVirtualizationDriver = new(
-    		this,
-    		useHorizontalVirtualization: true,
-    		useVerticalVirtualization: true);
+
     	_presentationAndSelectionDriver = new(this);
     
         ConstructRenderBatch();
@@ -1420,6 +1417,61 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         return Task.CompletedTask;
     }
     
+    #endregion ScrollbarSectionClose
+
+    #region VirtualizationDriverOpen
+
+    public string Virtualization_GetStyleCssString(VirtualizationBoundary virtualizationBoundary)
+    {
+        var styleBuilder = new StringBuilder();
+
+        // Width
+        if (virtualizationBoundary.WidthInPixels is null)
+        {
+            styleBuilder.Append(" width: 100%;");
+        }
+        else
+        {
+            var widthInPixelsInvariantCulture = virtualizationBoundary.WidthInPixels.Value.ToCssValue();
+            styleBuilder.Append($" width: {widthInPixelsInvariantCulture}px;");
+        }
+
+        // Height
+        if (virtualizationBoundary.HeightInPixels is null)
+        {
+            styleBuilder.Append(" height: 100%;");
+        }
+        else
+        {
+            var heightInPixelsInvariantCulture = virtualizationBoundary.HeightInPixels.Value.ToCssValue();
+            styleBuilder.Append($" height: {heightInPixelsInvariantCulture}px;");
+        }
+
+        // Left
+        if (virtualizationBoundary.LeftInPixels is null)
+        {
+            styleBuilder.Append(" left: 100%;");
+        }
+        else
+        {
+            var leftInPixelsInvariantCulture = virtualizationBoundary.LeftInPixels.Value.ToCssValue();
+            styleBuilder.Append($" left: {leftInPixelsInvariantCulture}px;");
+        }
+
+        // Top
+        if (virtualizationBoundary.TopInPixels is null)
+        {
+            styleBuilder.Append(" top: 100%;");
+        }
+        else
+        {
+            var topInPixelsInvariantCulture = virtualizationBoundary.TopInPixels.Value.ToCssValue();
+            styleBuilder.Append($" top: {topInPixelsInvariantCulture}px;");
+        }
+
+        return styleBuilder.ToString();
+    }
+
     #endregion ScrollbarSectionClose
 
     public void Dispose()
