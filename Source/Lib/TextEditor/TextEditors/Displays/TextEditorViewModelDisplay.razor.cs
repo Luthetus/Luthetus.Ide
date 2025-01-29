@@ -24,6 +24,10 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
+// GutterDriver.cs
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
+
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
@@ -81,7 +85,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private TextEditorViewModel? _linkedViewModel;
     
-    private GutterDriver _gutterDriver;
     public VirtualizationDriver _gutterVirtualizationDriver;
     private BodyDriver _bodyDriver;
     public VirtualizationDriver _bodyVirtualizationDriver;
@@ -127,7 +130,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     		}
     	};
     
-    	_gutterDriver = new(this);
     	_gutterVirtualizationDriver = new(
     		this,
     		useHorizontalVirtualization: false,
@@ -754,6 +756,40 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			    return ValueTask.CompletedTask;
             });
     }
+    
+    #region GutterDriverOpen
+
+    public string GetGutterStyleCss(TextEditorRenderBatch renderBatchLocal, int index)
+    {
+        var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+
+        var topInPixelsInvariantCulture = (index * measurements.LineHeight).ToCssValue();
+        var top = $"top: {topInPixelsInvariantCulture}px;";
+
+        var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
+        var height = $"height: {heightInPixelsInvariantCulture}px;";
+
+        var widthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
+        var width = $"width: {widthInPixelsInvariantCulture}px;";
+
+        var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
+        var paddingLeft = $"padding-left: {paddingLeftInPixelsInvariantCulture}px;";
+
+        var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
+        var paddingRight = $"padding-right: {paddingRightInPixelsInvariantCulture}px;";
+
+        return $"{width} {height} {top} {paddingLeft} {paddingRight}";
+    }
+
+    public string GetGutterSectionStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+        var widthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
+        var width = $"width: {widthInPixelsInvariantCulture}px;";
+
+        return width;
+    }
+    
+    #endregion GutterDriverClose
 
     public void Dispose()
     {

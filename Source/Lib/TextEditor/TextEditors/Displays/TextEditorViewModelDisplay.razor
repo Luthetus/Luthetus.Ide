@@ -1,5 +1,6 @@
 @using System.Collections.Immutable;
 @using System.Text;
+@using System.Diagnostics;
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.CustomEvents.Models
@@ -19,12 +20,15 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Models
+
 @{
     var renderBatchUnsafe = _currentRenderBatch;
     var renderBatchValidated = _activeRenderBatch;
 
     var cssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
     var cssStyle = $"{renderBatchUnsafe.FontSizeInPixelsCssStyle} {renderBatchUnsafe.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
+    
+    // var startTime = Stopwatch.GetTimestamp();
 }
 
 <div class="@cssClass" style="@cssStyle">
@@ -74,10 +78,86 @@
 		    </div>
 		</div>
       	
-        @if (ViewModelDisplayOptions.IncludeGutterComponent &&
-        	 renderBatchValidated is not null)
+        @if (ViewModelDisplayOptions.IncludeGutterComponent && renderBatchValidated is not null)
         {
-            @_gutterDriver.GetRenderFragment(renderBatchValidated);
+            <div class="luth_te_gutter-section"
+			      style="@(GetGutterSectionStyleCss(_activeRenderBatch))"
+			      id="@renderBatchValidated.ViewModel.GutterElementId">
+			      
+                @* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
+                @_gutterVirtualizationDriver.GetRenderFragment(renderBatchValidated)
+			    
+			    @foreach (var virtualizedRow in renderBatchValidated.ViewModel.VirtualizationResult.EntryList)
+			    {
+			        <div class="luth_te_gutter"
+			             style="@(GetGutterStyleCss(_activeRenderBatch, virtualizedRow.LineIndex))">
+			            @(virtualizedRow.LineIndex + 1)
+			        </div>
+			    }
+			    
+			    @{
+			        var heightOfGutter = renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Length *
+			                             renderBatchValidated.ViewModel.CharAndLineMeasurements.LineHeight;
+			
+			        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
+			        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
+			        //
+			        // But, there is a catch. The bug comes down to whether your virtualization result, has any 'overhang'
+			        // at the top of the text editor.
+			        //
+			        // Because this code just takes the virtualization result height as if it were centered
+			        // one ontop of the other with the visible content.
+			        //
+			        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
+			        //
+			        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
+			        
+			        double topOffscreenOverhang;
+			        
+			        if (renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Length > 0)
+			        {
+			        	topOffscreenOverhang = renderBatchValidated.ViewModel.VirtualizationResult.EntryList[0].TopInPixels ?? -1;
+			        }
+			        else
+			        {
+			        	 topOffscreenOverhang = -1;
+			        }
+			
+			        if (topOffscreenOverhang != -1)
+			        {
+			            // If the 'topOffscreenOverhang' was measureable, then subtract from the height of the gutter,
+			            // however much of it overhangs the top offscreen.
+			            heightOfGutter -= topOffscreenOverhang;
+			        }
+			
+			        // '1' is added to the text editor's height in order to avoid rounding errors
+			        if (heightOfGutter < 1 + renderBatchValidated.ViewModel.TextEditorDimensions.Height)
+			        {
+			            var remainingHeightToFill = renderBatchValidated.ViewModel.TextEditorDimensions.Height -
+			                heightOfGutter +
+			                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+			            
+			            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
+			
+						int lastIndex;
+						
+						if (renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Length > 0)
+						{
+							lastIndex = renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+						}
+						else
+						{
+							lastIndex = -1;
+						}
+			
+			            var imaginaryNextIndex = lastIndex + 1;
+			            
+			            <div class="luth_te_gutter"
+			                 style="@(GetGutterStyleCss(_activeRenderBatch, imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
+			            </div>
+			        }
+			    }
+			</div>
         }
 
         @if (renderBatchValidated is not null)
@@ -87,84 +167,84 @@
         	<div class="luth_te_body-section"
 		 		style="@_bodyDriver.GetBodyStyleCss(_bodyDriver._renderBatch)">
 		 		
-			@{
-				var primaryCursor = _bodyDriver._renderBatch.ViewModel!.PrimaryCursor;
-			}
-		        
-@* RowSection.razor Open *@
-<div class="luth_te_row-section"
-	id="@_bodyDriver._renderBatch.ViewModel.BodyElementId">
-		    
-	@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
-	@_bodyDriver._root._bodyVirtualizationDriver.GetRenderFragment(_bodyDriver._renderBatch)
-				                           
-	@_bodyDriver._root._presentationAndSelectionDriver.GetRenderFragment(_bodyDriver._renderBatch)
-	
-	@foreach (var virtualizationLine in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
-	{
-		<div class="luth_te_row"
-			 style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
-		
-			@*
-				'!= 0' because the struct's int property will default to '0',
-				and if there is no text then the property is unchanged from its default value.
-			*@
-			@if (virtualizationLine.VirtualizationSpanIndexExclusiveEnd != 0)
-			{
-				// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
-		    	//          Presumably this is due to cache misses?
-				foreach (var virtualizationSpan in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList
-						 	.Skip(virtualizationLine.VirtualizationSpanIndexInclusiveStart)
-							 .Take(virtualizationLine.VirtualizationSpanIndexExclusiveEnd - virtualizationLine.VirtualizationSpanIndexInclusiveStart))
-				{
-					<span class="@virtualizationSpan.CssClass">
-			            @((MarkupString)virtualizationSpan.Text)
-			        </span>
-			    }
-			}
-			
-			@if (_bodyDriver.GlobalShowNewlines && virtualizationLine.LineIndex < _bodyDriver._renderBatch.Model.LineCount)
-			{
-				var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
-				
-				var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
-				
-				if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
-				{
-				    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[virtualizationLine.LineIndex];
-				
-				    <span class="luth_te_newline">
-				        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
-				    </span>
+				@{
+					var primaryCursor = _bodyDriver._renderBatch.ViewModel!.PrimaryCursor;
 				}
-			}
-		</div>
-	}
-	
-	@{
-		_cursorDriver.GetRenderFragment(renderBatchValidated);
+			        
+				@* RowSection.razor Open *@
+				<div class="luth_te_row-section"
+					id="@_bodyDriver._renderBatch.ViewModel.BodyElementId">
+						    
+					@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
+					@_bodyDriver._root._bodyVirtualizationDriver.GetRenderFragment(_bodyDriver._renderBatch)
+								                           
+					@_bodyDriver._root._presentationAndSelectionDriver.GetRenderFragment(_bodyDriver._renderBatch)
 					
-		var leftRelativeToParentInPixelsCssStyle = string.Empty;
-		var textEditorKeymap = (ITextEditorKeymap)_cursorDriver._renderBatch.Options!.Keymap!;
-					    
-		if (!_cursorDriver._renderBatch.Options!.UseMonospaceOptimizations)
-		{
-			var leftRelativeToParentInPixelsCssValue = _cursorDriver._leftRelativeToParentInPixels.ToCssValue();
-			leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
-		}
-	}
+					@foreach (var virtualizationLine in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
+					{
+						<div class="luth_te_row"
+							 style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
+						
+							@*
+								'!= 0' because the struct's int property will default to '0',
+								and if there is no text then the property is unchanged from its default value.
+							*@
+							@if (virtualizationLine.VirtualizationSpanIndexExclusiveEnd != 0)
+							{
+								// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
+						    	//          Presumably this is due to cache misses?
+								foreach (var virtualizationSpan in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList
+										 	.Skip(virtualizationLine.VirtualizationSpanIndexInclusiveStart)
+											 .Take(virtualizationLine.VirtualizationSpanIndexExclusiveEnd - virtualizationLine.VirtualizationSpanIndexInclusiveStart))
+								{
+									<span class="@virtualizationSpan.CssClass">
+							            @((MarkupString)virtualizationSpan.Text)
+							        </span>
+							    }
+							}
+							
+							@if (_bodyDriver.GlobalShowNewlines && virtualizationLine.LineIndex < _bodyDriver._renderBatch.Model.LineCount)
+							{
+								var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+								
+								var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
+								
+								if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
+								{
+								    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[virtualizationLine.LineIndex];
+								
+								    <span class="luth_te_newline">
+								        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
+								    </span>
+								}
+							}
+						</div>
+					}
 					
-	<textarea id="@_cursorDriver.GetCursorDisplayId(_cursorDriver._renderBatch)"
-				tabindex="@_cursorDriver.GetTabIndex(_cursorDriver._renderBatch)"
-				class="luth_te_text-editor-cursor @_cursorDriver.BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
-				style="@_cursorDriver.GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
-	</textarea>
-					
-	<div class="luth_te_text-editor-caret-row"
-			style="@_cursorDriver.GetCaretRowStyleCss()">
-	</div>
-</div>
-@* RowSection.razor Close *@
+					@{
+						_cursorDriver.GetRenderFragment(renderBatchValidated);
+									
+						var leftRelativeToParentInPixelsCssStyle = string.Empty;
+						var textEditorKeymap = (ITextEditorKeymap)_cursorDriver._renderBatch.Options!.Keymap!;
+									    
+						if (!_cursorDriver._renderBatch.Options!.UseMonospaceOptimizations)
+						{
+							var leftRelativeToParentInPixelsCssValue = _cursorDriver._leftRelativeToParentInPixels.ToCssValue();
+							leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
+						}
+					}
+									
+					<textarea id="@_cursorDriver.GetCursorDisplayId(_cursorDriver._renderBatch)"
+								tabindex="@_cursorDriver.GetTabIndex(_cursorDriver._renderBatch)"
+								class="luth_te_text-editor-cursor @_cursorDriver.BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
+								style="@_cursorDriver.GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
+					</textarea>
+									
+					<div class="luth_te_text-editor-caret-row"
+							style="@_cursorDriver.GetCaretRowStyleCss()">
+					</div>
+				</div>
+				@* RowSection.razor Close *@
 			
 			    <ScrollbarSection RenderBatch="_bodyDriver._renderBatch"/>
 			    <TooltipDisplay RenderBatch="_bodyDriver._renderBatch"/>
@@ -202,5 +282,7 @@
 	    						  Parameters="DependentComponentParameters"/>
 	    	</ShouldRenderBoundary>
 	    }
+	    
+	    // Console.WriteLine($"elapsedTime (ms) UI: {Stopwatch.GetElapsedTime(startTime).TotalMilliseconds}");
     }
 </div>
