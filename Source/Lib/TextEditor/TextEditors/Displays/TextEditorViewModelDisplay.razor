@@ -220,26 +220,24 @@
 					}
 					
 					@{
-						_cursorDriver.GetRenderFragment(renderBatchValidated);
-									
 						var leftRelativeToParentInPixelsCssStyle = string.Empty;
-						var textEditorKeymap = (ITextEditorKeymap)_cursorDriver._renderBatch.Options!.Keymap!;
+						var textEditorKeymap = (ITextEditorKeymap)renderBatchValidated.Options!.Keymap!;
 									    
-						if (!_cursorDriver._renderBatch.Options!.UseMonospaceOptimizations)
+						if (!renderBatchValidated.Options!.UseMonospaceOptimizations)
 						{
-							var leftRelativeToParentInPixelsCssValue = _cursorDriver._leftRelativeToParentInPixels.ToCssValue();
+							var leftRelativeToParentInPixelsCssValue = _leftRelativeToParentInPixels.ToCssValue();
 							leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
 						}
 					}
 									
-					<textarea id="@_cursorDriver.GetCursorDisplayId(_cursorDriver._renderBatch)"
-								tabindex="@_cursorDriver.GetTabIndex(_cursorDriver._renderBatch)"
-								class="luth_te_text-editor-cursor @_cursorDriver.BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
-								style="@_cursorDriver.GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
+					<textarea id="@GetCursorDisplayId(renderBatchValidated)"
+								tabindex="@GetTabIndex(renderBatchValidated)"
+								class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
+								style="@GetCursorStyleCss(renderBatchValidated) @leftRelativeToParentInPixelsCssStyle">
 					</textarea>
 									
 					<div class="luth_te_text-editor-caret-row"
-							style="@_cursorDriver.GetCaretRowStyleCss()">
+							style="@GetCaretRowStyleCss(renderBatchValidated)">
 					</div>
 				</div>
 				@* RowSection.razor Close *@
