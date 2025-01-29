@@ -11,22 +11,16 @@ public struct CSharpLexerOutput
     {
     	SyntaxTokenList = new();
     	MiscTextSpanList = new();
-    	TriviaTextSpanList = new();
     	DiagnosticBag = new();
     }
     
-    public List<ISyntaxToken> SyntaxTokenList { get; }
+    /// <summary>If not 'DEBUG' then these are set to null after the compilation unit is finished.</summary>
+    public List<ISyntaxToken>? SyntaxTokenList { get; }
     /// <summary>
     /// MiscTextSpanList contains the comments and the escape characters.
+    /// 
+    /// If not 'DEBUG' then these are set to null after the compilation unit is finished.
     /// </summary>
-    public List<TextEditorTextSpan> MiscTextSpanList { get; }
-    /// <summary>
-    /// TriviaTextSpanList is likely going to fully replace 'MiscTextSpanList'.
-    /// I have to try some things out first.
-    ///
-    /// The first thing that will be tracked in this list
-    /// are the 'interpolated string expressions'.
-    /// </summary>
-    public List<TextEditorTextSpan> TriviaTextSpanList { get; }
+    public List<TextEditorTextSpan>? MiscTextSpanList { get; }
     public DiagnosticBag DiagnosticBag { get; }
 }
