@@ -175,7 +175,17 @@
                 <div>v <em class="luth_em">0.9.7.22 </em> (WIP_DATE)</div>
                 <ul>
                 	<li>
-                		Draft PR
+                		Consolidate the
+                	
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/TextEditorViewModelDisplay.razor">
+                    		TextEditorViewModelDisplay.razor
+                    	</a>
+                	
+                		component.
+                		
+                		(child components were inlined, this can (in rare cases) sometimes have a non-negligible performance improvement benefit,
+                		 since less parameter passing overhead, and less Blazor lifecycles,
+                		 I want to see the impact when this is published on the github page).
                 	</li>
                 	<li>
                 		Interpolated strings, major progress has been made on parsing the interpolated expressions themselves.
