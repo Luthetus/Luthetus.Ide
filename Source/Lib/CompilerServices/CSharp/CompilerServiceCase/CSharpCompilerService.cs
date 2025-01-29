@@ -73,14 +73,14 @@ public sealed class CSharpCompilerService : CompilerService
 		
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, CSharpBinder);
 		
-		cSharpCompilationUnit.LexerOutput = CSharpLexer.Lex(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
+		var lexerOutput = CSharpLexer.Lex(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 
 		// Even if the parser throws an exception, be sure to
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
 			cSharpCompilationUnit.BinderSession = (CSharpBinderSession)CSharpBinder.StartBinderSession(resourceUri);
-			CSharpParser.Parse(cSharpCompilationUnit);
+			CSharpParser.Parse(cSharpCompilationUnit, ref lexerOutput);
 		}
 		finally
 		{
@@ -90,36 +90,8 @@ public sealed class CSharpCompilerService : CompilerService
 				{
 					var resource = (CSharpResource)_resourceMap[resourceUri];
 					
-					var tokenTextSpanList = new List<TextEditorTextSpan>();
-					tokenTextSpanList.AddRange(cSharpCompilationUnit.LexerOutput.SyntaxTokenList.Select(st => st.TextSpan));
-					tokenTextSpanList.AddRange(cSharpCompilationUnit.LexerOutput.MiscTextSpanList);
-					resource.TokenTextSpanList = tokenTextSpanList;
-					
-					var symbolList = cSharpCompilationUnit.Binder.Symbols
-			            .Where(s => s.TextSpan.ResourceUri == resource.ResourceUri)
-			            .ToArray();
-			        resource.SymbolList = symbolList;
-					
-					#if !DEBUG
-					// The in use compilation unit can never garbage collect the
-					// 'SyntaxTokenList' nor 'MiscTextSpanList'
-					// until it has been replaced by a more recent compilation unit.
-					//
-					// With '1736' compilation units sitting around, and most of them
-					// never creating a new compilation unit,
-					// this means '1736 * 2' List<T> are sitting around in the heap
-					// for no reason.
-					//
-					// Setting these to null cannot directly cause them to be garbage collected,
-					// but it is presumed that if the reference were to NOT be made null,
-					// that it would never be garbage collected as long as there
-					// is a reference to the given compilation unit.
-					//
-					// So, this permits the garbage collector to at the least,
-					// garbage collect these no longer needed lists if it chooses to do so on its own.
-					cSharpCompilationUnit.LexerOutput.SyntaxTokenList = null;
-					cSharpCompilationUnit.LexerOutput.MiscTextSpanList = null;
-					#endif
+			  	  resource.SyntaxTokenList = lexerOutput.SyntaxTokenList;
+			        resource.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 
 					if (cSharpCompilationUnit is not null)
 						resource.CompilationUnit = cSharpCompilationUnit;

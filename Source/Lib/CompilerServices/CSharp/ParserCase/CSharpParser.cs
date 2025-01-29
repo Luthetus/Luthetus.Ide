@@ -17,7 +17,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public static class CSharpParser
 {
-    public static void Parse(CSharpCompilationUnit compilationUnit)
+    public static void Parse(CSharpCompilationUnit compilationUnit, ref CSharpLexerOutput lexerOutput)
     {
     	var globalCodeBlockNode = new GlobalCodeBlockNode();
     	
@@ -39,7 +39,7 @@ public static class CSharpParser
         var diagnosticBag = new DiagnosticBag();
 
         var parserModel = new CSharpParserModel(
-            new TokenWalker(compilationUnit.LexerOutput.SyntaxTokenList, diagnosticBag),
+            new TokenWalker(lexerOutput.SyntaxTokenList, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
@@ -260,7 +260,7 @@ public static class CSharpParser
         var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(
             parserModel.DiagnosticBag.ToArray()
                 .Union(compilationUnit.Binder.DiagnosticsList)
-                .Union(compilationUnit.LexerOutput.DiagnosticBag.ToList())
+                .Union(lexerOutput.DiagnosticBag.ToList())
                 .ToArray());
                 
         globalCodeBlockNode.SetCodeBlockNode(

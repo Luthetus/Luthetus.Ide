@@ -17,24 +17,36 @@ public sealed class CSharpResource : ICompilerServiceResource
 	public ResourceUri ResourceUri { get; }
     public ICompilerService CompilerService { get; }
 	public CSharpCompilationUnit? CompilationUnit { get; set; }
-	public IReadOnlyList<TextEditorTextSpan>? TokenTextSpanList { get; set; }
-	public IReadOnlyList<ITextEditorSymbol>? SymbolList { get; set; }
+	public IReadOnlyList<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; internal set; }
 	
 	ICompilationUnit? ICompilerServiceResource.CompilationUnit => CompilationUnit;
     
     public IReadOnlyList<ISyntaxToken> GetTokens()
     {
-        return Array.Empty<ISyntaxToken>();
+        return SyntaxTokenList;
     }
     
     public IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
     {
-    	return TokenTextSpanList ?? Array.Empty<TextEditorTextSpan>();
+		var tokenTextSpanList = new List<TextEditorTextSpan>();
+
+        tokenTextSpanList.AddRange(SyntaxTokenList.Select(st => st.TextSpan));
+		tokenTextSpanList.AddRange(MiscTextSpanList);
+
+		return tokenTextSpanList;
     }
 
     public IReadOnlyList<ITextEditorSymbol> GetSymbols()
     {
-    	return SymbolList ?? Array.Empty<ITextEditorSymbol>();
+        var localCompilationUnit = CompilationUnit;
+
+        if (localCompilationUnit is null)
+            return Array.Empty<ITextEditorSymbol>();
+
+        return localCompilationUnit.Binder.Symbols
+            .Where(s => s.TextSpan.ResourceUri == ResourceUri)
+            .ToArray();
     }
 
     public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics()
