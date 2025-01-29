@@ -15,11 +15,13 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	///
 	/// (for example a BinaryExpressionNode might in reality be the true expression primary,
 	///  but the InterpolatedStringNode is made expression primary for a time to parse its interpolated expressions first).
+	///
+	/// If 'toBeExpressionPrimary' is null then the 'InterpolatedStringNode' itself is the to be expression primary.
 	/// </summary>
     public InterpolatedStringNode(
     	StringInterpolatedStartToken stringInterpolatedStartToken,
     	StringInterpolatedEndToken stringInterpolatedEndToken,
-    	IExpressionNode toBeExpressionPrimary,
+    	IExpressionNode? toBeExpressionPrimary,
     	TypeClauseNode resultTypeClauseNode)
     {
         StringInterpolatedStartToken = stringInterpolatedStartToken;
@@ -33,7 +35,11 @@ public sealed class InterpolatedStringNode : IExpressionNode
 
     public StringInterpolatedStartToken StringInterpolatedStartToken { get; }
     public StringInterpolatedEndToken StringInterpolatedEndToken { get; }
-    public IExpressionNode ToBeExpressionPrimary { get; }
+    
+    /// <summary>
+    /// If 'ToBeExpressionPrimary' is null then the 'InterpolatedStringNode' itself is the to be expression primary.
+    /// </summary>
+    public IExpressionNode? ToBeExpressionPrimary { get; }
     
     public TypeClauseNode ResultTypeClauseNode { get; }
 

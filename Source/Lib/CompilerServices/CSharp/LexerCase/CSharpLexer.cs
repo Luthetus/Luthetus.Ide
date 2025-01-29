@@ -27,8 +27,10 @@ public static class CSharpLexer
 		    ResourceUri.Empty,
 		    string.Empty,
 		    string.Empty);
+		    
+		var interpolatedExpressionUnmatchedBraceCount = -1;
     	
-    	Lex_Frame(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan);
+    	Lex_Frame(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, ref interpolatedExpressionUnmatchedBraceCount);
     	
     	var endOfFileTextSpan = new TextEditorTextSpan(
             stringWalker.PositionIndex,
@@ -48,7 +50,7 @@ public static class CSharpLexer
     	ref CSharpLexerOutput lexerOutput,
     	ref StringWalkerStruct stringWalker,
     	ref TextEditorTextSpan previousEscapeCharacterTextSpan,
-    	ref int interpolatedExpressionUnmatchedBraceCount = -1)
+    	ref int interpolatedExpressionUnmatchedBraceCount)
     {
     	while (!stringWalker.IsEof)
         {
@@ -610,7 +612,7 @@ public static class CSharpLexer
 								// closing double quotes if the expression were the last thing in the string.
 								//
 								// So, a backtrack is done.
-								LexInterpolatedExpression(ref lexerOutput, ref stringWalker, startInclusiveOpenDelimiter: interpolationTemporaryPositionIndex, countDollarSign: countDollarSign);
+								LexInterpolatedExpression(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, startInclusiveOpenDelimiter: interpolationTemporaryPositionIndex, countDollarSign: countDollarSign);
 								stringWalker.BacktrackCharacter();
 		    				}
 		    			}
@@ -627,7 +629,7 @@ public static class CSharpLexer
 						// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
 						// Thus, if this while loop were to consume, it would skip the
 						// closing double quotes if the expression were the last thing in the string.
-						LexInterpolatedExpression(ref lexerOutput, ref stringWalker, startInclusiveOpenDelimiter: stringWalker.PositionIndex, countDollarSign: countDollarSign);
+						LexInterpolatedExpression(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, startInclusiveOpenDelimiter: stringWalker.PositionIndex, countDollarSign: countDollarSign);
 						continue;
 					}
 				}
@@ -692,7 +694,7 @@ public static class CSharpLexer
 		var unmatchedBraceCounter = countDollarSign;
         
         // Recursive solution that lexes the interpolated expression only, (not including the '{' or '}').
-        var innerLexerOutput = Lex_Frame(
+        Lex_Frame(
         	ref lexerOutput,
         	ref stringWalker,
         	ref previousEscapeCharacterTextSpan,
