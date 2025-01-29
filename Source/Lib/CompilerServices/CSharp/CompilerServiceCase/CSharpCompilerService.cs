@@ -95,6 +95,11 @@ public sealed class CSharpCompilerService : CompilerService
 					tokenTextSpanList.AddRange(cSharpCompilationUnit.LexerOutput.MiscTextSpanList);
 					resource.TokenTextSpanList = tokenTextSpanList;
 					
+					var symbolList = cSharpCompilationUnit.Binder.Symbols
+			            .Where(s => s.TextSpan.ResourceUri == resource.ResourceUri)
+			            .ToArray();
+			        resource.SymbolList = symbolList;
+					
 					#if !DEBUG
 					// The in use compilation unit can never garbage collect the
 					// 'SyntaxTokenList' nor 'MiscTextSpanList'

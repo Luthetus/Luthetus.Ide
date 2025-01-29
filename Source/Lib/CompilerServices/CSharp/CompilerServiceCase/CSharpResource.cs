@@ -34,19 +34,7 @@ public sealed class CSharpResource : ICompilerServiceResource
 
     public IReadOnlyList<ITextEditorSymbol> GetSymbols()
     {
-    	if (SymbolList is null)
-    	{
-    		var localCompilationUnit = CompilationUnit;
-
-	        if (localCompilationUnit is null)
-	            return Array.Empty<ITextEditorSymbol>();
-	            
-	        SymbolList = localCompilationUnit.Binder.Symbols
-	            .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-	            .ToArray();
-    	}
-        
-        return SymbolList;
+    	return SymbolList ?? Array.Empty<ITextEditorSymbol>();
     }
 
     public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics()
