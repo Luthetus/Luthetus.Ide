@@ -501,6 +501,137 @@ public partial class ExpressionAsStatementTests
     }
     
     [Fact]
+    public void String_Interpolated_Aaa()
+    {
+    	var aaa = 2;
+    	var bbb = $"abc {aaa} 123";
+    
+    	var test = new Test(
+@"
+$""abc {aaa} 123"";
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		// var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
+		// Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+		/*
+		If the 'TextEditorTextSpan' had been lexed then I could do some sort of 'deferred parsing' once I reached the end of the
+		statement.
+		
+		Because the $"abc {aaa} 123" ought to be of type 'string' regardless of the interpolated expression '{aaa}',
+		and since this is just static analysis, then the code surrounding '$"abc {aaa} 123"'
+		only is considering the fact that the result is a string. The evaluation of the interpolated expressions is irrelevant to them.
+		
+		I wonder if '{' is permitted to appear anywhere within an interpolated expression.
+		Either due to constructor invocation or lambda expression with a statement code block.
+		
+		lambda expression with a statement code block as a declaration alone probably isn't valid
+		since it isn't 'expression-y' enough.
+		
+		But if for some reason someone had a constructor invocation that had an argument which
+		was an Action or Func then that argument might contain a lambda expression with a statement code block.
+		
+		I don't think this will be an issue though.
+		
+		I am going to add lambda expression with a statement code block parsing in the future,
+		but when I do I expect to have it be 'deferred parsing'.
+		
+		Once again, the static analysis only cares about the existence of the lambda expression
+		(edge case perhaps being inferred type clause nodes),
+		if the deferred parsing for an interpolated string contained a lambda expression with a statement code block,
+		then the interpolated string could enqueue the lambda expression for deferred parsing,
+		on the same code block.
+		
+		This would eventually resolve no matter how many times an interpolated string contained
+		a lambda expression with a statement code block or vice versa.
+		
+		There might be a way to alternate between parsing the string literal parts
+		and the interpolated expressions but I am going to try 'deferred lexing'.
+		
+		I think long term there is no 'deferred' anything. It seems less efficient
+		than just doing it in one pass but I'm just not sure how to do so at the moment.
+		
+		This way I can Lex the interpolated string as if it were a 'string literal'
+		and just track the text spans of the interpolated expressions separately.
+		
+		Then when I return to the main Lex() loop, I can set the state such that it starts lexing those
+		text spans. Then returns back to where it left off when done.
+		
+		I wonder if I want to put the lex'd text span tokens into the main List<ISyntaxToken>
+		or if I want to have Trivia be a List<ISyntaxToken> instead of TextEditorTextSpan.
+		
+		Because, with the ISyntaxToken I'd still be able to do the weird "surveying" logic
+		since each ISyntaxToken has a TextEditorTextSpan property.
+		
+		But, for something like GenericParameters, I don't store the tokens between the '<...>'
+		in a different place.
+		
+		I just have a delimiter for the start and end of the GenericParameters instead.
+		
+		I suppose if I had a delimiter for the state and end of the interpolated string
+		that I'd be able to keep its interpolated expression tokens inside the same List<ISyntaxToken>
+		as everything else.
+		
+		I'm still going to try and stick with the 'Trivia' list for this though just using ISyntaxToken.
+		
+		Side note: avoid list allocation by yield returning?
+		
+		-----------------------------------------------------
+		
+		If the tokens for the interpolated expressions are not in the main List<ISyntaxToken>
+		that the parser iterates over how do I expect to have the parser parse them?
+		
+		-----------------------------------------------------
+		
+		I don't have to put the interpolated expressions in the Trivia list.
+		And I don't need to have a token starting delimter and a separate one for ending delimiter.
+		
+		Because the StringInterpolatedToken itself perhaps could contain the start and end token indices
+		for its various interpolated expressions?
+		
+		This would end up being a List of sorts because there can be an arbitrary amount of
+		interpolated expressions in any given interpolated string.
+		
+		Having every StringInterpolatedToken instantiate a List is a bad idea
+		for performance / memory / garbage collection overhead,
+		so I could put this extra information in the 'Trivia' list and the tokens in the
+		main ISyntaxToken list that the parser iterates?
+		
+		I think this conflicts with my desire to convert 'text' to 'syntax tree' then back to 'text'.
+		
+		I've considered breaking the StringInterpolatedToken into string concatenations
+		but I think this again would conflict with the 'text' to 'syntax tree' then back to 'text' goal.
+		
+		Because I'd lose the fact that it was string interpolation previously.
+		
+		
+		*/
+    }
+    
+    [Fact]
+    public void String_Interpolated_More()
+    {
+    	var aaa = 2;
+    	var bbb = $"abc {aaa} 123";
+    
+    	var test = new Test(
+@"
+var aaa = 2;
+var bbb = 7;
+var ccc = $""abc {aaa} 123 {bbb}"";
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		// var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
+		// Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+    }
+    
+    [Fact]
     public void String_Verbatim()
     {
     	var test = new Test("@\"asd\"");

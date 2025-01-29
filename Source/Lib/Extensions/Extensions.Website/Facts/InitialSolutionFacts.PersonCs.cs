@@ -20,6 +20,7 @@ public class Person : IPerson
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
 	
+	// Most interpolated expressions work now, try hovering these interpolated expressions.
 	public string DisplayName => $"{FirstName} {LastName}";
 }
 
