@@ -157,6 +157,7 @@ public static class ParseOthers
 			case SyntaxKind.StatementDelimiterToken:
 			case SyntaxKind.ColonToken:
 			case SyntaxKind.CloseSquareBracketToken:
+			case SyntaxKind.StringInterpolatedEndToken:
     			return true;
     		default:
     			return false;

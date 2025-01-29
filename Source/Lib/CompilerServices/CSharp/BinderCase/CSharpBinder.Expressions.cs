@@ -29,9 +29,9 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*#if DEBUG
+		#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}");
-		#endif*/
+		#endif
 		
 		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
 			UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
@@ -93,9 +93,9 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeExpression(
 		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*#if DEBUG
+		#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {expressionSecondary.SyntaxKind}");
-		#endif*/
+		#endif
 	
 		switch (expressionPrimary.SyntaxKind)
 		{
@@ -1520,6 +1520,11 @@ public partial class CSharpBinder
 	public IExpressionNode InterpolatedStringMergeToken(
 		InterpolatedStringNode interpolatedStringNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		Console.WriteLine("aaa InterpolatedStringMergeToken");
+	
+		if (token.SyntaxKind == SyntaxKind.StringInterpolatedEndToken)
+			return interpolatedStringNode;
+
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), interpolatedStringNode, token);
 	}
 	
@@ -1528,6 +1533,8 @@ public partial class CSharpBinder
 	{
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedEndToken)
 		{
+			interpolatedStringNode.SetStringInterpolatedEndToken((StringInterpolatedEndToken)parserModel.TokenWalker.Current);
+
 			// Interpolated strings have their interpolated expressions inserted into the syntax token list
 			// immediately following the StringInterpolatedStartToken itself.
 			//

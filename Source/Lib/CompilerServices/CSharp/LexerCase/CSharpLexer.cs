@@ -326,7 +326,7 @@ public static class CSharpLexer
                 	if (interpolatedExpressionUnmatchedBraceCount != -1)
                 	{
 						if (--interpolatedExpressionUnmatchedBraceCount <= 0)
-							break;
+							goto forceExit;
 					}
                 
                     var entryPositionIndex = stringWalker.PositionIndex;
@@ -485,8 +485,11 @@ public static class CSharpLexer
                     _ = stringWalker.ReadCharacter();
                     break;
             }
-        }
-    }
+		}
+
+        forceExit:
+        return;
+	}
     
     /// <summary>
     /// The invoker of this method is expected to count the amount of '$' (dollar sign characters).
@@ -653,7 +656,14 @@ public static class CSharpLexer
 				syntaxTokenListIndex,
 				new StringInterpolatedStartToken(textSpan));
 				
-			lexerOutput.SyntaxTokenList.Add(new StringInterpolatedEndToken(textSpan));
+			lexerOutput.SyntaxTokenList.Add(new StringInterpolatedEndToken(
+				new TextEditorTextSpan(
+		            stringWalker.PositionIndex,
+				    stringWalker.PositionIndex,
+				    (byte)GenericDecorationKind.None,
+				    stringWalker.ResourceUri,
+            		stringWalker.SourceText,
+				    string.Empty)));
 		}
 		else
 		{
@@ -680,17 +690,6 @@ public static class CSharpLexer
     		_ = stringWalker.ReadCharacter();
     	}
 		
-		// In the event that the C# Parser throws an exception,
-		// it is useful for the Lexer to decorate the interpolated expressions
-		// with the text color '(byte)GenericDecorationKind.None'
-		// so they are distinct from the string itself.
-        lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
-            startInclusiveOpenDelimiter,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText));
-        
 		var unmatchedBraceCounter = countDollarSign;
         
         // Recursive solution that lexes the interpolated expression only, (not including the '{' or '}').
@@ -701,7 +700,18 @@ public static class CSharpLexer
         	ref unmatchedBraceCounter);
         	
         _ = stringWalker.ReadCharacter(); // This consumes the final '}'.
-    }
+
+		// In the event that the C# Parser throws an exception,
+		// it is useful for the Lexer to decorate the interpolated expressions
+		// with the text color '(byte)GenericDecorationKind.None'
+		// so they are distinct from the string itself.
+		lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
+			startInclusiveOpenDelimiter,
+			stringWalker.PositionIndex,
+			(byte)GenericDecorationKind.None,
+			stringWalker.ResourceUri,
+			stringWalker.SourceText));
+	}
     
     private static void EscapeCharacterListAdd(
     	ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, TextEditorTextSpan textSpan)

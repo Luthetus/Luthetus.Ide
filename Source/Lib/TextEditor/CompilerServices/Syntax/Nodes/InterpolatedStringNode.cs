@@ -34,7 +34,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	private bool _childListIsDirty = true;
 
     public StringInterpolatedStartToken StringInterpolatedStartToken { get; }
-    public StringInterpolatedEndToken StringInterpolatedEndToken { get; }
+    public StringInterpolatedEndToken StringInterpolatedEndToken { get; private set; }
     
     /// <summary>
     /// If 'ToBeExpressionPrimary' is null then the 'InterpolatedStringNode' itself is the to be expression primary.
@@ -45,20 +45,34 @@ public sealed class InterpolatedStringNode : IExpressionNode
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.InterpolatedStringNode;
-    
-    public ISyntax[] GetChildList()
+
+    public InterpolatedStringNode SetStringInterpolatedEndToken(StringInterpolatedEndToken stringInterpolatedEndToken)
+    {
+        StringInterpolatedEndToken = stringInterpolatedEndToken;
+        _childListIsDirty = true;
+		return this;
+	}
+
+	public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	var childCount = 4; // StringInterpolatedStartToken, StringInterpolatedEndToken, ToBeExpressionPrimary, ResultTypeClauseNode,
+    	var childCount = 3; // StringInterpolatedStartToken, StringInterpolatedEndToken, ResultTypeClauseNode,
+    	
+    	if (ToBeExpressionPrimary is not null)
+    		childCount++;
             
         var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = StringInterpolatedStartToken;
 		childList[i++] = StringInterpolatedEndToken;
-		childList[i++] = ToBeExpressionPrimary;
+		
+		if (ToBeExpressionPrimary is not null)
+			childList[i++] = ToBeExpressionPrimary;
+		
+		
 		childList[i++] = ResultTypeClauseNode;
             
         _childList = childList;
