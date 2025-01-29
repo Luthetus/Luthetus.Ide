@@ -28,6 +28,13 @@
 
 @* TooltipDisplay.razor *@
 @using Luthetus.Common.RazorLib.Dimensions.Models;
+
+@* PresentationAndSelectionStaticRenderFragments.razor *@
+@using System.Collections.Immutable
+@using Luthetus.TextEditor.RazorLib.Decorations.Models
+@using Luthetus.TextEditor.RazorLib.Lexers.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.Cursors.Models
 				
 @{
     var renderBatchUnsafe = _currentRenderBatch;
@@ -209,7 +216,146 @@
 					</div>
 	                @* Virtualization Close *@
 								                           
-					@_presentationAndSelectionDriver.GetRenderFragment(renderBatchValidated)
+					@*  PresentationAndSelection Open *@
+					<div class="luth_te_first-render-presentation-layer-group">
+	
+					    @{
+					        var FIRST_presentationLayerOrderedByRankAscending =
+					        	GetTextEditorPresentationModels(renderBatchValidated, renderBatchValidated.ViewModel.FirstPresentationLayerKeysList)
+					        	.OrderBy(x => x.Rank).ToList();
+					    }
+					
+					    @foreach (var presentationLayer in FIRST_presentationLayerOrderedByRankAscending)
+					    {
+					        var completedCalculation = presentationLayer.CompletedCalculation;
+					
+							var textSpansList = completedCalculation?.TextSpanList
+					            ?? Array.Empty<TextEditorTextSpan>();
+					
+					        IReadOnlyList<TextEditorTextModification> textModificationList = ((IReadOnlyList<TextEditorTextModification>?)completedCalculation?.TextModificationsSinceRequestList)
+					            ?? Array.Empty<TextEditorTextModification>();
+					
+					        @if (completedCalculation is not null)
+					        {
+					            textSpansList = PresentationVirtualizeAndShiftTextSpans(renderBatchValidated, textModificationList, completedCalculation.TextSpanList);
+					
+					            <div class="@presentationLayer.CssClassString">
+					                @foreach (var textSpan in textSpansList)
+					                {
+					                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
+					
+					                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(renderBatchValidated, renderBatchValidated.Model, boundsInPositionIndexUnits);
+					
+					                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
+					                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
+					                         i++)
+					                    {
+					                        var rowIndex = i;
+					
+					                        <div class="@PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
+					                             style="@PresentationGetCssStyleString(
+					                             	   renderBatchValidated,
+					                                    boundsInPositionIndexUnits.StartingIndexInclusive,
+					                                    boundsInPositionIndexUnits.EndingIndexExclusive,
+					                                    rowIndex)">
+					                        </div>
+					                    }
+					                }
+					            </div>
+					        }
+					    }
+					</div>
+					
+					<div class="luth_te_text-selection-group">
+					    @if (TextEditorSelectionHelper.HasSelectedText(renderBatchValidated.ViewModel.PrimaryCursor.Selection) &&
+					         renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Length > 0)
+					    {
+					        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
+					            renderBatchValidated.ViewModel.PrimaryCursor.Selection);
+					
+					        var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(renderBatchValidated, selectionBoundsInPositionIndexUnits);
+					
+					        var virtualLowerBoundInclusiveRowIndex = renderBatchValidated.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
+					        var virtualUpperBoundExclusiveRowIndex = 1 + renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+					
+					        int useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
+					            ? virtualLowerBoundInclusiveRowIndex
+					            : selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+					
+					        int useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.upperRowIndexExclusive
+					            ? virtualUpperBoundExclusiveRowIndex
+					            : selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+					
+					        for (var badIndex = useLowerBoundInclusiveRowIndex; badIndex < useUpperBoundExclusiveRowIndex; badIndex++)
+					        {
+					            var rowIndex = badIndex;
+					            var textSelectionStyleCss = string.Empty;
+					
+					            if (renderBatchValidated.Options.UseMonospaceOptimizations)
+					            {
+					                textSelectionStyleCss = GetTextSelectionStyleCss(
+					                	renderBatchValidated,
+					                    selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
+					                    selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
+					                    rowIndex);
+					            }
+								
+								<div class="luth_te_text-selection"
+								     style="@textSelectionStyleCss">
+								</div>
+					        }
+					    }
+					</div>
+					                        
+					<div class="luth_te_last-render-presentation-layer-group">
+					
+					    @{
+					        var LAST_presentationLayerOrderedByRankAscending = 
+					        	GetTextEditorPresentationModels(renderBatchValidated, renderBatchValidated.ViewModel.LastPresentationLayerKeysList)
+					        	.OrderBy(x => x.Rank).ToList();
+					    }
+					
+					    @foreach (var presentationLayer in LAST_presentationLayerOrderedByRankAscending)
+					    {
+					        var completedCalculation = presentationLayer.CompletedCalculation;
+					        
+					        var textSpansList = completedCalculation?.TextSpanList
+					            ?? Array.Empty<TextEditorTextSpan>();
+					
+					        IReadOnlyList<TextEditorTextModification> textModificationList = ((IReadOnlyList<TextEditorTextModification>?)completedCalculation?.TextModificationsSinceRequestList)
+					            ?? Array.Empty<TextEditorTextModification>();
+					
+					        @if (completedCalculation is not null)
+					        {
+					            textSpansList = PresentationVirtualizeAndShiftTextSpans(renderBatchValidated, textModificationList, completedCalculation.TextSpanList);
+					
+					            <div class="@presentationLayer.CssClassString">
+					                @foreach (var textSpan in textSpansList)
+					                {
+					                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
+					
+					                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(renderBatchValidated, renderBatchValidated.Model, boundsInPositionIndexUnits);
+					
+					                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
+					                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
+					                         i++)
+					                    {
+					                        var rowIndex = i;
+					
+					                        <div class="@PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
+					                             style="@PresentationGetCssStyleString(
+					                                    renderBatchValidated,
+					                                    boundsInPositionIndexUnits.StartingIndexInclusive,
+					                                    boundsInPositionIndexUnits.EndingIndexExclusive,
+					                                    rowIndex)">
+					                        </div>
+					                    }
+					                }
+					            </div>
+					        }
+					    }
+					</div>
+					@*  PresentationAndSelection Close *@
 					
 					@foreach (var virtualizationLine in renderBatchValidated.ViewModel.VirtualizationResult.EntryList)
 					{
