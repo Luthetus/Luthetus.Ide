@@ -107,11 +107,11 @@ public class RazorSyntaxTree
         	_codebehindResourceUri,
 			new CSharpBinder());
 			
-		compilationUnit.LexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
+		var lexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
 		
 		compilationUnit.BinderSession = (CSharpBinderSession)compilationUnit.Binder.StartBinderSession(_codebehindResourceUri);
 		
-		CSharpParser.Parse(compilationUnit);
+		CSharpParser.Parse(compilationUnit, ref lexerOutput);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,
