@@ -578,6 +578,36 @@ $""abc {aaa} 123"";
 		I'm still going to try and stick with the 'Trivia' list for this though just using ISyntaxToken.
 		
 		Side note: avoid list allocation by yield returning?
+		
+		-----------------------------------------------------
+		
+		If the tokens for the interpolated expressions are not in the main List<ISyntaxToken>
+		that the parser iterates over how do I expect to have the parser parse them?
+		
+		-----------------------------------------------------
+		
+		I don't have to put the interpolated expressions in the Trivia list.
+		And I don't need to have a token starting delimter and a separate one for ending delimiter.
+		
+		Because the StringInterpolatedToken itself perhaps could contain the start and end token indices
+		for its various interpolated expressions?
+		
+		This would end up being a List of sorts because there can be an arbitrary amount of
+		interpolated expressions in any given interpolated string.
+		
+		Having every StringInterpolatedToken instantiate a List is a bad idea
+		for performance / memory / garbage collection overhead,
+		so I could put this extra information in the 'Trivia' list and the tokens in the
+		main ISyntaxToken list that the parser iterates?
+		
+		I think this conflicts with my desire to convert 'text' to 'syntax tree' then back to 'text'.
+		
+		I've considered breaking the StringInterpolatedToken into string concatenations
+		but I think this again would conflict with the 'text' to 'syntax tree' then back to 'text' goal.
+		
+		Because I'd lose the fact that it was string interpolation previously.
+		
+		
 		*/
     }
     

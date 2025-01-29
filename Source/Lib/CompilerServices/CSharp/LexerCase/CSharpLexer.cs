@@ -472,6 +472,9 @@ public static class CSharpLexer
     /// </summary>
     private static void LexString(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, int countDollarSign, bool useVerbatim)
     {
+    	// Interpolated expressions will be done recursively and added to this 'SyntaxTokenList'
+    	var syntaxTokenListIndex = lexerOutput.SyntaxTokenList.Count;
+    
     	var entryPositionIndex = stringWalker.PositionIndex;
 
 		var useInterpolation = countDollarSign > 0;
@@ -620,9 +623,15 @@ public static class CSharpLexer
             stringWalker.SourceText);
 
 		if (useInterpolation)
-			lexerOutput.SyntaxTokenList.Add(new StringInterpolatedToken(textSpan, countDollarSign));
+		{
+			lexerOutput.SyntaxTokenList.Insert(
+				syntaxTokenListIndex,
+				new StringInterpolatedToken(textSpan));
+		}
 		else
+		{
         	lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(textSpan));
+        }
     }
     
     /// <summary>
@@ -637,15 +646,13 @@ public static class CSharpLexer
     private static void LexInterpolatedExpression(
     	ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, int startInclusiveOpenDelimiter, int countDollarSign)
     {
-    	if (stringWalker.CurrentCharacter == '{')
-		{
-			// The normal interpolation will invoke this method with '{' as the current character.
-			//
-			// But, raw interpolation will invoke this method 1 index further than the final '{' that
-			// deliminates the start of the interpolated expression.
-        	_ = stringWalker.ReadCharacter();
-        }
-        
+    	var readOpenDelimiterCount = stringWalker.PositionIndex - startInclusiveOpenDelimiter;
+    	
+    	for (; readOpenDelimiterCount < countDollarSign; readOpenDelimiterCount++)
+    	{
+    		_ = stringWalker.ReadCharacter();
+    	}
+    
         // TODO: Don't commit this code without ensuring '{{...}}' colors the '{{' and '}}' as no decoration.
         //
         // TODO: Can interpolated expressions contain '{' or '}'?...
@@ -654,7 +661,7 @@ public static class CSharpLexer
         // Because it is desired that the interpolated expression's delimiters be syntax highlighted as a 'none decoration'.
         var entryPositionIndex = stringWalker.PositionIndex;
         
-    	var unmatchedBraceCounter = countDollarSign;
+        var unmatchedBraceCounter = countDollarSign;
 		
 		while (!stringWalker.IsEof)
 		{
@@ -675,12 +682,22 @@ public static class CSharpLexer
 		
 		// TODO: Again, watch out for the ending delimiter too: Don't commit this code without ensuring '{{...}}' colors the '{{' and '}}' as no decoration.
 		var textSpan = new TextEditorTextSpan(
-            startInclusiveOpenDelimiter,
-            stringWalker.PositionIndex,
+            entryPositionIndex,
+            // Do not include the '{' or '}', consider IsEof
+            stringWalker.PositionIndex - (countDollarSign - unmatchedBraceCounter),
             (byte)GenericDecorationKind.None,
             stringWalker.ResourceUri,
             stringWalker.SourceText);
         lexerOutput.TriviaTextSpanList.Add(textSpan);
+        
+        // Recursive solution?
+        var innerLexerOutput = Lex(ResourceUri.Empty, textSpan.GetText());
+        
+        innerLexerOutput.SyntaxTokenList.RemoveAt(innerLexerOutput.SyntaxTokenList.Count - 1);
+        lexerOutput.SyntaxTokenList.AddRange(innerLexerOutput.SyntaxTokenList);
+	    lexerOutput.MiscTextSpanList.AddRange(innerLexerOutput.MiscTextSpanList);
+	    // lexerOutput.TriviaTextSpanList.AddRange(innerLexerOutput.TriviaTextSpanList);
+	    // lexerOutput.MiscTextSpanList.AddRange(innerLexerOutput.DiagnosticBag);
     }
     
     private static void EscapeCharacterListAdd(

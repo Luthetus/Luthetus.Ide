@@ -2596,7 +2596,44 @@ public partial class CSharpBinder
 			
 		Console.WriteLine("aaa Hack_LiteralExpressionNode");
 		
-		var trivia = parserModel.TokenWalker.GetCurrentTrivia(
+		var stringInterpolatedToken = (StringInterpolatedToken)literalExpressionNode.LiteralSyntaxToken;
+		
+		parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedEndToken, binaryExpressionNode));
+		
+		
+		// So long as I handle multiple interpolated expressions within a single interpolated string
+		// I can use the awkward 'EndOfFile' marker as a delimiter for a child expression
+		// then return to the interpolated string in the end?
+		
+		// If I'm adding to the syntax tokens I can just add a non 'EndOfFile' token in place of it
+		// so that there is a more specific SyntaxKind to indicate this.
+		
+		for (int i = stringInterpolatedToken.StartInclusiveInterpolatedExpressionsTokenIndex;
+			 i < stringInterpolatedToken.EndExclusiveInterpolatedExpressionsTokenIndex;
+			 i++)
+		{
+			var innerToken = parserModel.TokenWalker.Consume();
+			
+			if (innerToken.SyntaxKind == SyntaxKind.IdentifierToken)
+			{
+				// IsConvertibleToTypeClauseNode contains IsConvertibleToIdentifierToken
+				if (UtilityApi.IsConvertibleToTypeClauseNode(innerToken.SyntaxKind))
+				{
+					var ambiguousIdentifierExpressionNode = new AmbiguousIdentifierExpressionNode(
+						innerToken,
+				        genericParametersListingNode: null,
+				        CSharpFacts.Types.Void.ToTypeClause());
+				    
+				    ForceDecisionAmbiguousIdentifier(
+				    	EmptyExpressionNode.Empty,
+				    	ambiguousIdentifierExpressionNode,
+				    	compilationUnit,
+				    	ref parserModel);
+				}
+			}
+		}
+		
+		/*var trivia = parserModel.TokenWalker.GetCurrentTrivia(
 			literalExpressionNode.LiteralSyntaxToken.TextSpan.StartingIndexInclusive,
 			literalExpressionNode.LiteralSyntaxToken.TextSpan.EndingIndexExclusive);
 			
@@ -2607,6 +2644,6 @@ public partial class CSharpBinder
 		else
 		{
 			Console.WriteLine($"aaa trivia.GetText(): {trivia.Value.GetText()}");
-		}
+		}*/
 	}
 }
