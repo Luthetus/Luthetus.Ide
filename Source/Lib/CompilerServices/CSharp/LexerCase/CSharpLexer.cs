@@ -12,7 +12,22 @@ namespace Luthetus.CompilerServices.CSharp.LexerCase;
 
 public static class CSharpLexer
 {
+	/// <summary>
+	/// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
+	/// </summary>
     public static CSharpLexerOutput Lex(ResourceUri resourceUri, string sourceText)
+    {
+    	var stringWalker = new StringWalkerStruct(resourceUri, sourceText);
+    	var lexerOutput = new CSharpLexerOutput();
+    	
+    	Lex_Frame(ref lexerOutput, ref stringWalker);
+    }
+    
+    /// <summary>
+    /// Isolate the while loop within its own function in order to permit recursion without
+    /// allocating new state.
+    /// </summary>
+    public static CSharpLexerOutput Lex_Frame(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
     {
     	var stringWalker = new StringWalkerStruct(resourceUri, sourceText);
     	
@@ -24,7 +39,7 @@ public static class CSharpLexer
 		    string.Empty,
 		    string.Empty);
 		    
-    	var lexerOutput = new CSharpLexerOutput();
+    	var lexerOutput = ;
     	
         while (!stringWalker.IsEof)
         {
@@ -653,12 +668,6 @@ public static class CSharpLexer
     		_ = stringWalker.ReadCharacter();
     	}
     
-        // TODO: Don't commit this code without ensuring '{{...}}' colors the '{{' and '}}' as no decoration.
-        //
-        // TODO: Can interpolated expressions contain '{' or '}'?...
-        // ...bringing this up because it would mean the start position index would need to be passed to this method,
-        // because it would be very confusing to try and 'Backtrack' while at '{' because what if '{' is part of the expression itself.
-        // Because it is desired that the interpolated expression's delimiters be syntax highlighted as a 'none decoration'.
         var entryPositionIndex = stringWalker.PositionIndex;
         
         var unmatchedBraceCounter = countDollarSign;
@@ -680,20 +689,34 @@ public static class CSharpLexer
 		
 		_ = stringWalker.ReadCharacter(); // This consumes the final '}'.
 		
-		// TODO: Again, watch out for the ending delimiter too: Don't commit this code without ensuring '{{...}}' colors the '{{' and '}}' as no decoration.
-		var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            // Do not include the '{' or '}', consider IsEof
-            stringWalker.PositionIndex - (countDollarSign - unmatchedBraceCounter),
+		// In the event that the C# Parser throws an exception,
+		// it is useful for the Lexer to decorate the interpolated expressions
+		// with the text color '(byte)GenericDecorationKind.None'
+		// so they are distinct from the string itself.
+        lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
+            startInclusiveOpenDelimiter,
+            stringWalker.PositionIndex,
             (byte)GenericDecorationKind.None,
             stringWalker.ResourceUri,
-            stringWalker.SourceText);
-        lexerOutput.TriviaTextSpanList.Add(textSpan);
+            stringWalker.SourceText));
         
-        // Recursive solution?
-        var innerLexerOutput = Lex(ResourceUri.Empty, textSpan.GetText());
+        // Recursive solution that lexes the interpolated expression only, (not including the '{' or '}').
+        //
+        // TODO: Do not do this with recursion, it results in many object allocations due to the lists used during lexing.
+        var innerLexerOutput = Lex(
+        	ResourceUri.Empty,
+        	new TextEditorTextSpan(
+		            entryPositionIndex,
+		            stringWalker.PositionIndex - (countDollarSign - unmatchedBraceCounter), // Do not include the '{' or '}', consider IsEof
+		            (byte)GenericDecorationKind.None,
+		            stringWalker.ResourceUri,
+		            stringWalker.SourceText)
+	            .GetText());
         
+        // Remove the inner lex's 'EndOfFileToken'
         innerLexerOutput.SyntaxTokenList.RemoveAt(innerLexerOutput.SyntaxTokenList.Count - 1);
+        
+        // Add the inner lex's results to this lex result.
         lexerOutput.SyntaxTokenList.AddRange(innerLexerOutput.SyntaxTokenList);
 	    lexerOutput.MiscTextSpanList.AddRange(innerLexerOutput.MiscTextSpanList);
 	    // lexerOutput.TriviaTextSpanList.AddRange(innerLexerOutput.TriviaTextSpanList);

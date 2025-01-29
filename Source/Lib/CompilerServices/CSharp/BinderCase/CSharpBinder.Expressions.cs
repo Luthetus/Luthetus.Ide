@@ -2598,7 +2598,7 @@ public partial class CSharpBinder
 		
 		var stringInterpolatedToken = (StringInterpolatedToken)literalExpressionNode.LiteralSyntaxToken;
 		
-		parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedEndToken, binaryExpressionNode));
+		/*parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedEndToken, binaryExpressionNode));
 		
 		
 		// So long as I handle multiple interpolated expressions within a single interpolated string
@@ -2631,7 +2631,7 @@ public partial class CSharpBinder
 				    	ref parserModel);
 				}
 			}
-		}
+		}*/
 		
 		/*var trivia = parserModel.TokenWalker.GetCurrentTrivia(
 			literalExpressionNode.LiteralSyntaxToken.TextSpan.StartingIndexInclusive,
