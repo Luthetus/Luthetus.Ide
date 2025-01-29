@@ -81,10 +81,7 @@ public class ParseFunctions
 
 			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 	    	{
-	    		if (argument.IsOptional)
-	    			compilationUnit.Binder.BindFunctionOptionalArgument(argument, compilationUnit);
-	    		else
-	    			compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 	    	}
         }
         

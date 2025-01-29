@@ -45,6 +45,8 @@ public partial class CSharpBinder
 				return EmptyMergeToken((EmptyExpressionNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			case SyntaxKind.LiteralExpressionNode:
 				return LiteralMergeToken((LiteralExpressionNode)expressionPrimary, token, compilationUnit, ref parserModel);
+			case SyntaxKind.InterpolatedStringNode:
+				return InterpolatedStringMergeToken((InterpolatedStringNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			case SyntaxKind.BinaryExpressionNode:
 				return BinaryMergeToken((BinaryExpressionNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			case SyntaxKind.ParenthesizedExpressionNode:
@@ -99,6 +101,8 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.BinaryExpressionNode:
 				return BinaryMergeExpression((BinaryExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
+			case SyntaxKind.InterpolatedStringNode:
+				return InterpolatedStringMergeExpression((InterpolatedStringNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			//case SyntaxKind.CommaSeparatedExpressionNode:
@@ -693,6 +697,7 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.NumericLiteralToken:
 			case SyntaxKind.StringLiteralToken:
+			case SyntaxKind.StringInterpolatedStartToken:
 			case SyntaxKind.CharLiteralToken:
 			case SyntaxKind.FalseTokenKeyword:
 			case SyntaxKind.TrueTokenKeyword:
@@ -700,7 +705,7 @@ public partial class CSharpBinder
 				
 				if (token.SyntaxKind == SyntaxKind.NumericLiteralToken)
 					tokenTypeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
-				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken)
+				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken || token.SyntaxKind == SyntaxKind.StringInterpolatedStartToken)
 					tokenTypeClauseNode = CSharpFacts.Types.String.ToTypeClause();
 				else if (token.SyntaxKind == SyntaxKind.CharLiteralToken)
 					tokenTypeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
@@ -714,9 +719,30 @@ public partial class CSharpBinder
 				var leftExpressionTypeClauseNodeText = binaryExpressionNode.LeftExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText();
 				if (leftExpressionTypeClauseNodeText != tokenTypeClauseNodeText)
 					goto default;
-			
-				var rightExpressionNode = new LiteralExpressionNode(token, tokenTypeClauseNode);
+				
+				IExpressionNode rightExpressionNode;
+					
+				if (token.SyntaxKind == SyntaxKind.StringInterpolatedStartToken)
+				{
+					rightExpressionNode = new InterpolatedStringNode(
+						(StringInterpolatedStartToken)token,
+				    	stringInterpolatedEndToken: default,
+				    	toBeExpressionPrimary: binaryExpressionNode,
+				    	resultTypeClauseNode: CSharpFacts.Types.String.ToTypeClause());
+				}
+				else
+				{
+					rightExpressionNode = new LiteralExpressionNode(token, tokenTypeClauseNode);
+				}
+				
 				binaryExpressionNode.SetRightExpressionNode(rightExpressionNode);
+				
+				if (token.SyntaxKind == SyntaxKind.StringInterpolatedStartToken)
+				{
+					// Awkwardly double checking the 'token.SyntaxKind' here to avoid duplicating 'binaryExpressionNode.SetRightExpressionNode(rightExpressionNode);'
+					return ParseInterpolatedStringNode((InterpolatedStringNode)rightExpressionNode, compilationUnit, ref parserModel);
+				}
+				
 				return binaryExpressionNode;
 			case SyntaxKind.PlusToken:
 			case SyntaxKind.MinusToken:
@@ -1072,6 +1098,7 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.NumericLiteralToken:
 			case SyntaxKind.StringLiteralToken:
+			case SyntaxKind.StringInterpolatedStartToken:
 			case SyntaxKind.CharLiteralToken:
 			case SyntaxKind.FalseTokenKeyword:
 			case SyntaxKind.TrueTokenKeyword:
@@ -1079,7 +1106,7 @@ public partial class CSharpBinder
 				
 				if (token.SyntaxKind == SyntaxKind.NumericLiteralToken)
 					tokenTypeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
-				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken)
+				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken || token.SyntaxKind == SyntaxKind.StringInterpolatedStartToken)
 					tokenTypeClauseNode = CSharpFacts.Types.String.ToTypeClause();
 				else if (token.SyntaxKind == SyntaxKind.CharLiteralToken)
 					tokenTypeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
@@ -1087,8 +1114,19 @@ public partial class CSharpBinder
 					tokenTypeClauseNode = CSharpFacts.Types.Bool.ToTypeClause();
 				else
 					goto default;
+				
+				if (token.SyntaxKind == SyntaxKind.StringInterpolatedStartToken)
+				{
+					var interpolatedStringNode = new InterpolatedStringNode(
+						(StringInterpolatedStartToken)token,
+				    	stringInterpolatedEndToken: default,
+				    	toBeExpressionPrimary: null,
+				    	resultTypeClauseNode: CSharpFacts.Types.String.ToTypeClause());
 					
-				return new LiteralExpressionNode(token, tokenTypeClauseNode);
+					return ParseInterpolatedStringNode(interpolatedStringNode, compilationUnit, ref parserModel);
+				}
+					
+				return new LiteralExpressionNode(token, tokenTypeClauseNode);;
 			case SyntaxKind.OpenParenthesisToken:
 			
 				if (!UtilityApi.IsConvertibleToTypeClauseNode(parserModel.TokenWalker.Next.SyntaxKind))
@@ -1473,18 +1511,58 @@ public partial class CSharpBinder
 		}
 	}
 
-	/// <summary>
-	/// I am not evaluating anything when parsing for the IDE, so for now I'm going to ignore the precedence,
-	/// and just track the start and end of the expression more or less.
-	///
-	/// Reason for this being: object initialization and collection initialization
-	/// currently will at times break the Parser for an entire file, and therefore
-	/// they are much higher priority.
-	/// </summary>
 	public IExpressionNode LiteralMergeToken(
 		LiteralExpressionNode literalExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
+	}
+	
+	public IExpressionNode InterpolatedStringMergeToken(
+		InterpolatedStringNode interpolatedStringNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (token.SyntaxKind == SyntaxKind.StringInterpolatedEndToken)
+		{
+			return interpolatedStringNode;
+		}
+		else if (token.SyntaxKind == SyntaxKind.StringInterpolatedContinueToken)
+		{
+			parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedContinueToken, interpolatedStringNode));
+			return EmptyExpressionNode.Empty;
+		}
+
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), interpolatedStringNode, token);
+	}
+	
+	public IExpressionNode InterpolatedStringMergeExpression(
+		InterpolatedStringNode interpolatedStringNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedEndToken)
+		{
+			if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, compilationUnit, ref parserModel);
+
+			interpolatedStringNode.SetStringInterpolatedEndToken((StringInterpolatedEndToken)parserModel.TokenWalker.Current);
+
+			// Interpolated strings have their interpolated expressions inserted into the syntax token list
+			// immediately following the StringInterpolatedStartToken itself.
+			//
+			// They are deliminated by StringInterpolatedEndToken,
+			// upon which this 'LiteralMergeExpression' will be invoked.
+			//
+			// Just return back the 'interpolatedStringNode.ToBeExpressionPrimary'.
+			return interpolatedStringNode.ToBeExpressionPrimary ?? interpolatedStringNode;
+		}
+		else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedContinueToken)
+		{
+			if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, compilationUnit, ref parserModel);
+
+			return interpolatedStringNode;
+		}
+		else
+		{
+			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), interpolatedStringNode, expressionSecondary);
+		}
 	}
 	
 	public IExpressionNode ParenthesizedMergeToken(
@@ -2566,6 +2644,30 @@ public partial class CSharpBinder
 			OpenLambdaExpressionScope(lambdaExpressionNode, new OpenBraceToken(parserModel.TokenWalker.Next.TextSpan), compilationUnit, ref parserModel);
 		}
 		
+		return EmptyExpressionNode.Empty;
+	}
+	
+	/// <summary>
+	/// Am working on the first implementation of parsing interpolated strings.
+	/// Need a way for a 'StringInterpolatedToken' to trigger the new code.
+	///
+	/// Currently there are 2 'LiteralExpressionNode' constructor invocations,
+	/// so under each of them I've invoked this method.
+	///
+	/// Will see where things go from here, TODO: don't do this long term.
+	///
+	/// --------------------------------
+	///
+	/// Interpolated strings might not actually be "literal expressions"
+	/// but I think this is a good path to investigate that will lead to understanding the correct answer.
+	/// </summary>
+	public IExpressionNode ParseInterpolatedStringNode(
+		InterpolatedStringNode interpolatedStringNode,
+		CSharpCompilationUnit compilationUnit,
+		ref CSharpParserModel parserModel)
+	{
+		parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedEndToken, interpolatedStringNode));
+		parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedContinueToken, interpolatedStringNode));
 		return EmptyExpressionNode.Empty;
 	}
 }
