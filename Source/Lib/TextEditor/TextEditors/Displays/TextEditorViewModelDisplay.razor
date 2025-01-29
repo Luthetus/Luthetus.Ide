@@ -161,29 +161,27 @@
         }
 
         @if (renderBatchValidated is not null)
-        {
-        	_bodyDriver.GetRenderFragment(renderBatchValidated);
-        
+        {        
         	<div class="luth_te_body-section"
-		 		style="@_bodyDriver.GetBodyStyleCss(_bodyDriver._renderBatch)">
+		 		style="@GetBodyStyleCss(renderBatchValidated)">
 		 		
 				@{
-					var primaryCursor = _bodyDriver._renderBatch.ViewModel!.PrimaryCursor;
+					var primaryCursor = renderBatchValidated.ViewModel!.PrimaryCursor;
 				}
 			        
 				@* RowSection.razor Open *@
 				<div class="luth_te_row-section"
-					id="@_bodyDriver._renderBatch.ViewModel.BodyElementId">
+					id="@renderBatchValidated.ViewModel.BodyElementId">
 						    
 					@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
-					@_bodyDriver._root._bodyVirtualizationDriver.GetRenderFragment(_bodyDriver._renderBatch)
+					@_bodyVirtualizationDriver.GetRenderFragment(renderBatchValidated)
 								                           
-					@_bodyDriver._root._presentationAndSelectionDriver.GetRenderFragment(_bodyDriver._renderBatch)
+					@_presentationAndSelectionDriver.GetRenderFragment(renderBatchValidated)
 					
-					@foreach (var virtualizationLine in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
+					@foreach (var virtualizationLine in renderBatchValidated.ViewModel.VirtualizationResult.EntryList)
 					{
 						<div class="luth_te_row"
-							 style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
+							 style="@RowSection_GetRowStyleCss(renderBatchValidated, virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
 						
 							@*
 								'!= 0' because the struct's int property will default to '0',
@@ -193,7 +191,7 @@
 							{
 								// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
 						    	//          Presumably this is due to cache misses?
-								foreach (var virtualizationSpan in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList
+								foreach (var virtualizationSpan in renderBatchValidated.ViewModel.VirtualizationResult.VirtualizationSpanList
 										 	.Skip(virtualizationLine.VirtualizationSpanIndexInclusiveStart)
 											 .Take(virtualizationLine.VirtualizationSpanIndexExclusiveEnd - virtualizationLine.VirtualizationSpanIndexInclusiveStart))
 								{
@@ -203,15 +201,15 @@
 							    }
 							}
 							
-							@if (_bodyDriver.GlobalShowNewlines && virtualizationLine.LineIndex < _bodyDriver._renderBatch.Model.LineCount)
+							@if (GlobalShowNewlines && virtualizationLine.LineIndex < renderBatchValidated.Model.LineCount)
 							{
-								var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+								var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / renderBatchValidated.ViewModel.CharAndLineMeasurements.CharacterWidth;
 								
-								var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
+								var lengthOfRow = renderBatchValidated.Model.GetLineLength(virtualizationLine.LineIndex, true);
 								
 								if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
 								{
-								    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[virtualizationLine.LineIndex];
+								    var rowEndingTuple = renderBatchValidated.Model.LineEndList[virtualizationLine.LineIndex];
 								
 								    <span class="luth_te_newline">
 								        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
@@ -246,10 +244,10 @@
 				</div>
 				@* RowSection.razor Close *@
 			
-			    <ScrollbarSection RenderBatch="_bodyDriver._renderBatch"/>
-			    <TooltipDisplay RenderBatch="_bodyDriver._renderBatch"/>
-			    <FindOverlayDisplay RenderBatch="_bodyDriver._renderBatch"/>
-			    <WidgetLayerDisplay RenderBatch="_bodyDriver._renderBatch"/>
+			    <ScrollbarSection RenderBatch="renderBatchValidated"/>
+			    <TooltipDisplay RenderBatch="renderBatchValidated"/>
+			    <FindOverlayDisplay RenderBatch="renderBatchValidated"/>
+			    <WidgetLayerDisplay RenderBatch="renderBatchValidated"/>
 			</div>
         }
 

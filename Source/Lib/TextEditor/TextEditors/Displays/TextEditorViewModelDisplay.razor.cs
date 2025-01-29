@@ -28,6 +28,9 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 
+// BodyDriver.cs
+using System.Text;
+
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
@@ -86,7 +89,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private TextEditorViewModel? _linkedViewModel;
     
     public VirtualizationDriver _gutterVirtualizationDriver;
-    private BodyDriver _bodyDriver;
     public VirtualizationDriver _bodyVirtualizationDriver;
     // TODO: awkward public
     public PresentationAndSelectionDriver _presentationAndSelectionDriver;
@@ -134,7 +136,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     		this,
     		useHorizontalVirtualization: false,
     		useVerticalVirtualization: true);
-    	_bodyDriver = new(this);
     	_bodyVirtualizationDriver = new(
     		this,
     		useHorizontalVirtualization: true,
@@ -790,6 +791,78 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     }
     
     #endregion GutterDriverClose
+    
+    #region BodyDriverOpen
+    public bool GlobalShowNewlines => TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines;
+    
+    public string GetBodyStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+        var gutterWidthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
+
+        var width = $"width: calc(100% - {gutterWidthInPixelsInvariantCulture}px);";
+        var left = $"left: {gutterWidthInPixelsInvariantCulture}px;";
+
+        return $"{width} {left}";
+    }
+    
+    /* RowSection.razor Open */
+    public string RowSection_GetRowStyleCss(TextEditorRenderBatch renderBatchLocal, int index, double? virtualizedRowLeftInPixels)
+    {
+        var charMeasurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+
+        var topInPixelsInvariantCulture = (index * charMeasurements.LineHeight).ToCssValue();
+        var top = $"top: {topInPixelsInvariantCulture}px;";
+
+        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
+        var height = $"height: {heightInPixelsInvariantCulture}px;";
+
+        var virtualizedRowLeftInPixelsInvariantCulture = virtualizedRowLeftInPixels.GetValueOrDefault().ToCssValue();
+        var left = $"left: {virtualizedRowLeftInPixelsInvariantCulture}px;";
+
+        return $"{top} {height} {left}";
+    }
+
+    public void RowSection_AppendTextEscaped(
+    	TextEditorRenderBatch renderBatchLocal,
+        StringBuilder spanBuilder,
+        RichCharacter richCharacter,
+        string tabKeyOutput,
+        string spaceKeyOutput)
+    {
+        switch (richCharacter.Value)
+        {
+            case '\t':
+                spanBuilder.Append(tabKeyOutput);
+                break;
+            case ' ':
+                spanBuilder.Append(spaceKeyOutput);
+                break;
+            case '\r':
+                break;
+            case '\n':
+                break;
+            case '<':
+                spanBuilder.Append("&lt;");
+                break;
+            case '>':
+                spanBuilder.Append("&gt;");
+                break;
+            case '"':
+                spanBuilder.Append("&quot;");
+                break;
+            case '\'':
+                spanBuilder.Append("&#39;");
+                break;
+            case '&':
+                spanBuilder.Append("&amp;");
+                break;
+            default:
+                spanBuilder.Append(richCharacter.Value);
+                break;
+        }
+    }
+    
+    #endregion BodyDriverClose
 
     public void Dispose()
     {
