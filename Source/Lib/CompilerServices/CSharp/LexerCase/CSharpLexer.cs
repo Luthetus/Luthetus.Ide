@@ -649,7 +649,9 @@ public static class CSharpLexer
 		{
 			lexerOutput.SyntaxTokenList.Insert(
 				syntaxTokenListIndex,
-				new StringInterpolatedToken(textSpan));
+				new StringInterpolatedStartToken(textSpan));
+				
+			lexerOutput.SyntaxTokenList.Add(new StringInterpolatedEndToken(textSpan));
 		}
 		else
 		{

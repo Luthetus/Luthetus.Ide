@@ -99,6 +99,8 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.BinaryExpressionNode:
 				return BinaryMergeExpression((BinaryExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
+			case SyntaxKind.LiteralExpressionNode:
+				return LiteralMergeExpression((LiteralExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			//case SyntaxKind.CommaSeparatedExpressionNode:
@@ -717,10 +719,9 @@ public partial class CSharpBinder
 					goto default;
 			
 				var rightExpressionNode = new LiteralExpressionNode(token, tokenTypeClauseNode);
-				Hack_LiteralExpressionNode(rightExpressionNode, compilationUnit, ref parserModel);
-				
 				binaryExpressionNode.SetRightExpressionNode(rightExpressionNode);
-				return binaryExpressionNode;
+				
+				return Hack_LiteralExpressionNode(rightExpressionNode, compilationUnit, ref parserModel, binaryExpressionNode);
 			case SyntaxKind.PlusToken:
 			case SyntaxKind.MinusToken:
 			case SyntaxKind.StarToken:
@@ -1491,6 +1492,26 @@ public partial class CSharpBinder
 		LiteralExpressionNode literalExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
+	}
+	
+	public IExpressionNode LiteralMergeExpression(
+		LiteralExpressionNode literalExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (literalExpressionNode.LiteralSyntaxToken.SyntaxKind == SyntaxKind.StringInterpolatedStartToken)
+		{
+			// Interpolated strings have their interpolated expressions inserted into the syntax token list
+			// immediately following the StringInterpolatedStartToken itself.
+			//
+			// They are deliminated by StringInterpolatedEndToken,
+			// upon which this 'LiteralMergeExpression' will be invoked.
+			//
+			// Just return back the 'StringInterpolatedStartToken'.
+			return literalExpressionNode;
+		}
+		else
+		{
+			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, expressionSecondary);
+		}
 	}
 	
 	public IExpressionNode ParenthesizedMergeToken(
@@ -2589,18 +2610,25 @@ public partial class CSharpBinder
 	/// Interpolated strings might not actually be "literal expressions"
 	/// but I think this is a good path to investigate that will lead to understanding the correct answer.
 	/// </summary>
-	public void Hack_LiteralExpressionNode(LiteralExpressionNode literalExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public IExpressionNode Hack_LiteralExpressionNode(
+		LiteralExpressionNode literalExpressionNode,
+		CSharpCompilationUnit compilationUnit,
+		ref CSharpParserModel parserModel,
+		IExpressionNode returnExpressionNode)
 	{
-		if (literalExpressionNode.LiteralSyntaxToken.SyntaxKind != SyntaxKind.StringInterpolatedToken)
+		if (literalExpressionNode.LiteralSyntaxToken.SyntaxKind != SyntaxKind.StringInterpolatedStartToken)
 			return;
 			
 		Console.WriteLine("aaa Hack_LiteralExpressionNode");
 		
 		var stringInterpolatedToken = (StringInterpolatedToken)literalExpressionNode.LiteralSyntaxToken;
 		
-		/*parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedEndToken, binaryExpressionNode));
+		var aaa = new InterpolatedStringNode();
 		
+		parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedEndToken, literalExpressionNode));
+		return 
 		
+		/*
 		// So long as I handle multiple interpolated expressions within a single interpolated string
 		// I can use the awkward 'EndOfFile' marker as a delimiter for a child expression
 		// then return to the interpolated string in the end?
