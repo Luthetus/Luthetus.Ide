@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Fluxor;
@@ -745,6 +746,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken)
     {
+    	// var startTime = Stopwatch.GetTimestamp();
+    	
         try
 		{
 			var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
@@ -1055,6 +1058,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					MarginScrollHeight = marginScrollHeight
 				},
 			};
+			
+			// Console.WriteLine($"elapsedTime (ms) AP: {Stopwatch.GetElapsedTime(startTime).TotalMilliseconds}");
 			
 			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
 		}

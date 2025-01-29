@@ -24,6 +24,51 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
+// GutterDriver.cs
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
+
+// BodyDriver.cs
+using System.Text;
+
+// CursorDriver.cs
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
+
+// ScrollbarSection.razor.cs
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using Fluxor;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Events.Models;
+
+// VirtualizationDriver.cs
+using System.Text;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+
+// PresentationAndSelectionDriver.cs
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
@@ -58,6 +103,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public IDialogService DialogService { get; set; } = null!;
     [Inject]
     public LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    // ScrollbarSection.razor.cs
+    [Inject]
+    private IState<DragState> DragStateWrap { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
@@ -80,14 +128,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public TextEditorRenderBatch? _activeRenderBatch;
     
     private TextEditorViewModel? _linkedViewModel;
-    
-    private GutterDriver _gutterDriver;
-    public VirtualizationDriver _gutterVirtualizationDriver;
-    private BodyDriver _bodyDriver;
-    public VirtualizationDriver _bodyVirtualizationDriver;
-    // TODO: awkward public
-    public PresentationAndSelectionDriver _presentationAndSelectionDriver;
-    public CursorDriver _cursorDriver;
     
     private Dictionary<string, object?> DependentComponentParameters;
     
@@ -126,20 +166,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     			this
     		}
     	};
-    
-    	_gutterDriver = new(this);
-    	_gutterVirtualizationDriver = new(
-    		this,
-    		useHorizontalVirtualization: false,
-    		useVerticalVirtualization: true);
-    	_bodyDriver = new(this);
-    	_bodyVirtualizationDriver = new(
-    		this,
-    		useHorizontalVirtualization: true,
-    		useVerticalVirtualization: true);
-    	_presentationAndSelectionDriver = new(this);
-    	_cursorDriver = new(this);
-    
+
         ConstructRenderBatch();
 
 		SetComponentData();
@@ -147,6 +174,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
+        
+        // ScrollbarSection.razor.cs
+        DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -754,9 +784,1076 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			    return ValueTask.CompletedTask;
             });
     }
+    
+    #region GutterDriverOpen
+
+    public string GetGutterStyleCss(TextEditorRenderBatch renderBatchLocal, int index)
+    {
+        var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+
+        var topInPixelsInvariantCulture = (index * measurements.LineHeight).ToCssValue();
+        var top = $"top: {topInPixelsInvariantCulture}px;";
+
+        var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
+        var height = $"height: {heightInPixelsInvariantCulture}px;";
+
+        var widthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
+        var width = $"width: {widthInPixelsInvariantCulture}px;";
+
+        var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
+        var paddingLeft = $"padding-left: {paddingLeftInPixelsInvariantCulture}px;";
+
+        var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
+        var paddingRight = $"padding-right: {paddingRightInPixelsInvariantCulture}px;";
+
+        return $"{width} {height} {top} {paddingLeft} {paddingRight}";
+    }
+
+    public string GetGutterSectionStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+        var widthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
+        var width = $"width: {widthInPixelsInvariantCulture}px;";
+
+        return width;
+    }
+    
+    #endregion GutterDriverClose
+    
+    #region BodyDriverOpen
+    public bool GlobalShowNewlines => TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines;
+    
+    public string GetBodyStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+        var gutterWidthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
+
+        var width = $"width: calc(100% - {gutterWidthInPixelsInvariantCulture}px);";
+        var left = $"left: {gutterWidthInPixelsInvariantCulture}px;";
+
+        return $"{width} {left}";
+    }
+    
+    /* RowSection.razor Open */
+    public string RowSection_GetRowStyleCss(TextEditorRenderBatch renderBatchLocal, int index, double? virtualizedRowLeftInPixels)
+    {
+        var charMeasurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+
+        var topInPixelsInvariantCulture = (index * charMeasurements.LineHeight).ToCssValue();
+        var top = $"top: {topInPixelsInvariantCulture}px;";
+
+        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
+        var height = $"height: {heightInPixelsInvariantCulture}px;";
+
+        var virtualizedRowLeftInPixelsInvariantCulture = virtualizedRowLeftInPixels.GetValueOrDefault().ToCssValue();
+        var left = $"left: {virtualizedRowLeftInPixelsInvariantCulture}px;";
+
+        return $"{top} {height} {left}";
+    }
+
+    public void RowSection_AppendTextEscaped(
+    	TextEditorRenderBatch renderBatchLocal,
+        StringBuilder spanBuilder,
+        RichCharacter richCharacter,
+        string tabKeyOutput,
+        string spaceKeyOutput)
+    {
+        switch (richCharacter.Value)
+        {
+            case '\t':
+                spanBuilder.Append(tabKeyOutput);
+                break;
+            case ' ':
+                spanBuilder.Append(spaceKeyOutput);
+                break;
+            case '\r':
+                break;
+            case '\n':
+                break;
+            case '<':
+                spanBuilder.Append("&lt;");
+                break;
+            case '>':
+                spanBuilder.Append("&gt;");
+                break;
+            case '"':
+                spanBuilder.Append("&quot;");
+                break;
+            case '\'':
+                spanBuilder.Append("&#39;");
+                break;
+            case '&':
+                spanBuilder.Append("&amp;");
+                break;
+            default:
+                spanBuilder.Append(richCharacter.Value);
+                break;
+        }
+    }
+    
+    #endregion BodyDriverClose
+    
+    #region CursorDriverOpen
+
+    /// <summary>This property will need to be used when multi-cursor is added.</summary>
+    public bool IsFocusTarget => true;
+
+    public readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
+    public readonly Throttle _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
+
+    public ElementReference? _cursorDisplayElementReference;
+    public int _menuShouldGetFocusRequestCount;
+    public string _previousGetCursorStyleCss = string.Empty;
+    public string _previousGetCaretRowStyleCss = string.Empty;
+    public string _previousGetMenuStyleCss = string.Empty;
+
+    public string _previouslyObservedCursorDisplayId = string.Empty;
+    public double _leftRelativeToParentInPixels;
+        
+    public bool GetIncludeContextMenuHelperComponent(TextEditorRenderBatch renderBatchLocal)
+    {
+    	return renderBatchLocal.ViewModelDisplayOptions.IncludeContextMenuHelperComponent;
+    }
+
+	public string GetScrollableContainerId(TextEditorRenderBatch renderBatchLocal)
+	{ 
+		return renderBatchLocal.ViewModel.BodyElementId;
+	}
+
+    public string GetCursorDisplayId(TextEditorRenderBatch renderBatchLocal)
+    {
+    	return renderBatchLocal.ViewModel.PrimaryCursor.IsPrimaryCursor
+	        ? renderBatchLocal?.ViewModel?.PrimaryCursorContentId ?? string.Empty
+	        : string.Empty;
+    }
+
+    public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
+        ? "luth_te_blink"
+        : string.Empty;
+
+    public string GetCursorStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+        try
+        {
+            var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+
+            var leftInPixels = 0d;
+
+            // Tab key column offset
+            {
+                var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
+                    renderBatchLocal.ViewModel.PrimaryCursor.LineIndex,
+                    renderBatchLocal.ViewModel.PrimaryCursor.ColumnIndex);
+
+                // 1 of the character width is already accounted for
+
+                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                leftInPixels += extraWidthPerTabKey *
+                    tabsOnSameRowBeforeCursor *
+                    measurements.CharacterWidth;
+            }
+
+            leftInPixels += measurements.CharacterWidth * renderBatchLocal.ViewModel.PrimaryCursor.ColumnIndex;
+
+            var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
+            var left = $"left: {leftInPixelsInvariantCulture}px;";
+
+            var topInPixelsInvariantCulture = (measurements.LineHeight * renderBatchLocal.ViewModel.PrimaryCursor.LineIndex)
+                .ToCssValue();
+
+            var top = $"top: {topInPixelsInvariantCulture}px;";
+
+            var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
+            var height = $"height: {heightInPixelsInvariantCulture}px;";
+
+            var widthInPixelsInvariantCulture = renderBatchLocal.Options.CursorWidthInPixels.ToCssValue();
+            var width = $"width: {widthInPixelsInvariantCulture}px;";
+
+            var keymapStyling = ((ITextEditorKeymap)renderBatchLocal.Options.Keymap).GetCursorCssStyleString(
+                renderBatchLocal.Model,
+                renderBatchLocal.ViewModel,
+                renderBatchLocal.Options);
+            
+            // This feels a bit hacky, exceptions are happening because the UI isn't accessing
+            // the text editor in a thread safe way.
+            //
+            // When an exception does occur though, the cursor should receive a 'text editor changed'
+            // event and re-render anyhow however.
+            // 
+            // So store the result of this method incase an exception occurs in future invocations,
+            // to keep the cursor on screen while the state works itself out.
+            return _previousGetCursorStyleCss = $"{left} {top} {height} {width} {keymapStyling}";
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return _previousGetCursorStyleCss;
+        }
+    }
+
+    public string GetCaretRowStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+        try
+        {
+            var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+
+            var topInPixelsInvariantCulture = (measurements.LineHeight * renderBatchLocal.ViewModel.PrimaryCursor.LineIndex)
+                .ToCssValue();
+
+            var top = $"top: {topInPixelsInvariantCulture}px;";
+
+            var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
+            var height = $"height: {heightInPixelsInvariantCulture}px;";
+
+            var widthOfBodyInPixelsInvariantCulture =
+                (renderBatchLocal.Model.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
+                .ToCssValue();
+
+            var width = $"width: {widthOfBodyInPixelsInvariantCulture}px;";
+
+            // This feels a bit hacky, exceptions are happening because the UI isn't accessing
+            // the text editor in a thread safe way.
+            //
+            // When an exception does occur though, the cursor should receive a 'text editor changed'
+            // event and re-render anyhow however.
+            // 
+            // So store the result of this method incase an exception occurs in future invocations,
+            // to keep the cursor on screen while the state works itself out.
+            return _previousGetCaretRowStyleCss = $"{top} {width} {height}";
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return _previousGetCaretRowStyleCss;
+        }
+    }
+
+    public string GetMenuStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+        try
+        {
+            var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+
+            var leftInPixels = 0d;
+
+            // Tab key column offset
+            {
+                var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
+                    renderBatchLocal.ViewModel.PrimaryCursor.LineIndex,
+                    renderBatchLocal.ViewModel.PrimaryCursor.ColumnIndex);
+
+                // 1 of the character width is already accounted for
+                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                leftInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor *
+                    measurements.CharacterWidth;
+            }
+
+            leftInPixels += measurements.CharacterWidth * renderBatchLocal.ViewModel.PrimaryCursor.ColumnIndex;
+
+            var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
+            var left = $"left: {leftInPixelsInvariantCulture}px;";
+
+            var topInPixelsInvariantCulture = (measurements.LineHeight * (renderBatchLocal.ViewModel.PrimaryCursor.LineIndex + 1))
+                .ToCssValue();
+
+            // Top is 1 row further than the cursor so it does not cover text at cursor position.
+            var top = $"top: {topInPixelsInvariantCulture}px;";
+
+            var minWidthInPixelsInvariantCulture = (measurements.CharacterWidth * 16).ToCssValue();
+            var minWidth = $"min-Width: {minWidthInPixelsInvariantCulture}px;";
+
+            var minHeightInPixelsInvariantCulture = (measurements.LineHeight * 4).ToCssValue();
+            var minHeight = $"min-height: {minHeightInPixelsInvariantCulture}px;";
+
+            // This feels a bit hacky, exceptions are happening because the UI isn't accessing
+            // the text editor in a thread safe way.
+            //
+            // When an exception does occur though, the cursor should receive a 'text editor changed'
+            // event and re-render anyhow however.
+            // 
+            // So store the result of this method incase an exception occurs in future invocations,
+            // to keep the cursor on screen while the state works itself out.
+            return _previousGetMenuStyleCss = $"{left} {top} {minWidth} {minHeight}";
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return _previousGetMenuStyleCss;
+        }
+    }
+
+    public async Task FocusAsync()
+    {
+        try
+        {
+            if (_cursorDisplayElementReference is not null)
+            {
+                await _cursorDisplayElementReference.Value
+                    .FocusAsync(preventScroll: true)
+                    .ConfigureAwait(false);
+            }
+        }
+        catch (Exception)
+        {
+            // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+            //             This bug is seemingly happening randomly. I have a suspicion
+            //             that there are race-condition exceptions occurring with "FocusAsync"
+            //             on an ElementReference.
+        }
+    }
+
+    public async Task SetFocusToActiveMenuAsync()
+    {
+        _menuShouldGetFocusRequestCount++;
+        // await InvokeAsync(StateHasChanged);
+    }
+
+    public bool TextEditorMenuShouldTakeFocus()
+    {
+        if (_menuShouldGetFocusRequestCount > 0)
+        {
+            _menuShouldGetFocusRequestCount = 0;
+            return true;
+        }
+
+        return false;
+    }
+
+    public int GetTabIndex(TextEditorRenderBatch renderBatchLocal)
+    {
+        if (!IsFocusTarget)
+            return -1;
+
+        return renderBatchLocal.ViewModelDisplayOptions.TabIndex;;
+    }
+    
+    #endregion CursorDriverClose
+    
+    #region ScrollbarSectionOpen
+
+    [Parameter, EditorRequired]
+    public TextEditorRenderBatch? RenderBatch { get; set; }
+
+	/// <summary>
+	/// Unit of measurement is pixels (px).
+	/// </summary>
+	private const int DISTANCE_TO_RESET_SCROLL_POSITION = 300;
+
+	private MouseEventArgs? _mouseDownEventArgs;
+
+    private readonly Guid VERTICAL_scrollbarGuid = Guid.NewGuid();
+	private readonly Guid HORIZONTAL_scrollbarGuid = Guid.NewGuid();
+
+    private bool VERTICAL_thinksLeftMouseButtonIsDown;
+
+	private double VERTICAL_clientXThresholdToResetScrollTopPosition;
+	private double VERTICAL_scrollTopOnMouseDown;
+
+    private string VERTICAL_ScrollbarElementId => $"luth_te_{VERTICAL_scrollbarGuid}";
+    private string VERTICAL_ScrollbarSliderElementId => $"luth_te_{VERTICAL_scrollbarGuid}-slider";
+
+    private bool HORIZONTAL_thinksLeftMouseButtonIsDown;
+	private double HORIZONTAL_clientYThresholdToResetScrollLeftPosition;
+	private double HORIZONTAL_scrollLeftOnMouseDown;
+
+    private string HORIZONTAL_ScrollbarElementId => $"luth_te_{HORIZONTAL_scrollbarGuid}";
+    private string HORIZONTAL_ScrollbarSliderElementId => $"luth_te_{HORIZONTAL_scrollbarGuid}-slider";
+	
+	private Func<MouseEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
+
+    private string HORIZONTAL_GetScrollbarHorizontalStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+        var scrollbarWidthInPixels = renderBatchLocal.ViewModel.TextEditorDimensions.Width -
+            ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+
+        var scrollbarWidthInPixelsInvariantCulture = scrollbarWidthInPixels.ToCssValue();
+        var width = $"width: {scrollbarWidthInPixelsInvariantCulture}px;";
+
+        return width;
+    }
+
+    private string HORIZONTAL_GetSliderHorizontalStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+    	var scrollbarWidthInPixels = renderBatchLocal.ViewModel.TextEditorDimensions.Width -
+            ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+
+        // Proportional Left
+        var sliderProportionalLeftInPixels = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollLeft *
+            scrollbarWidthInPixels /
+            renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollWidth;
+
+        var sliderProportionalLeftInPixelsInvariantCulture = sliderProportionalLeftInPixels.ToCssValue();
+        var left = $"left: {sliderProportionalLeftInPixelsInvariantCulture}px;";
+
+        // Proportional Width
+        var pageWidth = renderBatchLocal.ViewModel.TextEditorDimensions.Width;
+
+        var sliderProportionalWidthInPixels = pageWidth *
+            scrollbarWidthInPixels /
+            renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollWidth;
+
+        var sliderProportionalWidthInPixelsInvariantCulture = sliderProportionalWidthInPixels.ToCssValue();
+        var width = $"width: {sliderProportionalWidthInPixelsInvariantCulture}px;";
+
+        return $"{left} {width}";
+    }
+    
+    private string VERTICAL_GetSliderVerticalStyleCss(TextEditorRenderBatch renderBatchLocal)
+    {
+    	var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+        var scrollBarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
+
+        var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+
+        // Proportional Top
+        var sliderProportionalTopInPixels = scrollBarDimensions.ScrollTop *
+            scrollbarHeightInPixels /
+            scrollBarDimensions.ScrollHeight;
+
+        var sliderProportionalTopInPixelsInvariantCulture = sliderProportionalTopInPixels.ToCssValue();
+
+        var top = $"top: {sliderProportionalTopInPixelsInvariantCulture}px;";
+
+        // Proportional Height
+        var pageHeight = textEditorDimensions.Height;
+
+        var sliderProportionalHeightInPixels = pageHeight *
+            scrollbarHeightInPixels /
+            scrollBarDimensions.ScrollHeight;
+
+        var sliderProportionalHeightInPixelsInvariantCulture = sliderProportionalHeightInPixels.ToCssValue();
+
+        var height = $"height: {sliderProportionalHeightInPixelsInvariantCulture}px;";
+
+        return $"{top} {height}";
+    }
+
+    private async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
+    {
+    	var renderBatchLocal = _activeRenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    
+    	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
+		HORIZONTAL_scrollLeftOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollLeft;
+
+		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
+			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
+			.ConfigureAwait(false);
+
+		// Drag far up to reset scroll to original
+		var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
+		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
+
+		// Subscribe to the drag events
+		//
+		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
+		//       So be wary if one intends to move its assignment elsewhere.
+		{
+			_mouseDownEventArgs = mouseEventArgs;
+			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
+	
+			Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, null));
+		}
+    }
+    
+    private async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
+    {
+    	var renderBatchLocal = _activeRenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    
+    	VERTICAL_thinksLeftMouseButtonIsDown = true;
+		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollTop;
+
+		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
+			.MeasureElementById(VERTICAL_ScrollbarElementId)
+			.ConfigureAwait(false);
+
+		// Drag far left to reset scroll to original
+		var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+		var distanceBetweenLeftEditorAndLeftScrollbar = scrollbarBoundingClientRect.LeftInPixels - textEditorDimensions.BoundingClientRectLeft;
+		VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
+
+		// Subscribe to the drag events
+		//
+		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
+		//       So be wary if one intends to move its assignment elsewhere.
+		{
+			_mouseDownEventArgs = mouseEventArgs;
+			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
+	
+			Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, null));
+		}     
+    }
+
+    private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
+    {
+        if (!DragStateWrap.Value.ShouldDisplay)
+        {
+            // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
+			//       So be wary if one intends to move its assignment elsewhere.
+            _mouseDownEventArgs = null;
+        }
+        else
+        {
+            var localMouseDownEventArgs = _mouseDownEventArgs;
+            var dragEventArgs = DragStateWrap.Value.MouseEventArgs;
+			var localDragEventHandler = _dragEventHandler;
+
+            if (localMouseDownEventArgs is not null && dragEventArgs is not null)
+                await localDragEventHandler.Invoke(localMouseDownEventArgs, dragEventArgs).ConfigureAwait(false);
+        }
+    }
+
+    private Task HORIZONTAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
+    {
+    	var renderBatchLocal = _activeRenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    
+    	var localThinksLeftMouseButtonIsDown = HORIZONTAL_thinksLeftMouseButtonIsDown;
+
+        if (!localThinksLeftMouseButtonIsDown)
+            return Task.CompletedTask;
+
+        // Buttons is a bit flag '& 1' gets if left mouse button is held
+        if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
+        {
+			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+			var scrollbarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
+		
+			OnScrollHorizontal onScrollHorizontal;
+
+			if (onDragMouseEventArgs.ClientY < HORIZONTAL_clientYThresholdToResetScrollLeftPosition)
+			{
+				// Drag far left to reset scroll to original
+				onScrollHorizontal = new OnScrollHorizontal(
+					HORIZONTAL_scrollLeftOnMouseDown,
+					renderBatchLocal.ComponentData,
+					renderBatchLocal.ViewModel.ViewModelKey);
+			}
+			else
+			{
+				var diffX = onDragMouseEventArgs.ClientX - localMouseDownEventArgs.ClientX;
+	
+	            var scrollbarWidthInPixels = textEditorDimensions.Width - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+	
+	            var scrollLeft = HORIZONTAL_scrollLeftOnMouseDown +
+					diffX *
+	                scrollbarDimensions.ScrollWidth /
+	                scrollbarWidthInPixels;
+	
+	            if (scrollLeft + textEditorDimensions.Width > scrollbarDimensions.ScrollWidth)
+	                scrollLeft = scrollbarDimensions.ScrollWidth - textEditorDimensions.Width;
+
+				if (scrollLeft < 0)
+					scrollLeft = 0;
+	
+				onScrollHorizontal = new OnScrollHorizontal(
+					scrollLeft,
+					renderBatchLocal.ComponentData,
+					renderBatchLocal.ViewModel.ViewModelKey);
+			}
+
+			TextEditorService.Post(onScrollHorizontal);
+        }
+        else
+        {
+            HORIZONTAL_thinksLeftMouseButtonIsDown = false;
+        }
+
+        return Task.CompletedTask;
+    }
+    
+    private Task VERTICAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
+    {
+    	var renderBatchLocal = _activeRenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    
+    	var localThinksLeftMouseButtonIsDown = VERTICAL_thinksLeftMouseButtonIsDown;
+
+        if (!localThinksLeftMouseButtonIsDown)
+            return Task.CompletedTask;
+
+        // Buttons is a bit flag '& 1' gets if left mouse button is held
+        if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
+        {
+			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+			var scrollbarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
+
+			OnScrollVertical onScrollVertical;
+
+			if (onDragMouseEventArgs.ClientX < VERTICAL_clientXThresholdToResetScrollTopPosition)
+			{
+				// Drag far left to reset scroll to original
+				onScrollVertical = new OnScrollVertical(
+					VERTICAL_scrollTopOnMouseDown,
+					renderBatchLocal.ComponentData,
+					renderBatchLocal.ViewModel.ViewModelKey);
+			}
+			else
+			{
+	    		var diffY = onDragMouseEventArgs.ClientY - localMouseDownEventArgs.ClientY;
+	
+	            var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+	
+	            var scrollTop = VERTICAL_scrollTopOnMouseDown +
+					diffY *
+	                scrollbarDimensions.ScrollHeight /
+	                scrollbarHeightInPixels;
+	
+	            if (scrollTop + textEditorDimensions.Height > scrollbarDimensions.ScrollHeight)
+	                scrollTop = scrollbarDimensions.ScrollHeight - textEditorDimensions.Height;
+
+				if (scrollTop < 0)
+					scrollTop = 0;
+	
+				onScrollVertical = new OnScrollVertical(
+					scrollTop,
+					renderBatchLocal.ComponentData,
+					renderBatchLocal.ViewModel.ViewModelKey);
+			}
+
+			TextEditorService.Post(onScrollVertical);
+        }
+        else
+        {
+            VERTICAL_thinksLeftMouseButtonIsDown = false;
+        }
+
+        return Task.CompletedTask;
+    }
+    
+    #endregion ScrollbarSectionClose
+
+    #region VirtualizationDriverOpen
+
+    public string Virtualization_GetStyleCssString(VirtualizationBoundary virtualizationBoundary)
+    {
+        var styleBuilder = new StringBuilder();
+
+        // Width
+        if (virtualizationBoundary.WidthInPixels is null)
+        {
+            styleBuilder.Append(" width: 100%;");
+        }
+        else
+        {
+            var widthInPixelsInvariantCulture = virtualizationBoundary.WidthInPixels.Value.ToCssValue();
+            styleBuilder.Append($" width: {widthInPixelsInvariantCulture}px;");
+        }
+
+        // Height
+        if (virtualizationBoundary.HeightInPixels is null)
+        {
+            styleBuilder.Append(" height: 100%;");
+        }
+        else
+        {
+            var heightInPixelsInvariantCulture = virtualizationBoundary.HeightInPixels.Value.ToCssValue();
+            styleBuilder.Append($" height: {heightInPixelsInvariantCulture}px;");
+        }
+
+        // Left
+        if (virtualizationBoundary.LeftInPixels is null)
+        {
+            styleBuilder.Append(" left: 100%;");
+        }
+        else
+        {
+            var leftInPixelsInvariantCulture = virtualizationBoundary.LeftInPixels.Value.ToCssValue();
+            styleBuilder.Append($" left: {leftInPixelsInvariantCulture}px;");
+        }
+
+        // Top
+        if (virtualizationBoundary.TopInPixels is null)
+        {
+            styleBuilder.Append(" top: 100%;");
+        }
+        else
+        {
+            var topInPixelsInvariantCulture = virtualizationBoundary.TopInPixels.Value.ToCssValue();
+            styleBuilder.Append($" top: {topInPixelsInvariantCulture}px;");
+        }
+
+        return styleBuilder.ToString();
+    }
+
+    #endregion ScrollbarSectionClose
+    
+    #region PresentationAndSelectionDriverOpen
+    
+    public List<TextEditorPresentationModel> GetTextEditorPresentationModels(
+    	TextEditorRenderBatch renderBatchLocal,
+    	IReadOnlyList<Key<TextEditorPresentationModel>> textEditorPresentationKeys)
+    {
+    	var textEditorPresentationModelList = new List<TextEditorPresentationModel>();
+
+        foreach (var presentationKey in textEditorPresentationKeys)
+        {
+            var textEditorPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(x =>
+                x.TextEditorPresentationKey == presentationKey);
+
+            if (textEditorPresentationModel is not null)
+                textEditorPresentationModelList.Add(textEditorPresentationModel);
+        }
+
+        return textEditorPresentationModelList;
+    }
+
+    public string PresentationGetCssStyleString(
+    	TextEditorRenderBatch renderBatchLocal,
+        int lowerPositionIndexInclusive,
+        int upperPositionIndexExclusive,
+        int rowIndex)
+    {
+    	try
+        {
+            var charMeasurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+            var scrollbarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
+
+            if (rowIndex >= renderBatchLocal.Model.LineEndList.Count)
+                return string.Empty;
+
+            var line = renderBatchLocal.Model.GetLineInformation(rowIndex);
+
+            var startingColumnIndex = 0;
+            var endingColumnIndex = line.EndPositionIndexExclusive - 1;
+
+            var fullWidthOfRowIsSelected = true;
+
+            if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
+            {
+                startingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
+                fullWidthOfRowIsSelected = false;
+            }
+
+            if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
+            {
+                endingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
+                fullWidthOfRowIsSelected = false;
+            }
+
+            var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
+
+            var top = $"top: {topInPixelsInvariantCulture}px;";
+
+            var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
+
+            var height = $"height: {heightInPixelsInvariantCulture}px;";
+
+            var startInPixels = startingColumnIndex * charMeasurements.CharacterWidth;
+
+            // startInPixels offset from Tab keys a width of many characters
+            {
+                var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
+                    rowIndex,
+                    startingColumnIndex);
+
+                // 1 of the character width is already accounted for
+                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                startInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+            }
+
+            var startInPixelsInvariantCulture = startInPixels.ToCssValue();
+            var left = $"left: {startInPixelsInvariantCulture}px;";
+
+            var widthInPixels = endingColumnIndex * charMeasurements.CharacterWidth - startInPixels;
+
+            // Tab keys a width of many characters
+            {
+                var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
+                    rowIndex,
+                    line.LastValidColumnIndex);
+
+                // 1 of the character width is already accounted for
+                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+                widthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+            }
+
+            var widthCssStyleString = "width: ";
+
+            var fullWidthValue = scrollbarDimensions.ScrollWidth;
+
+            if (textEditorDimensions.Width > scrollbarDimensions.ScrollWidth)
+                fullWidthValue = textEditorDimensions.Width; // If content does not fill the viewable width of the Text Editor User Interface
+
+            var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
+
+            var widthInPixelsInvariantCulture = widthInPixels.ToCssValue();
+
+            if (fullWidthOfRowIsSelected)
+                widthCssStyleString += $"{fullWidthValueInPixelsInvariantCulture}px;";
+            else if (startingColumnIndex != 0 && upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
+                widthCssStyleString += $"calc({fullWidthValueInPixelsInvariantCulture}px - {startInPixelsInvariantCulture}px);";
+            else
+                widthCssStyleString += $"{widthInPixelsInvariantCulture}px;";
+
+            return $"position: absolute; {top} {height} {left} {widthCssStyleString}";
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return string.Empty;
+        }
+    }
+
+    public string PresentationGetCssClass(TextEditorPresentationModel presentationModel, byte decorationByte)
+    {
+        return presentationModel.DecorationMapper.Map(decorationByte);
+    }
+
+    public IReadOnlyList<TextEditorTextSpan> PresentationVirtualizeAndShiftTextSpans(
+    	TextEditorRenderBatch renderBatchLocal,
+        IReadOnlyList<TextEditorTextModification> textModifications,
+        IReadOnlyList<TextEditorTextSpan> inTextSpanList)
+    {
+    	// (2025-01-22)
+    	// ============
+    	// The text spans need to be tied to the partitions they reside in
+    	// (careful of a textspan that overlaps two partitions).
+    	//
+    	// This shouldn't be done here, it should be done during the editContext.
+    	
+    	try
+        {
+            // Virtualize the text spans
+            var virtualizedTextSpanList = new List<TextEditorTextSpan>();
+            if (renderBatchLocal.ViewModel.VirtualizationResult.EntryList.Any())
+            {
+                var lowerLineIndexInclusive = renderBatchLocal.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
+                var upperLineIndexInclusive = renderBatchLocal.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+
+                var lowerLine = renderBatchLocal.Model.GetLineInformation(lowerLineIndexInclusive);
+                var upperLine = renderBatchLocal.Model.GetLineInformation(upperLineIndexInclusive);
+
+				// Awkward enumeration was modified 'for loop' (2025-01-22)
+				// Also, this shouldn't be done here, it should be done during the editContext.
+				var count = inTextSpanList.Count;
+                for (int i = 0; i < count; i++)
+                {
+                	var textSpan = inTextSpanList[i];
+                	
+                    if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
+                        upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
+                    {
+                        virtualizedTextSpanList.Add(textSpan);
+                    }
+                }
+            }
+            else
+            {
+                // No 'VirtualizationResult', so don't render any text spans.
+                return Array.Empty<TextEditorTextSpan>();
+            }
+
+            var outTextSpansList = new List<TextEditorTextSpan>();
+            // Shift the text spans
+            {
+                foreach (var textSpan in virtualizedTextSpanList)
+                {
+                    var startingIndexInclusive = textSpan.StartingIndexInclusive;
+                    var endingIndexExclusive = textSpan.EndingIndexExclusive;
+
+					// Awkward enumeration was modified 'for loop' (2025-01-22)
+					// Also, this shouldn't be done here, it should be done during the editContext.
+					var count = textModifications.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                    	var textModification = textModifications[i];
+                    
+                        if (textModification.WasInsertion)
+                        {
+                            if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
+                            {
+                                startingIndexInclusive += textModification.TextEditorTextSpan.Length;
+                                endingIndexExclusive += textModification.TextEditorTextSpan.Length;
+                            }
+                        }
+                        else // was deletion
+                        {
+                            if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
+                            {
+                                startingIndexInclusive -= textModification.TextEditorTextSpan.Length;
+                                endingIndexExclusive -= textModification.TextEditorTextSpan.Length;
+                            }
+                        }
+                    }
+
+                    outTextSpansList.Add(textSpan with
+                    {
+                        StartingIndexInclusive = startingIndexInclusive,
+                        EndingIndexExclusive = endingIndexExclusive
+                    });
+                }
+            }
+
+            return outTextSpansList;
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return Array.Empty<TextEditorTextSpan>();
+        }
+    }
+
+    public (int FirstRowToSelectDataInclusive, int LastRowToSelectDataExclusive) PresentationGetBoundsInRowIndexUnits(
+    	TextEditorRenderBatch renderBatchLocal,
+    	TextEditorModel model,
+    	(int StartingIndexInclusive, int EndingIndexExclusive) boundsInPositionIndexUnits)
+    {
+    	try
+        {
+            var firstRowToSelectDataInclusive = renderBatchLocal.Model
+                .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive)
+                .Index;
+
+            var lastRowToSelectDataExclusive = renderBatchLocal.Model
+                .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive)
+                .Index +
+                1;
+
+            return (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return (0, 0);
+        }
+    }
+    
+    public string GetTextSelectionStyleCss(
+    	TextEditorRenderBatch renderBatchLocal,
+        int lowerPositionIndexInclusive,
+        int upperPositionIndexExclusive,
+        int rowIndex)
+    {
+    	try
+		{
+	        if (rowIndex >= renderBatchLocal.Model.LineEndList.Count)
+	            return string.Empty;
+	
+	        var line = renderBatchLocal.Model.GetLineInformation(rowIndex);
+	
+	        var selectionStartingColumnIndex = 0;
+	        var selectionEndingColumnIndex = line.EndPositionIndexExclusive - 1;
+	
+	        var fullWidthOfRowIsSelected = true;
+	
+	        if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
+	        {
+	            selectionStartingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
+	            fullWidthOfRowIsSelected = false;
+	        }
+	
+	        if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
+	        {
+	            selectionEndingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
+	            fullWidthOfRowIsSelected = false;
+	        }
+	
+	        var charMeasurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+	
+	        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
+	        var top = $"top: {topInPixelsInvariantCulture}px;";
+	
+	        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
+	        var height = $"height: {heightInPixelsInvariantCulture}px;";
+	
+	        var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidth;
+	
+	        // selectionStartInPixels offset from Tab keys a width of many characters
+	        {
+	            var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
+	                rowIndex,
+	                selectionStartingColumnIndex);
+	
+	            // 1 of the character width is already accounted for
+	            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+	
+	            selectionStartInPixels += 
+	                extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+	        }
+	
+	        var selectionStartInPixelsInvariantCulture = selectionStartInPixels.ToCssValue();
+	        var left = $"left: {selectionStartInPixelsInvariantCulture}px;";
+	
+	        var selectionWidthInPixels = 
+	            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels;
+	
+	        // Tab keys a width of many characters
+	        {
+	            var lineInformation = renderBatchLocal.Model.GetLineInformation(rowIndex);
+	
+	            selectionEndingColumnIndex = Math.Min(
+	                selectionEndingColumnIndex,
+	                lineInformation.LastValidColumnIndex);
+	
+	            var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
+	                rowIndex,
+	                selectionEndingColumnIndex);
+	
+	            // 1 of the character width is already accounted for
+	            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+	
+	            selectionWidthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+	        }
+	
+	        var widthCssStyleString = "width: ";
+	        var fullWidthValue = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollWidth;
+	
+	        if (renderBatchLocal.ViewModel.TextEditorDimensions.Width >
+	            renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollWidth)
+	        {
+	            // If content does not fill the viewable width of the Text Editor User Interface
+	            fullWidthValue = renderBatchLocal.ViewModel.TextEditorDimensions.Width;
+	        }
+	
+	        var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
+	
+	        var selectionWidthInPixelsInvariantCulture = selectionWidthInPixels.ToCssValue();
+	
+	        if (fullWidthOfRowIsSelected)
+	            widthCssStyleString += $"{fullWidthValueInPixelsInvariantCulture}px;";
+	        else if (selectionStartingColumnIndex != 0 &&
+	                 upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
+	            widthCssStyleString += $"calc({fullWidthValueInPixelsInvariantCulture}px - {selectionStartInPixelsInvariantCulture}px);";
+	        else
+	            widthCssStyleString += $"{selectionWidthInPixelsInvariantCulture}px;";
+	
+	        return $"{top} {height} {left} {widthCssStyleString}";
+		}
+		catch (LuthetusTextEditorException e)
+		{
+			Console.WriteLine(e);
+			return "display: none;";
+		}
+    }
+
+    public (int lowerRowIndexInclusive, int upperRowIndexExclusive) GetSelectionBoundsInRowIndexUnits(
+    	TextEditorRenderBatch renderBatchLocal,
+    	(int lowerPositionIndexInclusive, int upperPositionIndexExclusive) selectionBoundsInPositionIndexUnits)
+    {
+    	try
+        {
+            return TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+                renderBatchLocal.Model,
+                selectionBoundsInPositionIndexUnits);
+        }
+        catch (LuthetusTextEditorException)
+        {
+            return (0, 0);
+        }
+    }
+    
+    #endregion PresentationAndSelectionDriverClose
 
     public void Dispose()
     {
+    	// ScrollbarSection.razor.cs
+    	DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
+    
+    	// TextEditorViewModelDisplay.razor.cs
         TextEditorStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrap_StateChanged;
 		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
