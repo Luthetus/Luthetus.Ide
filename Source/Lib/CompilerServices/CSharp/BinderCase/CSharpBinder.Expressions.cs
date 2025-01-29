@@ -29,9 +29,9 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		#if DEBUG
+		/*#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}");
-		#endif
+		#endif*/
 		
 		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
 			UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
@@ -93,9 +93,9 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeExpression(
 		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		#if DEBUG
+		/*#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {expressionSecondary.SyntaxKind}");
-		#endif
+		#endif*/
 	
 		switch (expressionPrimary.SyntaxKind)
 		{
@@ -1520,10 +1520,15 @@ public partial class CSharpBinder
 	public IExpressionNode InterpolatedStringMergeToken(
 		InterpolatedStringNode interpolatedStringNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		Console.WriteLine("aaa InterpolatedStringMergeToken");
-	
 		if (token.SyntaxKind == SyntaxKind.StringInterpolatedEndToken)
+		{
 			return interpolatedStringNode;
+		}
+		else if (token.SyntaxKind == SyntaxKind.StringInterpolatedContinueToken)
+		{
+			parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedContinueToken, interpolatedStringNode));
+			return EmptyExpressionNode.Empty;
+		}
 
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), interpolatedStringNode, token);
 	}
@@ -1533,6 +1538,9 @@ public partial class CSharpBinder
 	{
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedEndToken)
 		{
+			if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, compilationUnit, ref parserModel);
+
 			interpolatedStringNode.SetStringInterpolatedEndToken((StringInterpolatedEndToken)parserModel.TokenWalker.Current);
 
 			// Interpolated strings have their interpolated expressions inserted into the syntax token list
@@ -1543,6 +1551,13 @@ public partial class CSharpBinder
 			//
 			// Just return back the 'interpolatedStringNode.ToBeExpressionPrimary'.
 			return interpolatedStringNode.ToBeExpressionPrimary ?? interpolatedStringNode;
+		}
+		else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedContinueToken)
+		{
+			if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, compilationUnit, ref parserModel);
+
+			return interpolatedStringNode;
 		}
 		else
 		{
@@ -2652,6 +2667,7 @@ public partial class CSharpBinder
 		ref CSharpParserModel parserModel)
 	{
 		parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedEndToken, interpolatedStringNode));
+		parserModel.ExpressionList.Add((SyntaxKind.StringInterpolatedContinueToken, interpolatedStringNode));
 		return EmptyExpressionNode.Empty;
 	}
 }

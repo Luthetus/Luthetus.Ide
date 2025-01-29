@@ -16,6 +16,7 @@ public enum SyntaxKind
     CharLiteralToken,
     StringLiteralToken,
     StringInterpolatedStartToken,
+    StringInterpolatedContinueToken,
     StringInterpolatedEndToken,
     TriviaToken,
     PreprocessorDirectiveToken,

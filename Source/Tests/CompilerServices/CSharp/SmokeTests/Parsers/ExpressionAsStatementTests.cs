@@ -620,7 +620,8 @@ $""abc {aaa} 123"";
     	var test = new Test(
 @"
 var aaa = 2;
-var bbb = $""abc {aaa} 123"";
+var bbb = 7;
+var ccc = $""abc {aaa} 123 {bbb}"";
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		

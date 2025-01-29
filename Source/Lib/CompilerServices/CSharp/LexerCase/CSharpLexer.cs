@@ -711,6 +711,15 @@ public static class CSharpLexer
 			(byte)GenericDecorationKind.None,
 			stringWalker.ResourceUri,
 			stringWalker.SourceText));
+		
+		lexerOutput.SyntaxTokenList.Add(new StringInterpolatedContinueToken(
+			new TextEditorTextSpan(
+	            stringWalker.PositionIndex,
+			    stringWalker.PositionIndex,
+			    (byte)GenericDecorationKind.None,
+			    stringWalker.ResourceUri,
+        		stringWalker.SourceText,
+			    string.Empty)));
 	}
     
     private static void EscapeCharacterListAdd(
