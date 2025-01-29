@@ -12,8 +12,12 @@ namespace Luthetus.CompilerServices.CSharp.LexerCase;
 
 public static class CSharpLexer
 {
+	/// <summary>
+	/// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
+	/// </summary>
     public static CSharpLexerOutput Lex(ResourceUri resourceUri, string sourceText)
     {
+    	var lexerOutput = new CSharpLexerOutput();
     	var stringWalker = new StringWalkerStruct(resourceUri, sourceText);
     	
     	var previousEscapeCharacterTextSpan = new TextEditorTextSpan(
@@ -24,9 +28,31 @@ public static class CSharpLexer
 		    string.Empty,
 		    string.Empty);
 		    
-    	var lexerOutput = new CSharpLexerOutput();
+		var interpolatedExpressionUnmatchedBraceCount = -1;
     	
-        while (!stringWalker.IsEof)
+    	Lex_Frame(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, ref interpolatedExpressionUnmatchedBraceCount);
+    	
+    	var endOfFileTextSpan = new TextEditorTextSpan(
+            stringWalker.PositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        lexerOutput.SyntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
+        return lexerOutput;
+    }
+    
+    /// <summary>
+    /// Isolate the while loop within its own function in order to permit recursion without allocating new state.
+    /// </summary>
+    public static void Lex_Frame(
+    	ref CSharpLexerOutput lexerOutput,
+    	ref StringWalkerStruct stringWalker,
+    	ref TextEditorTextSpan previousEscapeCharacterTextSpan,
+    	ref int interpolatedExpressionUnmatchedBraceCount)
+    {
+    	while (!stringWalker.IsEof)
         {
             switch (stringWalker.CurrentCharacter)
             {
@@ -286,6 +312,9 @@ public static class CSharpLexer
                 }
                 case '{':
                 {
+                	if (interpolatedExpressionUnmatchedBraceCount != -1)
+                		++interpolatedExpressionUnmatchedBraceCount;
+                
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
@@ -294,6 +323,12 @@ public static class CSharpLexer
                 }
                 case '}':
                 {
+                	if (interpolatedExpressionUnmatchedBraceCount != -1)
+                	{
+						if (--interpolatedExpressionUnmatchedBraceCount <= 0)
+							goto forceExit;
+					}
+                
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
@@ -450,18 +485,11 @@ public static class CSharpLexer
                     _ = stringWalker.ReadCharacter();
                     break;
             }
-        }
+		}
 
-        var endOfFileTextSpan = new TextEditorTextSpan(
-            stringWalker.PositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        lexerOutput.SyntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
-        return lexerOutput;
-    }
+        forceExit:
+        return;
+	}
     
     /// <summary>
     /// The invoker of this method is expected to count the amount of '$' (dollar sign characters).
@@ -472,6 +500,9 @@ public static class CSharpLexer
     /// </summary>
     private static void LexString(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, int countDollarSign, bool useVerbatim)
     {
+    	// Interpolated expressions will be done recursively and added to this 'SyntaxTokenList'
+    	var syntaxTokenListIndex = lexerOutput.SyntaxTokenList.Count;
+    
     	var entryPositionIndex = stringWalker.PositionIndex;
 
 		var useInterpolation = countDollarSign > 0;
@@ -579,21 +610,12 @@ public static class CSharpLexer
 		    				}
 		    				else
 		    				{
-		    					var innerTextSpan = new TextEditorTextSpan(
-						            entryPositionIndex,
-						            interpolationTemporaryPositionIndex,
-						            (byte)GenericDecorationKind.StringLiteral,
-						            stringWalker.ResourceUri,
-						            stringWalker.SourceText);
-						        lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
-							
-								// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
+		    					// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
 								// Thus, if this while loop were to consume, it would skip the
 								// closing double quotes if the expression were the last thing in the string.
 								//
 								// So, a backtrack is done.
-								LexInterpolatedExpression(ref lexerOutput, ref stringWalker, countDollarSign);
-								entryPositionIndex = stringWalker.PositionIndex;
+								LexInterpolatedExpression(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, startInclusiveOpenDelimiter: interpolationTemporaryPositionIndex, countDollarSign: countDollarSign);
 								stringWalker.BacktrackCharacter();
 		    				}
 		    			}
@@ -607,19 +629,10 @@ public static class CSharpLexer
 					}
 					else
 					{
-						var innerTextSpan = new TextEditorTextSpan(
-				            entryPositionIndex,
-				            stringWalker.PositionIndex,
-				            (byte)GenericDecorationKind.StringLiteral,
-				            stringWalker.ResourceUri,
-				            stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
-					
 						// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
 						// Thus, if this while loop were to consume, it would skip the
 						// closing double quotes if the expression were the last thing in the string.
-						LexInterpolatedExpression(ref lexerOutput, ref stringWalker, countDollarSign);
-						entryPositionIndex = stringWalker.PositionIndex;
+						LexInterpolatedExpression(ref lexerOutput, ref stringWalker, ref previousEscapeCharacterTextSpan, startInclusiveOpenDelimiter: stringWalker.PositionIndex, countDollarSign: countDollarSign);
 						continue;
 					}
 				}
@@ -637,41 +650,77 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(textSpan));
+		if (useInterpolation)
+		{
+			lexerOutput.SyntaxTokenList.Insert(
+				syntaxTokenListIndex,
+				new StringInterpolatedStartToken(textSpan));
+				
+			lexerOutput.SyntaxTokenList.Add(new StringInterpolatedEndToken(
+				new TextEditorTextSpan(
+		            stringWalker.PositionIndex,
+				    stringWalker.PositionIndex,
+				    (byte)GenericDecorationKind.None,
+				    stringWalker.ResourceUri,
+            		stringWalker.SourceText,
+				    string.Empty)));
+		}
+		else
+		{
+        	lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(textSpan));
+        }
     }
     
-    private static void LexInterpolatedExpression(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, int countDollarSign)
+    /// <summary>
+    /// 'startInclusiveFirstOpenDelimiter' refers to:
+    ///     $"Hello, {name}"
+    ///
+    /// how there is a '{' that deliminates the start of the interpolated expression.
+    /// at what position index does it lie at?
+    ///
+    /// In the case of raw strings, the start-inclusive of the multi-character open delimiter is what needs to be provided.
+    /// </summary>
+    private static void LexInterpolatedExpression(
+    	ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, int startInclusiveOpenDelimiter, int countDollarSign)
     {
-    	var entryPositionIndex = stringWalker.PositionIndex;
+    	var readOpenDelimiterCount = stringWalker.PositionIndex - startInclusiveOpenDelimiter;
+    	
+    	for (; readOpenDelimiterCount < countDollarSign; readOpenDelimiterCount++)
+    	{
+    		_ = stringWalker.ReadCharacter();
+    	}
 		
-		if (stringWalker.CurrentCharacter == '{')
-		{
-			// The normal interpolation will invoke this method with '{' as the current character.
-			//
-			// But, raw interpolation will invoke this method 1 index further than the final '{' that
-			// deliminates the start of the interpolated expression.
-        	_ = stringWalker.ReadCharacter();
-        }
+		var unmatchedBraceCounter = countDollarSign;
         
-    	var unmatchedBraceCounter = countDollarSign;
+        // Recursive solution that lexes the interpolated expression only, (not including the '{' or '}').
+        Lex_Frame(
+        	ref lexerOutput,
+        	ref stringWalker,
+        	ref previousEscapeCharacterTextSpan,
+        	ref unmatchedBraceCounter);
+        	
+        _ = stringWalker.ReadCharacter(); // This consumes the final '}'.
+
+		// In the event that the C# Parser throws an exception,
+		// it is useful for the Lexer to decorate the interpolated expressions
+		// with the text color '(byte)GenericDecorationKind.None'
+		// so they are distinct from the string itself.
+		lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
+			startInclusiveOpenDelimiter,
+			stringWalker.PositionIndex,
+			(byte)GenericDecorationKind.None,
+			stringWalker.ResourceUri,
+			stringWalker.SourceText));
 		
-		while (!stringWalker.IsEof)
-		{
-			if (stringWalker.CurrentCharacter == '{')
-			{
-				++unmatchedBraceCounter;
-			}
-			else if (stringWalker.CurrentCharacter == '}')
-			{
-				if (--unmatchedBraceCounter <= 0)
-					break;
-			}
-
-			_ = stringWalker.ReadCharacter();
-		}
-
-		_ = stringWalker.ReadCharacter();
-    }
+		lexerOutput.SyntaxTokenList.Add(new StringInterpolatedContinueToken(
+			new TextEditorTextSpan(
+	            stringWalker.PositionIndex,
+			    stringWalker.PositionIndex,
+			    (byte)GenericDecorationKind.None,
+			    stringWalker.ResourceUri,
+        		stringWalker.SourceText,
+			    string.Empty)));
+	}
     
     private static void EscapeCharacterListAdd(
     	ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, TextEditorTextSpan textSpan)

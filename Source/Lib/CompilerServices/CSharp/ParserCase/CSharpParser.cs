@@ -64,6 +64,7 @@ public static class CSharpParser
                 case SyntaxKind.NumericLiteralToken:
                 case SyntaxKind.CharLiteralToken:
 				case SyntaxKind.StringLiteralToken:
+				case SyntaxKind.StringInterpolatedStartToken:
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusToken:

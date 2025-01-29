@@ -15,6 +15,9 @@ public enum SyntaxKind
     NumericLiteralToken,
     CharLiteralToken,
     StringLiteralToken,
+    StringInterpolatedStartToken,
+    StringInterpolatedContinueToken,
+    StringInterpolatedEndToken,
     TriviaToken,
     PreprocessorDirectiveToken,
     LibraryReferenceToken,
@@ -194,6 +197,7 @@ public enum SyntaxKind
 
     // Nodes
     LiteralExpressionNode,
+    InterpolatedStringNode,
     AmbiguousParenthesizedExpressionNode,
     ParenthesizedExpressionNode,
     EmptyExpressionNode,

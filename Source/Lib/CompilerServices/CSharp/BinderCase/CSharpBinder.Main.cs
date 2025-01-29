@@ -122,35 +122,6 @@ public partial class CSharpBinder : IBinder
 		UpsertBinderSession(binderSession);
 	}
 
-    public LiteralExpressionNode BindLiteralExpressionNode(
-        LiteralExpressionNode literalExpressionNode,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    	TypeClauseNode typeClauseNode;
-    
-    	switch (literalExpressionNode.LiteralSyntaxToken.SyntaxKind)
-    	{
-    		case SyntaxKind.NumericLiteralToken:
-    			typeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
-    			break;
-            case SyntaxKind.CharLiteralToken:
-            	typeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
-            	break;
-            case SyntaxKind.StringLiteralToken:
-            	typeClauseNode = CSharpFacts.Types.String.ToTypeClause();
-            	break;
-            default:
-            	typeClauseNode = CSharpFacts.Types.Void.ToTypeClause();
-            	parserModel.DiagnosticBag.ReportTodoException(literalExpressionNode.LiteralSyntaxToken.TextSpan, $"{nameof(BindLiteralExpressionNode)}(...) failed to map SyntaxKind: '{literalExpressionNode.LiteralSyntaxToken.SyntaxKind}'");
-            	break;
-    	}
-
-        return new LiteralExpressionNode(
-            literalExpressionNode.LiteralSyntaxToken,
-            typeClauseNode);
-    }
-
     public BinaryOperatorNode BindBinaryOperatorNode(
         IExpressionNode leftExpressionNode,
         ISyntaxToken operatorToken,
@@ -300,45 +271,7 @@ public partial class CSharpBinder : IBinder
         FunctionArgumentEntryNode functionArgumentEntryNode,
         CSharpCompilationUnit? compilationUnit)
     {
-    	if (compilationUnit is null)
-    		return;
-    
-        var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
-        
-        /*
-		// TODO: Wouldn't this have a '!' at the start? And '... && typeDefinitionNode is not null' (2024-10-25)
-        if (TryGetTypeDefinitionHierarchically(
-        		model,
-        		compilationUnit.BinderSession.ResourceUri,
-                compilationUnit.BinderSession.CurrentScopeIndexKey,
-                argumentTypeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
-                out var typeDefinitionNode)
-            || typeDefinitionNode is null)
-        {
-            typeDefinitionNode = CSharpFacts.Types.Void;
-        }
-
-        var literalExpressionNode = new LiteralExpressionNode(
-            functionArgumentEntryNode.OptionalCompileTimeConstantToken,
-            typeDefinitionNode.ToTypeClause());
-
-        literalExpressionNode = BindLiteralExpressionNode(literalExpressionNode, compilationUnit);
-
-        if (literalExpressionNode.ResultTypeClauseNode.ValueType is null ||
-            literalExpressionNode.ResultTypeClauseNode.ValueType != functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType)
-        {
-            var optionalArgumentTextSpan = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan with
-            {
-                EndingIndexExclusive = functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive
-            };
-
-            compilationUnit.BinderSession.DiagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(
-                optionalArgumentTextSpan,
-                functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText(),
-                functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType?.Name ?? "null",
-                literalExpressionNode.ResultTypeClauseNode.ValueType?.Name ?? "null");
-        }
-        */
+    	throw new NotImplementedException();
     }
 
     /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>
