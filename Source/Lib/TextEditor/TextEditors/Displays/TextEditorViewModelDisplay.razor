@@ -21,6 +21,11 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Models
 
+@* ScrollbarSection.razor *@
+@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+				
 @{
     var renderBatchUnsafe = _currentRenderBatch;
     var renderBatchValidated = _activeRenderBatch;
@@ -242,7 +247,51 @@
 				</div>
 				@* RowSection.razor Close *@
 			
-			    <ScrollbarSection RenderBatch="renderBatchValidated"/>
+				@* ScrollbarSection.razor Open *@
+				<div class="luth_te_scrollbar-section">
+				
+					<div class="luth_te_scrollbar luth_te_scrollbar-horizontal"
+					     id="@HORIZONTAL_ScrollbarElementId"
+					     style="@HORIZONTAL_GetScrollbarHorizontalStyleCss(renderBatchValidated)"
+					     @onmousedown:stopPropagation="true"
+					     @onmousedown="HORIZONTAL_HandleOnMouseDownAsync"
+					     @onmousemove:stopPropagation="true"
+					     @ondblclick:stopPropagation="true"
+					     @onclick:stopPropagation="true"
+					     @oncontextmenu:stopPropagation="true">
+					    
+					    <div class="luth_te_scrollbar-slider"
+					         id="@HORIZONTAL_ScrollbarSliderElementId"
+					         style="bottom: 0; height: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @HORIZONTAL_GetSliderHorizontalStyleCss(renderBatchValidated)">
+					    </div>
+					</div>
+					
+					<div class="luth_te_scrollbar luth_te_scrollbar-vertical"
+					     id="@VERTICAL_ScrollbarElementId"
+					     @onmousedown:stopPropagation="true"
+					     @onmousedown="VERTICAL_HandleOnMouseDownAsync"
+					     @onmousemove:stopPropagation="true"
+					     @ondblclick:stopPropagation="true"
+					     @onclick:stopPropagation="true"
+					     @oncontextmenu:stopPropagation="true">
+					         
+					    <div class="luth_te_scrollbar-slider"
+					         id="@VERTICAL_ScrollbarSliderElementId"
+					         style="left: 0; width: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @VERTICAL_GetSliderVerticalStyleCss(renderBatchValidated)">
+					    </div>
+					</div>
+				    
+				    @* TODO: Color the luth_te_scrollbar-connector differently and render the 'corner icon'? *@
+					<div class="luth_te_scrollbar luth_te_scrollbar-connector"
+					     @onmousedown:stopPropagation="true"
+					     @onmousemove:stopPropagation="true"
+					     @ondblclick:stopPropagation="true"
+					     @onclick:stopPropagation="true"
+					     @oncontextmenu:stopPropagation="true">
+					</div>
+				</div>
+				@* ScrollbarSection.razor Close *@
+			    
 			    <TooltipDisplay RenderBatch="renderBatchValidated"/>
 			    <FindOverlayDisplay RenderBatch="renderBatchValidated"/>
 			    <WidgetLayerDisplay RenderBatch="renderBatchValidated"/>
