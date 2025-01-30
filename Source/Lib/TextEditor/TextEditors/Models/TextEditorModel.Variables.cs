@@ -22,17 +22,17 @@ public partial class TextEditorModel
     private string? _allText;
 
     public RichCharacter[] RichCharacterList { get; init; }
-    public ImmutableList<TextEditorPartition> PartitionList { get; init; }
+    public List<TextEditorPartition> PartitionList { get; init; } = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
 
-    public ImmutableList<ITextEditorEdit> EditBlockList { get; init; } = ImmutableList<ITextEditorEdit>.Empty;
+    public List<ITextEditorEdit> EditBlockList { get; init; } = new();
 
     /// <inheritdoc cref="ITextEditorModel.LineEndList"/>
-	public ImmutableList<LineEnd> LineEndList { get; init; } = ImmutableList<LineEnd>.Empty;
-	public ImmutableList<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; init; } = ImmutableList<(LineEndKind lineEndingKind, int count)>.Empty;
-	public ImmutableList<TextEditorPresentationModel> PresentationModelList { get; init; } = ImmutableList<TextEditorPresentationModel>.Empty;
+	public List<LineEnd> LineEndList { get; init; } = new();
+	public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; init; } = new();
+	public List<TextEditorPresentationModel> PresentationModelList { get; init; } = new();
     
     /// <inheritdoc cref="ITextEditorModel.TabKeyPositionList"/>
-	public ImmutableList<int> TabKeyPositionList = ImmutableList<int>.Empty;
+	public List<int> TabKeyPositionList { get; } = new();
     
     /// <inheritdoc cref="ITextEditorModel.OnlyLineEndKind"/>
     public LineEndKind? OnlyLineEndKind { get; init; }
@@ -59,14 +59,6 @@ public partial class TextEditorModel
     public int DocumentLength => RichCharacterList.Length;
     
     RichCharacter[] ITextEditorModel.RichCharacterList => RichCharacterList;
-
-    ImmutableList<TextEditorPartition> ITextEditorModel.PartitionList => PartitionList;
-    
-    IList<ITextEditorEdit> ITextEditorModel.EditBlockList => EditBlockList;
-	IList<LineEnd> ITextEditorModel.LineEndList => LineEndList;
-	IList<(LineEndKind lineEndKind, int count)> ITextEditorModel.LineEndKindCountList => LineEndKindCountList;
-	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelList => PresentationModelList;
-	IList<int> ITextEditorModel.TabKeyPositionList => TabKeyPositionList;
 
     int ITextEditorModel.LineCount => LineCount;
     int ITextEditorModel.CharCount => DocumentLength;

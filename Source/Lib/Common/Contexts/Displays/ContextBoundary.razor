@@ -2,11 +2,11 @@
      class="luth_ide_context-boundary @ClassCssString"
      style="@StyleCssString"
      tabindex="@TabIndex"
-     @onfocus="HandleOnFocus"
-     @onblur="HandleOnBlur"
-     @onfocusin="HandleOnFocusIn"
+     @onfocus="EventUtil.AsNonRenderingEventHandler(HandleOnFocus)"
+     @onblur="EventUtil.AsNonRenderingEventHandler(HandleOnBlur)"
+     @onfocusin="EventUtil.AsNonRenderingEventHandler(HandleOnFocusIn)"
      @onfocusin:stopPropagation="true"
-     @onkeydown="HandleOnKeyDownAsync"
+     @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(HandleOnKeyDownAsync)"
      @onkeydown:stopPropagation="true">
 	
     <CascadingValue Value="this">
