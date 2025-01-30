@@ -828,53 +828,67 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					{
 						var localHorizontalStartingIndex = horizontalStartingIndex;
 						var localHorizontalTake = horizontalTake;
+						
+						var unrenderedTabCount = 0;
+						var resultTabCount = 0;
+						// Tab key adjustments
+						{
+							var line = modelModifier.GetLineInformation(lineIndex);
+				
+							var foundLine = false;
+							var foundSplit = false;
+					
+							// Count the unrendered tabs that preceed the rendered content on that line
+							// As well, separately count the tabs that are among the rendered content.
+							foreach (var tabKeyPosition in modelModifier.TabKeyPositionList)
+							{
+								var tabKeyColumnIndex = line.StartPositionIndexInclusive;
+							
+								if (!foundLine)
+								{
+									if (tabKeyPosition >= line.StartPositionIndexInclusive)
+										foundLine = true;
+								}
+								
+								if (foundLine)
+								{
+									if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
+										break;
+								
+									if (!foundSplit)
+									{
+										if (tabKeyColumnIndex < localHorizontalStartingIndex)
+										{
+											localHorizontalStartingIndex -= extraWidthPerTabKey;
+											
+											if (localHorizontalStartingIndex < 0)
+												localHorizontalStartingIndex = 0;
+											
+											if (tabKeyColumnIndex < localHorizontalStartingIndex)
+												unrenderedTabCount++;
+											else
+												foundSplit = true;
+										}
+										else
+										{
+											foundSplit = true;
+										}
+									}
+									
+									if (foundSplit)
+										resultTabCount++;
+								}
+							}
+							
+							if (line.Index == 57)
+								Console.WriteLine($"line.LineIndex == 57, un:{unrenderedTabCount} rt:{resultTabCount}");
+						}
 	
 						if (localHorizontalStartingIndex + localHorizontalTake > lineLength)
 							localHorizontalTake = lineLength - localHorizontalStartingIndex;
 	
 						localHorizontalStartingIndex = Math.Max(0, localHorizontalStartingIndex);
 						localHorizontalTake = Math.Max(0, localHorizontalTake);
-
-						var positionIndexInclusiveStart = lineStartPositionIndexInclusive + localHorizontalStartingIndex;
-						
-						var positionIndexExclusiveEnd = positionIndexInclusiveStart + localHorizontalTake;
-						if (positionIndexExclusiveEnd > lineInformation.UpperLineEnd.StartPositionIndexInclusive)
-							positionIndexExclusiveEnd = lineInformation.UpperLineEnd.StartPositionIndexInclusive;
-							
-						var line = modelModifier.GetLineInformation(lineIndex);
-				
-						var foundLine = false;
-						var foundSplit = false;
-						var unrenderedtabCount = 0;
-						var resultTabCount = 0;
-				
-						// Count the unrendered tabs that preceed the rendered content on that line
-						// As well, separately count the tabs that are among the rendered content.
-						foreach (var tabKeyPosition in modelModifier.TabKeyPositionList)
-						{
-							if (!foundLine)
-							{
-								if (tabKeyPosition >= line.StartPositionIndexInclusive)
-									foundLine = true;
-							}
-							
-							if (foundLine)
-							{
-								if (tabKeyPosition >= line.LastValidColumnIndex)
-									break;
-							
-								if (!foundSplit)
-								{
-									if (tabKeyPosition < line.StartPositionIndexInclusive + localHorizontalStartingIndex)
-										unrenderedtabCount++;
-									else
-										foundSplit = true;
-								}
-								
-								if (foundSplit)
-									resultTabCount++;
-							}
-						}
 	
 						widthInPixels = ((localHorizontalTake - localHorizontalStartingIndex) + (extraWidthPerTabKey * resultTabCount)) *
 							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
@@ -884,13 +898,19 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	
 						// Adjust the unrendered for tab key width
 						leftInPixels += (extraWidthPerTabKey *
-							unrenderedtabCount *
+							unrenderedTabCount *
 							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
 	
 						leftInPixels = Math.Max(0, leftInPixels);
 	
 						var topInPixels = lineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
 
+						var positionIndexInclusiveStart = lineStartPositionIndexInclusive + localHorizontalStartingIndex;
+						
+						var positionIndexExclusiveEnd = positionIndexInclusiveStart + localHorizontalTake;
+						if (positionIndexExclusiveEnd > lineInformation.UpperLineEnd.StartPositionIndexInclusive)
+							positionIndexExclusiveEnd = lineInformation.UpperLineEnd.StartPositionIndexInclusive;
+						
 						virtualizedLineList[lineOffset] = new VirtualizationLine(
 							lineIndex,
 							PositionIndexInclusiveStart: positionIndexInclusiveStart,

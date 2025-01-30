@@ -105,6 +105,16 @@ public record VirtualizationGrid
     /// I want to make sure the List is written over.
     /// I have not tested if referencing the properties through an implicit/explicit 'this' keyword
     /// would correctly update the List that the struct is contained in.
+    ///
+    /// -------------------------------------------------------------------------------------
+    ///
+    /// Extremely important detail: look into the difference between the model modifier 
+    /// and the model itself.
+    ///
+    /// This is probably why the for loop takes 500x longer.
+    ///
+    /// You are accepting an 'ITextEditorModel' but I think it is a TextEditorModelModifier,
+    /// and these are not equivalent in implementation of the properties.
     /// </summary>
     public void CreateCache(ITextEditorService textEditorService, ITextEditorModel model, TextEditorViewModel viewModel)
     {
