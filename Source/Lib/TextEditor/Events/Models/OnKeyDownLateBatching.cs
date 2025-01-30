@@ -74,7 +74,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
         
+        #if DEBUG
         LuthetusDebugSomething.OnKeyDownLateBatchingCountSent++;
+        #endif
     }
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
@@ -138,7 +140,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
+    	#if DEBUG
     	LuthetusDebugSomething.OnKeyDownLateBatchingCountHandled++;
+    	#endif
     
     	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
 
