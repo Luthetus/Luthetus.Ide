@@ -309,7 +309,7 @@ public partial class TextEditorModelModifier
         CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
-        if (cursorPositionIndex > _richCharacterList.Length)
+        if (cursorPositionIndex > CharCount)
             return;
 
         __InsertRange(
@@ -513,7 +513,7 @@ public partial class TextEditorModelModifier
                 if (toDeletePositionIndex < 0 || toDeletePositionIndex >= CharCount)
                     break;
 
-                var richCharacterToDelete = _richCharacterList[toDeletePositionIndex];
+                var richCharacterToDelete = RichCharacterList[toDeletePositionIndex];
 
                 if (KeyboardKeyFacts.IsLineEndingCharacter(richCharacterToDelete.Value))
                 {
@@ -583,7 +583,7 @@ public partial class TextEditorModelModifier
                 if (toDeletePositionIndex < 0 || toDeletePositionIndex >= CharCount)
                     break;
 
-                var richCharacterToDelete = _richCharacterList[toDeletePositionIndex];
+                var richCharacterToDelete = RichCharacterList[toDeletePositionIndex];
 
                 if (KeyboardKeyFacts.IsLineEndingCharacter(richCharacterToDelete.Value))
                 {
@@ -722,7 +722,7 @@ public partial class TextEditorModelModifier
 	private void DeleteValue(int positionIndex, int count, CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
-        if (positionIndex >= _richCharacterList.Length)
+        if (positionIndex >= CharCount)
             return;
 
         __RemoveRange(positionIndex, count);

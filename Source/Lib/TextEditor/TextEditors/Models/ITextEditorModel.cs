@@ -80,19 +80,19 @@ public interface ITextEditorModel
 	/// I'm now seeing 643 MB of memory usage after changing RichCharacter to a struct from a class
 	/// </summary>
     public RichCharacter[] RichCharacterList { get; }
-    public ImmutableList<TextEditorPartition> PartitionList { get; }
-    public IList<ITextEditorEdit> EditBlockList { get; }
+    public List<TextEditorPartition> PartitionList { get; }
+    public List<ITextEditorEdit> EditBlockList { get; }
     /// <summary>
     /// Convert an index for a <see cref="LineEnd"/> to a <see cref="LineInformation"/>, use the method:
     /// <see cref="TextEditorModelExtensionMethods.GetLineInformation(ITextEditorModel, int)"/>
     /// </summary>
-    public IList<LineEnd> LineEndList { get; }
-    public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; }
-    public IList<TextEditorPresentationModel> PresentationModelList { get; }
+    public List<LineEnd> LineEndList { get; }
+    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; }
+    public List<TextEditorPresentationModel> PresentationModelList { get; }
     /// <summary>
     /// Provides exact position index of a tab character
     /// </summary>
-    public IList<int> TabKeyPositionList { get; }
+    public List<int> TabKeyPositionList { get; }
     /// <summary>
 	/// If there is a mixture of<br/>-Carriage Return<br/>-Linefeed<br/>-CRLF<br/>
 	/// Then this will be null.<br/><br/>

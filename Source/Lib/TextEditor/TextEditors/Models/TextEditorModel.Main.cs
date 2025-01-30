@@ -37,13 +37,13 @@ public sealed partial class TextEditorModel : ITextEditorModel
 		_allText = modifier.AllText;
         RichCharacterList = modifier.RichCharacterList;
         PartitionList = modifier.PartitionList;
-        LineEndKindCountList = modifier.LineEndKindCountList.ToImmutableList();
-		LineEndList = modifier.LineEndList.ToImmutableList();
-		TabKeyPositionList = modifier.TabKeyPositionList.ToImmutableList();
+        LineEndKindCountList = modifier.LineEndKindCountList;
+		LineEndList = modifier.LineEndList;
+		TabKeyPositionList = modifier.TabKeyPositionList;
 		OnlyLineEndKind = modifier.OnlyLineEndKind;
 		LineEndKindPreference = modifier.LineEndKindPreference;
 		MostCharactersOnASingleLineTuple = modifier.MostCharactersOnASingleLineTuple;
-		EditBlockList = modifier.EditBlockList.ToImmutableList();
+		EditBlockList = modifier.EditBlockList;
 		EditBlockIndex = modifier.EditBlockIndex;
 	}
 
@@ -51,12 +51,12 @@ public sealed partial class TextEditorModel : ITextEditorModel
         string allText,
         RichCharacter[] richCharacterList,
         int partitionSize,
-        ImmutableList<TextEditorPartition> partitionList,
-		ImmutableList<ITextEditorEdit> editBlocksList,
-		ImmutableList<LineEnd> rowEndingPositionsList,
-		ImmutableList<(LineEndKind rowEndingKind, int count)> rowEndingKindCountsList,
-		ImmutableList<TextEditorPresentationModel> presentationModelsList,
-		ImmutableList<int> tabKeyPositionsList,
+        List<TextEditorPartition> partitionList,
+		List<ITextEditorEdit> editBlocksList,
+		List<LineEnd> rowEndingPositionsList,
+		List<(LineEndKind rowEndingKind, int count)> rowEndingKindCountsList,
+		List<TextEditorPresentationModel> presentationModelsList,
+		List<int> tabKeyPositionsList,
 		LineEndKind? onlyRowEndingKind,
 		LineEndKind usingRowEndingKind,
 		ResourceUri resourceUri,
