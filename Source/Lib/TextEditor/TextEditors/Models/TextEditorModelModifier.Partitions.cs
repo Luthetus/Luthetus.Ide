@@ -11,9 +11,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
         int relativePositionIndex = -1;
         var runningCount = 0;
 
-        for (int i = 0; i < _partitionList.Count; i++)
+        for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = _partitionList[i];
+            TextEditorPartition? partition = PartitionList[i];
 
             if (runningCount + partition.Count >= globalPositionIndex)
             {
@@ -42,10 +42,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
         if (relativePositionIndex == -1)
             throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
-        var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+        var inPartition = PartitionList[indexOfPartitionWithAvailableSpace];
         var outPartition = inPartition.Insert(relativePositionIndex, richCharacter);
 
-        _partitionList = _partitionList.SetItem(
+        PartitionListSetItem(
             indexOfPartitionWithAvailableSpace,
             outPartition);
     }
@@ -65,9 +65,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
         int relativePositionIndex = -1;
         var runningCount = 0;
 
-        for (int i = 0; i < _partitionList.Count; i++)
+        for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = _partitionList[i];
+            TextEditorPartition? partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -88,10 +88,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
         if (relativePositionIndex == -1)
             throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
-        var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+        var inPartition = PartitionList[indexOfPartitionWithAvailableSpace];
         var outPartition = inPartition.SetItem(relativePositionIndex, richCharacter);
 
-        _partitionList = _partitionList.SetItem(
+        PartitionListSetItem(
             indexOfPartitionWithAvailableSpace,
             outPartition);
     }
@@ -104,9 +104,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
         int relativePositionIndex = -1;
         var runningCount = 0;
 
-        for (int i = 0; i < _partitionList.Count; i++)
+        for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = _partitionList[i];
+            TextEditorPartition? partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -127,7 +127,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         if (relativePositionIndex == -1)
             throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
-        var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+        var inPartition = PartitionList[indexOfPartitionWithAvailableSpace];
         var targetRichCharacter = inPartition.RichCharacterList[relativePositionIndex];
         
         inPartition.RichCharacterList[relativePositionIndex] = new(
@@ -144,9 +144,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
         int relativePositionIndex = -1;
         var runningCount = 0;
 
-        for (int i = 0; i < _partitionList.Count; i++)
+        for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = _partitionList[i];
+            TextEditorPartition? partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -167,22 +167,22 @@ public partial class TextEditorModelModifier : ITextEditorModel
         if (relativePositionIndex == -1)
             throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
-        var inPartition = _partitionList[indexOfPartitionWithContent];
+        var inPartition = PartitionList[indexOfPartitionWithContent];
         var outPartition = inPartition.RemoveAt(relativePositionIndex);
 
-        _partitionList = _partitionList.SetItem(
+        PartitionListSetItem(
             indexOfPartitionWithContent,
             outPartition);
     }
 
     private void __InsertNewPartition(int partitionIndex)
     {
-        _partitionList = _partitionList.Insert(partitionIndex, new TextEditorPartition(new List<RichCharacter>()));
+        PartitionListInsert(partitionIndex, new TextEditorPartition(new List<RichCharacter>()));
     }
 
     private void __SplitIntoTwoPartitions(int partitionIndex)
     {
-        var originalPartition = _partitionList[partitionIndex];
+        var originalPartition = PartitionList[partitionIndex];
 
         var firstUnevenSplit = PartitionSize / 2 + PartitionSize % 2;
         var secondUnevenSplit = PartitionSize / 2;
@@ -224,7 +224,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 .Take(firstUnevenSplit)
                 .ToList());
 
-            _partitionList = _partitionList.SetItem(
+            PartitionListSetItem(
                 partitionIndex,
                 partition);
         }
@@ -236,7 +236,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 .Take(secondUnevenSplit)
                 .ToList());
 
-            _partitionList = _partitionList.Insert(
+            PartitionListInsert(
                 partitionIndex + 1,
                 partition);
         }
@@ -253,9 +253,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
             var runningCount = 0;
             TextEditorPartition? partition;
 
-            for (int i = 0; i < _partitionList.Count; i++)
+            for (int i = 0; i < PartitionList.Count; i++)
             {
-                partition = _partitionList[i];
+                partition = PartitionList[i];
 
                 if (runningCount + partition.Count >= globalPositionIndex)
                 {
@@ -282,7 +282,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             if (relativePositionIndex == -1)
                 throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
-            partition = _partitionList[indexOfPartitionWithAvailableSpace];
+            partition = PartitionList[indexOfPartitionWithAvailableSpace];
             var partitionAvailableSpace = PartitionSize - partition.Count;
 
             var richCharacterBatchInsertList = new List<RichCharacter> { richCharacterEnumerator.Current };
@@ -292,10 +292,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 richCharacterBatchInsertList.Add(richCharacterEnumerator.Current);
             }
 
-            var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
+            var inPartition = PartitionList[indexOfPartitionWithAvailableSpace];
             var outPartition = inPartition.InsertRange(relativePositionIndex, richCharacterBatchInsertList);
 
-            _partitionList = _partitionList.SetItem(
+            PartitionListSetItem(
                 indexOfPartitionWithAvailableSpace,
                 outPartition);
 
@@ -346,7 +346,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             //          ...invocation, with regards to this method.
             //          If one adds other alterations to the _partitionList in this method,
             //          check if this logic would break.
-            _partitionList = _partitionList.SetItem(
+            PartitionListSetItem(
                 partitionIndex,
                 partition.RemoveRange(relativePositionIndex, deletes));
 
@@ -360,6 +360,28 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public void __Add(RichCharacter richCharacter)
     {
         __Insert(CharCount, richCharacter);
+    }
+    
+    public void PartitionListSetItem(int index, TextEditorPartition partition)
+    {
+    	if (!_partitionListIsShallowCopy)
+    	{
+    		_partitionListIsShallowCopy = true;
+    		PartitionList = new(PartitionList);
+    	}
+    	
+    	PartitionList[index] = partition;
+    }
+    
+    public void PartitionListInsert(int index, TextEditorPartition partition)
+    {
+    	if (!_partitionListIsShallowCopy)
+    	{
+    		_partitionListIsShallowCopy = true;
+    		PartitionList = new(PartitionList);
+    	}
+    	
+    	PartitionList.Insert(index, partition);
     }
 }
 

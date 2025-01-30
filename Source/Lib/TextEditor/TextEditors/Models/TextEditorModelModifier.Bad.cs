@@ -31,7 +31,8 @@ public partial class TextEditorModelModifier
 
         _mostCharactersOnASingleLineTuple = (0, TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-        _partitionList = new TextEditorPartition[] { new TextEditorPartition(new List<RichCharacter>()) }.ToImmutableList();
+        PartitionList = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
+        _partitionListChanged = true;
 
         _lineEndList = new List<LineEnd> 
         {

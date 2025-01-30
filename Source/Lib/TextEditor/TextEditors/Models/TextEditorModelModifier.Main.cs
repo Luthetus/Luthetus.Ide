@@ -43,16 +43,54 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
 
         _textEditorModel = model;
         _partitionList = _textEditorModel.PartitionList;
+        _richCharacterList = _textEditorModel.RichCharacterList;
     }
+    
+    private bool _partitionListChanged;
 
-    public RichCharacter[] RichCharacterList => _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList;
-    public ImmutableList<TextEditorPartition> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
+    public RichCharacter[] _richCharacterList;
+    
+    public RichCharacter[] RichCharacterList
+    {
+    	get
+    	{
+    		if (_partitionListChanged)
+    		{
+    			_partitionListChanged = false;
+    			_richCharacterList = PartitionList.SelectMany(x => x.RichCharacterList).ToArray();
+    		}
+    		
+    		return _richCharacterList;
+    	}
+    	set
+    	{
+    		_partitionListChanged = false;
+    		_richCharacterList = value;
+    	}
+    }
+    
+    public List<TextEditorPartition> _partitionList;
+    
+    public List<TextEditorPartition> PartitionList
+    {
+    	get
+    	{
+    		return _partitionList;
+    	}
+    	set
+    	{
+    		_partitionListChanged = true;
+    		_partitionList = value;
+    	}
+    }
+    
+    private bool _partitionListIsShallowCopy = false;
 
-    public IList<ITextEditorEdit> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList;
-    public IList<LineEnd> LineEndList => _lineEndList is null ? _textEditorModel.LineEndList : _lineEndList;
-    public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountList => _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList;
-    public IList<TextEditorPresentationModel> PresentationModelList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
-    public IList<int> TabKeyPositionList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList;
+    public List<ITextEditorEdit> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList;
+    public List<LineEnd> LineEndList => _lineEndList is null ? _textEditorModel.LineEndList : _lineEndList;
+    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList => _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList;
+    public List<TextEditorPresentationModel> PresentationModelList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
+    public List<int> TabKeyPositionList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList;
     public LineEndKind? OnlyLineEndKind => _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind;
     public LineEndKind LineEndKindPreference => _usingLineEndKind ?? _textEditorModel.LineEndKindPreference;
     public ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
@@ -69,33 +107,12 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
 
     public int LineCount => LineEndList.Count;
     public int PreviousLineCount => _textEditorModel.LineEndList.Count;
-    public int CharCount => _richCharacterList.Length;
+    public int CharCount => PartitionList.Sum(x => x.Count);
 
 	/// <summary>
 	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
 	/// </summary>
 	public Stack<TextEditorEditOther> OtherEditStack { get; } = new();
-
-    /// <summary>
-    /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
-    ///       ...with the naming conventions of a private field.
-    ///       |
-    ///       The reason for breaking convention here is that every other purpose of this type is done
-    ///       through a private field.
-    ///       |
-    ///       Need to revisit naming this.
-    /// </summary>
-    private RichCharacter[] _richCharacterList => _partitionList.SelectMany(x => x.RichCharacterList).ToArray();
-    /// <summary>
-    /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
-    ///       ...with the naming conventions of a private field.
-    ///       |
-    ///       The reason for breaking convention here is that every other purpose of this type is done
-    ///       through a private field.
-    ///       |
-    ///       Need to revisit naming this.
-    /// </summary>
-    private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { new TextEditorPartition(new List<RichCharacter>()) }.ToImmutableList();
 
     private List<ITextEditorEdit>? _editBlocksList;
     private List<LineEnd>? _lineEndList;
@@ -148,14 +165,14 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
     {
         return new TextEditorModel(
             AllText,
-            _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList,
+            RichCharacterList,
             PartitionSize,
-            _partitionList is null ? _textEditorModel.PartitionList : _partitionList,
-            _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList.ToImmutableList(),
-            _lineEndList is null ? _textEditorModel.LineEndList : _lineEndList.ToImmutableList(),
-            _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList.ToImmutableList(),
-            _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList.ToImmutableList(),
-            _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList.ToImmutableList(),
+            PartitionList,
+            _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList,
+            _lineEndList is null ? _textEditorModel.LineEndList : _lineEndList,
+            _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList,
+            _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList,
+            _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList,
             _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind,
             _usingLineEndKind ?? _textEditorModel.LineEndKindPreference,
             _resourceUri ?? _textEditorModel.ResourceUri,
