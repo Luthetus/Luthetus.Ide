@@ -35,6 +35,9 @@
 @using Luthetus.TextEditor.RazorLib.Lexers.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.TextEditor.RazorLib.Cursors.Models
+
+
+@using Luthetus.Common.RazorLib.Installations.Models
 				
 @{
     var renderBatchUnsafe = _currentRenderBatch;
@@ -532,6 +535,6 @@
 	    	</ShouldRenderBoundary>
 	    }
 	    
-	    // Console.WriteLine($"elapsedTime (ms) UI: {Stopwatch.GetElapsedTime(startTime).TotalMilliseconds}");
+	    // LuthetusDebugSomething.SetTextEditorUi(Stopwatch.GetElapsedTime(startTime));
     }
 </div>

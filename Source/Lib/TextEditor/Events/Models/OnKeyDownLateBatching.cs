@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Components.Web;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -72,6 +73,8 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
+        
+        LuthetusDebugSomething.OnKeyDownLateBatchingCountSent++;
     }
 
     public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
@@ -135,6 +138,8 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
+    	LuthetusDebugSomething.OnKeyDownLateBatchingCountHandled++;
+    
     	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
 
         var modelModifier = EditContext.GetModelModifier(ResourceUri);

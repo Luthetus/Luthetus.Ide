@@ -1,5 +1,6 @@
 using System.Text;
 using System.Diagnostics;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -107,7 +108,9 @@ public record VirtualizationGrid
     /// </summary>
     public void CreateCache(ITextEditorService textEditorService, ITextEditorModel model, TextEditorViewModel viewModel)
     {
-    	// var startTime = Stopwatch.GetTimestamp();
+    	#if DEBUG
+    	var startTime = Stopwatch.GetTimestamp();
+    	#endif
     
     	if (viewModel.VirtualizationResult.EntryList.Length == 0)
 			return;
@@ -233,7 +236,9 @@ public record VirtualizationGrid
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
 		}
 		
-		// Console.WriteLine($"elapsedTime (ms) VG: {Stopwatch.GetElapsedTime(startTime).TotalMilliseconds}");
+		#if DEBUG
+		LuthetusDebugSomething.SetTextEditorVirtualizationGrid(Stopwatch.GetElapsedTime(startTime));
+		#endif
     }
     
     /// <summary>

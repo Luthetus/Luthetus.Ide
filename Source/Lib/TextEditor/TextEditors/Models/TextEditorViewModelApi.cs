@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Fluxor;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -746,7 +747,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken)
     {
-    	// var startTime = Stopwatch.GetTimestamp();
+    	#if DEBUG
+    	var startTime = Stopwatch.GetTimestamp();
+    	#endif
     	
         try
 		{
@@ -1059,7 +1062,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				},
 			};
 			
-			// Console.WriteLine($"elapsedTime (ms) AP: {Stopwatch.GetElapsedTime(startTime).TotalMilliseconds}");
+			#if DEBUG
+			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
+			#endif
 			
 			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
 		}
