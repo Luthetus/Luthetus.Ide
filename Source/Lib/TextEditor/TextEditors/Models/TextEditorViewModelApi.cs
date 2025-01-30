@@ -829,67 +829,34 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						var localHorizontalStartingIndex = horizontalStartingIndex;
 						var localHorizontalTake = horizontalTake;
 						
-						var unrenderedTabCount = 0;
-						var resultTabCount = 0;
-						
-						var firstTabKeyOnLineIndex = -1;
-						
 						// Tab key adjustments
-						{
-							var line = modelModifier.GetLineInformation(lineIndex);
+						var line = modelModifier.GetLineInformation(lineIndex);
+						var firstTabKeyOnLineIndex = -1;
+						var foundLine = false;
+						var tabKeyPositionListCount = modelModifier.TabKeyPositionList.Count;
 				
-							var foundLine = false;
-							var foundSplit = false;
-					
-							// Count the unrendered tabs that preceed the rendered content on that line
-							// As well, separately count the tabs that are among the rendered content.
-							for (int i = 0; i < modelModifier.TabKeyPositionList; i++)
+						// Move the horizontal starting index based on the extra character width from 'tab' characters.
+						for (int i = 0; i < tabKeyPositionListCount; i++)
+						{
+							var tabKeyPosition = modelModifier.TabKeyPositionList[i];
+							var tabKeyColumnIndex = tabKeyPosition - line.StartPositionIndexInclusive;
+						
+							if (!foundLine)
 							{
-								var tabKeyPosition = modelModifier.TabKeyPositionList[i];
-							
-								var tabKeyColumnIndex = line.StartPositionIndexInclusive;
-							
-								if (!foundLine)
+								if (tabKeyPosition >= line.StartPositionIndexInclusive)
 								{
-									if (tabKeyPosition >= line.StartPositionIndexInclusive)
-									{
-										firstTabKeyOnLineIndex = i;
-										foundLine = true;
-									}
-								}
-								
-								if (foundLine)
-								{
-									if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
-										break;
-								
-									if (!foundSplit)
-									{
-										if (tabKeyColumnIndex < localHorizontalStartingIndex)
-										{
-											localHorizontalStartingIndex -= extraWidthPerTabKey;
-											
-											if (localHorizontalStartingIndex < 0)
-												localHorizontalStartingIndex = 0;
-											
-											if (tabKeyColumnIndex < localHorizontalStartingIndex)
-												unrenderedTabCount++;
-											else
-												foundSplit = true;
-										}
-										else
-										{
-											foundSplit = true;
-										}
-									}
-									
-									if (foundSplit)
-										resultTabCount++;
+									firstTabKeyOnLineIndex = i;
+									foundLine = true;
 								}
 							}
 							
-							if (line.Index == 57)
-								Console.WriteLine($"line.LineIndex == 57, un:{unrenderedTabCount} rt:{resultTabCount}");
+							if (foundLine)
+							{
+								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
+									break;
+							
+								localHorizontalStartingIndex -= extraWidthPerTabKey;
+							}
 						}
 	
 						if (localHorizontalStartingIndex + localHorizontalTake > lineLength)
@@ -897,6 +864,46 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	
 						localHorizontalStartingIndex = Math.Max(0, localHorizontalStartingIndex);
 						localHorizontalTake = Math.Max(0, localHorizontalTake);
+						
+						var foundSplit = false;
+						var unrenderedTabCount = 0;
+						var resultTabCount = 0;
+						
+						// Count the 'tab' characters that preceed the text to display so that the 'left' can be modified by the extra width.
+						// Count the 'tab' characters that are among the text to display so that the 'width' can be modified by the extra width.
+						if (firstTabKeyOnLineIndex != -1)
+						{
+							for (int i = firstTabKeyOnLineIndex; i < tabKeyPositionListCount; i++)
+							{
+								var tabKeyPosition = modelModifier.TabKeyPositionList[i];
+								
+								var tabKeyColumnIndex = tabKeyPosition - line.StartPositionIndexInclusive;
+								
+								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
+									break;
+							
+								if (!foundSplit)
+								{
+									if (tabKeyColumnIndex < localHorizontalStartingIndex)
+										unrenderedTabCount++;
+									else
+										foundSplit = true;
+								}
+								
+								if (foundSplit)
+									resultTabCount++;
+							}
+						}
+						
+						if (line.Index == 57)
+						{
+							Console.WriteLine($"ur:{unrenderedTabCount} rt:{resultTabCount} hsi:{localHorizontalStartingIndex}");
+							
+							if (unrenderedTabCount + resultTabCount != 6)
+							{
+								Console.WriteLine("!= 6");
+							}
+						}
 	
 						widthInPixels = ((localHorizontalTake - localHorizontalStartingIndex) + (extraWidthPerTabKey * resultTabCount)) *
 							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
