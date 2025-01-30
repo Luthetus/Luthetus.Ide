@@ -895,16 +895,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							}
 						}
 						
-						if (line.Index == 57)
-						{
-							Console.WriteLine($"ur:{unrenderedTabCount} rt:{resultTabCount} hsi:{localHorizontalStartingIndex}");
-							
-							if (unrenderedTabCount + resultTabCount != 6)
-							{
-								Console.WriteLine("!= 6");
-							}
-						}
-	
 						widthInPixels = ((localHorizontalTake - localHorizontalStartingIndex) + (extraWidthPerTabKey * resultTabCount)) *
 							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
 	
