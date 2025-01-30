@@ -831,6 +831,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						
 						var unrenderedTabCount = 0;
 						var resultTabCount = 0;
+						
+						var firstTabKeyOnLineIndex = -1;
+						
 						// Tab key adjustments
 						{
 							var line = modelModifier.GetLineInformation(lineIndex);
@@ -840,14 +843,19 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					
 							// Count the unrendered tabs that preceed the rendered content on that line
 							// As well, separately count the tabs that are among the rendered content.
-							foreach (var tabKeyPosition in modelModifier.TabKeyPositionList)
+							for (int i = 0; i < modelModifier.TabKeyPositionList; i++)
 							{
+								var tabKeyPosition = modelModifier.TabKeyPositionList[i];
+							
 								var tabKeyColumnIndex = line.StartPositionIndexInclusive;
 							
 								if (!foundLine)
 								{
 									if (tabKeyPosition >= line.StartPositionIndexInclusive)
+									{
+										firstTabKeyOnLineIndex = i;
 										foundLine = true;
+									}
 								}
 								
 								if (foundLine)

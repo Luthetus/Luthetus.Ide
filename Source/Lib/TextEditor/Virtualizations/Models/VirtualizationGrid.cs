@@ -115,6 +115,8 @@ public record VirtualizationGrid
     ///
     /// You are accepting an 'ITextEditorModel' but I think it is a TextEditorModelModifier,
     /// and these are not equivalent in implementation of the properties.
+    ///
+    /// Oh my gosh: 'private RichCharacter[] _richCharacterList => _partitionList.SelectMany(x => x.RichCharacterList).ToArray();'.
     /// </summary>
     public void CreateCache(ITextEditorService textEditorService, ITextEditorModel model, TextEditorViewModel viewModel)
     {
