@@ -133,6 +133,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         inPartition.RichCharacterList[relativePositionIndex] = new(
         	targetRichCharacter.Value,
         	decorationByte);
+        _partitionListChanged = true;
     }
 
     public void __RemoveAt(int globalPositionIndex)
@@ -371,6 +372,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     	}
     	
     	PartitionList[index] = partition;
+    	_partitionListChanged = true;
     }
     
     public void PartitionListInsert(int index, TextEditorPartition partition)
@@ -382,6 +384,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     	}
     	
     	PartitionList.Insert(index, partition);
+    	_partitionListChanged = true;
     }
 }
 
