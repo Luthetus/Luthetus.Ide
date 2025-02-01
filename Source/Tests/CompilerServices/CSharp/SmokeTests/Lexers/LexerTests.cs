@@ -18,8 +18,8 @@ public class LexerTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
-			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
-	        CSharpParser.Parse(CompilationUnit);
+			var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+	        CSharpParser.Parse(CompilationUnit, ref lexerOutput);
 		}
 		
 		public string SourceText { get; set; }

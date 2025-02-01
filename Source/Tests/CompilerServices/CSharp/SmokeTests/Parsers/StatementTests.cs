@@ -25,9 +25,9 @@ public class StatementTests
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
 			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
-			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+			var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
 			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
-	        CSharpParser.Parse(CompilationUnit);
+	        CSharpParser.Parse(CompilationUnit, ref lexerOutput);
 		}
 		
 		public string SourceText { get; set; }

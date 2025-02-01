@@ -371,7 +371,7 @@ public partial class CSharpBinder
 		        ambiguousIdentifierExpressionNode.GenericParametersListingNode,
 		        functionParametersListingNode,
 		        CSharpFacts.Types.Void.ToTypeClause());
-		        
+		    
 		    BindFunctionInvocationNode(
 		        functionInvocationNode,
 		        compilationUnit);
@@ -679,6 +679,52 @@ public partial class CSharpBinder
 	public IExpressionNode BadMergeToken(
 		BadExpressionNode badExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		// (2025-01-31)
+		// ============
+		// 'if (typeof(string))' is breaking any text parsed after it in 'CSharpBinder.Main.cs'.
+		//
+		// There is more to it than just 'if (typeof(string))',
+		// the issue actually occurs due to two consecutive 'if (typeof(string))'.
+		//
+		// Because the parser can recover from this under certain conditions,
+		// but the nested 'if (typeof(string))' in 'CSharpBinder.Main.cs' results
+		// in plain text syntax highlighting for any code that appears in the remaining methods.
+		//
+		// The issue is that 'if (...)' adds to 'parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+		//
+		// This results in the expression loop returning (back to the statement loop) upon encountering an unmatched 'CloseParenthesisToken'.
+		// But, 'typeof(string)' is not understood by the expression loop.
+		//
+		// It only will create a FunctionInvocationNode if the "function name is an IdentifierToken / convertible to an IdentifierToken".
+		//
+		// And the keyword 'typeof' cannot be converted to an IdentifierToken, so it makes a bad expression node.
+		//
+		// Following that, the bad expression node goes to merge with an 'OpenParenthesisToken',
+		// and under normal circumstances an 'OpenParenthesisToken' would 'parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, ambiguousParenthesizedExpressionNode));'
+		//
+		// But, when merging with the 'bad expression node' the 'OpenParenthesisToken' does not do this.
+		//
+		// Thus, the statement loop picks back up at the first 'CloseParenthesisToken' of 'if (typeof(string))'
+		// when it should've picked back up at the second 'CloseParenthesisToken'.
+		//
+		// The statement loop then goes on to presume that the first 'CloseParenthesisToken'
+		// was the closing delimiter of the if statement's predicate.
+		//
+		// So it Matches a 'CloseParenthesisToken', then sets the next token to be the start of the if statement's code block.
+		// But, that next token is another 'CloseParenthesisToken'.
+		//
+		// From here it is presumed that errors start to cascade, and therefore the details are only relevant if wanting to
+		// add 'recovery' logic.
+		//
+		// I think the best 'recovery' logic for this would that an unmatched 'CloseBraceToken' should
+		// return to the statement loop.
+		//
+		// But, as for a fix, the bad expression node needs to 'match' the Parenthesis tokens so that
+		// the statement loop picks back up at the second 'CloseParenthesisToken'.
+		// 
+		if (token.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, badExpressionNode));
+		
 		badExpressionNode.SyntaxList.Add(token);
 		return badExpressionNode;
 	}
@@ -1082,7 +1128,8 @@ public partial class CSharpBinder
 		    };
 		    
 		    if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken && !ambiguousExpressionNode.FollowsMemberAccessToken ||
-		    	parserModel.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode) && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.WithTokenContextualKeyword)
+		    	parserModel.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode) && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.WithTokenContextualKeyword &&
+		    	parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.EqualsCloseAngleBracketToken)
 		    {
 				return ForceDecisionAmbiguousIdentifier(
 					emptyExpressionNode,
