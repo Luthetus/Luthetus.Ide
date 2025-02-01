@@ -41,9 +41,9 @@ public partial class ExpressionAsStatementTests
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
 			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
-			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+			var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
 			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
-	        CSharpParser.Parse(CompilationUnit);
+	        CSharpParser.Parse(CompilationUnit, ref lexerOutput);
 		}
 		
 		public string SourceText { get; set; }
@@ -2533,6 +2533,42 @@ person.FirstName;
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList()[1];
+		// var expressionNode = binaryExpressionNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Keyword_Functions_KeywordTypeClause()
+    {
+    	// if (typeof(string))
+		// {
+		// }
+    
+    	var test = new Test(
+@"
+if (typeof(string))
+{
+}
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		// var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList()[1];
+		// var expressionNode = binaryExpressionNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Keyword_Functions_IdentifierTypeClause()
+    {
+    	var test = new Test(
+@"
+if (typeof(Apple))
+{
+}
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		// var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList()[1];
 		// var expressionNode = binaryExpressionNode.ExpressionNode;
 		throw new NotImplementedException();
     }
