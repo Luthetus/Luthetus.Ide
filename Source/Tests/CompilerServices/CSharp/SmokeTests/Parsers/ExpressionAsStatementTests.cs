@@ -868,6 +868,25 @@ var ccc = $""abc {aaa} 123 {bbb}"";
     }
     
     [Fact]
+    public void FunctionInvocationNode_LambdaFunction_Parameter()
+    {
+    	var test = new Test("MyMethod(x => 2);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
+		
+		// FunctionParametersListingNode
+		{
+			Assert.True(functionInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			
+			var lambdaFunctionParameterEntryNode = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[0];
+			Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaFunctionParameterEntryNode.ExpressionNode.SyntaxKind);
+
+			Assert.True(functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+    }
+    
+    [Fact]
     public void ConstructorInvocationNode_Basic()
     {
     	var test = new Test("new Person()");

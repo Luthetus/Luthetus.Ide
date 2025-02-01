@@ -371,7 +371,7 @@ public partial class CSharpBinder
 		        ambiguousIdentifierExpressionNode.GenericParametersListingNode,
 		        functionParametersListingNode,
 		        CSharpFacts.Types.Void.ToTypeClause());
-		        
+		    
 		    BindFunctionInvocationNode(
 		        functionInvocationNode,
 		        compilationUnit);
@@ -1128,7 +1128,8 @@ public partial class CSharpBinder
 		    };
 		    
 		    if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken && !ambiguousExpressionNode.FollowsMemberAccessToken ||
-		    	parserModel.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode) && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.WithTokenContextualKeyword)
+		    	parserModel.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode) && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.WithTokenContextualKeyword &&
+		    	parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.EqualsCloseAngleBracketToken)
 		    {
 				return ForceDecisionAmbiguousIdentifier(
 					emptyExpressionNode,
