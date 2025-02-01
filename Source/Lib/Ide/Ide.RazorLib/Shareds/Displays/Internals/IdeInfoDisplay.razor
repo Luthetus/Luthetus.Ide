@@ -172,7 +172,20 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.22 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.23 </em> (WIP_DATE)</div>
+                <ul>
+                	<li>
+                		Fix: function invocation as a statement where
+                		     any of the parameters are a lambda expression.
+                	</li>
+                	<li>
+                		Fix: 'typeof(...)' causing 'if(x.GetType() == typeof(...))'
+                		     to erroneously end the if statement predicate 1 CloseParenthesisToken too soon.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.22 </em> (2025-01-30)</div>
                 <ul>
                 	<li>
                 		Text editor seems many orders of magnitude faster when running single threaded.
