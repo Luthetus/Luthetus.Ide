@@ -1,5 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -8,6 +9,13 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 public class CSharpStatementBuilder
 {
 	public List<ISyntax> ChildList { get; } = new();
+	
+	/// <summary>
+	/// Measure the cost of 'Peek(...)', 'TryPeek(...)' since now
+	/// this is a value tuple and the dequeue alone does not mean success,
+	/// you have to peek first to see if the object references are equal.
+	/// </summary>
+	public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; } = new();
 	
 	/// <summary>Invokes the other overload with index: ^1</summary>
 	public bool TryPeek(out ISyntax syntax)
@@ -45,25 +53,41 @@ public class CSharpStatementBuilder
 	/// If it was not yet added, then add it.
 	///
 	/// Lastly, clear the StatementBuilder.ChildList.
+	///
+	/// Returns the result of 'ParseChildScopeStack.TryPop(out var deferredChildScope)'.
 	/// </summary>
-	public void FinishStatement(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (ChildList.Count == 0)
-			return;
-		
-		var statementSyntax = ChildList[^1];
-		
-		ISyntax codeBlockBuilderSyntax;
-		
-		if (parserModel.CurrentCodeBlockBuilder.ChildList.Count == 0)
-			codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
-		else
-			codeBlockBuilderSyntax = parserModel.CurrentCodeBlockBuilder.ChildList[^1];
+		if (ChildList.Count != 0)
+		{
+			var statementSyntax = ChildList[^1];
 			
-		if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax))
-			parserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+			ISyntax codeBlockBuilderSyntax;
+			
+			if (parserModel.CurrentCodeBlockBuilder.ChildList.Count == 0)
+				codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
+			else
+				codeBlockBuilderSyntax = parserModel.CurrentCodeBlockBuilder.ChildList[^1];
+				
+			if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax))
+				parserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+			
+			ChildList.Clear();
+		}
 		
-		ChildList.Clear();
+		if (ParseChildScopeStack.Count > 0)
+		{
+			var tuple = ParseChildScopeStack.Peek();
+			
+			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+			{
+				tuple = ParseChildScopeStack.Pop();
+				tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, compilationUnit, ref parserModel);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public void WriteToConsole()
