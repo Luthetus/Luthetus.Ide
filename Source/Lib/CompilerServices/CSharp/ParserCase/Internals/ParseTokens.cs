@@ -300,6 +300,10 @@ public static class ParseTokens
 			they will disambiguate with the EqualsCloseAngleBracketToken ('=>').
 		*/
 		
+		// Lambda expression's are done via the expression loop, then use custom deferred parsing.
+		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.LambdaExpressionNode)
+			return;
+		
 		// (2025-01-25)
 		// ============
 		// Am removing '//parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.ArbitraryCodeBlockNode &&'
