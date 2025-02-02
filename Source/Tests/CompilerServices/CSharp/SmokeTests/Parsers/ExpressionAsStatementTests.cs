@@ -1720,6 +1720,43 @@ var ccc = $""abc {aaa} 123 {bbb}"";
     }
     
     [Fact]
+    public void LambdaFunction_CodeBlock_SingleParameter()
+    {
+    	var test = new Test("return x => { return \"Abc\"; };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Lambda_Aaa()
+    {
+    	var test = new Test(@"void Aaa()
+{
+    var aaa = 3;
+
+    SomeMethod(x =>
+    {
+        var bbb = 7;
+        return aaa - ccc;
+    });
+
+    var ccc = bbb;
+}");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
     public void MethodGroup()
     {
     	/*var session = new ExpressionSession(

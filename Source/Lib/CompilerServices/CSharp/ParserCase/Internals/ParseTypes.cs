@@ -217,7 +217,7 @@ public static class ParseTypes
     	
     	parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
     	
-    	parserModel.StatementBuilder.FinishStatement(compilationUnit, ref parserModel);
+    	parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;

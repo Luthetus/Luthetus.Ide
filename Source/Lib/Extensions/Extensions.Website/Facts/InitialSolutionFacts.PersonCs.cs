@@ -232,9 +232,20 @@ return xasas => 3; // Lambda Function, parameters declared without parenthesis.
 
 return async xasas => Task.CompletedTask; // Lambda Function, async.
 
-return x =>
+return aaa => // Lambda Function with statement block body.
 {
-	return x;  // Lambda Function with statement block body.
+	return Aaa(
+		x =>
+		{
+			var abc = 2;
+			return "Abc";
+		},
+		y =>
+		{
+			var cba = 3;
+			return "Abc";
+		},
+		z => e => 2);
 };
 
 public enum SomeKind
