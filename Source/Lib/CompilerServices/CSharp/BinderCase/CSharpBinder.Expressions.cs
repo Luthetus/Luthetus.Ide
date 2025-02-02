@@ -2261,6 +2261,7 @@ public partial class CSharpBinder
 		
 		parserModel.TokenWalker.Consume(); // Skip the EqualsCloseAngleBracketToken
 		
+		var openTokenIndex = parserModel.TokenWalker.Index;
 		var openBraceToken = (OpenBraceToken)parserModel.TokenWalker.Consume();
     	
     	var openBraceCounter = 1;
@@ -2282,7 +2283,8 @@ public partial class CSharpBinder
 
 			_ = parserModel.TokenWalker.Consume();
 		}
-
+		
+		var lambdaCodeBlockBuilder = parserModel.CurrentCodeBlockBuilder;
 		CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
 	
 		var closeTokenIndex = parserModel.TokenWalker.Index;
@@ -2291,6 +2293,12 @@ public partial class CSharpBinder
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
+		
+		parserModel.StatementBuilder.ParseChildScopeQueue.Enqueue(
+			new CSharpDeferredChildScope(
+				openTokenIndex,
+				closeTokenIndex,
+				lambdaCodeBlockBuilder));
 	}
 	
 	public IExpressionNode ParseMemberAccessToken(IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
