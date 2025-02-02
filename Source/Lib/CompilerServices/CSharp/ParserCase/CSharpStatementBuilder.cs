@@ -1,5 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -8,7 +9,13 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 public class CSharpStatementBuilder
 {
 	public List<ISyntax> ChildList { get; } = new();
-	public Queue<CSharpDeferredChildScope> ParseChildScopeQueue { get; } = new();
+	
+	/// <summary>
+	/// Measure the cost of 'Peek(...)', 'TryPeek(...)' since now
+	/// this is a value tuple and the dequeue alone does not mean success,
+	/// you have to peek first to see if the object references are equal.
+	/// </summary>
+	public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; } = new();
 	
 	/// <summary>Invokes the other overload with index: ^1</summary>
 	public bool TryPeek(out ISyntax syntax)
@@ -47,7 +54,7 @@ public class CSharpStatementBuilder
 	///
 	/// Lastly, clear the StatementBuilder.ChildList.
 	///
-	/// Returns the result of 'ParseChildScopeQueue.TryDequeue(out var deferredChildScope)'.
+	/// Returns the result of 'ParseChildScopeStack.TryPop(out var deferredChildScope)'.
 	/// </summary>
 	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
@@ -68,12 +75,19 @@ public class CSharpStatementBuilder
 			ChildList.Clear();
 		}
 		
-		var success = ParseChildScopeQueue.TryDequeue(out var deferredChildScope);
+		if (ParseChildScopeStack.Count > 0)
+		{
+			var tuple = ParseChildScopeStack.Peek();
+			
+			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+			{
+				tuple = ParseChildScopeStack.Pop();
+				tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, compilationUnit, ref parserModel);
+				return true;
+			}
+		}
 		
-		if (success)
-			deferredChildScope.PrepareMainParserLoop(finishTokenIndex, compilationUnit, ref parserModel);
-		
-		return success;
+		return false;
 	}
 	
 	public void WriteToConsole()

@@ -2294,11 +2294,14 @@ public partial class CSharpBinder
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 		
-		parserModel.StatementBuilder.ParseChildScopeQueue.Enqueue(
-			new CSharpDeferredChildScope(
-				openTokenIndex,
-				closeTokenIndex,
-				lambdaCodeBlockBuilder));
+		parserModel.StatementBuilder.ParseChildScopeStack.Push(
+			(
+				parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,
+				new CSharpDeferredChildScope(
+					openTokenIndex,
+					closeTokenIndex,
+					lambdaCodeBlockBuilder)
+			));
 	}
 	
 	public IExpressionNode ParseMemberAccessToken(IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
