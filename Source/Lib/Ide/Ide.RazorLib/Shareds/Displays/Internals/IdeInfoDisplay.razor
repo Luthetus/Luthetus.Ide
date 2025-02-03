@@ -175,7 +175,10 @@
                 <div>v <em class="luth_em">0.9.7.24 </em> (WIP_DATE)</div>
                 <ul>
                 	<li>
-                		Draft PR
+                		Move 'CSharpCodeBlockBuilder.ParseChildScopeQueue' to be
+                		'CSharpParserModel.ParseChildScopeStack'.
+                		(one object instantiation for the "queue" per parse rather
+                		 than having an instance "per" code block builder).
                 	</li>
                 </ul>
             </div>

@@ -11,8 +11,8 @@ public class CSharpStatementBuilder
 	public List<ISyntax> ChildList { get; } = new();
 	
 	/// <summary>
-	/// Measure the cost of 'Peek(...)', 'TryPeek(...)' since now
-	/// this is a value tuple and the dequeue alone does not mean success,
+	/// TODO: Measure the cost of 'Peek(...)', 'TryPeek(...)' since now...
+	/// ...this is a value tuple and the dequeue alone does not mean success,
 	/// you have to peek first to see if the object references are equal.
 	/// </summary>
 	public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; } = new();

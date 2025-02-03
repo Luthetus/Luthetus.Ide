@@ -230,15 +230,22 @@ public static class CSharpParser
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
-				if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue is not null &&
-					parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+				bool deferredParsingOccurred = false;
+				
+				if (parserModel.ParseChildScopeStack.Count > 0)
 				{
-					deferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+					var tuple = parserModel.ParseChildScopeStack.Peek();
+					
+					if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+					{
+						tuple = parserModel.ParseChildScopeStack.Pop();
+						tuple.DeferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+						deferredParsingOccurred = true;
+					}
 				}
-				else
-				{
+				
+				if (!deferredParsingOccurred)
 					break;
-				}
 			}
 			
 			if (parserModel.TokenWalker.ConsumeCounter == 0)

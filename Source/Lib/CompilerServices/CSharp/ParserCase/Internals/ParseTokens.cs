@@ -365,11 +365,16 @@ public static class ParseTokens
     		throw new NotImplementedException("ParseCloseBraceToken(...) -> if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)");
     	}*/
     
-    	if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue is not null &&
-    		parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+    	if (parserModel.ParseChildScopeStack.Count > 0)
 		{
-			deferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, compilationUnit, ref parserModel);
-			return;
+			var tuple = parserModel.ParseChildScopeStack.Peek();
+			
+			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+			{
+				tuple = parserModel.ParseChildScopeStack.Pop();
+				tuple.DeferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, compilationUnit, ref parserModel);
+				return;
+			}
 		}
 
 		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)

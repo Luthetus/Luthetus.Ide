@@ -91,9 +91,13 @@ internal static class TokenWalkerExtensionMethods
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 
-		parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new CSharpDeferredChildScope(
-			openTokenIndex,
-			closeTokenIndex,
-			deferredCodeBlockBuilder));
+		parserModel.ParseChildScopeStack.Push(
+			(
+				parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,
+				new CSharpDeferredChildScope(
+					openTokenIndex,
+					closeTokenIndex,
+					deferredCodeBlockBuilder)
+			));
     }
 }

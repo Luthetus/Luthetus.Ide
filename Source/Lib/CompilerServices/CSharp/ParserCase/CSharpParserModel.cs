@@ -42,6 +42,13 @@ public struct CSharpParserModel
     public CSharpStatementBuilder StatementBuilder { get; set; } = new();
     
     /// <summary>
+	/// TODO: Measure the cost of 'Peek(...)', 'TryPeek(...)' since now...
+	/// ...this is a value tuple and the dequeue alone does not mean success,
+	/// you have to peek first to see if the object references are equal.
+	/// </summary>
+    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; } = new();
+    
+    /// <summary>
     /// The C# IParserModel implementation will only "short circuit" if the 'SyntaxKind DelimiterSyntaxKind'
     /// is registered as a delimiter.
     ///
