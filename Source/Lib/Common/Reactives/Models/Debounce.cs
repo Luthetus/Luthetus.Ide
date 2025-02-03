@@ -83,7 +83,7 @@ public class Debounce<TArgs>
         	
         	while (!CancellationToken.IsCancellationRequested)
         	{
-        		await Task.Delay(DebounceTimeSpan);
+        		await Task.Delay(DebounceTimeSpan).ConfigureAwait(false);
         		
         		lock (_lockWorkItemArgs)
         		{
