@@ -1484,10 +1484,11 @@ var ccc = $""abc {aaa} 123 {bbb}"";
     [Fact]
     public void LambdaFunction_Expression_NoParameter()
     {
-    	var test = new Test("() => \"Abc\";");
+    	var test = new Test("return () => 3;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
+		var lambdaExpressionNode = (LambdaExpressionNode)returnStatementNode.ExpressionNode;
 		Assert.True(lambdaExpressionNode.CodeBlockNodeIsExpression);
 		Assert.Empty(lambdaExpressionNode.VariableDeclarationNodeList);
     }
