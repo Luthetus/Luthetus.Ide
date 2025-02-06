@@ -27,8 +27,6 @@ public class CSharpDeferredChildScope
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
 		
-		parserModel.SyntaxStack.Push(CodeBlockBuilder.CodeBlockOwner);
-		
 		compilationUnit.Binder.SetCurrentScopeAndBuilder(
 			CodeBlockBuilder,
 			compilationUnit,

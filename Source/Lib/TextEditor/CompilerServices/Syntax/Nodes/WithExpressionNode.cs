@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class WithExpressionNode : IExpressionNode
 {
     public WithExpressionNode(
-    	IdentifierToken variableIdentifierToken,
-    	OpenBraceToken openBraceToken,
-    	CloseBraceToken closeBraceToken,
+    	SyntaxToken variableIdentifierToken,
+    	SyntaxToken openBraceToken,
+    	SyntaxToken closeBraceToken,
     	TypeClauseNode resultTypeClauseNode)
     {
         IdentifierToken = variableIdentifierToken;
@@ -21,9 +21,9 @@ public sealed class WithExpressionNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public IdentifierToken IdentifierToken { get; }
-    public OpenBraceToken OpenBraceToken { get; }
-    public CloseBraceToken CloseBraceToken { get; }
+    public SyntaxToken IdentifierToken { get; }
+    public SyntaxToken OpenBraceToken { get; }
+    public SyntaxToken CloseBraceToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
     public bool IsFabricated { get; init; }

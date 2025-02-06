@@ -1,5 +1,5 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -12,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class AmbiguousIdentifierNode : ISyntaxNode
 {
-    public AmbiguousIdentifierNode(IdentifierToken identifierToken)
+    public AmbiguousIdentifierNode(SyntaxToken identifierToken)
     {
         IdentifierToken = identifierToken;
     }
@@ -20,7 +20,7 @@ public sealed class AmbiguousIdentifierNode : ISyntaxNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public IdentifierToken IdentifierToken { get; }
+    public SyntaxToken IdentifierToken { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;

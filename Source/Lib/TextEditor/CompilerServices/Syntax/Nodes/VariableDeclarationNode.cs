@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -9,7 +9,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 {
     public VariableDeclarationNode(
         TypeClauseNode typeClauseNode,
-        IdentifierToken identifierToken,
+        SyntaxToken identifierToken,
         VariableKind variableKind,
         bool isInitialized)
     {
@@ -26,7 +26,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 
     public TypeClauseNode TypeClauseNode { get; private set; }
     
-    public IdentifierToken IdentifierToken { get; }
+    public SyntaxToken IdentifierToken { get; }
     /// <summary>
     /// TODO: Remove the 'set;' on this property
     /// </summary>

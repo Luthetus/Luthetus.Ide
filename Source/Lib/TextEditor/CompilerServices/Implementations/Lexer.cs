@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 public class Lexer : ILexer
 {
     protected readonly StringWalker _stringWalker;
-    protected readonly List<ISyntaxToken> _syntaxTokenList = new();
+    protected readonly List<SyntaxToken> _syntaxTokenList = new();
     protected readonly DiagnosticBag _diagnosticBag = new();
 
     public Lexer(
@@ -28,7 +28,7 @@ public class Lexer : ILexer
     public string SourceText { get; }
     public LexerKeywords LexerKeywords { get; }
 
-    public List<ISyntaxToken> SyntaxTokenList => _syntaxTokenList;
+    public List<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
     public List<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToList();
 
     public virtual void Lex()

@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -18,7 +17,7 @@ public static class ParseOthers
 	/// </summary>
 	public static ISyntax HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-        var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
+        var combineNamespaceIdentifierIntoOne = new List<SyntaxToken>();
 
         while (!parserModel.TokenWalker.IsEof)
         {
@@ -51,7 +50,7 @@ public static class ParseOthers
         
         identifierTextSpan.ClearTextCache();
 
-        return new IdentifierToken(identifierTextSpan);
+        return new SyntaxToken(SyntaxKind.IdentifierToken, identifierTextSpan);
     }
 
     public static void StartStatement_Expression(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -91,7 +90,7 @@ public static class ParseOthers
 	/// will currently erroneously parse as a TypeClauseNode.
 	///
 	/// But, once the statement code receives the 'TypeClauseNode' result
-	/// from 'TryParseExpression', the next ISyntaxToken
+	/// from 'TryParseExpression', the next SyntaxToken
 	/// is OpenParenthesisToken.
 	///
 	/// Therefore, it is obvious at this point that we really wanted

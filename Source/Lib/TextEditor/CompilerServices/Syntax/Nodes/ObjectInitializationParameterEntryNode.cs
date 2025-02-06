@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -15,8 +15,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 {
     public ObjectInitializationParameterEntryNode(
-        IdentifierToken propertyIdentifierToken,
-        EqualsToken equalsToken,
+        SyntaxToken propertyIdentifierToken,
+        SyntaxToken equalsToken,
         IExpressionNode expressionNode)
     {
         PropertyIdentifierToken = propertyIdentifierToken;
@@ -27,8 +27,8 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public IdentifierToken PropertyIdentifierToken { get; set; }
-    public EqualsToken EqualsToken { get; set; }
+    public SyntaxToken PropertyIdentifierToken { get; set; }
+    public SyntaxToken EqualsToken { get; set; }
     public IExpressionNode ExpressionNode { get; set; }
     public bool IsCollectionInitialization => !PropertyIdentifierToken.ConstructorWasInvoked;
 

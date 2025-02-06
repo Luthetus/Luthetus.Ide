@@ -1,5 +1,4 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
@@ -61,7 +60,7 @@ internal static class TokenWalkerExtensionMethods
 			}
 	
 			closeTokenIndex = tokenWalker.Index;
-			var statementDelimiterToken = (StatementDelimiterToken)tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+			var statementDelimiterToken = tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 		}
 		else
 		{
@@ -84,16 +83,20 @@ internal static class TokenWalkerExtensionMethods
 			}
 	
 			closeTokenIndex = tokenWalker.Index;
-			var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
+			var closeBraceToken = tokenWalker.Match(SyntaxKind.CloseBraceToken);
 		}
 		
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 
-		parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new CSharpDeferredChildScope(
-			openTokenIndex,
-			closeTokenIndex,
-			deferredCodeBlockBuilder));
+		parserModel.ParseChildScopeStack.Push(
+			(
+				parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,
+				new CSharpDeferredChildScope(
+					openTokenIndex,
+					closeTokenIndex,
+					deferredCodeBlockBuilder)
+			));
     }
 }

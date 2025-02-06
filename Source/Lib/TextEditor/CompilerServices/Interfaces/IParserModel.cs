@@ -1,5 +1,4 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -31,19 +30,7 @@ public interface IParserModel
     public TokenWalker TokenWalker { get; }
     
     /// <summary>
-    /// This property is likely to become obsolete.
-    /// It is a hacky sort of 'catch all' case
-    /// where one can push onto it whatever they want.
-    /// 
-    /// <see cref="StatementBuilder"/> is being
-    /// added and is expected to fully replace this property.
-    /// </summary>
-    public Stack<ISyntax> SyntaxStack { get; set; }
-    
-    /// <summary>
-    /// Unlike <see cref="SyntaxStack"/> there are more defined rules for this property.
-    ///
-    /// It will be cleared after every <see cref="StatementDelimiterToken"/>,
+    /// This will be cleared after every <see cref="StatementDelimiterToken"/>,
     /// <see cref="OpenBraceToken"/>, and <see cref="CloseBraceToken"/>
     /// that is handled by the main loop.
     ///

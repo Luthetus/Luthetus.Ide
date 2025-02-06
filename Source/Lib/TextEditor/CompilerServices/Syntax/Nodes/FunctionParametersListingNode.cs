@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -25,9 +25,9 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class FunctionParametersListingNode : IExpressionNode
 {
     public FunctionParametersListingNode(
-        OpenParenthesisToken openParenthesisToken,
+        SyntaxToken openParenthesisToken,
         List<FunctionParameterEntryNode> functionParameterEntryNodeList,
-        CloseParenthesisToken closeParenthesisToken)
+        SyntaxToken closeParenthesisToken)
     {
         OpenParenthesisToken = openParenthesisToken;
         FunctionParameterEntryNodeList = functionParameterEntryNodeList;
@@ -37,15 +37,15 @@ public sealed class FunctionParametersListingNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public SyntaxToken OpenParenthesisToken { get; }
     public List<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; private set; }
+    public SyntaxToken CloseParenthesisToken { get; private set; }
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionParametersListingNode;
     
-    public FunctionParametersListingNode SetCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)
+    public FunctionParametersListingNode SetCloseParenthesisToken(SyntaxToken closeParenthesisToken)
     {
     	CloseParenthesisToken = closeParenthesisToken;
     	

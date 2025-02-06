@@ -4,7 +4,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -17,6 +16,8 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public static class CSharpParser
 {
+	public static int ErrorCount { get; set; }
+
     public static void Parse(CSharpCompilationUnit compilationUnit, ref CSharpLexerOutput lexerOutput)
     {
     	var globalCodeBlockNode = new GlobalCodeBlockNode();
@@ -40,7 +41,6 @@ public static class CSharpParser
 
         var parserModel = new CSharpParserModel(
             new TokenWalker(lexerOutput.SyntaxTokenList, diagnosticBag),
-            new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
@@ -48,9 +48,19 @@ public static class CSharpParser
 		#if DEBUG
 		parserModel.TokenWalker.ProtectedTokenSyntaxKindList = new() { SyntaxKind.StatementDelimiterToken, SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken, };
 		#endif
+		
+		var loopCount = 0;
         
         while (true)
         {
+        	var multiplier = 3;
+        	if (loopCount++ > parserModel.TokenWalker.TokenList.Count * multiplier)
+        	{
+        		++ErrorCount;
+        		throw new NotImplementedException($"ErrorCount:{ErrorCount};;; if (loopCount++ > parserModel.TokenWalker.TokenList.Count * {multiplier})");
+        	}
+
+        
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
             var token = parserModel.TokenWalker.Current;
@@ -82,7 +92,7 @@ public static class CSharpParser
                 	}
                 	break;
                 case SyntaxKind.PreprocessorDirectiveToken:
-                    ParseTokens.ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParsePreprocessorDirectiveToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.IdentifierToken:
                 	ParseTokens.ParseIdentifierToken(compilationUnit, ref parserModel);
@@ -97,7 +107,7 @@ public static class CSharpParser
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 					#endif
 					
-					var openBraceToken = (OpenBraceToken)parserModel.TokenWalker.Consume();
+					var openBraceToken = parserModel.TokenWalker.Consume();
 					
 					#if DEBUG
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
@@ -128,7 +138,7 @@ public static class CSharpParser
 					// to be passed the index that was consumed in order to
 					// get the CloseBraceToken.
 					var closeBraceTokenIndex = parserModel.TokenWalker.Index;
-					var closeBraceToken = (CloseBraceToken)parserModel.TokenWalker.Consume();
+					var closeBraceToken = parserModel.TokenWalker.Consume();
 					
 					#if DEBUG
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
@@ -141,28 +151,28 @@ public static class CSharpParser
                 	ParseTokens.ParseOpenParenthesisToken(compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.CloseParenthesisToken:
-                    ParseTokens.ParseCloseParenthesisToken((CloseParenthesisToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseParenthesisToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
                 	if (parserModel.StatementBuilder.ChildList.Count == 0)
                 		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
                 	else
-                    	ParseTokens.ParseOpenAngleBracketToken((OpenAngleBracketToken)token, compilationUnit, ref parserModel);
+                    	ParseTokens.ParseOpenAngleBracketToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.CloseAngleBracketToken:
-                    ParseTokens.ParseCloseAngleBracketToken((CloseAngleBracketToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseAngleBracketToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.OpenSquareBracketToken:
                     ParseTokens.ParseOpenSquareBracketToken(compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.CloseSquareBracketToken:
-                    ParseTokens.ParseCloseSquareBracketToken((CloseSquareBracketToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseSquareBracketToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.ColonToken:
                     ParseTokens.ParseColonToken(compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.MemberAccessToken:
-                    ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParseMemberAccessToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.EqualsToken:
                     ParseTokens.ParseEqualsToken(compilationUnit, ref parserModel);
@@ -178,7 +188,7 @@ public static class CSharpParser
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 					#endif
 					
-					var statementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Consume();
+					var statementDelimiterToken = parserModel.TokenWalker.Consume();
 					
 					#if DEBUG
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
@@ -188,37 +198,6 @@ public static class CSharpParser
                     break;
                 }
                 case SyntaxKind.EndOfFileToken:
-                    if (parserModel.SyntaxStack.TryPeek(out var syntax) &&
-                        syntax is EndOfFileToken)
-                    {
-                        _ = parserModel.SyntaxStack.Pop();
-                    }
-
-                    if (parserModel.SyntaxStack.TryPop(out var notUsedSyntax))
-                    {
-                    	if (notUsedSyntax is null)
-                    	{
-                    	}
-                        else if (notUsedSyntax is IExpressionNode)
-                        {
-                            parserModel.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
-                        }
-                        else if (notUsedSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
-                        {
-                            var ambiguousIdentifierNode = (AmbiguousIdentifierNode)notUsedSyntax;
-                            parserModel.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
-                            parserModel.DiagnosticBag.ReportUndefinedTypeOrNamespace(
-                                ambiguousIdentifierNode.IdentifierToken.TextSpan,
-                                ambiguousIdentifierNode.IdentifierToken.TextSpan.GetText());
-                        }
-                    }
-                    else if (parserModel.StatementBuilder.ChildList.Any())
-                    {
-                    	foreach (var item in parserModel.StatementBuilder.ChildList)
-                    	{
-                    		parserModel.CurrentCodeBlockBuilder.ChildList.Add(item);
-                    	}
-                    }
                     break;
                 default:
                     if (UtilityApi.IsContextualKeywordSyntaxKind(token.SyntaxKind))
@@ -230,14 +209,26 @@ public static class CSharpParser
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
-				if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue is not null &&
-					parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+				bool deferredParsingOccurred = false;
+				
+				if (parserModel.ParseChildScopeStack.Count > 0)
 				{
-					deferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+					var tuple = parserModel.ParseChildScopeStack.Peek();
+					
+					if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+					{
+						tuple = parserModel.ParseChildScopeStack.Pop();
+						tuple.DeferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+						deferredParsingOccurred = true;
+					}
 				}
-				else
+				
+				if (!deferredParsingOccurred)
 				{
-					break;
+					// This second 'deferredParsingOccurred' is for any lambda expressions with one or many statements in its body.
+					deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+					if (!deferredParsingOccurred)
+						break;
 				}
 			}
 			
@@ -262,6 +253,8 @@ public static class CSharpParser
 			
 			parserModel.TokenWalker.ConsumeCounterReset();
         }
+        
+        // Console.WriteLine($"loopCount:{loopCount:N0}, tokenCount:{parserModel.TokenWalker.TokenList.Count:N0}");
 
         if (parserModel.CurrentCodeBlockBuilder.Parent is not null)
         {
