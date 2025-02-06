@@ -24,8 +24,8 @@ public partial class CSharpFacts
                         new List<NamespaceStatementNode>
                         {
                             new NamespaceStatementNode(
-                                new(new(0, 0, 0, ResourceUri.Empty, string.Empty), SyntaxKind.UnrecognizedTokenKeyword),
-                                new(new(0, SystemNamespaceIdentifier.Length, 0, ResourceUri.Empty, SystemNamespaceIdentifier)),
+                                new(SyntaxKind.UnrecognizedTokenKeyword, new(0, 0, 0, ResourceUri.Empty, string.Empty)),
+                                new(SyntaxKind.IdentifierToken, new(0, SystemNamespaceIdentifier.Length, 0, ResourceUri.Empty, SystemNamespaceIdentifier)),
                                 new CodeBlockNode(Array.Empty<ISyntax>()))
                         })
                 }
@@ -35,8 +35,8 @@ public partial class CSharpFacts
         public static NamespaceStatementNode GetTopLevelNamespaceStatementNode()
         {
             return new NamespaceStatementNode(
-                new(new(0, 0, 0, ResourceUri.Empty, string.Empty), SyntaxKind.UnrecognizedTokenKeyword),
-                new(new(0, TopLevelNamespaceIdentifier.Length, 0, ResourceUri.Empty, TopLevelNamespaceIdentifier)),
+                new(SyntaxKind.UnrecognizedTokenKeyword, new(0, 0, 0, ResourceUri.Empty, string.Empty)),
+                new(SyntaxKind.IdentifierToken, new(0, TopLevelNamespaceIdentifier.Length, 0, ResourceUri.Empty, TopLevelNamespaceIdentifier)),
                 new CodeBlockNode(Array.Empty<ISyntax>()));
         }
     }

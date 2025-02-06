@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.DotNetSolution.Facts;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
@@ -115,7 +114,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                     EndingIndexExclusive = openEndingIndexExclusive + solutionProjectEntry.Length
                 };
                 
-                dotNetProject.OpenAssociatedGroupToken = new OpenAssociatedGroupToken(openTextSpan);
+                dotNetProject.OpenAssociatedGroupToken = new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, openTextSpan);
                 
                 var closeEndingIndexExclusive =
                     lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan.EndingIndexExclusive +
@@ -130,7 +129,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                     EndingIndexExclusive = closeEndingIndexExclusive
                 };
                 
-                dotNetProject.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(closeTextSpan);
+                dotNetProject.CloseAssociatedGroupToken = new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, closeTextSpan);
 
                 newProjectToken = dotNetProject;
             }
@@ -149,8 +148,8 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                     EndingIndexExclusive = newProjectTextSpanStartingIndexInclusive + solutionProjectEntry.Length
                 };
 
-                dotNetProject.OpenAssociatedGroupToken = new OpenAssociatedGroupToken(newProjectTextSpan);
-                dotNetProject.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(newProjectTextSpan);
+                dotNetProject.OpenAssociatedGroupToken = new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, newProjectTextSpan);
+                dotNetProject.CloseAssociatedGroupToken = new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, newProjectTextSpan);
 
                 newProjectToken = dotNetProject;
             }
@@ -184,7 +183,7 @@ EndProject
     }
 
     private void UnsafeShiftTextAfterInsertion(
-        ImmutableArray<(ISyntaxToken token, Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?> withFunc)> tokenTuplesToShift,
+        ImmutableArray<(SyntaxToken token, Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?> withFunc)> tokenTuplesToShift,
         TextEditorTextSpan insertedTextSpan)
     {
         for (int i = 0; i < tokenTuplesToShift.Length; i++)
@@ -204,15 +203,15 @@ EndProject
         }
     }
 
-    private ImmutableArray<(ISyntaxToken token, Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?> withFunc)> GetAllTokens()
+    private ImmutableArray<(SyntaxToken token, Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?> withFunc)> GetAllTokens()
     {
-        var tokens = new List<(ISyntaxToken token, Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?> withFunc)>();
+        var tokens = new List<(SyntaxToken token, Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?> withFunc)>();
 
         foreach (var dotNetProject in DotNetProjectList)
         {
             tokens.Add((
                 dotNetProject.OpenAssociatedGroupToken,
-                new Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?>((inToken, textSpan) =>
+                new Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?>((inToken, textSpan) =>
                 {
                     var outOpenAssociatedGroupToken = dotNetProject.OpenAssociatedGroupToken with
                     {
@@ -227,9 +226,9 @@ EndProject
             {
                 tokens.Add((
                     dotNetProject.CloseAssociatedGroupToken,
-                    new Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?>((inToken, textSpan) =>
+                    new Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?>((inToken, textSpan) =>
                     {
-                    	dotNetProject.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(textSpan);
+                    	dotNetProject.CloseAssociatedGroupToken = new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan);
                         return null;
                     })));
             }
@@ -241,9 +240,9 @@ EndProject
         {
             tokens.Add((
                 global.OpenAssociatedGroupToken,
-                new Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?>((inToken, textSpan) =>
+                new Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?>((inToken, textSpan) =>
                 {
-                    global.OpenAssociatedGroupToken = new OpenAssociatedGroupToken(textSpan);
+                    global.OpenAssociatedGroupToken = new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, textSpan);
                     return null;
                 })));
         }
@@ -252,9 +251,9 @@ EndProject
         {
             tokens.Add((
                 global.CloseAssociatedGroupToken,
-                new Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?>((inToken, textSpan) =>
+                new Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?>((inToken, textSpan) =>
                 {
-                    global.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(textSpan);
+                    global.CloseAssociatedGroupToken = new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan);
                     return null;
                 })));
         }

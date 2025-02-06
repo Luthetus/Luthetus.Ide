@@ -1,12 +1,12 @@
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 
 public class AssociatedEntryGroupBuilder
 {
     public AssociatedEntryGroupBuilder(
-        OpenAssociatedGroupToken openAssociatedGroupToken,
+        SyntaxToken openAssociatedGroupToken,
         Action<AssociatedEntryGroup> onAfterBuildAction)
     {
         OpenAssociatedGroupToken = openAssociatedGroupToken;
@@ -14,9 +14,9 @@ public class AssociatedEntryGroupBuilder
     }
 
     public Action<AssociatedEntryGroup> OnAfterBuildAction { get; }
-    public OpenAssociatedGroupToken OpenAssociatedGroupToken { get; set; }
+    public SyntaxToken OpenAssociatedGroupToken { get; set; }
     public List<IAssociatedEntry> AssociatedEntryList { get; } = new();
-    public CloseAssociatedGroupToken CloseAssociatedGroupToken { get; set; }
+    public SyntaxToken CloseAssociatedGroupToken { get; set; }
 
     public AssociatedEntryGroup Build()
     {

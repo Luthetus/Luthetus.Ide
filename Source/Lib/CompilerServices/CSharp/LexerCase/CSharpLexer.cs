@@ -38,7 +38,7 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.SyntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
+        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));
         return lexerOutput;
     }
     
@@ -145,7 +145,7 @@ public static class CSharpLexer
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new DivisionToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DivisionToken, textSpan));
                     }
                     break;
                 case '+':
@@ -155,14 +155,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new PlusPlusToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PlusPlusToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new PlusToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PlusToken, textSpan));
                     }
                     break;
                 case '-':
@@ -172,14 +172,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new MinusMinusToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MinusMinusToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new MinusToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MinusToken, textSpan));
                     }
                     break;
                 case '=':
@@ -189,7 +189,7 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new EqualsEqualsToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsEqualsToken, textSpan));
                     }
                     else if (stringWalker.PeekCharacter(1) == '>')
                 	{
@@ -197,14 +197,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new EqualsCloseAngleBracketToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsCloseAngleBracketToken, textSpan));
                 	}
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new EqualsToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsToken, textSpan));
                     }
                     break;
                 case '?':
@@ -214,14 +214,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new QuestionMarkQuestionMarkToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.QuestionMarkQuestionMarkToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new QuestionMarkToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.QuestionMarkToken, textSpan));
                     }
                     break;
                 case '|':
@@ -231,14 +231,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new PipePipeToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PipePipeToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new PipeToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PipeToken, textSpan));
                     }
                     break;
                 case '&':
@@ -248,14 +248,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new AmpersandAmpersandToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new AmpersandToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AmpersandToken, textSpan));
                     }
                     break;
                 case '*':
@@ -263,7 +263,7 @@ public static class CSharpLexer
                 	var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new StarToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StarToken, textSpan));
                     break;
                 }
                 case '!':
@@ -274,14 +274,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new BangEqualsToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BangEqualsToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new BangToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BangToken, textSpan));
                     }
                     break;
                 }
@@ -290,7 +290,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new StatementDelimiterToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StatementDelimiterToken, textSpan));
                     break;
                 }
                 case '(':
@@ -298,7 +298,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new OpenParenthesisToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenParenthesisToken, textSpan));
                     break;
                 }
                 case ')':
@@ -306,7 +306,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new CloseParenthesisToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseParenthesisToken, textSpan));
                     break;
                 }
                 case '{':
@@ -317,7 +317,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new OpenBraceToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenBraceToken, textSpan));
                     break;
                 }
                 case '}':
@@ -331,7 +331,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new CloseBraceToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseBraceToken, textSpan));
                     break;
                 }
                 case '<':
@@ -342,14 +342,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new OpenAngleBracketEqualsToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketEqualsToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new OpenAngleBracketToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketToken, textSpan));
                     }
                     break;
                 }
@@ -361,14 +361,14 @@ public static class CSharpLexer
 				        stringWalker.ReadCharacter();
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new CloseAngleBracketEqualsToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketEqualsToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new CloseAngleBracketToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketToken, textSpan));
                     }
                     break;
                 }
@@ -377,7 +377,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new OpenSquareBracketToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenSquareBracketToken, textSpan));
                     break;
                 }
                 case ']':
@@ -385,7 +385,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new CloseSquareBracketToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseSquareBracketToken, textSpan));
                     break;
                 }
                 case '$':
@@ -416,7 +416,7 @@ public static class CSharpLexer
                 		// Only the last '$' (dollar sign character) will be syntax highlighted
                 		// if this code is NOT included.
                 		var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.StringLiteral, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringLiteralToken, textSpan));
                 		
                 		// From the LexString(...) method:
                 		// 	"awkwardly even if there are many of these it is expected
@@ -431,7 +431,7 @@ public static class CSharpLexer
                     	var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new DollarSignToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DollarSignToken, textSpan));
 	                    break;
                     }
                     break;
@@ -449,7 +449,7 @@ public static class CSharpLexer
                     	var entryPositionIndex = stringWalker.PositionIndex;
 				        stringWalker.ReadCharacter();
 				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-				        lexerOutput.SyntaxTokenList.Add(new AtToken(textSpan));
+				        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AtToken, textSpan));
 	                    break;
                     }
                     break;
@@ -458,7 +458,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new ColonToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ColonToken, textSpan));
                     break;
                 }
                 case '.':
@@ -466,7 +466,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new MemberAccessToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MemberAccessToken, textSpan));
                     break;
                 }
                 case ',':
@@ -474,7 +474,7 @@ public static class CSharpLexer
                     var entryPositionIndex = stringWalker.PositionIndex;
 			        stringWalker.ReadCharacter();
 			        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
-			        lexerOutput.SyntaxTokenList.Add(new CommaToken(textSpan));
+			        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CommaToken, textSpan));
                     break;
                 }
                 case '#':
