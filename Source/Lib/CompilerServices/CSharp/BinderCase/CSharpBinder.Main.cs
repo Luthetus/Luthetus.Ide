@@ -123,7 +123,7 @@ public partial class CSharpBinder : IBinder
 
     public BinaryOperatorNode BindBinaryOperatorNode(
         IExpressionNode leftExpressionNode,
-        ISyntaxToken operatorToken,
+        SyntaxToken operatorToken,
         IExpressionNode rightExpressionNode,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
@@ -194,7 +194,7 @@ public partial class CSharpBinder : IBinder
 
     /// <summary>TODO: Construct a BoundStringInterpolationExpressionNode and identify the expressions within the string literal. For now I am just making the dollar sign the same color as a string literal.</summary>
     public void BindStringInterpolationExpression(
-        DollarSignToken dollarSignToken,
+        SyntaxToken dollarSignToken,
         CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(
@@ -208,7 +208,7 @@ public partial class CSharpBinder : IBinder
     }
     
     public void BindStringVerbatimExpression(
-        AtToken atToken,
+        SyntaxToken atToken,
         CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(
@@ -222,7 +222,7 @@ public partial class CSharpBinder : IBinder
     }
     
     public void BindDiscard(
-        IdentifierToken identifierToken,
+        SyntaxToken identifierToken,
         CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(
@@ -275,7 +275,7 @@ public partial class CSharpBinder : IBinder
 
     /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>
     public ReturnStatementNode BindReturnStatementNode(
-        KeywordToken keywordToken,
+        SyntaxToken keywordToken,
         IExpressionNode expressionNode)
     {
         return new ReturnStatementNode(
@@ -284,7 +284,7 @@ public partial class CSharpBinder : IBinder
     }
 
     public IfStatementNode BindIfStatementNode(
-        KeywordToken ifKeywordToken,
+        SyntaxToken ifKeywordToken,
         IExpressionNode expressionNode)
     {
         var boundIfStatementNode = new IfStatementNode(
@@ -433,7 +433,7 @@ public partial class CSharpBinder : IBinder
     }
 
     public VariableReferenceNode ConstructAndBindVariableReferenceNode(
-        IdentifierToken variableIdentifierToken,
+        SyntaxToken variableIdentifierToken,
         CSharpCompilationUnit compilationUnit)
     {
         var text = variableIdentifierToken.TextSpan.GetText();
@@ -516,7 +516,7 @@ public partial class CSharpBinder : IBinder
     }
 
     public void BindConstructorDefinitionIdentifierToken(
-        IdentifierToken identifierToken,
+        SyntaxToken identifierToken,
         CSharpCompilationUnit compilationUnit)
     {
         var constructorSymbol = new ConstructorSymbol(
@@ -564,7 +564,7 @@ public partial class CSharpBinder : IBinder
     }
 
     public void BindNamespaceReference(
-        IdentifierToken namespaceIdentifierToken,
+        SyntaxToken namespaceIdentifierToken,
         CSharpCompilationUnit compilationUnit)
     {
         var namespaceSymbol = new NamespaceSymbol(
@@ -603,7 +603,7 @@ public partial class CSharpBinder : IBinder
     }
 
     public void BindTypeIdentifier(
-        IdentifierToken identifierToken,
+        SyntaxToken identifierToken,
         CSharpCompilationUnit compilationUnit)
     {
         if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
@@ -635,9 +635,9 @@ public partial class CSharpBinder : IBinder
 
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
     public AttributeNode BindAttributeNode(
-        OpenSquareBracketToken openSquareBracketToken,
-        List<ISyntaxToken> innerTokens,
-        CloseSquareBracketToken closeSquareBracketToken,
+        SyntaxToken openSquareBracketToken,
+        List<SyntaxToken> innerTokens,
+        SyntaxToken closeSquareBracketToken,
         CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(
@@ -966,7 +966,7 @@ public partial class CSharpBinder : IBinder
 	/// that was used to construct the ITextEditorSymbol.
 	/// </summary>
     public int CreateVariableSymbol(
-        IdentifierToken identifierToken,
+        SyntaxToken identifierToken,
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit)
     {

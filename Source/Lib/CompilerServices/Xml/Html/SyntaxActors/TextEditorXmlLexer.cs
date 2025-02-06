@@ -30,23 +30,23 @@ public class TextEditorXmlLexer : Lexer
 
         // Tag Names
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.TagNameNodes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            htmlSyntaxWalker.TagNameNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         // InjectedLanguageFragmentSyntaxes
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.InjectedLanguageFragmentNodes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            htmlSyntaxWalker.InjectedLanguageFragmentNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         // Attribute Names
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.AttributeNameNodes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            htmlSyntaxWalker.AttributeNameNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         // Attribute Values
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.AttributeValueNodes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            htmlSyntaxWalker.AttributeValueNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         // Comments
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.CommentNodes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            htmlSyntaxWalker.CommentNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
             
 		var endOfFileTextSpan = new TextEditorTextSpan(
             SourceText.Length,
@@ -56,6 +56,6 @@ public class TextEditorXmlLexer : Lexer
 		    SourceText,
 		    getTextPrecalculatedResult: string.Empty);
 		
-        _syntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
+        _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));
     }
 }

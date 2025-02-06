@@ -17,12 +17,12 @@ public sealed class CSharpResource : ICompilerServiceResource
 	public ResourceUri ResourceUri { get; }
     public ICompilerService CompilerService { get; }
 	public CSharpCompilationUnit? CompilationUnit { get; set; }
-	public IReadOnlyList<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+	public IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<SyntaxToken>.Empty;
 	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; internal set; }
 	
 	ICompilationUnit? ICompilerServiceResource.CompilationUnit => CompilationUnit;
     
-    public IReadOnlyList<ISyntaxToken> GetTokens()
+    public IReadOnlyList<SyntaxToken> GetTokens()
     {
         return SyntaxTokenList;
     }

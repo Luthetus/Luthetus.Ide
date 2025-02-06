@@ -10,14 +10,14 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 public static class ParseTypes
 {
     public static void HandleStaticClassIdentifier(
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     }
 
     public static void HandleUndefinedTypeOrNamespaceReference(
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -74,7 +74,7 @@ public static class ParseTypes
     }
 
     public static void HandleAttribute(
-        OpenSquareBracketToken consumedOpenSquareBracketToken,
+        SyntaxToken consumedOpenSquareBracketToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -92,7 +92,7 @@ public static class ParseTypes
 	/// Furthermore, because there is a need to disambiguate, more checks are performed in this method
 	/// than in <see cref="MatchTypeClause"/>.
 	/// </summary>
-	public static bool IsPossibleTypeClause(ISyntaxToken syntaxToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public static bool IsPossibleTypeClause(SyntaxToken syntaxToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		return false;
 	}

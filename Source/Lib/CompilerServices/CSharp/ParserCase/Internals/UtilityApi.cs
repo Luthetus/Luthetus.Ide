@@ -152,7 +152,7 @@ public static class UtilityApi
     /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="StorageModifierKind"/>,
     /// then null is returned.
     /// </summary>
-    public static StorageModifierKind? GetStorageModifierKindFromToken(ISyntaxToken consumedToken)
+    public static StorageModifierKind? GetStorageModifierKindFromToken(SyntaxToken consumedToken)
     {
         switch (consumedToken.TextSpan.GetText())
         {
@@ -175,7 +175,7 @@ public static class UtilityApi
     /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="AccessModifierKind"/>,
     /// then null is returned.
     /// </summary>
-    public static AccessModifierKind? GetAccessModifierKindFromToken(ISyntaxToken consumedToken)
+    public static AccessModifierKind? GetAccessModifierKindFromToken(SyntaxToken consumedToken)
     {
         switch (consumedToken.TextSpan.GetText())
         {
@@ -247,7 +247,7 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static SyntaxToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{

@@ -13,7 +13,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 public static class ParseTokens
 {
     public static void ParsePreprocessorDirectiveToken(
-        PreprocessorDirectiveToken consumedPreprocessorDirectiveToken,
+        SyntaxToken consumedPreprocessorDirectiveToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -267,7 +267,7 @@ public static class ParseTokens
 	/// OpenBraceToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void ParseOpenBraceToken(SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
 		/*
 		    (2025-01-13)
@@ -355,7 +355,7 @@ public static class ParseTokens
 	/// CloseBraceToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, int closeBraceTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void ParseCloseBraceToken(SyntaxToken closeBraceToken, int closeBraceTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	// while () if not CloseBraceToken accepting bubble up until someone takes it or null parent.
     	
@@ -431,7 +431,7 @@ public static class ParseTokens
     }
 
     public static void ParseCloseParenthesisToken(
-        CloseParenthesisToken consumedCloseParenthesisToken,
+        SyntaxToken consumedCloseParenthesisToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -439,14 +439,14 @@ public static class ParseTokens
     }
 
     public static void ParseOpenAngleBracketToken(
-        OpenAngleBracketToken consumedOpenAngleBracketToken,
+        SyntaxToken consumedOpenAngleBracketToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     }
 
     public static void ParseCloseAngleBracketToken(
-        CloseAngleBracketToken consumedCloseAngleBracketToken,
+        SyntaxToken consumedCloseAngleBracketToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -508,7 +508,7 @@ public static class ParseTokens
     }
 
     public static void ParseCloseSquareBracketToken(
-        CloseSquareBracketToken consumedCloseSquareBracketToken,
+        SyntaxToken consumedCloseSquareBracketToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -520,7 +520,7 @@ public static class ParseTokens
 	}
 
     public static void ParseMemberAccessToken(
-        MemberAccessToken consumedMemberAccessToken,
+        SyntaxToken consumedMemberAccessToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -530,7 +530,7 @@ public static class ParseTokens
 	/// StatementDelimiterToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void ParseStatementDelimiterToken(SyntaxToken statementDelimiterToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {

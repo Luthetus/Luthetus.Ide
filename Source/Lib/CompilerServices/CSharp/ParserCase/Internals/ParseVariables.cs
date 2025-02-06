@@ -11,7 +11,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 public static class ParseVariables
 {
     public static void HandleVariableReference(
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -20,7 +20,7 @@ public static class ParseVariables
 	/// <summary>Function invocation which uses the 'out' keyword.</summary>
     public static IVariableDeclarationNode? HandleVariableDeclarationExpression(
         TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
@@ -43,7 +43,7 @@ public static class ParseVariables
     /// </summary>
     public static void HandleVariableDeclarationStatement(
         TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
@@ -105,7 +105,7 @@ public static class ParseVariables
 
     public static void HandlePropertyDeclaration(
         IVariableDeclarationNode consumedVariableDeclarationNode,
-        OpenBraceToken consumedOpenBraceToken,
+        SyntaxToken consumedOpenBraceToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -113,16 +113,16 @@ public static class ParseVariables
 
     public static void HandlePropertyExpression(
         IVariableDeclarationNode consumedVariableDeclarationNode,
-        EqualsToken consumedEqualsToken,
-        CloseAngleBracketToken consumedCloseAngleBracketToken,
+        SyntaxToken consumedEqualsToken,
+        SyntaxToken consumedCloseAngleBracketToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     }
 
     public static void HandleVariableAssignment(
-        IdentifierToken consumedIdentifierToken,
-        EqualsToken consumedEqualsToken,
+        SyntaxToken consumedIdentifierToken,
+        SyntaxToken consumedEqualsToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {

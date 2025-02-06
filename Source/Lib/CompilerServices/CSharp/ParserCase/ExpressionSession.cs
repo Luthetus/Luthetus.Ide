@@ -14,7 +14,7 @@ public class ExpressionSession
 	private readonly List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> _shortCircuitList = new();
 
 	public ExpressionSession(
-		List<ISyntaxToken> tokenList,
+		List<SyntaxToken> tokenList,
 		Stack<ISyntax> expressionStack)
 	{
 		TokenList = tokenList;
@@ -26,7 +26,7 @@ public class ExpressionSession
 
 	public IReadOnlyList<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ShortCircuitList => _shortCircuitList;
 
-	public List<ISyntaxToken> TokenList { get; }
+	public List<SyntaxToken> TokenList { get; }
 	public Stack<ISyntax> ExpressionStack { get; }
 	public int Position { get; set; }
 	
