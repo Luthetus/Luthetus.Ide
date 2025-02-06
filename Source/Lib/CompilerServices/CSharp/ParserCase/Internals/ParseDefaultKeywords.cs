@@ -905,9 +905,8 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-	        
-	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+	    
+	    // Do not set 'IsImplicitOpenCodeBlockTextSpan' for namespace file scoped.
     }
 
     public static void HandleReturnTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

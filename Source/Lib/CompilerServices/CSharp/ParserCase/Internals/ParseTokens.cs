@@ -480,8 +480,7 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseStatementDelimiterToken(SyntaxToken statementDelimiterToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode &&
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
         	var namespaceStatementNode = (NamespaceStatementNode)parserModel.CurrentCodeBlockBuilder.CodeBlockOwner;
         	
