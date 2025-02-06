@@ -68,9 +68,12 @@ public class CSharpStatementBuilder
 				codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
 			else
 				codeBlockBuilderSyntax = parserModel.CurrentCodeBlockBuilder.ChildList[^1];
-				
-			if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax))
+
+			if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax) &&
+				!Object.ReferenceEquals(statementSyntax, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+			{
 				parserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+			}
 			
 			ChildList.Clear();
 		}

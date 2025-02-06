@@ -1205,6 +1205,34 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
     	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
+    [Fact]
+    public void InfiniteLoopBug()
+    {
+    	var test = new Test(
+@"
+public class GitIdeApi
+{
+	public void DiffFileEnqueue()
+	{
+	    _backgroundTaskService.Enqueue(
+	        () =>
+	        {
+	            var terminalCommandRequest = new TerminalCommandRequest
+	            {
+	            	ContinueWithFunc = parsedCommand =>
+	            	{
+	            		return 3;
+	            	}
+	            };
+			});
+	}
+}
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
