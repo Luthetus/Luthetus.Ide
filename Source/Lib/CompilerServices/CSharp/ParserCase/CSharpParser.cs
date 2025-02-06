@@ -16,6 +16,8 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public static class CSharpParser
 {
+	public static int ErrorCount { get; set; }
+
     public static void Parse(CSharpCompilationUnit compilationUnit, ref CSharpLexerOutput lexerOutput)
     {
     	var globalCodeBlockNode = new GlobalCodeBlockNode();
@@ -46,9 +48,19 @@ public static class CSharpParser
 		#if DEBUG
 		parserModel.TokenWalker.ProtectedTokenSyntaxKindList = new() { SyntaxKind.StatementDelimiterToken, SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken, };
 		#endif
+		
+		var loopCount = 0;
         
         while (true)
         {
+        	var multiplier = 3;
+        	if (loopCount++ > parserModel.TokenWalker.TokenList.Count * multiplier)
+        	{
+        		++ErrorCount;
+        		throw new NotImplementedException($"ErrorCount:{ErrorCount};;; if (loopCount++ > parserModel.TokenWalker.TokenList.Count * {multiplier})");
+        	}
+
+        
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
             var token = parserModel.TokenWalker.Current;
@@ -241,6 +253,8 @@ public static class CSharpParser
 			
 			parserModel.TokenWalker.ConsumeCounterReset();
         }
+        
+        // Console.WriteLine($"loopCount:{loopCount:N0}, tokenCount:{parserModel.TokenWalker.TokenList.Count:N0}");
 
         if (parserModel.CurrentCodeBlockBuilder.Parent is not null)
         {
