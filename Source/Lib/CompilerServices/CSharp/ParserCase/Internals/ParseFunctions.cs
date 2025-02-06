@@ -46,7 +46,6 @@ public class ParseFunctions
             null);
 
         compilationUnit.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit);
-        parserModel.SyntaxStack.Push(functionDefinitionNode);
         
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	functionDefinitionNode,
@@ -101,7 +100,6 @@ public class ParseFunctions
             null);
 
         compilationUnit.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit);
-        parserModel.SyntaxStack.Push(constructorDefinitionNode);
         
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	constructorDefinitionNode,

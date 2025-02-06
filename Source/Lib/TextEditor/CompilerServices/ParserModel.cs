@@ -13,7 +13,6 @@ public class ParserModel : IParserModel
         IBinder binder,
         IBinderSession binderSession,
         TokenWalker tokenWalker,
-        Stack<ISyntax> syntaxStack,
         DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder)
@@ -21,7 +20,6 @@ public class ParserModel : IParserModel
         Binder = binder;
         BinderSession = binderSession;
         TokenWalker = tokenWalker;
-        SyntaxStack = syntaxStack;
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
@@ -32,7 +30,6 @@ public class ParserModel : IParserModel
     public IBinder Binder { get; }
     public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
-    public Stack<ISyntax> SyntaxStack { get; set; }
     public StatementBuilder StatementBuilder { get; set; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }

@@ -55,50 +55,33 @@ public class ParseDefaultKeywords
     	var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
     
     	TryStatementNode? tryStatementNode = null;
-    
-    	if (parserModel.SyntaxStack.TryPeek(out var syntax) &&
-    		syntax is TryStatementNode temporaryTryStatementNodeOne)
-    	{
-	        tryStatementNode = temporaryTryStatementNodeOne;
-    	}
-    	else if (parserModel.SyntaxStack.TryPeek(out syntax) &&
-    		syntax is TryStatementTryNode tryNode)
-    	{
-	        if (tryNode.Parent is TryStatementNode temporaryTryStatementNodeTwo)
-	        {
-	        	tryStatementNode = temporaryTryStatementNodeTwo;
-	        }
-    	}
     	
-    	if (tryStatementNode is not null)
-    	{
-    		var catchNode = new TryStatementCatchNode(
-	        	tryStatementNode,
-		        catchKeywordToken,
-		        openParenthesisToken,
-		        closeParenthesisToken,
-		        codeBlockNode: null);
-		    
-		    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-		    {
-		    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-    			compilationUnit.Binder.RemoveVariableDeclarationNodeFromActiveBinderSession(compilationUnit.BinderSession.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserModel);
-		    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
-		    }
-        
-        	tryStatementNode.SetTryStatementCatchNode(catchNode);
-        	parserModel.SyntaxStack.Push(catchNode);
-        	
-        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
-	        	catchNode,
-		        catchNode.GetReturnTypeClauseNode(),
-		        parserModel.TokenWalker.Current.TextSpan,
-		        compilationUnit,
-		        ref parserModel);
-		        
-		    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
-    	}
+    	var catchNode = new TryStatementCatchNode(
+        	tryStatementNode,
+	        catchKeywordToken,
+	        openParenthesisToken,
+	        closeParenthesisToken,
+	        codeBlockNode: null);
+	    
+	    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	    {
+	    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
+			compilationUnit.Binder.RemoveVariableDeclarationNodeFromActiveBinderSession(compilationUnit.BinderSession.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserModel);
+	    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
+	    }
+    
+    	// This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
+    	// tryStatementNode.SetTryStatementCatchNode(catchNode);
+    	
+    	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	catchNode,
+	        catchNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	        
+	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+    		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleCharTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -150,10 +133,6 @@ public class ParseDefaultKeywords
 	        openParenthesisToken: default,
 	        expressionNode: null,
 	        closeParenthesisToken: default);
-        	
-        // Have to push twice so it is on the stack when the 'while' keyword is parsed.
-		parserModel.SyntaxStack.Push(doWhileStatementNode);
-		parserModel.SyntaxStack.Push(doWhileStatementNode);
 		
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	doWhileStatementNode,
@@ -212,48 +191,23 @@ public class ParseDefaultKeywords
     	
     	TryStatementNode? tryStatementNode = null;
     	
-    	if (parserModel.SyntaxStack.TryPeek(out var syntax) &&
-    		syntax is TryStatementNode temporaryTryStatementNodeOne)
-    	{
-	        tryStatementNode = temporaryTryStatementNodeOne;
-    	}
-        else if (parserModel.SyntaxStack.TryPeek(out syntax) &&
-    		syntax is TryStatementTryNode tryNode)
-    	{
-	        if (tryNode.Parent is TryStatementNode temporaryTryStatementNodeTwo)
-	        {
-	        	tryStatementNode = temporaryTryStatementNodeTwo;
-	        }
-    	}
-    	else if (parserModel.SyntaxStack.TryPeek(out syntax) &&
-    			 syntax is TryStatementCatchNode catchNode)
-    	{
-    		if (catchNode.Parent is TryStatementNode temporaryTryStatementNodeThree)
-	        {
-	        	tryStatementNode = temporaryTryStatementNodeThree;
-	        }
-    	}
+		var finallyNode = new TryStatementFinallyNode(
+			tryStatementNode,
+        	finallyKeywordToken,
+        	codeBlockNode: null);
+    
+    	// This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
+		// tryStatementNode.SetTryStatementFinallyNode(finallyNode);
     	
-    	if (tryStatementNode is not null)
-    	{
-    		var finallyNode = new TryStatementFinallyNode(
-    			tryStatementNode,
-	        	finallyKeywordToken,
-	        	codeBlockNode: null);
-	    
-	    	tryStatementNode.SetTryStatementFinallyNode(finallyNode);
-	    	parserModel.SyntaxStack.Push(finallyNode);
-	    	
-        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
-	        	finallyNode,
-		        finallyNode.GetReturnTypeClauseNode(),
-		        parserModel.TokenWalker.Current.TextSpan,
-		        compilationUnit,
-		        ref parserModel);
-    	
-    		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
-    	}
+    	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	finallyNode,
+	        finallyNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	
+		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+    		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleFixedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -282,8 +236,6 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken: default,
 	        codeBlockNode: null);
 	        
-        parserModel.SyntaxStack.Push(forStatementNode);
-        
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	forStatementNode,
 	        forStatementNode.GetReturnTypeClauseNode(),
@@ -340,8 +292,6 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
-        parserModel.SyntaxStack.Push(foreachStatementNode);
-        
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	foreachStatementNode,
 	        foreachStatementNode.GetReturnTypeClauseNode(),
@@ -396,8 +346,6 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
-        parserModel.SyntaxStack.Push(lockStatementNode);
-        
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	lockStatementNode,
 	        lockStatementNode.GetReturnTypeClauseNode(),
@@ -503,8 +451,6 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
-        parserModel.SyntaxStack.Push(switchStatementNode);
-        
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	switchStatementNode,
 	        switchStatementNode.GetReturnTypeClauseNode(),
@@ -546,10 +492,6 @@ public class ParseDefaultKeywords
 		tryStatementNode.SetTryStatementTryNode(tryStatementTryNode);
 	        
 	    parserModel.CurrentCodeBlockBuilder.ChildList.Add(tryStatementNode);
-	        
-		parserModel.SyntaxStack.Push(tryStatementNode);
-		
-		parserModel.SyntaxStack.Push(tryStatementTryNode);
         
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	tryStatementTryNode,
@@ -613,36 +555,33 @@ public class ParseDefaultKeywords
 		
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
-		if (parserModel.SyntaxStack.TryPeek(out var syntax) &&
-    		syntax is DoWhileStatementNode doWhileStatementNode)
+		/* This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
     	{
-	        doWhileStatementNode.SetWhileProperties(
+		    doWhileStatementNode.SetWhileProperties(
 		    	whileKeywordToken,
 		        openParenthesisToken,
 		        expressionNode,
 		        closeParenthesisToken);
-    	}
-		else
-		{
-			var whileStatementNode = new WhileStatementNode(
-				whileKeywordToken,
-		        openParenthesisToken,
-		        expressionNode,
-		        closeParenthesisToken,
-		        codeBlockNode: null);
-		        
-	        parserModel.SyntaxStack.Push(whileStatementNode);
-        	
-        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
-	        	whileStatementNode,
-		        whileStatementNode.GetReturnTypeClauseNode(),
-		        parserModel.TokenWalker.Current.TextSpan,
-		        compilationUnit,
-		        ref parserModel);
+		    
+		    return;
+    	}*/
 		
-			if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
-		}
+		var whileStatementNode = new WhileStatementNode(
+			whileKeywordToken,
+	        openParenthesisToken,
+	        expressionNode,
+	        closeParenthesisToken,
+	        codeBlockNode: null);
+	        
+    	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	whileStatementNode,
+	        whileStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	
+		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+    		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleUnrecognizedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -735,7 +674,6 @@ public class ParseDefaultKeywords
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
         var ifStatementNode = compilationUnit.Binder.BindIfStatementNode(ifTokenKeyword, expression);
-        parserModel.SyntaxStack.Push(ifStatementNode);
         
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	ifStatementNode,
@@ -892,7 +830,6 @@ public class ParseDefaultKeywords
         compilationUnit.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
         compilationUnit.Binder.BindTypeIdentifier(identifierToken, compilationUnit);
         
-        parserModel.SyntaxStack.Push(typeDefinitionNode);
         parserModel.StatementBuilder.ChildList.Add(typeDefinitionNode);
         
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
@@ -924,7 +861,6 @@ public class ParseDefaultKeywords
             var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel);
             compilationUnit.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit);
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
-            parserModel.SyntaxStack.Push(typeDefinitionNode);
     	}
     	
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
@@ -963,8 +899,6 @@ public class ParseDefaultKeywords
 
         compilationUnit.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit);
         
-        parserModel.SyntaxStack.Push(namespaceStatementNode);
-        
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	namespaceStatementNode,
 	        namespaceStatementNode.GetReturnTypeClauseNode(),
@@ -972,10 +906,8 @@ public class ParseDefaultKeywords
 	        compilationUnit,
 	        ref parserModel);
 	        
-	    // TODO: 'if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        //			parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;'
-        //
-        // or not?
+	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleReturnTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

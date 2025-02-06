@@ -213,21 +213,7 @@ public class ParseContextualKeywords
 
     public static void HandleWhereTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	var whereTokenContextualKeyword = parserModel.TokenWalker.Consume();
-    	
-    	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind != SyntaxKind.TypeDefinitionNode)
-    		return;
-    	
-    	while (!parserModel.TokenWalker.IsEof)
-    	{
-    		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-    			parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-    		{
-    			break;
-    		}
-    		
-    		_ = parserModel.TokenWalker.Consume();
-    	}
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleWithTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

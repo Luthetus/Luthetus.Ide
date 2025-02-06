@@ -277,7 +277,6 @@ public static class ParseTokens
     		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan is not null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
-			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
 			
 			compilationUnit.Binder.NewScopeAndBuilderFromOwner(
 		    	arbitraryCodeBlockNode,
@@ -341,14 +340,6 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-    	{
-    		var typeDefinitionNode = (TypeDefinitionNode)parserModel.SyntaxStack.Pop();
-    		var functionArgumentsListingNode = ParseFunctions.HandleFunctionArguments(compilationUnit, ref parserModel);
-    		typeDefinitionNode.SetPrimaryConstructorFunctionArgumentsListingNode(functionArgumentsListingNode);
-    		return;
-    	}
-    	
     	var originalTokenIndex = parserModel.TokenWalker.Index;
     	
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
@@ -489,9 +480,10 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseStatementDelimiterToken(SyntaxToken statementDelimiterToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode &&
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
         {
-        	var namespaceStatementNode = (NamespaceStatementNode)parserModel.SyntaxStack.Pop();
+        	var namespaceStatementNode = (NamespaceStatementNode)parserModel.CurrentCodeBlockBuilder.CodeBlockOwner;
         	
             ICodeBlockOwner nextCodeBlockOwner = namespaceStatementNode;
             TypeClauseNode? scopeReturnTypeClauseNode = null;

@@ -19,13 +19,11 @@ public struct CSharpParserModel
 {
     public CSharpParserModel(
         TokenWalker tokenWalker,
-        Stack<ISyntax> syntaxStack,
         DiagnosticBag diagnosticBag,
         CSharpCodeBlockBuilder globalCodeBlockBuilder,
         CSharpCodeBlockBuilder currentCodeBlockBuilder)
     {
     	TokenWalker = tokenWalker;
-        SyntaxStack = syntaxStack;
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
@@ -37,7 +35,6 @@ public struct CSharpParserModel
     }
 
     public TokenWalker TokenWalker { get; }
-    public Stack<ISyntax> SyntaxStack { get; set; }
     public CSharpStatementBuilder StatementBuilder { get; set; } = new();
     
     /// <summary>

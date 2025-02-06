@@ -39,7 +39,6 @@ public static class CSharpParser
 
         var parserModel = new CSharpParserModel(
             new TokenWalker(lexerOutput.SyntaxTokenList, diagnosticBag),
-            new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
