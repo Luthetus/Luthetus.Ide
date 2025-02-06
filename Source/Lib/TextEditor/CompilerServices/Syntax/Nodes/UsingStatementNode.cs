@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class UsingStatementNode : ISyntaxNode
 {
-    public UsingStatementNode(KeywordToken keywordToken, IdentifierToken namespaceIdentifier)
+    public UsingStatementNode(SyntaxToken keywordToken, SyntaxToken namespaceIdentifier)
     {
         KeywordToken = keywordToken;
         NamespaceIdentifier = namespaceIdentifier;
@@ -14,8 +14,8 @@ public sealed class UsingStatementNode : ISyntaxNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken KeywordToken { get; }
-    public IdentifierToken NamespaceIdentifier { get; }
+    public SyntaxToken KeywordToken { get; }
+    public SyntaxToken NamespaceIdentifier { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;

@@ -29,7 +29,7 @@ public sealed class CommaSeparatedExpressionNode : IExpressionNode
     public TypeClauseNode ResultTypeClauseNode { get; } = TypeFacts.Pseudo.ToTypeClause();
     
     public List<IExpressionNode> InnerExpressionList { get; } = new();
-    public CloseParenthesisToken CloseParenthesisToken { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CommaSeparatedExpressionNode;

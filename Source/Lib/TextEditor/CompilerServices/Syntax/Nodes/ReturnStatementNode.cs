@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class ReturnStatementNode : IExpressionNode
 {
-    public ReturnStatementNode(KeywordToken keywordToken, IExpressionNode expressionNode)
+    public ReturnStatementNode(SyntaxToken keywordToken, IExpressionNode expressionNode)
     {
         KeywordToken = keywordToken;
         ExpressionNode = expressionNode;
@@ -15,7 +15,7 @@ public sealed class ReturnStatementNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken KeywordToken { get; }
+    public SyntaxToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
     public TypeClauseNode ResultTypeClauseNode => ExpressionNode.ResultTypeClauseNode;
 

@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
-public struct SyntaxToken : ISyntaxToken
+public struct SyntaxToken : ISyntax
 {
     public SyntaxToken(SyntaxKind syntaxKind, TextEditorTextSpan textSpan)
     {

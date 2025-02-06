@@ -11,11 +11,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class DoWhileStatementNode : ICodeBlockOwner
 {
     public DoWhileStatementNode(
-        KeywordToken doKeywordToken,
-        KeywordToken whileKeywordToken,
-        OpenParenthesisToken openParenthesisToken,
+        SyntaxToken doKeywordToken,
+        SyntaxToken whileKeywordToken,
+        SyntaxToken openParenthesisToken,
         IExpressionNode? expressionNode,
-        CloseParenthesisToken closeParenthesisToken)
+        SyntaxToken closeParenthesisToken)
     {
         DoKeywordToken = doKeywordToken;
         WhileKeywordToken = whileKeywordToken;
@@ -27,11 +27,11 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken DoKeywordToken { get; }
-    public KeywordToken WhileKeywordToken { get; private set; }
-    public OpenParenthesisToken OpenParenthesisToken { get; private set; }
+    public SyntaxToken DoKeywordToken { get; }
+    public SyntaxToken WhileKeywordToken { get; private set; }
+    public SyntaxToken OpenParenthesisToken { get; private set; }
     public IExpressionNode? ExpressionNode { get; private set; }
-    public CloseParenthesisToken CloseParenthesisToken { get; private set; }
+    public SyntaxToken CloseParenthesisToken { get; private set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -122,10 +122,10 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
     }
     
     public void SetWhileProperties(
-		KeywordToken whileKeywordToken,
-	    OpenParenthesisToken openParenthesisToken,
+		SyntaxToken whileKeywordToken,
+	    SyntaxToken openParenthesisToken,
 	    IExpressionNode expressionNode,
-	    CloseParenthesisToken closeParenthesisToken)
+	    SyntaxToken closeParenthesisToken)
     {
     	WhileKeywordToken = whileKeywordToken;
     	OpenParenthesisToken = openParenthesisToken;

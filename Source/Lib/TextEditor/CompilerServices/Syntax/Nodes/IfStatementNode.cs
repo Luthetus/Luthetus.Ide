@@ -11,7 +11,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class IfStatementNode : ICodeBlockOwner
 {
     public IfStatementNode(
-        KeywordToken keywordToken,
+        SyntaxToken keywordToken,
         IExpressionNode expressionNode,
         CodeBlockNode? codeBlockNode)
     {
@@ -23,7 +23,7 @@ public sealed class IfStatementNode : ICodeBlockOwner
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken KeywordToken { get; }
+    public SyntaxToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
 	// ICodeBlockOwner properties.

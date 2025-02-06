@@ -12,7 +12,7 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 {
 	public TryStatementFinallyNode(
 		TryStatementNode? parent,
-        KeywordToken keywordToken,
+        SyntaxToken keywordToken,
         CodeBlockNode? codeBlockNode)
     {
     	Parent = parent;
@@ -23,7 +23,7 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken KeywordToken { get; }
+    public SyntaxToken KeywordToken { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

@@ -11,10 +11,10 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class SwitchStatementNode : ICodeBlockOwner
 {
     public SwitchStatementNode(
-        KeywordToken keywordToken,
-        OpenParenthesisToken openParenthesisToken,
+        SyntaxToken keywordToken,
+        SyntaxToken openParenthesisToken,
         IExpressionNode expressionNode,
-        CloseParenthesisToken closeParenthesisToken,
+        SyntaxToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
         KeywordToken = keywordToken;
@@ -27,10 +27,10 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken KeywordToken { get; }
-    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public SyntaxToken KeywordToken { get; }
+    public SyntaxToken OpenParenthesisToken { get; }
     public IExpressionNode ExpressionNode { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
+    public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

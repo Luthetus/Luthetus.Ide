@@ -11,8 +11,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class NamespaceStatementNode : ICodeBlockOwner
 {
     public NamespaceStatementNode(
-        KeywordToken keywordToken,
-        IdentifierToken identifierToken,
+        SyntaxToken keywordToken,
+        SyntaxToken identifierToken,
         CodeBlockNode codeBlockNode)
     {
         KeywordToken = keywordToken;
@@ -23,8 +23,8 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken KeywordToken { get; }
-    public IdentifierToken IdentifierToken { get; }
+    public SyntaxToken KeywordToken { get; }
+    public SyntaxToken IdentifierToken { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;

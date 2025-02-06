@@ -13,7 +13,7 @@ public class TokenWalker
     private int _index;
 	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
 
-    public TokenWalker(List<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
+    public TokenWalker(List<SyntaxToken> tokenList, DiagnosticBag diagnosticBag)
     {
     	if (tokenList.Count > 0 &&
     		tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
@@ -32,20 +32,20 @@ public class TokenWalker
 	public List<SyntaxKind> ProtectedTokenSyntaxKindList { get; set; }
 	#endif
 	
-    public List<ISyntaxToken> TokenList { get; }
-    public ISyntaxToken Current => Peek(0);
-    public ISyntaxToken Next => Peek(1);
-    public ISyntaxToken Previous => Peek(-1);
+    public List<SyntaxToken> TokenList { get; }
+    public SyntaxToken Current => Peek(0);
+    public SyntaxToken Next => Peek(1);
+    public SyntaxToken Previous => Peek(-1);
     public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
     public int Index => _index;
 
     /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
-    private ISyntaxToken EOF => TokenList.Count > 0
+    private SyntaxToken EOF => TokenList.Count > 0
         ? TokenList[TokenList.Count - 1]
         : new EndOfFileToken(new(0, 0, 0, ResourceUri.Empty, string.Empty));
 
     /// <summary>The input to this method can be positive OR negative.<br/><br/>Returns <see cref="BadToken"/> when an index out of bounds error would've occurred.</summary>
-    public ISyntaxToken Peek(int offset)
+    public SyntaxToken Peek(int offset)
     {
         var index = _index + offset;
 
@@ -57,7 +57,7 @@ public class TokenWalker
         return TokenList[index];
     }
 
-    public ISyntaxToken Consume()
+    public SyntaxToken Consume()
     {
         if (_index >= TokenList.Count)
             return EOF; // Return the end of file token (the last token)
@@ -89,7 +89,7 @@ public class TokenWalker
         return consumedToken;
     }
 
-    public ISyntaxToken Backtrack()
+    public SyntaxToken Backtrack()
     {
         if (_index > 0)
         {
@@ -101,7 +101,7 @@ public class TokenWalker
     }
 
     /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
-    public ISyntaxToken Match(SyntaxKind expectedSyntaxKind)
+    public SyntaxToken Match(SyntaxKind expectedSyntaxKind)
     {
         var currentToken = Peek(0);
 
@@ -126,7 +126,7 @@ public class TokenWalker
     }
 
     /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
-    public ISyntaxToken MatchRange(IEnumerable<SyntaxKind> validSyntaxKinds, SyntaxKind fabricationKind)
+    public SyntaxToken MatchRange(IEnumerable<SyntaxKind> validSyntaxKinds, SyntaxKind fabricationKind)
     {
         var currentToken = Peek(0);
 
@@ -165,5 +165,5 @@ public class TokenWalker
 		ConsumeCounter = 0;
 	}
 
-    private BadToken GetBadToken() => new BadToken(new(0, 0, 0, ResourceUri.Empty, string.Empty));
+    private SyntaxToken GetBadToken() => new BadToken(new(0, 0, 0, ResourceUri.Empty, string.Empty));
 }

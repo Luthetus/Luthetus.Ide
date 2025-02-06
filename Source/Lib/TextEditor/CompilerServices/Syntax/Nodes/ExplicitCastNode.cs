@@ -7,9 +7,9 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class ExplicitCastNode : IExpressionNode
 {
 	public ExplicitCastNode(
-        OpenParenthesisToken openParenthesisToken,
+        SyntaxToken openParenthesisToken,
         TypeClauseNode resultTypeClauseNode,
-        CloseParenthesisToken closeParenthesisToken)
+        SyntaxToken closeParenthesisToken)
     {
         OpenParenthesisToken = openParenthesisToken;
         ResultTypeClauseNode = resultTypeClauseNode;
@@ -19,19 +19,19 @@ public sealed class ExplicitCastNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
     
-    public ExplicitCastNode(OpenParenthesisToken openParenthesisToken, TypeClauseNode resultTypeClauseNode)
+    public ExplicitCastNode(SyntaxToken openParenthesisToken, TypeClauseNode resultTypeClauseNode)
     	: this(openParenthesisToken, resultTypeClauseNode, default)
     {
     }
 
-    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public SyntaxToken OpenParenthesisToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; private set; }
+    public SyntaxToken CloseParenthesisToken { get; private set; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
     
-    public ExplicitCastNode SetCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)
+    public ExplicitCastNode SetCloseParenthesisToken(SyntaxToken closeParenthesisToken)
     {
     	CloseParenthesisToken = closeParenthesisToken;
     	

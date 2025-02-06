@@ -15,9 +15,9 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class GenericParametersListingNode : IExpressionNode
 {
     public GenericParametersListingNode(
-        OpenAngleBracketToken openAngleBracketToken,
+        SyntaxToken openAngleBracketToken,
         List<GenericParameterEntryNode> genericParameterEntryNodeList,
-        CloseAngleBracketToken closeAngleBracketToken)
+        SyntaxToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
         GenericParameterEntryNodeList = genericParameterEntryNodeList;
@@ -27,15 +27,15 @@ public sealed class GenericParametersListingNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public OpenAngleBracketToken OpenAngleBracketToken { get; }
+    public SyntaxToken OpenAngleBracketToken { get; }
     public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
-    public CloseAngleBracketToken CloseAngleBracketToken { get; private set; }
+    public SyntaxToken CloseAngleBracketToken { get; private set; }
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParametersListingNode;
     
-    public GenericParametersListingNode SetCloseAngleBracketToken(CloseAngleBracketToken closeAngleBracketToken)
+    public GenericParametersListingNode SetCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
     {
     	CloseAngleBracketToken = closeAngleBracketToken;
     	

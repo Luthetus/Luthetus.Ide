@@ -17,7 +17,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         AccessModifierKind accessModifierKind,
         bool hasPartialModifier,
         StorageModifierKind storageModifierKind,
-        IdentifierToken typeIdentifier,
+        SyntaxToken typeIdentifier,
         Type? valueType,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
@@ -48,7 +48,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     /// Then: 'Person' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: <see cref="GenericArgumentsListingNode"/> would be null
     /// </summary>
-    public IdentifierToken TypeIdentifierToken { get; }
+    public SyntaxToken TypeIdentifierToken { get; }
     public Type? ValueType { get; }
     /// <summary>
     /// Given: 'public struct Array&lt;T&gt; { /* struct definition here */ }'<br/>

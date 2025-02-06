@@ -9,9 +9,9 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class GenericArgumentsListingNode : ISyntaxNode
 {
     public GenericArgumentsListingNode(
-        OpenAngleBracketToken openAngleBracketToken,
+        SyntaxToken openAngleBracketToken,
         ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodeList,
-        CloseAngleBracketToken closeAngleBracketToken)
+        SyntaxToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
         GenericArgumentEntryNodeList = genericArgumentEntryNodeList;
@@ -21,9 +21,9 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public OpenAngleBracketToken OpenAngleBracketToken { get; }
+    public SyntaxToken OpenAngleBracketToken { get; }
     public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeList { get; }
-    public CloseAngleBracketToken CloseAngleBracketToken { get; }
+    public SyntaxToken CloseAngleBracketToken { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentsListingNode;

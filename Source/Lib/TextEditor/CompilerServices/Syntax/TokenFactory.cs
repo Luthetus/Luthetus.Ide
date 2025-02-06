@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 public static class TokenFactory
 {
-    public static ISyntaxToken FabricateToken(this TokenWalker tokenWalker, SyntaxKind syntaxKind)
+    public static SyntaxToken FabricateToken(this TokenWalker tokenWalker, SyntaxKind syntaxKind)
     {
         var currentTextSpan = tokenWalker.Peek(0).TextSpan;
 

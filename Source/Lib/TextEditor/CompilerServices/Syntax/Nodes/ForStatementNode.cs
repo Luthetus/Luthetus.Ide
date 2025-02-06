@@ -11,14 +11,14 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class ForStatementNode : ICodeBlockOwner
 {
     public ForStatementNode(
-        KeywordToken keywordToken,
-        OpenParenthesisToken openParenthesisToken,
+        SyntaxToken keywordToken,
+        SyntaxToken openParenthesisToken,
         ImmutableArray<ISyntax> initializationSyntaxList,
-        StatementDelimiterToken initializationStatementDelimiterToken,
+        SyntaxToken initializationStatementDelimiterToken,
         IExpressionNode conditionExpressionNode,
-        StatementDelimiterToken conditionStatementDelimiterToken,
+        SyntaxToken conditionStatementDelimiterToken,
         IExpressionNode updationExpressionNode,
-        CloseParenthesisToken closeParenthesisToken,
+        SyntaxToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
         KeywordToken = keywordToken;
@@ -35,14 +35,14 @@ public sealed class ForStatementNode : ICodeBlockOwner
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken KeywordToken { get; }
-    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public SyntaxToken KeywordToken { get; }
+    public SyntaxToken OpenParenthesisToken { get; }
     public ImmutableArray<ISyntax> InitializationSyntaxList { get; }
-    public StatementDelimiterToken InitializationStatementDelimiterToken { get; }
+    public SyntaxToken InitializationStatementDelimiterToken { get; }
     public IExpressionNode ConditionExpressionNode { get; }
-    public StatementDelimiterToken ConditionStatementDelimiterToken { get; }
+    public SyntaxToken ConditionStatementDelimiterToken { get; }
     public IExpressionNode UpdationExpressionNode { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
+    public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

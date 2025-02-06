@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 {
     public AmbiguousParenthesizedExpressionNode(
-    	OpenParenthesisToken openParenthesisToken,
+    	SyntaxToken openParenthesisToken,
     	bool isParserContextKindForceStatementExpression)
     {
         OpenParenthesisToken = openParenthesisToken;
@@ -56,7 +56,7 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 	/// </summary>
 	public bool IsFirstLoop { get; set; } = true;
 
-    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public SyntaxToken OpenParenthesisToken { get; }
     public bool IsParserContextKindForceStatementExpression { get; }
     public TypeClauseNode ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
     

@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 [Obsolete($"Use: {nameof(ConstructorInvocationExpressionNode)}.{nameof(ConstructorInvocationExpressionNode.ObjectInitializationParametersListingNode)}")]
 public sealed class ObjectInitializationNode : ISyntaxNode
 {
-    public ObjectInitializationNode(OpenBraceToken openBraceToken, CloseBraceToken closeBraceToken)
+    public ObjectInitializationNode(SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
     {
         OpenBraceToken = openBraceToken;
         CloseBraceToken = closeBraceToken;
@@ -16,8 +16,8 @@ public sealed class ObjectInitializationNode : ISyntaxNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public OpenBraceToken OpenBraceToken { get; }
-    public CloseBraceToken CloseBraceToken { get; }
+    public SyntaxToken OpenBraceToken { get; }
+    public SyntaxToken CloseBraceToken { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;

@@ -6,7 +6,7 @@ public sealed class UnaryOperatorNode : ISyntaxNode
 {
     public UnaryOperatorNode(
         TypeClauseNode operandTypeClauseNode,
-        ISyntaxToken operatorToken,
+        SyntaxToken operatorToken,
         TypeClauseNode resultTypeClauseNode)
     {
         OperandTypeClauseNode = operandTypeClauseNode;
@@ -18,7 +18,7 @@ public sealed class UnaryOperatorNode : ISyntaxNode
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode OperandTypeClauseNode { get; }
-    public ISyntaxToken OperatorToken { get; }
+    public SyntaxToken OperatorToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
     public bool IsFabricated { get; init; }

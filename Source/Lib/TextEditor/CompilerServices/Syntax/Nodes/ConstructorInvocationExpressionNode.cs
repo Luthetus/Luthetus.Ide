@@ -12,7 +12,7 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 	/// on the <see cref="TypeClauseNode"/>.
 	/// </summary>
     public ConstructorInvocationExpressionNode(
-        KeywordToken newKeywordToken,
+        SyntaxToken newKeywordToken,
         TypeClauseNode typeClauseNode,
         FunctionParametersListingNode? functionParametersListingNode,
         ObjectInitializationParametersListingNode? objectInitializationParametersListingNode)
@@ -26,7 +26,7 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken NewKeywordToken { get; }
+    public SyntaxToken NewKeywordToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; private set; }
     public FunctionParametersListingNode? FunctionParametersListingNode { get; private set; }
     public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; private set; }

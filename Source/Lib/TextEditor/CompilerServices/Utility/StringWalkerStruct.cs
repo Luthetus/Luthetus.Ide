@@ -205,7 +205,7 @@ public struct StringWalkerStruct
     /// Ex: '1.73', positive only.<br/>
     /// { 0, ..., 1, ..., 2, ...}
     /// </Summary>
-    public NumericLiteralToken ReadUnsignedNumericLiteral()
+    public SyntaxToken ReadUnsignedNumericLiteral()
     {
         var startingPosition = PositionIndex;
         var seenPeriod = false;

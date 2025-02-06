@@ -12,7 +12,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 {
     public ConstructorDefinitionNode(
         TypeClauseNode returnTypeClauseNode,
-        IdentifierToken functionIdentifier,
+        SyntaxToken functionIdentifier,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
         CodeBlockNode? codeBlockNode,
@@ -30,7 +30,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode ReturnTypeClauseNode { get; }
-    public IdentifierToken FunctionIdentifier { get; }
+    public SyntaxToken FunctionIdentifier { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public ConstraintNode? ConstraintNode { get; }

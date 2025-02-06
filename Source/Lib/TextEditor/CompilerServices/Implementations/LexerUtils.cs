@@ -16,7 +16,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 public static class LexerUtils
 {
     public static void LexNumericLiteralToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -60,7 +60,7 @@ public static class LexerUtils
     }
 
 	public static void LexCharLiteralToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, List<TextEditorTextSpan>? escapeCharacterList = null, char delimiter = '\'', char escapeCharacter = '\\')
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens, List<TextEditorTextSpan>? escapeCharacterList = null, char delimiter = '\'', char escapeCharacter = '\\')
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -105,7 +105,7 @@ public static class LexerUtils
     }
 
     public static void LexStringLiteralToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, List<TextEditorTextSpan>? escapeCharacterList = null, char delimiter = '"', char escapeCharacter = '\\')
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens, List<TextEditorTextSpan>? escapeCharacterList = null, char delimiter = '"', char escapeCharacter = '\\')
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -150,7 +150,7 @@ public static class LexerUtils
     }
 
     public static void LexCommentSingleLineToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -186,7 +186,7 @@ public static class LexerUtils
     }
 
     public static void LexCommentMultiLineToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -229,7 +229,7 @@ public static class LexerUtils
     }
 
     public static void LexIdentifierOrKeywordOrKeywordContextual(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, LexerKeywords lexerKeywords)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens, LexerKeywords lexerKeywords)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -279,7 +279,7 @@ public static class LexerUtils
     }
 
     public static void LexPlusToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -296,7 +296,7 @@ public static class LexerUtils
     }
 
     public static void LexPlusPlusToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -316,7 +316,7 @@ public static class LexerUtils
     }
 
     public static void LexMinusToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -333,7 +333,7 @@ public static class LexerUtils
     }
 
     public static void LexMinusMinusToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -353,7 +353,7 @@ public static class LexerUtils
     }
 
     public static void LexEqualsToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -370,7 +370,7 @@ public static class LexerUtils
     }
 
     public static void LexEqualsEqualsToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -390,7 +390,7 @@ public static class LexerUtils
     }
 
     public static void LexQuestionMarkToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -407,7 +407,7 @@ public static class LexerUtils
     }
 
     public static void LexQuestionMarkQuestionMarkToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -427,7 +427,7 @@ public static class LexerUtils
     }
 
     public static void LexStarToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -444,7 +444,7 @@ public static class LexerUtils
     }
 
     public static void LexDivisionToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -461,7 +461,7 @@ public static class LexerUtils
     }
 
     public static void LexBangToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -478,7 +478,7 @@ public static class LexerUtils
     }
 
     public static void LexStatementDelimiterToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -495,7 +495,7 @@ public static class LexerUtils
     }
 
     public static void LexOpenParenthesisToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -512,7 +512,7 @@ public static class LexerUtils
     }
 
     public static void LexCloseParenthesisToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -529,7 +529,7 @@ public static class LexerUtils
     }
 
     public static void LexOpenBraceToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -546,7 +546,7 @@ public static class LexerUtils
     }
 
     public static void LexCloseBraceToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -563,7 +563,7 @@ public static class LexerUtils
     }
 
     public static void LexOpenAngleBracketToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -580,7 +580,7 @@ public static class LexerUtils
     }
 
     public static void LexCloseAngleBracketToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -597,7 +597,7 @@ public static class LexerUtils
     }
 
     public static void LexOpenSquareBracketToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -614,7 +614,7 @@ public static class LexerUtils
     }
 
     public static void LexCloseSquareBracketToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -631,7 +631,7 @@ public static class LexerUtils
     }
 
     public static void LexDollarSignToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -648,7 +648,7 @@ public static class LexerUtils
     }
 
     public static void LexAtToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -665,7 +665,7 @@ public static class LexerUtils
     }
 
     public static void LexColonToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -682,7 +682,7 @@ public static class LexerUtils
     }
 
     public static void LexMemberAccessToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -699,7 +699,7 @@ public static class LexerUtils
     }
 
     public static void LexCommaToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -716,7 +716,7 @@ public static class LexerUtils
     }
 
     public static void LexPreprocessorDirectiveToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+        StringWalker stringWalker, List<SyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
