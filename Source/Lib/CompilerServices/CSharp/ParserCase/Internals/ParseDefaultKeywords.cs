@@ -12,12 +12,12 @@ public class ParseDefaultKeywords
 {
     public static void HandleAsTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-        parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleBaseTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleBoolTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -27,7 +27,7 @@ public class ParseDefaultKeywords
 
     public static void HandleBreakTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleByteTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -108,17 +108,17 @@ public class ParseDefaultKeywords
 
     public static void HandleCheckedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleConstTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleContinueTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleDecimalTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -132,7 +132,7 @@ public class ParseDefaultKeywords
         if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
         	_ = parserModel.TokenWalker.Consume();
 		else
-			parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+			parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleDelegateTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -173,7 +173,7 @@ public class ParseDefaultKeywords
 
     public static void HandleElseTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleEnumTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -187,17 +187,17 @@ public class ParseDefaultKeywords
 
     public static void HandleEventTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleExplicitTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleExternTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleFalseTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -258,7 +258,7 @@ public class ParseDefaultKeywords
 
     public static void HandleFixedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleFloatTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -355,17 +355,17 @@ public class ParseDefaultKeywords
 
     public static void HandleGotoTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleImplicitTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleInTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleIntTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -375,7 +375,7 @@ public class ParseDefaultKeywords
 
     public static void HandleIsTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleLockTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -426,17 +426,17 @@ public class ParseDefaultKeywords
 
     public static void HandleOperatorTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleOutTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleParamsTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleProtectedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -447,12 +447,12 @@ public class ParseDefaultKeywords
 
     public static void HandleReadonlyTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleRefTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleSbyteTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -467,12 +467,12 @@ public class ParseDefaultKeywords
 
     public static void HandleSizeofTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleStackallocTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleStringTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -515,12 +515,12 @@ public class ParseDefaultKeywords
 
     public static void HandleThisTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleThrowTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleTrueTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -564,7 +564,7 @@ public class ParseDefaultKeywords
 
     public static void HandleTypeofTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleUintTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -579,12 +579,12 @@ public class ParseDefaultKeywords
 
     public static void HandleUncheckedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleUnsafeTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleUshortTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -599,7 +599,7 @@ public class ParseDefaultKeywords
 
     public static void HandleVolatileTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleWhileTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -647,7 +647,7 @@ public class ParseDefaultKeywords
 
     public static void HandleUnrecognizedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
 	/// <summary>The 'Default' of this method name is confusing.
@@ -655,7 +655,7 @@ public class ParseDefaultKeywords
 	/// </summary>
     public static void HandleDefault(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleTypeIdentifierKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -673,7 +673,7 @@ public class ParseDefaultKeywords
     	}
     	else
     	{
-    		parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    		parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     	}
     }
 
@@ -697,27 +697,27 @@ public class ParseDefaultKeywords
 
     public static void HandleStaticTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleOverrideTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleVirtualTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleAbstractTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleSealedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
     public static void HandleIfTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

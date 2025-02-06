@@ -209,23 +209,26 @@ public static class UtilityApi
     	else if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		return new TypeClauseNode(
-	    		(IdentifierToken)syntax,
-		        null,
-		        null);
+	    		(SyntaxToken)syntax,
+		        valueType: null,
+		        genericParametersListingNode: null,
+		        isKeywordType: false);
     	}
 	    else if (IsTypeIdentifierKeywordSyntaxKind(syntax.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(KeywordToken)syntax,
-		        null,
-		        null);
+	    		(SyntaxToken)syntax,
+		        valueType: null,
+		        genericParametersListingNode: null,
+		        isKeywordType: true);
 	    }
 	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(KeywordContextualToken)syntax,
-		        null,
-		        null);
+	    		(SyntaxToken)syntax,
+		        valueType: null,
+		        genericParametersListingNode: null,
+		        isKeywordType: true);
 	    }
 	    else
 	    {
@@ -251,12 +254,12 @@ public static class UtilityApi
     {
     	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
-    		return (IdentifierToken)syntax;
+    		return (SyntaxToken)syntax;
     	}
 	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
 	    {
-	    	var keywordContextualToken = (KeywordContextualToken)syntax;
-	    	return new IdentifierToken(keywordContextualToken.TextSpan);
+	    	var keywordContextualToken = (SyntaxToken)syntax;
+	    	return new SyntaxToken(SyntaxKind.IdentifierToken, keywordContextualToken.TextSpan);
 	    }
 	    else
 	    {
@@ -265,7 +268,7 @@ public static class UtilityApi
 	    	//
 	    	parserModel.DiagnosticBag.ReportTodoException(
 	    		parserModel.TokenWalker.Current.TextSpan,
-	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
+	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(SyntaxKind.IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
 	    		
 	    	// TODO: Returning default when it can't be converted might be a fine idea? It isn't as bad as returning null.
 	    	return default;
