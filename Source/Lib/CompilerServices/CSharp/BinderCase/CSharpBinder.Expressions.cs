@@ -1667,7 +1667,8 @@ public partial class CSharpBinder
 			 
 			 if (variableReferenceNode.IsFabricated)
 			 {
-			 	var typeClauseNode = new TypeClauseNode(variableReferenceNode.VariableIdentifierToken, valueType: null, genericParametersListingNode: null);
+			 	var typeClauseNode = new TypeClauseNode(
+			 		variableReferenceNode.VariableIdentifierToken, valueType: null, genericParametersListingNode: null, isKeywordType: false);
 				
 				BindTypeClauseNode(
 			        typeClauseNode,
@@ -2539,7 +2540,8 @@ public partial class CSharpBinder
 		return new TypeClauseNode(
 			identifierToken,
 	        valueType: null,
-	        genericParametersListingNode: null);
+	        genericParametersListingNode: null,
+	        isKeywordType: false);
 	}
 	
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_LambdaExpressionNode(

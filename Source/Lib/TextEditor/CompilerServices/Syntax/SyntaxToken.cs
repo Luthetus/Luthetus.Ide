@@ -11,7 +11,10 @@ public struct SyntaxToken : ISyntax
     }
 
     public SyntaxKind SyntaxKind { get; }
-    public TextEditorTextSpan TextSpan { get; }
+    
+    /// <summary>TODO: Remove the setter.</summary>
+    public TextEditorTextSpan TextSpan { get; set; }
+    
     public bool IsFabricated { get; init; }
     public bool ConstructorWasInvoked => TextSpan.ConstructorWasInvoked;
 }

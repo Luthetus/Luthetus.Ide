@@ -225,7 +225,7 @@ EndProject
             if (dotNetProject.CloseAssociatedGroupToken is not null)
             {
                 tokens.Add((
-                    dotNetProject.CloseAssociatedGroupToken,
+                    dotNetProject.CloseAssociatedGroupToken.Value,
                     new Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?>((inToken, textSpan) =>
                     {
                     	dotNetProject.CloseAssociatedGroupToken = new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan);
@@ -239,7 +239,7 @@ EndProject
         if (global.OpenAssociatedGroupToken is not null)
         {
             tokens.Add((
-                global.OpenAssociatedGroupToken,
+                global.OpenAssociatedGroupToken.Value,
                 new Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?>((inToken, textSpan) =>
                 {
                     global.OpenAssociatedGroupToken = new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, textSpan);
@@ -250,7 +250,7 @@ EndProject
         if (global.CloseAssociatedGroupToken is not null)
         {
             tokens.Add((
-                global.CloseAssociatedGroupToken,
+                global.CloseAssociatedGroupToken.Value,
                 new Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?>((inToken, textSpan) =>
                 {
                     global.CloseAssociatedGroupToken = new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, textSpan);
