@@ -175,6 +175,12 @@
                 <div>v <em class="luth_em">0.9.7.24 </em> (WIP_DATE)</div>
                 <ul>
                 	<li>
+                		Empty parameter list for lambda expression support.
+                	</li>
+                	<li>
+                		Massive reduction in value type boxing while parsing syntax tokens.
+                	</li>
+                	<li>
                 		Move 'CSharpCodeBlockBuilder.ParseChildScopeQueue' to be
                 		'CSharpParserModel.ParseChildScopeStack'.
                 		(one object instantiation for the "queue" per parse rather
