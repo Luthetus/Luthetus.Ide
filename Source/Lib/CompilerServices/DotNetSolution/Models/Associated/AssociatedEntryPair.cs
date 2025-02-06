@@ -1,19 +1,19 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 
 public record AssociatedEntryPair : IAssociatedEntry
 {
     public AssociatedEntryPair(
-        AssociatedNameToken associatedNameToken,
-        AssociatedValueToken associatedValueToken)
+        SyntaxToken associatedNameToken,
+        SyntaxToken associatedValueToken)
     {
         AssociatedNameToken = associatedNameToken;
         AssociatedValueToken = associatedValueToken;
     }
 
-    public AssociatedNameToken AssociatedNameToken { get; init; }
-    public AssociatedValueToken AssociatedValueToken { get; init; }
+    public SyntaxToken AssociatedNameToken { get; init; }
+    public SyntaxToken AssociatedValueToken { get; init; }
 
     public AssociatedEntryKind AssociatedEntryKind => AssociatedEntryKind.Pair;
 }

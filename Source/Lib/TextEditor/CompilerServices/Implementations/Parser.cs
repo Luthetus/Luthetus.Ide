@@ -42,7 +42,6 @@ public class Parser : IParser
             Binder,
             BinderSession,
             new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),
-            new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);

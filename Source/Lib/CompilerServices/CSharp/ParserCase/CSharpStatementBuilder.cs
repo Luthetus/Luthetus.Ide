@@ -11,8 +11,8 @@ public class CSharpStatementBuilder
 	public List<ISyntax> ChildList { get; } = new();
 	
 	/// <summary>
-	/// Measure the cost of 'Peek(...)', 'TryPeek(...)' since now
-	/// this is a value tuple and the dequeue alone does not mean success,
+	/// TODO: Measure the cost of 'Peek(...)', 'TryPeek(...)' since now...
+	/// ...this is a value tuple and the dequeue alone does not mean success,
 	/// you have to peek first to see if the object references are equal.
 	/// </summary>
 	public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; } = new();
@@ -68,9 +68,12 @@ public class CSharpStatementBuilder
 				codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
 			else
 				codeBlockBuilderSyntax = parserModel.CurrentCodeBlockBuilder.ChildList[^1];
-				
-			if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax))
+
+			if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax) &&
+				!Object.ReferenceEquals(statementSyntax, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+			{
 				parserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+			}
 			
 			ChildList.Clear();
 		}

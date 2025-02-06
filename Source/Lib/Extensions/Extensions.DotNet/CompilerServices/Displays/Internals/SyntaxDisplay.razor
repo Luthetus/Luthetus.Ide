@@ -10,7 +10,7 @@
         var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.C_SHARP_CLASS);
     }
 
-    @if (Syntax is ISyntaxToken syntaxToken)
+    @if (Syntax is SyntaxToken syntaxToken)
     {
         cssClassForColor = decorationMapper.Map(syntaxToken.TextSpan.DecorationByte);
     }

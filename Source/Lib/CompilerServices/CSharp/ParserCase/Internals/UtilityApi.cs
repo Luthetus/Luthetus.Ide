@@ -2,7 +2,6 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -153,7 +152,7 @@ public static class UtilityApi
     /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="StorageModifierKind"/>,
     /// then null is returned.
     /// </summary>
-    public static StorageModifierKind? GetStorageModifierKindFromToken(ISyntaxToken consumedToken)
+    public static StorageModifierKind? GetStorageModifierKindFromToken(SyntaxToken consumedToken)
     {
         switch (consumedToken.TextSpan.GetText())
         {
@@ -176,7 +175,7 @@ public static class UtilityApi
     /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="AccessModifierKind"/>,
     /// then null is returned.
     /// </summary>
-    public static AccessModifierKind? GetAccessModifierKindFromToken(ISyntaxToken consumedToken)
+    public static AccessModifierKind? GetAccessModifierKindFromToken(SyntaxToken consumedToken)
     {
         switch (consumedToken.TextSpan.GetText())
         {
@@ -210,23 +209,26 @@ public static class UtilityApi
     	else if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		return new TypeClauseNode(
-	    		(IdentifierToken)syntax,
-		        null,
-		        null);
+	    		(SyntaxToken)syntax,
+		        valueType: null,
+		        genericParametersListingNode: null,
+		        isKeywordType: false);
     	}
 	    else if (IsTypeIdentifierKeywordSyntaxKind(syntax.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(KeywordToken)syntax,
-		        null,
-		        null);
+	    		(SyntaxToken)syntax,
+		        valueType: null,
+		        genericParametersListingNode: null,
+		        isKeywordType: true);
 	    }
 	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(KeywordContextualToken)syntax,
-		        null,
-		        null);
+	    		(SyntaxToken)syntax,
+		        valueType: null,
+		        genericParametersListingNode: null,
+		        isKeywordType: true);
 	    }
 	    else
 	    {
@@ -248,16 +250,16 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static SyntaxToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
-    		return (IdentifierToken)syntax;
+    		return (SyntaxToken)syntax;
     	}
 	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
 	    {
-	    	var keywordContextualToken = (KeywordContextualToken)syntax;
-	    	return new IdentifierToken(keywordContextualToken.TextSpan);
+	    	var keywordContextualToken = (SyntaxToken)syntax;
+	    	return new SyntaxToken(SyntaxKind.IdentifierToken, keywordContextualToken.TextSpan);
 	    }
 	    else
 	    {
@@ -266,7 +268,7 @@ public static class UtilityApi
 	    	//
 	    	parserModel.DiagnosticBag.ReportTodoException(
 	    		parserModel.TokenWalker.Current.TextSpan,
-	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
+	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(SyntaxKind.IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
 	    		
 	    	// TODO: Returning default when it can't be converted might be a fine idea? It isn't as bad as returning null.
 	    	return default;

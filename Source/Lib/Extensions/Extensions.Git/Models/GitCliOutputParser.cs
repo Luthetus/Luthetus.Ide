@@ -218,7 +218,7 @@ public class GitCliOutputParser
                 _ = stringWalker.ReadRange(" by ".Length);
 
                 // Read the unsigned-integer
-                var syntaxTokenList = new List<ISyntaxToken>();
+                var syntaxTokenList = new List<SyntaxToken>();
                 LexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
                 var numberTextSpan = syntaxTokenList.Single().TextSpan;
                 var numberString = numberTextSpan.GetText();
@@ -261,7 +261,7 @@ public class GitCliOutputParser
                 _ = stringWalker.ReadRange(" by ".Length);
 
                 // Read the unsigned-integer
-                var syntaxTokenList = new List<ISyntaxToken>();
+                var syntaxTokenList = new List<SyntaxToken>();
                 LexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
                 var numberTextSpan = syntaxTokenList.Single().TextSpan;
                 var numberString = numberTextSpan.GetText();

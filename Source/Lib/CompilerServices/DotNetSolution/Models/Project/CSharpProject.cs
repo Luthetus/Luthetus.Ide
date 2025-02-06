@@ -1,5 +1,5 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
@@ -10,8 +10,8 @@ public class CSharpProjectModel : IDotNetProject
         Guid projectTypeGuid,
         string relativePathFromSolutionFileString,
         Guid projectIdGuid,
-        OpenAssociatedGroupToken openAssociatedGroupToken,
-        CloseAssociatedGroupToken? closeAssociatedGroupToken,
+        SyntaxToken openAssociatedGroupToken,
+        SyntaxToken? closeAssociatedGroupToken,
         AbsolutePath absolutePath)
     {
         DisplayName = displayName;
@@ -27,8 +27,8 @@ public class CSharpProjectModel : IDotNetProject
     public Guid ProjectTypeGuid { get; }
     public string RelativePathFromSolutionFileString { get; }
     public Guid ProjectIdGuid { get; }
-    public OpenAssociatedGroupToken OpenAssociatedGroupToken { get; set; }
-    public CloseAssociatedGroupToken? CloseAssociatedGroupToken { get; set; }
+    public SyntaxToken OpenAssociatedGroupToken { get; set; }
+    public SyntaxToken? CloseAssociatedGroupToken { get; set; }
     public AbsolutePath AbsolutePath { get; set; }
     public DotNetProjectKind DotNetProjectKind => DotNetProjectKind.CSharpProject;
 }

@@ -1,6 +1,5 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -14,7 +13,6 @@ public class ParserModel : IParserModel
         IBinder binder,
         IBinderSession binderSession,
         TokenWalker tokenWalker,
-        Stack<ISyntax> syntaxStack,
         DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder)
@@ -22,7 +20,6 @@ public class ParserModel : IParserModel
         Binder = binder;
         BinderSession = binderSession;
         TokenWalker = tokenWalker;
-        SyntaxStack = syntaxStack;
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
@@ -33,7 +30,6 @@ public class ParserModel : IParserModel
     public IBinder Binder { get; }
     public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
-    public Stack<ISyntax> SyntaxStack { get; set; }
     public StatementBuilder StatementBuilder { get; set; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }

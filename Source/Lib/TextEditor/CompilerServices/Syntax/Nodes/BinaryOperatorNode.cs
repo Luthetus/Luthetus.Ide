@@ -6,7 +6,7 @@ public sealed class BinaryOperatorNode : ISyntaxNode
 {
     public BinaryOperatorNode(
         TypeClauseNode leftOperandTypeClauseNode,
-        ISyntaxToken operatorToken,
+        SyntaxToken operatorToken,
         TypeClauseNode rightOperandTypeClauseNode,
         TypeClauseNode resultTypeClauseNode)
     {
@@ -20,7 +20,7 @@ public sealed class BinaryOperatorNode : ISyntaxNode
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode LeftOperandTypeClauseNode { get; }
-    public ISyntaxToken OperatorToken { get; }
+    public SyntaxToken OperatorToken { get; }
     public TypeClauseNode RightOperandTypeClauseNode { get; }
 	public TypeClauseNode ResultTypeClauseNode { get; }
 

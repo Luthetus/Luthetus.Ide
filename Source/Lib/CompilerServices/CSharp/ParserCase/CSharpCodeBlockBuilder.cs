@@ -14,9 +14,6 @@ public class CSharpCodeBlockBuilder
         Parent = parent;
         CodeBlockOwner = codeBlockOwner;
         
-        if (CodeBlockOwner.ScopeDirectionKind == ScopeDirectionKind.Both)
-        	ParseChildScopeQueue = new();
-        
         var parentScopeDirection = parent?.CodeBlockOwner.ScopeDirectionKind
         	?? ScopeDirectionKind.Both;
         
@@ -34,8 +31,6 @@ public class CSharpCodeBlockBuilder
     /// Identifier is equal to the constructor's identifier.
     /// </summary>
     public ICodeBlockOwner CodeBlockOwner { get; }
-    
-    public Queue<CSharpDeferredChildScope>? ParseChildScopeQueue { get; set; }
     
 	public bool PermitCodeBlockParsing { get; set; } = true;
 	

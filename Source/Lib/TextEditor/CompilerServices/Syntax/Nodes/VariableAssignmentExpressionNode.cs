@@ -1,14 +1,14 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class VariableAssignmentExpressionNode : IExpressionNode
 {
     public VariableAssignmentExpressionNode(
-        IdentifierToken variableIdentifierToken,
-        EqualsToken equalsToken,
+        SyntaxToken variableIdentifierToken,
+        SyntaxToken equalsToken,
         IExpressionNode expressionNode)
     {
         VariableIdentifierToken = variableIdentifierToken;
@@ -19,8 +19,8 @@ public sealed class VariableAssignmentExpressionNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public IdentifierToken VariableIdentifierToken { get; }
-    public EqualsToken EqualsToken { get; }
+    public SyntaxToken VariableIdentifierToken { get; }
+    public SyntaxToken EqualsToken { get; }
     public IExpressionNode ExpressionNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode => ExpressionNode.ResultTypeClauseNode;
 

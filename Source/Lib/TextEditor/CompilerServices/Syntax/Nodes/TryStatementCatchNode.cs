@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -12,9 +12,9 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 {
 	public TryStatementCatchNode(
 		TryStatementNode? parent,
-        KeywordToken keywordToken,
-        OpenParenthesisToken openParenthesisToken,
-        CloseParenthesisToken closeParenthesisToken,
+        SyntaxToken keywordToken,
+        SyntaxToken openParenthesisToken,
+        SyntaxToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
     	Parent = parent;
@@ -28,10 +28,10 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 	
-	public KeywordToken KeywordToken { get; }
-    public OpenParenthesisToken OpenParenthesisToken { get; }
+	public SyntaxToken KeywordToken { get; }
+    public SyntaxToken OpenParenthesisToken { get; }
     public VariableDeclarationNode? VariableDeclarationNode { get; private set; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
+    public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

@@ -1,12 +1,12 @@
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 public interface IVariableDeclarationNode : IExpressionNode
 {
     public TypeClauseNode TypeClauseNode { get; }
-    public IdentifierToken IdentifierToken { get; }
+    public SyntaxToken IdentifierToken { get; }
     public VariableKind VariableKind { get; }
     public bool IsInitialized { get; set; }
     /// <summary>

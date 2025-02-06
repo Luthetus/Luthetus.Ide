@@ -1,5 +1,5 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
@@ -13,12 +13,12 @@ public interface IDotNetProject
     /// TODO: Remove the "set;" hack. Added so one can shift text spans when the .sln content is
     /// modified. (2023-10-10))
     /// </summary>
-    public OpenAssociatedGroupToken OpenAssociatedGroupToken { get; set; }
+    public SyntaxToken OpenAssociatedGroupToken { get; set; }
     /// <summary>
     /// TODO: Remove the "set;" hack. Added so one can shift text spans when the .sln content is
     /// modified. (2023-10-10))
     /// </summary>
-    public CloseAssociatedGroupToken? CloseAssociatedGroupToken { get; set; }
+    public SyntaxToken? CloseAssociatedGroupToken { get; set; }
     /// <summary>
     /// TODO: Remove the "set;" hack.
     /// </summary>

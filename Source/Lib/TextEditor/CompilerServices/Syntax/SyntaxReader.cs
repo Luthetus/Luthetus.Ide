@@ -14,7 +14,7 @@ public static class SyntaxReader
 
         foreach (var child in node.GetChildList())
         {
-            if (child is ISyntaxToken token)
+            if (child is SyntaxToken token)
             {
                 minStartingIndexInclusive = minStartingIndexInclusive is null
                     ? token.TextSpan.StartingIndexInclusive

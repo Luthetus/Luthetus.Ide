@@ -132,6 +132,7 @@ public record struct TextEditorTextSpan(
     }
 
     public int Length => EndingIndexExclusive - StartingIndexInclusive;
+    public bool ConstructorWasInvoked => ResourceUri.Value is not null;
 
     public string GetText()
     {

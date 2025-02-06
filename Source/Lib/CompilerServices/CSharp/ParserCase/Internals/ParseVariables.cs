@@ -3,7 +3,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.CompilerServices.CSharp.Facts;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -12,7 +11,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 public static class ParseVariables
 {
     public static void HandleVariableReference(
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -21,7 +20,7 @@ public static class ParseVariables
 	/// <summary>Function invocation which uses the 'out' keyword.</summary>
     public static IVariableDeclarationNode? HandleVariableDeclarationExpression(
         TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
@@ -44,7 +43,7 @@ public static class ParseVariables
     /// </summary>
     public static void HandleVariableDeclarationStatement(
         TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
@@ -66,7 +65,7 @@ public static class ParseVariables
             // Variable initialization occurs here.
             HandleVariableAssignment(
                 consumedIdentifierToken,
-                (EqualsToken)parserModel.TokenWalker.Consume(),
+                parserModel.TokenWalker.Consume(),
                 compilationUnit,
                 ref parserModel);
         }
@@ -74,8 +73,8 @@ public static class ParseVariables
         {
         	HandlePropertyExpression(
 	            variableDeclarationNode,
-	            (EqualsToken)parserModel.TokenWalker.Consume(),
-	            (CloseAngleBracketToken)parserModel.TokenWalker.Consume(),
+	            parserModel.TokenWalker.Consume(),
+	            parserModel.TokenWalker.Consume(),
 	            compilationUnit,
 	            ref parserModel);
         }
@@ -94,7 +93,7 @@ public static class ParseVariables
         {
             HandlePropertyDeclaration(
                 variableDeclarationNode,
-                (OpenBraceToken)parserModel.TokenWalker.Consume(),
+                parserModel.TokenWalker.Consume(),
                 compilationUnit,
                 ref parserModel);
         }
@@ -106,7 +105,7 @@ public static class ParseVariables
 
     public static void HandlePropertyDeclaration(
         IVariableDeclarationNode consumedVariableDeclarationNode,
-        OpenBraceToken consumedOpenBraceToken,
+        SyntaxToken consumedOpenBraceToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -114,16 +113,16 @@ public static class ParseVariables
 
     public static void HandlePropertyExpression(
         IVariableDeclarationNode consumedVariableDeclarationNode,
-        EqualsToken consumedEqualsToken,
-        CloseAngleBracketToken consumedCloseAngleBracketToken,
+        SyntaxToken consumedEqualsToken,
+        SyntaxToken consumedCloseAngleBracketToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     }
 
     public static void HandleVariableAssignment(
-        IdentifierToken consumedIdentifierToken,
-        EqualsToken consumedEqualsToken,
+        SyntaxToken consumedIdentifierToken,
+        SyntaxToken consumedEqualsToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {

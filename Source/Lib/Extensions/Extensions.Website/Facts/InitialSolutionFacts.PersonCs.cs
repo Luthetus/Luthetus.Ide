@@ -224,13 +224,12 @@ List<(Apple Aaa, Banana Bbb)> myListFour; // (is named)
 (List<(int Aaa, bool Bbb)>)myVariableThree;    // (with generic argument, which is a tuple, is named)
 (List<(Apple Aaa, Banana Bbb)>)myVariableFour; // (with generic argument, which is a tuple, is named)
 
-return (aaa, bbb, ccc) => 2; // Lambda Function with implicitly typed parameters, expression body
-
-return (int aaa, bool bbb, string ccc) => (aaa, bbb, ccc); // Lambda Function with explicitly typed parameters, expression body
-
-return xasas => 3; // Lambda Function, parameters declared without parenthesis.
-
-return async xasas => Task.CompletedTask; // Lambda Function, async.
+return x => 3;
+return () => 3;
+return (x, y) => 3;
+return (int x, PersonDisplay y) => 3;
+return async x => 3;
+return async () => 3;
 
 return aaa => // Lambda Function with statement block body.
 {
@@ -247,6 +246,10 @@ return aaa => // Lambda Function with statement block body.
 		},
 		z => e => 2);
 };
+
+Task SomeMethodAsync() => Task.CompletedTask;
+await SomeMethodAsync();     // Statement loop
+_ = await SomeMethodAsync(); // Expression loop
 
 public enum SomeKind
 {

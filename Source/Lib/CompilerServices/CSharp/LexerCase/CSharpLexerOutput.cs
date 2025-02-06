@@ -14,8 +14,7 @@ public struct CSharpLexerOutput
     	DiagnosticBag = new();
     }
     
-    /// <summary>If not 'DEBUG' then these are set to null after the compilation unit is finished.</summary>
-    public List<ISyntaxToken> SyntaxTokenList { get; }
+    public List<SyntaxToken> SyntaxTokenList { get; }
     /// <summary>
     /// MiscTextSpanList contains the comments and the escape characters.
     /// </summary>
