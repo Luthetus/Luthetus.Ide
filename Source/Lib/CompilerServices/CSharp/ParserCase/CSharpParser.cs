@@ -187,37 +187,6 @@ public static class CSharpParser
                     break;
                 }
                 case SyntaxKind.EndOfFileToken:
-                    if (parserModel.SyntaxStack.TryPeek(out var syntax) &&
-                        syntax.SyntaxKind == SyntaxKind.EndOfFileToken)
-                    {
-                        _ = parserModel.SyntaxStack.Pop();
-                    }
-
-                    if (parserModel.SyntaxStack.TryPop(out var notUsedSyntax))
-                    {
-                    	if (notUsedSyntax is null)
-                    	{
-                    	}
-                        else if (notUsedSyntax is IExpressionNode)
-                        {
-                            parserModel.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
-                        }
-                        else if (notUsedSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
-                        {
-                            var ambiguousIdentifierNode = (AmbiguousIdentifierNode)notUsedSyntax;
-                            parserModel.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
-                            parserModel.DiagnosticBag.ReportUndefinedTypeOrNamespace(
-                                ambiguousIdentifierNode.IdentifierToken.TextSpan,
-                                ambiguousIdentifierNode.IdentifierToken.TextSpan.GetText());
-                        }
-                    }
-                    else if (parserModel.StatementBuilder.ChildList.Any())
-                    {
-                    	foreach (var item in parserModel.StatementBuilder.ChildList)
-                    	{
-                    		parserModel.CurrentCodeBlockBuilder.ChildList.Add(item);
-                    	}
-                    }
                     break;
                 default:
                     if (UtilityApi.IsContextualKeywordSyntaxKind(token.SyntaxKind))
@@ -244,7 +213,12 @@ public static class CSharpParser
 				}
 				
 				if (!deferredParsingOccurred)
-					break;
+				{
+					// This second 'deferredParsingOccurred' is for any lambda expressions with one or many statements in its body.
+					deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+					if (!deferredParsingOccurred)
+						break;
+				}
 			}
 			
 			if (parserModel.TokenWalker.ConsumeCounter == 0)
