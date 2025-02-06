@@ -104,8 +104,9 @@ public class ParseFunctions
 
         var typeClauseNode = new TypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
-            null,
-            null);
+            valueType: null,
+            genericParametersListingNode: null,
+            isKeywordType: false);
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
             typeClauseNode,
@@ -131,12 +132,12 @@ public class ParseFunctions
             // Constructor invokes some other constructor as well
         	// 'this(...)' or 'base(...)'
         	
-        	KeywordToken keywordToken;
+        	SyntaxToken keywordToken;
         	
         	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
-        		keywordToken = (KeywordToken)parserModel.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
+        		keywordToken = parserModel.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
         	else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
-        		keywordToken = (KeywordToken)parserModel.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
+        		keywordToken = parserModel.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
         	else
         		keywordToken = default;
         	
@@ -160,7 +161,7 @@ public class ParseFunctions
                 _ = parserModel.TokenWalker.Consume();
             }
             
-            var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+            var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
             
             // Parse secondary syntax ': base(myVariable, 7)'
             if (!openParenthesisToken.IsFabricated)
@@ -216,7 +217,7 @@ public class ParseFunctions
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
     public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Consume();
+    	var openParenthesisToken = parserModel.TokenWalker.Consume();
     	var functionArgumentEntryNodeList = new List<FunctionArgumentEntryNode>();
     	var openParenthesisCount = 1;
     	var corruptState = false;
@@ -315,10 +316,10 @@ public class ParseFunctions
             _ = parserModel.TokenWalker.Consume();
         }
         
-        var closeParenthesisToken = default(CloseParenthesisToken);
+        var closeParenthesisToken = default(SyntaxToken);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-        	closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Consume();
+        	closeParenthesisToken = parserModel.TokenWalker.Consume();
         
         return new FunctionArgumentsListingNode(
         	openParenthesisToken,

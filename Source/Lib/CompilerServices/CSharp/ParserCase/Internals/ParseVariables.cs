@@ -65,7 +65,7 @@ public static class ParseVariables
             // Variable initialization occurs here.
             HandleVariableAssignment(
                 consumedIdentifierToken,
-                (EqualsToken)parserModel.TokenWalker.Consume(),
+                parserModel.TokenWalker.Consume(),
                 compilationUnit,
                 ref parserModel);
         }
@@ -73,8 +73,8 @@ public static class ParseVariables
         {
         	HandlePropertyExpression(
 	            variableDeclarationNode,
-	            (EqualsToken)parserModel.TokenWalker.Consume(),
-	            (CloseAngleBracketToken)parserModel.TokenWalker.Consume(),
+	            parserModel.TokenWalker.Consume(),
+	            parserModel.TokenWalker.Consume(),
 	            compilationUnit,
 	            ref parserModel);
         }
@@ -93,7 +93,7 @@ public static class ParseVariables
         {
             HandlePropertyDeclaration(
                 variableDeclarationNode,
-                (OpenBraceToken)parserModel.TokenWalker.Consume(),
+                parserModel.TokenWalker.Consume(),
                 compilationUnit,
                 ref parserModel);
         }

@@ -60,7 +60,7 @@ internal static class TokenWalkerExtensionMethods
 			}
 	
 			closeTokenIndex = tokenWalker.Index;
-			var statementDelimiterToken = (StatementDelimiterToken)tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+			var statementDelimiterToken = tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 		}
 		else
 		{
@@ -83,7 +83,7 @@ internal static class TokenWalkerExtensionMethods
 			}
 	
 			closeTokenIndex = tokenWalker.Index;
-			var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
+			var closeBraceToken = tokenWalker.Match(SyntaxKind.CloseBraceToken);
 		}
 		
 		#if DEBUG

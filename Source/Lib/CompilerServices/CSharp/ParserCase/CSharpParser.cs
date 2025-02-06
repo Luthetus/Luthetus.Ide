@@ -81,7 +81,7 @@ public static class CSharpParser
                 	}
                 	break;
                 case SyntaxKind.PreprocessorDirectiveToken:
-                    ParseTokens.ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParsePreprocessorDirectiveToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.IdentifierToken:
                 	ParseTokens.ParseIdentifierToken(compilationUnit, ref parserModel);
@@ -96,7 +96,7 @@ public static class CSharpParser
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 					#endif
 					
-					var openBraceToken = (OpenBraceToken)parserModel.TokenWalker.Consume();
+					var openBraceToken = parserModel.TokenWalker.Consume();
 					
 					#if DEBUG
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
@@ -127,7 +127,7 @@ public static class CSharpParser
 					// to be passed the index that was consumed in order to
 					// get the CloseBraceToken.
 					var closeBraceTokenIndex = parserModel.TokenWalker.Index;
-					var closeBraceToken = (CloseBraceToken)parserModel.TokenWalker.Consume();
+					var closeBraceToken = parserModel.TokenWalker.Consume();
 					
 					#if DEBUG
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
@@ -140,28 +140,28 @@ public static class CSharpParser
                 	ParseTokens.ParseOpenParenthesisToken(compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.CloseParenthesisToken:
-                    ParseTokens.ParseCloseParenthesisToken((CloseParenthesisToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseParenthesisToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
                 	if (parserModel.StatementBuilder.ChildList.Count == 0)
                 		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
                 	else
-                    	ParseTokens.ParseOpenAngleBracketToken((OpenAngleBracketToken)token, compilationUnit, ref parserModel);
+                    	ParseTokens.ParseOpenAngleBracketToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.CloseAngleBracketToken:
-                    ParseTokens.ParseCloseAngleBracketToken((CloseAngleBracketToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseAngleBracketToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.OpenSquareBracketToken:
                     ParseTokens.ParseOpenSquareBracketToken(compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.CloseSquareBracketToken:
-                    ParseTokens.ParseCloseSquareBracketToken((CloseSquareBracketToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseSquareBracketToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.ColonToken:
                     ParseTokens.ParseColonToken(compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.MemberAccessToken:
-                    ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, compilationUnit, ref parserModel);
+                    ParseTokens.ParseMemberAccessToken(token, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.EqualsToken:
                     ParseTokens.ParseEqualsToken(compilationUnit, ref parserModel);
@@ -177,7 +177,7 @@ public static class CSharpParser
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 					#endif
 					
-					var statementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Consume();
+					var statementDelimiterToken = parserModel.TokenWalker.Consume();
 					
 					#if DEBUG
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
@@ -188,7 +188,7 @@ public static class CSharpParser
                 }
                 case SyntaxKind.EndOfFileToken:
                     if (parserModel.SyntaxStack.TryPeek(out var syntax) &&
-                        syntax is EndOfFileToken)
+                        syntax.SyntaxKind == SyntaxKind.EndOfFileToken)
                     {
                         _ = parserModel.SyntaxStack.Pop();
                     }

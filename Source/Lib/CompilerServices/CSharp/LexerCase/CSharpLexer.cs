@@ -653,9 +653,10 @@ public static class CSharpLexer
 		{
 			lexerOutput.SyntaxTokenList.Insert(
 				syntaxTokenListIndex,
-				new StringInterpolatedStartToken(textSpan));
+				new SyntaxToken(SyntaxKind.StringInterpolatedStartToken, textSpan));
 				
-			lexerOutput.SyntaxTokenList.Add(new StringInterpolatedEndToken(
+			lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
+				SyntaxKind.StringInterpolatedEndToken,
 				new TextEditorTextSpan(
 		            stringWalker.PositionIndex,
 				    stringWalker.PositionIndex,
@@ -666,7 +667,7 @@ public static class CSharpLexer
 		}
 		else
 		{
-        	lexerOutput.SyntaxTokenList.Add(new StringLiteralToken(textSpan));
+        	lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringLiteralToken, textSpan));
         }
     }
     
@@ -711,7 +712,8 @@ public static class CSharpLexer
 			stringWalker.ResourceUri,
 			stringWalker.SourceText));
 		
-		lexerOutput.SyntaxTokenList.Add(new StringInterpolatedContinueToken(
+		lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
+			SyntaxKind.StringInterpolatedContinueToken,
 			new TextEditorTextSpan(
 	            stringWalker.PositionIndex,
 			    stringWalker.PositionIndex,
@@ -778,15 +780,15 @@ public static class CSharpLexer
 
             if (CSharpKeywords.LexerKeywords.ContextualKeywords.Contains(textValue))
             {
-                lexerOutput.SyntaxTokenList.Add(new KeywordContextualToken(textSpan, LexerUtils.GetSyntaxKindForContextualKeyword(textSpan)));
+                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(LexerUtils.GetSyntaxKindForContextualKeyword(textSpan), textSpan));
                 return;
             }
 
-            lexerOutput.SyntaxTokenList.Add(new KeywordToken(textSpan, LexerUtils.GetSyntaxKindForKeyword(textSpan)));
+            lexerOutput.SyntaxTokenList.Add(new SyntaxToken(LexerUtils.GetSyntaxKindForKeyword(textSpan), textSpan));
             return;
         }
 
-        lexerOutput.SyntaxTokenList.Add(new IdentifierToken(textSpan));
+        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
     }
     
     public static void LexNumericLiteralToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
@@ -829,7 +831,7 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.SyntaxTokenList.Add(new NumericLiteralToken(textSpan));
+        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NumericLiteralToken, textSpan));
     }
     
     public static void LexCharLiteralToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
@@ -873,7 +875,7 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.SyntaxTokenList.Add(new CharLiteralToken(textSpan));
+        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharLiteralToken, textSpan));
     }
     
     public static void LexCommentSingleLineToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
@@ -994,6 +996,6 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        lexerOutput.SyntaxTokenList.Add(new PreprocessorDirectiveToken(textSpan));
+        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PreprocessorDirectiveToken, textSpan));
     }
 }

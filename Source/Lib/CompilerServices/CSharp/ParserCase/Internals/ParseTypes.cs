@@ -28,14 +28,14 @@ public static class ParseTypes
     /// </summary>
     public static GenericArgumentsListingNode HandleGenericArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	var openAngleBracketToken = (OpenAngleBracketToken)parserModel.TokenWalker.Consume();
+    	var openAngleBracketToken = parserModel.TokenWalker.Consume();
     
     	if (SyntaxKind.CloseAngleBracketToken == parserModel.TokenWalker.Current.SyntaxKind)
         {
             return new GenericArgumentsListingNode(
                 openAngleBracketToken,
                 ImmutableArray<GenericArgumentEntryNode>.Empty,
-                (CloseAngleBracketToken)parserModel.TokenWalker.Consume());
+                parserModel.TokenWalker.Consume());
         }
 
         var mutableGenericArgumentsListing = new List<GenericArgumentEntryNode>();
@@ -53,7 +53,7 @@ public static class ParseTypes
 
             if (SyntaxKind.CommaToken == parserModel.TokenWalker.Current.SyntaxKind)
             {
-                var commaToken = (CommaToken)parserModel.TokenWalker.Consume();
+                var commaToken = parserModel.TokenWalker.Consume();
 
                 // TODO: Track comma tokens?
                 //
@@ -65,7 +65,7 @@ public static class ParseTypes
             }
         }
 
-        var closeAngleBracketToken = (CloseAngleBracketToken)parserModel.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
+        var closeAngleBracketToken = parserModel.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
 
         return new GenericArgumentsListingNode(
             openAngleBracketToken,
@@ -105,12 +105,13 @@ public static class ParseTypes
     	}
     	else
     	{
-    		var syntaxToken = (IdentifierToken)parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
+    		var syntaxToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
     		
     		return new TypeClauseNode(
 	            syntaxToken,
-	            null,
-	            null);
+	            valueType: null,
+	            genericParametersListingNode: null,
+	            isKeywordType: false);
     	}
     	
         /*ISyntaxToken syntaxToken;
@@ -222,7 +223,7 @@ public static class ParseTypes
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
-		var openBraceToken = (OpenBraceToken)parserModel.TokenWalker.Consume();
+		var openBraceToken = parserModel.TokenWalker.Consume();
 		
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;

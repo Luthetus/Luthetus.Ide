@@ -32,7 +32,7 @@ public static class ParseTokens
 			        parserModel.TokenWalker.Current.TextSpan.GetText(),
 			        out _))
 			{
-				compilationUnit.Binder.BindDiscard((IdentifierToken)parserModel.TokenWalker.Current, compilationUnit);
+				compilationUnit.Binder.BindDiscard(parserModel.TokenWalker.Current, compilationUnit);
 	    		_ = parserModel.TokenWalker.Consume();
 	    		return;
 			}
@@ -211,7 +211,7 @@ public static class ParseTokens
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
-		var openBraceToken = (OpenBraceToken)parserModel.TokenWalker.Consume();
+		var openBraceToken = parserModel.TokenWalker.Consume();
     	
     	var openBraceCounter = 1;
 		
@@ -242,7 +242,7 @@ public static class ParseTokens
 		}
 
 		var closeTokenIndex = parserModel.TokenWalker.Index;
-		var closeBraceToken = (CloseBraceToken)parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+		var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
 		
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
@@ -251,15 +251,15 @@ public static class ParseTokens
     
     public static void ParsePropertyDefinition_ExpressionBound(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-		var equalsCloseAngleBracketToken = (EqualsCloseAngleBracketToken)parserModel.TokenWalker.Consume();
+		var equalsCloseAngleBracketToken = parserModel.TokenWalker.Consume();
 		
 		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-		var statementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+		var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
     }
 
     public static void ParseColonToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	var colonToken = (ColonToken)parserModel.TokenWalker.Consume();
+    	var colonToken = parserModel.TokenWalker.Consume();
         parserModel.DiagnosticBag.ReportTodoException(colonToken.TextSpan, "Colon is in unexpected place.");
     }
 
@@ -435,7 +435,7 @@ public static class ParseTokens
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	var closesParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Consume();
+    	var closesParenthesisToken = parserModel.TokenWalker.Consume();
     }
 
     public static void ParseOpenAngleBracketToken(
@@ -454,13 +454,13 @@ public static class ParseTokens
 
     public static void ParseOpenSquareBracketToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	var openSquareBracketToken = (OpenSquareBracketToken)parserModel.TokenWalker.Consume();
+    	var openSquareBracketToken = parserModel.TokenWalker.Consume();
     
     	if (parserModel.StatementBuilder.ChildList.Count != 0)
     	{
     		parserModel.DiagnosticBag.ReportTodoException(
 	    		openSquareBracketToken.TextSpan,
-	    		$"Unexpected '{nameof(OpenSquareBracketToken)}'");
+	    		$"Unexpected '{nameof(SyntaxKind.OpenSquareBracketToken)}'");
 	    	return;
 	    }
     	var openSquareBracketCounter = 1;
@@ -500,7 +500,7 @@ public static class ParseTokens
 		}
 
 		var closeTokenIndex = parserModel.TokenWalker.Index;
-		var closeSquareBracketToken = (CloseSquareBracketToken)parserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
+		var closeSquareBracketToken = parserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
 		
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
