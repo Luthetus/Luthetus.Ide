@@ -58,33 +58,17 @@ public class ParseFunctions
         // (2025-01-13)
 		// ========================================================
 		//
-		// - FunctionDefinitionNode checks encompassing CodeBlockOwner, if it is an interface. 
-		//
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
-		//
-		// - PermitInnerPendingCodeBlockOwnerToBeParsed needs to move
-		//   to the ICodeBlockOwner itself.
-		// 
-		// - 'parserModel.SyntaxStack.Push(PendingCodeBlockOwner);' is unnecessary because
-		//   the CodeBlockBuilder and Scope will be active.
-		//
-		// - '...InnerPendingCodeBlockOwner = PendingCodeBlockOwner;' needs to change
-		//   to 'set active code block builder' and 'set active scope'.
-
-        if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
-            typeDefinitionNode.IsInterface)
-        {
-            // TODO: Would method constraints break this code? "public T Aaa<T>() where T : OtherClass"
-            var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-
-			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-	    	{
-	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
-	    	}
-        }
+		// - FunctionDefinitionNode checks encompassing CodeBlockOwner, if it is an interface.
+		
+		// (2025-02-06)
+		// ============
+		// 'where' clause / other secondary syntax if there is more.
         
-        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+        {
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        }
+        else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
         	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
         

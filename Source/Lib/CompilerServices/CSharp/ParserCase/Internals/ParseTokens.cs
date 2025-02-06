@@ -269,55 +269,12 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseOpenBraceToken(SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-		/*
-		    (2025-01-13)
-		    ========================================================
-		    
-		    public void SomeMethod(SomeRecord recordInstance) =>
-		    	recordInstance with
-			    {
-			    	SomeProperty = "cat",
-			    };
-			
-			-------------------------------------------------------
-			
-			SomeRecord recordInstance = new();
-			
-			if (false)
-				return recordInstance with
-			    {
-			    	SomeProperty = "cat",
-			    };
-			    
-			-------------------------------------------------------
-			
-			You know because an 'if' statement does not have "secondary syntax".
-			Either the OpenBraceToken immediately follows the if statement's
-			predicate, or there isn't one at all as far as the if statement is concerned.
-			
-			As for a FunctionDefinitionNode, (or any "secondary syntax" having ICodeBlockOwner),
-			they will disambiguate with the EqualsCloseAngleBracketToken ('=>').
-		*/
-		
 		// Lambda expression's are done via the expression loop, then use custom deferred parsing.
 		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.LambdaExpressionNode)
 			return;
 		
-		// (2025-01-25)
-		// ============
-		// Am removing '//parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.ArbitraryCodeBlockNode &&'
-		// from the below if.
-		//
-		// But it is so confusing as to why it was there is the first place that I feel a need
-		// to leave a comment here for now
-		// 
-		// Issue:
-		// ````{{}}
-		// 
-		// Nesting arbitrary code block nodes was impossible with that as part of the if statement.
-    	if (
-    		(parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
-    		 	parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan is not null))
+    	if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
+    		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan is not null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
