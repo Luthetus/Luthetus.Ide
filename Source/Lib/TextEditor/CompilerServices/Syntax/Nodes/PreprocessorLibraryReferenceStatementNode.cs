@@ -6,8 +6,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
 {
     public PreprocessorLibraryReferenceStatementNode(
-        ISyntaxToken includeDirectiveSyntaxToken,
-        ISyntaxToken libraryReferenceSyntaxToken)
+        SyntaxToken includeDirectiveSyntaxToken,
+        SyntaxToken libraryReferenceSyntaxToken)
     {
         IncludeDirectiveSyntaxToken = includeDirectiveSyntaxToken;
         LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;
@@ -16,8 +16,8 @@ public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
-    public ISyntaxToken LibraryReferenceSyntaxToken { get; }
+    public SyntaxToken IncludeDirectiveSyntaxToken { get; }
+    public SyntaxToken LibraryReferenceSyntaxToken { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;

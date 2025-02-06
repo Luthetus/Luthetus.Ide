@@ -19,11 +19,11 @@ public class CompilerServiceResource : ICompilerServiceResource
     public virtual ResourceUri ResourceUri { get; }
     public virtual ICompilerService CompilerService { get; }
     public virtual CompilationUnit? CompilationUnit { get; set; }
-    public virtual IReadOnlyList<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+    public virtual IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<SyntaxToken>.Empty;
 
 	ICompilationUnit? ICompilerServiceResource.CompilationUnit => CompilationUnit;
 
-    public virtual IReadOnlyList<ISyntaxToken> GetTokens()
+    public virtual IReadOnlyList<SyntaxToken> GetTokens()
     {
         return SyntaxTokenList;
     }

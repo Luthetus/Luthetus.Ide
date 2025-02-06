@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class VariableReferenceNode : IExpressionNode
 {
     public VariableReferenceNode(
-        IdentifierToken variableIdentifierToken,
+        SyntaxToken variableIdentifierToken,
         IVariableDeclarationNode variableDeclarationNode)
     {
         VariableIdentifierToken = variableIdentifierToken;
@@ -17,7 +17,7 @@ public sealed class VariableReferenceNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public IdentifierToken VariableIdentifierToken { get; }
+    public SyntaxToken VariableIdentifierToken { get; }
     /// <summary>
     /// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
     /// </summary>

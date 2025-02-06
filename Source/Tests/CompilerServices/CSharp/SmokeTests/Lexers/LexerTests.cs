@@ -2,7 +2,6 @@ using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
@@ -144,10 +143,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var pipeToken = (PipeToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.PipeToken, pipeToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.PipeToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -158,10 +155,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var pipePipeToken = (PipePipeToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.PipePipeToken, pipePipeToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.PipePipeToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
     
     [Fact]
@@ -172,10 +167,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var ampersandToken = (AmpersandToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.AmpersandToken, ampersandToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.AmpersandToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -186,10 +179,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var ampersandAmpersandToken = (AmpersandAmpersandToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.AmpersandAmpersandToken, ampersandAmpersandToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.AmpersandAmpersandToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -200,10 +191,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var bangToken = (BangToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.BangToken, bangToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.BangToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
     
     [Fact]
@@ -214,10 +203,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var bangEqualsToken = (BangEqualsToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.BangEqualsToken, bangEqualsToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.BangEqualsToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
     
     [Fact]
@@ -228,10 +215,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var closeAngleBracketEqualsToken = (CloseAngleBracketEqualsToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.CloseAngleBracketEqualsToken, closeAngleBracketEqualsToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.CloseAngleBracketEqualsToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
     
     [Fact]
@@ -242,10 +227,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var openAngleBracketEqualsToken = (OpenAngleBracketEqualsToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.OpenAngleBracketEqualsToken, openAngleBracketEqualsToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.OpenAngleBracketEqualsToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -256,10 +239,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var closeAngleBracketToken = (CloseAngleBracketToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.CloseAngleBracketToken, closeAngleBracketToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.CloseAngleBracketToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -276,10 +257,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var closeBraceToken = (CloseBraceToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.CloseBraceToken, closeBraceToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.CloseBraceToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -290,10 +269,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var closeParenthesisToken = (CloseParenthesisToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.CloseParenthesisToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -304,10 +281,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var closeSquareBracketToken = (CloseSquareBracketToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.CloseSquareBracketToken, closeSquareBracketToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.CloseSquareBracketToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -318,10 +293,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var colonToken = (ColonToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.ColonToken, colonToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.ColonToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -332,10 +305,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var commaToken = (CommaToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.CommaToken, commaToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.CommaToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -358,10 +329,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var dollarSignToken = (DollarSignToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.DollarSignToken, dollarSignToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.DollarSignToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -378,10 +347,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var equalsEqualsToken = (EqualsEqualsToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.EqualsEqualsToken, equalsEqualsToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.EqualsEqualsToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
     
     [Fact]
@@ -392,10 +359,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var equalsCloseAngleBracketToken = (EqualsCloseAngleBracketToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.EqualsCloseAngleBracketToken, equalsCloseAngleBracketToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.EqualsCloseAngleBracketToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -406,10 +371,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var equalsToken = (EqualsToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.EqualsToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Theory]
@@ -471,10 +434,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var identifierToken = (IdentifierToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.IdentifierToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -503,10 +464,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var memberAccessToken = (MemberAccessToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.MemberAccessToken, memberAccessToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.MemberAccessToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -517,10 +476,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var minusMinusToken = (MinusMinusToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.MinusMinusToken, minusMinusToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.MinusMinusToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -531,10 +488,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var minusToken = (MinusToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.MinusToken, minusToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.MinusToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -545,10 +500,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var numericLiteralToken = (NumericLiteralToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.NumericLiteralToken, numericLiteralToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.NumericLiteralToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -559,10 +512,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var openAngleBracketToken = (OpenAngleBracketToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.OpenAngleBracketToken, openAngleBracketToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.OpenAngleBracketToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -579,10 +530,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var openBraceToken = (OpenBraceToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.OpenBraceToken, openBraceToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.OpenBraceToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -593,10 +542,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var openParenthesisToken = (OpenParenthesisToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.OpenParenthesisToken, openParenthesisToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.OpenParenthesisToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -607,10 +554,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var openSquareBracketToken = (OpenSquareBracketToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.OpenSquareBracketToken, openSquareBracketToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.OpenSquareBracketToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -621,10 +566,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var plusPlusToken = (PlusPlusToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.PlusPlusToken, plusPlusToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.PlusPlusToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -635,10 +578,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var plusToken = (PlusToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.PlusToken, plusToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.PlusToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -655,10 +596,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var questionMarkQuestionMarkToken = (QuestionMarkQuestionMarkToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.QuestionMarkQuestionMarkToken, questionMarkQuestionMarkToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.QuestionMarkQuestionMarkToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -669,10 +608,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var questionMarkToken = (QuestionMarkToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.QuestionMarkToken, questionMarkToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.QuestionMarkToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -683,10 +620,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var starToken = (StarToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.StarToken, starToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.StarToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -697,10 +632,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var statementDelimiterToken = (StatementDelimiterToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.StatementDelimiterToken, statementDelimiterToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.StatementDelimiterToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -711,10 +644,8 @@ TODO
         var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
-        var stringLiteralToken = (StringLiteralToken)lexerOutput.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
-
-        Assert.Equal(SyntaxKind.StringLiteralToken, stringLiteralToken.SyntaxKind);
+        Assert.Equal(SyntaxKind.StringLiteralToken, lexerOutput.SyntaxTokenList[0].SyntaxKind);
+        Assert.Equal(SyntaxKind.EndOfFileToken, lexerOutput.SyntaxTokenList[1].SyntaxKind);
     }
 
     [Fact]
@@ -775,7 +706,7 @@ TODO
 			{
 				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
 			}
-			else if (child is ISyntaxToken syntaxToken)
+			else if (child is SyntaxToken syntaxToken)
 			{
 				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
 			}

@@ -11,7 +11,7 @@ public interface ICompilerServiceResource
     public ICompilerService CompilerService { get; }
     public ICompilationUnit? CompilationUnit { get; }
 
-	public IReadOnlyList<ISyntaxToken> GetTokens();
+	public IReadOnlyList<SyntaxToken> GetTokens();
     public IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans();
     public IReadOnlyList<ITextEditorSymbol> GetSymbols();
     public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics();

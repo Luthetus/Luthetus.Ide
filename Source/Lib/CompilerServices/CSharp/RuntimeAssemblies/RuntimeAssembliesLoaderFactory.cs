@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -267,7 +266,7 @@ public static class RuntimeAssembliesLoaderFactory
             Type[] genericParameters)
         {
             var typeTextSpan = TextEditorTextSpan.FabricateTextSpan(name);
-            var typeIdentifierToken = new IdentifierToken(typeTextSpan);
+            var typeIdentifierToken = new SyntaxToken(SyntaxKind.IdentifierToken, typeTextSpan);
 
             GenericParametersListingNode? genericParametersListingNode = null;
 
@@ -275,7 +274,7 @@ public static class RuntimeAssembliesLoaderFactory
             {
                 // Generic Parameters Open Angle Bracket
                 var openAngleBracketTextSpan = TextEditorTextSpan.FabricateTextSpan("<");
-                var openAngleBracketToken = new OpenAngleBracketToken(openAngleBracketTextSpan);
+                var openAngleBracketToken = new SyntaxToken(SyntaxKind.OpenAngleBracketToken, openAngleBracketTextSpan);
 
                 // Generic Parameter Entries
                 var genericParameterEntryNodeList = new List<GenericParameterEntryNode>();
@@ -292,7 +291,7 @@ public static class RuntimeAssembliesLoaderFactory
 
                 // Generic Parameters Close Parenthesis
                 var closeAngleBracketTextSpan = TextEditorTextSpan.FabricateTextSpan(">");
-                var closeAngleBracketToken = new CloseAngleBracketToken(closeAngleBracketTextSpan);
+                var closeAngleBracketToken = new SyntaxToken(SyntaxKind.CloseAngleBracketToken, closeAngleBracketTextSpan);
 
                 // Generic Parameters Listing
                 genericParametersListingNode = new GenericParametersListingNode(
@@ -304,7 +303,8 @@ public static class RuntimeAssembliesLoaderFactory
             return new TypeClauseNode(
                 typeIdentifierToken,
                 null,
-                genericParametersListingNode);
+                genericParametersListingNode,
+                isKeywordType: false);
         }
     }
 }

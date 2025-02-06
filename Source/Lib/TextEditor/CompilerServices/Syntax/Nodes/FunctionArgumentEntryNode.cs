@@ -9,7 +9,7 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
 {
     public FunctionArgumentEntryNode(
         VariableDeclarationNode variableDeclarationNode,
-        ISyntaxToken? optionalCompileTimeConstantToken,
+        SyntaxToken? optionalCompileTimeConstantToken,
         bool isOptional,
         bool hasParamsKeyword,
         bool hasOutKeyword,
@@ -29,7 +29,7 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
 	private bool _childListIsDirty = true;
 
     public VariableDeclarationNode VariableDeclarationNode { get; }
-    public ISyntaxToken? OptionalCompileTimeConstantToken { get; }
+    public SyntaxToken? OptionalCompileTimeConstantToken { get; }
     public bool IsOptional { get; }
     public bool HasParamsKeyword { get; }
     public bool HasOutKeyword { get; }

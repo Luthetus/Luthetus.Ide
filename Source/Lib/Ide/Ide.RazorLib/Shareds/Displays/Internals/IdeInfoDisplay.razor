@@ -172,6 +172,38 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.7.24 </em> (2025-02-06)</div>
+                <ul>
+                	<li>
+                		"infinite loop" protected/heuristic.
+                		If the 'statement while loop' iterates 3 * 'SyntaxToken Count'
+                		then presume an "infinite loop" and throw an exception.
+                		
+                		I'm working on the lambda expressions and I have a bug in the code.
+                		Presumably some "infinite loop" protection would be useful regardless
+                		so now is the time I'll add it.
+                		
+                		TODO: The UI should notify that 'SomeFile.cs' was detected to have an infinite loop,
+                		and therefore was cancelled for parsing.
+                		
+                		When dogfooding the IDE, out of '1,676' C# files, this exception is occurring for 7 of them at the moment.
+                		Going to continue working on the lambda expressions.
+                	</li>
+                	<li>
+                		Empty parameter list for lambda expression support.
+                	</li>
+                	<li>
+                		Massive reduction in value type boxing while parsing syntax tokens.
+                	</li>
+                	<li>
+                		Move 'CSharpCodeBlockBuilder.ParseChildScopeQueue' to be
+                		'CSharpParserModel.ParseChildScopeStack'.
+                		(one object instantiation for the "queue" per parse rather
+                		 than having an instance "per" code block builder).
+                	</li>
+                </ul>
+            </div>
+            <div>
                 <div>v <em class="luth_em">0.9.7.23 </em> (2025-02-02)</div>
                 <ul>
                 	<li>

@@ -7,8 +7,8 @@ public class ExpressionDelimiter
     public ExpressionDelimiter(
         SyntaxKind? openSyntaxKind,
         SyntaxKind closeSyntaxKind,
-        ISyntaxToken? openSyntaxToken,
-        ISyntaxToken? closeSyntaxToken)
+        SyntaxToken? openSyntaxToken,
+        SyntaxToken? closeSyntaxToken)
     {
         OpenSyntaxKind = openSyntaxKind;
         CloseSyntaxKind = closeSyntaxKind;
@@ -24,6 +24,6 @@ public class ExpressionDelimiter
     public SyntaxKind? OpenSyntaxKind { get; set; }
     public SyntaxKind CloseSyntaxKind { get; set; }
 
-    public ISyntaxToken? OpenSyntaxToken { get; set; }
-    public ISyntaxToken? CloseSyntaxToken { get; set; }
+    public SyntaxToken? OpenSyntaxToken { get; set; }
+    public SyntaxToken? CloseSyntaxToken { get; set; }
 }

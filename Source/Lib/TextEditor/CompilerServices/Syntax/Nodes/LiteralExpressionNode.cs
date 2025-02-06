@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class LiteralExpressionNode : IExpressionNode
 {
-    public LiteralExpressionNode(ISyntaxToken literalSyntaxToken, TypeClauseNode typeClauseNode)
+    public LiteralExpressionNode(SyntaxToken literalSyntaxToken, TypeClauseNode typeClauseNode)
     {
         LiteralSyntaxToken = literalSyntaxToken;
         ResultTypeClauseNode = typeClauseNode;
@@ -14,7 +14,7 @@ public sealed class LiteralExpressionNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public ISyntaxToken LiteralSyntaxToken { get; }
+    public SyntaxToken LiteralSyntaxToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
     public bool IsFabricated { get; init; }

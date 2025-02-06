@@ -1,14 +1,14 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class AttributeNode : ISyntaxNode
 {
     public AttributeNode(
-        OpenSquareBracketToken openSquareBracketToken,
-        List<ISyntaxToken> innerTokens,
-        CloseSquareBracketToken closeSquareBracketToken)
+        SyntaxToken openSquareBracketToken,
+        List<SyntaxToken> innerTokens,
+        SyntaxToken closeSquareBracketToken)
     {
         OpenSquareBracketToken = openSquareBracketToken;
         InnerTokens = innerTokens;
@@ -18,9 +18,9 @@ public sealed class AttributeNode : ISyntaxNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public OpenSquareBracketToken OpenSquareBracketToken { get; }
-    public List<ISyntaxToken> InnerTokens { get; }
-    public CloseSquareBracketToken CloseSquareBracketToken { get; }
+    public SyntaxToken OpenSquareBracketToken { get; }
+    public List<SyntaxToken> InnerTokens { get; }
+    public SyntaxToken CloseSquareBracketToken { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;

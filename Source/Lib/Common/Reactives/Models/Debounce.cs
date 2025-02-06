@@ -13,99 +13,6 @@ namespace Luthetus.Common.RazorLib.Reactives.Models;
 /// </summary> 
 public class Debounce<TArgs>
 {
-
-/*
-
-jjjjjjj
-
-j -> Task.Delay(DebounceTimeSpan)
-
-j 
-
-CancellationToken share between
-	'j -> Task.Delay(DebounceTimeSpan)'
-	'taskStartWorkItem'
-	
-j ->
-	Task.Delay(DebounceTimeSpan, cancellationToken) ->
-		Task.Run();
-
-no
-
-j ->
-	Task.Run(Task.Delay(DebounceTimeSpan, cancellationToken)); ->
-	// if Task.Run is given the cancellationToken it will throw an exception upon cancellation
-	// the user probably doesn't want this information so I won't put it on the Task.Run itself.
-	// Otherwise every invocation would require me to start a task.
-	//
-	// Speaking of which, I need to re-use the "intent to start" task rather than stopping
-	// it and starting a new task.
-	//
-	// I presume this would be a massive improvement in all regards
-	// considering how often the debounce might fire.
-	
-j ->
-	Step Cancel:
-		CancellationTokenSource.Cancel();
-	if (intentToRun.IsCompleted)
-	{
-		// Begin a new intentToRun
-		var intentToRun = Task.Run(await () =>
-		{
-			Task.Delay(DebounceTimeSpan, cancellationToken)
-		});
-	}
-	else
-	{
-	}
-	Step Reuse:
-	
-No
-
-TimerSpan?
-
-Is there API to re-use the same 'CancellationTokenSource' after cancelling?
-
-Every second, check the timespan of the most recent event.
-If mostRecentEvent - CurrentTimeSpan > Delay => start work item
-
-j ->
-	if (intentToRun.IsCompleted)
-	{
-		lock (eventLock)
-		{
-			_eventTimeSpan = DateTime.UtcNow;
-		}
-		
-		// Begin a new intentToRun
-		IntentToRun = Task.Run(async () =>
-		{
-			// Constructor takes 'CancellationToken' so the outside and tell it to stop
-			while (!CancellationToken.IsCancellationRequested)
-			{
-				await Task.Delay(DebounceTimeSpan);
-				
-				if (_eventTimeSpan - DateTime.UtcNow > DebounceTimeSpan)
-					break;
-			}
-			
-			if (CancellationToken.IsCancellationRequested)
-				return;
-				
-			// Await the previous workItem
-			await WorkItem;
-			
-			WorkItem = workItemFunc.Invoke();
-			await WorkItem;
-		});
-	}
-	else
-	{
-	}
-	Step Reuse:
-
-*/
-
     private readonly object _lockWorkItemArgs = new();
 	private readonly Func<TArgs, CancellationToken, Task> _workItem;
 
@@ -176,7 +83,7 @@ j ->
         	
         	while (!CancellationToken.IsCancellationRequested)
         	{
-        		await Task.Delay(DebounceTimeSpan);
+        		await Task.Delay(DebounceTimeSpan).ConfigureAwait(false);
         		
         		lock (_lockWorkItemArgs)
         		{

@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
@@ -13,7 +12,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 public class ParseFunctions
 {
     public static void HandleFunctionDefinition(
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         TypeClauseNode consumedTypeClauseNode,
         GenericParametersListingNode? consumedGenericArgumentsListingNode,
         CSharpCompilationUnit compilationUnit,
@@ -47,7 +46,6 @@ public class ParseFunctions
             null);
 
         compilationUnit.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit);
-        parserModel.SyntaxStack.Push(functionDefinitionNode);
         
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	functionDefinitionNode,
@@ -59,33 +57,17 @@ public class ParseFunctions
         // (2025-01-13)
 		// ========================================================
 		//
-		// - FunctionDefinitionNode checks encompassing CodeBlockOwner, if it is an interface. 
-		//
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
-		//
-		// - PermitInnerPendingCodeBlockOwnerToBeParsed needs to move
-		//   to the ICodeBlockOwner itself.
-		// 
-		// - 'parserModel.SyntaxStack.Push(PendingCodeBlockOwner);' is unnecessary because
-		//   the CodeBlockBuilder and Scope will be active.
-		//
-		// - '...InnerPendingCodeBlockOwner = PendingCodeBlockOwner;' needs to change
-		//   to 'set active code block builder' and 'set active scope'.
-
-        if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
-            typeDefinitionNode.IsInterface)
-        {
-            // TODO: Would method constraints break this code? "public T Aaa<T>() where T : OtherClass"
-            var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-
-			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-	    	{
-	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
-	    	}
-        }
+		// - FunctionDefinitionNode checks encompassing CodeBlockOwner, if it is an interface.
+		
+		// (2025-02-06)
+		// ============
+		// 'where' clause / other secondary syntax if there is more.
         
-        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+        {
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        }
+        else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
         	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
         
@@ -97,7 +79,7 @@ public class ParseFunctions
 
     public static void HandleConstructorDefinition(
     	TypeDefinitionNode typeDefinitionNodeCodeBlockOwner,
-        IdentifierToken consumedIdentifierToken,
+        SyntaxToken consumedIdentifierToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -105,8 +87,9 @@ public class ParseFunctions
 
         var typeClauseNode = new TypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
-            null,
-            null);
+            valueType: null,
+            genericParametersListingNode: null,
+            isKeywordType: false);
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
             typeClauseNode,
@@ -117,7 +100,6 @@ public class ParseFunctions
             null);
 
         compilationUnit.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit);
-        parserModel.SyntaxStack.Push(constructorDefinitionNode);
         
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	constructorDefinitionNode,
@@ -132,12 +114,12 @@ public class ParseFunctions
             // Constructor invokes some other constructor as well
         	// 'this(...)' or 'base(...)'
         	
-        	KeywordToken keywordToken;
+        	SyntaxToken keywordToken;
         	
         	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
-        		keywordToken = (KeywordToken)parserModel.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
+        		keywordToken = parserModel.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
         	else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
-        		keywordToken = (KeywordToken)parserModel.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
+        		keywordToken = parserModel.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
         	else
         		keywordToken = default;
         	
@@ -161,7 +143,7 @@ public class ParseFunctions
                 _ = parserModel.TokenWalker.Consume();
             }
             
-            var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+            var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
             
             // Parse secondary syntax ': base(myVariable, 7)'
             if (!openParenthesisToken.IsFabricated)
@@ -217,7 +199,7 @@ public class ParseFunctions
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
     public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Consume();
+    	var openParenthesisToken = parserModel.TokenWalker.Consume();
     	var functionArgumentEntryNodeList = new List<FunctionArgumentEntryNode>();
     	var openParenthesisCount = 1;
     	var corruptState = false;
@@ -316,10 +298,10 @@ public class ParseFunctions
             _ = parserModel.TokenWalker.Consume();
         }
         
-        var closeParenthesisToken = default(CloseParenthesisToken);
+        var closeParenthesisToken = default(SyntaxToken);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-        	closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Consume();
+        	closeParenthesisToken = parserModel.TokenWalker.Consume();
         
         return new FunctionArgumentsListingNode(
         	openParenthesisToken,

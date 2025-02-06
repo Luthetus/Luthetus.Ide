@@ -3,7 +3,7 @@ using System.Text;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
@@ -205,7 +205,7 @@ public struct StringWalkerStruct
     /// Ex: '1.73', positive only.<br/>
     /// { 0, ..., 1, ..., 2, ...}
     /// </Summary>
-    public NumericLiteralToken ReadUnsignedNumericLiteral()
+    public SyntaxToken ReadUnsignedNumericLiteral()
     {
         var startingPosition = PositionIndex;
         var seenPeriod = false;
@@ -224,7 +224,7 @@ public struct StringWalkerStruct
         }
 
         var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, ref this, 0);
-        return new NumericLiteralToken(numericLiteralTextSpan);
+        return new SyntaxToken(SyntaxKind.NumericLiteralToken, numericLiteralTextSpan);
     }
 
     public string ReadUntil(char deliminator)

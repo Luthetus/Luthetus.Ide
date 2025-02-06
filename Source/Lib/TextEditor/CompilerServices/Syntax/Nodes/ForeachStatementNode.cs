@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -11,12 +11,12 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class ForeachStatementNode : ICodeBlockOwner
 {
     public ForeachStatementNode(
-        KeywordToken foreachKeywordToken,
-        OpenParenthesisToken openParenthesisToken,
+        SyntaxToken foreachKeywordToken,
+        SyntaxToken openParenthesisToken,
         VariableDeclarationNode variableDeclarationNode,
-        KeywordToken inKeywordToken,
+        SyntaxToken inKeywordToken,
         IExpressionNode expressionNode,
-        CloseParenthesisToken closeParenthesisToken,
+        SyntaxToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
         ForeachKeywordToken = foreachKeywordToken;
@@ -31,12 +31,12 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public KeywordToken ForeachKeywordToken { get; }
-    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public SyntaxToken ForeachKeywordToken { get; }
+    public SyntaxToken OpenParenthesisToken { get; }
     public VariableDeclarationNode VariableDeclarationNode { get; }
-    public KeywordToken InKeywordToken { get; }
+    public SyntaxToken InKeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
+    public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

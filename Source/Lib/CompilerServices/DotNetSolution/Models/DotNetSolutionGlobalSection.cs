@@ -1,4 +1,4 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 
 namespace Luthetus.CompilerServices.DotNetSolution.Models;
@@ -12,8 +12,8 @@ namespace Luthetus.CompilerServices.DotNetSolution.Models;
 public record DotNetSolutionGlobalSection
 {
     public DotNetSolutionGlobalSection(
-        AssociatedValueToken? globalSectionArgument,
-        AssociatedValueToken? globalSectionOrder,
+        SyntaxToken? globalSectionArgument,
+        SyntaxToken? globalSectionOrder,
         AssociatedEntryGroup associatedEntryGroup)
     {
         GlobalSectionArgument = globalSectionArgument;
@@ -25,12 +25,12 @@ public record DotNetSolutionGlobalSection
     /// Given: ...GlobalSection(SolutionConfigurationPlatforms) = preSolution...<br/>
     /// Then: "SolutionConfigurationPlatforms" is the <see cref="GlobalSectionArgument"/>
     /// </summary>
-    public AssociatedValueToken? GlobalSectionArgument { get; init; }
+    public SyntaxToken? GlobalSectionArgument { get; init; }
     /// <summary>
     /// Given: ...GlobalSection(SolutionConfigurationPlatforms) = preSolution...<br/>
     /// Then: "preSolution" is the <see cref="GlobalSectionOrder"/>
     /// </summary>
-    public AssociatedValueToken? GlobalSectionOrder { get; init; }
+    public SyntaxToken? GlobalSectionOrder { get; init; }
     /// <summary>
     /// Given: GlobalSection(ProjectConfigurationPlatforms) = postSolution<br/>
 	/// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU<br/>

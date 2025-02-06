@@ -1,7 +1,6 @@
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -20,13 +19,11 @@ public struct CSharpParserModel
 {
     public CSharpParserModel(
         TokenWalker tokenWalker,
-        Stack<ISyntax> syntaxStack,
         DiagnosticBag diagnosticBag,
         CSharpCodeBlockBuilder globalCodeBlockBuilder,
         CSharpCodeBlockBuilder currentCodeBlockBuilder)
     {
     	TokenWalker = tokenWalker;
-        SyntaxStack = syntaxStack;
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
@@ -38,8 +35,14 @@ public struct CSharpParserModel
     }
 
     public TokenWalker TokenWalker { get; }
-    public Stack<ISyntax> SyntaxStack { get; set; }
     public CSharpStatementBuilder StatementBuilder { get; set; } = new();
+    
+    /// <summary>
+	/// TODO: Measure the cost of 'Peek(...)', 'TryPeek(...)' since now...
+	/// ...this is a value tuple and the dequeue alone does not mean success,
+	/// you have to peek first to see if the object references are equal.
+	/// </summary>
+    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; } = new();
     
     /// <summary>
     /// The C# IParserModel implementation will only "short circuit" if the 'SyntaxKind DelimiterSyntaxKind'

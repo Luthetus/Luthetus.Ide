@@ -34,7 +34,6 @@ public class DeferredChildScope
 			CloseTokenIndex,
 			TokenIndexToRestore);
 		
-		model.SyntaxStack.Push(PendingCodeBlockOwner);
 		model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = PendingCodeBlockOwner;
 	}
 }

@@ -1,8 +1,7 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
@@ -57,16 +56,16 @@ public class DotNetSolutionParser : IParser
             switch (consumedToken.SyntaxKind)
             {
                 case SyntaxKind.AssociatedNameToken:
-                    ParseAssociatedNameToken((AssociatedNameToken)consumedToken);
+                    ParseAssociatedNameToken(consumedToken);
                     break;
                 case SyntaxKind.AssociatedValueToken:
-                    ParseAssociatedValueToken((AssociatedValueToken)consumedToken);
+                    ParseAssociatedValueToken(consumedToken);
                     break;
                 case SyntaxKind.OpenAssociatedGroupToken:
-                    ParseOpenAssociatedGroupToken((OpenAssociatedGroupToken)consumedToken);
+                    ParseOpenAssociatedGroupToken(consumedToken);
                     break;
                 case SyntaxKind.CloseAssociatedGroupToken:
-                    ParseCloseAssociatedGroupToken((CloseAssociatedGroupToken)consumedToken);
+                    ParseCloseAssociatedGroupToken(consumedToken);
                     break;
                 default:
                     break;
@@ -119,7 +118,7 @@ public class DotNetSolutionParser : IParser
             null);
     }
 
-    public void ParseAssociatedNameToken(AssociatedNameToken associatedNameToken)
+    public void ParseAssociatedNameToken(SyntaxToken associatedNameToken)
     {
         if (!_hasReadHeader)
         {
@@ -127,7 +126,7 @@ public class DotNetSolutionParser : IParser
             {
                 if (associatedNameToken.TextSpan.GetText() == wellKnownAssociatedName)
                 {
-                    var associatedValueToken = (AssociatedValueToken)_tokenWalker.Match(SyntaxKind.AssociatedValueToken);
+                    var associatedValueToken = _tokenWalker.Match(SyntaxKind.AssociatedValueToken);
 
                     switch (wellKnownAssociatedName)
                     {
@@ -165,26 +164,26 @@ public class DotNetSolutionParser : IParser
         }
         else
         {
-            var associatedValueToken = (AssociatedValueToken)_tokenWalker.Match(SyntaxKind.AssociatedValueToken);
+            var associatedValueToken = _tokenWalker.Match(SyntaxKind.AssociatedValueToken);
             var associatedEntryPair = new AssociatedEntryPair(associatedNameToken, associatedValueToken);
 
             _associatedEntryGroupBuilderStack.Peek().AssociatedEntryList.Add(associatedEntryPair);
         }
     }
 
-    public void ParseAssociatedValueToken(AssociatedValueToken associatedValueToken)
+    public void ParseAssociatedValueToken(SyntaxToken associatedValueToken)
     {
         // One enters this method when parsing the Project definitions.
         // They are one value after another, no names involved.
 
         var associatedEntryPair = new AssociatedEntryPair(
-            new AssociatedNameToken(TextEditorTextSpan.FabricateTextSpan(string.Empty)),
+            new SyntaxToken(SyntaxKind.AssociatedNameToken, TextEditorTextSpan.FabricateTextSpan(string.Empty)),
             associatedValueToken);
 
         _associatedEntryGroupBuilderStack.Peek().AssociatedEntryList.Add(associatedEntryPair);
     }
 
-    private void ParseOpenAssociatedGroupToken(OpenAssociatedGroupToken openAssociatedGroupToken)
+    private void ParseOpenAssociatedGroupToken(SyntaxToken openAssociatedGroupToken)
     {
         // Presumption is made here, that the header only contains AssociatedEntryPairs
         _hasReadHeader = true;
@@ -220,10 +219,10 @@ public class DotNetSolutionParser : IParser
                 }));
 
             localDotNetSolutionGlobalSectionBuilder.GlobalSectionArgument =
-                (AssociatedValueToken)_tokenWalker.Match(SyntaxKind.AssociatedValueToken);
+                _tokenWalker.Match(SyntaxKind.AssociatedValueToken);
 
             localDotNetSolutionGlobalSectionBuilder.GlobalSectionOrder =
-                (AssociatedValueToken)_tokenWalker.Match(SyntaxKind.AssociatedValueToken);
+                _tokenWalker.Match(SyntaxKind.AssociatedValueToken);
         }
         else if (openAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN)
         {
@@ -287,7 +286,7 @@ public class DotNetSolutionParser : IParser
         }
     }
 
-    private void ParseCloseAssociatedGroupToken(CloseAssociatedGroupToken closeAssociatedGroupToken)
+    private void ParseCloseAssociatedGroupToken(SyntaxToken closeAssociatedGroupToken)
     {
         if (closeAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.Global.END_TOKEN)
         {

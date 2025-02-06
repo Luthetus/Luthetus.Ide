@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class ConstraintNode : ISyntaxNode
 {
-    public ConstraintNode(ImmutableArray<ISyntaxToken> innerTokens)
+    public ConstraintNode(ImmutableArray<SyntaxToken> innerTokens)
     {
         InnerTokens = innerTokens;
     }
@@ -26,7 +26,7 @@ public sealed class ConstraintNode : ISyntaxNode
     /// TODO: For now, just grab all tokens and put them in an array...
     /// ...In the future parse the tokens. (2023-10-19)
     /// </summary>
-    public ImmutableArray<ISyntaxToken> InnerTokens { get; }
+    public ImmutableArray<SyntaxToken> InnerTokens { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;
@@ -36,7 +36,7 @@ public sealed class ConstraintNode : ISyntaxNode
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	_childList = InnerTokens.ToArray();
+    	_childList = InnerTokens.Select(x => (ISyntax)x).ToArray();
         
     	_childListIsDirty = false;
     	return _childList;

@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -19,8 +19,8 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	/// If 'toBeExpressionPrimary' is null then the 'InterpolatedStringNode' itself is the to be expression primary.
 	/// </summary>
     public InterpolatedStringNode(
-    	StringInterpolatedStartToken stringInterpolatedStartToken,
-    	StringInterpolatedEndToken stringInterpolatedEndToken,
+    	SyntaxToken stringInterpolatedStartToken,
+    	SyntaxToken stringInterpolatedEndToken,
     	IExpressionNode? toBeExpressionPrimary,
     	TypeClauseNode resultTypeClauseNode)
     {
@@ -33,8 +33,8 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public StringInterpolatedStartToken StringInterpolatedStartToken { get; }
-    public StringInterpolatedEndToken StringInterpolatedEndToken { get; private set; }
+    public SyntaxToken StringInterpolatedStartToken { get; }
+    public SyntaxToken StringInterpolatedEndToken { get; private set; }
     
     /// <summary>
     /// If 'ToBeExpressionPrimary' is null then the 'InterpolatedStringNode' itself is the to be expression primary.
@@ -46,7 +46,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.InterpolatedStringNode;
 
-    public InterpolatedStringNode SetStringInterpolatedEndToken(StringInterpolatedEndToken stringInterpolatedEndToken)
+    public InterpolatedStringNode SetStringInterpolatedEndToken(SyntaxToken stringInterpolatedEndToken)
     {
         StringInterpolatedEndToken = stringInterpolatedEndToken;
         _childListIsDirty = true;

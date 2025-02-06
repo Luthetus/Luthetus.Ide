@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.CompilerServices.Css.SyntaxActors;
@@ -32,15 +31,15 @@ public class TextEditorCssLexer : Lexer
         syntaxWalker.Visit(syntaxNodeRoot);
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.IdentifierSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.IdentifierSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.CommentSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.CommentSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.PropertyNameSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.PropertyNameSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.PropertyValueSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.PropertyValueSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
     }
 }
