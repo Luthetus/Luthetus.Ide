@@ -309,7 +309,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+		    Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Type definition
 			    var typeDefinitionScope = binderSession.ScopeList[1];
@@ -344,7 +344,7 @@ public class ScopeTests
 				Assert.Equal(1, typeDefinitionScope.IndexKey);
 			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
 			    Assert.Equal(19, typeDefinitionScope.StartingIndexInclusive);
-			    Assert.Equal(54, typeDefinitionScope.EndingIndexExclusive);
+			    Assert.Equal(55, typeDefinitionScope.EndingIndexExclusive);
 				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
 				
 				var typeDefinitionNode = typeDefinitionScope.CodeBlockOwner;
@@ -363,6 +363,38 @@ public class ScopeTests
     public void GlobalScope_TypeDefinitionNode_WithPrimaryConstructorSyntax_ExplicitStartCodeBlock()
     {
     	var test = new Test(@"public class Person(string FirstName, string LastName) { }");
+    	
+    	var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(19, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(58, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				var typeDefinitionNode = typeDefinitionScope.CodeBlockOwner;
+				
+				Assert.Equal(1, typeDefinitionNode.ScopeIndexKey);
+				
+				Assert.Equal(55, typeDefinitionNode.OpenCodeBlockTextSpan.Value.StartingIndexInclusive);
+				Assert.Equal(56, typeDefinitionNode.OpenCodeBlockTextSpan.Value.EndingIndexExclusive);
+				
+				Assert.Equal(57, typeDefinitionNode.CloseCodeBlockTextSpan.Value.StartingIndexInclusive);
+				Assert.Equal(58, typeDefinitionNode.CloseCodeBlockTextSpan.Value.EndingIndexExclusive);
+			}
+	    }
     }
     
     [Fact]
@@ -380,7 +412,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Type definition
 			    var typeDefinitionScope = binderSession.ScopeList[1];
@@ -427,9 +459,38 @@ public class ScopeTests
 	}
 	
 	public string FirstName { get; set; } = ""abc"";
-}");
+}".ReplaceLineEndings("\n"));
+
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
 		
-		throw new NotImplementedException();
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(137, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				{ // Constructor definition
+					var constructorDefinitionScope = binderSession.ScopeList[2];
+					Assert.Equal(2, constructorDefinitionScope.IndexKey);
+				    Assert.Equal(1, constructorDefinitionScope.ParentIndexKey);
+				    Assert.Equal(56, constructorDefinitionScope.StartingIndexInclusive);
+				    Assert.Equal(85, constructorDefinitionScope.EndingIndexExclusive);
+					Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionScope.CodeBlockOwner.SyntaxKind);
+				}
+			}
+	    }
     }
     
     [Fact]
@@ -447,7 +508,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Type definition
 			    var typeDefinitionScope = binderSession.ScopeList[1];
@@ -485,7 +546,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Type definition
 			    var typeDefinitionScope = binderSession.ScopeList[1];
@@ -534,7 +595,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Type definition
 			    var typeDefinitionScope = binderSession.ScopeList[1];
@@ -590,7 +651,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Type definition
 			    var typeDefinitionScope = binderSession.ScopeList[1];
@@ -618,7 +679,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Type definition
 			    var typeDefinitionScope = binderSession.ScopeList[1];
@@ -655,7 +716,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Type definition
 			    var typeDefinitionScope = binderSession.ScopeList[1];
@@ -730,7 +791,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Function definition
 			    var functionDefinitionScope = binderSession.ScopeList[1];
@@ -796,7 +857,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Function definition
 			    var functionDefinitionScope = binderSession.ScopeList[1];
@@ -824,7 +885,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Function definition
 			    var functionDefinitionScope = binderSession.ScopeList[1];
@@ -869,7 +930,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Arbitrary scope
 				var arbitraryScope = binderSession.ScopeList[1];
@@ -918,7 +979,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Arbitrary scope
 				var arbitraryScope = binderSession.ScopeList[1];
@@ -963,7 +1024,7 @@ x = x with
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Arbitrary scope
 				var arbitraryScope = binderSession.ScopeList[1];
@@ -1006,7 +1067,7 @@ x = x with
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Arbitrary scope
 				var arbitraryScope = binderSession.ScopeList[1];
@@ -1049,7 +1110,7 @@ x = x with
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Arbitrary scope
 				var arbitraryScope = binderSession.ScopeList[1];
@@ -1092,7 +1153,7 @@ x = x with
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Arbitrary scope
 				var arbitraryScope = binderSession.ScopeList[1];
@@ -1134,7 +1195,7 @@ ccc;
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // Arbitrary scope
 				var arbitraryScope = binderSession.ScopeList[1];
@@ -1210,7 +1271,7 @@ ccc;
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // If statement scope
 				var ifStatementScope = binderSession.ScopeList[1];
@@ -1282,7 +1343,7 @@ ccc;
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // If statement scope
 				var ifStatementScope = binderSession.ScopeList[1];
@@ -1321,7 +1382,7 @@ ccc;
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // If statement scope
 				var ifStatementScope = binderSession.ScopeList[1];
@@ -1375,7 +1436,7 @@ public class Aaa
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
-		    Assert.Null(globalScope.CodeBlockOwner);
+			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
 		    { // If statement scope
 				var ifStatementScope = binderSession.ScopeList[1];
