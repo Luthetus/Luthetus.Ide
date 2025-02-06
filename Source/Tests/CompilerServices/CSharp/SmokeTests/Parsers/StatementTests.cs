@@ -3,7 +3,6 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -98,8 +97,7 @@ public class StatementTests
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var publicKeywordToken = (KeywordToken)topCodeBlock.GetChildList()[0];
-		Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
+		Assert.Equal(SyntaxKind.PublicTokenKeyword, topCodeBlock.GetChildList()[0].SyntaxKind);
 		
 		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList()[1];
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
@@ -116,8 +114,7 @@ public class StatementTests
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var publicKeywordToken = (KeywordToken)topCodeBlock.GetChildList()[0];
-		Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
+		Assert.Equal(SyntaxKind.PublicTokenKeyword, topCodeBlock.GetChildList()[0].SyntaxKind);
 		
 		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList()[1];
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
@@ -2070,7 +2067,7 @@ public class GitIdeApi
 			{
 				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
 			}
-			else if (child is ISyntaxToken syntaxToken)
+			else if (child is SyntaxToken syntaxToken)
 			{
 				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
 			}

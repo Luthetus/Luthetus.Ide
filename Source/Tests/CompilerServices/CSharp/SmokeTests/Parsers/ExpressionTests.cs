@@ -3,7 +3,6 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -2003,7 +2002,7 @@ Func(decimalPercentProgress);
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList()[0];
 		// WriteChildrenIndented(functionInvocationNode, nameof(functionInvocationNode));
 		
-		var identifierToken = (IdentifierToken)functionInvocationNode.GetChildList()[0];
+		Assert.Equal(SyntaxKind.IdentifierToken, functionInvocationNode.GetChildList()[0].SyntaxKind);
 		
 		var functionParametersListingNode = (FunctionParametersListingNode)functionInvocationNode.GetChildList()[1];
 		{
@@ -2145,7 +2144,7 @@ Func(decimalPercentProgress);
 			{
 				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
 			}
-			else if (child is ISyntaxToken syntaxToken)
+			else if (child is SyntaxToken syntaxToken)
 			{
 				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
 			}
