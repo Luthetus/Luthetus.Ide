@@ -36,7 +36,7 @@ public sealed class ConstraintNode : ISyntaxNode
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	_childList = InnerTokens.ToArray();
+    	_childList = InnerTokens.Select(x => (ISyntax)x).ToArray();
         
     	_childListIsDirty = false;
     	return _childList;

@@ -224,7 +224,7 @@ public class StringWalker
         }
 
         var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, this, 0);
-        return new NumericLiteralToken(numericLiteralTextSpan);
+        return new SyntaxToken(SyntaxKind.NumericLiteralToken, numericLiteralTextSpan);
     }
 
     public string ReadUntil(char deliminator)

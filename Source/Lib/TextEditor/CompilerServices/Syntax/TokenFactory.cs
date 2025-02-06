@@ -12,85 +12,85 @@ public static class TokenFactory
         switch (syntaxKind)
         {
             case SyntaxKind.CommentMultiLineToken:
-                return new CommentMultiLineToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.CommentMultiLineToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.CommentSingleLineToken:
-                return new CommentSingleLineToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.CommentSingleLineToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.IdentifierToken:
-                return new IdentifierToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.IdentifierToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.NumericLiteralToken:
-                return new NumericLiteralToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.NumericLiteralToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.StringLiteralToken:
-                return new StringLiteralToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.StringLiteralToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.TriviaToken:
-                return new TriviaToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.TriviaToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.PreprocessorDirectiveToken:
-                return new PreprocessorDirectiveToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.PreprocessorDirectiveToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.LibraryReferenceToken:
-                return new LibraryReferenceToken(currentTextSpan, false) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.LibraryReferenceToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.PlusToken:
-                return new PlusToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.PlusToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.PlusPlusToken:
-                return new PlusPlusToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.PlusPlusToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.MinusToken:
-                return new MinusToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.MinusToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.MinusMinusToken:
-                return new MinusMinusToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.MinusMinusToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.EqualsToken:
-                return new EqualsToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.EqualsToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.EqualsEqualsToken:
-                return new EqualsEqualsToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.EqualsEqualsToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.QuestionMarkToken:
-                return new QuestionMarkToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.QuestionMarkToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.QuestionMarkQuestionMarkToken:
-                return new QuestionMarkQuestionMarkToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.QuestionMarkQuestionMarkToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.BangToken:
-                return new BangToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.BangToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.StatementDelimiterToken:
-                return new StatementDelimiterToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.StatementDelimiterToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.OpenParenthesisToken:
-                return new OpenParenthesisToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.OpenParenthesisToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.CloseParenthesisToken:
-                return new CloseParenthesisToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.CloseParenthesisToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.OpenBraceToken:
-                return new OpenBraceToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.OpenBraceToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.CloseBraceToken:
-                return new CloseBraceToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.CloseBraceToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.OpenAngleBracketToken:
-                return new OpenAngleBracketToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.OpenAngleBracketToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.CloseAngleBracketToken:
-                return new CloseAngleBracketToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.CloseAngleBracketToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.OpenSquareBracketToken:
-                return new OpenSquareBracketToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.OpenSquareBracketToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.CloseSquareBracketToken:
-                return new CloseSquareBracketToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.CloseSquareBracketToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.DollarSignToken:
-                return new DollarSignToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.DollarSignToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.ColonToken:
-                return new ColonToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.ColonToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.MemberAccessToken:
-                return new MemberAccessToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.MemberAccessToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.CommaToken:
-                return new CommaToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.CommaToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.BadToken:
-                return new BadToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.BadToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.EndOfFileToken:
-                return new EndOfFileToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.EndOfFileToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.AssociatedNameToken:
-                return new AssociatedNameToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.AssociatedNameToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.AssociatedValueToken:
-                return new AssociatedValueToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.AssociatedValueToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.OpenAssociatedGroupToken:
-                return new OpenAssociatedGroupToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, currentTextSpan) { IsFabricated = true, };
             case SyntaxKind.CloseAssociatedGroupToken:
-                return new CloseAssociatedGroupToken(currentTextSpan) { IsFabricated = true, };
+                return new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, currentTextSpan) { IsFabricated = true, };
             default:
             	if (syntaxKind.ToString().EndsWith("ContextualKeyword"))
             	{
-            		return new KeywordContextualToken(currentTextSpan, syntaxKind) { IsFabricated = true, };
+            		return new SyntaxToken(syntaxKind, currentTextSpan) { IsFabricated = true, };
             	}
             	else if (syntaxKind.ToString().EndsWith("Keyword"))
             	{
-            		return new KeywordToken(currentTextSpan, syntaxKind) { IsFabricated = true, };
+            		return new SyntaxToken(syntaxKind, currentTextSpan) { IsFabricated = true, };
             	}
             	else
             	{

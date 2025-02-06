@@ -56,7 +56,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new NumericLiteralToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.NumericLiteralToken, textSpan));
     }
 
 	public static void LexCharLiteralToken(
@@ -101,7 +101,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new CharLiteralToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.CharLiteralToken, textSpan));
     }
 
     public static void LexStringLiteralToken(
@@ -146,7 +146,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new StringLiteralToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.StringLiteralToken, textSpan));
     }
 
     public static void LexCommentSingleLineToken(
@@ -182,7 +182,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new CommentSingleLineToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.CommentSingleLineToken, textSpan));
     }
 
     public static void LexCommentMultiLineToken(
@@ -225,7 +225,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new CommentMultiLineToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.CommentMultiLineToken, textSpan));
     }
 
     public static void LexIdentifierOrKeywordOrKeywordContextual(
@@ -267,15 +267,15 @@ public static class LexerUtils
 
             if (lexerKeywords.ContextualKeywords.Contains(textValue))
             {
-                syntaxTokens.Add(new KeywordContextualToken(textSpan, GetSyntaxKindForContextualKeyword(textSpan)));
+                syntaxTokens.Add(new SyntaxToken(GetSyntaxKindForContextualKeyword(textSpan), textSpan));
                 return;
             }
 
-            syntaxTokens.Add(new KeywordToken(textSpan, GetSyntaxKindForKeyword(textSpan)));
+            syntaxTokens.Add(new SyntaxToken(GetSyntaxKindForKeyword(textSpan), textSpan));
             return;
         }
 
-        syntaxTokens.Add(new IdentifierToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
     }
 
     public static void LexPlusToken(
@@ -292,7 +292,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new PlusToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.PlusToken, textSpan));
     }
 
     public static void LexPlusPlusToken(
@@ -312,7 +312,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new PlusPlusToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.PlusPlusToken, textSpan));
     }
 
     public static void LexMinusToken(
@@ -329,7 +329,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new MinusToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.MinusToken, textSpan));
     }
 
     public static void LexMinusMinusToken(
@@ -349,7 +349,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new MinusMinusToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.MinusMinusToken, textSpan));
     }
 
     public static void LexEqualsToken(
@@ -366,7 +366,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new EqualsToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.EqualsToken, textSpan));
     }
 
     public static void LexEqualsEqualsToken(
@@ -386,7 +386,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new EqualsEqualsToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.EqualsEqualsToken, textSpan));
     }
 
     public static void LexQuestionMarkToken(
@@ -403,7 +403,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new QuestionMarkToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.QuestionMarkToken, textSpan));
     }
 
     public static void LexQuestionMarkQuestionMarkToken(
@@ -423,7 +423,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new QuestionMarkQuestionMarkToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.QuestionMarkQuestionMarkToken, textSpan));
     }
 
     public static void LexStarToken(
@@ -440,7 +440,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new StarToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.StarToken, textSpan));
     }
 
     public static void LexDivisionToken(
@@ -457,7 +457,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new DivisionToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.DivisionToken, textSpan));
     }
 
     public static void LexBangToken(
@@ -474,7 +474,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new BangToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.BangToken, textSpan));
     }
 
     public static void LexStatementDelimiterToken(
@@ -491,7 +491,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new StatementDelimiterToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.StatementDelimiterToken, textSpan));
     }
 
     public static void LexOpenParenthesisToken(
@@ -508,7 +508,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new OpenParenthesisToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.OpenParenthesisToken, textSpan));
     }
 
     public static void LexCloseParenthesisToken(
@@ -525,7 +525,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new CloseParenthesisToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.CloseParenthesisToken, textSpan));
     }
 
     public static void LexOpenBraceToken(
@@ -542,7 +542,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new OpenBraceToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.OpenBraceToken, textSpan));
     }
 
     public static void LexCloseBraceToken(
@@ -559,7 +559,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new CloseBraceToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.CloseBraceToken, textSpan));
     }
 
     public static void LexOpenAngleBracketToken(
@@ -576,7 +576,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new OpenAngleBracketToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketToken, textSpan));
     }
 
     public static void LexCloseAngleBracketToken(
@@ -593,7 +593,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new CloseAngleBracketToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketToken, textSpan));
     }
 
     public static void LexOpenSquareBracketToken(
@@ -610,7 +610,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new OpenSquareBracketToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.OpenSquareBracketToken, textSpan));
     }
 
     public static void LexCloseSquareBracketToken(
@@ -627,7 +627,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new CloseSquareBracketToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.CloseSquareBracketToken, textSpan));
     }
 
     public static void LexDollarSignToken(
@@ -644,7 +644,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new DollarSignToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.DollarSignToken, textSpan));
     }
 
     public static void LexAtToken(
@@ -661,7 +661,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new AtToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.AtToken, textSpan));
     }
 
     public static void LexColonToken(
@@ -678,7 +678,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new ColonToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.ColonToken, textSpan));
     }
 
     public static void LexMemberAccessToken(
@@ -695,7 +695,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new MemberAccessToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.MemberAccessToken, textSpan));
     }
 
     public static void LexCommaToken(
@@ -712,7 +712,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new CommaToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.CommaToken, textSpan));
     }
 
     public static void LexPreprocessorDirectiveToken(
@@ -748,7 +748,7 @@ public static class LexerUtils
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
-        syntaxTokens.Add(new PreprocessorDirectiveToken(textSpan));
+        syntaxTokens.Add(new SyntaxToken(SyntaxKind.PreprocessorDirectiveToken, textSpan));
     }
 
     public static SyntaxKind GetSyntaxKindForKeyword(TextEditorTextSpan textSpan)

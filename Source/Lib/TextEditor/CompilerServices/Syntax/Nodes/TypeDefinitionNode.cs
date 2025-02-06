@@ -111,10 +111,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return _toTypeClauseNodeResult ??= new TypeClauseNode(
             TypeIdentifierToken,
             ValueType,
-            null)
-	        {
-	        	IsKeywordType = IsKeywordType
-	        };
+            genericParametersListingNode: null,
+        	isKeywordType: IsKeywordType);
     }
     
 	#region ICodeBlockOwner_Methods
