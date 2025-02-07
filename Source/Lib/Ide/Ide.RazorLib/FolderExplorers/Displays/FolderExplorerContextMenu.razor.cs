@@ -45,7 +45,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
         if (treeViewCommandArgs.NodeThatReceivedMouseEvent is null)
         {
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -59,7 +59,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
         if (treeViewModel is not TreeViewAbsolutePath treeViewAbsolutePath)
 		{
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -78,7 +78,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
 		// Default case
 		{
-			var menuRecord = new MenuRecord(menuRecordsList.ToImmutableArray());
+			var menuRecord = new MenuRecord(menuRecordsList);
 			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
 			return menuRecord;
 		}

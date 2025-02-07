@@ -112,7 +112,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 							        	menuOptionList.Add(new MenuOptionRecord(
 							        		absolutePath.NameWithExtension,
 							        		MenuOptionKind.Other,
-							        		OnClickFunc: () =>
+							        		onClickFunc: () =>
 							        		{
 							        			return TextEditorService.OpenInEditorAsync(
 													absolutePath.Value,
@@ -126,8 +126,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 							}
 							
 							var menu = menuOptionList.Count == 0
-								? MenuRecord.Empty
-								: new MenuRecord(menuOptionList.ToImmutableArray());
+								? MenuRecord.GetEmpty()
+								: new MenuRecord(menuOptionList);
 								
 							return Task.FromResult(menu);
 						})));

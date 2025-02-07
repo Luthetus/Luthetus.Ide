@@ -285,7 +285,7 @@ public class HeaderDriver
 		menuOptionList.Add(new MenuOptionRecord(
 		    "Cancel",
 		    MenuOptionKind.Read,
-		    OnClickFunc: () =>
+		    onClickFunc: () =>
 		    {
 			    _root.Dispatcher.Dispatch(new DropdownState.DisposeAction(dropdownKey));
 		    	return Task.CompletedTask;
@@ -294,7 +294,7 @@ public class HeaderDriver
 		menuOptionList.Add(new MenuOptionRecord(
 		    $"Reset: '{absolutePath.NameWithExtension}'",
 		    MenuOptionKind.Delete,
-		    OnClickFunc: () =>
+		    onClickFunc: () =>
 		    {
 			    _root.TextEditorService.PostUnique(
 		            nameof(DoReloadOnClick),
@@ -308,7 +308,7 @@ public class HeaderDriver
 		    	return Task.CompletedTask;
 		    }));
 		    
-		var menu = new MenuRecord(menuOptionList.ToImmutableArray());
+		var menu = new MenuRecord(menuOptionList);
 
 		var dropdownRecord = new DropdownRecord(
 			dropdownKey,

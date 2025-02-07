@@ -49,7 +49,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 			menuOptionRecordList.Add(new MenuOptionRecord(
 				"Open in editor",
 				MenuOptionKind.Other,
-				OnClickFunc: () => OpenFileInEditor(
+				onClickFunc: () => OpenFileInEditor(
 					compilerServiceResource.ResourceUri.Value,
 					textEditorConfig,
 					serviceProvider)));
@@ -59,7 +59,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 				menuOptionRecordList.Add(new MenuOptionRecord(
 					"Load Projects",
 					MenuOptionKind.Other,
-					OnClickFunc: () => LoadProjects(
+					onClickFunc: () => LoadProjects(
 						(DotNetSolutionResource)compilerServiceResource,
 						textEditorConfig,
 						serviceProvider)));
@@ -69,7 +69,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 				menuOptionRecordList.Add(new MenuOptionRecord(
 					"Load Classes",
 					MenuOptionKind.Other,
-					OnClickFunc: () => LoadClasses(
+					onClickFunc: () => LoadClasses(
 						(CSharpProjectResource)compilerServiceResource,
 						localSolutionVisualizationModel,
 						textEditorConfig,
@@ -80,7 +80,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		return new MenuOptionRecord(
 			targetDisplayName,
 			MenuOptionKind.Other,
-			SubMenu: new MenuRecord(menuOptionRecordList.ToImmutableArray()));
+			subMenu: new MenuRecord(menuOptionRecordList));
 	}
 
 	private Task OpenFileInEditor(

@@ -122,28 +122,30 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 					Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuFileAction(
 						inMenu => 
 						{
-							var inMenuOptionOpen = inMenu.MenuOptionList.FirstOrDefault(
-								x => x.DisplayName == "Open");
-						
-							if (inMenuOptionOpen?.SubMenu is null)
+							var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
+							
+							if (indexMenuOptionOpen == -1)
 							{
+								var copyList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
+								copyList.Add(menuOptionOpenDotNetSolution);
 								return inMenu with
 								{
-									MenuOptionList = inMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
+									MenuOptionList = copyList
 								};
 							}
 							
-							var outMenuOptionOpen = inMenuOptionOpen with
-							{
-								SubMenu = inMenuOptionOpen.SubMenu with
-								{
-									MenuOptionList = inMenuOptionOpen.SubMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
-								}
-							};
+							var menuOptionOpen = inMenu.MenuOptionList[indexMenuOptionOpen];
 							
-							var outMenu = inMenu with
+							if (menuOptionOpen.SubMenu is null)
+								menuOptionOpen.SubMenu = new MenuRecord(new List<MenuOptionRecord>());
+							
+							// UI foreach enumeration was modified nightmare. (2025-02-07)
+							var copySubMenuList = new List<MenuOptionRecord>(menuOptionOpen.SubMenu.MenuOptionList);
+							copySubMenuList.Add(menuOptionOpenDotNetSolution);
+							
+							menuOptionOpen.SubMenu = menuOptionOpen.SubMenu with
 							{
-								MenuOptionList = inMenu.MenuOptionList.Replace(inMenuOptionOpen, outMenuOptionOpen)
+								MenuOptionList = copySubMenuList
 							};
 							
 							// Menu Option New
@@ -156,12 +158,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 					            var menuOptionNew = new MenuOptionRecord(
 					                "New",
 					                MenuOptionKind.Other,
-					                SubMenu: new MenuRecord(new[] { menuOptionNewDotNetSolution }.ToImmutableArray()));
+					                subMenu: new MenuRecord(new() { menuOptionNewDotNetSolution }));
 					
-					            return outMenu with
-								{
-									MenuOptionList = outMenu.MenuOptionList.Insert(0, menuOptionNew)
-								};
+								var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
+					            copyMenuOptionList.Insert(0, menuOptionNew);
+					            
+					            return inMenu with
+					            {
+					            	MenuOptionList = copyMenuOptionList
+					            };
 					        }
 						}));
 						
@@ -391,11 +396,12 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 
         Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuRunAction(inMenu =>
         {
-        	var outMenuOptionList = inMenu.MenuOptionList.AddRange(menuOptionsList);
-        	
+        	// UI foreach enumeration was modified nightmare. (2025-02-07)
+        	var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
+        	copyMenuOptionList.AddRange(menuOptionsList);
         	return inMenu with
         	{
-        		MenuOptionList = outMenuOptionList
+        		MenuOptionList = copyMenuOptionList
         	};
         }));
 	}

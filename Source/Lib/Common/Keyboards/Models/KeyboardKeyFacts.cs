@@ -311,7 +311,7 @@ public static class KeyboardKeyFacts
         public const string PAGE_UP = "PageUp";
         public const string PAGE_DOWN = "PageDown";
 
-        public static readonly ImmutableArray<string> AllList = new string[]
+        public static readonly List<string> AllList = new()
         {
             BACKSPACE,
             ESCAPE,
@@ -319,7 +319,7 @@ public static class KeyboardKeyFacts
             F10,
             PAGE_UP,
             PAGE_DOWN,
-        }.ToImmutableArray();
+        };
     }
 
     public static class WhitespaceCharacters
@@ -329,13 +329,13 @@ public static class KeyboardKeyFacts
         public const char NEW_LINE = '\n';
         public const char SPACE = ' ';
 
-        public static readonly ImmutableArray<char> AllList = new char[]
+        public static readonly List<char> AllList = new()
         {
             TAB,
             CARRIAGE_RETURN,
             NEW_LINE,
             SPACE,
-        }.ToImmutableArray();
+        };
     }
 
     public static class WhitespaceCodes
@@ -348,12 +348,12 @@ public static class KeyboardKeyFacts
         public const string ENTER_CODE = "Enter";
         public const string SPACE_CODE = "Space";
 
-        public static readonly ImmutableArray<string> AllList = new string[]
+        public static readonly List<string> AllList = new()
         {
             TAB_CODE,
             ENTER_CODE,
             SPACE_CODE,
-        }.ToImmutableArray();
+        };
     }
 
     /// <summary>
@@ -396,7 +396,7 @@ public static class KeyboardKeyFacts
         public const char FORWARD_SLASH = '/';
         public const char BACK_SLASH = '\\';
 
-        public static readonly ImmutableArray<char> AllList = new char[]
+        public static readonly List<char> AllList = new()
         {
             OPEN_CURLY_BRACE,
             CLOSE_CURLY_BRACE,
@@ -431,7 +431,7 @@ public static class KeyboardKeyFacts
             CLOSE_ARROW_BRACKET,
             FORWARD_SLASH,
             BACK_SLASH,
-        }.ToImmutableArray();
+        };
     }
 
     public static class MovementKeys
@@ -443,7 +443,7 @@ public static class KeyboardKeyFacts
         public const string HOME = "Home";
         public const string END = "End";
 
-        public static readonly ImmutableArray<string> AllList = new string[]
+        public static readonly List<string> AllList = new()
         {
             ARROW_LEFT,
             ARROW_DOWN,
@@ -451,7 +451,7 @@ public static class KeyboardKeyFacts
             ARROW_RIGHT,
             HOME,
             END,
-        }.ToImmutableArray();
+        };
     }
     
     public static class MovementCodes
@@ -463,7 +463,7 @@ public static class KeyboardKeyFacts
         public const string HOME = "Home";
         public const string END = "End";
 
-        public static readonly ImmutableArray<string> AllList = new string[]
+        public static readonly List<string> AllList = new()
         {
             ARROW_LEFT,
             ARROW_DOWN,
@@ -471,7 +471,7 @@ public static class KeyboardKeyFacts
             ARROW_RIGHT,
             HOME,
             END,
-        }.ToImmutableArray();
+        };
     }
 
     public static class AlternateMovementKeys
@@ -481,13 +481,13 @@ public static class KeyboardKeyFacts
         public const string ARROW_UP = "k";
         public const string ARROW_RIGHT = "l";
 
-        public static readonly ImmutableArray<string> AllList = new string[]
+        public static readonly List<string> AllList = new()
         {
             ARROW_LEFT,
             ARROW_DOWN,
             ARROW_UP,
             ARROW_RIGHT,
-        }.ToImmutableArray();
+        };
     }
     
     public static class AlternateMovementCodes
@@ -497,12 +497,12 @@ public static class KeyboardKeyFacts
         public const string ARROW_UP = "KeyK";
         public const string ARROW_RIGHT = "KeyL";
 
-        public static readonly ImmutableArray<string> AllList = new string[]
+        public static readonly List<string> AllList = new()
         {
             ARROW_LEFT,
             ARROW_DOWN,
             ARROW_UP,
             ARROW_RIGHT,
-        }.ToImmutableArray();
+        };
     }
 }

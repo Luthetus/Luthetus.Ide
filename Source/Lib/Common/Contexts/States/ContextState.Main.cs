@@ -7,17 +7,17 @@ namespace Luthetus.Common.RazorLib.Contexts.States;
 
 [FeatureState]
 public partial record ContextState(
-    ImmutableArray<ContextRecord> AllContextsList,
+    List<ContextRecord> AllContextsList,
     ContextHeirarchy FocusedContextHeirarchy,
     ContextHeirarchy? InspectedContextHeirarchy,
-    ImmutableArray<InspectableContext> InspectableContextList,
+    List<InspectableContext> InspectableContextList,
     bool IsSelectingInspectionTarget)
 {
     public ContextState() : this(
-        ImmutableArray<ContextRecord>.Empty,
+        new List<ContextRecord>(),
         new(new List<Key<ContextRecord>>()),
         null,
-        ImmutableArray<InspectableContext>.Empty,
+        new List<InspectableContext>(),
         false)
     {
         FocusedContextHeirarchy = new ContextHeirarchy(new List<Key<ContextRecord>>
