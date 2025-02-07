@@ -28,7 +28,7 @@ public partial class CSharpBinder : IBinder
     /// The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/>
     /// </summary>
 	private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
-    private readonly Dictionary<string, NamespaceGroupNode> _namespaceGroupNodeMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
+    private readonly Dictionary<string, NamespaceGroup> _namespaceGroupMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>
     /// All of the type definitions should be maintainted in this dictionary as they are
     /// found via parsing. Then, when one types an ambiguous identifier, perhaps they
@@ -47,7 +47,7 @@ public partial class CSharpBinder : IBinder
         // _boundScopes.Add(_globalScope.ResourceUri, new List<IScope> { _globalScope });
     }
 
-    public IReadOnlyDictionary<string, NamespaceGroupNode> NamespaceGroupNodes => _namespaceGroupNodeMap;
+    public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
     public TextEditorDiagnostic[] DiagnosticsList => Array.Empty<TextEditorDiagnostic>();
@@ -80,7 +80,7 @@ public partial class CSharpBinder : IBinder
 	/// <summary><see cref="FinalizeBinderSession"/></summary>
     public CSharpBinderSession StartBinderSession(ResourceUri resourceUri)
     {
-    	foreach (var namespaceGroupNodeKvp in _namespaceGroupNodeMap)
+    	foreach (var namespaceGroupNodeKvp in _namespaceGroupMap)
         {
         	for (int i = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.Count - 1; i >= 0; i--)
         	{
@@ -205,20 +205,21 @@ public partial class CSharpBinder : IBinder
         		namespaceStatementNode.IdentifierToken.TextSpan),
         	compilationUnit);
 
-        if (_namespaceGroupNodeMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
+        if (_namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
+        	// Bad, why is a new list being made? (2025-02-07)
         	var outNamespaceStatementNodeList = new List<NamespaceStatementNode>(inNamespaceGroupNode.NamespaceStatementNodeList);
             outNamespaceStatementNodeList.Add(namespaceStatementNode);
 
-            var outNamespaceGroupNode = new NamespaceGroupNode(
+            var outNamespaceGroupNode = new NamespaceGroup(
                 inNamespaceGroupNode.NamespaceString,
                 outNamespaceStatementNodeList);
 
-            _namespaceGroupNodeMap[namespaceString] = outNamespaceGroupNode;
+            _namespaceGroupMap[namespaceString] = outNamespaceGroupNode;
         }
         else
         {
-            _namespaceGroupNodeMap.Add(namespaceString, new NamespaceGroupNode(
+            _namespaceGroupMap.Add(namespaceString, new NamespaceGroup(
                 namespaceString,
                 new List<NamespaceStatementNode> { namespaceStatementNode }));
         }
@@ -660,9 +661,10 @@ public partial class CSharpBinder : IBinder
     	if (compilationUnit is null)
     		return;
     	
-        if (_namespaceGroupNodeMap.TryGetValue(namespaceString, out var namespaceGroupNode) &&
-            namespaceGroupNode is not null)
+        if (_namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroupNode) &&
+            namespaceGroupNode.ConstructorWasInvoked)
         {
+        	// Bad (2025-02-07)
             var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
 
             foreach (var typeDefinitionNode in typeDefinitionNodes)
@@ -919,14 +921,14 @@ public partial class CSharpBinder : IBinder
 	/// </summary>
     public void ClearStateByResourceUri(ResourceUri resourceUri)
     {
-        foreach (var namespaceGroupNodeKvp in _namespaceGroupNodeMap)
+        foreach (var namespaceGroupNodeKvp in _namespaceGroupMap)
         {
             var keepStatements = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList
                 .Where(x => x.IdentifierToken.TextSpan.ResourceUri != resourceUri)
                 .ToList();
 
-            _namespaceGroupNodeMap[namespaceGroupNodeKvp.Key] =
-                new NamespaceGroupNode(
+            _namespaceGroupMap[namespaceGroupNodeKvp.Key] =
+                new NamespaceGroup(
                     namespaceGroupNodeKvp.Value.NamespaceString,
                     keepStatements);
         }

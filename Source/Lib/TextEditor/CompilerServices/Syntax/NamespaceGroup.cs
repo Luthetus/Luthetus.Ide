@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed class NamespaceGroupNode : ISyntaxNode
+public record struct NamespaceGroup
 {
-    public NamespaceGroupNode(
+    public NamespaceGroup(
         string namespaceString,
         List<NamespaceStatementNode> namespaceStatementNodeList)
     {
@@ -12,14 +12,10 @@ public sealed class NamespaceGroupNode : ISyntaxNode
         NamespaceStatementNodeList = namespaceStatementNodeList;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
     public string NamespaceString { get; }
     public List<NamespaceStatementNode> NamespaceStatementNodeList { get; }
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.NamespaceGroupNode;
+    public bool ConstructorWasInvoked => NamespaceStatementNodeList is not null;
 
     /// <summary>
     /// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
@@ -28,21 +24,9 @@ public sealed class NamespaceGroupNode : ISyntaxNode
     /// This is to say that, any type definitions which are nested, would not
     /// be in this collection.
     /// </summary>
-    public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
+    public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
     {
         return NamespaceStatementNodeList
-            .SelectMany(x => x.GetTopLevelTypeDefinitionNodes())
-            .ToImmutableArray();
-    }
-    
-    public ISyntax[] GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	_childList = NamespaceStatementNodeList.Select(x => (ISyntax)x).ToArray();
-        
-    	_childListIsDirty = false;
-    	return _childList;
+            .SelectMany(x => x.GetTopLevelTypeDefinitionNodes());
     }
 }
