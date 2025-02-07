@@ -164,16 +164,6 @@ public partial class CSharpBinder : IBinder
         }
     }
     
-    void IBinder.BindFunctionOptionalArgument(FunctionArgumentEntryNode functionArgumentEntryNode, IParserModel parserModel) =>
-    	BindFunctionOptionalArgument(functionArgumentEntryNode, compilationUnit: null);
-    
-    public void BindFunctionOptionalArgument(
-        FunctionArgumentEntryNode functionArgumentEntryNode,
-        CSharpCompilationUnit? compilationUnit)
-    {
-    	throw new NotImplementedException();
-    }
-
     /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>
     public ReturnStatementNode BindReturnStatementNode(
         SyntaxToken keywordToken,
@@ -267,9 +257,6 @@ public partial class CSharpBinder : IBinder
     {
     	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
     }
-
-	void IBinder.BindVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, IParserModel parserModel) =>
-		BindVariableDeclarationNode(variableDeclarationNode, compilationUnit: null);
 
     public void BindVariableDeclarationNode(
         IVariableDeclarationNode variableDeclarationNode,
@@ -1211,9 +1198,6 @@ public partial class CSharpBinder : IBinder
     	return binderSession.ScopeTypeDefinitionMap.TryGetValue(scopeKeyAndIdentifierText, out typeDefinitionNode);
     }
     
-    bool IBinder.TryAddTypeDefinitionNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string typeIdentifierText, TypeDefinitionNode typeDefinitionNode) =>
-    	TryAddTypeDefinitionNodeByScope(compilationUnit: null, resourceUri, scopeIndexKey, typeIdentifierText, typeDefinitionNode);
-        
     public bool TryAddTypeDefinitionNodeByScope(
     	CSharpCompilationUnit? compilationUnit,
     	ResourceUri resourceUri,
@@ -1227,9 +1211,6 @@ public partial class CSharpBinder : IBinder
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, typeIdentifierText);
     	return binderSession.ScopeTypeDefinitionMap.TryAdd(scopeKeyAndIdentifierText, typeDefinitionNode);
     }
-    
-    void IBinder.SetTypeDefinitionNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string typeIdentifierText, TypeDefinitionNode typeDefinitionNode) =>
-    	SetTypeDefinitionNodeByScope(compilationUnit: null, resourceUri, scopeIndexKey, typeIdentifierText, typeDefinitionNode);
     
     public void SetTypeDefinitionNodeByScope(
     	CSharpCompilationUnit? compilationUnit,
@@ -1282,9 +1263,6 @@ public partial class CSharpBinder : IBinder
     	return binderSession.ScopeFunctionDefinitionMap.TryGetValue(scopeKeyAndIdentifierText, out functionDefinitionNode);
     }
     
-    bool IBinder.TryAddFunctionDefinitionNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string functionIdentifierText, FunctionDefinitionNode functionDefinitionNode) =>
-    	TryAddFunctionDefinitionNodeByScope(compilationUnit: null, resourceUri, scopeIndexKey, functionIdentifierText, functionDefinitionNode);
-    
     public bool TryAddFunctionDefinitionNodeByScope(
     	CSharpCompilationUnit? compilationUnit,
     	ResourceUri resourceUri,
@@ -1298,9 +1276,6 @@ public partial class CSharpBinder : IBinder
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, functionIdentifierText);
     	return binderSession.ScopeFunctionDefinitionMap.TryAdd(scopeKeyAndIdentifierText, functionDefinitionNode);
     }
-
-	void IBinder.SetFunctionDefinitionNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string functionIdentifierText, FunctionDefinitionNode functionDefinitionNode) =>
-		SetFunctionDefinitionNodeByScope(compilationUnit: null, resourceUri, scopeIndexKey, functionIdentifierText, functionDefinitionNode);
 
     public void SetFunctionDefinitionNodeByScope(
     	CSharpCompilationUnit? compilationUnit,
@@ -1353,9 +1328,6 @@ public partial class CSharpBinder : IBinder
     	return binderSession.ScopeVariableDeclarationMap.TryGetValue(scopeKeyAndIdentifierText, out variableDeclarationNode);
     }
     
-    bool IBinder.TryAddVariableDeclarationNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string variableIdentifierText, IVariableDeclarationNode variableDeclarationNode) =>
-    	TryAddVariableDeclarationNodeByScope(compilationUnit: null, resourceUri, scopeIndexKey, variableIdentifierText, variableDeclarationNode);
-        
     public bool TryAddVariableDeclarationNodeByScope(
     	CSharpCompilationUnit? compilationUnit,
     	ResourceUri resourceUri,
@@ -1370,9 +1342,6 @@ public partial class CSharpBinder : IBinder
     	return binderSession.ScopeVariableDeclarationMap.TryAdd(scopeKeyAndIdentifierText, variableDeclarationNode);
     }
     
-    void IBinder.SetVariableDeclarationNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string variableIdentifierText, IVariableDeclarationNode variableDeclarationNode) =>
-    	SetVariableDeclarationNodeByScope(compilationUnit: null, resourceUri, scopeIndexKey, variableIdentifierText, variableDeclarationNode);
-        
     public void SetVariableDeclarationNodeByScope(
     	CSharpCompilationUnit? compilationUnit,
     	ResourceUri resourceUri,
@@ -1403,9 +1372,6 @@ public partial class CSharpBinder : IBinder
     	else
     		return null;
     }
-    
-    bool IBinder.TryAddReturnTypeClauseNodeByScope(ResourceUri resourceUri, int scopeIndexKey, TypeClauseNode typeClauseNode) =>
-    	TryAddReturnTypeClauseNodeByScope(compilationUnit: null, resourceUri, scopeIndexKey, typeClauseNode);
     
     public bool TryAddReturnTypeClauseNodeByScope(
     	CSharpCompilationUnit? compilationUnit,
