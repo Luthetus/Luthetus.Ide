@@ -37,12 +37,12 @@ public sealed class CSharpResource : ICompilerServiceResource
 		return tokenTextSpanList;
     }
 
-    public IReadOnlyList<ITextEditorSymbol> GetSymbols()
+    public IReadOnlyList<Symbol> GetSymbols()
     {
         var localCompilationUnit = CompilationUnit;
 
         if (localCompilationUnit is null)
-            return Array.Empty<ITextEditorSymbol>();
+            return Array.Empty<Symbol>();
 
         return localCompilationUnit.Binder.Symbols
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)

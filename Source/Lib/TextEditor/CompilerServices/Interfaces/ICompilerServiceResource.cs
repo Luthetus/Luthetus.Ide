@@ -13,6 +13,6 @@ public interface ICompilerServiceResource
 
 	public IReadOnlyList<SyntaxToken> GetTokens();
     public IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans();
-    public IReadOnlyList<ITextEditorSymbol> GetSymbols();
+    public IReadOnlyList<Symbol> GetSymbols();
     public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics();
 }

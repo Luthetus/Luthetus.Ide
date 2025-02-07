@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 public interface IBinder
 {
     public TextEditorDiagnostic[] DiagnosticsList { get; }
-    public ITextEditorSymbol[] SymbolsList { get; }
+    public Symbol[] SymbolsList { get; }
 	
 	/// <summary>
 	/// Returns the text span at which the definition exists in the source code.
@@ -27,7 +27,7 @@ public interface IBinder
     /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
     /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
     /// </summary>
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, ITextEditorSymbol? symbol = null);
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
     
     /// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.

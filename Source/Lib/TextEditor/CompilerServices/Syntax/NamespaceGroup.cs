@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 public record struct NamespaceGroup
 {

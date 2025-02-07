@@ -33,12 +33,12 @@ public class CompilerServiceResource : ICompilerServiceResource
         return SyntaxTokenList.Select(st => st.TextSpan).ToArray();
     }
 
-    public virtual IReadOnlyList<ITextEditorSymbol> GetSymbols()
+    public virtual IReadOnlyList<Symbol> GetSymbols()
     {
         var localCompilationUnit = CompilationUnit;
 
         if (localCompilationUnit is null)
-            return Array.Empty<ITextEditorSymbol>();
+            return Array.Empty<Symbol>();
 
         return localCompilationUnit.Binder.SymbolsList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
