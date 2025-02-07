@@ -25,18 +25,18 @@
 		text = "unknown state";
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
-			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol))
+			 (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.StringInterpolationSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.StringVerbatimSymbol))
 	{
-		if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol)
+		if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.StringInterpolationSymbol)
 		{
 			prefixText = "(string-interpolation)";
 		}
-		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol)
+		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.StringVerbatimSymbol)
 		{
         	prefixText = "(string-verbatim)";
 		}
-		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.InjectedLanguageComponentSymbol)
+		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.InjectedLanguageComponentSymbol)
 		{
         	prefixText = "(component)";
 		}
@@ -45,7 +45,7 @@
 			prefixText = "(symbol)";
 		}
 		
-		text = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
+		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 	}
 	else
 	{

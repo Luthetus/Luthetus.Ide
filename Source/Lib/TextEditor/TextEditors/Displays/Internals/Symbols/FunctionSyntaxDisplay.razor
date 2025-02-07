@@ -93,23 +93,23 @@
 		}
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
-			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FunctionSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol))
+			 (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FunctionSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol))
 	{
 		prefixText = "(symbol)";
 	
-		if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FunctionSymbol)
+		if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FunctionSymbol)
 		{
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
+			methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 			genericParametersListingNode = null;
 			functionArgumentsListingNode = null;
 		}
-		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol)
+		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = null;
-			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
+			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 			methodName = null;
 			genericParametersListingNode = null;
 			functionArgumentsListingNode = null;

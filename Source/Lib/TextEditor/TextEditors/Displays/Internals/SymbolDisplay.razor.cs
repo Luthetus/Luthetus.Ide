@@ -18,7 +18,7 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ITextEditorSymbol Symbol { get; set; } = null!;
+    public Symbol Symbol { get; set; }
     
     private int _shouldRenderHashCode = 0;
     
@@ -77,7 +77,7 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 	///
 	/// The 'targetNode' is whichever node the ISymbol directly mapped to.
 	/// </summary>
-    private ISyntaxNode? GetTargetNode(ITextEditorSymbol symbolLocal)
+    private ISyntaxNode? GetTargetNode(Symbol symbolLocal)
     {
     	try
     	{
@@ -108,7 +108,7 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 	///
 	/// Otherwise, ask the IBinder for the definition node:
 	/// </summary>
-    private ISyntaxNode? GetDefinitionNode(ITextEditorSymbol symbolLocal, ISyntaxNode targetNode)
+    private ISyntaxNode? GetDefinitionNode(Symbol symbolLocal, ISyntaxNode targetNode)
     {
     	try
     	{
