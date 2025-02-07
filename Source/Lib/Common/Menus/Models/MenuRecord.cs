@@ -13,7 +13,7 @@ public record MenuRecord(List<MenuOptionRecord> MenuOptionList)
     public static MenuRecord GetEmpty()
     {
     	if (_empty.MenuOptionList.Count != 1)
-    		Console.WriteLine("{nameof(MenuRecord)} {nameof(GetEmpty)} if (Empty.Count != 1)");
+    		Console.WriteLine($"{nameof(MenuRecord)} {nameof(GetEmpty)} if (Empty.Count != 1)");
     		
     	return _empty;
     }

@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
@@ -76,13 +77,13 @@ public partial record PanelState
             if (inPanelGroup is null)
                 return inState;
 
-            var outTabList = inPanelGroup.TabList;
+            var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
 
             var insertionPoint = registerPanelTabAction.InsertAtIndexZero
                 ? 0
-                : inPanelGroup.TabList.Length;
+                : outTabList.Count;
 
-            outTabList = inPanelGroup.TabList.Insert(insertionPoint, registerPanelTabAction.PanelTab);
+            outTabList.Insert(insertionPoint, registerPanelTabAction.PanelTab);
 
             var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
             {
@@ -106,14 +107,15 @@ public partial record PanelState
             if (inPanelGroup is null)
                 return inState;
 
-            var panelTab = inPanelGroup.TabList.FirstOrDefault(
+            var indexPanelTab = inPanelGroup.TabList.FindIndex(
                 x => x.Key == disposePanelTabAction.PanelTabKey);
 
-            if (panelTab is null)
+            if (indexPanelTab == -1)
                 return inState;
 
-            var outTabList = inPanelGroup.TabList.Remove(panelTab);
-
+            var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
+            outTabList.RemoveAt(indexPanelTab);
+            
             var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
             {
                 TabList = outTabList

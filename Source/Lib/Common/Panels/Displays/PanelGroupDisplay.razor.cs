@@ -54,7 +54,7 @@ public partial class PanelGroupDisplay : FluxorComponent
         await base.OnAfterRenderAsync(firstRender);
     }
 
-	private ImmutableArray<IPanelTab> GetTabList(PanelGroup panelGroup)
+	private List<IPanelTab> GetTabList(PanelGroup panelGroup)
 	{
 		var tabList = new List<IPanelTab>();
 
@@ -64,7 +64,7 @@ public partial class PanelGroupDisplay : FluxorComponent
 			tabList.Add(panelTab);
 		}
 
-		return tabList.ToImmutableArray();
+		return tabList;
 	}
 
     private string GetHtmlId()

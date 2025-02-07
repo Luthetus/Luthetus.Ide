@@ -37,7 +37,7 @@ public partial record PanelState(
             PanelFacts.LeftPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<IPanelTab>.Empty);
+            PanelGroup.GetEmptyTabList());
 
         leftPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -54,7 +54,7 @@ public partial record PanelState(
             PanelFacts.RightPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<IPanelTab>.Empty);
+            PanelGroup.GetEmptyTabList());
 
         rightPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -71,7 +71,7 @@ public partial record PanelState(
             PanelFacts.BottomPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<IPanelTab>.Empty);
+            PanelGroup.GetEmptyTabList());
 
         bottomPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
