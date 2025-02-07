@@ -64,6 +64,7 @@ public partial class CSharpBinder : IBinder
     	{
     		try
     		{
+    			// Bad (2025-02-07)
     			return _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToArray();
     		}
     		catch (InvalidOperationException e)
@@ -121,106 +122,6 @@ public partial class CSharpBinder : IBinder
 		UpsertBinderSession(binderSession);
 	}
 
-    public BinaryOperatorNode BindBinaryOperatorNode(
-        IExpressionNode leftExpressionNode,
-        SyntaxToken operatorToken,
-        IExpressionNode rightExpressionNode,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-        var problematicTextSpan = (TextEditorTextSpan?)null;
-
-        if (leftExpressionNode.ResultTypeClauseNode.ValueType == typeof(int))
-        {
-            if (rightExpressionNode.ResultTypeClauseNode.ValueType == typeof(int))
-            {
-                switch (operatorToken.SyntaxKind)
-                {
-                    case SyntaxKind.PlusToken:
-                    case SyntaxKind.MinusToken:
-                    case SyntaxKind.StarToken:
-                    case SyntaxKind.DivisionToken:
-                        return new BinaryOperatorNode(
-                            leftExpressionNode.ResultTypeClauseNode,
-                            operatorToken,
-                            rightExpressionNode.ResultTypeClauseNode,
-                            CSharpFacts.Types.Int.ToTypeClause());
-                }
-            }
-            else
-            {
-                problematicTextSpan = rightExpressionNode.ConstructTextSpanRecursively();
-            }
-        }
-        else if (leftExpressionNode.ResultTypeClauseNode.ValueType == typeof(string))
-        {
-            if (rightExpressionNode.ResultTypeClauseNode.ValueType == typeof(string))
-            {
-                switch (operatorToken.SyntaxKind)
-                {
-                    case SyntaxKind.PlusToken:
-                        return new BinaryOperatorNode(
-                            leftExpressionNode.ResultTypeClauseNode,
-                            operatorToken,
-                            rightExpressionNode.ResultTypeClauseNode,
-                            CSharpFacts.Types.String.ToTypeClause());
-                }
-            }
-            else
-            {
-                problematicTextSpan = rightExpressionNode.ConstructTextSpanRecursively();
-            }
-        }
-        else
-        {
-            problematicTextSpan = leftExpressionNode.ConstructTextSpanRecursively();
-        }
-
-        if (problematicTextSpan is not null)
-        {
-            var errorMessage = $"Operator: {operatorToken.TextSpan.GetText()} is not defined" +
-                $" for types: {leftExpressionNode.ConstructTextSpanRecursively().GetText()}" +
-                $" and {rightExpressionNode.ConstructTextSpanRecursively().GetText()}";
-
-            parserModel.DiagnosticBag.ReportTodoException(problematicTextSpan.Value, errorMessage);
-        }
-
-        return new BinaryOperatorNode(
-            leftExpressionNode.ResultTypeClauseNode,
-            operatorToken,
-            rightExpressionNode.ResultTypeClauseNode,
-            CSharpFacts.Types.Void.ToTypeClause());
-    }
-
-    /// <summary>TODO: Construct a BoundStringInterpolationExpressionNode and identify the expressions within the string literal. For now I am just making the dollar sign the same color as a string literal.</summary>
-    public void BindStringInterpolationExpression(
-        SyntaxToken dollarSignToken,
-        CSharpCompilationUnit compilationUnit)
-    {
-        AddSymbolReference(
-        	new StringInterpolationSymbol(
-	        	compilationUnit.BinderSession.GetNextSymbolId(),
-	        	dollarSignToken.TextSpan with
-		        {
-		            DecorationByte = (byte)GenericDecorationKind.StringLiteral,
-		        }),
-			compilationUnit);
-    }
-    
-    public void BindStringVerbatimExpression(
-        SyntaxToken atToken,
-        CSharpCompilationUnit compilationUnit)
-    {
-        AddSymbolReference(
-        	new StringVerbatimSymbol(
-        		compilationUnit.BinderSession.GetNextSymbolId(),
-        		atToken.TextSpan with
-		        {
-		            DecorationByte = (byte)GenericDecorationKind.StringLiteral,
-		        }),
-		    compilationUnit);
-    }
-    
     public void BindDiscard(
         SyntaxToken identifierToken,
         CSharpCompilationUnit compilationUnit)

@@ -1201,10 +1201,7 @@ public partial class CSharpBinder
 			case SyntaxKind.AsyncTokenContextualKeyword:
 				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.DollarSignToken:
-				BindStringInterpolationExpression(token, compilationUnit);
-				return emptyExpressionNode;
 			case SyntaxKind.AtToken:
-				BindStringVerbatimExpression(token, compilationUnit);
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
 				return emptyExpressionNode;
