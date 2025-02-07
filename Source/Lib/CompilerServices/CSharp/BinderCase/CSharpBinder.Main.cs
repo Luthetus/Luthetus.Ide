@@ -163,28 +163,6 @@ public partial class CSharpBinder : IBinder
                 functionIdentifierText);
         }
     }
-    
-    /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>
-    public ReturnStatementNode BindReturnStatementNode(
-        SyntaxToken keywordToken,
-        IExpressionNode expressionNode)
-    {
-        return new ReturnStatementNode(
-            keywordToken,
-            expressionNode);
-    }
-
-    public IfStatementNode BindIfStatementNode(
-        SyntaxToken ifKeywordToken,
-        IExpressionNode expressionNode)
-    {
-        var boundIfStatementNode = new IfStatementNode(
-            ifKeywordToken,
-            expressionNode,
-            null);
-
-        return boundIfStatementNode;
-    }
 
     public void SetCurrentNamespaceStatementNode(
         NamespaceStatementNode namespaceStatementNode,
@@ -225,32 +203,6 @@ public partial class CSharpBinder : IBinder
         }
     }
 
-    public void BindConstructorInvocationNode()
-    {
-        // Deleted what was in this method because it was nonsense, and causing errors. (2023-08-06)
-    }
-
-    public InheritanceStatementNode BindInheritanceStatementNode(
-        TypeClauseNode typeClauseNode,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-        AddSymbolReference(
-        	new TypeSymbol(
-	        	compilationUnit.BinderSession.GetNextSymbolId(),
-	        	typeClauseNode.TypeIdentifierToken.TextSpan with
-		        {
-		            DecorationByte = (byte)GenericDecorationKind.Type
-		        }),
-	        compilationUnit);
-
-        parserModel.DiagnosticBag.ReportTodoException(
-            typeClauseNode.TypeIdentifierToken.TextSpan,
-            $"Implement {nameof(BindInheritanceStatementNode)}");
-
-        return new InheritanceStatementNode(typeClauseNode);
-    }
-    
     public void BindEnumMember(
         VariableDeclarationNode variableDeclarationNode,
         CSharpCompilationUnit compilationUnit,
