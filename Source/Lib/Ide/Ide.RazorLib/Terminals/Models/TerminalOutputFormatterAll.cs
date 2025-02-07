@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
@@ -42,7 +43,7 @@ public class TerminalOutputFormatterAll : ITerminalOutputFormatter
 			string.Empty,
 			ImmutableList<TerminalCommandParsed>.Empty,
 			ImmutableList<TextEditorTextSpan>.Empty,
-			ImmutableList<ITextEditorSymbol>.Empty);
+			ImmutableList<Symbol>.Empty);
 	}
 	
 	public void Dispose()

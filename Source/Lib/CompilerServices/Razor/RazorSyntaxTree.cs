@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
@@ -249,7 +249,8 @@ public class RazorSyntaxTree
 
                 var razorResource = (RazorResource)compilerServiceResource;
 
-                razorResource.HtmlSymbols.Add(new InjectedLanguageComponentSymbol(
+                razorResource.HtmlSymbols.Add(new Symbol(
+                	SyntaxKind.InjectedLanguageComponentSymbol,
             		symbolId: 0,
                 	textSpan));
             }

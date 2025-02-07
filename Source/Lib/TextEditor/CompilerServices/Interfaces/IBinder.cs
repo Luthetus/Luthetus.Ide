@@ -7,10 +7,14 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
+/// <summary>
+/// The IBinder should only define the way in which the text editor will "query" the CompilationUnit(s) / Binder.
+/// Any implementation details of parsing should NOT be included here.
+/// </summary>
 public interface IBinder
 {
     public TextEditorDiagnostic[] DiagnosticsList { get; }
-    public ITextEditorSymbol[] SymbolsList { get; }
+    public Symbol[] SymbolsList { get; }
 	
 	/// <summary>
 	/// Returns the text span at which the definition exists in the source code.
@@ -23,7 +27,7 @@ public interface IBinder
     /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
     /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
     /// </summary>
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, ITextEditorSymbol? symbol = null);
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
     
     /// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.
@@ -65,18 +69,6 @@ public interface IBinder
     	string typeIdentifierText,
     	out TypeDefinitionNode typeDefinitionNode);
     
-    public bool TryAddTypeDefinitionNodeByScope(
-    	ResourceUri resourceUri,
-    	int scopeIndexKey,
-    	string typeIdentifierText,
-        TypeDefinitionNode typeDefinitionNode);
-        
-    public void SetTypeDefinitionNodeByScope(
-    	ResourceUri resourceUri,
-    	int scopeIndexKey,
-    	string typeIdentifierText,
-        TypeDefinitionNode typeDefinitionNode);
-    
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(ResourceUri resourceUri, int scopeIndexKey);
     
     public bool TryGetFunctionDefinitionNodeByScope(
@@ -84,18 +76,6 @@ public interface IBinder
     	int scopeIndexKey,
     	string functionIdentifierText,
     	out FunctionDefinitionNode functionDefinitionNode);
-    
-    public bool TryAddFunctionDefinitionNodeByScope(
-    	ResourceUri resourceUri,
-    	int scopeIndexKey,
-    	string functionIdentifierText,
-        FunctionDefinitionNode functionDefinitionNode);
-        
-    public void SetFunctionDefinitionNodeByScope(
-    	ResourceUri resourceUri,
-    	int scopeIndexKey,
-    	string functionIdentifierText,
-        FunctionDefinitionNode functionDefinitionNode);
     
     public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey);
     
@@ -105,27 +85,8 @@ public interface IBinder
     	string variableIdentifierText,
     	out IVariableDeclarationNode variableDeclarationNode);
     
-    public bool TryAddVariableDeclarationNodeByScope(
-    	ResourceUri resourceUri,
-    	int scopeIndexKey,
-    	string variableIdentifierText,
-        IVariableDeclarationNode variableDeclarationNode);
-        
-    public void SetVariableDeclarationNodeByScope(
-    	ResourceUri resourceUri,
-    	int scopeIndexKey,
-    	string variableIdentifierText,
-        IVariableDeclarationNode variableDeclarationNode);
-    
     public TypeClauseNode? GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, int scopeIndexKey);
-    
-    public bool TryAddReturnTypeClauseNodeByScope(
-    	ResourceUri resourceUri,
-    	int scopeIndexKey,
-        TypeClauseNode typeClauseNode);
     
     public void ClearStateByResourceUri(ResourceUri resourceUri);
     public void AddNamespaceToCurrentScope(string namespaceString, IParserModel model);
-    public void BindFunctionOptionalArgument(FunctionArgumentEntryNode functionArgumentEntryNode, IParserModel model);
-    public void BindVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, IParserModel model);
 }

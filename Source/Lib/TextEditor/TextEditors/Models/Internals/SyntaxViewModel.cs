@@ -29,7 +29,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 public struct SyntaxViewModel
 {
 	public SyntaxViewModel(
-		ITextEditorSymbol? targetSymbol,
+		Symbol? targetSymbol,
 		ISyntaxNode? targetNode,
 		ISyntaxNode? definitionNode,
 		int depth)
@@ -44,7 +44,7 @@ public struct SyntaxViewModel
 	/// The user interface gesture is to hover a symbol in the text editor.
 	/// Other than a UI event, it is unlikely this property is non-null.
 	/// </summary>
-	public ITextEditorSymbol? TargetSymbol { get; }
+	public Symbol? TargetSymbol { get; }
 	
 	/// <summary>
 	/// The user interface provided an 'ITextEditorSymbol',

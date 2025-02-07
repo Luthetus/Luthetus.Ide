@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -89,7 +90,7 @@ public interface ICompilerService
     /// Provides syntax highlighting that cannot be determined by lexing alone.
     /// This method is invoked, and applied, after <see cref="GetTokenTextSpansFor"/>
     /// </summary>
-    public IReadOnlyList<ITextEditorSymbol> GetSymbolsFor(ResourceUri resourceUri);
+    public IReadOnlyList<Symbol> GetSymbolsFor(ResourceUri resourceUri);
 
     /// <summary>
     /// Provides 'squigglies' which when hovered over display a message, along with

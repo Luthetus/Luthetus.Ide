@@ -1201,10 +1201,7 @@ public partial class CSharpBinder
 			case SyntaxKind.AsyncTokenContextualKeyword:
 				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.DollarSignToken:
-				BindStringInterpolationExpression(token, compilationUnit);
-				return emptyExpressionNode;
 			case SyntaxKind.AtToken:
-				BindStringVerbatimExpression(token, compilationUnit);
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
 				return emptyExpressionNode;
@@ -1453,7 +1450,7 @@ public partial class CSharpBinder
 			    token.TextSpan.SourceText);
 		
 			((CSharpBinder)compilationUnit.Binder).AddSymbolDefinition(
-				new LambdaSymbol(compilationUnit.BinderSession.GetNextSymbolId(), textSpan, lambdaExpressionNode), compilationUnit);
+				new Symbol(SyntaxKind.LambdaSymbol, compilationUnit.BinderSession.GetNextSymbolId(), textSpan), compilationUnit);
 		
 			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
@@ -2379,7 +2376,8 @@ public partial class CSharpBinder
 			        functionParametersListingNode: null,
 			        functionDefinitionNode.ReturnTypeClauseNode);
 		        
-		        var functionSymbol = new FunctionSymbol(
+		        var functionSymbol = new Symbol(
+		        	SyntaxKind.FunctionSymbol,
 		        	compilationUnit.BinderSession.GetNextSymbolId(),
 		        	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
 			        {

@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -97,12 +98,12 @@ public class CompilerService : ICompilerService
         }
     }
 
-    public virtual IReadOnlyList<ITextEditorSymbol> GetSymbolsFor(ResourceUri resourceUri)
+    public virtual IReadOnlyList<Symbol> GetSymbolsFor(ResourceUri resourceUri)
     {
         lock (_resourceMapLock)
         {
             if (!_resourceMap.ContainsKey(resourceUri))
-                return Array.Empty<ITextEditorSymbol>();
+                return Array.Empty<Symbol>();
 
             return _resourceMap[resourceUri].GetSymbols();
         }

@@ -45,13 +45,13 @@
 		variableDeclarationNode = null;
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
-			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FieldSymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.PropertySymbol ||
-			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.EnumMemberSymbol))
+			 (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.VariableSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FieldSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.PropertySymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.EnumMemberSymbol))
 	{
 		prefixText = "(symbol)";
-		text = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
+		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 		textCssClass = "luth_te_variable";
 		variableDeclarationNode = null;
 	}
