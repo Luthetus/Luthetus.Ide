@@ -1,11 +1,17 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
-public interface ITextEditorSymbol
+public record struct Symbol
 {
-	/// <summary>
+    public Symbol(SyntaxKind syntaxKind, int symbolId, TextEditorTextSpan textSpan)
+    {
+    	SyntaxKind = syntaxKind;
+    	SymbolId = symbolId;
+        TextSpan = textSpan;
+    }
+    
+    /// <summary>
     /// If a symbol references a defintion that exists within a different ResourceUri,
     /// and is not "indexed" information, then this disambiguates the definition.
     ///
@@ -32,11 +38,11 @@ public interface ITextEditorSymbol
     /// from a symbol to arbitrary information, they'd be able to do so.
     /// </summary>
 	public int SymbolId { get; }
-
-    public TextEditorTextSpan TextSpan { get; }
-
-    public SyntaxKind SyntaxKind { get; }
+    public TextEditorTextSpan TextSpan { get; init; }
+    
     /// <summary>
+    /// Bad (2025-02-07)
+    /// ----------------
     /// <see cref="SymbolKindString"/> is not an Enum here.
     /// <br/><br/>
     /// This is because <see cref="ITextEditorSymbol"/>
@@ -47,5 +53,7 @@ public interface ITextEditorSymbol
     /// is going to be used for now. This allows the consumer of the Text Editor library
     /// to add further SymbolKind(s) of their choosing.
     /// </summary>
-    public string SymbolKindString { get; }
+    public string SymbolKindString => SyntaxKind.ToString();
+
+    public SyntaxKind SyntaxKind { get; }
 }

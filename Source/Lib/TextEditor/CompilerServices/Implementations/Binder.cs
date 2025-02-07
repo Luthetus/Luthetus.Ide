@@ -15,7 +15,7 @@ public class Binder : IBinder
 	private readonly object _binderSessionMapLock = new();
 
     public TextEditorDiagnostic[] DiagnosticsList { get; } = Array.Empty<TextEditorDiagnostic>();
-    public ITextEditorSymbol[] SymbolsList { get; } = Array.Empty<ITextEditorSymbol>();
+    public Symbol[] SymbolsList { get; } = Array.Empty<Symbol>();
     public IReadOnlyDictionary<ResourceUri, List<IScope>> ScopeList { get; } = new Dictionary<ResourceUri, List<IScope>>();
 
     public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
@@ -23,7 +23,7 @@ public class Binder : IBinder
     	return null;
     }
     
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, ITextEditorSymbol? symbol = null)
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
     {
     	return null;
     }

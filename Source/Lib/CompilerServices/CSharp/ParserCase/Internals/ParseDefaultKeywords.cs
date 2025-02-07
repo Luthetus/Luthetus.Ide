@@ -673,7 +673,10 @@ public class ParseDefaultKeywords
 		
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
-        var ifStatementNode = compilationUnit.Binder.BindIfStatementNode(ifTokenKeyword, expression);
+        var ifStatementNode = new IfStatementNode(
+            ifTokenKeyword,
+            expression,
+            null);
         
         compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	ifStatementNode,

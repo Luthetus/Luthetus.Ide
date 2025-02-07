@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -61,7 +62,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	public ITerminalOutputFormatted Format()
 	{
-		var outSymbolList = new List<ITextEditorSymbol>();
+		var outSymbolList = new List<Symbol>();
 		var outTextSpanList = new List<TextEditorTextSpan>();
 		
 		var parsedCommandList = _terminal.TerminalOutput.GetParsedCommandList();

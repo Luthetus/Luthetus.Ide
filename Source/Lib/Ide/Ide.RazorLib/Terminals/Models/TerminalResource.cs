@@ -30,7 +30,7 @@ public class TerminalResource : CompilerServiceResource
 
     public override IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<SyntaxToken>.Empty;
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
-    public List<ITextEditorSymbol> ManualSymbolList { get; } = new List<ITextEditorSymbol>();
+    public List<Symbol> ManualSymbolList { get; } = new List<Symbol>();
 
     public override IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
     {
@@ -41,7 +41,7 @@ public class TerminalResource : CompilerServiceResource
         return tokenTextSpanList;
     }
 
-    public override IReadOnlyList<ITextEditorSymbol> GetSymbols()
+    public override IReadOnlyList<Symbol> GetSymbols()
     {
         return ManualSymbolList;
     }

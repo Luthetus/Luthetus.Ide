@@ -63,11 +63,11 @@
 		hasQuestionMark = typeClauseNode.HasQuestionMark;
 		arrayRank = typeClauseNode.ArrayRank;
 	}
-	else if (syntaxViewModelLocal.TargetSymbol is not null && syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.TypeSymbol)
+	else if (syntaxViewModelLocal.TargetSymbol is not null && syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.TypeSymbol)
 	{
 		prefixText = "(symbol)";
 		prefixTextCssClass = null;
-		text = ((TypeSymbol)syntaxViewModelLocal.TargetSymbol).TextSpan.GetText();
+		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 		syntaxHighlightingClassCssString = "luth_te_type";
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = null;
