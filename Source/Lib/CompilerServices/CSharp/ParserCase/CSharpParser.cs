@@ -50,25 +50,26 @@ public static class CSharpParser
 		#endif
 		
 		var loopCount = 0;
-		var multiplier = 2;
+		
+		var multiplier = 2.8;
 		
 		// 1 is just for padding. This loop limit is expected to be
 		// correct from 'tokenCount * 2' alone.
 		//
-		// *2 because deferred parsing for the open and close braces.
+		// *3 because deferred parsing for the open and close braces.
 		// So, perhaps they'd be parsed in the statement loop twice.
 		//
 		// +1 feels nice for avoiding any false positives.
 		//
 		// Am seeing 9 files out of 1,660 hit this exception
-        var loopLimit = parserModel.TokenWalker.TokenList.Count * multiplier + 1;
+        var loopLimit = Math.Ceiling(parserModel.TokenWalker.TokenList.Count * multiplier) + 1;
         
         while (true)
         {
         	if (loopCount++ > loopLimit)
         	{
         		++ErrorCount;
-        		throw new NotImplementedException($"ErrorCount:{ErrorCount};;; if (loopCount++ > parserModel.TokenWalker.TokenList.Count * {multiplier} + 1)");
+        		throw new NotImplementedException($"ErrorCount:{ErrorCount};;; if (loopCount++ > Math.Ceiling(parserModel.TokenWalker.TokenList.Count * {multiplier}) + 1)");
         	}
 
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
