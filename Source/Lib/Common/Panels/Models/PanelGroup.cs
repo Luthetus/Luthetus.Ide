@@ -8,13 +8,30 @@ using Luthetus.Common.RazorLib.Panels.States;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
+/// <summary>
+/// Once the 'TabList' is exposed publically,
+/// it should NOT be modified.
+/// Make a shallow copy 'new List<IPanelTab>(panelGroup.TabList);'
+/// and modify the shallow copy if modification of the list
+/// after exposing it publically is necessary.
+/// </summary>
 public record PanelGroup(
 	    Key<PanelGroup> Key,
 	    Key<Panel> ActiveTabKey,
 	    ElementDimensions ElementDimensions,
-	    ImmutableArray<IPanelTab> TabList)
+	    List<IPanelTab> TabList)
 	: ITabGroup
 {
+	private static readonly List<IPanelTab> _emptyTabList = new List<IPanelTab>();
+        
+    public static List<IPanelTab> GetEmptyTabList()
+    {
+    	if (_emptyTabList.Count != 0)
+    		Console.WriteLine($"{nameof(PanelGroup)} {nameof(GetEmptyTabList)} if (_emptyTabList.Count != 0)");
+    		
+    	return _emptyTabList;
+    }
+
     /// <summary>
     /// TODO: Make this property immutable. Until then in a hack needs to be done where this gets set...
 	///       ...for Luthetus.Ide this is done in LuthetusIdeInitializer.razor.cs (2024-04-08)

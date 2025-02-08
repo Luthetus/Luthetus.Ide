@@ -28,7 +28,7 @@ public partial class FindAllContextMenu : ComponentBase
 
         if (commandArgs.NodeThatReceivedMouseEvent is null)
 		{
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -37,14 +37,14 @@ public partial class FindAllContextMenu : ComponentBase
 
         if (!menuRecordsList.Any())
 		{
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
 
 		// Default case
 		{
-			var menuRecord = new MenuRecord(menuRecordsList.ToImmutableArray());
+			var menuRecord = new MenuRecord(menuRecordsList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -56,14 +56,14 @@ public partial class FindAllContextMenu : ComponentBase
 
 		if (!menuOptionRecordList.Any())
 		{
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
 
 		// Default case
 		{
-			var menuRecord = new MenuRecord(menuOptionRecordList.ToImmutableArray());
+			var menuRecord = new MenuRecord(menuOptionRecordList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}

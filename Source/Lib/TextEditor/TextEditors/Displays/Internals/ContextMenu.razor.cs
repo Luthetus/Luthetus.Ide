@@ -152,7 +152,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         if (!menuOptionRecordsList.Any())
             menuOptionRecordsList.Add(new MenuOptionRecord("No Context Menu Options for this item", MenuOptionKind.Other));
 
-        return new MenuRecord(menuOptionRecordsList.ToImmutableArray());
+        return new MenuRecord(menuOptionRecordsList);
     }
 
     private Task SelectMenuOption(Func<Task> menuOptionAction)

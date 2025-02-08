@@ -106,8 +106,8 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 		menuRecordsList.Add(new MenuOptionRecord(
 			"Settings",
 			MenuOptionKind.Other,
-			WidgetRendererType: typeof(SolutionVisualizationSettingsDisplay),
-			WidgetParameterMap: new()
+			widgetRendererType: typeof(SolutionVisualizationSettingsDisplay),
+			widgetParameterMap: new()
 			{
 				{
 					nameof(SolutionVisualizationSettingsDisplay.SolutionVisualizationModel),
@@ -116,9 +116,9 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 			}));
 
 		if (!menuRecordsList.Any())
-			return Task.FromResult(MenuRecord.Empty);
+			return Task.FromResult(MenuRecord.GetEmpty());
 
-		return Task.FromResult(new MenuRecord(menuRecordsList.ToImmutableArray()));
+		return Task.FromResult(new MenuRecord(menuRecordsList));
 	}
 
 	//// Debugging

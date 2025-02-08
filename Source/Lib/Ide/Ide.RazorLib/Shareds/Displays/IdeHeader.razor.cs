@@ -141,12 +141,12 @@ public partial class IdeHeader : ComponentBase, IDisposable
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
                 MenuOptionKind.Other,
-                SubMenu: new MenuRecord(new[]
+                subMenu: new MenuRecord(new()
                 {
                     menuOptionOpenFile,
                     menuOptionOpenDirectory,
                     menuOptionOpenCSharpProject,
-                }.ToImmutableArray()));
+                }));
 
             menuOptionsList.Add(menuOptionOpen);
         }
@@ -162,7 +162,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
         }
 
 		Dispatcher.Dispatch(new IdeHeaderState.SetMenuFileAction(
-			new MenuRecord(menuOptionsList.ToImmutableArray())));
+			new MenuRecord(menuOptionsList)));
     }
 
 	private void InitializeMenuTools()
@@ -293,7 +293,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
         //    menuOptionsList.Add(menuOptionSolutionVisualization);
         //}
 
-        Dispatcher.Dispatch(new IdeHeaderState.SetMenuToolsAction(new MenuRecord(menuOptionsList.ToImmutableArray())));
+        Dispatcher.Dispatch(new IdeHeaderState.SetMenuToolsAction(new MenuRecord(menuOptionsList)));
     }
 
 	private void InitializeMenuView()
@@ -370,12 +370,12 @@ public partial class IdeHeader : ComponentBase, IDisposable
 		if (menuOptionsList.Count == 0)
 		{
 			Dispatcher.Dispatch(new IdeHeaderState.SetMenuViewAction(
-				MenuRecord.Empty));
+				MenuRecord.GetEmpty()));
 		}
 		else
 		{
 			Dispatcher.Dispatch(new IdeHeaderState.SetMenuViewAction(
-				new MenuRecord(menuOptionsList.ToImmutableArray())));
+				new MenuRecord(menuOptionsList)));
 		}
     }
 

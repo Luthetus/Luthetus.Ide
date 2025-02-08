@@ -80,8 +80,8 @@ public partial class InputFileSidebar : ComponentBase
                     TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null
-                        ? ImmutableList<TreeViewNoType>.Empty
-                        : new TreeViewNoType[] { directoryHomeNode }.ToImmutableList()));
+                        ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
+                        : new() { directoryHomeNode }));
             }
         }
 

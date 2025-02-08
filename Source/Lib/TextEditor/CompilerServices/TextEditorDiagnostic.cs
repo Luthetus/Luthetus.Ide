@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 /// are reporting the same diagnostic but perhaps with differing
 /// messages due to variable interpolation into the string.
 /// </summary>
-public record TextEditorDiagnostic(
+public record struct TextEditorDiagnostic(
     TextEditorDiagnosticLevel DiagnosticLevel,
     string Message,
     TextEditorTextSpan TextSpan,

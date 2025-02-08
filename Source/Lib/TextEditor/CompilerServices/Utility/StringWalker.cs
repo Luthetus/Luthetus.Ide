@@ -12,6 +12,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 /// <summary>Provides common API that can be used when implementing an <see cref="ITextEditorLexer" /> for the <see cref="TextEditorModel" />.<br /><br />The marker for an out of bounds read is <see cref="ParserFacts.END_OF_FILE" />.</summary>
 public class StringWalker
 {
+	private static List<char> _emptyAdditionalCharactersToBreakOnList = new();
+
     /// <summary>Pass in the <see cref="ResourceUri"/> of a file, and its text. One can pass in <see cref="string.Empty"/> for the <see cref="ResourceUri"/> if they are only working with the text itself.</summary>
     public StringWalker(ResourceUri resourceUri, string sourceText)
     {
@@ -162,7 +164,7 @@ public class StringWalker
         return PeekRange(0, substring.Length) == substring;
     }
 
-    public bool PeekForSubstringRange(ImmutableArray<string> substringsList, out string? matchedOn)
+    public bool PeekForSubstringRange(List<string> substringsList, out string? matchedOn)
     {
         foreach (var substring in substringsList)
         {
@@ -264,9 +266,9 @@ public class StringWalker
     /// This method will return immediately upon encountering whitespace.
     /// Returns a text span with its <see cref="TextEditorTextSpan.StartingIndexInclusive"/> equal to '-1' if no word was found.
     /// </summary>
-    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(ImmutableArray<char>? additionalCharactersToBreakOnList = null)
+    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(List<char>? additionalCharactersToBreakOnList = null)
     {
-        additionalCharactersToBreakOnList ??= ImmutableArray<char>.Empty;
+        additionalCharactersToBreakOnList ??= _emptyAdditionalCharactersToBreakOnList;
 
         // The wordBuilder is appended to everytime a character is consumed.
         var wordBuilder = new StringBuilder();
@@ -277,7 +279,7 @@ public class StringWalker
         while (!IsEof)
         {
             if (WhitespaceFacts.ALL_LIST.Contains(CurrentCharacter) ||
-                additionalCharactersToBreakOnList.Value.Contains(CurrentCharacter))
+                additionalCharactersToBreakOnList.Contains(CurrentCharacter))
             {
                 break;
             }

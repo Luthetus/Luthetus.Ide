@@ -31,7 +31,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             .Wait();
     }
 
-    public ImmutableArray<InMemoryFile> Files => _files.ToImmutableArray();
+    public IReadOnlyList<InMemoryFile> Files => _files;
 
     public IFileHandler File => _file;
     public IDirectoryHandler Directory => _directory;

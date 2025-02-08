@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
@@ -15,7 +16,8 @@ public partial record PanelState
             if (inState.PanelList.Any(x => x.Key == registerPanelAction.Panel.Key))
                 return inState;
 
-            var outPanelList = inState.PanelList.Add(registerPanelAction.Panel);
+            var outPanelList = new List<Panel>(inState.PanelList);
+            outPanelList.Add(registerPanelAction.Panel);
 
             return inState with { PanelList = outPanelList };
         }
@@ -25,13 +27,14 @@ public partial record PanelState
             PanelState inState,
             DisposePanelAction disposePanelAction)
         {
-            var inPanel = inState.PanelList.FirstOrDefault(
+            var indexPanel = inState.PanelList.FindIndex(
                 x => x.Key == disposePanelAction.PanelKey);
 
-            if (inPanel is null)
+            if (indexPanel == -1)
                 return inState;
 
-            var outPanelList = inState.PanelList.Remove(inPanel);
+            var outPanelList = new List<Panel>(inState.PanelList);
+            outPanelList.RemoveAt(indexPanel);
 
             return inState with { PanelList = outPanelList };
         }
@@ -44,8 +47,9 @@ public partial record PanelState
             if (inState.PanelGroupList.Any(x => x.Key == registerPanelGroupAction.PanelGroup.Key))
                 return inState;
 
-            var outPanelGroupList = inState.PanelGroupList.Add(registerPanelGroupAction.PanelGroup);
-
+            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+            outPanelGroupList.Add(registerPanelGroupAction.PanelGroup);
+            
             return inState with { PanelGroupList = outPanelGroupList };
         }
 
@@ -54,13 +58,14 @@ public partial record PanelState
             PanelState inState,
             DisposePanelGroupAction disposePanelGroupAction)
         {
-            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
+            var indexPanelGroup = inState.PanelGroupList.FindIndex(
                 x => x.Key == disposePanelGroupAction.PanelGroupKey);
 
-            if (inPanelGroup is null)
+            if (indexPanelGroup == -1)
                 return inState;
 
-            var outPanelGroupList = inState.PanelGroupList.Remove(inPanelGroup);
+            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+            outPanelGroupList.RemoveAt(indexPanelGroup);
 
             return inState with { PanelGroupList = outPanelGroupList };
         }
@@ -70,24 +75,28 @@ public partial record PanelState
             PanelState inState,
             RegisterPanelTabAction registerPanelTabAction)
         {
-            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
+            var indexPanelGroup = inState.PanelGroupList.FindIndex(
                 x => x.Key == registerPanelTabAction.PanelGroupKey);
 
-            if (inPanelGroup is null)
+            if (indexPanelGroup == -1)
                 return inState;
+                
+            var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
 
-            var outTabList = inPanelGroup.TabList;
+            var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
 
             var insertionPoint = registerPanelTabAction.InsertAtIndexZero
                 ? 0
-                : inPanelGroup.TabList.Length;
+                : outTabList.Count;
 
-            outTabList = inPanelGroup.TabList.Insert(insertionPoint, registerPanelTabAction.PanelTab);
+            outTabList.Insert(insertionPoint, registerPanelTabAction.PanelTab);
 
-            var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
+            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+            
+            outPanelGroupList[indexPanelGroup] = inPanelGroup with
             {
                 TabList = outTabList
-            });
+            };
 
             return inState with
             {
@@ -100,24 +109,28 @@ public partial record PanelState
             PanelState inState,
             DisposePanelTabAction disposePanelTabAction)
         {
-            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
+            var indexPanelGroup = inState.PanelGroupList.FindIndex(
                 x => x.Key == disposePanelTabAction.PanelGroupKey);
 
-            if (inPanelGroup is null)
+            if (indexPanelGroup == -1)
                 return inState;
+                
+            var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
 
-            var panelTab = inPanelGroup.TabList.FirstOrDefault(
+            var indexPanelTab = inPanelGroup.TabList.FindIndex(
                 x => x.Key == disposePanelTabAction.PanelTabKey);
 
-            if (panelTab is null)
+            if (indexPanelTab == -1)
                 return inState;
 
-            var outTabList = inPanelGroup.TabList.Remove(panelTab);
-
-            var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
+            var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
+            outTabList.RemoveAt(indexPanelTab);
+            
+            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+            outPanelGroupList[indexPanelGroup] = inPanelGroup with
             {
                 TabList = outTabList
-            });
+            };
 
             return inState with { PanelGroupList = outPanelGroupList };
         }
@@ -127,16 +140,20 @@ public partial record PanelState
             PanelState inState,
             SetActivePanelTabAction setActivePanelTabAction)
         {
-            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
+            var indexPanelGroup = inState.PanelGroupList.FindIndex(
                 x => x.Key == setActivePanelTabAction.PanelGroupKey);
 
-            if (inPanelGroup is null)
+            if (indexPanelGroup == -1)
                 return inState;
+                
+            var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
 
-            var outPanelGroupList = inState.PanelGroupList.Replace(inPanelGroup, inPanelGroup with
+			var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+			
+            outPanelGroupList[indexPanelGroup] = inPanelGroup with
             {
                 ActiveTabKey = setActivePanelTabAction.PanelTabKey
-            });
+            };
 
             return inState with { PanelGroupList = outPanelGroupList };
         }

@@ -19,9 +19,12 @@ public partial record DropdownState
 			if (indexExistingDropdown != -1)
 				return inState;
 
+			var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
+			outDropdownList.Add(registerAction.Dropdown);
+
             return inState with
             {
-                DropdownList = inState.DropdownList.Add(registerAction.Dropdown)
+                DropdownList = outDropdownList
             };
         }
 
@@ -35,10 +38,13 @@ public partial record DropdownState
 
 			if (indexExistingDropdown == -1)
 				return inState;
+				
+			var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
+			outDropdownList.RemoveAt(indexExistingDropdown);
 
             return inState with
             {
-                DropdownList = inState.DropdownList.RemoveAt(indexExistingDropdown)
+                DropdownList = outDropdownList
             };
         }
 
@@ -46,9 +52,11 @@ public partial record DropdownState
         public static DropdownState ReduceClearAction(
             DropdownState inState)
         {
+        	var outDropdownList = new List<DropdownRecord>();
+        
             return inState with
             {
-                DropdownList = ImmutableList<DropdownRecord>.Empty
+                DropdownList = outDropdownList
             };
         }
 
@@ -72,10 +80,13 @@ public partial record DropdownState
 				Left = fitOnScreenAction.Dropdown.Left,
 				Top = fitOnScreenAction.Dropdown.Top
 			};
+			
+			var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
+			outDropdownList[indexExistingDropdown] = outDropdown;
 
             return inState with
             {
-                DropdownList = inState.DropdownList.SetItem(indexExistingDropdown, outDropdown)
+                DropdownList = outDropdownList
             };
         }
     }

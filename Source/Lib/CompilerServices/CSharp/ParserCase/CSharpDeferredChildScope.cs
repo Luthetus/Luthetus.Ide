@@ -5,7 +5,7 @@ using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
-public class CSharpDeferredChildScope
+public struct CSharpDeferredChildScope
 {
 	public CSharpDeferredChildScope(
 		int openTokenIndex,

@@ -811,7 +811,7 @@ public class TextEditorCommandDefaultFunctions
 			menuOptionList.Add(new MenuOptionRecord(
 				siblingAbsolutePath.NameWithExtension,
 				MenuOptionKind.Other,
-				OnClickFunc: async () => commandArgs.TextEditorService.OpenInEditorAsync(
+				onClickFunc: async () => commandArgs.TextEditorService.OpenInEditorAsync(
 					file,
 					true,
 					null,
@@ -825,9 +825,9 @@ public class TextEditorCommandDefaultFunctions
 		MenuRecord menu;
 		
 		if (menuOptionList.Count == 0)
-			menu = MenuRecord.Empty;
+			menu = MenuRecord.GetEmpty();
 		else
-			menu = new MenuRecord(menuOptionList.ToImmutableArray());
+			menu = new MenuRecord(menuOptionList);
 		
 		var dropdownRecord = new DropdownRecord(
 			Key<DropdownRecord>.NewKey(),
@@ -920,7 +920,7 @@ public class TextEditorCommandDefaultFunctions
 			menuOptionList.Add(new MenuOptionRecord(
 				"syntaxNode was null",
 				MenuOptionKind.Other,
-				OnClickFunc: async () => {}));
+				onClickFunc: async () => {}));
 		}
 		else
 		{
@@ -978,9 +978,9 @@ public class TextEditorCommandDefaultFunctions
 		MenuRecord menu;
 		
 		if (menuOptionList.Count == 0)
-			menu = MenuRecord.Empty;
+			menu = MenuRecord.GetEmpty();
 		else
-			menu = new MenuRecord(menuOptionList.ToImmutableArray());
+			menu = new MenuRecord(menuOptionList);
 		
 		var dropdownRecord = new DropdownRecord(
 			Key<DropdownRecord>.NewKey(),

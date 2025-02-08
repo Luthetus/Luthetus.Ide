@@ -6,7 +6,7 @@ namespace Luthetus.Common.RazorLib.Dynamics.Models;
 
 public interface IDrag : IDynamicViewModel
 {
-    public ImmutableArray<IDropzone> DropzoneList { get; set; }
+    public List<IDropzone> DropzoneList { get; set; }
 
 	public Type DragComponentType { get; }
 	public Dictionary<string, object?>? DragComponentParameterMap { get; }
