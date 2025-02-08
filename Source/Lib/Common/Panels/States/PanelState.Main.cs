@@ -1,9 +1,9 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
-using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
@@ -12,21 +12,18 @@ namespace Luthetus.Common.RazorLib.Panels.States;
 /// </summary>
 [FeatureState]
 public partial record PanelState(
-	ImmutableArray<PanelGroup> PanelGroupList,
-	ImmutableArray<Panel> PanelList)
+	List<PanelGroup> PanelGroupList,
+	List<Panel> PanelList)
 {
-    public PanelState() : this(ImmutableArray<PanelGroup>.Empty, ImmutableArray<Panel>.Empty)
+    public PanelState() : this(new List<PanelGroup>(), new List<Panel>())
     {
         var topLeftGroup = ConstructTopLeftGroup();
         var topRightGroup = ConstructTopRightGroup();
         var bottomGroup = ConstructBottomGroup();
 
-        PanelGroupList = new[]
-        {
-            topLeftGroup,
-            topRightGroup,
-            bottomGroup,
-        }.ToImmutableArray();
+        PanelGroupList.Add(topLeftGroup);
+        PanelGroupList.Add(topRightGroup);
+        PanelGroupList.Add(bottomGroup);
     }
 
     public (IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs { get; set; }
