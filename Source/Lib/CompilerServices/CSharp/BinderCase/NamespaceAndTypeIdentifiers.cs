@@ -1,6 +1,6 @@
 namespace Luthetus.CompilerServices.CSharp.BinderCase;
 
-public record NamespaceAndTypeIdentifiers(string NamespaceIdentifier, string TypeIdentifier)
+public record struct NamespaceAndTypeIdentifiers(string NamespaceIdentifier, string TypeIdentifier)
 {
     private const char MEMBER_ACCESS_TEXT = '.';
 

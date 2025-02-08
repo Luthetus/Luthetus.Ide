@@ -454,9 +454,9 @@ public class CommandFactory : ICommandFactory
 					MenuRecord menu;
 					
 					if (menuOptionList.Count == 0)
-						menu = MenuRecord.Empty;
+						menu = MenuRecord.GetEmpty();
 					else
-						menu = new MenuRecord(menuOptionList.ToImmutableArray());
+						menu = new MenuRecord(menuOptionList);
 						
 					var dropdownRecord = new DropdownRecord(
 						Key<DropdownRecord>.NewKey(),

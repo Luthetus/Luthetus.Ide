@@ -11,7 +11,7 @@ public class GenericLanguageDefinition
         string functionInvocationEnd,
         string memberAccessToken,
         string commentSingleLineStart,
-        ImmutableArray<string> commentSingleLineEndingsList,
+        List<string> commentSingleLineEndingsList,
         string commentMultiLineStart,
         string commentMultiLineEnd,
         string[] keywordsList,
@@ -36,7 +36,7 @@ public class GenericLanguageDefinition
     public string FunctionInvocationEnd { get; }
     public string MemberAccessToken { get; }
     public string CommentSingleLineStart { get; }
-    public ImmutableArray<string> CommentSingleLineEndingsList { get; }
+    public List<string> CommentSingleLineEndingsList { get; }
     public string CommentMultiLineStart { get; }
     public string CommentMultiLineEnd { get; }
     public string[] KeywordsList { get; }

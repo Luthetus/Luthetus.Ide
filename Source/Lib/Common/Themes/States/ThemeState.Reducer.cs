@@ -1,4 +1,5 @@
-﻿using Fluxor;
+using Fluxor;
+using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.Common.RazorLib.Themes.States;
 
@@ -17,7 +18,8 @@ public partial record ThemeState
             if (inTheme is not null)
                 return inState;
 
-            var outThemeList = inState.ThemeList.Add(registerAction.Theme);
+            var outThemeList = new List<ThemeRecord>(inState.ThemeList);
+            outThemeList.Add(registerAction.Theme);
 
             return new ThemeState { ThemeList = outThemeList };
         }
@@ -33,7 +35,8 @@ public partial record ThemeState
             if (inTheme is null)
                 return inState;
 
-            var outThemeList = inState.ThemeList.Remove(inTheme);
+            var outThemeList = new List<ThemeRecord>(inState.ThemeList);
+            outThemeList.Remove(inTheme);
 
             return new ThemeState { ThemeList = outThemeList };
         }

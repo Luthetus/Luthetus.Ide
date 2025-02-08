@@ -88,7 +88,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
     public bool DialogIsMaximized { get; set; }
     public bool DialogIsResizable { get; set; } = true;
     public string DialogFocusPointHtmlElementId { get; init; }
-    public ImmutableArray<IDropzone> DropzoneList { get; set; }
+    public List<IDropzone> DropzoneList { get; set; }
 
     public ElementDimensions DragElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
 
@@ -210,7 +210,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
             TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey,
             elementDimensions));
 
-        DropzoneList = dropzoneList.ToImmutableArray();
+        DropzoneList = dropzoneList;
     }
 
     public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)

@@ -14,10 +14,10 @@ public partial record IdeHeaderState(
 	MenuRecord MenuRun)
 {
 	public IdeHeaderState() : this(
-		new(ImmutableArray<MenuOptionRecord>.Empty),
-		new(ImmutableArray<MenuOptionRecord>.Empty),
-		new(ImmutableArray<MenuOptionRecord>.Empty),
-		new(ImmutableArray<MenuOptionRecord>.Empty))
+		new MenuRecord(new List<MenuOptionRecord>()),
+		new MenuRecord(new List<MenuOptionRecord>()),
+		new MenuRecord(new List<MenuOptionRecord>()),
+		new MenuRecord(new List<MenuOptionRecord>()))
 	{
 	}
 

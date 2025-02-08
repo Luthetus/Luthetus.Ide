@@ -42,8 +42,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
-            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
-            WidgetParameterMap: new Dictionary<string, object?>
+            widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+            widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.CheckForTemplates), false },
@@ -68,8 +68,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
-            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
-            WidgetParameterMap: new Dictionary<string, object?>
+            widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+            widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.CheckForTemplates), true },
@@ -94,8 +94,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
-            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
-            WidgetParameterMap: new Dictionary<string, object?>
+            widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+            widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.IsDirectory), true },
@@ -114,8 +114,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
-            WidgetRendererType: _ideComponentRenderers.DeleteFileFormRendererType,
-            WidgetParameterMap: new Dictionary<string, object?>
+            widgetRendererType: _ideComponentRenderers.DeleteFileFormRendererType,
+            widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IDeleteFileFormRendererType.AbsolutePath), absolutePath },
                 { nameof(IDeleteFileFormRendererType.IsDirectory), true },
@@ -134,8 +134,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, IDispatcher dispatcher, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
-            WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
-            WidgetParameterMap: new Dictionary<string, object?>
+            widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+            widgetParameterMap: new Dictionary<string, object?>
             {
                 {
                     nameof(IFileFormRendererType.FileName),
@@ -158,7 +158,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord CopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Copy", MenuOptionKind.Update,
-            OnClickFunc: () =>
+            onClickFunc: () =>
 			{
 				PerformCopyFile(absolutePath, onAfterCompletion);
 				return Task.CompletedTask;
@@ -168,7 +168,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord CutFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Cut", MenuOptionKind.Update,
-            OnClickFunc: () =>
+            onClickFunc: () =>
 			{
 				PerformCutFile(absolutePath, onAfterCompletion);
 				return Task.CompletedTask;
@@ -178,7 +178,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord PasteClipboard(AbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Paste", MenuOptionKind.Update,
-            OnClickFunc: () =>
+            onClickFunc: () =>
 			{
 				PerformPasteFile(directoryAbsolutePath, onAfterCompletion);
 				return Task.CompletedTask;

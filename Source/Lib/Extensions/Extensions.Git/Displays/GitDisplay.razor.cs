@@ -101,7 +101,7 @@ public partial class GitDisplay : FluxorComponent
             var menuOptionNew = new MenuOptionRecord(
                 "Repo",
                 MenuOptionKind.Other,
-                SubMenu: new MenuRecord(new[] { menuOption }.ToImmutableArray()));
+                subMenu: new MenuRecord(new() { menuOption }));
 
             menuOptionsList.Add(menuOptionNew);
         }
@@ -115,11 +115,11 @@ public partial class GitDisplay : FluxorComponent
             var menuOptionNew = new MenuOptionRecord(
                 "Branch",
                 MenuOptionKind.Other,
-                SubMenu: new MenuRecord(new[]
+                subMenu: new MenuRecord(new()
                 { 
                     branchNewMenuOption,
                     branchCheckoutMenuOption,
-                }.ToImmutableArray()));
+                }));
 
             menuOptionsList.Add(menuOptionNew);
         }
@@ -134,17 +134,17 @@ public partial class GitDisplay : FluxorComponent
             var menuOptionNew = new MenuOptionRecord(
                 "Actions",
                 MenuOptionKind.Other,
-                SubMenu: new MenuRecord(new[]
+                subMenu: new MenuRecord(new()
                 {
                     pushMenuOption,
                     pullMenuOption,
                     fetchMenuOption,
-                }.ToImmutableArray()));
+                }));
 
             menuOptionsList.Add(menuOptionNew);
         }
 
-        return new MenuRecord(menuOptionsList.ToImmutableArray());
+        return new MenuRecord(menuOptionsList);
     }
 
     private async Task RestoreFocusToMenuButton()
@@ -184,8 +184,8 @@ public partial class GitDisplay : FluxorComponent
         return new MenuOptionRecord(
             "New",
             MenuOptionKind.Create,
-            WidgetRendererType: IdeComponentRenderers.FileFormRendererType,
-            WidgetParameterMap: new Dictionary<string, object?>
+            widgetRendererType: IdeComponentRenderers.FileFormRendererType,
+            widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
                 { nameof(IFileFormRendererType.CheckForTemplates), false },
@@ -211,8 +211,8 @@ public partial class GitDisplay : FluxorComponent
         return new MenuOptionRecord(
             "Checkout",
             MenuOptionKind.Other,
-            WidgetRendererType: typeof(GitBranchCheckoutDisplay),
-            WidgetParameterMap: new Dictionary<string, object?>
+            widgetRendererType: typeof(GitBranchCheckoutDisplay),
+            widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(GitBranchCheckoutDisplay.GitState), localGitState },
             });

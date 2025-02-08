@@ -144,7 +144,7 @@ public static class ContextFacts
         "dropdown",
         IKeymap.Empty);
 
-    public static readonly ImmutableArray<ContextRecord> AllContextsList = new[]
+    public static readonly List<ContextRecord> AllContextsList = new()
     {
         GlobalContext,
         ActiveContextsContext,
@@ -168,5 +168,5 @@ public static class ContextFacts
         DialogContext,
         WidgetContext,
         DropdownContext,
-    }.ToImmutableArray();
+    };
 }

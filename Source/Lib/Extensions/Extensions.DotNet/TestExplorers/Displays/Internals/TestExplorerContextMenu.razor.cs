@@ -86,7 +86,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		}
 
 		if (commandArgs.NodeThatReceivedMouseEvent is null)
-			return MenuRecord.Empty;
+			return MenuRecord.GetEmpty();
 
 		var menuRecordsList = new List<MenuOptionRecord>();
 
@@ -118,7 +118,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 					menuRecordsList.Add(new MenuOptionRecord(
 						$"Send to Output panel",
 						MenuOptionKind.Other,
-						OnClickFunc: () =>
+						onClickFunc: () =>
 						{
 							return SendToOutputPanelAsync(treeViewStringFragment.Item.TerminalCommandParsed?.OutputCache.ToString() ?? string.Empty);
 						}));
@@ -137,7 +137,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			menuRecordsList.Add(new MenuOptionRecord(
 				$"Refresh: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}",
 				MenuOptionKind.Other,
-				OnClickFunc: async () =>
+				onClickFunc: async () =>
 				{
 					// TODO: This code is not concurrency safe with 'TestExplorerScheduler.Task_DiscoverTests()'
 					Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
@@ -197,7 +197,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				menuRecordsList.Add(new MenuOptionRecord(
 					$"Send to Output panel",
 					MenuOptionKind.Other,
-					OnClickFunc: () =>
+					onClickFunc: () =>
 					{
 						return SendToOutputPanelAsync(treeViewProjectTestModel.Item.TerminalCommandParsed?.OutputCache.ToString() ?? string.Empty);
 					}));
@@ -205,9 +205,9 @@ public partial class TestExplorerContextMenu : ComponentBase
 		}
 
 		if (!menuRecordsList.Any())
-			return MenuRecord.Empty;
+			return MenuRecord.GetEmpty();
 
-		return new MenuRecord(menuRecordsList.ToImmutableArray());
+		return new MenuRecord(menuRecordsList);
 	}
 
 	private MenuOptionRecord GetEndPointMenuOption(
@@ -218,7 +218,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		var menuOptionRecord = new MenuOptionRecord(
 			$"Run: {treeViewStringFragment.Item.Value}",
 			MenuOptionKind.Other,
-			OnClickFunc: () =>
+			onClickFunc: () =>
 			{
 				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 				{
@@ -272,7 +272,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 
 		var fabricateTreeViewContainer = commandArgs.TreeViewContainer with
 		{
-			SelectedNodeList = fabricateSelectedNodeList.ToImmutableList()
+			SelectedNodeList = fabricateSelectedNodeList
 		};
 
 		var fabricateCommandArgs = new TreeViewCommandArgs(
@@ -289,7 +289,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		var menuOptionRecord = new MenuOptionRecord(
 			$"Namespace: {treeViewStringFragment.Item.Value} | {fabricateSelectedNodeList.Count}",
 			MenuOptionKind.Other,
-			SubMenu: multiSelectionMenuRecord);
+			subMenu: multiSelectionMenuRecord);
 
 		return new() { menuOptionRecord };
 	}
@@ -318,7 +318,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				menuOption = new(
 					treeViewStringFragment.Item.Value,
 					MenuOptionKind.Other,
-					SubMenu: await GetMenuRecord(innerTreeViewCommandArgs, true).ConfigureAwait(false));
+					subMenu: await GetMenuRecord(innerTreeViewCommandArgs, true).ConfigureAwait(false));
 
 				var copyRunAllOnClicksWithinSelection = runAllOnClicksWithinSelection;
 
@@ -342,7 +342,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				menuOption = new(
 					node.GetType().Name,
 					MenuOptionKind.Other,
-					SubMenu: MenuRecord.Empty);
+					subMenu: MenuRecord.GetEmpty());
 			}
 
 			menuOptionRecordList.Add(menuOption);
@@ -353,13 +353,13 @@ public partial class TestExplorerContextMenu : ComponentBase
 			menuOptionRecordList.Insert(0, new(
 				"Run all OnClicks within selection",
 				MenuOptionKind.Create,
-				OnClickFunc: runAllOnClicksWithinSelection));
+				onClickFunc: runAllOnClicksWithinSelection));
 		}
 
 		if (!menuOptionRecordList.Any())
-			return MenuRecord.Empty;
+			return MenuRecord.GetEmpty();
 
-		return new MenuRecord(menuOptionRecordList.ToImmutableArray());
+		return new MenuRecord(menuOptionRecordList);
 	}
 
 	private void RunTestByFullyQualifiedName(

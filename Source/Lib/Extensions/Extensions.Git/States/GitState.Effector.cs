@@ -105,15 +105,15 @@ public partial record GitState
                 var firstNode = untrackedTreeViewList.FirstOrDefault();
 
                 var activeNodes = firstNode is null
-                    ? Array.Empty<TreeViewNoType>()
-                    : new[] { firstNode };
+                    ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
+                    : new() { firstNode };
 
                 if (!_treeViewService.TryGetTreeViewContainer(TreeViewGitChangesKey, out var container))
                 {
                     _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                         TreeViewGitChangesKey,
                         adhocRoot,
-                        activeNodes.ToImmutableList()));
+                        activeNodes));
                 }
                 else
                 {

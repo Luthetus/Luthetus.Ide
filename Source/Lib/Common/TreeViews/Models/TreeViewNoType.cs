@@ -8,6 +8,16 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public abstract class TreeViewNoType
 {
+	private static readonly List<TreeViewNoType> _emptyTreeViewNoTypeList = new();
+	
+	public static List<TreeViewNoType> GetEmptyTreeViewNoTypeList()
+    {
+    	if (_emptyTreeViewNoTypeList.Count != 0)
+    		Console.WriteLine($"{nameof(TreeViewNoType)} {nameof(GetEmptyTreeViewNoTypeList)} if (_emptyTreeViewNoTypeList.Count != 0)");
+    		
+    	return _emptyTreeViewNoTypeList;
+    }
+
     public abstract object UntypedItem { get; }
     public abstract Type ItemType { get; }
 

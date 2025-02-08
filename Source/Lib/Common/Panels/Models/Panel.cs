@@ -75,7 +75,7 @@ public record Panel : IPanelTab, IDialog, IDrag
     public string DialogFocusPointHtmlElementId { get; init; }
 	public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
 
-    public ImmutableArray<IDropzone> DropzoneList { get; set; } = new();
+    public List<IDropzone> DropzoneList { get; set; } = new();
 
 	public ElementDimensions DragElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
     
@@ -164,7 +164,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				null));
 		}
 
-		DropzoneList = dropzoneList.ToImmutableArray();
+		DropzoneList = dropzoneList;
 	}
 
     public Task OnDragEndAsync(MouseEventArgs mouseEventArgs, IDropzone? dropzone)

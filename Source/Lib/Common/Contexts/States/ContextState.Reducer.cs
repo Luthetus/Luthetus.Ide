@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Contexts.States;
 
@@ -30,7 +30,7 @@ public partial record ContextState
 
             if (!outIsSelectingInspectionTarget)
             {
-                outInspectableContextList = ImmutableArray<InspectableContext>.Empty;
+                inContextStates.InspectableContextList.Clear();
                 outInspectedContextHeirarchy = null;
             }
 
@@ -56,10 +56,11 @@ public partial record ContextState
             }
             else
             {
+            	inContextStates.InspectableContextList.Clear();
+            	
                 return inContextStates with
                 {
                     IsSelectingInspectionTarget = false,
-                    InspectableContextList = ImmutableArray<InspectableContext>.Empty,
                     InspectedContextHeirarchy = null,
                 };
             }
@@ -70,10 +71,11 @@ public partial record ContextState
             ContextState inContextStates,
             SetInspectedContextHeirarchyAction setInspectedContextHeirarchyAction)
         {
+        	inContextStates.InspectableContextList.Clear();
+        
             return inContextStates with
             {
                 IsSelectingInspectionTarget = false,
-                InspectableContextList = ImmutableArray<InspectableContext>.Empty,
                 InspectedContextHeirarchy = setInspectedContextHeirarchyAction.InspectedContextHeirarchy,
             };
         }
@@ -83,13 +85,10 @@ public partial record ContextState
             ContextState inContextStates,
             AddInspectableContextAction addInspectableContextAction)
         {
-            var outList = inContextStates.InspectableContextList.Add(
+            inContextStates.InspectableContextList.Add(
                 addInspectableContextAction.InspectableContext);
 
-            return inContextStates with
-            {
-                InspectableContextList = outList,
-            };
+            return inContextStates with { };
         }
         
         [ReducerMethod]
@@ -102,16 +101,17 @@ public partial record ContextState
 
             if (inContextRecord != default)
                 return inContextStates;
+                
+            var index = inContextStates.AllContextsList.FindIndex(x => x.ContextKey == inContextRecord.ContextKey);
+            if (index == -1)
+            	return inContextStates;
 
-            var outList = inContextStates.AllContextsList.Replace(inContextRecord, inContextRecord with
+            inContextStates.AllContextsList[index] = inContextRecord with
             {
                 Keymap = setContextKeymapAction.Keymap
-            });
-
-            return inContextStates with
-            {
-                AllContextsList = outList,
             };
+
+            return inContextStates with { };
         }
     }
 }

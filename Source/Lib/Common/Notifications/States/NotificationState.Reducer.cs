@@ -13,7 +13,8 @@ public partial record NotificationState
             NotificationState inState,
             RegisterAction registerAction)
         {
-            var outDefaultList = inState.DefaultList.Add(registerAction.Notification);
+            var outDefaultList = new List<INotification>(inState.DefaultList);
+            outDefaultList.Add(registerAction.Notification);
 
             return inState with { DefaultList = outDefaultList };
         }
@@ -23,13 +24,16 @@ public partial record NotificationState
             NotificationState inState,
             DisposeAction disposeAction)
         {
-            var inNotification = inState.DefaultList.FirstOrDefault(
+            var indexNotification = inState.DefaultList.FindIndex(
                 x => x.DynamicViewModelKey == disposeAction.Key);
 
-            if (inNotification is null)
+            if (indexNotification == -1)
                 return inState;
+                
+            var inNotification = inState.DefaultList[indexNotification];
 
-            var outDefaultList = inState.DefaultList.Remove(inNotification);
+            var outDefaultList = new List<INotification>(inState.DefaultList);
+            outDefaultList.RemoveAt(indexNotification);
 
             return inState with { DefaultList = outDefaultList };
         }
@@ -47,8 +51,11 @@ public partial record NotificationState
 
             var inNotification = inState.DefaultList[inNotificationIndex];
 
-            var outDefaultList = inState.DefaultList.RemoveAt(inNotificationIndex);
-            var outReadList = inState.ReadList.Add(inNotification);
+            var outDefaultList = new List<INotification>(inState.DefaultList);
+            outDefaultList.RemoveAt(inNotificationIndex);
+            
+            var outReadList = new List<INotification>(inState.ReadList);
+            outReadList.Add(inNotification);
 
             return inState with
             {
@@ -70,8 +77,11 @@ public partial record NotificationState
 
             var inNotification = inState.ReadList[inNotificationIndex];
 
-            var outReadList = inState.ReadList.RemoveAt(inNotificationIndex);
-            var outDefaultList = inState.DefaultList.Add(inNotification);
+            var outReadList = new List<INotification>(inState.ReadList);
+            outReadList.RemoveAt(inNotificationIndex);
+            
+            var outDefaultList = new List<INotification>(inState.DefaultList);
+            outDefaultList.Add(inNotification);
 
             return inState with
             {
@@ -93,8 +103,11 @@ public partial record NotificationState
 
             var inNotification = inState.DefaultList[inNotificationIndex];
 
-            var outDefaultList = inState.DefaultList.RemoveAt(inNotificationIndex);
-            var outDeletedList = inState.DeletedList.Add(inNotification);
+            var outDefaultList = new List<INotification>(inState.DefaultList);
+            outDefaultList.RemoveAt(inNotificationIndex);
+            
+            var outDeletedList = new List<INotification>(inState.DeletedList);
+            outDeletedList.Add(inNotification);
 
             return inState with
             {
@@ -116,8 +129,11 @@ public partial record NotificationState
 
             var inNotification = inState.DeletedList[inNotificationIndex];
 
-            var outDeletedList = inState.DeletedList.RemoveAt(inNotificationIndex);
-            var outDefaultList = inState.DefaultList.Add(inNotification);
+            var outDeletedList = new List<INotification>(inState.DeletedList);
+            outDeletedList.RemoveAt(inNotificationIndex);
+
+            var outDefaultList = new List<INotification>(inState.DefaultList);
+            outDefaultList.Add(inNotification);
 
             return inState with
             {
@@ -139,8 +155,11 @@ public partial record NotificationState
 
             var inNotification = inState.DefaultList[inNotificationIndex];
 
-            var outDefaultList = inState.DefaultList.RemoveAt(inNotificationIndex);
-            var outArchivedList = inState.ArchivedList.Add(inNotification);
+            var outDefaultList = new List<INotification>(inState.DefaultList);
+            outDefaultList.RemoveAt(inNotificationIndex);
+
+            var outArchivedList = new List<INotification>(inState.ArchivedList);
+            outArchivedList.Add(inNotification);
 
             return inState with
             {
@@ -162,8 +181,11 @@ public partial record NotificationState
 
             var inNotification = inState.ArchivedList[inNotificationIndex];
 
-            var outArchivedList = inState.ArchivedList.RemoveAt(inNotificationIndex);
-            var outDefaultList = inState.DefaultList.Add(inNotification);
+            var outArchivedList = new List<INotification>(inState.ArchivedList);
+            outArchivedList.RemoveAt(inNotificationIndex);
+            
+            var outDefaultList = new List<INotification>(inState.DefaultList);
+            outDefaultList.Add(inNotification);
 
             return inState with
             {
@@ -178,7 +200,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                DefaultList = ImmutableList<INotification>.Empty
+                DefaultList = new List<INotification>()
             };
         }
         
@@ -188,7 +210,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                ReadList = ImmutableList<INotification>.Empty
+                ReadList = new List<INotification>()
             };
         }
         
@@ -198,7 +220,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                DeletedList = ImmutableList<INotification>.Empty
+                DeletedList = new List<INotification>()
             };
         }
 
@@ -208,7 +230,7 @@ public partial record NotificationState
         {
             return inState with
             {
-                ArchivedList = ImmutableList<INotification>.Empty
+                ArchivedList = new List<INotification>()
             };
         }
     }

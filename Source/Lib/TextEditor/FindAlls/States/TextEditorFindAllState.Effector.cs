@@ -258,15 +258,15 @@ public partial record TextEditorFindAllState
 		    var firstNode = treeViewList.FirstOrDefault();
 		
 		    var activeNodes = firstNode is null
-		        ? Array.Empty<TreeViewNoType>()
-		        : new[] { firstNode };
+		        ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
+		        : new() { firstNode };
 		
 		    if (!_treeViewService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
 		    {
 		        _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
 		            TextEditorFindAllState.TreeViewFindAllContainerKey,
 		            adhocRoot,
-		            activeNodes.ToImmutableList()));
+		            activeNodes));
 		    }
 		    else
 		    {

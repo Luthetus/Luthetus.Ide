@@ -23,17 +23,17 @@ public static class HtmlFacts
     public const string COMMENT_TAG_BEGINNING = "<!--";
     public const string COMMENT_TAG_ENDING = "-->";
 
-    public static readonly ImmutableArray<string> OPEN_TAG_ENDING_OPTIONS = new[]
+    public static readonly List<string> OPEN_TAG_ENDING_OPTIONS = new()
     {
         OPEN_TAG_WITH_CHILD_CONTENT_ENDING,
         OPEN_TAG_SELF_CLOSING_ENDING,
-    }.ToImmutableArray();
+    };
 
-    public static readonly ImmutableArray<string> TAG_NAME_STOP_DELIMITERS = new[]
+    public static readonly List<string> TAG_NAME_STOP_DELIMITERS = new List<string>()
     {
         ParserFacts.END_OF_FILE.ToString(),
     }
     .Union(WhitespaceFacts.ALL_LIST.Select(x => x.ToString()))
-        .Union(OPEN_TAG_ENDING_OPTIONS)
-        .ToImmutableArray();
+    .Union(OPEN_TAG_ENDING_OPTIONS)
+    .ToList();
 }

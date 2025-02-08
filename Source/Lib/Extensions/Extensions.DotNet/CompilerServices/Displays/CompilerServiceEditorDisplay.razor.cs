@@ -3,13 +3,13 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.Editors.Models;
@@ -31,7 +31,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 	[Inject]
 	private IState<CompilerServiceEditorState> CompilerServiceEditorStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
+	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 
@@ -55,7 +55,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
 		CompilerServiceEditorStateWrap.StateChanged += CompilerServiceEditorStateWrap_StateChanged;
 		TextEditorGroupStateWrap.StateChanged += TextEditorGroupStateWrap_StateChanged;
-		TextEditorStateWrap.StateChanged += TextEditorStateWrap_StateChanged;
+		TextEditorService.TextEditorStateChanged += TextEditorStateWrap_StateChanged;
 
 		base.OnInitialized();
 	}
@@ -67,7 +67,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 			var localCSharpCompilerService = _cSharpCompilerService;
 			var localCompilerServiceEditorState = CompilerServiceEditorStateWrap.Value;
 			var localTextEditorGroupState = TextEditorGroupStateWrap.Value;
-			var localTextEditorState = TextEditorStateWrap.Value;
+			var localTextEditorState = TextEditorService.TextEditorState;
 
 			var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
 				x => x.GroupKey == EditorIdeApi.EditorTextEditorGroupKey);
@@ -118,7 +118,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		}
 	}
 
-	private async void TextEditorStateWrap_StateChanged(object? sender, EventArgs e)
+	private async void TextEditorStateWrap_StateChanged()
 	{
 		ThrottledReRender();
 	}
@@ -156,7 +156,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
 		CompilerServiceEditorStateWrap.StateChanged -= CompilerServiceEditorStateWrap_StateChanged;
 		TextEditorGroupStateWrap.StateChanged -= TextEditorGroupStateWrap_StateChanged;
-		TextEditorStateWrap.StateChanged -= TextEditorStateWrap_StateChanged;
+		TextEditorService.TextEditorStateChanged -= TextEditorStateWrap_StateChanged;
 	}
 
 	private class CompilerServiceEditorViewModel

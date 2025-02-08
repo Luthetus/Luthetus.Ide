@@ -35,9 +35,9 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     /// </summary>
     public int Count => _queue.Count;
 
-	public ImmutableArray<IBackgroundTask> BackgroundTaskList => _queue.ToImmutableArray();
-
     public SemaphoreSlim __DequeueSemaphoreSlim { get; } = new(0);
+
+	public List<IBackgroundTask> GetBackgroundTaskList() => _queue.ToList();
 
     /// <summary>
     /// When enqueueing an event, a batchFunc is also provided.<br/><br/>

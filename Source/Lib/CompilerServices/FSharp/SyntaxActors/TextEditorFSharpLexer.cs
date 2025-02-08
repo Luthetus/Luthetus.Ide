@@ -25,11 +25,11 @@ public class TextEditorFSharpLexer : Lexer
         ")",
         ".",
         "//",
-        new[]
+        new()
         {
             WhitespaceFacts.CARRIAGE_RETURN.ToString(),
             WhitespaceFacts.LINE_FEED.ToString()
-        }.ToImmutableArray(),
+        },
         "(*",
         "*)",
         FSharpKeywords.ALL,

@@ -17,8 +17,8 @@ Customize the UI:
 
 And there are more features that are not shown in these gifs.
 
-Only 287.1 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.7) (The gif is sped up by cutting the frames in half):
-![Example GIF](./Images/Ide/Gifs/parseSolutionWideUpdated.gif)
+Only 312 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.25) (The gif is sped up by cutting the frames in half):
+![Example GIF](./Images/Ide/Gifs/parse_0.9.7.25.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/

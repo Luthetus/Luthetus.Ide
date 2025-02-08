@@ -98,7 +98,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		if (commandArgs.TreeViewContainer.ActiveNode is null)
 		{
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -152,14 +152,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		if (!menuOptionList.Any())
 		{
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
 
 		// Default case
 		{
-			var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
+			var menuRecord = new MenuRecord(menuOptionList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -192,8 +192,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			menuOptionList.Add(new MenuOptionRecord(
 				"Delete",
 				MenuOptionKind.Delete,
-				WidgetRendererType: IdeComponentRenderers.BooleanPromptOrCancelRendererType,
-				WidgetParameterMap: new Dictionary<string, object?>
+				widgetRendererType: IdeComponentRenderers.BooleanPromptOrCancelRendererType,
+				widgetParameterMap: new Dictionary<string, object?>
 				{
 					{ nameof(IBooleanPromptOrCancelRendererType.IncludeCancelOption), false },
 					{ nameof(IBooleanPromptOrCancelRendererType.Message), $"DELETE:" },
@@ -253,14 +253,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		if (!menuOptionList.Any())
 		{
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
 
 		// Default case
 		{
-			var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
+			var menuRecord = new MenuRecord(menuOptionList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -285,11 +285,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			});
 
 		var createOptions = new MenuOptionRecord("Add", MenuOptionKind.Create,
-			SubMenu: new MenuRecord(new[]
+			subMenu: new MenuRecord(new()
 			{
 				addNewCSharpProject,
 				addExistingCSharpProject,
-			}.ToImmutableArray()));
+			}));
 
 		var openInTextEditor = new MenuOptionRecord(
 			"Open in text editor",
@@ -407,16 +407,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		};
 	}
 
-	private MenuOptionRecord[] GetTreeViewLightWeightNugetPackageRecordMenuOptions(
+	private List<MenuOptionRecord> GetTreeViewLightWeightNugetPackageRecordMenuOptions(
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference)
 	{
 		if (treeViewCSharpProjectNugetPackageReference.Parent
 				is not TreeViewCSharpProjectNugetPackageReferences treeViewCSharpProjectNugetPackageReferences)
 		{
-			return MenuRecord.Empty.MenuOptionList.ToArray();
+			return MenuRecord.GetEmpty().MenuOptionList;
 		}
 
-		return new[]
+		return new()
 		{
 			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,

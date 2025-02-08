@@ -5,22 +5,27 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 namespace Luthetus.Common.RazorLib.Notifications.States;
 
 /// <summary>
+/// The list provided should not be modified after passing it as a parameter.
+/// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
+/// 
+/// ---
+/// 
 /// TODO: SphagettiCode - The NotificationState is written such that there are (2023-09-19)
 /// 4 lists. One foreach filter option. And the NotificationRecord gets shuffled around.
 /// This is odd. Perhaps use one list and filter it?
 /// </summary>
 [FeatureState]
 public partial record NotificationState(
-    ImmutableList<INotification> DefaultList,
-    ImmutableList<INotification> ReadList,
-    ImmutableList<INotification> ArchivedList,
-    ImmutableList<INotification> DeletedList)
+    List<INotification> DefaultList,
+    List<INotification> ReadList,
+    List<INotification> ArchivedList,
+    List<INotification> DeletedList)
 {
     public NotificationState() : this(
-        ImmutableList<INotification>.Empty,
-        ImmutableList<INotification>.Empty,
-        ImmutableList<INotification>.Empty,
-        ImmutableList<INotification>.Empty)
+        new List<INotification>(),
+        new List<INotification>(),
+        new List<INotification>(),
+        new List<INotification>())
     {
         
     }

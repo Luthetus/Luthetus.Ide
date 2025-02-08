@@ -594,7 +594,7 @@ Execution Terminal"));
 			_treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
-				new TreeViewNoType[] { rootNode }.ToImmutableList()));
+				new() { rootNode }));
 		}
 		else
 		{

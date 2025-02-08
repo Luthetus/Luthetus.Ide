@@ -11,8 +11,6 @@ public class BackgroundTaskService : IBackgroundTaskService
     
     private readonly object _taskCompletionSourceLock = new();
     
-    public ImmutableArray<IBackgroundTaskQueue> Queues => _queueContainerMap.Values.Select(x => (IBackgroundTaskQueue)x).ToImmutableArray();
-
 	/// <summary>
 	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
 	/// </summary>
@@ -21,6 +19,8 @@ public class BackgroundTaskService : IBackgroundTaskService
 	/// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
 	/// </summary>
     public BackgroundTaskWorker IndefiniteTaskWorker { get; private set; }
+
+	public List<IBackgroundTaskQueue> GetQueues() => _queueContainerMap.Values.Select(x => (IBackgroundTaskQueue)x).ToList();
 
     public void Enqueue(IBackgroundTask backgroundTask)
     {

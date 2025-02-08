@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Themes.Models;
@@ -11,7 +11,7 @@ public static class ThemeFacts
         "luth_visual-studio-light-theme-clone",
         ThemeContrastKind.Default,
         ThemeColorKind.Light,
-        new[] { ThemeScope.App, ThemeScope.TextEditor }.ToImmutableList());
+        new() { ThemeScope.App, ThemeScope.TextEditor });
 
     public static readonly ThemeRecord VisualStudioDarkThemeClone = new ThemeRecord(
         new Key<ThemeRecord>(Guid.Parse("8eaabd97-186d-40d0-a57b-5fec1c158902")),
@@ -19,5 +19,5 @@ public static class ThemeFacts
         "luth_visual-studio-dark-theme-clone",
         ThemeContrastKind.Default,
         ThemeColorKind.Dark,
-        new[] { ThemeScope.App, ThemeScope.TextEditor }.ToImmutableList());
+        new() { ThemeScope.App, ThemeScope.TextEditor });
 }

@@ -5,9 +5,7 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public interface IBackgroundTaskService
 {
-    public ImmutableArray<IBackgroundTaskQueue> Queues { get; }
-    
-    /// <summary>
+	/// <summary>
 	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
 	///
 	/// Similarly: If you think the task you are enqueueing will result in the previous statement being untrue, then you should use the IndefiniteTaskWorker.
@@ -19,6 +17,8 @@ public interface IBackgroundTaskService
 	/// Similarly: If you think the task you are enqueueing will finish "immediately" then you should use the ContinuousTaskWorker.
 	/// </summary>
     public BackgroundTaskWorker IndefiniteTaskWorker { get; }
+    
+    public List<IBackgroundTaskQueue> GetQueues();
 
     public void Enqueue(IBackgroundTask backgroundTask);
     public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc);

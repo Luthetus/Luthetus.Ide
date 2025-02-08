@@ -15,7 +15,6 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -24,7 +23,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 {
     private readonly ITextEditorService _textEditorService;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IState<TextEditorState> _textEditorStateWrap;
     private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
 
@@ -34,14 +32,12 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public TextEditorViewModelApi(
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
-        IState<TextEditorState> textEditorStateWrap,
         IJSRuntime jsRuntime,
         IDispatcher dispatcher,
         IDialogService dialogService)
     {
         _textEditorService = textEditorService;
         _backgroundTaskService = backgroundTaskService;
-        _textEditorStateWrap = textEditorStateWrap;
         _jsRuntime = jsRuntime;
         _dispatcher = dispatcher;
         _dialogService = dialogService;
@@ -108,37 +104,37 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         ResourceUri resourceUri,
         Category category)
     {
-        _dispatcher.Dispatch(new TextEditorState.RegisterViewModelAction(
-            viewModelKey,
+    	_textEditorService.ReduceRegisterViewModelAction(
+    		viewModelKey,
             resourceUri,
             category,
             _textEditorService,
             _dispatcher,
             _dialogService,
-            _jsRuntime));
+            _jsRuntime);
     }
     
     public void Register(TextEditorViewModel viewModel)
     {
-        _dispatcher.Dispatch(new TextEditorState.RegisterViewModelExistingAction(viewModel));
+        _textEditorService.ReduceRegisterViewModelExistingAction(viewModel);
     }
     #endregion
 
     #region READ_METHODS
     public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-        return _textEditorService.TextEditorStateWrap.Value.ViewModelGetOrDefault(
+        return _textEditorService.TextEditorState.ViewModelGetOrDefault(
             viewModelKey);
     }
 
     public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> GetViewModels()
     {
-        return _textEditorService.TextEditorStateWrap.Value.ViewModelGetViewModels();
+        return _textEditorService.TextEditorState.ViewModelGetViewModels();
     }
 
     public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-        var viewModel = _textEditorService.TextEditorStateWrap.Value.ViewModelGetOrDefault(
+        var viewModel = _textEditorService.TextEditorState.ViewModelGetOrDefault(
             viewModelKey);
 
         if (viewModel is null)
@@ -1157,7 +1153,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     #region DELETE_METHODS
     public void Dispose(Key<TextEditorViewModel> viewModelKey)
     {
-        _dispatcher.Dispatch(new TextEditorState.DisposeViewModelAction(viewModelKey));
+        _textEditorService.ReduceDisposeViewModelAction(viewModelKey);
     }
     #endregion
 }
