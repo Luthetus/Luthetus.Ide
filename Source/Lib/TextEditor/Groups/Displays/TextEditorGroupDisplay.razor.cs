@@ -67,7 +67,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
         }
 	}
 
-	private ImmutableArray<ITab> GetTabList(TextEditorGroup textEditorGroup)
+	private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
         var textEditorState = TextEditorStateWrap.Value;
 		var tabList = new List<ITab>();
@@ -83,7 +83,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
             }
 		}
 
-		return tabList.ToImmutableArray();
+		return tabList;
 	}
 
     public void Dispose()

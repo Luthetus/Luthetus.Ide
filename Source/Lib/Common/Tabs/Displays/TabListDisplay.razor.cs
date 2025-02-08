@@ -18,7 +18,7 @@ public partial class TabListDisplay : ComponentBase
 	private IDispatcher Dispatcher { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public ImmutableArray<ITab> TabList { get; set; } = ImmutableArray<ITab>.Empty;
+	public List<ITab> TabList { get; set; } = null!;
 	
 	[Parameter]
 	public string CssClassString { get; set; } = string.Empty;
