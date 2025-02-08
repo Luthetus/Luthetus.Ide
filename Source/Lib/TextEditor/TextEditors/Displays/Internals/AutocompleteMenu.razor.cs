@@ -38,10 +38,10 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 	}*/
 
 	private static readonly MenuRecord NoResultsMenuRecord = new(
-		new MenuOptionRecord[]
+		new List<MenuOptionRecord>()
         {
             new("No results", MenuOptionKind.Other)
-        }.ToImmutableArray());
+        });
 
     private ElementReference? _autocompleteMenuElementReference;
     private MenuDisplay? _autocompleteMenuComponent;
@@ -180,7 +180,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                             	
                             return entry.SideEffectFunc?.Invoke();
                         }),
-                        WidgetParameterMap: new Dictionary<string, object?>
+                        widgetParameterMap: new Dictionary<string, object?>
                         {
                             {
                                 nameof(AutocompleteEntry),
@@ -193,7 +193,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                 if (!menuOptionRecordsList.Any())
                     menuOptionRecordsList.Add(new MenuOptionRecord("No results", MenuOptionKind.Other));
 
-                return new MenuRecord(menuOptionRecordsList.ToImmutableArray());
+                return new MenuRecord(menuOptionRecordsList);
             }
 
             return NoResultsMenuRecord;

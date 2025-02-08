@@ -75,7 +75,7 @@ public partial class StartupControlDisplay : FluxorComponent
 			menuOptionList.Add(new MenuOptionRecord(
 				"View Output",
 			    MenuOptionKind.Other,
-			    OnClickFunc: async () => 
+			    onClickFunc: async () => 
 				{
 					var success = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
 	
@@ -91,7 +91,7 @@ public partial class StartupControlDisplay : FluxorComponent
 			menuOptionList.Add(new MenuOptionRecord(
 				"View Terminal",
 			    MenuOptionKind.Other,
-			    OnClickFunc: async () => 
+			    onClickFunc: async () => 
 				{
 					var success = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	
@@ -109,7 +109,7 @@ public partial class StartupControlDisplay : FluxorComponent
 			menuOptionList.Add(new MenuOptionRecord(
 				"Stop Execution",
 			    MenuOptionKind.Other,
-			    OnClickFunc: () =>
+			    onClickFunc: () =>
 			    {
 			    	var localStartupControlState = StartupControlStateWrap.Value;
 			    	
@@ -126,7 +126,7 @@ public partial class StartupControlDisplay : FluxorComponent
 				_startButtonElementId,
 				DropdownOrientation.Bottom,
 				_startButtonDropdownKey,
-				new MenuRecord(menuOptionList.ToImmutableArray()),
+				new MenuRecord(menuOptionList),
 				_startButtonElementReference);
 		}
         else

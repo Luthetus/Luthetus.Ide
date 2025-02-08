@@ -8,7 +8,6 @@ public interface IBackgroundTaskQueue
     public Key<IBackgroundTaskQueue> Key { get; }
     public string DisplayName { get; }
     public int Count { get; }
-	public ImmutableArray<IBackgroundTask> BackgroundTaskList { get; }
 	
 	/// <summary>
 	/// TODO: Decide how to not have this public. (cast the interface to its concrete type?).
@@ -35,4 +34,6 @@ public interface IBackgroundTaskQueue
 	/// but yeah it's a matter of worry, and other things need done than measure this.
 	/// </summary>
 	public IBackgroundTask? __DequeueOrDefault();
+	
+	public List<IBackgroundTask> GetBackgroundTaskList();
 }

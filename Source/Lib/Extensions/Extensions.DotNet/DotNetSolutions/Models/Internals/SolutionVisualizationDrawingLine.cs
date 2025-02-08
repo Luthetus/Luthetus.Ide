@@ -33,6 +33,6 @@ public class SolutionVisualizationDrawingLine<TItem> : ISolutionVisualizationDra
 		return new MenuOptionRecord(
 			"Connection",
 			MenuOptionKind.Other,
-			SubMenu: new MenuRecord(menuOptionRecordList.ToImmutableArray()));
+			subMenu: new MenuRecord(menuOptionRecordList));
 	}
 }

@@ -48,8 +48,8 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
-			WidgetRendererType: _dotNetComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
-			WidgetParameterMap: new Dictionary<string, object?>
+			widgetRendererType: _dotNetComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+			widgetParameterMap: new Dictionary<string, object?>
 			{
 				{
 					nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsolutePath),
@@ -81,7 +81,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
-			OnClickFunc:
+			onClickFunc:
 			() =>
 			{
 				PerformAddProjectToProjectReference(
@@ -102,7 +102,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove Project Reference", MenuOptionKind.Other,
-			OnClickFunc:
+			onClickFunc:
 				() =>
 				{
 					PerformRemoveProjectToProjectReference(
@@ -123,8 +123,8 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other,
-			WidgetRendererType: _ideComponentRenderers.FileFormRendererType,
-			WidgetParameterMap: new Dictionary<string, object?>
+			widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+			widgetParameterMap: new Dictionary<string, object?>
 			{
 				{ nameof(IFileFormRendererType.FileName), string.Empty },
 				{ nameof(IFileFormRendererType.IsDirectory), false },
@@ -154,7 +154,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove NuGet Package Reference", MenuOptionKind.Other,
-			OnClickFunc: () =>
+			onClickFunc: () =>
 			{
 				PerformRemoveNuGetPackageReferenceFromProject(
 					modifyProjectNamespacePath,

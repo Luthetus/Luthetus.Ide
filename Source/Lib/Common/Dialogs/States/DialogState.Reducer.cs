@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.States;
 
@@ -17,7 +18,8 @@ public partial record DialogState
             	return inState;
             }
 
-            var outDialogList = inState.DialogList.Add(registerAction.Dialog);
+			var outDialogList = new List<IDialog>(inState.DialogList);
+            outDialogList.Add(registerAction.Dialog);
 
             return inState with 
             {
@@ -31,15 +33,17 @@ public partial record DialogState
             DialogState inState,
             SetIsMaximizedAction setIsMaximizedAction)
         {
-            var inDialog = inState.DialogList.FirstOrDefault(
+            var indexDialog = inState.DialogList.FindIndex(
                 x => x.DynamicViewModelKey == setIsMaximizedAction.DynamicViewModelKey);
 
-            if (inDialog is null)
+            if (indexDialog == -1)
                 return inState;
+                
+            var inDialog = inState.DialogList[indexDialog];
 
-            var outDialogList = inState.DialogList.Replace(
-				inDialog,
-				inDialog.SetDialogIsMaximized(setIsMaximizedAction.IsMaximized));
+            var outDialogList = new List<IDialog>(inState.DialogList);
+            
+            outDialogList[indexDialog] = inDialog.SetDialogIsMaximized(setIsMaximizedAction.IsMaximized);
 
             return inState with { DialogList = outDialogList };
         }
@@ -57,13 +61,16 @@ public partial record DialogState
             DialogState inState,
             DisposeAction disposeAction)
         {
-            var inDialog = inState.DialogList.FirstOrDefault(
+            var indexDialog = inState.DialogList.FindIndex(
                 x => x.DynamicViewModelKey == disposeAction.DynamicViewModelKey);
 
-            if (inDialog is null)
+            if (indexDialog == -1)
                 return inState;
 
-            var outDialogList = inState.DialogList.Remove(inDialog);
+			var inDialog = inState.DialogList[indexDialog];
+
+            var outDialogList = new List<IDialog>(inState.DialogList);
+            outDialogList.RemoveAt(indexDialog);
 
             return inState with { DialogList = outDialogList };
         }

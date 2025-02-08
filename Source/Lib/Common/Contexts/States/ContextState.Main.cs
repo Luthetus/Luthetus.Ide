@@ -5,19 +5,23 @@ using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Contexts.States;
 
+/// <summary>
+/// The list provided should not be modified after passing it as a parameter.
+/// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
+/// </summary>
 [FeatureState]
 public partial record ContextState(
-    ImmutableArray<ContextRecord> AllContextsList,
+    List<ContextRecord> AllContextsList,
     ContextHeirarchy FocusedContextHeirarchy,
     ContextHeirarchy? InspectedContextHeirarchy,
-    ImmutableArray<InspectableContext> InspectableContextList,
+    List<InspectableContext> InspectableContextList,
     bool IsSelectingInspectionTarget)
 {
     public ContextState() : this(
-        ImmutableArray<ContextRecord>.Empty,
+        new List<ContextRecord>(),
         new(new List<Key<ContextRecord>>()),
         null,
-        ImmutableArray<InspectableContext>.Empty,
+        new List<InspectableContext>(),
         false)
     {
         FocusedContextHeirarchy = new ContextHeirarchy(new List<Key<ContextRecord>>

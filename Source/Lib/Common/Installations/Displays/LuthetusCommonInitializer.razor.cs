@@ -158,8 +158,8 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 							}
 						
 							var menu = menuOptionList.Count == 0
-								? MenuRecord.Empty
-								: new MenuRecord(menuOptionList.ToImmutableArray());
+								? MenuRecord.GetEmpty()
+								: new MenuRecord(menuOptionList);
 								
 							return Task.FromResult(menu);
 						})));

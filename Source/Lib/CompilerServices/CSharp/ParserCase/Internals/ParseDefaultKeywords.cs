@@ -864,6 +864,27 @@ public class ParseDefaultKeywords
             var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel);
             compilationUnit.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit);
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
+			
+			while (!parserModel.TokenWalker.IsEof)
+			{
+				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+				{
+					_ = parserModel.TokenWalker.Consume(); // Consume the CommaToken
+				
+					var consumeCounter = parserModel.TokenWalker.ConsumeCounter;
+					
+            		compilationUnit.Binder.BindTypeClauseNode(
+            			parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel),
+            			compilationUnit);
+            		
+            		if (consumeCounter == parserModel.TokenWalker.ConsumeCounter)
+            			break;
+				}
+				else
+				{
+					break;
+				}
+			}
     	}
     	
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)

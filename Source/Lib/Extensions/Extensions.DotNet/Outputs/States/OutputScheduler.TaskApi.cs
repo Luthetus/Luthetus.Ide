@@ -118,15 +118,15 @@ public partial class OutputScheduler
         var firstNode = treeViewNodeList.FirstOrDefault();
 
         var activeNodes = firstNode is null
-            ? Array.Empty<TreeViewNoType>()
-            : new[] { firstNode };
+            ? new List<TreeViewNoType>()
+            : new() { firstNode };
 
         if (!_treeViewService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
         {
             _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                 OutputState.TreeViewContainerKey,
                 adhocRoot,
-                activeNodes.ToImmutableList()));
+                activeNodes));
         }
         else
         {

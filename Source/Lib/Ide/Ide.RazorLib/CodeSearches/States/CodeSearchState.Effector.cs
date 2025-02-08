@@ -129,15 +129,15 @@ public partial record CodeSearchState
 		    var firstNode = treeViewList.FirstOrDefault();
 		
 		    var activeNodes = firstNode is null
-		        ? Array.Empty<TreeViewNoType>()
-		        : new[] { firstNode };
+		        ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
+		        : new() { firstNode };
 		
 		    if (!_treeViewService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
 		    {
 		        _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
 		            CodeSearchState.TreeViewCodeSearchContainerKey,
 		            adhocRoot,
-		            activeNodes.ToImmutableList()));
+		            activeNodes));
 		    }
 		    else
 		    {

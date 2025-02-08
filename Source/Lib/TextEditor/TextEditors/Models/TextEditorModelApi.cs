@@ -7,7 +7,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -34,7 +33,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     #region CREATE_METHODS
     public void RegisterCustom(TextEditorModel model)
     {
-        _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(model));
+        _textEditorService.ReduceRegisterModelAction(model);
     }
 
     public void RegisterTemplated(
@@ -52,14 +51,14 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
             _textEditorRegistryWrap.DecorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
             _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod));
 
-        _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(model));
+        _textEditorService.ReduceRegisterModelAction(model);
     }
     #endregion
 
     #region READ_METHODS
     public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
-    	return _textEditorService.TextEditorStateWrap.Value.ModelGetViewModelsOrEmpty(resourceUri);
+    	return _textEditorService.TextEditorState.ModelGetViewModelsOrEmpty(resourceUri);
     }
 
     public string? GetAllText(ResourceUri resourceUri)
@@ -69,18 +68,18 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
     {
-        return _textEditorService.TextEditorStateWrap.Value.ModelGetOrDefault(
+        return _textEditorService.TextEditorState.ModelGetOrDefault(
         	resourceUri);
     }
 
     public Dictionary<ResourceUri, TextEditorModel> GetModels()
     {
-        return _textEditorService.TextEditorStateWrap.Value.ModelGetModels();
+        return _textEditorService.TextEditorState.ModelGetModels();
     }
     
     public int GetModelsCount()
     {
-    	return _textEditorService.TextEditorStateWrap.Value.ModelGetModelsCount();
+    	return _textEditorService.TextEditorState.ModelGetModelsCount();
     }
     #endregion
 
@@ -291,7 +290,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     #region DELETE_METHODS
     public void Dispose(ResourceUri resourceUri)
     {
-        _dispatcher.Dispatch(new TextEditorState.DisposeModelAction(resourceUri));
+        _textEditorService.ReduceDisposeModelAction(resourceUri);
     }
     #endregion
 }

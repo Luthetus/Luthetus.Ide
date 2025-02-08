@@ -409,10 +409,10 @@ public class JsonSyntaxTree
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
-        var firstWordTuple = stringWalker.ReadWordTuple(new[]
+        var firstWordTuple = stringWalker.ReadWordTuple(new()
         {
             ','
-        }.ToImmutableArray());
+        });
 
         if (JsonFacts.NULL_STRING_VALUE == firstWordTuple.value)
         {

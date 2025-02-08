@@ -69,7 +69,7 @@ public partial class ContextSwitchDisplay : ComponentBase
 					contextSwitchGroup.Title,
 					menu,
 					_flatMenuOptionList.Count,
-					menu.MenuOptionList.Length));
+					menu.MenuOptionList.Count));
 					
 				_flatMenuOptionList.AddRange(menu.MenuOptionList);
 			}

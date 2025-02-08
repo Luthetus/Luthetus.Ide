@@ -1,32 +1,38 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
-using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
 /// <summary>
+/// Once the 'PanelGroupList'/'PanelList' are exposed publically,
+/// they should NOT be modified.
+/// Make a shallow copy 'new List<PanelGroup>(panelState.PanelGroupList);'/
+/// 'new List<Panel>(panelState.PanelList);'
+/// and modify the shallow copy if modification of the list
+/// after exposing it publically is necessary.
+///
+/// ---
+///
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
 [FeatureState]
 public partial record PanelState(
-	ImmutableArray<PanelGroup> PanelGroupList,
-	ImmutableArray<Panel> PanelList)
+	List<PanelGroup> PanelGroupList,
+	List<Panel> PanelList)
 {
-    public PanelState() : this(ImmutableArray<PanelGroup>.Empty, ImmutableArray<Panel>.Empty)
+    public PanelState() : this(new List<PanelGroup>(), new List<Panel>())
     {
         var topLeftGroup = ConstructTopLeftGroup();
         var topRightGroup = ConstructTopRightGroup();
         var bottomGroup = ConstructBottomGroup();
 
-        PanelGroupList = new[]
-        {
-            topLeftGroup,
-            topRightGroup,
-            bottomGroup,
-        }.ToImmutableArray();
+        PanelGroupList.Add(topLeftGroup);
+        PanelGroupList.Add(topRightGroup);
+        PanelGroupList.Add(bottomGroup);
     }
 
     public (IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs { get; set; }
@@ -37,7 +43,7 @@ public partial record PanelState(
             PanelFacts.LeftPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<IPanelTab>.Empty);
+            PanelGroup.GetEmptyTabList());
 
         leftPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -54,7 +60,7 @@ public partial record PanelState(
             PanelFacts.RightPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<IPanelTab>.Empty);
+            PanelGroup.GetEmptyTabList());
 
         rightPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -71,7 +77,7 @@ public partial record PanelState(
             PanelFacts.BottomPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            ImmutableArray<IPanelTab>.Empty);
+            PanelGroup.GetEmptyTabList());
 
         bottomPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {

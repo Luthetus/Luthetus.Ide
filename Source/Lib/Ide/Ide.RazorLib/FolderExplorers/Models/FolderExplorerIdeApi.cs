@@ -120,7 +120,7 @@ public class FolderExplorerIdeApi
             _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
-                new TreeViewNoType[] { rootNode }.ToImmutableList()));
+                new() { rootNode }));
         }
         else
         {

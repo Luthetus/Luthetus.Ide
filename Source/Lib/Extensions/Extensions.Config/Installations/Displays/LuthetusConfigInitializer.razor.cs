@@ -122,8 +122,8 @@ public partial class LuthetusConfigInitializer : ComponentBase
                     InputFileContent.TreeViewContainerKey,
                     adhocRootNode,
                     activeNode is null
-                        ? ImmutableList<TreeViewNoType>.Empty
-                        : new TreeViewNoType[] { activeNode }.ToImmutableList()));
+                        ? new List<TreeViewNoType>()
+                        : new() { activeNode }));
             }
             else
             {

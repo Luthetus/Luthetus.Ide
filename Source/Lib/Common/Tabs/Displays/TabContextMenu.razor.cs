@@ -42,14 +42,14 @@ public partial class TabContextMenu : ComponentBase
 
 		if (!menuOptionList.Any())
 		{
-			var menuRecord = MenuRecord.Empty;
+			var menuRecord = MenuRecord.GetEmpty();
 			_previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
 			return menuRecord;
 		}
 
 		// Default case
 		{
-			var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
+			var menuRecord = new MenuRecord(menuOptionList);
 			_previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
 			return menuRecord;
 		}

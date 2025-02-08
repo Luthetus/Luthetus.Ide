@@ -1,6 +1,8 @@
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -13,7 +15,6 @@ using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
@@ -33,7 +34,6 @@ public partial interface ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public IState<TextEditorState> TextEditorStateWrap { get; }
     public IState<TextEditorGroupState> GroupStateWrap { get; }
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
@@ -46,6 +46,10 @@ public partial interface ITextEditorService
 	public IAutocompleteIndexer AutocompleteIndexer { get; }
 	public IAutocompleteService AutocompleteService { get; }
 	public LuthetusTextEditorConfig TextEditorConfig { get; }
+	
+	public TextEditorState TextEditorState { get; }
+	
+	public event Action? TextEditorStateChanged;
         
     /// <summary>
     /// This method will create an instance of <see cref="UniqueTextEditorTask"/>,
@@ -99,4 +103,31 @@ public partial interface ITextEditorService
 		int? columnIndex,
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey);
+		
+	public void ReduceRegisterModelAction(TextEditorModel model);
+	public void ReduceDisposeModelAction(ResourceUri resourceUri);
+	public void ReduceSetModelAction(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier);
+	
+	public void ReduceRegisterViewModelAction(
+	    Key<TextEditorViewModel> viewModelKey,
+	    ResourceUri resourceUri,
+	    Category category,
+	    ITextEditorService textEditorService,
+	    IDispatcher dispatcher,
+	    IDialogService dialogService,
+	    IJSRuntime jsRuntime);
+	
+	public void ReduceRegisterViewModelExistingAction(TextEditorViewModel viewModel);
+	
+	public void ReduceDisposeViewModelAction(Key<TextEditorViewModel> viewModelKey);
+	
+	public void ReduceSetViewModelWithAction(
+	    ITextEditorEditContext editContext,
+	    Key<TextEditorViewModel> viewModelKey,
+	    Func<TextEditorViewModel, TextEditorViewModel> withFunc);
+	
+	public void ReduceSetModelAndViewModelRangeAction(
+	    ITextEditorEditContext editContext,
+		Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
+		Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList);
 }

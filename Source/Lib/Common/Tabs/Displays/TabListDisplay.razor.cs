@@ -17,8 +17,12 @@ public partial class TabListDisplay : ComponentBase
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 
+	/// <summary>
+	/// The list provided should not be modified after passing it as a parameter..
+	/// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
+	/// </summary>
 	[Parameter, EditorRequired]
-	public ImmutableArray<ITab> TabList { get; set; } = ImmutableArray<ITab>.Empty;
+	public List<ITab> TabList { get; set; } = null!;
 	
 	[Parameter]
 	public string CssClassString { get; set; } = string.Empty;

@@ -34,11 +34,11 @@ public class PythonLexer : Lexer
         ")",
         ".",
         "#",
-        new[]
+        new()
         {
             WhitespaceFacts.CARRIAGE_RETURN.ToString(),
             WhitespaceFacts.LINE_FEED.ToString()
-        }.ToImmutableArray(),
+        },
         "/*",
         "*/",
         PythonLanguageFacts.Keywords.ALL_LIST,

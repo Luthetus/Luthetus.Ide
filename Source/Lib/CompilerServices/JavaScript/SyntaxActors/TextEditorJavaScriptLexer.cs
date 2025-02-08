@@ -25,11 +25,11 @@ public class TextEditorJavaScriptLexer : Lexer
         ")",
         ".",
         "//",
-        new[]
+        new()
         {
             WhitespaceFacts.CARRIAGE_RETURN.ToString(),
             WhitespaceFacts.LINE_FEED.ToString()
-        }.ToImmutableArray(),
+        },
         "/*",
         "*/",
         JavaScriptKeywords.ALL,

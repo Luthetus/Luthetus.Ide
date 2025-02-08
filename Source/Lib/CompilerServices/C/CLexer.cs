@@ -34,11 +34,11 @@ public class CLexer : Lexer
         ")",
         ".",
         "//",
-        new[]
+        new()
         {
             WhitespaceFacts.CARRIAGE_RETURN.ToString(),
             WhitespaceFacts.LINE_FEED.ToString()
-        }.ToImmutableArray(),
+        },
         "/*",
         "*/",
         CLanguageFacts.Keywords.ALL_LIST,
