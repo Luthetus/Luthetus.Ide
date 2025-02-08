@@ -16,7 +16,7 @@ public record TreeViewContainer
     public TreeViewContainer(
         Key<TreeViewContainer> key,
         TreeViewNoType? rootNode,
-        ImmutableList<TreeViewNoType> selectedNodeList)
+        List<TreeViewNoType> selectedNodeList)
     {    
 		rootNode ??= TreeViewAdhoc.ConstructTreeViewAdhoc();
 
@@ -31,6 +31,6 @@ public record TreeViewContainer
     /// The <see cref="ActiveNode"/> is the last or default entry in <see cref="SelectedNodeList"/>
     /// </summary>
     public TreeViewNoType? ActiveNode => SelectedNodeList.FirstOrDefault();
-    public ImmutableList<TreeViewNoType> SelectedNodeList { get; init; }
+    public List<TreeViewNoType> SelectedNodeList { get; init; }
     public Guid StateId { get; init; } = Guid.NewGuid();
 }

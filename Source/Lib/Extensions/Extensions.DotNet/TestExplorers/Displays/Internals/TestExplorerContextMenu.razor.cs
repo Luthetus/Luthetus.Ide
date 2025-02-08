@@ -272,7 +272,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 
 		var fabricateTreeViewContainer = commandArgs.TreeViewContainer with
 		{
-			SelectedNodeList = fabricateSelectedNodeList.ToImmutableList()
+			SelectedNodeList = fabricateSelectedNodeList
 		};
 
 		var fabricateCommandArgs = new TreeViewCommandArgs(

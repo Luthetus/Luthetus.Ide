@@ -163,14 +163,14 @@ public partial class TestExplorerScheduler
         
         var firstNode = localTreeViewProjectTestModelList.FirstOrDefault();
 
-        var activeNodes = new TreeViewNoType[] { ContainsTestsTreeViewGroup };
+        var activeNodes = new List<TreeViewNoType> { ContainsTestsTreeViewGroup };
 
         if (!_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out _))
         {
             _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                 TestExplorerState.TreeViewTestExplorerKey,
                 adhocRoot,
-                activeNodes.ToImmutableList()));
+                activeNodes));
         }
         else
         {

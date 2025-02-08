@@ -19,7 +19,9 @@ public partial record TreeViewState
             if (inContainer is not null)
                 return inState;
 
-            var outContainerList = inState.ContainerList.Add(registerContainerAction.Container);
+            var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList.Add(registerContainerAction.Container);
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -27,13 +29,15 @@ public partial record TreeViewState
         public static TreeViewState ReduceDisposeContainerAction(
             TreeViewState inState, DisposeContainerAction disposeContainerAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+            var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == disposeContainerAction.ContainerKey);
 
-            if (inContainer is null)
+            if (indexContainer == -1)
                 return inState;
-
-            var outContainerList = inState.ContainerList.Remove(inContainer);
+            
+            var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList.RemoveAt(indexContainer);
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -41,19 +45,23 @@ public partial record TreeViewState
         public static TreeViewState ReduceWithRootNodeAction(
             TreeViewState inState, WithRootNodeAction withRootNodeAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+            var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == withRootNodeAction.ContainerKey);
 
-            if (inContainer is null)
+            if (indexContainer == -1)
                 return inState;
 
+            var inContainer = inState.ContainerList[indexContainer];
+            
             var outContainer = inContainer with
             {
                 RootNode = withRootNodeAction.Node,
-                SelectedNodeList = new TreeViewNoType[] { withRootNodeAction.Node }.ToImmutableList()
+                SelectedNodeList = new() { withRootNodeAction.Node }
             };
 
-            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
+            var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList[indexContainer] = outContainer;
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -89,15 +97,19 @@ public partial record TreeViewState
         public static TreeViewState ReduceReRenderNodeAction(
             TreeViewState inState, ReRenderNodeAction reRenderNodeAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+            var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == reRenderNodeAction.ContainerKey);
 
-            if (inContainer is null)
+            if (indexContainer == -1)
                 return inState;
 
+            var inContainer = inState.ContainerList[indexContainer];
+            
             var outContainer = PerformReRenderNode(inContainer, reRenderNodeAction);
 
-            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
+            var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList[indexContainer] = outContainer;
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -105,17 +117,18 @@ public partial record TreeViewState
         public static TreeViewState ReduceSetActiveNodeAction(
             TreeViewState inState, SetActiveNodeAction setActiveNodeAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+            var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == setActiveNodeAction.ContainerKey);
 
-            if (inContainer is null)
+            if (indexContainer == -1)
                 return inState;
 
+			var inContainer = inState.ContainerList[indexContainer];
+			
 			var outContainer = PerformSetActiveNode(inContainer, setActiveNodeAction);
 
-			var outContainerList = inState.ContainerList.Replace(
-				inContainer,
-				outContainer);
+			var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+			outContainerList[indexContainer] = outContainer;
 
             return inState with { ContainerList = outContainerList };
         }
@@ -124,17 +137,19 @@ public partial record TreeViewState
         public static TreeViewState ReduceRemoveSelectedNodeAction(
             TreeViewState inState, RemoveSelectedNodeAction removeSelectedNodeAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+            var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == removeSelectedNodeAction.ContainerKey);
 
-            if (inContainer is null)
+            if (indexContainer == -1)
                 return inState;
 
+			var inContainer = inState.ContainerList[indexContainer];
+			
 			var outContainer = PerformRemoveSelectedNode(inContainer, removeSelectedNodeAction);
 
-			var outContainerList = inState.ContainerList.Replace(
-				inContainer,
-				outContainer);
+			var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+				
+			outContainerList[indexContainer] = outContainer;
 
             return inState with { ContainerList = outContainerList };
         }
@@ -143,17 +158,20 @@ public partial record TreeViewState
         public static TreeViewState ReduceMoveLeftAction(
             TreeViewState inState, MoveLeftAction moveLeftAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+            var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == moveLeftAction.ContainerKey);
 
-            if (inContainer is null || inContainer.ActiveNode is null)
+			if (indexContainer == -1)
+				return inState;
+				
+			var inContainer = inState.ContainerList[indexContainer];
+            if (inContainer?.ActiveNode is null)
                 return inState;
 
             var outContainer = PerformMoveLeft(inContainer, moveLeftAction);
 
-            var outContainerList = inState.ContainerList.Replace(
-                inContainer,
-                outContainer);
+            var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList[indexContainer] = outContainer;
 
             return inState with { ContainerList = outContainerList };
         }
@@ -162,15 +180,21 @@ public partial record TreeViewState
         public static TreeViewState ReduceMoveDownAction(
             TreeViewState inState, MoveDownAction moveDownAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+            var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == moveDownAction.ContainerKey);
 
-            if (inContainer is null || inContainer.ActiveNode is null)
+            if (indexContainer == -1)
+            	return inState;
+            
+            var inContainer = inState.ContainerList[indexContainer];
+            if (inContainer?.ActiveNode is null)
                 return inState;
 
             var outContainer = PerformMoveDown(inContainer, moveDownAction);
 
-            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
+            var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList[indexContainer] = outContainer;
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -178,15 +202,19 @@ public partial record TreeViewState
         public static TreeViewState ReduceMoveUpAction(
             TreeViewState inState, MoveUpAction moveUpAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+            var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == moveUpAction.ContainerKey);
 
-            if (inContainer is null)
+			if (indexContainer == -1)
                 return inState;
 
+            var inContainer = inState.ContainerList[indexContainer];
+            
             var outContainer = PerformMoveUp(inContainer, moveUpAction);
 
-            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
+            var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList[indexContainer] = outContainer;
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -194,15 +222,22 @@ public partial record TreeViewState
         public static TreeViewState ReduceMoveRightAction(
             TreeViewState inState, MoveRightAction moveRightAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+        	var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == moveRightAction.ContainerKey);
-
-            if (inContainer is null || inContainer.ActiveNode is null)
+			
+			if (indexContainer == -1)
+                return inState;
+			
+            var inContainer = inState.ContainerList[indexContainer];
+                
+            if (inContainer?.ActiveNode is null)
                 return inState;
 
             var outContainer = PerformMoveRight(inContainer, moveRightAction);
 
-            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
+			var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList[indexContainer] = outContainer;
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -210,15 +245,21 @@ public partial record TreeViewState
         public static TreeViewState ReduceMoveHomeAction(
             TreeViewState inState, MoveHomeAction moveHomeAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+        	var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == moveHomeAction.ContainerKey);
-
-            if (inContainer is null || inContainer.ActiveNode is null)
+                
+			if (indexContainer == -1)
+                return inState;
+                
+            var inContainer = inState.ContainerList[indexContainer];
+            if (inContainer?.ActiveNode is null)
                 return inState;
 
             var outContainer = PerformMoveHome(inContainer, moveHomeAction);
 
-            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
+			var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList[indexContainer] = outContainer;
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -226,15 +267,21 @@ public partial record TreeViewState
         public static TreeViewState ReduceMoveEndAction(
             TreeViewState inState, MoveEndAction moveEndAction)
         {
-            var inContainer = inState.ContainerList.FirstOrDefault(
+        	var indexContainer = inState.ContainerList.FindIndex(
                 x => x.Key == moveEndAction.ContainerKey);
-
-            if (inContainer is null || inContainer.ActiveNode is null)
+			
+			if (indexContainer == -1)
+                return inState;
+            
+            var inContainer = inState.ContainerList[indexContainer];
+            if (inContainer?.ActiveNode is null)
                 return inState;
 
             var outContainer = PerformMoveEnd(inContainer, moveEndAction);
 
-            var outContainerList = inState.ContainerList.Replace(inContainer, outContainer);
+			var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            outContainerList[indexContainer] = outContainer;
+            
             return inState with { ContainerList = outContainerList };
         }
 
@@ -395,7 +442,7 @@ public partial record TreeViewState
 	
 					outContainer = inContainer with
 		            {
-		                SelectedNodeList = ImmutableList<TreeViewNoType>.Empty
+		                SelectedNodeList = new()
 		            };
 				}
 				else if (!setActiveNodeAction.AddSelectedNodes)
@@ -404,10 +451,10 @@ public partial record TreeViewState
 	
 					outContainer = inContainer with
 		            {
-		                SelectedNodeList = new TreeViewNoType[] 
+		                SelectedNodeList = new()
 						{
 							setActiveNodeAction.NextActiveNode
-						}.ToImmutableList()
+						}
 		            };
 				}
 				else
@@ -417,19 +464,25 @@ public partial record TreeViewState
 					
 					if (alreadyExistingIndex != -1)
 					{
+						var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
+						outSelectedNodeList.RemoveAt(alreadyExistingIndex);
+					
 						inContainer = inContainer with
 			            {
-			                SelectedNodeList = inContainer.SelectedNodeList.RemoveAt(
-								alreadyExistingIndex)
+			                SelectedNodeList = outSelectedNodeList
 			            };
 					}
 
-					outContainer = inContainer with
-		            {
-		                SelectedNodeList = inContainer.SelectedNodeList.Insert(
-							0,
-							setActiveNodeAction.NextActiveNode)
-		            };
+					// Variable name collision on 'outSelectedNodeLists'.
+					{
+						var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
+						outSelectedNodeList.Insert(0, setActiveNodeAction.NextActiveNode);
+						
+						outContainer = inContainer with
+			            {
+			                SelectedNodeList = outSelectedNodeList
+			            };
+			        }
 				}
 			}
 			
@@ -451,10 +504,12 @@ public partial record TreeViewState
             var indexOfNodeToRemove = inContainer.SelectedNodeList.FindIndex(
                 x => x.Key == removeSelectedNodeAction.KeyOfNodeToRemove);
 
+			var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
+			outSelectedNodeList.RemoveAt(indexOfNodeToRemove);
+
             return inContainer with
             {
-                SelectedNodeList = inContainer.SelectedNodeList.RemoveAt(
-                    indexOfNodeToRemove)
+                SelectedNodeList = outSelectedNodeList
             };
         }
         

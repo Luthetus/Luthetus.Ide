@@ -76,6 +76,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private readonly ElementDimensions _sidebarElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
 
+	private readonly List<TreeViewNoType> _emptyTreeViewNoTypeList = new();
+
     private AbsolutePath? _selectedAbsolutePath;
     private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
     private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
@@ -92,7 +94,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private List<(Key<TreeViewContainer> treeViewContainerKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
 
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
-
+    
     protected override void OnInitialized()
     {
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
@@ -193,8 +195,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
-                    ? ImmutableList<TreeViewNoType>.Empty
-                    : new TreeViewNoType[] { activeNode }.ToImmutableList()));
+                    ? _emptyTreeViewNoTypeList
+                    : new() { activeNode }));
         }
         else
         {

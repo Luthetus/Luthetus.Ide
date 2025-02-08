@@ -1,13 +1,13 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.States;
 
 [FeatureState]
-public partial record TreeViewState(ImmutableList<TreeViewContainer> ContainerList)
+public partial record TreeViewState(List<TreeViewContainer> ContainerList)
 {
-    public TreeViewState() : this(ImmutableList<TreeViewContainer>.Empty)
+    public TreeViewState() : this(new List<TreeViewContainer>())
     {
     }
 }

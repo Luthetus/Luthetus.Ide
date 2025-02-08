@@ -18,6 +18,8 @@ public partial record CodeSearchState
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
         private readonly ITreeViewService _treeViewService;
+        
+        private readonly List<TreeViewNoType> _emptyTreeViewNoTypeList = new();
 
         public Effector(
             IState<CodeSearchState> codeSearchStateWrap,
@@ -129,15 +131,15 @@ public partial record CodeSearchState
 		    var firstNode = treeViewList.FirstOrDefault();
 		
 		    var activeNodes = firstNode is null
-		        ? Array.Empty<TreeViewNoType>()
-		        : new[] { firstNode };
+		        ? _emptyTreeViewNoTypeList
+		        : new() { firstNode };
 		
 		    if (!_treeViewService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
 		    {
 		        _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
 		            CodeSearchState.TreeViewCodeSearchContainerKey,
 		            adhocRoot,
-		            activeNodes.ToImmutableList()));
+		            activeNodes));
 		    }
 		    else
 		    {

@@ -150,7 +150,7 @@ public class CompilerServiceIdeApi
 					_treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						rootNode,
-						new TreeViewNoType[] { rootNode }.ToImmutableList()));
+						new() { rootNode }));
 				}
 				else
 				{

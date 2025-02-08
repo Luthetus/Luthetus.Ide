@@ -49,6 +49,8 @@ public partial class InputFileSidebar : ComponentBase
     public Action<AbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
     public static readonly Key<TreeViewContainer> TreeViewContainerKey = Key<TreeViewContainer>.NewKey();
+    
+    private readonly List<TreeViewNoType> _emptyTreeViewNoTypeList = new();
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -80,8 +82,8 @@ public partial class InputFileSidebar : ComponentBase
                     TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null
-                        ? ImmutableList<TreeViewNoType>.Empty
-                        : new TreeViewNoType[] { directoryHomeNode }.ToImmutableList()));
+                        ? _emptyTreeViewNoTypeList
+                        : new() { directoryHomeNode }));
             }
         }
 
