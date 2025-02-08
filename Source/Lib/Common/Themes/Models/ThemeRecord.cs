@@ -1,5 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Themes.Models;
 
@@ -9,4 +9,4 @@ public record ThemeRecord(
     string CssClassString,
     ThemeContrastKind ThemeContrastKind,
     ThemeColorKind ThemeColorKind,
-    ImmutableList<ThemeScope> ThemeScopeList);
+    List<ThemeScope> ThemeScopeList);
