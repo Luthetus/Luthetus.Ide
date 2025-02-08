@@ -41,8 +41,8 @@
 
     <div class="luth_web_notifications-view-body">
         @{
-            var entriesToRenderList = ImmutableList<INotification>.Empty;
-            var clearOnClick = new Action(() => { });
+            var entriesToRenderList = _emptyEntriesToRenderList;
+            var clearOnClick = _defaultClearAction;
 
             switch (_chosenNotificationsViewKind)
             {

@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -12,6 +13,9 @@ public partial class NotificationsViewDisplay : FluxorComponent
     private IState<NotificationState> NotificationStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    
+    private readonly List<INotification> _emptyEntriesToRenderList = new();
+    private readonly Action _defaultClearAction = new Action(() => { });
 
     private NotificationsViewKind _chosenNotificationsViewKind = NotificationsViewKind.Notifications;
 
