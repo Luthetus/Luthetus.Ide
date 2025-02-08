@@ -10,10 +10,10 @@ public partial record DialogState
 {
     public DialogState()
     {
-        DialogList = ImmutableList<IDialog>.Empty;
+        DialogList = new List<IDialog>();
     }
 
-    public ImmutableList<IDialog> DialogList { get; init; }
+    public List<IDialog> DialogList { get; init; }
     /// <summary>
     /// The active dialog is either:<br/><br/>
     /// -the one which has focus within it,<br/>
