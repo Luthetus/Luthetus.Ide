@@ -6,9 +6,9 @@ using Luthetus.Common.RazorLib.Keys.Models;
 namespace Luthetus.Common.RazorLib.Contexts.States;
 
 [FeatureState]
-public partial record ContextSwitchState(ImmutableList<ContextSwitchGroup> ContextSwitchGroupList)
+public partial record ContextSwitchState(List<ContextSwitchGroup> ContextSwitchGroupList)
 {
-	public ContextSwitchState() : this(ImmutableList<ContextSwitchGroup>.Empty)
+	public ContextSwitchState() : this(new List<ContextSwitchGroup>())
 	{
 	}
 	
@@ -33,8 +33,8 @@ public partial record ContextSwitchState(ImmutableList<ContextSwitchGroup> Conte
         		return inState;
         	}
         
-        	var outContextSwitchGroupList = inState.ContextSwitchGroupList.Add(
-        		registerContextSwitchGroupAction.ContextSwitchGroup);
+        	var outContextSwitchGroupList = new List<ContextSwitchGroup>(inState.ContextSwitchGroupList);
+        	outContextSwitchGroupList.Add(registerContextSwitchGroupAction.ContextSwitchGroup);
         
             return inState with
             {
