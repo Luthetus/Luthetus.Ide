@@ -17,7 +17,6 @@ using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Edits.States;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -41,7 +40,6 @@ public partial class TextEditorService : ITextEditorService
     private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
-        IState<TextEditorState> textEditorStateWrap,
         IState<TextEditorGroupState> groupStateWrap,
         IState<TextEditorDiffState> diffStateWrap,
         IState<ThemeState> themeStateWrap,
@@ -60,7 +58,6 @@ public partial class TextEditorService : ITextEditorService
 		IState<AppDimensionState> appDimensionStateWrap,
 		IServiceProvider serviceProvider)
     {
-        TextEditorStateWrap = textEditorStateWrap;
         GroupStateWrap = groupStateWrap;
         DiffStateWrap = diffStateWrap;
         ThemeStateWrap = themeStateWrap;
@@ -84,13 +81,14 @@ public partial class TextEditorService : ITextEditorService
 		AutocompleteService = autocompleteService;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService, _dispatcher);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, TextEditorStateWrap, _jsRuntime, _dispatcher, _dialogService);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
         OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _commonBackgroundTaskApi, _dispatcher);
+        
+        TextEditorState = new();
     }
 
-    public IState<TextEditorState> TextEditorStateWrap { get; }
     public IState<TextEditorGroupState> GroupStateWrap { get; }
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
@@ -120,6 +118,10 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorGroupApi GroupApi { get; }
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
+    
+    public TextEditorState TextEditorState { get; }
+    
+    public event Action? TextEditorStateChanged;
 
     public void PostUnique(
         string name,

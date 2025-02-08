@@ -8,7 +8,6 @@ using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
@@ -17,8 +16,6 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IState<TextEditorDiffState> TextEditorDiffStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
@@ -70,7 +67,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         TextEditorDiffStateWrap.StateChanged += TextEditorDiffWrapOnStateChanged;
-        TextEditorStateWrap.StateChanged += TextEditorModelsCollectionWrapOnStateChanged;
+        TextEditorService.TextEditorStateChanged += TextEditorModelsCollectionWrapOnStateChanged;
         TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
@@ -80,7 +77,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            TextEditorModelsCollectionWrapOnStateChanged(null, EventArgs.Empty);
+            TextEditorModelsCollectionWrapOnStateChanged();
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -89,7 +86,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     private async void TextEditorDiffWrapOnStateChanged(object? sender, EventArgs e) =>
         await InvokeAsync(StateHasChanged);
 
-    private void TextEditorModelsCollectionWrapOnStateChanged(object? sender, EventArgs e)
+    private void TextEditorModelsCollectionWrapOnStateChanged()
     {
         // Commenting this out for a moment because 'TextEditorService.DiffApi.CalculateFactory'
         // needs to be written. It currently freezes the application. (2024-05-19)
@@ -134,7 +131,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         TextEditorDiffStateWrap.StateChanged -= TextEditorDiffWrapOnStateChanged;
-        TextEditorStateWrap.StateChanged -= TextEditorModelsCollectionWrapOnStateChanged;
+        TextEditorService.TextEditorStateChanged -= TextEditorModelsCollectionWrapOnStateChanged;
         TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrapOnStateChanged;
 
         _calculateDiffCancellationTokenSource.Cancel();

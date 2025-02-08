@@ -3,7 +3,6 @@ using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -15,8 +14,6 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
-	[Inject]
-    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -48,7 +45,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         TextEditorGroupStateWrap.StateChanged += TextEditorGroupWrapOnStateChanged;
-        TextEditorStateWrap.StateChanged += TextEditorViewModelStateWrapOnStateChanged;
+        TextEditorService.TextEditorStateChanged += TextEditorViewModelStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -56,7 +53,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     private async void TextEditorGroupWrapOnStateChanged(object? sender, EventArgs e) =>
         await InvokeAsync(StateHasChanged);
 
-	private async void TextEditorViewModelStateWrapOnStateChanged(object? sender, EventArgs e)
+	private async void TextEditorViewModelStateWrapOnStateChanged()
 	{
 		var localTabListDisplay = _tabListDisplay;
 
@@ -69,7 +66,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 	private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
-        var textEditorState = TextEditorStateWrap.Value;
+        var textEditorState = TextEditorService.TextEditorState;
 		var tabList = new List<ITab>();
 
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
@@ -89,6 +86,6 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         TextEditorGroupStateWrap.StateChanged -= TextEditorGroupWrapOnStateChanged;
-		TextEditorStateWrap.StateChanged -= TextEditorViewModelStateWrapOnStateChanged;
+		TextEditorService.TextEditorStateChanged -= TextEditorViewModelStateWrapOnStateChanged;
     }
 }

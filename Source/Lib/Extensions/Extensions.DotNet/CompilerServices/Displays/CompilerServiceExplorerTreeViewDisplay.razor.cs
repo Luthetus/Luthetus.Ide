@@ -7,8 +7,8 @@ using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Groups.States;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -23,9 +23,9 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	[Inject]
 	private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
-	[Inject]
 	private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
+	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
@@ -56,7 +56,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	protected override void OnInitialized()
 	{
 		CompilerServiceExplorerStateWrap.StateChanged += RerenderAfterEventWithArgs;
-		TextEditorStateWrap.StateChanged += RerenderAfterEventWithArgs;
+		TextEditorService.TextEditorStateChanged += RerenderAfterEvent;
 		TextEditorGroupStateWrap.StateChanged += RerenderAfterEventWithArgs;
 
 		_compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
@@ -86,6 +86,11 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 		return base.OnAfterRenderAsync(firstRender);
 	}
 
+	private async void RerenderAfterEvent()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
 	private async void RerenderAfterEventWithArgs(object? sender, EventArgs e)
 	{
 		await InvokeAsync(StateHasChanged);
@@ -119,7 +124,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	public void Dispose()
 	{
 		CompilerServiceExplorerStateWrap.StateChanged -= RerenderAfterEventWithArgs;
-		TextEditorStateWrap.StateChanged -= RerenderAfterEventWithArgs;
+		TextEditorService.TextEditorStateChanged -= RerenderAfterEvent;
 		TextEditorGroupStateWrap.StateChanged -= RerenderAfterEventWithArgs;
 	}
 }
