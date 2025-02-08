@@ -16,7 +16,7 @@ public partial record PanelState
             if (inState.PanelList.Any(x => x.Key == registerPanelAction.Panel.Key))
                 return inState;
 
-            var outPanelList = new List<Panel>();
+            var outPanelList = new List<Panel>(inState.PanelList);
             outPanelList.Add(registerPanelAction.Panel);
 
             return inState with { PanelList = outPanelList };
