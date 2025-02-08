@@ -104,19 +104,19 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         ResourceUri resourceUri,
         Category category)
     {
-        _dispatcher.Dispatch(new TextEditorState.RegisterViewModelAction(
-            viewModelKey,
+    	_textEditorService.ReduceRegisterViewModelAction(
+    		viewModelKey,
             resourceUri,
             category,
             _textEditorService,
             _dispatcher,
             _dialogService,
-            _jsRuntime));
+            _jsRuntime);
     }
     
     public void Register(TextEditorViewModel viewModel)
     {
-        _dispatcher.Dispatch(new TextEditorState.RegisterViewModelExistingAction(viewModel));
+        _textEditorService.ReduceRegisterViewModelExistingAction(viewModel);
     }
     #endregion
 
@@ -1153,7 +1153,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     #region DELETE_METHODS
     public void Dispose(Key<TextEditorViewModel> viewModelKey)
     {
-        _dispatcher.Dispatch(new TextEditorState.DisposeViewModelAction(viewModelKey));
+        _textEditorService.ReduceDisposeViewModelAction(viewModelKey);
     }
     #endregion
 }

@@ -1,6 +1,8 @@
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -101,4 +103,31 @@ public partial interface ITextEditorService
 		int? columnIndex,
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey);
+		
+	public void ReduceRegisterModelAction(TextEditorModel model);
+	public void ReduceDisposeModelAction(ResourceUri resourceUri);
+	public void ReduceSetModelAction(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier);
+	
+	public void ReduceRegisterViewModelAction(
+	    Key<TextEditorViewModel> viewModelKey,
+	    ResourceUri resourceUri,
+	    Category category,
+	    ITextEditorService textEditorService,
+	    IDispatcher dispatcher,
+	    IDialogService dialogService,
+	    IJSRuntime jsRuntime);
+	
+	public void ReduceRegisterViewModelExistingAction(TextEditorViewModel viewModel);
+	
+	public void ReduceDisposeViewModelAction(Key<TextEditorViewModel> viewModelKey);
+	
+	public void ReduceSetViewModelWithAction(
+	    ITextEditorEditContext editContext,
+	    Key<TextEditorViewModel> viewModelKey,
+	    Func<TextEditorViewModel, TextEditorViewModel> withFunc);
+	
+	public void ReduceSetModelAndViewModelRangeAction(
+	    ITextEditorEditContext editContext,
+		Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
+		Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList);
 }
