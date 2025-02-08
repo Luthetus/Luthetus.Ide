@@ -23,8 +23,6 @@ public class FolderExplorerIdeApi
     private readonly ITreeViewService _treeViewService;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
-    
-    private readonly List<TreeViewNoType> _emptyTreeViewNoTypeList = new();
 
     public FolderExplorerIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,

@@ -21,8 +21,6 @@ public partial record TextEditorFindAllState
 		private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
 		private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
 		
-		private readonly List<TreeViewNoType> _emptyTreeViewNoTypeList = new();
-		
 		public Effector(
 			IFileSystemProvider fileSystemProvider,
 			IEnvironmentProvider environmentProvider,
@@ -260,7 +258,7 @@ public partial record TextEditorFindAllState
 		    var firstNode = treeViewList.FirstOrDefault();
 		
 		    var activeNodes = firstNode is null
-		        ? _emptyTreeViewNoTypeList
+		        ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
 		        : new() { firstNode };
 		
 		    if (!_treeViewService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))

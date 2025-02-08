@@ -442,7 +442,7 @@ public partial record TreeViewState
 	
 					outContainer = inContainer with
 		            {
-		                SelectedNodeList = new()
+		                SelectedNodeList = TreeViewNoType.GetEmptyTreeViewNoTypeList()
 		            };
 				}
 				else if (!setActiveNodeAction.AddSelectedNodes)

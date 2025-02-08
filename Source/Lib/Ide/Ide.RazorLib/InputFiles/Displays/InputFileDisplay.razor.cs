@@ -76,8 +76,6 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private readonly ElementDimensions _sidebarElementDimensions = new();
     private readonly ElementDimensions _contentElementDimensions = new();
 
-	private readonly List<TreeViewNoType> _emptyTreeViewNoTypeList = new();
-
     private AbsolutePath? _selectedAbsolutePath;
     private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
     private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
@@ -195,7 +193,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
                 InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
-                    ? _emptyTreeViewNoTypeList
+                    ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
                     : new() { activeNode }));
         }
         else

@@ -22,8 +22,6 @@ public partial record GitState
         private readonly ITreeViewService _treeViewService;
         private readonly GitBackgroundTaskApi _gitBackgroundTaskApi;
         private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
-        
-        private readonly List<TreeViewNoType> _emptyTreeViewNoTypeList = new();
 
         public Effector(
             IState<GitState> gitStateWrap,
@@ -107,7 +105,7 @@ public partial record GitState
                 var firstNode = untrackedTreeViewList.FirstOrDefault();
 
                 var activeNodes = firstNode is null
-                    ? _emptyTreeViewNoTypeList
+                    ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
                     : new() { firstNode };
 
                 if (!_treeViewService.TryGetTreeViewContainer(TreeViewGitChangesKey, out var container))
