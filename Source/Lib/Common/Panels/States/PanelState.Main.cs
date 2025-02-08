@@ -8,6 +8,15 @@ using Luthetus.Common.RazorLib.Resizes.Displays;
 namespace Luthetus.Common.RazorLib.Panels.States;
 
 /// <summary>
+/// Once the 'PanelGroupList'/'PanelList' are exposed publically,
+/// they should NOT be modified.
+/// Make a shallow copy 'new List<PanelGroup>(panelState.PanelGroupList);'/
+/// 'new List<Panel>(panelState.PanelList);'
+/// and modify the shallow copy if modification of the list
+/// after exposing it publically is necessary.
+///
+/// ---
+///
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
 [FeatureState]

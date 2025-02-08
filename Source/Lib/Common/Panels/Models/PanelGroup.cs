@@ -8,6 +8,13 @@ using Luthetus.Common.RazorLib.Panels.States;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
+/// <summary>
+/// Once the 'TabList' is exposed publically,
+/// it should NOT be modified.
+/// Make a shallow copy 'new List<IPanelTab>(panelGroup.TabList);'
+/// and modify the shallow copy if modification of the list
+/// after exposing it publically is necessary.
+/// </summary>
 public record PanelGroup(
 	    Key<PanelGroup> Key,
 	    Key<Panel> ActiveTabKey,

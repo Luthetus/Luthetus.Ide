@@ -5,6 +5,11 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 namespace Luthetus.Common.RazorLib.TreeViews.States;
 
 /// <summary>
+/// The list provided should not be modified after passing it as a parameter.
+/// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
+/// 
+/// ---
+///
 /// Experimenting with 'List' instead of 'ImmutableList / ImmutableArray / Array'
 /// Presumption being that in the case of 'ImmutableList / ImmutableArray'
 /// the data would be stored as a tree structure, where each node is an object allocation.
