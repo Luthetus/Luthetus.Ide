@@ -1,11 +1,3 @@
-All my life I have been in and out of "mental hospitals". They're like sections of a hospital where you enter a secure building and live there for a week then are out either due to insurance saying they won't cover anymore time there, or the doctor / staff agreeing that you are fine to leave.
-
-When it comes to writing the code for this repository I have, and continue, to struggle immensely.
-
-But my struggle pales in comparison to what my parents have endured with raising me. I am extremely grateful for them.
-
-I want the good ending to this story.
-
 # Luthetus.Ide (In Development)
 
 Make a new .NET Solution:
