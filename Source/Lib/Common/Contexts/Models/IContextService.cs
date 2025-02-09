@@ -8,6 +8,7 @@ public interface IContextService
 	public event Action? ContextStateChanged;
     
     public ContextState GetContextState();
+    public ContextSwitchState GetContextSwitchState();
     
     public void ReduceSetFocusedContextHeirarchyAction(ContextHeirarchy focusedContextHeirarchy);
     public void ReduceToggleSelectInspectedContextHeirarchyAction();
@@ -15,4 +16,6 @@ public interface IContextService
     public void ReduceSetInspectedContextHeirarchyAction(ContextHeirarchy? inspectedContextHeirarchy);
     public void ReduceAddInspectableContextAction(InspectableContext inspectableContext);
     public void ReduceSetContextKeymapAction(Key<ContextRecord> contextKey, IKeymap keymap);
+    
+    public void ReduceRegisterContextSwitchGroupAction(ContextSwitchGroup contextSwitchGroup);
 }

@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -37,8 +36,6 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IContextService ContextService { get; set; } = null!;
-    [Inject]
-    private IState<ContextSwitchState> ContextSwitchStateWrap { get; set; } = null!;
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
     [Inject]
@@ -80,8 +77,8 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
                     .SetFromLocalStorageAsync()
                     .ConfigureAwait(false);
 
-				ContextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;                    
-                Dispatcher.Dispatch(new ContextSwitchState.RegisterContextSwitchGroupAction(
+				ContextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;                    
+                ContextService.ReduceRegisterContextSwitchGroupAction(
                 	new ContextSwitchGroup(
                 		ContextSwitchGroupKey,
 						"Contexts",
@@ -162,7 +159,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 								: new MenuRecord(menuOptionList);
 								
 							return Task.FromResult(menu);
-						})));
+						}));
             });
 	
 		base.OnInitialized();

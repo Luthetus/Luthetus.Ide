@@ -3,7 +3,6 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
@@ -31,7 +30,6 @@ namespace Luthetus.Ide.RazorLib.Commands;
 public class CommandFactory : ICommandFactory
 {
     private readonly IState<PanelState> _panelStateWrap;
-    private readonly IState<ContextSwitchState> _contextSwitchStateWrap;
     private readonly IContextService _contextService;
     private readonly ITextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
@@ -47,7 +45,6 @@ public class CommandFactory : ICommandFactory
 		IDialogService dialogService,
 		IEnvironmentProvider environmentProvider,
         IState<PanelState> panelStateWrap,
-        IState<ContextSwitchState> contextSwitchStateWrap,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
     {
@@ -57,7 +54,6 @@ public class CommandFactory : ICommandFactory
 		_dialogService = dialogService;
 		_environmentProvider = environmentProvider;
         _panelStateWrap = panelStateWrap;
-        _contextSwitchStateWrap = contextSwitchStateWrap;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
     }
@@ -479,11 +475,11 @@ public class CommandFactory : ICommandFactory
 			        if (_contextService.GetContextState().FocusedContextHeirarchy.NearestAncestorKey ==
 			        	    ContextFacts.TextEditorContext.ContextKey)
 			        {
-			        	_contextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = LuthetusTextEditorInitializer.ContextSwitchGroupKey;
+			        	_contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = LuthetusTextEditorInitializer.ContextSwitchGroupKey;
 			        }
 			        else
 			        {
-			        	_contextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = LuthetusCommonInitializer.ContextSwitchGroupKey;
+			        	_contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = LuthetusCommonInitializer.ContextSwitchGroupKey;
 			        }
 				
                     _contextSwitchWidget ??= new WidgetModel(

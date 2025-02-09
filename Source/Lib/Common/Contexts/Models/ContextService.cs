@@ -6,10 +6,13 @@ namespace Luthetus.Common.RazorLib.Contexts.Models;
 public class ContextService : IContextService
 {
 	private ContextState _contextState = new();
+	private ContextSwitchState _contextSwitchState = new();
     
     public event Action? ContextStateChanged;
+    public event Action? ContextSwitchStateChanged;
     
     public ContextState GetContextState() => _contextState;
+    public ContextSwitchState GetContextSwitchState() => _contextSwitchState;
     
     public void ReduceSetFocusedContextHeirarchyAction(ContextHeirarchy focusedContextHeirarchy)
     {
@@ -136,6 +139,29 @@ public class ContextService : IContextService
 
         _contextState = inState with { };
         ContextStateChanged?.Invoke();
+        return;
+    }
+	
+    public void ReduceRegisterContextSwitchGroupAction(ContextSwitchGroup contextSwitchGroup)
+    {
+    	var inState = GetContextSwitchState();
+    
+    	if (inState.ContextSwitchGroupList.Any(x =>
+    			x.Key == contextSwitchGroup.Key))
+    	{
+    		ContextSwitchStateChanged?.Invoke();
+        	return;
+    	}
+    
+    	var outContextSwitchGroupList = new List<ContextSwitchGroup>(inState.ContextSwitchGroupList);
+    	outContextSwitchGroupList.Add(contextSwitchGroup);
+    
+        _contextSwitchState = inState with
+        {
+            ContextSwitchGroupList = outContextSwitchGroupList
+        };
+        
+        ContextSwitchStateChanged?.Invoke();
         return;
     }
 }
