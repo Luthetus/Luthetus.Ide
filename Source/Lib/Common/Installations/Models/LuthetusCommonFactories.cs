@@ -4,7 +4,6 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Themes.States;
@@ -32,9 +31,7 @@ namespace Luthetus.Common.RazorLib.Installations.Models;
 public record LuthetusCommonFactories
 {
     public Func<IServiceProvider, IDragService> DragServiceFactory { get; init; } =
-        serviceProvider => new DragService(
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            serviceProvider.GetRequiredService<IState<DragState>>());
+        serviceProvider => new DragService();
 
     public Func<IServiceProvider, IClipboardService> ClipboardServiceFactory { get; init; } =
         serviceProvider => new JavaScriptInteropClipboardService(
@@ -42,8 +39,7 @@ public record LuthetusCommonFactories
 
     public Func<IServiceProvider, IDialogService> DialogServiceFactory { get; init; } =
         serviceProvider => new DialogService(
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            serviceProvider.GetRequiredService<IState<DialogState>>());
+            serviceProvider.GetRequiredService<IJSRuntime>());
 
     public Func<IServiceProvider, INotificationService> NotificationServiceFactory { get; init; } =
         serviceProvider => new NotificationService(

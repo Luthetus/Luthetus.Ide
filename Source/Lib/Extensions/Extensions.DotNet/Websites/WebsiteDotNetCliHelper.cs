@@ -1,7 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -19,6 +19,7 @@ public class WebsiteDotNetCliHelper
 		IFileSystemProvider fileSystemProvider,
 		DotNetBackgroundTaskApi compilerServicesBackgroundTaskApi,
 		IDispatcher dispatcher,
+		IDialogService dialogService,
 		IDialog dialogRecord,
 		ICommonComponentRenderers commonComponentRenderers)
 	{
@@ -56,7 +57,7 @@ public class WebsiteDotNetCliHelper
 			cSharpAbsolutePath);
 
 		// Close Dialog
-		dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.DynamicViewModelKey));
+		dialogService.ReduceDisposeAction(dialogRecord.DynamicViewModelKey);
 		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
 	}
 }

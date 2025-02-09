@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Widgets.States;
@@ -14,7 +13,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextSwitchDisplay : ComponentBase
 {
 	[Inject]
-	private IState<ContextSwitchState> ContextSwitchStateWrap { get; set; } = null!;
+	private IContextService ContextService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 	
@@ -58,7 +57,7 @@ public partial class ContextSwitchDisplay : ComponentBase
 	{
 		if (firstRender)
 		{
-			var contextSwitchState = ContextSwitchStateWrap.Value;
+			var contextSwitchState = ContextService.GetContextSwitchState();
 			
 			foreach (var contextSwitchGroup in contextSwitchState.ContextSwitchGroupList)
 			{

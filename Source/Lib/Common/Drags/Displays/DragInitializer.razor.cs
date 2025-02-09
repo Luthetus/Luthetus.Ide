@@ -5,17 +5,16 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Drags.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
-public partial class DragInitializer : FluxorComponent
+public partial class DragInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<DragState> DragStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IDragService DragService { get; set; } = null!;
 
-    private string StyleCss => DragStateWrap.Value.ShouldDisplay
+    private string StyleCss => DragService.GetDragState().ShouldDisplay
         ? string.Empty
         : "display: none;";
 
@@ -37,6 +36,8 @@ public partial class DragInitializer : FluxorComponent
     
     protected override void OnInitialized()
     {
+    	DragService.DragStateChanged += OnDragStateChanged;
+    
     	_throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second, async (args, _) =>
 	    {
 	    	if (args.IsOnMouseMove)
@@ -44,13 +45,13 @@ public partial class DragInitializer : FluxorComponent
 	    		if ((args.MouseEventArgs.Buttons & 1) != 1)
 	                DispatchClearDragStateAction();
 	            else
-	                Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs));
+	                DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
 	
 	            return;
 	    	}
 	    	else
 	    	{
-	    		var dragState = DragStateWrap.Value;
+	    		var dragState = DragService.GetDragState();
 				var localOnMouseOverDropzone = _onMouseOverDropzone;
 	    	
 	    		DispatchClearDragStateAction();
@@ -67,15 +68,20 @@ public partial class DragInitializer : FluxorComponent
     	
     	base.OnInitialized();
     }
+    
+    private async void OnDragStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
 
     private void DispatchClearDragStateAction()
     {
 		_onMouseOverDropzone = null;
 		
-        Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsAndDragSetAction(
+        DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(
         	false,
             null,
-			null));
+			null);
     }
 
     private void DispatchSetDragStateActionOnMouseMove(MouseEventArgs mouseEventArgs)
@@ -95,5 +101,10 @@ public partial class DragInitializer : FluxorComponent
 		return onMouseOverDropzoneKey == dropzone.DropzoneKey
             ? "luth_active"
 			: string.Empty;
+	}
+	
+	public void Dispose()
+	{
+		DragService.DragStateChanged -= OnDragStateChanged;
 	}
 }

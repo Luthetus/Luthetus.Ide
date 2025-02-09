@@ -15,7 +15,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     /// The first item in this list, is the OLDEST item in the 'queue'<br/><br/>
     /// The last item in this list, is the MOST-RECENT item in the 'queue'<br/><br/>
     /// </summary>
-    private readonly LinkedList<IBackgroundTask> _queue = new();
+    private readonly Queue<IBackgroundTask> _queue = new();
     /// <summary>
     /// Used when enqueueing.
     /// </summary>
@@ -26,7 +26,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
         Key = key;
         DisplayName = displayName;
     }
-
+    
 	public Key<IBackgroundTaskQueue> Key { get; }
     public string DisplayName { get; }
 
@@ -57,26 +57,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     {
 		lock (_modifyQueueLock)
 		{
-			if (downstreamEvent.EarlyBatchEnabled && _queue.Count > 0)
-			{
-				var upstreamEvent = _queue.Last.Value;
-				// TODO: Rename 'BatchOrDefault' to 'TryMergeIntoUpstream'
-				var batchEvent = downstreamEvent.EarlyBatchOrDefault(upstreamEvent);
-
-				if (batchEvent is not null)
-                {
-					// The length of the queue has not changed,
-					// so do not release the dequeue semaphore here.
-					//
-					// The batching was successful so return early.
-					_queue.RemoveLast();
-					_queue.AddLast(batchEvent);
-            		return;
-				}
-			}
-
-			// The batching was NOT successful so add to the queue.
-			_queue.AddLast(downstreamEvent);
+			_queue.Enqueue(downstreamEvent);
 			__DequeueSemaphoreSlim.Release();
 		}
     }
@@ -91,9 +72,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
 			if (_queue.Count <= 0)
 				return null;
 
-			var task = _queue.First.Value;
-            _queue.RemoveFirst();
-			return task;
+			return _queue.Dequeue();
 		}
     }
 }

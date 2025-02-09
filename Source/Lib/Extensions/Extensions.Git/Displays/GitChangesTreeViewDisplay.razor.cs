@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Extensions.Git.Models;
@@ -22,6 +23,8 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     private IState<GitState> GitStateWrap { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -50,7 +53,8 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
             TreeViewService,
             BackgroundTaskService,
             GitStateWrap,
-            Dispatcher);
+            Dispatcher,
+            DialogService);
 
         base.OnInitialized();
     }

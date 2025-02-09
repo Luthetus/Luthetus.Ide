@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.States;
@@ -17,6 +16,8 @@ public partial class GitControlsDisplay : ComponentBase
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
 	[Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
 
@@ -70,6 +71,6 @@ public partial class GitControlsDisplay : ComponentBase
             true,
             null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
+        DialogService.ReduceRegisterAction(dialogViewModel);
     }
 }

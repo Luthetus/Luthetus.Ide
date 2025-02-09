@@ -103,6 +103,7 @@ public class IdeBackgroundTaskApi
             this,
             _ideComponentRenderers,
             _backgroundTaskService,
+            _dialogService,
             _dispatcher);
     }
     

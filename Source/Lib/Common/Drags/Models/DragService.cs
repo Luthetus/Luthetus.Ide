@@ -1,19 +1,49 @@
+using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Models;
 
 public class DragService : IDragService
 {
-    private readonly IDispatcher _dispatcher;
-
-    public DragService(
-        IDispatcher dispatcher,
-        IState<DragState> dragStateWrap)
+    private DragState _dragState = new();
+    
+    public event Action? DragStateChanged;
+    
+    public DragState GetDragState() => _dragState;
+    
+    public void ReduceShouldDisplayAndMouseEventArgsSetAction(
+        bool shouldDisplay,
+        MouseEventArgs? mouseEventArgs)
     {
-        _dispatcher = dispatcher;
-        DragStateWrap = dragStateWrap;
+    	var inState = GetDragState();
+    
+        _dragState = inState with
+        {
+        	ShouldDisplay = shouldDisplay,
+            MouseEventArgs = mouseEventArgs,
+        };
+        
+        DragStateChanged?.Invoke();
+        return;
     }
-
-    public IState<DragState> DragStateWrap { get; }
+    
+    public void ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(
+        bool shouldDisplay,
+		MouseEventArgs? mouseEventArgs,
+		IDrag? drag)
+    {
+    	var inState = GetDragState();
+    	
+        _dragState = inState with
+        {
+        	ShouldDisplay = shouldDisplay,
+            MouseEventArgs = mouseEventArgs,
+            Drag = drag,
+        };
+        
+        DragStateChanged?.Invoke();
+        return;
+    }
 }

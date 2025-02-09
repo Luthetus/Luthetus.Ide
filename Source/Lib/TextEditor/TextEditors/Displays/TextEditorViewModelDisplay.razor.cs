@@ -46,6 +46,7 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 
@@ -102,7 +103,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     // ScrollbarSection.razor.cs
     [Inject]
-    private IState<DragState> DragStateWrap { get; set; } = null!;
+    private IDragService DragService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
@@ -173,7 +174,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         
         // ScrollbarSection.razor.cs
-        DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
+        DragService.DragStateChanged += DragStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -1248,7 +1249,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			_mouseDownEventArgs = mouseEventArgs;
 			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
 	
-			Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, null));
+			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
 		}
     }
     
@@ -1278,13 +1279,13 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			_mouseDownEventArgs = mouseEventArgs;
 			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
 	
-			Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, null));
+			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
 		}     
     }
 
-    private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void DragStateWrapOnStateChanged()
     {
-        if (!DragStateWrap.Value.ShouldDisplay)
+        if (!DragService.GetDragState().ShouldDisplay)
         {
             // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
 			//       So be wary if one intends to move its assignment elsewhere.
@@ -1293,7 +1294,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         else
         {
             var localMouseDownEventArgs = _mouseDownEventArgs;
-            var dragEventArgs = DragStateWrap.Value.MouseEventArgs;
+            var dragEventArgs = DragService.GetDragState().MouseEventArgs;
 			var localDragEventHandler = _dragEventHandler;
 
             if (localMouseDownEventArgs is not null && dragEventArgs is not null)
@@ -1848,7 +1849,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public void Dispose()
     {
     	// ScrollbarSection.razor.cs
-    	DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
+    	DragService.DragStateChanged -= DragStateWrapOnStateChanged;
     
     	// TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;

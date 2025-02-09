@@ -3,7 +3,6 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -23,6 +22,8 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
 
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;
@@ -42,7 +43,7 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
             true,
             null);
 
-            Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
+            DialogService.ReduceRegisterAction(dialogViewModel);
         }
         else
         {
