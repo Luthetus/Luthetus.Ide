@@ -57,10 +57,8 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 /// Optimistic vs Pessimistic batching?
 /// Early vs Late batching?
 /// </summary>
-public struct OnKeyDownLateBatching : ITextEditorWork
+public struct OnKeyDownLateBatching
 {
-	public const int MAX_BATCH_SIZE = 8;
-
 	public OnKeyDownLateBatching(
 		TextEditorComponentData componentData,
 	    KeymapArgs keymapArgs,
@@ -79,96 +77,49 @@ public struct OnKeyDownLateBatching : ITextEditorWork
         #endif
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; } = true;
-    public bool __TaskCompletionSourceWasCreated { get; set; }
     public KeymapArgs KeymapArgs { get; set; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
-	public ITextEditorEditContext? EditContext { get; private set; }
 	public TextEditorComponentData ComponentData { get; set; }
 	
-	public int BatchLength { get; set; }
-	public bool BatchHasAvailability => BatchLength < MAX_BATCH_SIZE;
-	
-	// TODO: Rewrite this.
-	public KeymapArgs[]? KeymapArgsList { get; set; }
-
-    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
-    public string Name => "luth_OnKeyDownLateBatching";
-
 	/// <summary>
 	/// Global variable used during <see cref="HandleEvent"/> to
 	/// iterate over <see cref="KeymapArgsList"/>
 	/// </summary>
 	private int _index;
 
-	public void AddToBatch(KeymapArgs keymapArgs)
-	{
-		if (KeymapArgsList is null)
-		{
-			KeymapArgsList = new KeymapArgs[MAX_BATCH_SIZE];
-			AddToBatch(KeymapArgs);
-		}
-
-		KeymapArgsList[BatchLength] = keymapArgs;
-        BatchLength++;
-    }
-
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask upstreamEvent)
-    {
-		if (upstreamEvent.Name == Name)
-		{
-			var upstreamOnKeyDownLateBatching = (OnKeyDownLateBatching)upstreamEvent;
-		
-			if (BatchLength == 0 && upstreamOnKeyDownLateBatching.BatchHasAvailability)
-			{
-				upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgs);
-	            return upstreamOnKeyDownLateBatching;
-            }
-		}
-		
-		// Keep both events.
-		return null;
-    }
-    
-    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
-    {
-    	return null;
-    }
-
+	/// <summary>
+	/// CONFUSING: '0 == 0' used to be 'BatchLength == 0'. The batching code is being removed but is a bit of a mess at the moment.
+	/// </summary>
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	#if DEBUG
     	LuthetusDebugSomething.OnKeyDownLateBatchingCountHandled++;
     	#endif
     
-    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
 
-        var modelModifier = EditContext.GetModelModifier(ResourceUri);
-        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-        var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+        var modelModifier = editContext.GetModelModifier(ResourceUri);
+        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
         if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
 		_index = 0;
 		
-		var batchLengthFake = BatchLength;
+		var batchLengthFake = 0;
 		
-		if (BatchLength == 0)
+		if (0 == 0)
 			batchLengthFake = 1;
 
 		for (; _index < batchLengthFake; _index++)
 		{
 			KeymapArgs keymapArgs;
 			
-			if (BatchLength == 0)
+			if (0 == 0)
 				keymapArgs = KeymapArgs;
-			else
-				keymapArgs = KeymapArgsList[_index];
 
             var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
@@ -176,7 +127,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
                 ComponentData,
 				keymapArgs,
 				definiteHasSelection,
-				EditContext.TextEditorService,
+				editContext.TextEditorService,
 				out var command);
 
             var shouldInvokeAfterOnKeyDownAsync = false;
@@ -190,9 +141,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
                         modelModifier.ResourceUri,
                         viewModelModifier.ViewModel.ViewModelKey,
 						ComponentData,
-						EditContext.TextEditorService,
+						editContext.TextEditorService,
 						ComponentData.ServiceProvider,
-						EditContext);
+						editContext);
 
                     await command.CommandFunc
                         .Invoke(commandArgs)
@@ -203,7 +154,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
                         viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
                     {
                     	// TODO: Focusing the menu from here isn't working?
-                    	await EditContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
+                    	await editContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
                     		AutocompleteMenu.HTML_ELEMENT_ID,
                     		preventScroll: true);
                     		
@@ -211,9 +162,9 @@ public struct OnKeyDownLateBatching : ITextEditorWork
                     }
                     else
                     {
-                        EditContext.TextEditorService.ViewModelApi.MoveCursor(
+                        editContext.TextEditorService.ViewModelApi.MoveCursor(
                     		keymapArgs,
-					        EditContext,
+					        editContext,
 					        modelModifier,
 					        viewModelModifier,
 					        cursorModifierBag);
@@ -221,7 +172,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 					    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					    {
 					    	TextEditorCommandDefaultFunctions.RemoveDropdown(
-						        EditContext,
+						        editContext,
 						        viewModelModifier,
 						        ComponentData.Dispatcher);
 					    }
@@ -229,7 +180,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
                     break;
                 case KeymapArgsKind.ContextMenu:
                 	TextEditorCommandDefaultFunctions.ShowContextMenu(
-				        EditContext,
+				        editContext,
 				        modelModifier,
 				        viewModelModifier,
 				        cursorModifierBag,
@@ -251,7 +202,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
                         	if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
                         	{
 								TextEditorCommandDefaultFunctions.RemoveDropdown(
-							        EditContext,
+							        editContext,
 							        viewModelModifier,
 							        ComponentData.Dispatcher);
 							}
@@ -266,10 +217,10 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 					if (definiteKeyboardEventArgsKind == KeymapArgsKind.Text)
 					{
 						// Batch contiguous insertions
-						var contiguousInsertionBuilder = new StringBuilder(keymapArgs.Key);
-						var innerIndex = _index + 1;
+						// var contiguousInsertionBuilder = new StringBuilder(keymapArgs.Key);
+						// var innerIndex = _index + 1;
 
-						for (; innerIndex < BatchLength; innerIndex++)
+						/*for (; innerIndex < 0; innerIndex++)
 						{
 							var innerKeyboardEventArgs = KeymapArgsList[innerIndex];
 
@@ -277,7 +228,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 								ComponentData,
 								innerKeyboardEventArgs,
 								definiteHasSelection,
-								EditContext.TextEditorService,
+								editContext.TextEditorService,
 								out _);
 
 							if (innerKeyboardEventArgsKind == KeymapArgsKind.Text)
@@ -289,10 +240,10 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 							{
 								break;
 							}
-						}
+						}*/
 
 						modelModifier.Insert(
-		                    contiguousInsertionBuilder.ToString(),
+		                    keymapArgs.Key,
 		                    cursorModifierBag,
 		                    cancellationToken: CancellationToken.None);
 					}
@@ -304,7 +255,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 							var eventCounter = 1;
 							var innerIndex = _index + 1;
 
-							for (; innerIndex < BatchLength; innerIndex++)
+							/*for (; innerIndex < 0; innerIndex++)
 							{
 								var innerKeymapArgs = KeymapArgsList[innerIndex];
 
@@ -312,7 +263,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 									ComponentData,
 									innerKeymapArgs,
 									definiteHasSelection,
-									EditContext.TextEditorService,
+									editContext.TextEditorService,
 									out _);
 
 								// If the user has a text selection, one cannot batch here.
@@ -330,7 +281,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 								{
 									break;
 								}
-							}
+							}*/
 
 		                    if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
 		                    {
@@ -353,8 +304,8 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 		                }
 						else
 						{
-							EditContext.TextEditorService.ModelApi.HandleKeyboardEvent(
-								EditContext,
+							editContext.TextEditorService.ModelApi.HandleKeyboardEvent(
+								editContext,
 						        modelModifier,
 						        cursorModifierBag,
 						        keymapArgs,
@@ -375,7 +326,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 				if (ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync is not null)
 		        {
 		            await ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync.Invoke(
-			                EditContext,
+			                editContext,
 					        modelModifier,
 					        viewModelModifier,
 					        cursorModifierBag,
@@ -386,7 +337,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 				else
 				{
 					await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsync(
-							EditContext,
+							editContext,
 					        modelModifier,
 					        viewModelModifier,
 					        cursorModifierBag,
@@ -399,7 +350,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 		
 		// TODO: Do this code first so the user gets immediate UI feedback in the event that
 		//       their keydown code takes a long time?
-		EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+		editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 		
 		// This code is wrong.
 		// It isn't about the line count or the "most characters on a single line"
@@ -410,8 +361,8 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 			{
 				var difference = modelModifier.PreviousLineCount - modelModifier.LineCount;
 			
-				EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-		            EditContext,
+				editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+		            editContext,
 			        viewModelModifier,
 			        -1 * difference * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
 			}
@@ -420,18 +371,16 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 			{
 				var difference = modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength - modelModifier.MostCharactersOnASingleLineTuple.lineLength;
 				
-				EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
-		            EditContext,
+				editContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+		            editContext,
 			        viewModelModifier,
 			        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
 			}*/
 		}
 		
-		await EditContext.TextEditorService
-			.FinalizePost(EditContext)
+		await editContext.TextEditorService
+			.FinalizePost(editContext)
 			.ConfigureAwait(false);
-			
-		// await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 
     private bool KeyAndModifiersAreEqual(KeymapArgs x, KeymapArgs y)

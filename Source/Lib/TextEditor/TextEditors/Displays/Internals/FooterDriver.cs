@@ -45,7 +45,7 @@ public class FooterDriver
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            _root.TextEditorService.PostRedundant(
+            _root.TextEditorService.TextEditorWorker.PostRedundant(
                 nameof(TextEditorService.ModelApi.SetUsingLineEndKind),
                 viewModel.ResourceUri,
 				viewModel.ViewModelKey,

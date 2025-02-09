@@ -122,7 +122,7 @@ public class CompilerService : ICompilerService
 
     public virtual void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-        _textEditorService.PostUnique(
+        _textEditorService.TextEditorWorker.PostUnique(
             nameof(CompilerService),
             editContext =>
             {

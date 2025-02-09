@@ -56,7 +56,7 @@ public partial class WidgetLayerDisplay : ComponentBase
     /// </summary>
     private void CloseWidgetOnClick(TextEditorRenderBatch localRenderBatch, WidgetBlock widget)
     {
-    	TextEditorService.PostUnique(
+    	TextEditorService.TextEditorWorker.PostUnique(
     		nameof(CloseWidgetOnClick),
     		editContext =>
     		{

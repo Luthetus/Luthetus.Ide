@@ -92,7 +92,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 	private void RegisterDetailsTextEditor(TextEditorModel model)
 	{
-		TextEditorService.PostUnique(
+		TextEditorService.TextEditorWorker.PostUnique(
 			nameof(TextEditorService.ModelApi.AddPresentationModel),
 			editContext =>
 			{

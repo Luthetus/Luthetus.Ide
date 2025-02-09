@@ -374,7 +374,7 @@ public class CommandFactory : ICommandFactory
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
                     
-                    _textEditorService.PostUnique(nameof(CodeSearchDisplay), editContext =>
+                    _textEditorService.TextEditorWorker.PostUnique(nameof(CodeSearchDisplay), editContext =>
                     {
                     	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
 	                    if (group is null)

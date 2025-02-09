@@ -72,7 +72,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Copy),
             editContext =>
             {
@@ -97,7 +97,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Cut),
             editContext =>
             {
@@ -122,7 +122,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),
             editContext =>
             {
@@ -147,7 +147,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Redo),
             editContext =>
             {
@@ -172,7 +172,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.TriggerSave),
             editContext =>
             {
@@ -197,7 +197,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Undo),
             editContext =>
             {
@@ -222,7 +222,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.SelectAll),
             editContext =>
             {
@@ -247,7 +247,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Remeasure),
             editContext =>
             {
@@ -296,7 +296,7 @@ public class HeaderDriver
 		    MenuOptionKind.Delete,
 		    onClickFunc: () =>
 		    {
-			    _root.TextEditorService.PostUnique(
+			    _root.TextEditorService.TextEditorWorker.PostUnique(
 		            nameof(DoReloadOnClick),
 		            editContext =>
 		            {
@@ -376,7 +376,7 @@ public class HeaderDriver
 
         var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
-        _root.TextEditorService.PostUnique(
+        _root.TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Remeasure),
             editContext =>
             {

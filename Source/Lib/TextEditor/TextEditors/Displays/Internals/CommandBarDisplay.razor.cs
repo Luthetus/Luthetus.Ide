@@ -51,7 +51,7 @@ public partial class CommandBarDisplay : FluxorComponent
         {
             // await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
 
-            TextEditorService.PostUnique(
+            TextEditorService.TextEditorWorker.PostUnique(
                 nameof(HandleOnKeyDown),
                 editContext =>
                 {
@@ -74,7 +74,7 @@ public partial class CommandBarDisplay : FluxorComponent
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
-        	TextEditorService.PostUnique(
+        	TextEditorService.TextEditorWorker.PostUnique(
                 nameof(HandleOnKeyDown),
                 editContext =>
                 {

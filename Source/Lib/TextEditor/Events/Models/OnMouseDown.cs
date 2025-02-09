@@ -11,7 +11,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public struct OnMouseDown : ITextEditorWork
+public struct OnMouseDown
 {
     public OnMouseDown(
         MouseEventArgs mouseEventArgs,
@@ -26,46 +26,19 @@ public struct OnMouseDown : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; } = true;
-    public bool __TaskCompletionSourceWasCreated { get; set; }
-    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
-    public string Name => "luth_OnMouseDown";
-    public Task? WorkProgress { get; }
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext? EditContext { get; private set; }
-
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
-    {
-        if (oldEvent.Name == Name)
-		{
-			// Replace the upstream event with this one,
-			// because unhandled-consecutive events of this type are redundant.
-			return this;
-		}
-        
-		// Keep both events, because they are not able to be batched.
-		return null;
-    }
-    
-    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
-    {
-    	return null;
-    }
-
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
-        var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
-        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-        var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+        var modelModifier = editContext.GetModelModifier(ResourceUri, true);
+        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
         if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
@@ -80,7 +53,7 @@ public struct OnMouseDown : ITextEditorWork
 		if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 		{
 			TextEditorCommandDefaultFunctions.RemoveDropdown(
-		        EditContext,
+		        editContext,
 		        viewModelModifier,
 		        ComponentData.Dispatcher);
 		}
@@ -98,7 +71,7 @@ public struct OnMouseDown : ITextEditorWork
 				ViewModelKey,
 				MouseEventArgs,
 				ComponentData,
-				EditContext)
+				editContext)
 			.ConfigureAwait(false);
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
@@ -128,12 +101,10 @@ public struct OnMouseDown : ITextEditorWork
 
         primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
         
-        EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+        editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
         
-        await EditContext.TextEditorService
-        	.FinalizePost(EditContext)
+        await editContext.TextEditorService
+        	.FinalizePost(editContext)
         	.ConfigureAwait(false);
-        	
-        // await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }
