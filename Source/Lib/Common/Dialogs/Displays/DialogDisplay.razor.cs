@@ -98,14 +98,14 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void ToggleIsMaximized()
     {
-        DialogService.SetDialogRecordIsMaximized(
+        DialogService.ReduceSetIsMaximizedAction(
             Dialog.DynamicViewModelKey,
             !Dialog.DialogIsMaximized);
     }
 
     private async Task DispatchDisposeDialogRecordAction()
     {
-        DialogService.DisposeDialogRecord(Dialog.DynamicViewModelKey);
+        DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
         
         await JsRuntime.GetLuthetusCommonApi()
 	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
@@ -122,7 +122,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private Task HandleOnFocusIn()
     {
-        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(Dialog.DynamicViewModelKey));
+        DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
         return OnFocusInFunc.Invoke(Dialog);
     }
     
@@ -133,7 +133,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void HandleOnMouseDown()
     {
-        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(Dialog.DynamicViewModelKey));
+        DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
     }
 
     public void Dispose()

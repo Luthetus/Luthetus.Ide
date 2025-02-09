@@ -36,6 +36,7 @@ public class CommandFactory : ICommandFactory
     private readonly IState<ContextSwitchState> _contextSwitchStateWrap;
     private readonly ITextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
+    private readonly IDialogService _dialogService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
@@ -43,6 +44,7 @@ public class CommandFactory : ICommandFactory
     public CommandFactory(
 		ITextEditorService textEditorService,
 		ITreeViewService treeViewService,
+		IDialogService dialogService,
 		IEnvironmentProvider environmentProvider,
         IState<PanelState> panelStateWrap,
         IState<ContextState> contextStateWrap,
@@ -52,6 +54,7 @@ public class CommandFactory : ICommandFactory
     {
 		_textEditorService = textEditorService;
 		_treeViewService = treeViewService;
+		_dialogService = dialogService;
 		_environmentProvider = environmentProvider;
         _panelStateWrap = panelStateWrap;
         _contextStateWrap = contextStateWrap;
@@ -372,7 +375,7 @@ public class CommandFactory : ICommandFactory
 						true,
 						null);
 
-                    _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
+                    _dialogService.ReduceRegisterAction(CodeSearchDialog);
                     
                     _textEditorService.TextEditorWorker.PostUnique(nameof(CodeSearchDisplay), editContext =>
                     {

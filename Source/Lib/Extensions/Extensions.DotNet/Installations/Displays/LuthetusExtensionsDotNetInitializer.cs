@@ -322,7 +322,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			true,
 			null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        DialogService.ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
     

@@ -17,17 +17,20 @@ public class InputFileIdeApi
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly IDialogService _dialogService;
     private readonly IDispatcher _dispatcher;
 
     public InputFileIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         IIdeComponentRenderers ideComponentRenderers,
         IBackgroundTaskService backgroundTaskService,
+        IDialogService dialogService,
         IDispatcher dispatcher)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _ideComponentRenderers = ideComponentRenderers;
         _backgroundTaskService = backgroundTaskService;
+        _dialogService = dialogService;
         _dispatcher = dispatcher;
     }
 
@@ -70,7 +73,7 @@ public class InputFileIdeApi
             true,
             null);
 
-        _dispatcher.Dispatch(new DialogState.RegisterAction(inputFileDialog));
+        _dialogService.ReduceRegisterAction(inputFileDialog);
 
         return Task.CompletedTask;
     }

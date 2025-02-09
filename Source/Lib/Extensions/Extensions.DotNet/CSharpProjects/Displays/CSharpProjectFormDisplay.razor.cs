@@ -4,6 +4,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -45,6 +46,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 	private LuthetusIdeConfig IdeConfig { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
 	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 	[Inject]
@@ -234,7 +237,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{
-				        	Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
+				        	DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
 							CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
 								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
@@ -257,6 +260,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					FileSystemProvider,
 					CompilerServicesBackgroundTaskApi,
 					Dispatcher,
+					DialogService,
 					DialogRecord,
 					LuthetusCommonComponentRenderers)
 				.ConfigureAwait(false);

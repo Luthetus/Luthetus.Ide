@@ -35,6 +35,6 @@ public partial class DirtyResourceUriInteractiveIconDisplay : FluxorComponent
 
     private void ShowDialogOnClick()
     {
-        DialogService.RegisterDialogRecord(_dialogRecord);
+        DialogService.ReduceRegisterAction(_dialogRecord);
     }
 }

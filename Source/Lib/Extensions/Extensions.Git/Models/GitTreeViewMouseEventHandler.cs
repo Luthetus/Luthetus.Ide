@@ -16,16 +16,19 @@ public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly IState<GitState> _gitStateWrap;
     private readonly IDispatcher _dispatcher;
+    private readonly IDialogService _dialogService;
 
     public GitTreeViewMouseEventHandler(
             ITreeViewService treeViewService,
             IBackgroundTaskService backgroundTaskService,
             IState<GitState> gitStateWrap,
-            IDispatcher dispatcher)
+            IDispatcher dispatcher,
+            IDialogService dialogService)
         : base(treeViewService, backgroundTaskService)
     {
         _gitStateWrap = gitStateWrap;
         _dispatcher = dispatcher;
+        _dialogService = dialogService;
     }
 
     protected override void OnDoubleClick(TreeViewCommandArgs commandArgs)
@@ -66,6 +69,6 @@ public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
             dialogViewModel.DialogElementDimensions.TopDimensionAttribute.Set(2.5, DimensionUnitKind.ViewportHeight);
         }
 
-        _dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
+        _dialogService.ReduceRegisterAction(dialogViewModel);
     }
 }

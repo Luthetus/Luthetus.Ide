@@ -45,6 +45,8 @@ public partial class GitDisplay : FluxorComponent
     private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
+	[Inject]
+    private IDialogService DialogService { get; set; } = null!;
 
 	private const string _dropdownMenuHtmlElementId = "luth_ide_git-display-dropdown-menu";
 
@@ -176,7 +178,7 @@ public partial class GitDisplay : FluxorComponent
             true,
             null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
+        DialogService.ReduceRegisterAction(dialogViewModel);
     }
 
     private MenuOptionRecord GetBranchNewMenuOptionRecord(GitState localGitState)

@@ -24,6 +24,8 @@ public partial class TerminalGroupDisplay : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
+    private IDialogService DialogService { get; set; } = null!;
+    [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 	private Key<IDynamicViewModel> _addIntegratedTerminalDialogKey = Key<IDynamicViewModel>.NewKey();
@@ -49,6 +51,6 @@ public partial class TerminalGroupDisplay : FluxorComponent
 			isResizable: true,
 			setFocusOnCloseElementId: null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(addIntegratedTerminalDialog));
+        DialogService.ReduceRegisterAction(addIntegratedTerminalDialog);
     }
 }

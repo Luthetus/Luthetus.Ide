@@ -21,6 +21,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
+    private IDialogService DialogService { get; set; } = null!;
+    [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -179,7 +181,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 			true,
 			null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        DialogService.ReduceRegisterAction(dialogRecord);
 
         return HandleShouldNoLongerRender(wasCausedByUiEvent: false);
     }

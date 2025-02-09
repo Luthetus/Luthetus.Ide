@@ -17,6 +17,8 @@ public partial class GitControlsDisplay : ComponentBase
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
 	[Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
 
@@ -70,6 +72,6 @@ public partial class GitControlsDisplay : ComponentBase
             true,
             null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
+        DialogService.ReduceRegisterAction(dialogViewModel);
     }
 }

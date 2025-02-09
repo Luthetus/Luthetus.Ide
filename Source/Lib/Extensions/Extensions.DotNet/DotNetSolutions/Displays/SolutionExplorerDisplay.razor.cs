@@ -35,6 +35,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
+	private IDialogService DialogService { get; set; } = null!;
+	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
@@ -110,7 +112,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			true,
 			null);
 
-		Dispatcher.Dispatch(new DialogState.RegisterAction(
-			dialogRecord));
+		DialogService.ReduceRegisterAction(dialogRecord);
 	}
 }

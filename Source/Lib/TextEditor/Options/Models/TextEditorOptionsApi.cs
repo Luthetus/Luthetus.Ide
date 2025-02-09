@@ -23,6 +23,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private readonly ITextEditorService _textEditorService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IStorageService _storageService;
+    private readonly IDialogService _dialogService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IDispatcher _dispatcher;
 
@@ -30,12 +31,14 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         ITextEditorService textEditorService,
         LuthetusTextEditorConfig textEditorConfig,
         IStorageService storageService,
+        IDialogService dialogService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
         _storageService = storageService;
+        _dialogService = dialogService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dispatcher = dispatcher;
     }
@@ -60,7 +63,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
-        _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
+        _dialogService.ReduceRegisterAction(settingsDialog);
     }
 
     public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -76,7 +79,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
-        _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
+        _dialogService.ReduceRegisterAction(_findAllDialog);
     }
 
     public void SetTheme(ThemeRecord theme, bool updateStorage = true)

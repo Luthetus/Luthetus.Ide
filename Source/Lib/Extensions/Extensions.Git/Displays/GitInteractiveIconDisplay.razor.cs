@@ -23,6 +23,8 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
 
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;
@@ -42,7 +44,7 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
             true,
             null);
 
-            Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
+            DialogService.ReduceRegisterAction(dialogViewModel);
         }
         else
         {

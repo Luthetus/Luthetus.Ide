@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -34,13 +35,13 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
+    private IDialogService DialogService { get; set; } = null!;
+    [Inject]
     private IState<ContextState> ContextStateWrap { get; set; } = null!;
     [Inject]
     private IState<ContextSwitchState> ContextSwitchStateWrap { get; set; } = null!;
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
-	[Inject]
-    private IState<DialogState> DialogStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -89,7 +90,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 						{
 							var contextState = ContextStateWrap.Value;
 							var panelState = PanelStateWrap.Value;
-							var dialogState = DialogStateWrap.Value;
+							var dialogState = DialogService.GetDialogState();
 							var menuOptionList = new List<MenuOptionRecord>();
 							
 							foreach (var panel in panelState.PanelList)
@@ -126,7 +127,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 											
 											if (existingDialog is not null)
 											{
-												Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(existingDialog.DynamicViewModelKey));
+												DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
 												
 												await JsRuntimeCommonApi
 									                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)

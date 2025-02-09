@@ -42,8 +42,7 @@ public record LuthetusCommonFactories
 
     public Func<IServiceProvider, IDialogService> DialogServiceFactory { get; init; } =
         serviceProvider => new DialogService(
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            serviceProvider.GetRequiredService<IState<DialogState>>());
+            serviceProvider.GetRequiredService<IJSRuntime>());
 
     public Func<IServiceProvider, INotificationService> NotificationServiceFactory { get; init; } =
         serviceProvider => new NotificationService(

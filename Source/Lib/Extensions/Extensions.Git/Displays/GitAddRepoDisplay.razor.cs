@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -20,6 +21,8 @@ public partial class GitAddRepoDisplay : ComponentBase
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
@@ -90,6 +93,6 @@ public partial class GitAddRepoDisplay : ComponentBase
         var repoAbsolutePath = EnvironmentProvider.AbsolutePathFactory(_repoAbsolutePathString, true);
         Dispatcher.Dispatch(new GitState.SetRepoAction(new GitRepo(repoAbsolutePath)));
 
-        Dispatcher.Dispatch(new DialogState.DisposeAction(Dialog.DynamicViewModelKey));
+        DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
     }
 }

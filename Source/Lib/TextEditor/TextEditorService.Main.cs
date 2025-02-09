@@ -88,7 +88,7 @@ public partial class TextEditorService : ITextEditorService
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _commonBackgroundTaskApi, _dispatcher);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, _commonBackgroundTaskApi, _dispatcher);
         
         TextEditorState = new();
     }
