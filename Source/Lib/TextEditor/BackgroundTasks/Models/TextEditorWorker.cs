@@ -231,6 +231,12 @@ public class TextEditorWorker : IBackgroundTask
 			
 		switch (workKind)
 		{
+			case TextEditorWorkKind.RedundantTextEditorWork:
+				var redundantTextEditorWork = RedundantTextEditorWorkQueue.Dequeue();
+				return redundantTextEditorWork.HandleEvent(cancellationToken);
+			case TextEditorWorkKind.UniqueTextEditorWork:
+				var uniqueTextEditorWork = UniqueTextEditorWorkQueue.Dequeue();
+				return uniqueTextEditorWork.HandleEvent(cancellationToken);
 			case TextEditorWorkKind.OnDoubleClick:
 				var onDoubleClick = OnDoubleClickQueue.Dequeue();
 				return onDoubleClick.HandleEvent(cancellationToken);
