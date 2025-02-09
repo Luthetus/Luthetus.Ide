@@ -359,7 +359,7 @@ public class HeaderDriver
 			true,
 			null);
 
-        _root.DialogService.RegisterDialogRecord(dialogRecord);
+        _root.DialogService.ReduceRegisterAction(dialogRecord);
     }
 
     public Task DoRefreshOnClick()

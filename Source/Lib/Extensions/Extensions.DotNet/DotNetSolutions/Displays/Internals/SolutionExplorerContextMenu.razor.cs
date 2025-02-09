@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
-using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -65,6 +64,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
@@ -510,7 +511,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			true,
 			null);
 
-		Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+		DialogService.ReduceRegisterAction(dialogRecord);
 		return Task.CompletedTask;
 	}
 

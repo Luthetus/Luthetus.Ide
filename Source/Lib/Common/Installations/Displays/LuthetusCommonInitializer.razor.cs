@@ -8,10 +8,9 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
-using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -34,13 +33,11 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
-    private IState<ContextState> ContextStateWrap { get; set; } = null!;
+    private IDialogService DialogService { get; set; } = null!;
     [Inject]
-    private IState<ContextSwitchState> ContextSwitchStateWrap { get; set; } = null!;
+    private IContextService ContextService { get; set; } = null!;
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
-	[Inject]
-    private IState<DialogState> DialogStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -80,16 +77,16 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
                     .SetFromLocalStorageAsync()
                     .ConfigureAwait(false);
 
-				ContextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;                    
-                Dispatcher.Dispatch(new ContextSwitchState.RegisterContextSwitchGroupAction(
+				ContextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;                    
+                ContextService.ReduceRegisterContextSwitchGroupAction(
                 	new ContextSwitchGroup(
                 		ContextSwitchGroupKey,
 						"Contexts",
 						() =>
 						{
-							var contextState = ContextStateWrap.Value;
+							var contextState = ContextService.GetContextState();
 							var panelState = PanelStateWrap.Value;
-							var dialogState = DialogStateWrap.Value;
+							var dialogState = DialogService.GetDialogState();
 							var menuOptionList = new List<MenuOptionRecord>();
 							
 							foreach (var panel in panelState.PanelList)
@@ -126,7 +123,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 											
 											if (existingDialog is not null)
 											{
-												Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(existingDialog.DynamicViewModelKey));
+												DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
 												
 												await JsRuntimeCommonApi
 									                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
@@ -162,7 +159,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 								: new MenuRecord(menuOptionList);
 								
 							return Task.FromResult(menu);
-						})));
+						}));
             });
 	
 		base.OnInitialized();

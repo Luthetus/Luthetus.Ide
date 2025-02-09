@@ -108,7 +108,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private void ShowCalculationOnClick()
     {
-        DialogService.DisposeDialogRecord(_detailsDialogRecord.DynamicViewModelKey);
+        DialogService.ReduceDisposeAction(_detailsDialogRecord.DynamicViewModelKey);
 
         _detailsDialogRecord = _detailsDialogRecord with
         {
@@ -125,7 +125,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 			}
 		};
 
-        DialogService.RegisterDialogRecord(_detailsDialogRecord);
+        DialogService.ReduceRegisterAction(_detailsDialogRecord);
     }
 
     public void Dispose()

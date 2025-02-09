@@ -4,6 +4,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
@@ -55,6 +56,7 @@ public partial class TextEditorService : ITextEditorService
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher,
         IDialogService dialogService,
+        IContextService contextService,
 		IAutocompleteIndexer autocompleteIndexer,
 		IAutocompleteService autocompleteService,
 		IState<AppDimensionState> appDimensionStateWrap,
@@ -88,7 +90,7 @@ public partial class TextEditorService : ITextEditorService
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _commonBackgroundTaskApi, _dispatcher);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi, _dispatcher);
         
         TextEditorState = new();
     }

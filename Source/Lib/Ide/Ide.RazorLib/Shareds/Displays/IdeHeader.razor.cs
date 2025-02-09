@@ -9,7 +9,6 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.FileSystems.Displays;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -41,8 +40,6 @@ public partial class IdeHeader : ComponentBase, IDisposable
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
-    private IState<DialogState> DialogStateWrap { get; set; } = null!;
-	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<IdeHeaderState> IdeHeaderStateWrap { get; set; } = null!;
@@ -56,6 +53,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
@@ -199,7 +198,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						true,
 						null);
 
-                    Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
+                    DialogService.ReduceRegisterAction(CommandFactory.CodeSearchDialog);
                     return Task.CompletedTask;
 				});
 
@@ -259,7 +258,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						true,
 						null);
 			
-			        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+			        DialogService.ReduceRegisterAction(dialogRecord);
 			        return Task.CompletedTask;
                 });
 
@@ -300,7 +299,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
     {
         var menuOptionsList = new List<MenuOptionRecord>();
 		var panelState = PanelStateWrap.Value;
-		var dialogState = DialogStateWrap.Value;
+		var dialogState = DialogService.GetDialogState();
 
 		foreach (var panel in panelState.PanelList)
 		{
@@ -336,7 +335,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						
 						if (existingDialog is not null)
 						{
-							Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(existingDialog.DynamicViewModelKey));
+							DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
 							
 							await JsRuntimeCommonApi
 				                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
@@ -409,7 +408,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			true,
 			null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        DialogService.ReduceRegisterAction(dialogRecord);
 		return Task.CompletedTask;
 	}
 
@@ -424,7 +423,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			true,
 			null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        DialogService.ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 

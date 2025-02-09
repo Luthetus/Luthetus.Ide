@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -39,6 +39,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
+	[Inject]
+	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
@@ -115,7 +117,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 	        	ContinueWithFunc = parsedCommand =>
 	        	{
 	        		// Close Dialog
-					Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
+					DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
 					// Open the created .NET Solution
 					var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
@@ -170,7 +172,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 			.ConfigureAwait(false);
 
 		// Close Dialog
-		Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
+		DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
 		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 

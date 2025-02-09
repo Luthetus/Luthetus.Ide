@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
@@ -59,7 +60,8 @@ public static class ServiceCollectionExtensions
 				return hostingInformation.BackgroundTaskService;
 			})
             .AddScoped<CommonBackgroundTaskApi>()
-            .AddScoped<BrowserResizeInterop>();
+            .AddScoped<BrowserResizeInterop>()
+            .AddScoped<IContextService, ContextService>();
 
         return services;
     }

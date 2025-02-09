@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
@@ -19,8 +18,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
-    [Inject]
-    private IStateSelection<DialogState, bool> DialogStateIsActiveSelection { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -56,9 +53,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
-        DialogStateIsActiveSelection.SelectedValueChanged += DialogStateIsActiveSelection_SelectedValueChanged;
-
-        DialogStateIsActiveSelection.Select(dialogState => dialogState.ActiveDialogKey == Dialog.DynamicViewModelKey);
+        DialogService.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
 
         base.OnInitialized();
     }
@@ -75,7 +70,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void DialogStateIsActiveSelection_SelectedValueChanged(object? sender, bool e)
+    private async void OnActiveDialogKeyChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
@@ -98,14 +93,14 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void ToggleIsMaximized()
     {
-        DialogService.SetDialogRecordIsMaximized(
+        DialogService.ReduceSetIsMaximizedAction(
             Dialog.DynamicViewModelKey,
             !Dialog.DialogIsMaximized);
     }
 
     private async Task DispatchDisposeDialogRecordAction()
     {
-        DialogService.DisposeDialogRecord(Dialog.DynamicViewModelKey);
+        DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
         
         await JsRuntime.GetLuthetusCommonApi()
 	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
@@ -122,7 +117,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private Task HandleOnFocusIn()
     {
-        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(Dialog.DynamicViewModelKey));
+        DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
         return OnFocusInFunc.Invoke(Dialog);
     }
     
@@ -133,12 +128,12 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void HandleOnMouseDown()
     {
-        Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(Dialog.DynamicViewModelKey));
+        DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
     }
 
     public void Dispose()
     {
         AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
-        DialogStateIsActiveSelection.SelectedValueChanged += DialogStateIsActiveSelection_SelectedValueChanged;
+        DialogService.ActiveDialogKeyChanged -= OnActiveDialogKeyChanged;
     }
 }

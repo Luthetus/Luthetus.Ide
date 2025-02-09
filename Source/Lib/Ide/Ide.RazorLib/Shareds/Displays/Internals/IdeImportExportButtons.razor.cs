@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
@@ -11,6 +10,8 @@ public partial class IdeImportExportButtons : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
 
     private IDialog _importDialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
@@ -32,11 +33,11 @@ public partial class IdeImportExportButtons : ComponentBase
 
     private void ImportOnClick()
     {
-        Dispatcher.Dispatch(new DialogState.RegisterAction(_importDialogRecord));
+        DialogService.ReduceRegisterAction(_importDialogRecord);
     }
     
     private void ExportOnClick()
     {
-        Dispatcher.Dispatch(new DialogState.RegisterAction(_exportDialogRecord));
+        DialogService.ReduceRegisterAction(_exportDialogRecord);
     }
 }

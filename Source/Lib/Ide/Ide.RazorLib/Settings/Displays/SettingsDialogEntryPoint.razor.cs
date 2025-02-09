@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -14,6 +13,8 @@ public partial class SettingsDialogEntryPoint : ComponentBase
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
 
     private IDialog _dialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
@@ -25,5 +26,5 @@ public partial class SettingsDialogEntryPoint : ComponentBase
 		null);
 
     public void DispatchRegisterDialogRecordAction() =>
-        Dispatcher.Dispatch(new DialogState.RegisterAction(_dialogRecord));
+        DialogService.ReduceRegisterAction(_dialogRecord);
 }

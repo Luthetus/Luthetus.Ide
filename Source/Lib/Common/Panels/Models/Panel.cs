@@ -196,7 +196,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				TabGroup = null;
 			}
 
-			DialogService.RegisterDialogRecord(this);
+			DialogService.ReduceRegisterAction(this);
 		}
 		
 		// Create Panel Tab
@@ -211,7 +211,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				}
 				else
 				{
-					DialogService.DisposeDialogRecord(DynamicViewModelKey);
+					DialogService.ReduceDisposeAction(DynamicViewModelKey);
 				}
 
 				TabGroup = null;

@@ -246,7 +246,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                     TabGroup = null;
                 }
 
-                DialogService.RegisterDialogRecord(this);
+                DialogService.ReduceRegisterAction(this);
             }
 
             // Create TextEditor Tab
@@ -275,7 +275,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                     else
                     {
                         // Is a dialog
-                        DialogService.DisposeDialogRecord(DynamicViewModelKey);
+                        DialogService.ReduceDisposeAction(DynamicViewModelKey);
                     }
 
                     TabGroup = null;
@@ -307,7 +307,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                 else
                 {
                     // Is a dialog
-                    DialogService.DisposeDialogRecord(DynamicViewModelKey);
+                    DialogService.ReduceDisposeAction(DynamicViewModelKey);
                 }
 
                 TabGroup = null;

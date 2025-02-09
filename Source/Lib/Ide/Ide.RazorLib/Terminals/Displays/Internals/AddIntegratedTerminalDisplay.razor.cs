@@ -106,6 +106,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		Dispatcher.Dispatch(new TerminalState.RegisterAction(terminalIntegrated));
 			
-		DialogService.DisposeDialogRecord(Dialog.DynamicViewModelKey);
+		DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}
 }

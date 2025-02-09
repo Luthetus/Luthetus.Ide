@@ -2,7 +2,6 @@ using System.Text.Json;
 using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -12,7 +11,6 @@ using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using static Luthetus.Common.RazorLib.Contexts.States.ContextState;
 
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -23,6 +21,8 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private readonly ITextEditorService _textEditorService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IStorageService _storageService;
+    private readonly IDialogService _dialogService;
+    private readonly IContextService _contextService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IDispatcher _dispatcher;
 
@@ -30,12 +30,16 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         ITextEditorService textEditorService,
         LuthetusTextEditorConfig textEditorConfig,
         IStorageService storageService,
+        IDialogService dialogService,
+        IContextService contextService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
         _storageService = storageService;
+        _dialogService = dialogService;
+        _contextService = contextService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dispatcher = dispatcher;
     }
@@ -60,7 +64,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
-        _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
+        _dialogService.ReduceRegisterAction(settingsDialog);
     }
 
     public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -76,7 +80,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
-        _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
+        _dialogService.ReduceRegisterAction(_findAllDialog);
     }
 
     public void SetTheme(ThemeRecord theme, bool updateStorage = true)
@@ -119,9 +123,9 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
         if (activeKeymap is not null)
         {
-            _dispatcher.Dispatch(new SetContextKeymapAction(
+            _contextService.ReduceSetContextKeymapAction(
                 ContextFacts.TextEditorContext.ContextKey,
-                activeKeymap));
+                activeKeymap);
         }
 
         if (updateStorage)
@@ -203,9 +207,9 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
             if (activeKeymap is not null)
             {
-                _dispatcher.Dispatch(new SetContextKeymapAction(
+                _contextService.ReduceSetContextKeymapAction(
                     ContextFacts.TextEditorContext.ContextKey,
-                    activeKeymap));
+                    activeKeymap);
             }
         }
 
