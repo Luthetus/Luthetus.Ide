@@ -1,3 +1,7 @@
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Events.Models;
+
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 /// <summary>
@@ -37,5 +41,66 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </summary>
 public class TextEditorWorker : IBackgroundTask
 {
+	public Key<IBackgroundTask> BackgroundTaskKey { get; }
+    public Key<IBackgroundTaskQueue> QueueKey { get; }
+    public string Name { get; }
+    public bool EarlyBatchEnabled { get; } = false;
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+    
+    public Queue<OnDoubleClick> OnDoubleClickQueue { get; } = new();
+    public Queue<OnKeyDownLateBatching> OnKeyDownLateBatchingQueue { get; } = new();
+	public Queue<OnMouseDown> OnMouseDownQueue { get; } = new();
+    public Queue<OnMouseMove> OnMouseMoveQueue { get; } = new();
+    public Queue<OnScrollHorizontal> OnScrollHorizontalQueue { get; } = new();
+	public Queue<OnScrollVertical> OnScrollVerticalQueue { get; } = new();
+	public Queue<OnWheel> OnWheelQueue { get; } = new();
+	public Queue<OnWheelBatch> OnWheelBatchQueue { get; } = new();
 	
+	/// <summary>
+	/// If multiple EventKind of the same are enqueued one after another then
+	/// better to have this Queue be a struct that has the count of contiguous work kind enqueues?
+	/// </summary>
+	public Queue<TextEditorWorkKind> WorkKindQueue { get; } = new();
+	
+	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+	
+	public ValueTask HandleEvent(CancellationToken cancellationToken)
+	{
+		if (!WorkKindQueue.TryDequeue(out var workKind))
+			return ValueTask.CompletedTask;
+			
+		switch (workKind)
+		{
+			case TextEditorWorkKind.OnDoubleClick:
+				var onDoubleClick = OnDoubleClickQueue.Dequeue();
+				return onDoubleClick.HandleEvent(cancellationToken);
+		    case TextEditorWorkKind.OnKeyDownLateBatching:
+		    	var onKeyDownLateBatching = OnKeyDownLateBatchingQueue.Dequeue();
+				return onKeyDownLateBatching.HandleEvent(cancellationToken);
+			case TextEditorWorkKind.OnMouseDown:
+				var onMouseDown = OnMouseDownQueue.Dequeue();
+				return onMouseDown.HandleEvent(cancellationToken);
+		    case TextEditorWorkKind.OnMouseMove:
+		    	var onMouseMove = OnMouseMoveQueue.Dequeue();
+				return onMouseMove.HandleEvent(cancellationToken);
+		    case TextEditorWorkKind.OnScrollHorizontal:
+		    	var onScrollHorizontal = OnScrollHorizontalQueue.Dequeue();
+				return onScrollHorizontal.HandleEvent(cancellationToken);
+			case TextEditorWorkKind.OnScrollVertical:
+		    	var onScrollVertical = OnScrollVerticalQueue.Dequeue();
+				return onScrollVertical.HandleEvent(cancellationToken);
+			case TextEditorWorkKind.OnWheel:
+		    	var onWheel = OnWheelQueue.Dequeue();
+				return onWheel.HandleEvent(cancellationToken);
+			case TextEditorWorkKind.OnWheelBatch:
+		    	var onWheelBatch = OnWheelBatchQueue.Dequeue();
+				return onWheelBatch.HandleEvent(cancellationToken);
+				break;
+			default:
+				return ValueTask.CompletedTask;
+		}
+	}
 }
