@@ -8,6 +8,7 @@ namespace Luthetus.Common.RazorLib.Dialogs.Models;
 public interface IDialogService
 {
 	public event Action? DialogStateChanged;
+	public event Action? ActiveDialogKeyChanged;
 	
 	/// <summary>
 	/// Capture the reference and re-use it,

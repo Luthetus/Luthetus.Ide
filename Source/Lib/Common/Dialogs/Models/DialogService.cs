@@ -27,6 +27,8 @@ public class DialogService : IDialogService
 		
 	public event Action? DialogStateChanged;
 	
+	public event Action? ActiveDialogKeyChanged;
+	
 	public DialogState GetDialogState() => _dialogState;
     
     public void ReduceRegisterAction(IDialog dialog)
@@ -90,7 +92,7 @@ public class DialogService : IDialogService
     	
         _dialogState = inState with { ActiveDialogKey = dynamicViewModelKey };
         
-        DialogStateChanged?.Invoke();
+        ActiveDialogKeyChanged?.Invoke();
         return;
     }
 

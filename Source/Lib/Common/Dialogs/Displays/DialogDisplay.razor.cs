@@ -20,8 +20,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IStateSelection<DialogState, bool> DialogStateIsActiveSelection { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private LuthetusCommonConfig CommonConfig { get; set; } = null!;
@@ -56,9 +54,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
-        DialogStateIsActiveSelection.SelectedValueChanged += DialogStateIsActiveSelection_SelectedValueChanged;
-
-        DialogStateIsActiveSelection.Select(dialogState => dialogState.ActiveDialogKey == Dialog.DynamicViewModelKey);
+        DialogService.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
 
         base.OnInitialized();
     }
@@ -75,7 +71,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void DialogStateIsActiveSelection_SelectedValueChanged(object? sender, bool e)
+    private async void OnActiveDialogKeyChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
@@ -139,6 +135,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
-        DialogStateIsActiveSelection.SelectedValueChanged += DialogStateIsActiveSelection_SelectedValueChanged;
+        DialogService.ActiveDialogKeyChanged -= OnActiveDialogKeyChanged;
     }
 }

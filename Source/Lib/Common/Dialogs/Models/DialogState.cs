@@ -29,5 +29,5 @@ public partial record DialogState
     /// dialogs is hidden by the other. To be able to 'bring to front'
     /// the dialog one is interested in by setting focus to it, is useful.
     /// </summary>
-    public Key<IDynamicViewModel> ActiveDialogKey { get; init; }
+    public Key<IDynamicViewModel> ActiveDialogKey { get; init; } = Key<IDynamicViewModel>.Empty;
 }
