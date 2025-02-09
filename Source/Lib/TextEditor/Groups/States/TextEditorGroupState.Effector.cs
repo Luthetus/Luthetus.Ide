@@ -50,7 +50,7 @@ public partial class TextEditorGroupState
 			Key<TextEditorGroup> groupKey,
         	Key<TextEditorViewModel> viewModelKey)
 		{
-			_textEditorService.PostRedundant(
+			_textEditorService.TextEditorWorker.PostRedundant(
 				nameof(PostScroll),
 				ResourceUri.Empty,
 				viewModelKey,

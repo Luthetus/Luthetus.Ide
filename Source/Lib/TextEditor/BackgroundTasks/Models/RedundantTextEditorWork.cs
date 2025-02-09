@@ -23,7 +23,7 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// For further control over the batching, one needs to implement <see cref="ITextEditorWork"/>
 /// and implement the method: <see cref="IBackgroundTask.BatchOrDefault"/>.
 /// </remarks>
-public struct RedundantTextEditorWork : ITextEditorWork
+public struct RedundantTextEditorWork : IBackgroundTask
 {
     private readonly Func<ITextEditorEditContext, ValueTask> _textEditorFunc;
 
@@ -51,7 +51,6 @@ public struct RedundantTextEditorWork : ITextEditorWork
     public bool EarlyBatchEnabled { get; set; } = true;
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public ITextEditorService TextEditorService { get; }
-    public ITextEditorEditContext? EditContext { get; private set; }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -80,14 +79,14 @@ public struct RedundantTextEditorWork : ITextEditorWork
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorEditContext(TextEditorService);
+    	var editContext = new TextEditorEditContext(TextEditorService);
     
 		await _textEditorFunc
-            .Invoke(EditContext)
+            .Invoke(editContext)
             .ConfigureAwait(false);
             
-        await EditContext.TextEditorService
-        	.FinalizePost(EditContext)
+        await editContext.TextEditorService
+        	.FinalizePost(editContext)
         	.ConfigureAwait(false);
     }
 }

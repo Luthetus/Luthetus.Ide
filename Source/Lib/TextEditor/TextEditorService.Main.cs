@@ -60,6 +60,8 @@ public partial class TextEditorService : ITextEditorService
 		IState<AppDimensionState> appDimensionStateWrap,
 		IServiceProvider serviceProvider)
     {
+    	TextEditorWorker = new(this);
+    
         GroupStateWrap = groupStateWrap;
         DiffStateWrap = diffStateWrap;
         ThemeStateWrap = themeStateWrap;
@@ -123,41 +125,11 @@ public partial class TextEditorService : ITextEditorService
     
     public TextEditorState TextEditorState { get; }
     
-    public event Action? TextEditorStateChanged;
-
-    public void PostUnique(
-        string name,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
-    {
-    	_backgroundTaskService.Enqueue(new UniqueTextEditorWork(
-            name,
-            this,
-            textEditorFunc));
-    }
-
-    public void PostRedundant(
-        string name,
-		ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
-    {
-    	_backgroundTaskService.Enqueue(new RedundantTextEditorWork(
-            name,
-			resourceUri,
-            viewModelKey,
-            this,
-            textEditorFunc));
-    }
-
-    public void Post(ITextEditorWork work)
-    {
-        _backgroundTaskService.Enqueue(work);
-    }
+    public TextEditorWorker TextEditorWorker { get; }
     
-    public Task PostAsync(ITextEditorWork work)
-    {
-        return _backgroundTaskService.EnqueueAsync(work);
-    }
+    public IBackgroundTaskService BackgroundTaskService => _backgroundTaskService;
+    
+    public event Action? TextEditorStateChanged;
 
 	public async ValueTask FinalizePost(ITextEditorEditContext editContext)
 	{
@@ -491,7 +463,7 @@ public partial class TextEditorService : ITextEditorService
 			// Move cursor
 			if (cursorPositionIndex is null)
 				return; // Leave the cursor unchanged if the argument is null
-			PostUnique(nameof(OpenInEditorAsync), editContext =>
+			TextEditorWorker.PostUnique(nameof(OpenInEditorAsync), editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(resourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
@@ -547,7 +519,7 @@ public partial class TextEditorService : ITextEditorService
 			// Move cursor
 			if (lineIndex is null && columnIndex is null)
 				return; // Leave the cursor unchanged if the argument is null
-			PostUnique(nameof(OpenInEditorAsync), editContext =>
+			TextEditorWorker.PostUnique(nameof(OpenInEditorAsync), editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(resourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);

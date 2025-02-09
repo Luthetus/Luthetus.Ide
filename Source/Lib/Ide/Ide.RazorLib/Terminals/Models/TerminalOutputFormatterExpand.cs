@@ -168,7 +168,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
         
         _textEditorService.ViewModelApi.Register(viewModel);
 
-        _textEditorService.PostUnique(
+        _textEditorService.TextEditorWorker.PostUnique(
             nameof(TerminalOutput),
             editContext =>
             {

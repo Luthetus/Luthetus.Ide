@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
@@ -22,6 +23,11 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
+/// <summary>
+/// Post any background tasks via <see cref="TextEditorWorker"/>.
+/// TODO: Make the TextEditorWorker logic more clear...
+/// ...(more clear that you don't use IBackgroundTaskService for text editor related background tasks).
+/// </summary>
 public partial interface ITextEditorService
 {
     /// <summary>This is used when interacting with the <see cref="IStorageService"/> to set and get data.</summary>
@@ -49,40 +55,13 @@ public partial interface ITextEditorService
 	
 	public TextEditorState TextEditorState { get; }
 	
+	public TextEditorWorker TextEditorWorker { get; }
+	
+	/// <summary>TODO: Delete this, this is a hack so I have it in scope for the new TextEditorWorker code.</summary>
+	public IBackgroundTaskService BackgroundTaskService { get; }
+	
 	public event Action? TextEditorStateChanged;
         
-    /// <summary>
-    /// This method will create an instance of <see cref="UniqueTextEditorTask"/>,
-    /// and then invoke IBackgroundTaskService.Enqueue(IBackgroundTask backgroundTask)<br/><br/>
-    /// </summary>
-    public void PostUnique(
-        string name,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc);
-        
-    /// <summary>
-    /// This method will create an instance of <see cref="RedundantTextEditorTask"/>,
-    /// and then invoke IBackgroundTaskService.Enqueue(IBackgroundTask backgroundTask)<br/><br/>
-    /// </summary>
-    public void PostRedundant(
-        string name,
-		ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc);
-
-    /// <summary>
-    /// This method simply invokes IBackgroundTaskService.Enqueue(IBackgroundTask backgroundTask)
-    /// with the same parameter.
-    /// </summary>
-    public void Post(ITextEditorWork textEditorWork);
-    
-    /// <summary>
-    /// This method simply invokes IBackgroundTaskService.EnqueueAsync(IBackgroundTask backgroundTask)
-    /// with the same parameter.
-    ///
-    /// This async version will block until the background task is completed.
-    /// </summary>
-    public Task PostAsync(ITextEditorWork textEditorWork);
-
 	/// <summmary>
 	/// This method writes any mutated data within the <see cref="ITextEditorWork.EditContext"/>
 	/// to the <see cref="TextEditorState"/>, and afterwards causes a UI render.

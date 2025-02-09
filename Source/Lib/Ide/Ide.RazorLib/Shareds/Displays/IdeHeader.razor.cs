@@ -223,7 +223,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
                     if (activeViewModel is null)
 						return Task.CompletedTask;
 
-					TextEditorService.PostUnique(
+					TextEditorService.TextEditorWorker.PostUnique(
 						nameof(TextEditorCommandDefaultFacts.ShowFindOverlay),
 						editContext =>
 						{

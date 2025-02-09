@@ -749,7 +749,7 @@ Execution Terminal"));
 
 		if (solutionTextEditorModel is not null)
 		{
-			_textEditorService.PostUnique(
+			_textEditorService.TextEditorWorker.PostUnique(
 				nameof(Website_AddExistingProjectToSolutionAsync),
 				editContext =>
 				{
