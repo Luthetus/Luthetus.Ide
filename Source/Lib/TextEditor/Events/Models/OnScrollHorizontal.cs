@@ -24,44 +24,22 @@ public struct OnScrollHorizontal
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext? EditContext { get; private set; }
-
-    /*public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
-    {
-        if (oldEvent.Name == Name)
-		{
-			// Replace the upstream event with this one,
-			// because unhandled-consecutive events of this type are redundant.
-			return this;
-		}
-        
-		// Keep both events, because they are not able to be batched.
-		return null;
-    }*/
-    
-    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
-    {
-    	return null;
-    }
-
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
-        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
         if (viewModelModifier is null)
             return;
 
-        EditContext.TextEditorService.ViewModelApi.SetScrollPosition(
-        	EditContext,
+        editContext.TextEditorService.ViewModelApi.SetScrollPosition(
+        	editContext,
     		viewModelModifier,
         	ScrollLeft,
         	null);
         	
-        await EditContext.TextEditorService
-        	.FinalizePost(EditContext)
+        await editContext.TextEditorService
+        	.FinalizePost(editContext)
         	.ConfigureAwait(false);
-        	
-        // await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

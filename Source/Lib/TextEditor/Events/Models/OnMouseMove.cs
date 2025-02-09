@@ -29,34 +29,14 @@ public struct OnMouseMove
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext? EditContext { get; private set; }
-
-    /*public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
-    {
-        if (oldEvent.Name == Name)
-		{
-			// Replace the upstream event with this one,
-			// because unhandled-consecutive events of this type are redundant.
-			return this;
-		}
-        
-		// Keep both events, because they are not able to be batched.
-		return null;
-    }*/
-    
-    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
-    {
-    	return null;
-    }
-
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
-        var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
-        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-        var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+        var modelModifier = editContext.GetModelModifier(ResourceUri, true);
+        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
         if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
@@ -68,23 +48,21 @@ public struct OnMouseMove
 				ViewModelKey,
 				MouseEventArgs,
 				ComponentData,
-				EditContext)
+				editContext)
 			.ConfigureAwait(false);
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
         primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-		// EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+		// editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 
         primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 	
-		EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+		editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 	
-		await EditContext.TextEditorService
-			.FinalizePost(EditContext)
+		await editContext.TextEditorService
+			.FinalizePost(editContext)
 			.ConfigureAwait(false);
-			
-		// await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

@@ -381,8 +381,6 @@ public struct OnKeyDownLateBatching
 		await editContext.TextEditorService
 			.FinalizePost(editContext)
 			.ConfigureAwait(false);
-			
-		// await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 
     private bool KeyAndModifiersAreEqual(KeymapArgs x, KeymapArgs y)
