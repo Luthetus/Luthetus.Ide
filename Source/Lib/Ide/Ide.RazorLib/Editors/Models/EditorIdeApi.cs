@@ -158,7 +158,7 @@ public class EditorIdeApi
 	            });
 			
 			if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
-				await _textEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+				await _textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWorkAsync(uniqueTextEditorWork).ConfigureAwait(false);
 			else
 				_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
         }

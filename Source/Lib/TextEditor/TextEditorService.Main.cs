@@ -131,40 +131,6 @@ public partial class TextEditorService : ITextEditorService
     
     public event Action? TextEditorStateChanged;
 
-    /*public void PostUnique(
-        string name,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
-    {
-    	_backgroundTaskService.Enqueue(new UniqueTextEditorWork(
-            name,
-            this,
-            textEditorFunc));
-    }
-
-    public void PostRedundant(
-        string name,
-		ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
-    {
-    	_backgroundTaskService.Enqueue(new RedundantTextEditorWork(
-            name,
-			resourceUri,
-            viewModelKey,
-            this,
-            textEditorFunc));
-    }
-
-    public void Post(ITextEditorWork work)
-    {
-        _backgroundTaskService.Enqueue(work);
-    }*/
-    
-    public Task PostAsync(IBackgroundTask work)
-    {
-        return _backgroundTaskService.EnqueueAsync(work);
-    }
-
 	public async ValueTask FinalizePost(ITextEditorEditContext editContext)
 	{
 		if (editContext.ModelCache is not null)

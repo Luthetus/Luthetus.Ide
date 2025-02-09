@@ -116,6 +116,21 @@ public class TextEditorWorker : IBackgroundTask
 		_textEditorService.BackgroundTaskService.Enqueue(this);
 	}
 	
+	/// <summary>
+	/// TODO: Get this to work without boxing the uniqueTextEditorWork.
+	/// TODO: ValueTaskCompletionSource exists?
+	/// </summary>
+	public Task EnqueueUniqueTextEditorWorkAsync(UniqueTextEditorWork uniqueTextEditorWork)
+	{
+		/*lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.UniqueTextEditorWork);
+			UniqueTextEditorWorkQueue.Enqueue(uniqueTextEditorWork);
+		}*/
+		
+		return _textEditorService.BackgroundTaskService.EnqueueAsync(uniqueTextEditorWork);
+	}
+	
 	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)
 	{
 		lock (_workKindQueueLock)
