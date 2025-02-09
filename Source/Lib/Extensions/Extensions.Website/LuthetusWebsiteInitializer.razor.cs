@@ -199,7 +199,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
             TextEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            TextEditorService.PostUnique(
+            TextEditorService.TextEditorWorker.PostUnique(
                 nameof(TextEditorService.ModelApi.AddPresentationModel),
                 editContext =>
                 {
