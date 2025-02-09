@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public struct OnWheelBatch : ITextEditorWork
+public struct OnWheelBatch
 {
     public OnWheelBatch(
         List<WheelEventArgs> wheelEventArgsList,
@@ -21,22 +21,16 @@ public struct OnWheelBatch : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; }
-    public bool __TaskCompletionSourceWasCreated { get; set; }
-    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
-    public string Name => "luth_OnWheelBatch";
     public List<WheelEventArgs> WheelEventArgsList { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    /*public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
         return null;
-    }
+    }*/
     
     public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
     {

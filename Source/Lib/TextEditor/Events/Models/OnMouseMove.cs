@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public struct OnMouseMove : ITextEditorWork
+public struct OnMouseMove
 {
     public OnMouseMove(
         MouseEventArgs mouseEventArgs,
@@ -24,12 +24,6 @@ public struct OnMouseMove : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; } = true;
-    public bool __TaskCompletionSourceWasCreated { get; set; }
-    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
-    public string Name => "luth_OnMouseMove";
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -37,7 +31,7 @@ public struct OnMouseMove : ITextEditorWork
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    /*public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent.Name == Name)
 		{
@@ -48,7 +42,7 @@ public struct OnMouseMove : ITextEditorWork
         
 		// Keep both events, because they are not able to be batched.
 		return null;
-    }
+    }*/
     
     public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
     {

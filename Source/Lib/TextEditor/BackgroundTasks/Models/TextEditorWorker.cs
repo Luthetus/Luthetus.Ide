@@ -1,6 +1,8 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
@@ -41,12 +43,22 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </summary>
 public class TextEditorWorker : IBackgroundTask
 {
-	public Key<IBackgroundTask> BackgroundTaskKey { get; }
-    public Key<IBackgroundTaskQueue> QueueKey { get; }
+	private readonly object _workKindQueueLock = new();
+	private readonly ITextEditorService _textEditorService;
+	
+	public TextEditorWorker(ITextEditorService textEditorService)
+	{
+		_textEditorService = textEditorService;
+	}
+
+	public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.Empty;
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; }
     public bool EarlyBatchEnabled { get; } = false;
     public bool __TaskCompletionSourceWasCreated { get; set; }
     
+    public Queue<RedundantTextEditorWork> RedundantTextEditorWorkQueue { get; } = new();
+    public Queue<UniqueTextEditorWork> UniqueTextEditorWorkQueue { get; } = new();
     public Queue<OnDoubleClick> OnDoubleClickQueue { get; } = new();
     public Queue<OnKeyDownLateBatching> OnKeyDownLateBatchingQueue { get; } = new();
 	public Queue<OnMouseDown> OnMouseDownQueue { get; } = new();
@@ -67,10 +79,155 @@ public class TextEditorWorker : IBackgroundTask
 		return null;
 	}
 	
+	public void PostRedundant(
+        string name,
+		ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
+    {
+    	EnqueueRedundantTextEditorWork(
+    		new RedundantTextEditorWork(
+	            name,
+				resourceUri,
+	            viewModelKey,
+	            _textEditorService,
+	            textEditorFunc));
+    }
+	
+	public void PostUnique(
+        string name,
+        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
+    {
+    	EnqueueUniqueTextEditorWork(
+    		new UniqueTextEditorWork(
+	            name,
+	            _textEditorService,
+	            textEditorFunc));
+    }
+	
+	public void EnqueueRedundantTextEditorWork(RedundantTextEditorWork redundantTextEditorWork)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.RedundantTextEditorWork);
+			RedundantTextEditorWorkQueue.Enqueue(redundantTextEditorWork);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.UniqueTextEditorWork);
+			UniqueTextEditorWorkQueue.Enqueue(uniqueTextEditorWork);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueOnDoubleClick(OnDoubleClick onDoubleClick)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnDoubleClick);
+			OnDoubleClickQueue.Enqueue(onDoubleClick);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueOnKeyDownLateBatching(OnKeyDownLateBatching onKeyDownLateBatching)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnKeyDownLateBatching);
+			OnKeyDownLateBatchingQueue.Enqueue(onKeyDownLateBatching);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueOnMouseDown(OnMouseDown onMouseDown)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnMouseDown);
+			OnMouseDownQueue.Enqueue(onMouseDown);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueOnMouseMove(OnMouseMove onMouseMove)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnMouseMove);
+			OnMouseMoveQueue.Enqueue(onMouseMove);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueOnScrollHorizontal(OnScrollHorizontal onScrollHorizontal)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnScrollHorizontal);
+			OnScrollHorizontalQueue.Enqueue(onScrollHorizontal);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueOnScrollVertical(OnScrollVertical onScrollVertical)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnScrollVertical);
+			OnScrollVerticalQueue.Enqueue(onScrollVertical);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueOnWheel(OnWheel onWheel)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnWheel);
+			OnWheelQueue.Enqueue(onWheel);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
+	public void EnqueueOnWheelBatch(OnWheelBatch onWheelBatch)
+	{
+		lock (_workKindQueueLock)
+		{
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnWheelBatch);
+			OnWheelBatchQueue.Enqueue(onWheelBatch);
+		}
+		
+		_textEditorService.BackgroundTaskService.Enqueue(this);
+	}
+	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)
 	{
-		if (!WorkKindQueue.TryDequeue(out var workKind))
-			return ValueTask.CompletedTask;
+		TextEditorWorkKind workKind;
+	
+		// avoid UI infinite loop enqueue dequeue single work item
+		// by getting the count prior to starting the yield return deqeue
+		// then only dequeueing at most 'count' times.
+		
+		lock (_workKindQueueLock)
+		{
+			if (!WorkKindQueue.TryDequeue(out workKind))
+				return ValueTask.CompletedTask;
+		}
 			
 		switch (workKind)
 		{
@@ -98,7 +255,6 @@ public class TextEditorWorker : IBackgroundTask
 			case TextEditorWorkKind.OnWheelBatch:
 		    	var onWheelBatch = OnWheelBatchQueue.Dequeue();
 				return onWheelBatch.HandleEvent(cancellationToken);
-				break;
 			default:
 				return ValueTask.CompletedTask;
 		}

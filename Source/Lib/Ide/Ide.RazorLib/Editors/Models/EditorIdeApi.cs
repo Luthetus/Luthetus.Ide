@@ -160,7 +160,7 @@ public class EditorIdeApi
 			if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
 				await _textEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
 			else
-				_textEditorService.Post(uniqueTextEditorWork);
+				_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
         }
 
         await CheckIfContentsWereModifiedAsync(
@@ -241,7 +241,7 @@ public class EditorIdeApi
 	                {
 	                    if (writtenDateTime is not null)
 	                    {
-	                        _textEditorService.PostUnique(
+	                        _textEditorService.TextEditorWorker.PostUnique(
 	                            nameof(HandleOnSaveRequested),
 	                            editContext =>
 	                            {
@@ -309,7 +309,7 @@ public class EditorIdeApi
             
         if (showViewModelArgs.ShouldSetFocusToEditor)
         {
-        	_textEditorService.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+        	_textEditorService.TextEditorWorker.PostUnique(nameof(TryShowViewModelFunc), editContext =>
 	        {
 	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
 	        	
@@ -368,7 +368,7 @@ public class EditorIdeApi
                                                 .ReadAllTextAsync(inputFileAbsolutePathString)
                                                 .ConfigureAwait(false);
 
-                                            _textEditorService.PostUnique(
+                                            _textEditorService.TextEditorWorker.PostUnique(
                                                 nameof(CheckIfContentsWereModifiedAsync),
                                                 editContext =>
                                                 {

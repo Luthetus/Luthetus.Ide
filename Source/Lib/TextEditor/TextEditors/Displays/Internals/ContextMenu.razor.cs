@@ -78,7 +78,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
-            TextEditorService.PostUnique(
+            TextEditorService.TextEditorWorker.PostUnique(
 				nameof(ContextMenu),
 				editContext =>
 				{
@@ -105,7 +105,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     		
         try
         {
-            TextEditorService.PostUnique(
+            TextEditorService.TextEditorWorker.PostUnique(
 				nameof(ContextMenu),
 				editContext =>
 				{
@@ -165,7 +165,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         {
             try
             {
-				TextEditorService.PostUnique(
+				TextEditorService.TextEditorWorker.PostUnique(
 					nameof(ContextMenu),
 					editContext =>
 					{
@@ -203,7 +203,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     		
         var commandArgs = ConstructCommandArgs(renderBatch);
 
-        TextEditorService.PostUnique(
+        TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Cut),
             editContext =>
             {
@@ -222,7 +222,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	
         var commandArgs = ConstructCommandArgs(renderBatch);
 
-        TextEditorService.PostUnique(
+        TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Copy),
             editContext =>
             {
@@ -241,7 +241,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     		
         var commandArgs = ConstructCommandArgs(renderBatch);
 
-        TextEditorService.PostUnique(
+        TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),
             editContext =>
             {
@@ -260,7 +260,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     		
         var commandArgs = ConstructCommandArgs(renderBatch);
 
-        TextEditorService.PostUnique(
+        TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.GoToDefinition),
             editContext =>
             {
@@ -287,7 +287,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	
         var commandArgs = ConstructCommandArgs(renderBatch);
 
-        TextEditorService.PostUnique(
+        TextEditorService.TextEditorWorker.PostUnique(
             nameof(TextEditorCommandDefaultFacts.QuickActionsSlashRefactor),
             editContext =>
             {

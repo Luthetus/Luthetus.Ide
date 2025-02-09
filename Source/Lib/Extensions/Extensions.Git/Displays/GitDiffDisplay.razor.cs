@@ -315,7 +315,7 @@ public partial class GitDiffDisplay : ComponentBase
             {
             	Console.WriteLine("DiffFileEnqueue");
             	
-            	TextEditorService.PostUnique(
+            	TextEditorService.TextEditorWorker.PostUnique(
             		nameof(plusMarkedLineIndexList),
             		editContext =>
             		{

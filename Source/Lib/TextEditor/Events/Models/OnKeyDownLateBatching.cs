@@ -57,7 +57,7 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 /// Optimistic vs Pessimistic batching?
 /// Early vs Late batching?
 /// </summary>
-public struct OnKeyDownLateBatching : ITextEditorWork
+public struct OnKeyDownLateBatching
 {
 	public const int MAX_BATCH_SIZE = 8;
 
@@ -79,10 +79,6 @@ public struct OnKeyDownLateBatching : ITextEditorWork
         #endif
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; } = true;
-    public bool __TaskCompletionSourceWasCreated { get; set; }
     public KeymapArgs KeymapArgs { get; set; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -116,7 +112,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
         BatchLength++;
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask upstreamEvent)
+    /*public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask upstreamEvent)
     {
 		if (upstreamEvent.Name == Name)
 		{
@@ -131,7 +127,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 		
 		// Keep both events.
 		return null;
-    }
+    }*/
     
     public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
     {

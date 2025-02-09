@@ -1,4 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -20,7 +22,7 @@ public class TextEditorRefactorFacts
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-    	textEditorService.PostUnique(nameof(GenerateConstructor), editContext =>
+    	textEditorService.TextEditorWorker.PostUnique(nameof(GenerateConstructor), editContext =>
 		{
 			var modelModifier = editContext.GetModelModifier(resourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);

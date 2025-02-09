@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public struct OnWheel : ITextEditorWork
+public struct OnWheel
 {
     public OnWheel(
         WheelEventArgs wheelEventArgs,
@@ -21,19 +21,13 @@ public struct OnWheel : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; } = true;
-    public bool __TaskCompletionSourceWasCreated { get; set; }
-    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
-    public string Name => "luth_OnWheel";
     public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
 	public ITextEditorEditContext? EditContext { get; private set; }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    /*public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
 		// Horizontal mouse wheel was not working on Linux.
 		// Prior to the fix that was just made, only the 'WheelEventArgs.DeltaY'
@@ -185,7 +179,7 @@ public struct OnWheel : ITextEditorWork
         }
 
         return null;
-    }
+    }*/
     
     public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
     {

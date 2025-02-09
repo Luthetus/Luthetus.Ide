@@ -13,7 +13,7 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// For further control over the batching, one needs to implement <see cref="ITextEditorTask"/>
 /// and implement the method: <see cref="IBackgroundTask.BatchOrDefault"/>.
 /// </remarks>
-public struct UniqueTextEditorWork : ITextEditorWork
+public struct UniqueTextEditorWork : IBackgroundTask
 {
     private readonly Func<ITextEditorEditContext, ValueTask> _textEditorFunc;
 

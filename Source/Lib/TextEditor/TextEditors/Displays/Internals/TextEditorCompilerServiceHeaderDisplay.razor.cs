@@ -89,7 +89,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	if (renderBatch is null)
     		return;
     	
-    	TextEditorService.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), editContext =>
+    	TextEditorService.TextEditorWorker.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), editContext =>
     	{
     		try
     		{
