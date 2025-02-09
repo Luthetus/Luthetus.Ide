@@ -3,14 +3,12 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -32,30 +30,30 @@ namespace Luthetus.Ide.RazorLib.Commands;
 public class CommandFactory : ICommandFactory
 {
     private readonly IState<PanelState> _panelStateWrap;
-    private readonly IState<ContextState> _contextStateWrap;
-    private readonly IState<ContextSwitchState> _contextSwitchStateWrap;
+    private readonly IContextService _contextService;
     private readonly ITextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
+    private readonly IDialogService _dialogService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
 
     public CommandFactory(
+    	IContextService contextService,
 		ITextEditorService textEditorService,
 		ITreeViewService treeViewService,
+		IDialogService dialogService,
 		IEnvironmentProvider environmentProvider,
         IState<PanelState> panelStateWrap,
-        IState<ContextState> contextStateWrap,
-        IState<ContextSwitchState> contextSwitchStateWrap,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
     {
+    	_contextService = contextService;
 		_textEditorService = textEditorService;
 		_treeViewService = treeViewService;
+		_dialogService = dialogService;
 		_environmentProvider = environmentProvider;
         _panelStateWrap = panelStateWrap;
-        _contextStateWrap = contextStateWrap;
-        _contextSwitchStateWrap = contextSwitchStateWrap;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
     }
@@ -372,7 +370,7 @@ public class CommandFactory : ICommandFactory
 						true,
 						null);
 
-                    _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
+                    _dialogService.ReduceRegisterAction(CodeSearchDialog);
                     
                     _textEditorService.TextEditorWorker.PostUnique(nameof(CodeSearchDisplay), editContext =>
                     {
@@ -440,7 +438,7 @@ public class CommandFactory : ICommandFactory
 						.MeasureElementById("luth_ide_header-button-file")
 						.ConfigureAwait(false);
 						
-					var contextState = _contextStateWrap.Value;
+					var contextState = _contextService.GetContextState();
 					
 					var menuOptionList = new List<MenuOptionRecord>();
 					
@@ -474,14 +472,14 @@ public class CommandFactory : ICommandFactory
 			
 			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 			        
-			        if (_contextStateWrap.Value.FocusedContextHeirarchy.NearestAncestorKey ==
+			        if (_contextService.GetContextState().FocusedContextHeirarchy.NearestAncestorKey ==
 			        	    ContextFacts.TextEditorContext.ContextKey)
 			        {
-			        	_contextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = LuthetusTextEditorInitializer.ContextSwitchGroupKey;
+			        	_contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = LuthetusTextEditorInitializer.ContextSwitchGroupKey;
 			        }
 			        else
 			        {
-			        	_contextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = LuthetusCommonInitializer.ContextSwitchGroupKey;
+			        	_contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = LuthetusCommonInitializer.ContextSwitchGroupKey;
 			        }
 				
                     _contextSwitchWidget ??= new WidgetModel(

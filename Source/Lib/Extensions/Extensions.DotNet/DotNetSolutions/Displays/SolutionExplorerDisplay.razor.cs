@@ -2,7 +2,6 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Options.States;
@@ -34,6 +33,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
+	[Inject]
+	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -110,7 +111,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			true,
 			null);
 
-		Dispatcher.Dispatch(new DialogState.RegisterAction(
-			dialogRecord));
+		DialogService.ReduceRegisterAction(dialogRecord);
 	}
 }

@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -23,6 +22,8 @@ public partial class TerminalGroupDisplay : FluxorComponent
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
@@ -49,6 +50,6 @@ public partial class TerminalGroupDisplay : FluxorComponent
 			isResizable: true,
 			setFocusOnCloseElementId: null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(addIntegratedTerminalDialog));
+        DialogService.ReduceRegisterAction(addIntegratedTerminalDialog);
     }
 }

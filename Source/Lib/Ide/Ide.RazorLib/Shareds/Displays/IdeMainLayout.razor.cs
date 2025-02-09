@@ -3,6 +3,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Options.States;
@@ -20,7 +21,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
-    private IState<DragState> DragStateWrap { get; set; } = null!;
+    private IDragService DragService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
@@ -50,11 +51,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ElementDimensions _bodyElementDimensions = new();
     private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
 
-    private string UnselectableClassCss => DragStateWrap.Value.ShouldDisplay ? "balc_unselectable" : string.Empty;
+    private string UnselectableClassCss => DragService.GetDragState().ShouldDisplay ? "balc_unselectable" : string.Empty;
 
     protected override void OnInitialized()
     {
-        DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
+        DragService.DragStateChanged += DragStateWrapOnStateChanged;
         AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
         IdeMainLayoutStateWrap.StateChanged += IdeMainLayoutStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
@@ -96,11 +97,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void DragStateWrapOnStateChanged()
     {
-        if (_previousDragStateWrapShouldDisplay != DragStateWrap.Value.ShouldDisplay)
+        if (_previousDragStateWrapShouldDisplay != DragService.GetDragState().ShouldDisplay)
         {
-            _previousDragStateWrapShouldDisplay = DragStateWrap.Value.ShouldDisplay;
+            _previousDragStateWrapShouldDisplay = DragService.GetDragState().ShouldDisplay;
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -119,7 +120,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
+        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
         AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
         IdeMainLayoutStateWrap.StateChanged -= IdeMainLayoutStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged -= TextEditorOptionsStateWrap_StateChanged;

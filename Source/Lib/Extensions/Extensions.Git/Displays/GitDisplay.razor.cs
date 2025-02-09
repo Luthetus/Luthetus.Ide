@@ -5,7 +5,6 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -45,6 +44,8 @@ public partial class GitDisplay : FluxorComponent
     private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
+	[Inject]
+    private IDialogService DialogService { get; set; } = null!;
 
 	private const string _dropdownMenuHtmlElementId = "luth_ide_git-display-dropdown-menu";
 
@@ -176,7 +177,7 @@ public partial class GitDisplay : FluxorComponent
             true,
             null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
+        DialogService.ReduceRegisterAction(dialogViewModel);
     }
 
     private MenuOptionRecord GetBranchNewMenuOptionRecord(GitState localGitState)

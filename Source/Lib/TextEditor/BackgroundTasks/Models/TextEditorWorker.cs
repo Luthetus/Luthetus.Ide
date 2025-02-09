@@ -50,12 +50,19 @@ public class TextEditorWorker : IBackgroundTask
 	{
 		_textEditorService = textEditorService;
 	}
+	
+	private bool _taskCompletionSourceWasCreated;
 
-	public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.Empty;
+	public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; }
     public bool EarlyBatchEnabled { get; } = false;
-    public bool __TaskCompletionSourceWasCreated { get; set; }
+    
+    public bool __TaskCompletionSourceWasCreated
+    {
+    	get => _taskCompletionSourceWasCreated;
+    	set => _ = value;
+    }
     
     public Queue<RedundantTextEditorWork> RedundantTextEditorWorkQueue { get; } = new();
     public Queue<UniqueTextEditorWork> UniqueTextEditorWorkQueue { get; } = new();
@@ -122,13 +129,15 @@ public class TextEditorWorker : IBackgroundTask
 	/// </summary>
 	public Task EnqueueUniqueTextEditorWorkAsync(UniqueTextEditorWork uniqueTextEditorWork)
 	{
-		/*lock (_workKindQueueLock)
+		uniqueTextEditorWork.__TaskCompletionSourceWasCreated = true;
+	
+		lock (_workKindQueueLock)
 		{
 			WorkKindQueue.Enqueue(TextEditorWorkKind.UniqueTextEditorWork);
 			UniqueTextEditorWorkQueue.Enqueue(uniqueTextEditorWork);
-		}*/
+		}
 		
-		return _textEditorService.BackgroundTaskService.EnqueueAsync(uniqueTextEditorWork);
+		return _textEditorService.BackgroundTaskService.EnqueueAsync(this);
 	}
 	
 	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)
@@ -248,33 +257,43 @@ public class TextEditorWorker : IBackgroundTask
 		{
 			case TextEditorWorkKind.RedundantTextEditorWork:
 				var redundantTextEditorWork = RedundantTextEditorWorkQueue.Dequeue();
+				_taskCompletionSourceWasCreated = redundantTextEditorWork.__TaskCompletionSourceWasCreated;
 				return redundantTextEditorWork.HandleEvent(cancellationToken);
 			case TextEditorWorkKind.UniqueTextEditorWork:
 				var uniqueTextEditorWork = UniqueTextEditorWorkQueue.Dequeue();
+				_taskCompletionSourceWasCreated = uniqueTextEditorWork.__TaskCompletionSourceWasCreated;
 				return uniqueTextEditorWork.HandleEvent(cancellationToken);
 			case TextEditorWorkKind.OnDoubleClick:
 				var onDoubleClick = OnDoubleClickQueue.Dequeue();
+				_taskCompletionSourceWasCreated = false;
 				return onDoubleClick.HandleEvent(cancellationToken);
 		    case TextEditorWorkKind.OnKeyDownLateBatching:
 		    	var onKeyDownLateBatching = OnKeyDownLateBatchingQueue.Dequeue();
+				_taskCompletionSourceWasCreated = false;
 				return onKeyDownLateBatching.HandleEvent(cancellationToken);
 			case TextEditorWorkKind.OnMouseDown:
 				var onMouseDown = OnMouseDownQueue.Dequeue();
+				_taskCompletionSourceWasCreated = false;
 				return onMouseDown.HandleEvent(cancellationToken);
 		    case TextEditorWorkKind.OnMouseMove:
 		    	var onMouseMove = OnMouseMoveQueue.Dequeue();
+				_taskCompletionSourceWasCreated = false;
 				return onMouseMove.HandleEvent(cancellationToken);
 		    case TextEditorWorkKind.OnScrollHorizontal:
 		    	var onScrollHorizontal = OnScrollHorizontalQueue.Dequeue();
+				_taskCompletionSourceWasCreated = false;
 				return onScrollHorizontal.HandleEvent(cancellationToken);
 			case TextEditorWorkKind.OnScrollVertical:
 		    	var onScrollVertical = OnScrollVerticalQueue.Dequeue();
+				_taskCompletionSourceWasCreated = false;
 				return onScrollVertical.HandleEvent(cancellationToken);
 			case TextEditorWorkKind.OnWheel:
 		    	var onWheel = OnWheelQueue.Dequeue();
+				_taskCompletionSourceWasCreated = false;
 				return onWheel.HandleEvent(cancellationToken);
 			case TextEditorWorkKind.OnWheelBatch:
 		    	var onWheelBatch = OnWheelBatchQueue.Dequeue();
+				_taskCompletionSourceWasCreated = false;
 				return onWheelBatch.HandleEvent(cancellationToken);
 			default:
 				return ValueTask.CompletedTask;

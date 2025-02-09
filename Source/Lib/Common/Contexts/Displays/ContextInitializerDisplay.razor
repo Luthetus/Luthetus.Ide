@@ -1,14 +1,10 @@
-﻿@using Fluxor.Blazor.Web.Components
-
-@inherits FluxorComponent
-
-@{ var contextStates = ContextStateWrap.Value; }
+@{ var contextState = ContextService.GetContextState(); }
 
 <div class="luth_ide_context-initializer">
 
-    @if (contextStates.IsSelectingInspectionTarget)
+    @if (contextState.IsSelectingInspectionTarget)
     {
-        foreach (var inspectableContext in contextStates.InspectableContextList)
+        foreach (var inspectableContext in contextState.InspectableContextList)
         {
             // TODO: App crashes when using: @key="inspectableContext.ContextHeirarchy.NearestAncestorKey"
             <ContextBoundaryOverlay InspectableContext="inspectableContext" />

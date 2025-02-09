@@ -33,6 +33,6 @@ public partial class NotificationsInteractiveIconDisplay : FluxorComponent
 
     private void ShowNotificationsViewDisplayOnClick()
     {
-        DialogService.RegisterDialogRecord(NotificationsViewDisplayDialogRecord);
+        DialogService.ReduceRegisterAction(NotificationsViewDisplayDialogRecord);
     }
 }

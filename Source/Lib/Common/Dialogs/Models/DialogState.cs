@@ -3,7 +3,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Common.RazorLib.Dialogs.States;
+namespace Luthetus.Common.RazorLib.Dialogs.Models;
 
 /// <summary>
 /// The list provided should not be modified after passing it as a parameter.
@@ -29,5 +29,5 @@ public partial record DialogState
     /// dialogs is hidden by the other. To be able to 'bring to front'
     /// the dialog one is interested in by setting focus to it, is useful.
     /// </summary>
-    public Key<IDynamicViewModel> ActiveDialogKey { get; init; }
+    public Key<IDynamicViewModel> ActiveDialogKey { get; init; } = Key<IDynamicViewModel>.Empty;
 }

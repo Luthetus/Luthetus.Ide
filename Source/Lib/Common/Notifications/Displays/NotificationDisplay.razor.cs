@@ -5,7 +5,6 @@ using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -20,6 +19,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -179,7 +180,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 			true,
 			null);
 
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        DialogService.ReduceRegisterAction(dialogRecord);
 
         return HandleShouldNoLongerRender(wasCausedByUiEvent: false);
     }
