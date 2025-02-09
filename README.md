@@ -2,7 +2,7 @@ All my life I have been in and out of "mental hospitals". They're like sections 
 
 When it comes to writing the code for this repository I have, and continue, to struggle immensely.
 
-But my struggle pales in comparison to what my parents have endured with raising me. I am extremely greatful for them.
+But my struggle pales in comparison to what my parents have endured with raising me. I am extremely grateful for them.
 
 I want the good ending to this story.
 
