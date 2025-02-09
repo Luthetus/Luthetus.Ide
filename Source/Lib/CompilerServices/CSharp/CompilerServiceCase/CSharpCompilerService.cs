@@ -360,7 +360,7 @@ public sealed class CSharpCompilerService : CompilerService
     
     private Task PropSnippet(string word, TextEditorTextSpan textSpan, string textToInsert)
     {
-    	_textEditorService.PostUnique(
+    	_textEditorService.TextEditorWorker.PostUnique(
 	        nameof(PropSnippet),
 	        editContext =>
 	        {

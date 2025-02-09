@@ -93,7 +93,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     		
         try
         {
-            TextEditorService.PostUnique(
+            TextEditorService.TextEditorWorker.PostUnique(
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
@@ -215,7 +215,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         {
             try
             {
-				TextEditorService.PostUnique(
+				TextEditorService.TextEditorWorker.PostUnique(
 					nameof(AutocompleteMenu),
 					editContext =>
 					{
@@ -270,7 +270,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     	if (renderBatch is null)
     		return;
     
-        TextEditorService.PostUnique(
+        TextEditorService.TextEditorWorker.PostUnique(
             nameof(InsertAutocompleteMenuOption),
             editContext =>
             {

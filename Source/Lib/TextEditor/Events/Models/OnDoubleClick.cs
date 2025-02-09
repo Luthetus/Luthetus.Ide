@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public struct OnDoubleClick : ITextEditorWork
+public struct OnDoubleClick
 {
     public OnDoubleClick(
         MouseEventArgs mouseEventArgs,
@@ -25,45 +25,19 @@ public struct OnDoubleClick : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; } = true;
-    public bool __TaskCompletionSourceWasCreated { get; set; }
-    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
-    public string Name => "luth_OnDoubleClick";
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext? EditContext { get; private set; }
-
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
-    {
-		if (oldEvent.Name == Name)
-		{
-			// Replace the upstream event with this one,
-			// because unhandled-consecutive events of this type are redundant.
-			return this;
-		}
-        
-		// Keep both events, because they are not able to be batched.
-		return null;
-    }
-    
-    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
-    {
-    	return null;
-    }
-
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
-        var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
-        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-        var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+        var modelModifier = editContext.GetModelModifier(ResourceUri, true);
+        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
         if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
@@ -83,7 +57,7 @@ public struct OnDoubleClick : ITextEditorWork
 				ViewModelKey,
 				MouseEventArgs,
 				ComponentData,
-				EditContext)
+				editContext)
 			.ConfigureAwait(false);
 
         var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
@@ -129,10 +103,8 @@ public struct OnDoubleClick : ITextEditorWork
             primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
         }
         
-        await EditContext.TextEditorService
-			.FinalizePost(EditContext)
+        await editContext.TextEditorService
+			.FinalizePost(editContext)
 			.ConfigureAwait(false);
-			
-		// await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

@@ -119,7 +119,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 				};
 			}
 
-			TextEditorService.PostUnique(
+			TextEditorService.TextEditorWorker.PostUnique(
 				nameof(TestExplorerDetailsDisplay),
 				editContext =>
 				{

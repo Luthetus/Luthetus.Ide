@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public struct OnWheelBatch : ITextEditorWork
+public struct OnWheelBatch
 {
     public OnWheelBatch(
         List<WheelEventArgs> wheelEventArgsList,
@@ -21,33 +21,15 @@ public struct OnWheelBatch : ITextEditorWork
         ViewModelKey = viewModelKey;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey => Key<IBackgroundTask>.Empty;
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; }
-    public bool __TaskCompletionSourceWasCreated { get; set; }
-    // TODO: I'm uncomfortable as to whether "luth_{nameof(Abc123)}" is a constant interpolated string so I'm just gonna hardcode it.
-    public string Name => "luth_OnWheelBatch";
     public List<WheelEventArgs> WheelEventArgsList { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public ITextEditorEditContext? EditContext { get; private set; }
-
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
-    {
-        return null;
-    }
-    
-    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
-    {
-    	return null;
-    }
-
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	EditContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
-        var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
 
         if (viewModelModifier is null)
             return;
@@ -78,24 +60,22 @@ public struct OnWheelBatch : ITextEditorWork
 		// 	      the OnWheel events have to be the same axis to batch."
         if (horizontalMutateScrollPositionByPixels is not null)
         {
-            EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
-                EditContext,
+            editContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+                editContext,
 		        viewModelModifier,
 		        horizontalMutateScrollPositionByPixels.Value);
         }
 
         if (verticalMutateScrollPositionByPixels is not null)
         {
-            EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-                EditContext,
+            editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                editContext,
 		        viewModelModifier,
 		        verticalMutateScrollPositionByPixels.Value);
         }
         
-        await EditContext.TextEditorService
-        	.FinalizePost(EditContext)
+        await editContext.TextEditorService
+        	.FinalizePost(editContext)
         	.ConfigureAwait(false);
-        	
-        // await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
     }
 }

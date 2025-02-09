@@ -399,14 +399,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             resourceUri,
             viewModelKey);
 
-        TextEditorService.Post(onKeyDown);
+        TextEditorService.TextEditorWorker.EnqueueOnKeyDownLateBatching(onKeyDown);
 	}
 
     private void ReceiveOnContextMenu()
     {
 		var localViewModelKey = TextEditorViewModelKey;
 
-		TextEditorService.PostUnique(
+		TextEditorService.TextEditorWorker.PostUnique(
 			nameof(ReceiveOnContextMenu),
 			editContext =>
 			{
@@ -453,7 +453,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             resourceUri,
             viewModelKey);
 
-        TextEditorService.Post(onDoubleClick);
+        TextEditorService.TextEditorWorker.EnqueueOnDoubleClick(onDoubleClick);
     }
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -481,7 +481,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             resourceUri,
             viewModelKey);
 
-        TextEditorService.Post(onMouseDown);
+        TextEditorService.TextEditorWorker.EnqueueOnMouseDown(onMouseDown);
     }
 
     private void ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
@@ -519,7 +519,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
                     if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
                     {
-						TextEditorService.PostUnique(
+						TextEditorService.TextEditorWorker.PostUnique(
 							nameof(ContextMenu),
 							editContext =>
 							{
@@ -552,7 +552,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 {
                     await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-                    TextEditorService.PostUnique(
+                    TextEditorService.TextEditorWorker.PostUnique(
 						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync),
 						editContext =>
 						{
@@ -595,7 +595,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 resourceUri,
                 viewModelKey);
 
-            TextEditorService.Post(onMouseMove);
+            TextEditorService.TextEditorWorker.EnqueueOnMouseMove(onMouseMove);
         }
         else
         {
@@ -622,7 +622,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             _componentData,
             viewModelKey);
 
-        TextEditorService.Post(onWheel);
+        TextEditorService.TextEditorWorker.EnqueueOnWheel(onWheel);
     }
 
     private void ReceiveOnTouchStart(TouchEventArgs touchEventArgs)
@@ -654,7 +654,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        TextEditorService.PostUnique(
+        TextEditorService.TextEditorWorker.PostUnique(
             nameof(ReceiveOnTouchMove),
             editContext =>
 			{
@@ -726,7 +726,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             return;
         }
 
-        TextEditorService.PostRedundant(
+        TextEditorService.TextEditorWorker.PostRedundant(
             nameof(QueueRemeasureBackgroundTask),
 			resourceUri,
 			viewModelKey,
@@ -761,7 +761,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             return;
         }
 
-        TextEditorService.PostRedundant(
+        TextEditorService.TextEditorWorker.PostRedundant(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
 			resourceUri,
 			viewModelKey,
@@ -1351,7 +1351,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 
-			TextEditorService.Post(onScrollHorizontal);
+			TextEditorService.TextEditorWorker.EnqueueOnScrollHorizontal(onScrollHorizontal);
         }
         else
         {
@@ -1411,7 +1411,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 
-			TextEditorService.Post(onScrollVertical);
+			TextEditorService.TextEditorWorker.EnqueueOnScrollVertical(onScrollVertical);
         }
         else
         {

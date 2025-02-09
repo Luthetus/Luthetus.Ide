@@ -300,12 +300,6 @@ Console.WriteLine(pointMessage);
 Not everything in this file works perfectly yet.
 I am laying it all out so I see what is and isn't working.
 As well, if something doesn't work, whether the parser can recover.
-
-The WASM demo is painfully slow relative to running it natively
-Presumably I use this most often natively which is multi-threaded,
-and so the single threaded optimization wasn't on my mind enough.
-I will look into the single threaded optimization, but
-the C# parsing is for sure my #1 priority at the moment.
 */
 """"""""";
 }
