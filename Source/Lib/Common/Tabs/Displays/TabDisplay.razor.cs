@@ -4,6 +4,7 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
+using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -18,7 +19,7 @@ namespace Luthetus.Common.RazorLib.Tabs.Displays;
 public partial class TabDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-    private IState<DragState> DragStateWrap { get; set; } = null!;
+    private IDragService DragService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
@@ -64,17 +65,17 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-        DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
+        DragService.DragStateChanged += DragStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
 
-    private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void DragStateWrapOnStateChanged()
     {
 		if (IsBeingDragged)
 			return;
 
-        if (!DragStateWrap.Value.ShouldDisplay)
+        if (!DragService.GetDragState().ShouldDisplay)
         {
             _dragEventHandler = null;
             _previousDragMouseEventArgs = null;
@@ -82,7 +83,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
         }
         else
         {
-            var mouseEventArgs = DragStateWrap.Value.MouseEventArgs;
+            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -244,7 +245,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         _dragEventHandler = DragEventHandlerAsync;
 
-		Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable));
+		DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
     }
 
 	private Task DragEventHandlerAsync(
@@ -295,6 +296,6 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	public void Dispose()
     {
-        DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
+        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
     }
 }

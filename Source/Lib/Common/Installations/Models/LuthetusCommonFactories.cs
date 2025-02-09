@@ -31,9 +31,7 @@ namespace Luthetus.Common.RazorLib.Installations.Models;
 public record LuthetusCommonFactories
 {
     public Func<IServiceProvider, IDragService> DragServiceFactory { get; init; } =
-        serviceProvider => new DragService(
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            serviceProvider.GetRequiredService<IState<DragState>>());
+        serviceProvider => new DragService();
 
     public Func<IServiceProvider, IClipboardService> ClipboardServiceFactory { get; init; } =
         serviceProvider => new JavaScriptInteropClipboardService(

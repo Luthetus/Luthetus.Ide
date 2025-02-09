@@ -1,12 +1,10 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 <div class="luth_drag-initializer"
      style="@StyleCss"
      @onmousemove="DispatchSetDragStateActionOnMouseMove"
      @onmouseup="DispatchSetDragStateActionOnMouseUp">
     
 	@{
-		var dragState = DragStateWrap.Value;
+		var dragState = DragService.GetDragState();
 		var draggableViewModel = dragState.Drag;
 	}
 
