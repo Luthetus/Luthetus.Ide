@@ -13,14 +13,9 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextBoundary : ComponentBase
 {
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    /// <summary>
-    /// Warning: Do not take lightly a future decision to have this type
-    ///          inherit FluxorComponent without noting that this injection will
-    ///          cause re-renders whenever the context state is changed.
-    /// </summary>
+    private IContextService ContextService { get; set; } = null!;
     [Inject]
-    private IState<ContextState> ContextStateWrap { get; set; } = null!;
+    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IState<OutlineState> OutlineStateWrap { get; set; } = null!;
 
@@ -46,7 +41,7 @@ public partial class ContextBoundary : ComponentBase
         if (ParentContextBoundary is not null)
             ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyList);
         else
-            Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList)));
+            ContextService.ReduceSetFocusedContextHeirarchyAction(new(contextRecordKeyList));
     }
     
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
@@ -69,7 +64,7 @@ public partial class ContextBoundary : ComponentBase
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
     public void HandleOnFocusIn()
     {
-    	if (ContextStateWrap.Value.FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey)
+    	if (ContextService.GetContextState().FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey)
     		DispatchSetActiveContextStatesAction(new());
     }
     

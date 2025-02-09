@@ -11,7 +11,6 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -37,7 +36,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
-    private IState<ContextState> ContextStateWrap { get; set; } = null!;
+    private IContextService ContextService { get; set; } = null!;
     [Inject]
     private IState<ContextSwitchState> ContextSwitchStateWrap { get; set; } = null!;
     [Inject]
@@ -88,7 +87,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 						"Contexts",
 						() =>
 						{
-							var contextState = ContextStateWrap.Value;
+							var contextState = ContextService.GetContextState();
 							var panelState = PanelStateWrap.Value;
 							var dialogState = DialogService.GetDialogState();
 							var menuOptionList = new List<MenuOptionRecord>();

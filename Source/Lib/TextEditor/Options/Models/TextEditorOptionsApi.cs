@@ -2,7 +2,6 @@ using System.Text.Json;
 using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -12,7 +11,6 @@ using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using static Luthetus.Common.RazorLib.Contexts.States.ContextState;
 
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -24,6 +22,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IStorageService _storageService;
     private readonly IDialogService _dialogService;
+    private readonly IContextService _contextService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IDispatcher _dispatcher;
 
@@ -32,6 +31,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         LuthetusTextEditorConfig textEditorConfig,
         IStorageService storageService,
         IDialogService dialogService,
+        IContextService contextService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher)
     {
@@ -39,6 +39,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         _textEditorConfig = textEditorConfig;
         _storageService = storageService;
         _dialogService = dialogService;
+        _contextService = contextService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dispatcher = dispatcher;
     }
@@ -122,9 +123,9 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
         if (activeKeymap is not null)
         {
-            _dispatcher.Dispatch(new SetContextKeymapAction(
+            _contextService.ReduceSetContextKeymapAction(
                 ContextFacts.TextEditorContext.ContextKey,
-                activeKeymap));
+                activeKeymap);
         }
 
         if (updateStorage)
@@ -206,9 +207,9 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
             if (activeKeymap is not null)
             {
-                _dispatcher.Dispatch(new SetContextKeymapAction(
+                _contextService.ReduceSetContextKeymapAction(
                     ContextFacts.TextEditorContext.ContextKey,
-                    activeKeymap));
+                    activeKeymap);
             }
         }
 

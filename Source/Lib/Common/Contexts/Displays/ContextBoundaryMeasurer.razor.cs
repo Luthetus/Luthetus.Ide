@@ -15,7 +15,7 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
-    private IState<ContextState> ContextStateWrap { get; set; } = null!;
+    private IContextService ContextService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -28,7 +28,7 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
 
     protected override bool ShouldRender()
     {
-        var contextState = ContextStateWrap.Value;
+        var contextState = ContextService.GetContextState();
 
         if (_previousIsSelectingInspectionTarget != contextState.IsSelectingInspectionTarget)
             return true;
@@ -38,7 +38,7 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var contextState = ContextStateWrap.Value;
+        var contextState = ContextService.GetContextState();
 
         if (_previousIsSelectingInspectionTarget != contextState.IsSelectingInspectionTarget)
         {
@@ -57,10 +57,10 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
                     ZIndex = contextBoundaryHeirarchy.Count
                 };
 
-                Dispatcher.Dispatch(new ContextState.AddInspectableContextAction(
+                ContextService.ReduceAddInspectableContextAction(
                     new InspectableContext(
                         new(contextBoundaryHeirarchy),
-                        measuredHtmlElementDimensions)));
+                        measuredHtmlElementDimensions));
             }
         }
 

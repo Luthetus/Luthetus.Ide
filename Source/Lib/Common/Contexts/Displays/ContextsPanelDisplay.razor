@@ -8,7 +8,7 @@
                  ClassCssString="luth_ide_active-contexts"
                  StyleCssString="height: 100%">
 
-    @{ var contextState = ContextStateWrap.Value; }
+    @{ var contextState = ContextService.GetContextState(); }
 
 	@*
 	This components title must always show because

@@ -1,15 +1,14 @@
 using Fluxor;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using System.Collections.Immutable;
 
-namespace Luthetus.Common.RazorLib.Contexts.States;
+namespace Luthetus.Common.RazorLib.Contexts.Models;
 
 /// <summary>
 /// The list provided should not be modified after passing it as a parameter.
 /// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
 /// </summary>
-[FeatureState]
 public partial record ContextState(
     List<ContextRecord> AllContextsList,
     ContextHeirarchy FocusedContextHeirarchy,

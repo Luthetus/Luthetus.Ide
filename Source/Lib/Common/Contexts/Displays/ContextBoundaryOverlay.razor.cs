@@ -8,6 +8,8 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextBoundaryOverlay : ComponentBase
 {
     [Inject]
+    private IContextService ContextService { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -40,7 +42,7 @@ public partial class ContextBoundaryOverlay : ComponentBase
 
     private void DispatchSetInspectionTargetActionOnClick()
     {
-        Dispatcher.Dispatch(new ContextState.SetInspectedContextHeirarchyAction(
-            InspectableContext.ContextHeirarchy));
+        ContextService.ReduceSetInspectedContextHeirarchyAction(
+            InspectableContext.ContextHeirarchy);
     }
 }

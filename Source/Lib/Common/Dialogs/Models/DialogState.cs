@@ -3,7 +3,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Common.RazorLib.Dialogs.States;
+namespace Luthetus.Common.RazorLib.Dialogs.Models;
 
 /// <summary>
 /// The list provided should not be modified after passing it as a parameter.
