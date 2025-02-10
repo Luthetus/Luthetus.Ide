@@ -1,10 +1,9 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 
-namespace Luthetus.Common.RazorLib.Outlines.States;
+namespace Luthetus.Common.RazorLib.Outlines.Models;
 
-[FeatureState]
-public partial record OutlineState(
+public record OutlineState(
 	string? ElementId,
 	MeasuredHtmlElementDimensions? MeasuredHtmlElementDimensions,
 	bool NeedsMeasured)

@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Outlines.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -61,7 +62,8 @@ public static class ServiceCollectionExtensions
 			})
             .AddScoped<CommonBackgroundTaskApi>()
             .AddScoped<BrowserResizeInterop>()
-            .AddScoped<IContextService, ContextService>();
+            .AddScoped<IContextService, ContextService>()
+            .AddScoped<IOutlineService, OutlineService>();
 
         return services;
     }
