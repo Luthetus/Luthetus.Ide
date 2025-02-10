@@ -9,7 +9,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Models;
 /// The list provided should not be modified after passing it as a parameter.
 /// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
 /// </summary>
-public partial record ContextState(
+public record struct ContextState(
     List<ContextRecord> AllContextsList,
     ContextHeirarchy FocusedContextHeirarchy,
     ContextHeirarchy? InspectedContextHeirarchy,

@@ -12,7 +12,7 @@ namespace Luthetus.Common.RazorLib.Notifications.Models;
 /// 4 lists. One foreach filter option. And the NotificationRecord gets shuffled around.
 /// This is odd. Perhaps use one list and filter it?
 /// </summary>
-public record NotificationState(
+public record struct NotificationState(
     List<INotification> DefaultList,
     List<INotification> ReadList,
     List<INotification> ArchivedList,

@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
@@ -9,8 +8,7 @@ namespace Luthetus.Common.RazorLib.Dialogs.Models;
 /// The list provided should not be modified after passing it as a parameter.
 /// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
 /// </summary>
-[FeatureState]
-public partial record DialogState
+public record struct DialogState
 {
     public DialogState()
     {

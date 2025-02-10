@@ -19,11 +19,12 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 ///
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
-public partial record PanelState(
+public record struct PanelState(
 	List<PanelGroup> PanelGroupList,
-	List<Panel> PanelList)
+	List<Panel> PanelList,
+	(IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs)
 {
-    public PanelState() : this(new List<PanelGroup>(), new List<Panel>())
+    public PanelState() : this(new List<PanelGroup>(), new List<Panel>(), null)
     {
         var topLeftGroup = ConstructTopLeftGroup();
         var topRightGroup = ConstructTopRightGroup();
@@ -33,8 +34,6 @@ public partial record PanelState(
         PanelGroupList.Add(topRightGroup);
         PanelGroupList.Add(bottomGroup);
     }
-
-    public (IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs { get; set; }
 
     private static PanelGroup ConstructTopLeftGroup()
     {

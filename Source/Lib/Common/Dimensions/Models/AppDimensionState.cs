@@ -32,7 +32,7 @@ namespace Luthetus.Common.RazorLib.Dimensions.Models;
 /// The unit of measurement is Pixels (px).
 /// This describes the distance the application is from the top side of the "display/monitor".
 /// </param>
-public partial record AppDimensionState(int Width, int Height, int Left, int Top)
+public record struct AppDimensionState(int Width, int Height, int Left, int Top)
 {
 	public AppDimensionState() : this(0, 0, 0, 0)
 	{
