@@ -12,6 +12,10 @@ public class ContextService : IContextService
     public event Action? ContextSwitchStateChanged;
     
     public ContextState GetContextState() => _contextState;
+    
+    public ContextRecord GetContextRecord(Key<ContextRecord> contextKey) =>
+    	_contextState.AllContextsList.FirstOrDefault(x => x.ContextKey == contextKey);
+    
     public ContextSwitchState GetContextSwitchState() => _contextSwitchState;
     
     public void ReduceSetFocusedContextHeirarchyAction(ContextHeirarchy focusedContextHeirarchy)

@@ -1,10 +1,8 @@
 @using Luthetus.Common.RazorLib.Panels.Models;
 @using Luthetus.Common.RazorLib.Tabs.Displays;
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 @{
-    var panelState = PanelStateWrap.Value;
+    var panelState = PanelService.GetPanelState();
 
     var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
@@ -48,7 +46,7 @@
             }
         </div>
 
-        @if (PanelStateWrap.Value.DragEventArgs is not null)
+        @if (panelState.DragEventArgs is not null)
         {
             <div class="luth_ide_panel-tab-dropzone luth_ide_panel-tab-dropzone-top"
                  @onmouseup:stopPropagation="true"

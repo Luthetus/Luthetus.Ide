@@ -1,6 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Models;
@@ -15,7 +15,7 @@ public static class ContextHelper
         string displayName,
         string internalIdentifier,
         LuthetusCommonJavaScriptInteropApi jsRuntimeCommonApi,
-        IDispatcher dispatcher)
+        IPanelService panelService)
     {
         return new CommonCommand(
             displayName, internalIdentifier, false,
@@ -25,8 +25,8 @@ public static class ContextHelper
 
                 if (!success)
                 {
-                    dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
-                        contextRecord.ContextKey));
+                    panelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+                        contextRecord.ContextKey);
 
                     _ = await TrySetFocus().ConfigureAwait(false);
                 }

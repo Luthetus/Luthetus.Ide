@@ -7,10 +7,10 @@ using Luthetus.Common.RazorLib.Options.States;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
-public partial class ContextDisplay : FluxorComponent
+public partial class ContextDisplay : FluxorComponent, IDisposable
 {
     [Inject]
-    private IStateSelection<ContextState, ContextRecord?> ContextRecordSelection { get; set; } = null!;
+    private IContextService ContextService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
@@ -21,10 +21,17 @@ public partial class ContextDisplay : FluxorComponent
 
     protected override void OnInitialized()
     {
-        ContextRecordSelection
-            .Select(contextState => contextState.AllContextsList
-                .FirstOrDefault(x => x.ContextKey == ContextKey));
-
+        ContextService.ContextStateChanged += OnContextStateChanged;
         base.OnInitialized();
+    }
+    
+    private async void OnContextStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	ContextService.ContextStateChanged -= OnContextStateChanged;
     }
 }

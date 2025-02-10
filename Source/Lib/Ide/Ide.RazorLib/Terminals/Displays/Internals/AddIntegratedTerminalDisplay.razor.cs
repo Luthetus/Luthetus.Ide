@@ -4,6 +4,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -22,6 +23,8 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
+	[Inject]
+	private IPanelService PanelService { get; set; } = null!;
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
@@ -91,8 +94,8 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 					TextEditorService,
 					CompilerServiceRegistry,
 					DialogService,
-				    JsRuntime,
-					Dispatcher)),
+				    PanelService,
+					JsRuntime)),
 			BackgroundTaskService,
 			CommonComponentRenderers,
 			Dispatcher,

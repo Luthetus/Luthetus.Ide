@@ -1,3 +1,7 @@
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -5,19 +9,14 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Panels.Displays;
 
-public partial class PanelGroupDisplay : FluxorComponent
+public partial class PanelGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<PanelState> PanelStateWrap { get; set; } = null!;
+    private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -44,6 +43,13 @@ public partial class PanelGroupDisplay : FluxorComponent
     public string DimensionAttributeModificationPurpose => $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
 
     private string PanelPositionCssClass => GetPanelPositionCssClass();
+    
+    protected override void OnInitialized()
+    {
+    	PanelService.PanelStateChanged += OnPanelStateChanged;
+    
+    	base.OnInitialized();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -91,7 +97,7 @@ public partial class PanelGroupDisplay : FluxorComponent
 
     private async Task PassAlongSizeIfNoActiveTab()
     {
-        var panelState = PanelStateWrap.Value;
+        var panelState = PanelService.GetPanelState();
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is not null)
@@ -176,7 +182,7 @@ public partial class PanelGroupDisplay : FluxorComponent
 
     private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-        var panelState = PanelStateWrap.Value;
+        var panelState = PanelService.GetPanelState();
 
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
@@ -187,16 +193,16 @@ public partial class PanelGroupDisplay : FluxorComponent
 
         if (panelDragEventArgs is not null)
         {
-            Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
+            PanelService.ReduceDisposePanelTabAction(
                 panelDragEventArgs.Value.PanelGroup.Key,
-                panelDragEventArgs.Value.PanelTab.Key));
+                panelDragEventArgs.Value.PanelTab.Key);
 
-            Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
+            PanelService.ReduceRegisterPanelTabAction(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
-                true));
+                true);
 
-            Dispatcher.Dispatch(new PanelState.SetDragEventArgsAction(null));
+            PanelService.ReduceSetDragEventArgsAction(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
@@ -206,7 +212,7 @@ public partial class PanelGroupDisplay : FluxorComponent
 
     private Task BottomDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-        var panelState = PanelStateWrap.Value;
+        var panelState = PanelService.GetPanelState();
 
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
@@ -217,20 +223,30 @@ public partial class PanelGroupDisplay : FluxorComponent
 
         if (panelDragEventArgs is not null)
         {
-            Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
+            PanelService.ReduceDisposePanelTabAction(
                 panelDragEventArgs.Value.PanelGroup.Key,
-                panelDragEventArgs.Value.PanelTab.Key));
+                panelDragEventArgs.Value.PanelTab.Key);
 
-            Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
+            PanelService.ReduceRegisterPanelTabAction(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
-                false));
+                false);
 
-            Dispatcher.Dispatch(new PanelState.SetDragEventArgsAction(null));
+            PanelService.ReduceSetDragEventArgsAction(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
 
         return Task.CompletedTask;
+    }
+    
+    private async void OnPanelStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	PanelService.PanelStateChanged -= OnPanelStateChanged;
     }
 }

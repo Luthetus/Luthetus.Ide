@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Fluxor;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -54,7 +53,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
     [Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
-	private IState<PanelState> PanelStateWrap { get; set; } = null!;
+	private IPanelService PanelService { get; set; } = null!;
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
@@ -171,7 +170,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 						
 					InitializeMenuRun();
 					
-					Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(_leftPanelGroupKey, _solutionExplorerPanelKey));
+					PanelService.ReduceSetActivePanelTabAction(_leftPanelGroupKey, _solutionExplorerPanelKey);
 					
 					var compilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 					
@@ -196,8 +195,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 
 	private void InitializeLeftPanelTabs()
 	{
-		var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
-		leftPanel.Dispatcher = Dispatcher;
+		var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelService.GetPanelState());
+		leftPanel.PanelService = PanelService;
 
 		// solutionExplorerPanel
 		var solutionExplorerPanel = new Panel(
@@ -207,11 +206,11 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			ContextFacts.SolutionExplorerContext.ContextKey,
 			typeof(SolutionExplorerDisplay),
 			null,
-			Dispatcher,
+			PanelService,
 			DialogService,
 			JsRuntime);
-		Dispatcher.Dispatch(new PanelState.RegisterPanelAction(solutionExplorerPanel));
-		Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false));
+		PanelService.ReduceRegisterPanelAction(solutionExplorerPanel);
+		PanelService.ReduceRegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false);
 		
 		// SetActivePanelTabAction
 		//
@@ -223,8 +222,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 
 	private void InitializeRightPanelTabs()
 	{
-		var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelStateWrap.Value);
-		rightPanel.Dispatcher = Dispatcher;
+		var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelService.GetPanelState());
+		rightPanel.PanelService = PanelService;
 
         // compilerServiceExplorerPanel
         var compilerServiceExplorerPanel = new Panel(
@@ -234,11 +233,11 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.CompilerServiceExplorerContext.ContextKey,
             typeof(CompilerServiceExplorerDisplay),
             null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(compilerServiceExplorerPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false));
+        PanelService.ReduceRegisterPanelAction(compilerServiceExplorerPanel);
+        PanelService.ReduceRegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false);
 
         // compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
@@ -248,17 +247,17 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.CompilerServiceEditorContext.ContextKey,
             typeof(CompilerServiceEditorDisplay),
             null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(compilerServiceEditorPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false));
+        PanelService.ReduceRegisterPanelAction(compilerServiceEditorPanel);
+        PanelService.ReduceRegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false);
     }
 
 	private void InitializeBottomPanelTabs()
 	{
-		var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelStateWrap.Value);
-		bottomPanel.Dispatcher = Dispatcher;
+		var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState());
+		bottomPanel.PanelService = PanelService;
 
         // outputPanel
         var outputPanel = new Panel(
@@ -268,11 +267,11 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(outputPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, outputPanel, false));
+        PanelService.ReduceRegisterPanelAction(outputPanel);
+        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, outputPanel, false);
 
         // testExplorerPanel
         var testExplorerPanel = new Panel(
@@ -282,11 +281,11 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.TestExplorerContext.ContextKey,
             typeof(TestExplorerDisplay),
             null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(testExplorerPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
+        PanelService.ReduceRegisterPanelAction(testExplorerPanel);
+        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
         Dispatcher.Dispatch(new TestExplorerState.InitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
@@ -303,11 +302,11 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
             null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(nuGetPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false));
+        PanelService.ReduceRegisterPanelAction(nuGetPanel);
+        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false);
     }
     
     private Task OpenNewDotNetSolutionDialog()

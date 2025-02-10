@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.FileSystems.Displays;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
@@ -37,8 +36,6 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeHeader : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
@@ -51,6 +48,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    [Inject]
+    private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -298,7 +297,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private void InitializeMenuView()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-		var panelState = PanelStateWrap.Value;
+		var panelState = PanelService.GetPanelState();
 		var dialogState = DialogService.GetDialogState();
 
 		foreach (var panel in panelState.PanelList)
@@ -312,7 +311,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
 					if (panelGroup is not null)
 					{
-						Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(panelGroup.Key, panel.Key));
+						PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
 						
 						var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 						
@@ -323,7 +322,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						        nameof(ContextHelper.ConstructFocusContextElementCommand),
 						        nameof(ContextHelper.ConstructFocusContextElementCommand),
 						        JsRuntimeCommonApi,
-						        Dispatcher);
+						        PanelService);
 						        
 						    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 						}
@@ -343,8 +342,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						}
 						else
 						{
-							Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true));
-							Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key));
+							PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
+							PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
 							
 							var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 						
@@ -355,7 +354,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 							        nameof(ContextHelper.ConstructFocusContextElementCommand),
 							        nameof(ContextHelper.ConstructFocusContextElementCommand),
 							        JsRuntimeCommonApi,
-							        Dispatcher);
+							        PanelService);
 							        
 							    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 							}

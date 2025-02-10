@@ -1,6 +1,7 @@
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -33,6 +34,7 @@ public class IdeBackgroundTaskApi
     private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
 	private readonly IDialogService _dialogService;
+	private readonly IPanelService _panelService;
 	private readonly IJSRuntime _jsRuntime;
 
     public IdeBackgroundTaskApi(
@@ -49,6 +51,7 @@ public class IdeBackgroundTaskApi
         IState<TerminalState> terminalStateWrap,
         IDecorationMapperRegistry decorationMapperRegistry,
         IDialogService dialogService,
+        IPanelService panelService,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
@@ -65,6 +68,7 @@ public class IdeBackgroundTaskApi
         _terminalStateWrap = terminalStateWrap;
 		_decorationMapperRegistry = decorationMapperRegistry;
 		_dialogService = dialogService;
+		_panelService = panelService;
 		_jsRuntime = jsRuntime;
 
         Editor = new EditorIdeApi(
@@ -78,6 +82,7 @@ public class IdeBackgroundTaskApi
             _decorationMapperRegistry,
             _compilerServiceRegistry,
             _dialogService,
+            _panelService,
             _dispatcher,
             _jsRuntime,
             serviceProvider);

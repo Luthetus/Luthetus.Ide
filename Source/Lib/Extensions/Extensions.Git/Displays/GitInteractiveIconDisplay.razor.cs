@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Extensions.Git.States;
 
@@ -19,7 +18,7 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<PanelState> PanelStateWrap { get; set; } = null!;
+    private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -47,7 +46,7 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
         }
         else
         {
-            var panelState = PanelStateWrap.Value;
+            var panelState = PanelService.GetPanelState();
             var gitPanel = panelState.PanelList.FirstOrDefault(x => x.ContextRecordKey == ContextFacts.GitContext.ContextKey);
 
             if (gitPanel is null)
@@ -57,12 +56,12 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
 
             if (panelGroup is not null)
             {
-                Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(panelGroup.Key, gitPanel.Key));
+                PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, gitPanel.Key);
             }
             else
             {
-                Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel, true));
-                Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel.Key));
+                PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel, true);
+                PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel.Key);
             }
         }
     }

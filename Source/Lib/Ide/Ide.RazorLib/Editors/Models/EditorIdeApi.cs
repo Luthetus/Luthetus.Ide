@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -42,6 +43,7 @@ public class EditorIdeApi
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly IDialogService _dialogService;
+    private readonly IPanelService _panelService;
     private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
     private readonly IServiceProvider _serviceProvider;
@@ -57,6 +59,7 @@ public class EditorIdeApi
         IDecorationMapperRegistry decorationMapperRegistry,
         ICompilerServiceRegistry compilerServiceRegistry,
         IDialogService dialogService,
+        IPanelService panelService,
         IDispatcher dispatcher,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
@@ -71,6 +74,7 @@ public class EditorIdeApi
         _decorationMapperRegistry = decorationMapperRegistry;
         _compilerServiceRegistry = compilerServiceRegistry;
         _dialogService = dialogService;
+        _panelService = panelService;
         _dispatcher = dispatcher;
         _jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
@@ -195,7 +199,7 @@ public class EditorIdeApi
                 viewModelKey,
                 registerViewModelArgs.ResourceUri,
                 _textEditorService,
-                _dispatcher,
+                _panelService,
                 _dialogService,
                 _jsRuntime,
                 VirtualizationGrid.Empty,

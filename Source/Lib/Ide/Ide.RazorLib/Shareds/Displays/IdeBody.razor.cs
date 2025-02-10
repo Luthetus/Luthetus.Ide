@@ -1,17 +1,17 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
 using Luthetus.Common.RazorLib.Options.States;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeBody : ComponentBase
 {
     [Inject]
-    private IState<PanelState> PanelStateWrap { get; set; } = null!;
+    private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 

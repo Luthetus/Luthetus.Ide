@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 
-namespace Luthetus.Common.RazorLib.Panels.States;
+namespace Luthetus.Common.RazorLib.Panels.Models;
 
 /// <summary>
 /// Once the 'PanelGroupList'/'PanelList' are exposed publically,
@@ -19,7 +19,6 @@ namespace Luthetus.Common.RazorLib.Panels.States;
 ///
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
-[FeatureState]
 public partial record PanelState(
 	List<PanelGroup> PanelGroupList,
 	List<Panel> PanelList)

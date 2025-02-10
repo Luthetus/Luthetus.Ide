@@ -4,6 +4,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -34,6 +35,7 @@ public partial class TextEditorService : ITextEditorService
 {
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
+    private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
@@ -55,6 +57,7 @@ public partial class TextEditorService : ITextEditorService
         IJSRuntime jsRuntime,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher,
+        IPanelService panelService,
         IDialogService dialogService,
         IContextService contextService,
 		IAutocompleteIndexer autocompleteIndexer,
@@ -88,7 +91,7 @@ public partial class TextEditorService : ITextEditorService
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService, _dispatcher);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dispatcher, _dialogService);
-        GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
+        GroupApi = new TextEditorGroupApi(this, _dispatcher, _panelService, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
         OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi, _dispatcher);
         
@@ -689,7 +692,7 @@ public partial class TextEditorService : ITextEditorService
 	        viewModelKey,
 	        resourceUri,
 	        textEditorService,
-	        dispatcher,
+	        _panelService,
 	        dialogService,
 	        jsRuntime,
 	        VirtualizationGrid.Empty,

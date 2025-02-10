@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -36,6 +37,8 @@ public partial class GitDiffDisplay : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
@@ -153,7 +156,7 @@ public partial class GitDiffDisplay : ComponentBase
                 viewModelKey,
                 resourceUri,
                 TextEditorService,
-                Dispatcher,
+                PanelService,
                 DialogService,
                 JsRuntime,
                 VirtualizationGrid.Empty,
@@ -220,7 +223,7 @@ public partial class GitDiffDisplay : ComponentBase
                 viewModelKey,
                 originalResourceUri,
                 TextEditorService,
-                Dispatcher,
+                PanelService,
                 DialogService,
                 JsRuntime,
                 VirtualizationGrid.Empty,
