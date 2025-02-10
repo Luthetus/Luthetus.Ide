@@ -1,8 +1,12 @@
-namespace Luthetus.Common.RazorLib.Dimensions.States;
+namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
-public partial record AppDimensionState
+public interface IAppDimensionService
 {
-	public record SetAppDimensionStateAction(Func<AppDimensionState, AppDimensionState> WithFunc);
+	public event Action? AppDimensionStateChanged;
+	
+	public AppDimensionState GetAppDimensionState();
+	
+	public void ReduceSetAppDimensionsAction(Func<AppDimensionState, AppDimensionState> withFunc);
 
 	/// <summary>
 	/// This action is for resizing that is done to an HTML element that is rendered.
@@ -11,10 +15,10 @@ public partial record AppDimensionState
 	/// Since these resizes won't affect the application's dimensions as a whole,
 	/// nothing needs to be used as a parameter, its just a way to notify.
 	/// </summary>
-	public record NotifyIntraAppResizeAction;
-	
+	public void ReduceNotifyIntraAppResizeAction();
+
 	/// <summary>
 	/// This action is for resizing that is done to the "user agent" / "window" / "document".
 	/// </summary>
-	public record NotifyUserAgentResizeAction;
+	public void ReduceNotifyUserAgentResizeAction();
 }

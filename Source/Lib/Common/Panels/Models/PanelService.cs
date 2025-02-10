@@ -3,17 +3,16 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
 public class PanelService : IPanelService
 {
-	private readonly IDispatcher _dispatcher;
+	private readonly IAppDimensionService _appDimensionService;
 
-	public PanelService(IDispatcher dispatcher)
+	public PanelService(IAppDimensionService appDimensionService)
 	{
-		_dispatcher = dispatcher;
+		_appDimensionService = appDimensionService;
 	}
 
 	private PanelState _panelState = new();
@@ -205,7 +204,7 @@ public class PanelService : IPanelService
         _panelState = inState with { PanelGroupList = outPanelGroupList };
         PanelStateChanged?.Invoke();
         
-        _dispatcher.Dispatch(new AppDimensionState.NotifyIntraAppResizeAction());
+        _appDimensionService.ReduceNotifyIntraAppResizeAction();
         return;
     }
 

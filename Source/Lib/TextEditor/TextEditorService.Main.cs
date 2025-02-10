@@ -9,7 +9,7 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -62,7 +62,7 @@ public partial class TextEditorService : ITextEditorService
         IContextService contextService,
 		IAutocompleteIndexer autocompleteIndexer,
 		IAutocompleteService autocompleteService,
-		IState<AppDimensionState> appDimensionStateWrap,
+		IAppDimensionService appDimensionService,
 		IServiceProvider serviceProvider)
     {
     	TextEditorWorker = new(this);
@@ -72,7 +72,7 @@ public partial class TextEditorService : ITextEditorService
         ThemeStateWrap = themeStateWrap;
         OptionsStateWrap = optionsStateWrap;
         FindAllStateWrap = findAllStateWrap;
-		AppDimensionStateWrap = appDimensionStateWrap;
+		AppDimensionService = appDimensionService;
 		_serviceProvider = serviceProvider;
 
         _backgroundTaskService = backgroundTaskService;
@@ -103,7 +103,8 @@ public partial class TextEditorService : ITextEditorService
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
-	public IState<AppDimensionState> AppDimensionStateWrap { get; }
+    
+    public IAppDimensionService AppDimensionService { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }

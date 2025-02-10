@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Options.States;
@@ -75,8 +74,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 {
     [Inject]
     public IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
-    [Inject]
-    public IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]

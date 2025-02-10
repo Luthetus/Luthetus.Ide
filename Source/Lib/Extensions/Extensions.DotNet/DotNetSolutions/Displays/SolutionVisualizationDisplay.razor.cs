@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
@@ -24,7 +24,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
-	private IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
+	private IAppDimensionService AppDimensionService { get; set; } = null!;
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
@@ -55,7 +55,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	{
 		_solutionVisualizationModel = new(null, OnCompilerServiceChanged);
 
-		AppDimensionStateWrap.StateChanged += OnAppDimensionStateWrapChanged;
+		AppDimensionService.AppDimensionStateChanged += OnAppDimensionStateWrapChanged;
 		DotNetSolutionStateWrap.StateChanged += OnDotNetSolutionStateWrapChanged;
 
 		SubscribeTo_DotNetSolutionCompilerService();
@@ -69,7 +69,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			OnAppDimensionStateWrapChanged(null, EventArgs.Empty);
+			OnAppDimensionStateWrapChanged();
 			OnDotNetSolutionStateWrapChanged(null, EventArgs.Empty);
 			OnCompilerServiceChanged();
 		}
@@ -77,7 +77,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
-	private async void OnAppDimensionStateWrapChanged(object sender, EventArgs e)
+	private async void OnAppDimensionStateWrapChanged()
 	{
 		_solutionVisualizationModel.Dimensions.DivBoundingClientRect = await CommonJavaScriptInteropApi
 			.MeasureElementById(DivHtmlElementId)
@@ -93,7 +93,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	private void OnDotNetSolutionStateWrapChanged(object sender, EventArgs e)
 	{
 		_solutionVisualizationModel = new(DotNetSolutionStateWrap.Value.DotNetSolutionModel?.AbsolutePath, OnCompilerServiceChanged);
-		OnAppDimensionStateWrapChanged(sender, e);
+		OnAppDimensionStateWrapChanged();
 	}
 
 	private void OnCompilerServiceChanged()
@@ -189,7 +189,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		DisposeFrom_CSharpProjectCompilerService();
 		DisposeFrom_CSharpCompilerService();
 
-		AppDimensionStateWrap.StateChanged -= OnAppDimensionStateWrapChanged;
+		AppDimensionService.AppDimensionStateChanged -= OnAppDimensionStateWrapChanged;
 		DotNetSolutionStateWrap.StateChanged -= OnDotNetSolutionStateWrapChanged;
 	}
 }

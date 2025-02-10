@@ -1,6 +1,6 @@
 using Fluxor;
 
-namespace Luthetus.Common.RazorLib.Dimensions.States;
+namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
 /// <summary>
 /// The measurements are in pixels (px).
@@ -32,7 +32,6 @@ namespace Luthetus.Common.RazorLib.Dimensions.States;
 /// The unit of measurement is Pixels (px).
 /// This describes the distance the application is from the top side of the "display/monitor".
 /// </param>
-[FeatureState]
 public partial record AppDimensionState(int Width, int Height, int Left, int Top)
 {
 	public AppDimensionState() : this(0, 0, 0, 0)

@@ -85,7 +85,7 @@ public sealed class DisplayTracker : IDisposable
 
                 // Furthermore, subscribe to the events which indicate that the UI has changed (for example font-size)
 				// so that these events are immediately handled, considering that this view model is being rendered on the UI.
-                _textEditorService.AppDimensionStateWrap.StateChanged += AppDimensionStateWrap_StateChanged;
+                _textEditorService.AppDimensionService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
             }
 			else if (Links > 1)
 			{
@@ -175,7 +175,7 @@ public sealed class DisplayTracker : IDisposable
 				// (perhaps the font-size was changed for eample)
 				//
                 // Due to lazily updating the UI, proceed to unsubscribe from the events which indicate that the UI has changed (for example font-size).
-				_textEditorService.AppDimensionStateWrap.StateChanged -= AppDimensionStateWrap_StateChanged;
+				_textEditorService.AppDimensionService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
             }
 			else if (Links < 0)
 			{
@@ -195,7 +195,7 @@ public sealed class DisplayTracker : IDisposable
         }
     }
 
-    private void AppDimensionStateWrap_StateChanged(object? sender, EventArgs e)
+    private void AppDimensionStateWrap_StateChanged()
     {
     	// The UI was resized, and therefore the text-editor measurements need to be re-measured.
     	//
@@ -248,7 +248,7 @@ public sealed class DisplayTracker : IDisposable
     {
         lock (_linksLock)
 		{
-        	_textEditorService.AppDimensionStateWrap.StateChanged -= AppDimensionStateWrap_StateChanged;
+        	_textEditorService.AppDimensionService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
 		}
     }
 }

@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
@@ -14,6 +13,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IDragService DragService { get; set; } = null!;
+    [Inject]
+    private IAppDimensionService AppDimensionService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -56,9 +57,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-			{
-				Dispatcher.Dispatch(new AppDimensionState.NotifyIntraAppResizeAction());
-			}
+				AppDimensionService.ReduceNotifyIntraAppResizeAction();
         }
         else
         {

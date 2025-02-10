@@ -65,7 +65,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<BrowserResizeInterop>()
             .AddScoped<IContextService, ContextService>()
             .AddScoped<IOutlineService, OutlineService>()
-            .AddScoped<IPanelService, PanelService>();
+            .AddScoped<IPanelService, PanelService>()
+            .AddScoped<IAppDimensionService, AppDimensionService>();
 
         return services;
     }
