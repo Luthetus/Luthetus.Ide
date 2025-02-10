@@ -76,7 +76,7 @@ public partial class InputFileSidebar : ComponentBase
 
             if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
-                TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null

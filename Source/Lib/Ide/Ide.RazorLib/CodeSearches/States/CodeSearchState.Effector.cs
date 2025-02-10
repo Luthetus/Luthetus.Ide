@@ -134,16 +134,16 @@ public partial record CodeSearchState
 		
 		    if (!_treeViewService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
 		    {
-		        _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+		        _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
 		            CodeSearchState.TreeViewCodeSearchContainerKey,
 		            adhocRoot,
 		            activeNodes));
 		    }
 		    else
 		    {
-		        _treeViewService.SetRoot(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
+		        _treeViewService.ReduceWithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
 		
-		        _treeViewService.SetActiveNode(
+		        _treeViewService.ReduceSetActiveNodeAction(
 		            CodeSearchState.TreeViewCodeSearchContainerKey,
 		            firstNode,
 		            true,

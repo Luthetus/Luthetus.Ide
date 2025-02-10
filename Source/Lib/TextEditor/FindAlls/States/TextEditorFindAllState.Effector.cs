@@ -263,16 +263,16 @@ public partial record TextEditorFindAllState
 		
 		    if (!_treeViewService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
 		    {
-		        _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+		        _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
 		            TextEditorFindAllState.TreeViewFindAllContainerKey,
 		            adhocRoot,
 		            activeNodes));
 		    }
 		    else
 		    {
-		        _treeViewService.SetRoot(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
+		        _treeViewService.ReduceWithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
 		
-		        _treeViewService.SetActiveNode(
+		        _treeViewService.ReduceSetActiveNodeAction(
 		            TextEditorFindAllState.TreeViewFindAllContainerKey,
 		            firstNode,
 		            true,

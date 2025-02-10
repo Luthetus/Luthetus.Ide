@@ -233,11 +233,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        _treeViewService.ReRenderNode(
+        _treeViewService.ReduceReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        _treeViewService.MoveUp(
+        _treeViewService.ReduceMoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

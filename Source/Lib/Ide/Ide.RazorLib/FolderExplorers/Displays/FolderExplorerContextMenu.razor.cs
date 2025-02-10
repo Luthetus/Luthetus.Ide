@@ -165,11 +165,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        TreeViewService.ReRenderNode(
+        TreeViewService.ReduceReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        TreeViewService.MoveUp(
+        TreeViewService.ReduceMoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

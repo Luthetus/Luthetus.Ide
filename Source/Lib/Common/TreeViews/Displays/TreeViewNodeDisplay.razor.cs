@@ -114,12 +114,12 @@ public partial class TreeViewNodeDisplay : ComponentBase
 			    async () => 
 			    {
 				    await localTreeViewNoType.LoadChildListAsync().ConfigureAwait(false);
-                    TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
+                    TreeViewService.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
 			    });
         }
         else
         {
-            TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
+            TreeViewService.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
         }
     }
 

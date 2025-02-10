@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 
-namespace Luthetus.Common.RazorLib.TreeViews.States;
+namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
 /// <summary>
 /// The list provided should not be modified after passing it as a parameter.
@@ -23,7 +23,6 @@ namespace Luthetus.Common.RazorLib.TreeViews.States;
 /// but what if someone modifies it.
 /// have property be IReadOnlyList and private List that is the?
 /// </summary>
-[FeatureState]
 public partial record TreeViewState(List<TreeViewContainer> ContainerList)
 {
     public TreeViewState() : this(new List<TreeViewContainer>())

@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Options.States;
-using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -70,10 +69,7 @@ public record LuthetusCommonFactories
             serviceProvider.GetRequiredService<IDispatcher>());
 
     public Func<IServiceProvider, ITreeViewService> TreeViewServiceFactory { get; init; } =
-        serviceProvider => new TreeViewService(
-            serviceProvider.GetRequiredService<IState<TreeViewState>>(),
-            serviceProvider.GetRequiredService<IBackgroundTaskService>(),
-            serviceProvider.GetRequiredService<IDispatcher>());
+        serviceProvider => new TreeViewService(serviceProvider.GetRequiredService<IBackgroundTaskService>());
 
     /// <summary>
     /// The default value for <see cref="EnvironmentProviderFactory"/> is based on the <see cref="LuthetusHostingKind"/>.

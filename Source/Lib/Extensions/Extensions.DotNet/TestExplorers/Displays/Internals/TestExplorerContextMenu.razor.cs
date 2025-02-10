@@ -165,10 +165,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 				    }));
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
-					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					await treeViewProjectTestModel.LoadChildListAsync();
-					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					DotNetBackgroundTaskApi.TestExplorer.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
@@ -384,7 +384,7 @@ public partial class TestExplorerContextMenu : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
-        		TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+        		TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
@@ -414,7 +414,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 					}
 				}
 			
-				TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+				TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
 				return Task.CompletedTask;
         	}
         };

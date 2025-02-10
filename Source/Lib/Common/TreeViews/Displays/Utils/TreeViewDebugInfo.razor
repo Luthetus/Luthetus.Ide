@@ -1,6 +1,4 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
-@{ var treeViewContainer = TreeViewStateSelection.Value; }
+@{ var treeViewContainer = TreeViewService.GetTreeViewContainer(TreeViewContainerKey); }
 
 <div class="luth_tree-view-debug-info">
 	<div>

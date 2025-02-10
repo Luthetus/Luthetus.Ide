@@ -189,7 +189,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
         {
-            TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+            TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                 InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
@@ -198,9 +198,9 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
         }
         else
         {
-            TreeViewService.SetRoot(InputFileContent.TreeViewContainerKey, adhocRootNode);
+            TreeViewService.ReduceWithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
             
-			TreeViewService.SetActiveNode(
+			TreeViewService.ReduceSetActiveNodeAction(
 				InputFileContent.TreeViewContainerKey,
 				activeNode,
 				true,

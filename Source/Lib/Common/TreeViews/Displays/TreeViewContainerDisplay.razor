@@ -1,10 +1,8 @@
 @using Luthetus.Common.RazorLib.Keys.Models;
 @using Luthetus.Common.RazorLib.TreeViews.Models;
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 @{
-    var treeViewContainer = TreeViewStateSelection.Value;
+    var treeViewContainer = TreeViewService.GetTreeViewContainer(TreeViewContainerKey);
 
     <div id="@TreeViewService.GetTreeViewContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
          class="luth_tree-view-state luth_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"

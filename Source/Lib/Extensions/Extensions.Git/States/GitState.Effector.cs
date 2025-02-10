@@ -110,16 +110,16 @@ public partial record GitState
 
                 if (!_treeViewService.TryGetTreeViewContainer(TreeViewGitChangesKey, out var container))
                 {
-                    _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+                    _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                         TreeViewGitChangesKey,
                         adhocRoot,
                         activeNodes));
                 }
                 else
                 {
-                    _treeViewService.SetRoot(TreeViewGitChangesKey, adhocRoot);
+                    _treeViewService.ReduceWithRootNodeAction(TreeViewGitChangesKey, adhocRoot);
 
-                    _treeViewService.SetActiveNode(
+                    _treeViewService.ReduceSetActiveNodeAction(
                         TreeViewGitChangesKey,
                         firstNode,
                         true,

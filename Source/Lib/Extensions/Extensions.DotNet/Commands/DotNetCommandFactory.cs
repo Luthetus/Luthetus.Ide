@@ -113,7 +113,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 						if (localNodeOfViewModel is null)
 							return;
 
-						_treeViewService.SetActiveNode(
+						_treeViewService.ReduceSetActiveNodeAction(
 							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 							localNodeOfViewModel,
 							false,

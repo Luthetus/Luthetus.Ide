@@ -117,16 +117,16 @@ public class FolderExplorerIdeApi
                 FolderExplorerState.TreeViewContentStateKey,
                 out var treeViewState))
         {
-            _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
                 new() { rootNode }));
         }
         else
         {
-            _treeViewService.SetRoot(FolderExplorerState.TreeViewContentStateKey, rootNode);
+            _treeViewService.ReduceWithRootNodeAction(FolderExplorerState.TreeViewContentStateKey, rootNode);
 
-            _treeViewService.SetActiveNode(
+            _treeViewService.ReduceSetActiveNodeAction(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
                 true,

@@ -240,7 +240,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 											if (localParent is not null)
 											{
 												await localParent.LoadChildListAsync().ConfigureAwait(false);
-												TreeViewService.ReRenderNode(mostRecentContainer.Key, localParent);
+												TreeViewService.ReduceReRenderNodeAction(mostRecentContainer.Key, localParent);
 											}
 										}
 									}
@@ -584,9 +584,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		TreeViewService.ReRenderNode(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
+		TreeViewService.ReduceReRenderNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
 
-		TreeViewService.MoveUp(
+		TreeViewService.ReduceMoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

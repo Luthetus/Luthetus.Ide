@@ -123,16 +123,16 @@ public partial class OutputScheduler
 
         if (!_treeViewService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
         {
-            _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                 OutputState.TreeViewContainerKey,
                 adhocRoot,
                 activeNodes));
         }
         else
         {
-            _treeViewService.SetRoot(OutputState.TreeViewContainerKey, adhocRoot);
+            _treeViewService.ReduceWithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
 
-            _treeViewService.SetActiveNode(
+            _treeViewService.ReduceSetActiveNodeAction(
                 OutputState.TreeViewContainerKey,
                 firstNode,
                 true,

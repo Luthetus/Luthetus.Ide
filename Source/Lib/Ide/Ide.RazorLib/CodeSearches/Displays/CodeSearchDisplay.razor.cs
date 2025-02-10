@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
@@ -20,14 +19,12 @@ using Luthetus.Ide.RazorLib.CodeSearches.States;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
-public partial class CodeSearchDisplay : FluxorComponent
+public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 {
 	[Inject]
 	private IState<CodeSearchState> CodeSearchStateWrap { get; set; } = null!;
     [Inject]
 	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<TreeViewState> TreeViewStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -76,9 +73,7 @@ public partial class CodeSearchDisplay : FluxorComponent
 	
 	protected override void OnInitialized()
 	{
-		// Suppress unused property warning.
-		// 	(am injecting this as a hack to easily re-render when the tree view changes)
-		_ = TreeViewStateWrap;
+		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
 			TextEditorService,
@@ -200,5 +195,15 @@ public partial class CodeSearchDisplay : FluxorComponent
 				}
             }
         }
+    }
+    
+    public async void OnTreeViewStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

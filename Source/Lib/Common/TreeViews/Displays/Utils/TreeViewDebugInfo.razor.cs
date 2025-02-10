@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
@@ -15,10 +14,10 @@ namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 /// The plan is to render this component
 /// in a <see cref="Luthetus.Common.RazorLib.Dialogs.Displays.DialogDisplay"/>.
 /// </summary>
-public partial class TreeViewDebugInfo : FluxorComponent
+public partial class TreeViewDebugInfo : ComponentBase, IDisposable
 {
 	[Inject]
-    private IStateSelection<TreeViewState, TreeViewContainer?> TreeViewStateSelection { get; set; } = null!;
+	private ITreeViewService TreeViewService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
@@ -29,9 +28,7 @@ public partial class TreeViewDebugInfo : FluxorComponent
 
 	protected override void OnInitialized()
     {
-        TreeViewStateSelection
-            .Select(treeViewContainer => treeViewContainer.ContainerList
-                .FirstOrDefault(x => x.Key == TreeViewContainerKey));
+        TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
 
         base.OnInitialized();
     }
@@ -44,7 +41,17 @@ public partial class TreeViewDebugInfo : FluxorComponent
 		_nodeList.Clear();
 
 		await RecursiveGetFlattenedTreeFunc
-			.Invoke(_nodeList, TreeViewStateSelection.Value.RootNode)
+			.Invoke(_nodeList, TreeViewService.GetTreeViewContainer(TreeViewContainerKey).RootNode)
             .ConfigureAwait(false);
+	}
+	
+	public async void OnTreeViewStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public void Dispose()
+	{
+		TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
 	}
 }

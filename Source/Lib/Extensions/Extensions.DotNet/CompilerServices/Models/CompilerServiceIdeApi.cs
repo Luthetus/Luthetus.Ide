@@ -147,18 +147,18 @@ public class CompilerServiceIdeApi
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						out var treeViewState))
 				{
-					_treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+					_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						rootNode,
 						new() { rootNode }));
 				}
 				else
 				{
-					_treeViewService.SetRoot(
+					_treeViewService.ReduceWithRootNodeAction(
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						rootNode);
 
-					_treeViewService.SetActiveNode(
+					_treeViewService.ReduceSetActiveNodeAction(
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						rootNode,
 						true,

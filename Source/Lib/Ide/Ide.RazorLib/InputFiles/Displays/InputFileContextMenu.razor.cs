@@ -164,9 +164,9 @@ public partial class InputFileContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        TreeViewService.ReRenderNode(InputFileSidebar.TreeViewContainerKey, treeViewModel);
+        TreeViewService.ReduceReRenderNodeAction(InputFileSidebar.TreeViewContainerKey, treeViewModel);
         
-		TreeViewService.MoveUp(
+		TreeViewService.ReduceMoveUpAction(
 			InputFileSidebar.TreeViewContainerKey,
 			false,
 			false);

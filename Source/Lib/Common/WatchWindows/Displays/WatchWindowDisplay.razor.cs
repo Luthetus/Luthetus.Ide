@@ -58,7 +58,7 @@ public partial class WatchWindowDisplay : FluxorComponent
                     false,
                     CommonComponentRenderers);
 
-                TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     rootNode,
                     new() { rootNode }));
@@ -94,7 +94,7 @@ public partial class WatchWindowDisplay : FluxorComponent
         {
             if (disposing)
             {
-                TreeViewService.DisposeTreeViewContainer(TreeViewContainerKey);
+                TreeViewService.ReduceDisposeContainerAction(TreeViewContainerKey);
             }
 
             _disposedValue = true;

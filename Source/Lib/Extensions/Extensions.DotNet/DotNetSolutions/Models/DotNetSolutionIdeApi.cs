@@ -591,16 +591,16 @@ Execution Terminal"));
 
 		if (!_treeViewService.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
 		{
-			_treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+			_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				new() { rootNode }));
 		}
 		else
 		{
-			_treeViewService.SetRoot(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
+			_treeViewService.ReduceWithRootNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
 
-			_treeViewService.SetActiveNode(
+			_treeViewService.ReduceSetActiveNodeAction(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				true,
