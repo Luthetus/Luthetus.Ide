@@ -2,7 +2,6 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -35,6 +34,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
+	[Inject]
+	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -96,7 +97,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			},
 			null);
 
-		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

@@ -2,7 +2,6 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -15,7 +14,7 @@ namespace Luthetus.Common.RazorLib.Menus.Displays;
 public partial class MenuOptionDisplay : ComponentBase
 {
     [Inject]
-    private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
@@ -46,7 +45,7 @@ public partial class MenuOptionDisplay : ComponentBase
 
     private bool IsActive => Index == ActiveMenuOptionRecordIndex;
 
-    private bool HasSubmenuActive => DropdownStateWrap.Value.DropdownList.Any(
+    private bool HasSubmenuActive => DropdownService.GetDropdownState().DropdownList.Any(
         x => x.Key == _subMenuDropdownKey);
 
     private string IsActiveCssClass => IsActive ? "luth_active" : string.Empty;
@@ -91,7 +90,7 @@ public partial class MenuOptionDisplay : ComponentBase
     private Task RenderDropdownAsync(MenuRecord localSubMenu)
     {
     	return DropdownHelper.RenderDropdownAsync(
-    		Dispatcher,
+    		DropdownService,
     		JsRuntime.GetLuthetusCommonApi(),
 			_menuOptionHtmlElementId,
 			DropdownOrientation.Right,
@@ -106,10 +105,10 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             var localDropdown = Dropdown;
             
-            Dispatcher.Dispatch(new DropdownState.ClearAction());
+            DropdownService.ReduceClearAction();
 			
 			if (localDropdown is not null)
-            	Dispatcher.Dispatch(new DropdownState.DisposeAction(localDropdown.Key));
+            	DropdownService.ReduceDisposeAction(localDropdown.Key);
             	
             await MenuOptionRecord.OnClickFunc.Invoke().ConfigureAwait(false);
         }
@@ -118,7 +117,7 @@ public partial class MenuOptionDisplay : ComponentBase
         if (localSubMenu is not null)
         {
             if (HasSubmenuActive)
-                Dispatcher.Dispatch(new DropdownState.DisposeAction(_subMenuDropdownKey));
+                DropdownService.ReduceDisposeAction(_subMenuDropdownKey);
             else
 				await RenderDropdownAsync(localSubMenu);
         }
@@ -183,11 +182,11 @@ public partial class MenuOptionDisplay : ComponentBase
         else // Hide the widget AND dispose the menu
         {
             onAfterWidgetHidden.Invoke();
-            Dispatcher.Dispatch(new DropdownState.ClearAction());
+            DropdownService.ReduceClearAction();
 
 			var localDropdown = Dropdown;
 			if (localDropdown is not null)
-            	Dispatcher.Dispatch(new DropdownState.DisposeAction(localDropdown.Key));
+            	DropdownService.ReduceDisposeAction(localDropdown.Key);
         }
     }
 }

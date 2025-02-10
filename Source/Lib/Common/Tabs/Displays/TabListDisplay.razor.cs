@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
@@ -15,7 +14,7 @@ public partial class TabListDisplay : ComponentBase
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
+	private IDropdownService DropdownService { get; set; } = null!;
 
 	/// <summary>
 	/// The list provided should not be modified after passing it as a parameter..
@@ -48,7 +47,7 @@ public partial class TabListDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        DropdownService.ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
 }

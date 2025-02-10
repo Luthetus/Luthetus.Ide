@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -29,6 +28,8 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+	[Inject]
+	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
@@ -114,7 +115,7 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 			},
 			null);
 
-		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

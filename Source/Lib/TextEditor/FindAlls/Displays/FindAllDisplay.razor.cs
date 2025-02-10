@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -30,6 +29,8 @@ public partial class FindAllDisplay : FluxorComponent
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -98,7 +99,7 @@ public partial class FindAllDisplay : FluxorComponent
 			},
 			null);
 
-		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

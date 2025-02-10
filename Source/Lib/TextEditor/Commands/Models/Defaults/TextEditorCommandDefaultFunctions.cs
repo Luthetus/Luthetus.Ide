@@ -11,7 +11,6 @@ using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -871,8 +870,8 @@ public class TextEditorCommandDefaultFunctions
 				await viewModelModifier.ViewModel.FocusAsync();
 			});
 
-		var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
-        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		var dropdownService = commandArgs.ServiceProvider.GetRequiredService<IDropdownService>();
+        dropdownService.ReduceRegisterAction(dropdownRecord);
     }
     
     public static async ValueTask QuickActionsSlashRefactor(
@@ -1020,8 +1019,8 @@ public class TextEditorCommandDefaultFunctions
 				await viewModelModifier.ViewModel.FocusAsync();
 			});
 
-		var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
-        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		var dropdownService = commandArgs.ServiceProvider.GetRequiredService<IDropdownService>();
+        dropdownService.ReduceRegisterAction(dropdownRecord);
     }
     
     public static void GoToDefinition(
@@ -1212,7 +1211,7 @@ public class TextEditorCommandDefaultFunctions
 		        viewModelModifier,
 		        cursorModifierBag,
 		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
-		        componentData.Dispatcher,
+		        componentData.DropdownService,
 		        componentData);
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
@@ -1313,7 +1312,7 @@ public class TextEditorCommandDefaultFunctions
 		        viewModelModifier,
 		        cursorModifierBag,
 		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
-		        componentData.Dispatcher,
+		        componentData.DropdownService,
 		        componentData);
         }
 
@@ -1444,7 +1443,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor,
-        IDispatcher dispatcher,
+        IDropdownService dropdownService,
         double? leftOffset,
         double? topOffset,
         Type componentType,
@@ -1486,13 +1485,13 @@ public class TextEditorCommandDefaultFunctions
 			ShouldShowOutOfBoundsClickDisplay = false
 		};
 
-        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        dropdownService.ReduceRegisterAction(dropdownRecord);
 	}
 	
 	public static void RemoveDropdown(
         ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        IDispatcher dispatcher)
+        IDropdownService dropdownService)
     {
     	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 		{
@@ -1500,7 +1499,7 @@ public class TextEditorCommandDefaultFunctions
 		};
     
 		var dropdownKey = new Key<DropdownRecord>(viewModelModifier.ViewModel.ViewModelKey.Guid);
-		dispatcher.Dispatch(new DropdownState.DisposeAction(dropdownKey));
+		dropdownService.ReduceDisposeAction(dropdownKey);
 	}
 	
 	public static void ShowContextMenu(
@@ -1509,7 +1508,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor,
-        IDispatcher dispatcher,
+        IDropdownService dropdownService,
         TextEditorComponentData componentData)
     {
     	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
@@ -1523,7 +1522,7 @@ public class TextEditorCommandDefaultFunctions
 	        viewModelModifier,
 	        cursorModifierBag,
 	        primaryCursor,
-	        dispatcher,
+	        dropdownService,
 	        leftOffset: null,
 	        topOffset: null,
 	        typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu),
@@ -1542,7 +1541,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor,
-        IDispatcher dispatcher,
+        IDropdownService dropdownService,
         TextEditorComponentData componentData)
     {
     	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
@@ -1556,7 +1555,7 @@ public class TextEditorCommandDefaultFunctions
 	        viewModelModifier,
 	        cursorModifierBag,
 	        primaryCursor,
-	        dispatcher,
+	        dropdownService,
 	        leftOffset: null,
 	        topOffset: null,
 	        typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),

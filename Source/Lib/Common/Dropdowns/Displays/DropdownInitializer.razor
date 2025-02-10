@@ -1,9 +1,8 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 @using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays
 
-@{ var dropdownState = DropdownStateWrap.Value; }
+@{ var dropdownState = DropdownService.GetDropdownState(); }
 
 @if (dropdownState.DropdownList.Count > 0 && dropdownState.DropdownList.Any(x => x.ShouldShowOutOfBoundsClickDisplay))
 {

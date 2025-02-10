@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
@@ -96,6 +97,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     public IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    public IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     public LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     // ScrollbarSection.razor.cs
@@ -301,6 +304,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			_currentRenderBatch.Options,
 			this,
 			Dispatcher,
+			DropdownService,
 			ServiceProvider);
     }
 
@@ -424,7 +428,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			        viewModelModifier,
 			        cursorModifierBag,
 			        primaryCursor,
-			        Dispatcher,
+			        DropdownService,
 			        ComponentData);
 				
 				return ValueTask.CompletedTask;

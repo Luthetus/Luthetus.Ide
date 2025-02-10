@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Options.States;
@@ -25,6 +24,8 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -75,7 +76,7 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

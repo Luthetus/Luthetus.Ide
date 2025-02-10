@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -26,6 +25,8 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+	[Inject]
+	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -105,7 +106,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
     

@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.FileSystems.Displays;
@@ -50,6 +49,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -487,7 +488,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderFileDropdownOnClick()
 	{
 		return DropdownHelper.RenderDropdownAsync(
-			Dispatcher,
+			DropdownService,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonFileId,
 			DropdownOrientation.Bottom,
@@ -499,7 +500,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderToolsDropdownOnClick()
 	{
 		return DropdownHelper.RenderDropdownAsync(
-			Dispatcher,
+			DropdownService,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonToolsId,
 			DropdownOrientation.Bottom,
@@ -513,7 +514,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 		InitializeMenuView();
 		
 		return DropdownHelper.RenderDropdownAsync(
-			Dispatcher,
+			DropdownService,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonViewId,
 			DropdownOrientation.Bottom,
@@ -525,7 +526,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderRunDropdownOnClick()
 	{
 		 return DropdownHelper.RenderDropdownAsync(
-			Dispatcher,
+			DropdownService,
 			JsRuntimeCommonApi,
 		    IdeHeaderState.ButtonRunId,
 			DropdownOrientation.Bottom,

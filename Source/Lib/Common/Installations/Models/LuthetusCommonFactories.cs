@@ -5,10 +5,9 @@ using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
-using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Options.States;
-using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -46,9 +45,7 @@ public record LuthetusCommonFactories
             serviceProvider.GetRequiredService<IState<NotificationState>>());
 
     public Func<IServiceProvider, IDropdownService> DropdownServiceFactory { get; init; } =
-        serviceProvider => new DropdownService(
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            serviceProvider.GetRequiredService<IState<DropdownState>>());
+        serviceProvider => new DropdownService();
 
     public Func<IServiceProvider, IStorageService> StorageServiceFactory { get; init; } =
         serviceProvider => new LocalStorageService(

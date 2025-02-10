@@ -5,7 +5,6 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -25,6 +24,8 @@ public partial class StartupControlDisplay : FluxorComponent
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
     [Inject]
@@ -121,7 +122,7 @@ public partial class StartupControlDisplay : FluxorComponent
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
-    			Dispatcher,
+    			DropdownService,
     			JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,

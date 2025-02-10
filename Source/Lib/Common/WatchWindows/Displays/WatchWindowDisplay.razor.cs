@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -22,6 +21,8 @@ public partial class WatchWindowDisplay : FluxorComponent
 {
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
@@ -84,7 +85,7 @@ public partial class WatchWindowDisplay : FluxorComponent
 			},
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        DropdownService.ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     

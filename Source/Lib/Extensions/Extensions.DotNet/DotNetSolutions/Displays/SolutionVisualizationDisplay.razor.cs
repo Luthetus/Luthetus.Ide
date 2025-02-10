@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Fluxor;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
@@ -25,6 +24,8 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
 	private IAppDimensionService AppDimensionService { get; set; } = null!;
+	[Inject]
+	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
@@ -129,7 +130,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		DropdownService.ReduceRegisterAction(dropdownRecord);
 	}
 
 	private void SubscribeTo_DotNetSolutionCompilerService()

@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -27,6 +26,8 @@ public partial class InputFileSidebar : ComponentBase
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -104,7 +105,7 @@ public partial class InputFileSidebar : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }
