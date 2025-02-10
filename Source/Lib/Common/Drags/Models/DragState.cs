@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Models;
 
-public partial record DragState(
+public record struct DragState(
     bool ShouldDisplay,
     MouseEventArgs? MouseEventArgs,
 	IDrag? Drag)
