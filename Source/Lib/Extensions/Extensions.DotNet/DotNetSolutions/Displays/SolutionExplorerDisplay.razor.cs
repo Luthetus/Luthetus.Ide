@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -34,6 +35,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
+	[Inject]
+	private INotificationService NotificationService { get; set; } = null!;
 	[Inject]
 	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
@@ -68,6 +71,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			CommonComponentRenderers,
 			TextEditorService,
 			TreeViewService,
+			NotificationService,
 			BackgroundTaskService,
 			EnvironmentProvider,
 			Dispatcher);

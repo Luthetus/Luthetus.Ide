@@ -38,6 +38,8 @@ public partial class GitDiffDisplay : ComponentBase
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
+    [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
@@ -189,7 +191,7 @@ public partial class GitDiffDisplay : ComponentBase
 		        nameof(TryCreateEditorIn),
 		        e.ToString(),
 		        CommonComponentRenderers,
-		        Dispatcher,
+		        NotificationService,
 		        TimeSpan.FromSeconds(6));
 		
 			return false;        
@@ -256,7 +258,7 @@ public partial class GitDiffDisplay : ComponentBase
 		        nameof(TryCreateEditorOut),
 		        e.ToString(),
 		        CommonComponentRenderers,
-		        Dispatcher,
+		        NotificationService,
 		        TimeSpan.FromSeconds(6));
 		
 			return false;        

@@ -113,7 +113,7 @@ public class TextEditorCommandDefaultFunctions
 		        nameof(TriggerSave),
 		        $"{nameof(TriggerSave)} was null",
 		        commandArgs.ServiceProvider.GetRequiredService<ICommonComponentRenderers>(),
-				commandArgs.ServiceProvider.GetRequiredService<IDispatcher>(),
+				commandArgs.ServiceProvider.GetRequiredService<INotificationService>(),
 		        TimeSpan.FromSeconds(7));
     	}
     	else

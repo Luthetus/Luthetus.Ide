@@ -9,7 +9,6 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -44,6 +43,7 @@ public class EditorIdeApi
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
+    private readonly INotificationService _notificationService;
     private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
     private readonly IServiceProvider _serviceProvider;
@@ -60,6 +60,7 @@ public class EditorIdeApi
         ICompilerServiceRegistry compilerServiceRegistry,
         IDialogService dialogService,
         IPanelService panelService,
+        INotificationService notificationService,
         IDispatcher dispatcher,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
@@ -75,6 +76,7 @@ public class EditorIdeApi
         _compilerServiceRegistry = compilerServiceRegistry;
         _dialogService = dialogService;
         _panelService = panelService;
+        _notificationService = notificationService;
         _dispatcher = dispatcher;
         _jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
@@ -182,7 +184,7 @@ public class EditorIdeApi
 	
 	        if (model is null)
 	        {
-	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(4));
+	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(4));
 	            return Task.FromResult(Key<TextEditorViewModel>.Empty);
 	        }
 	
@@ -272,7 +274,7 @@ public class EditorIdeApi
 		        nameof(TryRegisterViewModelFunc),
 		        e.ToString(),
 		        _commonComponentRenderers,
-		        _dispatcher,
+		        _notificationService,
 		        TimeSpan.FromSeconds(6));
 		    return Task.FromResult(Key<TextEditorViewModel>.Empty);
         }
@@ -365,8 +367,7 @@ public class EditorIdeApi
                                         "Check If Contexts Were Modified",
                                         async () =>
                                         {
-                                            dispatcher.Dispatch(new NotificationState.DisposeAction(
-                                                notificationInformativeKey));
+                                            _notificationService.ReduceDisposeAction(notificationInformativeKey);
 
                                             var content = await _fileSystemProvider.File
                                                 .ReadAllTextAsync(inputFileAbsolutePathString)
@@ -399,9 +400,7 @@ public class EditorIdeApi
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc),
                             new Func<Task>(() =>
                             {
-                                dispatcher.Dispatch(new NotificationState.DisposeAction(
-                                    notificationInformativeKey));
-
+                                _notificationService.ReduceDisposeAction(notificationInformativeKey);
                                 return Task.CompletedTask;
                             })
                         },
@@ -410,8 +409,7 @@ public class EditorIdeApi
                 true,
                 null);
 
-            dispatcher.Dispatch(new NotificationState.RegisterAction(
-                notificationInformative));
+            _notificationService.ReduceRegisterAction(notificationInformative);
         }
     }
 }

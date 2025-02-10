@@ -1,17 +1,17 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
-using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
-public partial class NotificationsInteractiveIconDisplay : FluxorComponent
+public partial class NotificationsInteractiveIconDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<NotificationState> NotificationStateWrap { get; set; } = null!;
+    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
 
@@ -30,9 +30,25 @@ public partial class NotificationsInteractiveIconDisplay : FluxorComponent
         null,
 		true,
 		_buttonElementId);
+		
+	protected override void OnInitialized()
+    {
+    	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
+    	base.OnInitialized();
+    }
 
     private void ShowNotificationsViewDisplayOnClick()
     {
         DialogService.ReduceRegisterAction(NotificationsViewDisplayDialogRecord);
     }
+    
+    public async void OnNotificationStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+	
+	public void Dispose()
+	{
+		NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
+	}
 }

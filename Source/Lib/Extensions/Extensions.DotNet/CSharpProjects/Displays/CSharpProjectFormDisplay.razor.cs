@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib;
@@ -47,6 +48,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
+	[Inject]
+	private INotificationService NotificationService { get; set; } = null!;
 	[Inject]
 	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 	[Inject]
@@ -259,6 +262,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					FileSystemProvider,
 					CompilerServicesBackgroundTaskApi,
 					Dispatcher,
+					NotificationService,
 					DialogService,
 					DialogRecord,
 					LuthetusCommonComponentRenderers)

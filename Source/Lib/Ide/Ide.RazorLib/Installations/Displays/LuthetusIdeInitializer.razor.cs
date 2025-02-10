@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -42,6 +43,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
@@ -260,7 +263,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher)
+					NotificationService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
 				}));
@@ -283,7 +286,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher)
+					Dispatcher,
+					NotificationService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
 				}));
@@ -311,7 +315,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher)
+					NotificationService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
 				}));
@@ -334,7 +338,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher)
+					Dispatcher,
+					NotificationService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
 				}));

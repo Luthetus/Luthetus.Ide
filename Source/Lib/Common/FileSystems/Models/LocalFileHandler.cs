@@ -10,16 +10,16 @@ public class LocalFileHandler : IFileHandler
 
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly IDispatcher _dispatcher;
+    private readonly INotificationService _notificationService;
 
     public LocalFileHandler(
         IEnvironmentProvider environmentProvider,
         ICommonComponentRenderers commonComponentRenderers,
-        IDispatcher dispatcher)
+        INotificationService notificationService)
     {
         _environmentProvider = environmentProvider;
         _commonComponentRenderers = commonComponentRenderers;
-        _dispatcher = dispatcher;
+        _notificationService = notificationService;
     }
 
     public Task<bool> ExistsAsync(
@@ -145,7 +145,7 @@ public class LocalFileHandler : IFileHandler
             title,
             exception.ToString(),
             _commonComponentRenderers,
-            _dispatcher,
+            _notificationService,
             TimeSpan.FromSeconds(10));
     }
 }

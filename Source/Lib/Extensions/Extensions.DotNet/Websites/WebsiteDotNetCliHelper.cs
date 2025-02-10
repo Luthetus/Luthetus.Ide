@@ -19,6 +19,7 @@ public class WebsiteDotNetCliHelper
 		IFileSystemProvider fileSystemProvider,
 		DotNetBackgroundTaskApi compilerServicesBackgroundTaskApi,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		IDialogService dialogService,
 		IDialog dialogRecord,
 		ICommonComponentRenderers commonComponentRenderers)
@@ -58,6 +59,6 @@ public class WebsiteDotNetCliHelper
 
 		// Close Dialog
 		dialogService.ReduceDisposeAction(dialogRecord.DynamicViewModelKey);
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
 	}
 }

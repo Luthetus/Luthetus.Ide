@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -26,6 +27,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
@@ -68,7 +71,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             TreeViewService,
 			BackgroundTaskService,
             EnvironmentProvider,
-            Dispatcher);
+            NotificationService);
 
         base.OnInitialized();
     }

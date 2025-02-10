@@ -131,7 +131,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, IDispatcher dispatcher, Func<Task> onAfterCompletion)
+    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, IDispatcher dispatcher, INotificationService notificationService, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
             widgetRendererType: _ideComponentRenderers.FileFormRendererType,
@@ -148,7 +148,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
                     new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>((nextName, _, _) =>
                     {
-                        PerformRename(sourceAbsolutePath, nextName, dispatcher, onAfterCompletion);
+                        PerformRename(sourceAbsolutePath, nextName, dispatcher, notificationService, onAfterCompletion);
                         return Task.CompletedTask;
                     })
                 },
@@ -400,7 +400,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, IDispatcher dispatcher, Func<Task> onAfterCompletion)
+    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, IDispatcher dispatcher, INotificationService notificationService, Func<Task> onAfterCompletion)
     {
         // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
@@ -411,6 +411,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 sourceAbsolutePath,
                 temporaryNextName,
                 dispatcher,
+                notificationService,
                 () => Task.CompletedTask);
 
             if (temporaryRenameResult.ExactInput is null)
@@ -437,7 +438,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(14));
             onAfterCompletion.Invoke();
             return default;
         }

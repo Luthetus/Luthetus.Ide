@@ -42,6 +42,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
+	private INotificationService NotificationService { get; set; } = null!;
+	[Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
 	[CascadingParameter]
@@ -174,7 +176,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 		// Close Dialog
 		DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
 
 		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,

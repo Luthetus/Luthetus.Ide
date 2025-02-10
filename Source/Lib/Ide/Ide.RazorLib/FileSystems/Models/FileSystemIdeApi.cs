@@ -14,20 +14,20 @@ public class FileSystemIdeApi
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
+    private readonly INotificationService _notificationService;
 
     public FileSystemIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         IFileSystemProvider fileSystemProvider,
         ICommonComponentRenderers commonComponentRenderers,
         IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+        INotificationService notificationService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _fileSystemProvider = fileSystemProvider;
         _commonComponentRenderers = commonComponentRenderers;
         _backgroundTaskService = backgroundTaskService;
-        _dispatcher = dispatcher;
+        _notificationService = notificationService;
     }
 
     public void SaveFile(
@@ -67,7 +67,7 @@ public class FileSystemIdeApi
         else
         {
             // TODO: Save As to make new file
-            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(7));
+            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(7));
         }
 
         DateTime? fileLastWriteTime = null;

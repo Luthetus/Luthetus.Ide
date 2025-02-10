@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Htmls.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -21,6 +21,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -161,12 +163,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private void DeleteNotification()
     {
-        Dispatcher.Dispatch(new NotificationState.MakeDeletedAction(Notification.DynamicViewModelKey));
+        NotificationService.ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
     }
 
     private void MarkNotificationAsRead()
     {
-        Dispatcher.Dispatch(new NotificationState.MakeReadAction(Notification.DynamicViewModelKey));
+        NotificationService.ReduceMakeReadAction(Notification.DynamicViewModelKey);
     }
 
     private Task ChangeNotificationToDialog()

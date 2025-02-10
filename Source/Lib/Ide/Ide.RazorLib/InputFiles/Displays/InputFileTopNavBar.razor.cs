@@ -27,6 +27,8 @@ public partial class InputFileTopNavBar : ComponentBase
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -129,7 +131,7 @@ public partial class InputFileTopNavBar : ComponentBase
         }
         catch (Exception exception)
         {
-            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(14));
         }
     }
 

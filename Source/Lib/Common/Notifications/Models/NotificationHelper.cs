@@ -2,7 +2,6 @@ using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Models;
@@ -13,7 +12,7 @@ public static class NotificationHelper
         string title,
         string message,
         ICommonComponentRenderers commonComponentRenderers,
-        IDispatcher dispatcher,
+        INotificationService notificationService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationViewModel(
@@ -31,14 +30,14 @@ public static class NotificationHelper
             true,
             null);
 
-        dispatcher.Dispatch(new NotificationState.RegisterAction(notificationInformative));
+        notificationService.ReduceRegisterAction(notificationInformative);
     }
 
     public static void DispatchError(
         string title,
         string message,
         ICommonComponentRenderers commonComponentRenderers,
-        IDispatcher dispatcher,
+        INotificationService notificationService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
@@ -52,14 +51,14 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        dispatcher.Dispatch(new NotificationState.RegisterAction(notificationError));
+        notificationService.ReduceRegisterAction(notificationError);
     }
 
     public static void DispatchProgress(
         string title,
         ProgressBarModel progressBarModel,
         ICommonComponentRenderers commonComponentRenderers,
-        IDispatcher dispatcher,
+        INotificationService notificationService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
@@ -76,7 +75,7 @@ public static class NotificationHelper
             true,
             null);
 
-        dispatcher.Dispatch(new NotificationState.RegisterAction(notificationProgress));
+        notificationService.ReduceRegisterAction(notificationProgress);
     }
 
     /// <summary>
@@ -93,7 +92,7 @@ public static class NotificationHelper
         string title,
         Func<string> messageFunc,
         ICommonComponentRenderers commonComponentRenderers,
-        IDispatcher dispatcher,
+        INotificationService notificationService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
@@ -107,6 +106,6 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        dispatcher.Dispatch(new NotificationState.RegisterAction(notificationError));
+        notificationService.ReduceRegisterAction(notificationError);
     }
 }

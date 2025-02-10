@@ -24,6 +24,7 @@ public static class TestExplorerHelper
 		string methodName,
 		ICommonComponentRenderers commonComponentRenderers,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		ITextEditorService textEditorService,
 		IServiceProvider serviceProvider)
@@ -41,7 +42,7 @@ public static class TestExplorerHelper
 					nameof(TestExplorerTreeViewMouseEventHandler),
 					$"Could not open in editor because {nameof(possibleCSharpCompilerService)} was null",
 					commonComponentRenderers,
-					dispatcher,
+					notificationService,
 					TimeSpan.FromSeconds(5));
 
 				return ValueTask.CompletedTask;
@@ -62,7 +63,7 @@ public static class TestExplorerHelper
 					nameof(TestExplorerTreeViewMouseEventHandler),
 					$"Could not open in editor because typeDefinitionNodeList.Count == 0",
 					commonComponentRenderers,
-					dispatcher,
+					notificationService,
 					TimeSpan.FromSeconds(5));
 
 				return ValueTask.CompletedTask;
@@ -89,7 +90,7 @@ public static class TestExplorerHelper
 						nameof(TestExplorerTreeViewMouseEventHandler),
 						$"The method: {methodName}, was found",
 						commonComponentRenderers,
-						dispatcher,
+						notificationService,
 						TimeSpan.FromSeconds(5));
 				}
 				else
@@ -98,7 +99,7 @@ public static class TestExplorerHelper
 						nameof(TestExplorerTreeViewMouseEventHandler),
 						$"Could not find the method because methodMatchList.Count == 0",
 						commonComponentRenderers,
-						dispatcher,
+						notificationService,
 						TimeSpan.FromSeconds(5));
 				}
 			}
@@ -108,7 +109,7 @@ public static class TestExplorerHelper
 					nameof(TestExplorerTreeViewMouseEventHandler),
 					$"Could not find the method because functionDefinitionNodeList.Length == 0",
 					commonComponentRenderers,
-					dispatcher,
+					notificationService,
 					TimeSpan.FromSeconds(5));
 			}
 
@@ -118,7 +119,7 @@ public static class TestExplorerHelper
 					nameof(TestExplorerTreeViewMouseEventHandler),
 					$"Could not open in editor because definitionTextSpan was null",
 					commonComponentRenderers,
-					dispatcher,
+					notificationService,
 					TimeSpan.FromSeconds(5));
 
 				return ValueTask.CompletedTask;
@@ -141,7 +142,7 @@ public static class TestExplorerHelper
 							nameof(TestExplorerTreeViewMouseEventHandler),
 							$"Could not open in editor because definitionModel was null",
 							commonComponentRenderers,
-							dispatcher,
+							notificationService,
 							TimeSpan.FromSeconds(5));
 
 						return ValueTask.CompletedTask;
@@ -153,7 +154,7 @@ public static class TestExplorerHelper
 						nameof(TestExplorerTreeViewMouseEventHandler),
 						$"Could not open in editor because textEditorService.TextEditorConfig.RegisterModelFunc was null",
 						commonComponentRenderers,
-						dispatcher,
+						notificationService,
 						TimeSpan.FromSeconds(5));
 
 					return ValueTask.CompletedTask;
@@ -181,7 +182,7 @@ public static class TestExplorerHelper
 							nameof(TestExplorerTreeViewMouseEventHandler),
 							$"Could not open in editor because !definitionViewModels.Any()",
 							commonComponentRenderers,
-							dispatcher,
+							notificationService,
 							TimeSpan.FromSeconds(5));
 
 						return ValueTask.CompletedTask;
@@ -193,7 +194,7 @@ public static class TestExplorerHelper
 						nameof(TestExplorerTreeViewMouseEventHandler),
 						$"Could not open in editor because textEditorService.TextEditorConfig.TryRegisterViewModelFunc was null",
 						commonComponentRenderers,
-						dispatcher,
+						notificationService,
 						TimeSpan.FromSeconds(5));
 
 					return ValueTask.CompletedTask;
@@ -212,7 +213,7 @@ public static class TestExplorerHelper
 					nameof(TestExplorerTreeViewMouseEventHandler),
 					$"Could not open in editor because definitionViewModelModifier was null || definitionCursorModifierBag was null || definitionPrimaryCursorModifier was null",
 					commonComponentRenderers,
-					dispatcher,
+					notificationService,
 					TimeSpan.FromSeconds(5));
 
 				return ValueTask.CompletedTask;
@@ -240,7 +241,7 @@ public static class TestExplorerHelper
 					nameof(TestExplorerTreeViewMouseEventHandler),
 					$"Could not open in editor because textEditorService.TextEditorConfig.TryShowViewModelFunc was null",
 					commonComponentRenderers,
-					dispatcher,
+					notificationService,
 					TimeSpan.FromSeconds(5));
 			}
 			

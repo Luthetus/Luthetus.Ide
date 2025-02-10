@@ -4,7 +4,6 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Options.States;
@@ -40,9 +39,7 @@ public record LuthetusCommonFactories
             serviceProvider.GetRequiredService<IJSRuntime>());
 
     public Func<IServiceProvider, INotificationService> NotificationServiceFactory { get; init; } =
-        serviceProvider => new NotificationService(
-            serviceProvider.GetRequiredService<IDispatcher>(),
-            serviceProvider.GetRequiredService<IState<NotificationState>>());
+        serviceProvider => new NotificationService();
 
     public Func<IServiceProvider, IDropdownService> DropdownServiceFactory { get; init; } =
         serviceProvider => new DropdownService();

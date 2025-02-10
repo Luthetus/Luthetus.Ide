@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 
@@ -17,6 +18,7 @@ public interface IMenuOptionsFactory
     public MenuOptionRecord RenameFile(
         AbsolutePath sourceAbsolutePath,
         IDispatcher dispatcher,
+        INotificationService notificationService,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord PasteClipboard(

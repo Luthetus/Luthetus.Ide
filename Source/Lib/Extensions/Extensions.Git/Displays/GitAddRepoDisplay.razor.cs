@@ -23,6 +23,8 @@ public partial class GitAddRepoDisplay : ComponentBase
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
+    [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
@@ -61,7 +63,7 @@ public partial class GitAddRepoDisplay : ComponentBase
                                 $"ERROR: {nameof(RequestInputFileForGitFolder)}",
                                 "'.git' folder did not have a parent directory.",
                                 CommonComponentRenderers,
-                                Dispatcher,
+                                NotificationService,
                                 TimeSpan.FromSeconds(10));
                             return;
                         }

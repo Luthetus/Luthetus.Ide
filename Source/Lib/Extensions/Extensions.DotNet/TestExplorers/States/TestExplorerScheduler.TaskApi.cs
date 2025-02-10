@@ -217,7 +217,7 @@ public partial class TestExplorerScheduler
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 				progressBarModel,
 				_commonComponentRenderers,
-				_dispatcher,
+				_notificationService,
 				TimeSpan.FromMilliseconds(-1));
 				
 			var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));

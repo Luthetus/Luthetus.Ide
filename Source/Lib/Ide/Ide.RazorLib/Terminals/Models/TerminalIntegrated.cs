@@ -15,7 +15,7 @@ public class TerminalIntegrated : ITerminal
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly IDispatcher _dispatcher;
+	private readonly INotificationService _notificationService;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly string _pathToShellExecutable;
 
@@ -26,7 +26,7 @@ public class TerminalIntegrated : ITerminal
 		Func<TerminalIntegrated, ITerminalOutput> terminalOutputFactory,
 		IBackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
-		IDispatcher dispatcher,
+		INotificationService notificationService,
 		IEnvironmentProvider environmentProvider,
 		string pathToShellExecutable)
 	{
@@ -37,7 +37,7 @@ public class TerminalIntegrated : ITerminal
 		
 		_backgroundTaskService = backgroundTaskService;
 		_commonComponentRenderers = commonComponentRenderers;
-		_dispatcher = dispatcher;
+		_notificationService = notificationService;
 		_environmentProvider = environmentProvider;
 		_pathToShellExecutable = pathToShellExecutable;
 	}
@@ -155,7 +155,7 @@ public class TerminalIntegrated : ITerminal
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{
@@ -228,7 +228,7 @@ public class TerminalIntegrated : ITerminal
 			catch (Exception e)
 			{
 				Console.WriteLine("exception shell");
-				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
+				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
 			}
 			finally
 			{

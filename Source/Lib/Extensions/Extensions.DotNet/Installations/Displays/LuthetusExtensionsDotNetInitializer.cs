@@ -48,6 +48,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private IDotNetCommandFactory DotNetCommandFactory { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
@@ -340,7 +342,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
 					BuildProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
 				else
-					NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(6));
+					NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(6));
 				return Task.CompletedTask;
 			}));
 
@@ -356,7 +358,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
 					CleanProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
 				else
-					NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(6));
+					NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(6));
 				return Task.CompletedTask;
 			}));
 
@@ -372,7 +374,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				if (dotNetSolutionModel?.AbsolutePath is not null)
 					BuildSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
 				else
-					NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(6));
+					NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(6));
 				return Task.CompletedTask;
 			}));
 
@@ -388,7 +390,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				if (dotNetSolutionModel?.AbsolutePath is not null)
 					CleanSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
 				else
-					NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(6));
+					NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(6));
 				return Task.CompletedTask;
 			}));
 

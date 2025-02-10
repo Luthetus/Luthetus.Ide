@@ -23,6 +23,8 @@ public partial class FolderExplorerContextMenu : ComponentBase
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
+    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -118,13 +120,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
             MenuOptionsFactory.CopyFile(
                 treeViewModel.Item,
                 () => {
-                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 }),
             MenuOptionsFactory.CutFile(
                 treeViewModel.Item,
                 () => {
-                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
                     ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 }),
@@ -134,6 +136,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
             MenuOptionsFactory.RenameFile(
                 treeViewModel.Item,
                 Dispatcher,
+                NotificationService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
         };
     }

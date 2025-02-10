@@ -16,6 +16,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 	private readonly IDispatcher _dispatcher;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly ITextEditorService _textEditorService;
+	private readonly INotificationService _notificationService;
 	private readonly IServiceProvider _serviceProvider;
 
 	public TestExplorerTreeViewKeyboardEventHandler(
@@ -23,6 +24,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			IDispatcher dispatcher,
 			ICompilerServiceRegistry compilerServiceRegistry,
 			ITextEditorService textEditorService,
+			INotificationService notificationService,
 			IServiceProvider serviceProvider,
 			ITreeViewService treeViewService,
 			IBackgroundTaskService backgroundTaskService)
@@ -32,6 +34,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 		_dispatcher = dispatcher;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_textEditorService = textEditorService;
+		_notificationService = notificationService;
 		_serviceProvider = serviceProvider;
 	}
 
@@ -63,7 +66,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 				nameof(TestExplorerTreeViewKeyboardEventHandler),
 				$"Could not open in editor because node is not type: {nameof(TreeViewStringFragment)}",
 				_commonComponentRenderers,
-				_dispatcher,
+				_notificationService,
 				TimeSpan.FromSeconds(5));
 
 			return Task.CompletedTask;
@@ -75,7 +78,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 				nameof(TestExplorerTreeViewKeyboardEventHandler),
 				$"Could not open in editor because node's parent does not seem to include a class name",
 				_commonComponentRenderers,
-				_dispatcher,
+				_notificationService,
 				TimeSpan.FromSeconds(5));
 
 			return Task.CompletedTask;
@@ -87,7 +90,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			className + ".cs",
 			_commonComponentRenderers,
-			_dispatcher,
+			_notificationService,
 			TimeSpan.FromSeconds(5));
 
 		var methodName = treeViewStringFragment.Item.Value.Trim();
@@ -96,7 +99,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			methodName + "()",
 			_commonComponentRenderers,
-			_dispatcher,
+			_notificationService,
 			TimeSpan.FromSeconds(5));
 
 		_textEditorService.TextEditorWorker.PostUnique(
@@ -106,6 +109,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 				methodName,
 				_commonComponentRenderers,
 				_dispatcher,
+				_notificationService,
 				_compilerServiceRegistry,
 				_textEditorService,
 				_serviceProvider));

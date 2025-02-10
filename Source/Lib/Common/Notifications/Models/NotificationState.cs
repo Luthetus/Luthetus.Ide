@@ -1,8 +1,6 @@
-using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 
-namespace Luthetus.Common.RazorLib.Notifications.States;
+namespace Luthetus.Common.RazorLib.Notifications.Models;
 
 /// <summary>
 /// The list provided should not be modified after passing it as a parameter.
@@ -14,8 +12,7 @@ namespace Luthetus.Common.RazorLib.Notifications.States;
 /// 4 lists. One foreach filter option. And the NotificationRecord gets shuffled around.
 /// This is odd. Perhaps use one list and filter it?
 /// </summary>
-[FeatureState]
-public partial record NotificationState(
+public record NotificationState(
     List<INotification> DefaultList,
     List<INotification> ReadList,
     List<INotification> ArchivedList,

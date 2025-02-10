@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.States;
@@ -20,6 +21,8 @@ public partial class TabDisplay : ComponentBase, IDisposable
 {
 	[Inject]
     private IDragService DragService { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
