@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Outlines.Models;
+using Luthetus.Common.RazorLib.Reflectives.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -70,7 +71,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IPanelService, PanelService>()
             .AddScoped<IAppDimensionService, AppDimensionService>()
             .AddScoped<IKeymapService, KeymapService>()
-            .AddScoped<IWidgetService, WidgetService>();
+            .AddScoped<IWidgetService, WidgetService>()
+            .AddScoped<IReflectiveService, ReflectiveService>();
 
         return services;
     }

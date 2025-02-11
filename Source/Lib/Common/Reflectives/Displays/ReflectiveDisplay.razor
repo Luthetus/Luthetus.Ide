@@ -2,7 +2,7 @@
 
 <div class="luth_reflective">
 
-    @{ var model = ReflectiveStateSelection.Value; }
+    @{ var model = ReflectiveService.GetReflectiveModel(ReflectiveModelKey); }
     
     @{
     	var appOptionsState = AppOptionsService.GetAppOptionsState();

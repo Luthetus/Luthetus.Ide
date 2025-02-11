@@ -1,5 +1,4 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Reflectives.States;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components;
 using System.Reflection;
@@ -13,7 +12,7 @@ public record ReflectiveModel(
     Guid PreviousTypeGuid,
     PropertyInfo[] ComponentPropertyInfoList,
     Dictionary<string, IReflectiveParameter> ReflectiveParameterMap,
-    IDispatcher Dispatcher) // This is gonna be a hack for re-rendering temporarily
+    IReflectiveService ReflectiveService) // This is gonna be a hack for re-rendering temporarily
 {
     public Type? ChosenType => ComponentTypeList
         .FirstOrDefault(x => x.GUID == ChosenTypeGuid);
@@ -44,9 +43,9 @@ public record ReflectiveModel(
             }
         }
 
-        Dispatcher.Dispatch(new ReflectiveState.WithAction(
+        ReflectiveService.ReduceWithAction(
             Key,
-            inState => inState with { }));
+            inState => inState with { });
 
         BubbleUpValue(name, value);
     }
@@ -145,14 +144,14 @@ public record ReflectiveModel(
             }
         }
 
-        Dispatcher.Dispatch(new ReflectiveState.WithAction(
+        ReflectiveService.ReduceWithAction(
             refDisplayState.Key, inDisplayState => inDisplayState with
             {
                 ChosenTypeGuid = refDisplayState.ChosenTypeGuid,
                 PreviousTypeGuid = refDisplayState.PreviousTypeGuid,
                 ComponentPropertyInfoList = refDisplayState.ComponentPropertyInfoList,
                 ReflectiveParameterMap = new(),
-            }));
+            });
     }
 
     /// <summary>

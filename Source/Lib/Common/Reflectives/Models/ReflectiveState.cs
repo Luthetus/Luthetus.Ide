@@ -1,11 +1,10 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Reflectives.Models;
 
-namespace Luthetus.Common.RazorLib.Reflectives.States;
+namespace Luthetus.Common.RazorLib.Reflectives.Models;
 
-[FeatureState]
-public partial record ReflectiveState
+public record struct ReflectiveState
 {
     public ReflectiveState()
     {
