@@ -55,7 +55,10 @@ public class TextEditorWorker : IBackgroundTask
 
 	public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; }
+    
+    // Nervous about this not being considered an interpolated constant string.
+    public string Name { get; } = "TextEditorWorker";
+    
     public bool EarlyBatchEnabled { get; } = false;
     
     public bool __TaskCompletionSourceWasCreated

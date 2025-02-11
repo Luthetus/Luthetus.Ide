@@ -108,6 +108,8 @@ public class AppOptionsService : IAppOptionsService
                 ThemeKey = themeKey
             }
         };
+        
+        AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -124,6 +126,8 @@ public class AppOptionsService : IAppOptionsService
                 ThemeKey = theme.Key
             }
         };
+        
+        AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -140,6 +144,8 @@ public class AppOptionsService : IAppOptionsService
                 FontFamily = fontFamily
             }
         };
+        
+        AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -156,6 +162,8 @@ public class AppOptionsService : IAppOptionsService
                 FontSizeInPixels = fontSizeInPixels
             }
         };
+        
+        AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -172,6 +180,8 @@ public class AppOptionsService : IAppOptionsService
                 ResizeHandleWidthInPixels = resizeHandleWidthInPixels
             }
         };
+        
+        AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -188,6 +198,8 @@ public class AppOptionsService : IAppOptionsService
                 ResizeHandleHeightInPixels = resizeHandleHeightInPixels
             }
         };
+        
+        AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -204,6 +216,8 @@ public class AppOptionsService : IAppOptionsService
                 IconSizeInPixels = iconSizeInPixels
             }
         };
+        
+        AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();

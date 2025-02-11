@@ -10,7 +10,7 @@ public partial class ContextBoundaryOverlay : ComponentBase
 
     [Parameter, EditorRequired]
     public InspectableContext InspectableContext { get; set; } = default!;
-
+    
     private string GetCssStyleString()
     {
         if (InspectableContext.TargetContextRecordMeasuredHtmlElementDimensions is null)

@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
-public partial class ContextDisplay : ComponentBase, IDisposable
+public partial class ContextDisplay : ComponentBase
 {
     [Inject]
     private IContextService ContextService { get; set; } = null!;
@@ -16,27 +16,4 @@ public partial class ContextDisplay : ComponentBase, IDisposable
     public Key<ContextRecord> ContextKey { get; set; }
 
     private bool _isExpanded;
-
-    protected override void OnInitialized()
-    {
-        ContextService.ContextStateChanged += OnContextStateChanged;
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
-        base.OnInitialized();
-    }
-    
-    private async void OnContextStateChanged()
-    {
-    	await InvokeAsync(StateHasChanged);
-    }
-    
-    private async void OnAppOptionsStateChanged()
-    {
-    	await InvokeAsync(StateHasChanged);
-    }
-    
-    public void Dispose()
-    {
-    	ContextService.ContextStateChanged -= OnContextStateChanged;
-    	AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
-    }
 }

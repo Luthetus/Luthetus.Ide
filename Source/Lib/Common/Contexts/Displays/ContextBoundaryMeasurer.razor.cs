@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
-public partial class ContextBoundaryMeasurer : ComponentBase
+public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -20,6 +20,12 @@ public partial class ContextBoundaryMeasurer : ComponentBase
     public Func<List<Key<ContextRecord>>> GetContextBoundaryHeirarchy { get; set; } = null!;
 
     private bool _previousIsSelectingInspectionTarget;
+
+	protected override void OnInitialized()
+	{
+		ContextService.ContextStateChanged += OnContextStateChanged;
+		base.OnInitialized();
+	}
 
     protected override bool ShouldRender()
     {
@@ -60,5 +66,15 @@ public partial class ContextBoundaryMeasurer : ComponentBase
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+    
+    public async void OnContextStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	ContextService.ContextStateChanged -= OnContextStateChanged;
     }
 }

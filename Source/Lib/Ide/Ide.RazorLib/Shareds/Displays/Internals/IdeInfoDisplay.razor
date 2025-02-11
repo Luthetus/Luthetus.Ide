@@ -172,8 +172,15 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.27 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.27 </em> (2025-02-11)</div>
                 <ul>
+                	<li>
+                		Bug: Text Editor's initial solution wide parse has a rare race condition where
+                		it won't fininsh parsing it just stops at some % and sits there.
+                		
+                		This is rare and when it does happen I find that restarting the IDE
+                		will fix it.
+                	</li>
                 	<li>
                 		Handle Luthetus.Common.RazorLib.csproj state directly.
                 	</li>
