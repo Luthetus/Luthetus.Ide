@@ -1,15 +1,11 @@
-@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Keys.Models;
 @using Luthetus.Common.RazorLib.Tabs.Displays
 @using Luthetus.Common.RazorLib.Reactives.Displays
 @using Luthetus.Common.RazorLib.TreeViews.Displays
 @using Luthetus.TextEditor.RazorLib.FindAlls.Models;
-@using Luthetus.TextEditor.RazorLib.FindAlls.States;
-
-@inherits FluxorComponent
 
 @{
-    var findAllState = TextEditorFindAllStateWrap.Value;
+    var findAllState = FindAllService.GetFindAllState();
     var appOptionsState = AppOptionsService.GetAppOptionsState();
 }
 

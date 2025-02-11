@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Edits.States;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Edits.Displays;
 
-public partial class DirtyResourceUriInteractiveIconDisplay : FluxorComponent
+public partial class DirtyResourceUriInteractiveIconDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<DirtyResourceUriState> DirtyResourceUriStateWrap { get; set; } = null!;
+    private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
 
@@ -32,9 +30,25 @@ public partial class DirtyResourceUriInteractiveIconDisplay : FluxorComponent
         null,
 		true,
 		_buttonId);
+		
+	protected override void OnInitialized()
+	{
+		DirtyResourceUriService.DirtyResourceUriStateChanged += OnDirtyResourceUriStateChanged;
+		base.OnInitialized();
+	}
 
     private void ShowDialogOnClick()
     {
         DialogService.ReduceRegisterAction(_dialogRecord);
+    }
+    
+    public async void OnDirtyResourceUriStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	DirtyResourceUriService.DirtyResourceUriStateChanged -= OnDirtyResourceUriStateChanged;
     }
 }

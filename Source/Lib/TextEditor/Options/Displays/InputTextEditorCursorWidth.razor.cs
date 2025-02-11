@@ -1,15 +1,11 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
-public partial class InputTextEditorCursorWidth : FluxorComponent
+public partial class InputTextEditorCursorWidth : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -20,7 +16,7 @@ public partial class InputTextEditorCursorWidth : FluxorComponent
 
     private double TextEditorCursorWidth
     {
-        get => TextEditorOptionsStateWrap.Value.Options.CursorWidthInPixels;
+        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.CursorWidthInPixels;
         set
         {
             if (value < MINIMUM_CURSOR_SIZE_IN_PIXELS)
@@ -28,5 +24,21 @@ public partial class InputTextEditorCursorWidth : FluxorComponent
 
             TextEditorService.OptionsApi.SetCursorWidth(value);
         }
+    }
+    
+    protected override void OnInitialized()
+    {
+    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	base.OnInitialized();
+    }
+    
+    private async void TextEditorOptionsStateWrapOnStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

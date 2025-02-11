@@ -1,11 +1,9 @@
-using Fluxor;
-using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Diffs.States;
+namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-[FeatureState]
-public partial class TextEditorDiffState
+public record struct TextEditorDiffState
 {
     public TextEditorDiffState()
     {

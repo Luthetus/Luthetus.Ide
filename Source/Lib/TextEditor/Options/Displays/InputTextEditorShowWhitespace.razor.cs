@@ -1,15 +1,11 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
-public partial class InputTextEditorShowWhitespace : FluxorComponent
+public partial class InputTextEditorShowWhitespace : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -18,7 +14,23 @@ public partial class InputTextEditorShowWhitespace : FluxorComponent
 
     public bool GlobalShowWhitespace
     {
-        get => TextEditorOptionsStateWrap.Value.Options.ShowWhitespace;
+        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace;
         set => TextEditorService.OptionsApi.SetShowWhitespace(value);
+    }
+    
+    protected override void OnInitialized()
+    {
+    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	base.OnInitialized();
+    }
+    
+    private async void TextEditorOptionsStateWrapOnStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

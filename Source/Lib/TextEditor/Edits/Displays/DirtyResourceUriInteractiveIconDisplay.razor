@@ -1,7 +1,5 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 @{ 
-	var dirtyResourceUriState = DirtyResourceUriStateWrap.Value;
+	var dirtyResourceUriState = DirtyResourceUriService.GetDirtyResourceUriState();
 	var iconBadgeIsActive = dirtyResourceUriState.DirtyResourceUriList.Count > 0;
 	var showIconBadgeCssClassString = iconBadgeIsActive ? "luth_active" : "";
 }

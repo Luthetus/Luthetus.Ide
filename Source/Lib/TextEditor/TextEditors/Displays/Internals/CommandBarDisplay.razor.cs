@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class CommandBarDisplay : FluxorComponent
+public partial class CommandBarDisplay : ComponentBase
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;

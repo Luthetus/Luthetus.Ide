@@ -5,8 +5,9 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -40,6 +41,7 @@ public class DotNetBackgroundTaskApi
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
+	private readonly IFindAllService _findAllService;
 	private readonly INotificationService _notificationService;
 	private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IState<TestExplorerState> _testExplorerStateWrap;
@@ -61,6 +63,7 @@ public class DotNetBackgroundTaskApi
 		IState<DotNetSolutionState> dotNetSolutionStateWrap,
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
+		IFindAllService findAllService,
 		INotificationService notificationService,
 		IState<TerminalState> terminalStateWrap,
         IState<TestExplorerState> testExplorerStateWrap,
@@ -81,6 +84,7 @@ public class DotNetBackgroundTaskApi
 		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
+		_findAllService = findAllService;
 		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
@@ -136,6 +140,7 @@ public class DotNetBackgroundTaskApi
 			_dotNetSolutionStateWrap,
 			_fileSystemProvider,
 			_textEditorService,
+			_findAllService,
 			_compilerServiceRegistry,
 			_terminalStateWrap,
 			_dotNetCliOutputParser,
