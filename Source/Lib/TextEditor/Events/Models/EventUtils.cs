@@ -254,7 +254,7 @@ public static class EventUtils
     {
         var modelModifier = editContext.GetModelModifier(resourceUri);
         var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-        var globalTextEditorOptions = editContext.TextEditorService.OptionsStateWrap.Value.Options;
+        var globalTextEditorOptions = editContext.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
 
         if (modelModifier is null || viewModelModifier is null)
             return (0, 0);

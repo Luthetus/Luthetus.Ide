@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -774,7 +774,8 @@ public static class TextEditorCommandDefaultFacts
 			if (selectedText is null)
 				return;
 			
-			commandArgs.ComponentData.Dispatcher.Dispatch(new TextEditorFindAllState.SetSearchQueryAction(selectedText));
+			var findAllService = commandArgs.ServiceProvider.GetRequiredService<IFindAllService>();
+			findAllService.ReduceSetSearchQueryAction(selectedText);
         });
         
     /// <summary>

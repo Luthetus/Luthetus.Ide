@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,10 +11,11 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -43,7 +43,6 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Drags.Models;
@@ -74,15 +73,13 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    public IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
-    [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    public IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     public ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    public IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
     public IAutocompleteIndexer AutocompleteIndexer { get; set; } = null!;
     [Inject]
@@ -170,7 +167,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		SetComponentData();
 
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
-        TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
+        TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrap_StateChanged;
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         
         // ScrollbarSection.razor.cs
@@ -272,7 +269,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         var renderBatchUnsafe = new TextEditorRenderBatch(
             model_viewmodel_tuple.Model,
             model_viewmodel_tuple.ViewModel,
-            TextEditorOptionsStateWrap.Value.Options,
+            TextEditorService.OptionsApi.GetTextEditorOptionsState().Options,
             TextEditorRenderBatch.DEFAULT_FONT_FAMILY,
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
             ViewModelDisplayOptions,
@@ -303,7 +300,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			ViewModelDisplayOptions,
 			_currentRenderBatch.Options,
 			this,
-			Dispatcher,
 			DropdownService,
 			ServiceProvider);
     }
@@ -311,9 +307,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private async void GeneralOnStateChangedEventHandler() =>
         await InvokeAsync(StateHasChanged);
         
-    private async void TextEditorOptionsStateWrap_StateChanged(object? sender, EventArgs e)
+    private async void TextEditorOptionsStateWrap_StateChanged()
     {
-    	if (TextEditorOptionsStateWrap.Value.Options.Keymap.Key != _componentData.Options.Keymap.Key)
+    	if (TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap.Key != _componentData.Options.Keymap.Key)
     	{
     		ConstructRenderBatch();
     		SetComponentData();
@@ -368,7 +364,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private string GetGlobalHeightInPixelsStyling()
     {
-        var heightInPixels = TextEditorService.OptionsStateWrap.Value.Options.TextEditorHeightInPixels;
+        var heightInPixels = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
 
         if (heightInPixels is null)
             return string.Empty;
@@ -819,7 +815,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     #endregion GutterDriverClose
     
     #region BodyDriverOpen
-    public bool GlobalShowNewlines => TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines;
+    public bool GlobalShowNewlines => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowNewlines;
     
     public string GetBodyStyleCss(TextEditorRenderBatch renderBatchLocal)
     {
@@ -1854,7 +1850,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     	// TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;
-        TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrap_StateChanged;
+        TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrap_StateChanged;
 		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         lock (_linkedViewModelLock)

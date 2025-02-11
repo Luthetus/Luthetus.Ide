@@ -1,15 +1,11 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
-public partial class InputTextEditorHeight : FluxorComponent
+public partial class InputTextEditorHeight : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -29,7 +25,7 @@ public partial class InputTextEditorHeight : FluxorComponent
 
     private int TextEditorHeight
     {
-        get => TextEditorOptionsStateWrap.Value.Options.TextEditorHeightInPixels ?? MINIMUM_HEIGHT_IN_PIXELS;
+        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels ?? MINIMUM_HEIGHT_IN_PIXELS;
         set
         {
             if (value < MINIMUM_HEIGHT_IN_PIXELS)
@@ -37,6 +33,12 @@ public partial class InputTextEditorHeight : FluxorComponent
 
             TextEditorService.OptionsApi.SetHeight(value);
         }
+    }
+    
+    protected override void OnInitialized()
+    {
+    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	base.OnInitialized();
     }
 
     public string GetIsDisabledCssClassString(bool globalHeightInPixelsValueIsNull)
@@ -52,5 +54,15 @@ public partial class InputTextEditorHeight : FluxorComponent
             TextEditorService.OptionsApi.SetHeight(MINIMUM_HEIGHT_IN_PIXELS);
         else
             TextEditorService.OptionsApi.SetHeight(null);
+    }
+    
+    private async void TextEditorOptionsStateWrapOnStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

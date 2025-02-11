@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
@@ -39,7 +39,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.OptionsStateWrap.StateChanged += OptionsWrapOnStateChanged;
+        TextEditorService.OptionsApi.TextEditorOptionsStateChanged += OptionsWrapOnStateChanged;
         ReadActualFontSizeInPixels();
 
         base.OnInitialized();
@@ -47,7 +47,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
     
     private void ReadActualFontSizeInPixels()
     {
-    	var temporaryFontSizeInPixels = TextEditorService.OptionsStateWrap.Value.Options.CommonOptions?.FontSizeInPixels;
+    	var temporaryFontSizeInPixels = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.CommonOptions?.FontSizeInPixels;
     	
     	if (temporaryFontSizeInPixels is null)
     	{
@@ -63,7 +63,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
     	_fontSizeInPixels = temporaryFontSizeInPixels.Value;
     }
 
-    private async void OptionsWrapOnStateChanged(object? sender, EventArgs e)
+    private async void OptionsWrapOnStateChanged()
     {
     	if (!_hasFocus)
     	{
@@ -84,6 +84,6 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.OptionsStateWrap.StateChanged -= OptionsWrapOnStateChanged;
+        TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= OptionsWrapOnStateChanged;
     }
 }

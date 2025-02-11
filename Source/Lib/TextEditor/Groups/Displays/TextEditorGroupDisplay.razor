@@ -6,7 +6,7 @@
 	 id="@HtmlId">
 
     @{
-        var textEditorGroup = TextEditorGroupStateWrap.Value.GroupList.FirstOrDefault(
+        var textEditorGroup = TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
             x => x.GroupKey == TextEditorGroupKey);
     }
     
