@@ -14,7 +14,7 @@ using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -47,7 +47,7 @@ public partial class TextEditorService : ITextEditorService
         IState<TextEditorGroupState> groupStateWrap,
         IState<TextEditorDiffState> diffStateWrap,
         IState<TextEditorOptionsState> optionsStateWrap,
-        IState<TextEditorFindAllState> findAllStateWrap,
+        IFindAllService findAllService,
         IThemeService themeService,
         IBackgroundTaskService backgroundTaskService,
         LuthetusTextEditorConfig textEditorConfig,
@@ -69,10 +69,10 @@ public partial class TextEditorService : ITextEditorService
         GroupStateWrap = groupStateWrap;
         DiffStateWrap = diffStateWrap;
         OptionsStateWrap = optionsStateWrap;
-        FindAllStateWrap = findAllStateWrap;
 		AppDimensionService = appDimensionService;
 		_serviceProvider = serviceProvider;
 
+        FindAllService = findAllService;
         ThemeService = themeService;
         _backgroundTaskService = backgroundTaskService;
         TextEditorConfig = textEditorConfig;
@@ -100,10 +100,10 @@ public partial class TextEditorService : ITextEditorService
     public IState<TextEditorGroupState> GroupStateWrap { get; }
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    public IState<TextEditorFindAllState> FindAllStateWrap { get; }
     
     public IThemeService ThemeService { get; }
     public IAppDimensionService AppDimensionService { get; }
+    public IFindAllService FindAllService { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
