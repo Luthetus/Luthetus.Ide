@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Themes.States;
+using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -59,6 +59,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
+    private IThemeService ThemeService { get; set; } = null!;
+    [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
@@ -75,7 +77,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 {
                     foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                     {
-                        Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
+                        ThemeService.ReduceRegisterAction(themeRecord);
                     }
                 }
 

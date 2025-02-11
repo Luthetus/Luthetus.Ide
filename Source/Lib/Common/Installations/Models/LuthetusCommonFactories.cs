@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -50,16 +49,14 @@ public record LuthetusCommonFactories
 
     public Func<IServiceProvider, IAppOptionsService> AppOptionsServiceFactory { get; init; } =
         serviceProvider => new AppOptionsService(
-            serviceProvider.GetRequiredService<IState<ThemeState>>(),
+            serviceProvider.GetRequiredService<IThemeService>(),
             serviceProvider.GetRequiredService<IDispatcher>(),
             serviceProvider.GetRequiredService<IStorageService>(),
             serviceProvider.GetRequiredService<CommonBackgroundTaskApi>(),
             serviceProvider.GetRequiredService<IBackgroundTaskService>());
 
     public Func<IServiceProvider, IThemeService> ThemeServiceFactory { get; init; } =
-        serviceProvider => new ThemeService(
-            serviceProvider.GetRequiredService<IState<ThemeState>>(),
-            serviceProvider.GetRequiredService<IDispatcher>());
+        serviceProvider => new ThemeService();
 
     public Func<IServiceProvider, ITreeViewService> TreeViewServiceFactory { get; init; } =
         serviceProvider => new TreeViewService(serviceProvider.GetRequiredService<IBackgroundTaskService>());

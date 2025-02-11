@@ -2,7 +2,6 @@ using System.Text.Json;
 using System.Text;
 using Fluxor;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -19,13 +18,13 @@ public class AppOptionsService : IAppOptionsService
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public AppOptionsService(
-        IState<ThemeState> themeStateWrap,
+		IThemeService themeService,
         IDispatcher dispatcher,
         IStorageService storageService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService)
     {
-        ThemeStateWrap = themeStateWrap;
+        ThemeService = themeService;
         _dispatcher = dispatcher;
         _storageService = storageService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
@@ -34,7 +33,7 @@ public class AppOptionsService : IAppOptionsService
     
     private AppOptionsState _appOptionsState = new();
 
-    public IState<ThemeState> ThemeStateWrap { get; }
+    public IThemeService ThemeService { get; }
 
 #if DEBUG
     public string StorageKey => "luthetus-common_theme-storage-key-debug"; 
@@ -42,7 +41,7 @@ public class AppOptionsService : IAppOptionsService
     public string StorageKey => "luthetus-common_theme-storage-key";
 #endif
 
-    public string ThemeCssClassString => ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+    public string ThemeCssClassString => ThemeService.GetThemeState().ThemeList.FirstOrDefault(
         x => x.Key == GetAppOptionsState().Options.ThemeKey)
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
@@ -79,7 +78,7 @@ public class AppOptionsService : IAppOptionsService
     {
         get
         {
-	        var activeTheme = ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+	        var activeTheme = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
 		        x => x.Key == GetAppOptionsState().Options.ThemeKey)
 		        	?? ThemeFacts.VisualStudioDarkThemeClone;
 		        
@@ -228,7 +227,7 @@ public class AppOptionsService : IAppOptionsService
 
         if (optionsJson.ThemeKey is not null)
         {
-            var matchedTheme = ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+            var matchedTheme = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.ThemeKey);
 
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);

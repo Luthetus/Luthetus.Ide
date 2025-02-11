@@ -1,30 +1,55 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Themes.States;
 
 namespace Luthetus.Common.RazorLib.Themes.Models;
 
 public class ThemeService : IThemeService
 {
-    private readonly IDispatcher _dispatcher;
+	private ThemeState _themeState = new();
+	
+	public event Action? ThemeStateChanged;
+	
+	public ThemeState GetThemeState() => _themeState;
 
-    public ThemeService(
-        IState<ThemeState> themeStateWrap,
-        IDispatcher dispatcher)
+    public void ReduceRegisterAction(ThemeRecord theme)
     {
-        ThemeStateWrap = themeStateWrap;
-        _dispatcher = dispatcher;
+    	var inState = GetThemeState();
+    
+        var inTheme = inState.ThemeList.FirstOrDefault(
+            x => x.Key == theme.Key);
+
+        if (inTheme is not null)
+        {
+            ThemeStateChanged?.Invoke();
+            return;
+        }
+
+        var outThemeList = new List<ThemeRecord>(inState.ThemeList);
+        outThemeList.Add(theme);
+
+        _themeState = new ThemeState { ThemeList = outThemeList };
+        ThemeStateChanged?.Invoke();
+        return;
     }
 
-    public IState<ThemeState> ThemeStateWrap { get; }
-
-    public void RegisterThemeRecord(ThemeRecord themeRecord)
+    public void ReduceDisposeAction(Key<ThemeRecord> themeKey)
     {
-        _dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
-    }
+    	var inState = GetThemeState();
+    
+        var inTheme = inState.ThemeList.FirstOrDefault(
+            x => x.Key == themeKey);
 
-    public void DisposeThemeRecord(Key<ThemeRecord> themeKey)
-    {
-        _dispatcher.Dispatch(new ThemeState.DisposeAction(themeKey));
+        if (inTheme is null)
+        {
+            ThemeStateChanged?.Invoke();
+            return;
+        }
+
+        var outThemeList = new List<ThemeRecord>(inState.ThemeList);
+        outThemeList.Remove(inTheme);
+
+        _themeState = new ThemeState { ThemeList = outThemeList };
+        ThemeStateChanged?.Invoke();
+        return;
     }
 }

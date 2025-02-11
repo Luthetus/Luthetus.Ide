@@ -1,7 +1,7 @@
 @using Luthetus.Common.RazorLib.Themes.Models;
 
 @{
-    var themeState = ThemeRecordsCollectionService.ThemeStateWrap.Value;
+    var themeState = ThemeService.GetThemeState();
     var appOptionsState = AppOptionsService.GetAppOptionsState();
 
     var themesInScopeList = themeState.ThemeList

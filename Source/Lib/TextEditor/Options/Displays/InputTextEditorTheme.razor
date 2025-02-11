@@ -6,7 +6,7 @@
         class="luth_select luth_te_text-editor-input-theme @InputViewModel.CssClass"
 	   style="@InputViewModel.CssStyle">
     @{
-        var themesList = ThemeStateWrap.Value.ThemeList;
+        var themesList = ThemeService.GetThemeState().ThemeList;
 
         var chosenThemeKey = TextEditorOptionsStateWrap.Value.Options.CommonOptions?.ThemeKey
             ?? ThemeFacts.VisualStudioDarkThemeClone.Key;

@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
-using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -34,7 +33,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private IThemeService ThemeRecordsCollectionService { get; set; } = null!;
+    private IThemeService ThemeService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -71,11 +70,11 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                 {
                     foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                     {
-                        Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
+                        ThemeService.ReduceRegisterAction(themeRecord);
                     }
                 }
 
-                var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+                var initialThemeRecord = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
                     x => x.Key == TextEditorConfig.InitialThemeKey);
 
                 if (initialThemeRecord is not null)

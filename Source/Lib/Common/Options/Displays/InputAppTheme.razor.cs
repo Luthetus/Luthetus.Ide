@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.Options.Displays;
 public partial class InputAppTheme : IDisposable
 {
     [Inject]
-    private IThemeService ThemeRecordsCollectionService { get; set; } = null!;
+    private IThemeService ThemeService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
@@ -18,12 +18,12 @@ public partial class InputAppTheme : IDisposable
     protected override void OnInitialized()
     {
         AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
-        ThemeRecordsCollectionService.ThemeStateWrap.StateChanged += OnStateChanged;
+        ThemeService.ThemeStateChanged += OnStateChanged;
 
         base.OnInitialized();
     }
 
-    private async void OnStateChanged(object? sender, EventArgs e)
+    private async void OnStateChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
@@ -33,7 +33,7 @@ public partial class InputAppTheme : IDisposable
         if (changeEventArgs.Value is null)
             return;
 
-        var themeState = ThemeRecordsCollectionService.ThemeStateWrap.Value;
+        var themeState = ThemeService.GetThemeState();
 
         var guidAsString = (string)changeEventArgs.Value;
 
@@ -67,6 +67,6 @@ public partial class InputAppTheme : IDisposable
     public void Dispose()
     {
         AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
-        ThemeRecordsCollectionService.ThemeStateWrap.StateChanged -= OnStateChanged;
+        ThemeService.ThemeStateChanged -= OnStateChanged;
     }
 }
