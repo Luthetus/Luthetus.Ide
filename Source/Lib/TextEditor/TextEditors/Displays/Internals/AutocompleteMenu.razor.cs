@@ -5,7 +5,8 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -23,7 +24,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     [Inject]
     private IAutocompleteService AutocompleteService { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IDropdownService DropdownService { get; set; } = null!;
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -104,7 +107,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        Dispatcher);
+					        DropdownService);
 					}
 
 					return ValueTask.CompletedTask;
@@ -226,7 +229,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 							TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
 						        viewModelModifier,
-						        Dispatcher);
+						        DropdownService);
 						}
 
 						return renderBatch.ViewModel.FocusAsync();

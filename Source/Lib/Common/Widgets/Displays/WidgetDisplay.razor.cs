@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Widgets.Models;
-using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Widgets.Displays;
@@ -13,7 +11,7 @@ public partial class WidgetDisplay : ComponentBase
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IWidgetService WidgetService { get; set; } = null!;
     
 	[Parameter, EditorRequired]
 	public WidgetModel Widget { get; set; } = null!;
@@ -56,6 +54,6 @@ public partial class WidgetDisplay : ComponentBase
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Escape")
-			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
+			WidgetService.ReduceSetWidgetAction(null);
 	}
 }

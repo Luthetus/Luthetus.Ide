@@ -24,6 +24,8 @@ public partial class NugetPackageDisplay : FluxorComponent
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -102,7 +104,7 @@ public partial class NugetPackageDisplay : FluxorComponent
         {
         	ContinueWithFunc = parsedCommand =>
         	{
-        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
+        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
         	}
         };

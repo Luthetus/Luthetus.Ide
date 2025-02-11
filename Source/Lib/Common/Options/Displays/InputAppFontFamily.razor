@@ -1,4 +1,4 @@
-@{ var appOptionsState = AppOptionsService.AppOptionsStateWrap.Value; }
+@{ var appOptionsState = AppOptionsService.GetAppOptionsState(); }
 
 <input class="luth_input luth_input-font-family @InputViewModel.CssClass"
 	   style="@InputViewModel.CssStyle"

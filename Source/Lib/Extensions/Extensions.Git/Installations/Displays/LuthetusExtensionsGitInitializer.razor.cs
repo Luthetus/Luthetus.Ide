@@ -4,7 +4,6 @@ using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -15,7 +14,7 @@ namespace Luthetus.Extensions.Git.Installations.Displays;
 public partial class LuthetusExtensionsGitInitializer : ComponentBase
 {
 	[Inject]
-	private IState<PanelState> PanelStateWrap { get; set; } = null!;
+	private IPanelService PanelService { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
@@ -47,8 +46,8 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
-        leftPanel.Dispatcher = Dispatcher;
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelService.GetPanelState());
+        leftPanel.PanelService = PanelService;
 
         // gitPanel
         var gitPanel = new Panel(
@@ -58,10 +57,10 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
             ContextFacts.GitContext.ContextKey,
             typeof(GitDisplay),
             null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(gitPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, gitPanel, false));
+        PanelService.ReduceRegisterPanelAction(gitPanel);
+        PanelService.ReduceRegisterPanelTabAction(leftPanel.Key, gitPanel, false);
     }
 }

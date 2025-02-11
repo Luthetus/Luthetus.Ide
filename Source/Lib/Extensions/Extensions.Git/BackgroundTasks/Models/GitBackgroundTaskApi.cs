@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -18,6 +19,7 @@ public class GitBackgroundTaskApi
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
+	private readonly INotificationService _notificationService;
 	private readonly IDispatcher _dispatcher;
 	
 	public GitBackgroundTaskApi(
@@ -28,6 +30,7 @@ public class GitBackgroundTaskApi
         IEnvironmentProvider environmentProvider,
         IBackgroundTaskService backgroundTaskService,
         ICommonComponentRenderers commonComponentRenderers,
+        INotificationService notificationService,
         IDispatcher dispatcher)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -37,6 +40,7 @@ public class GitBackgroundTaskApi
 		_environmentProvider = environmentProvider;
         _backgroundTaskService = backgroundTaskService;
         _commonComponentRenderers = commonComponentRenderers;
+        _notificationService = notificationService;
         _dispatcher = dispatcher;
 		
 		Git = new GitIdeApi(
@@ -48,6 +52,7 @@ public class GitBackgroundTaskApi
 			_environmentProvider,
 			_backgroundTaskService,
             _commonComponentRenderers,
+            _notificationService,
 			_dispatcher);
 	}
 	

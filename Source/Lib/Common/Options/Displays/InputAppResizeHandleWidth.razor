@@ -1,4 +1,4 @@
-@{ var appOptionsState = AppOptionsService.AppOptionsStateWrap.Value; }
+@{ var appOptionsState = AppOptionsService.GetAppOptionsState(); }
 
 <input type="number"
        class="luth_input luth_input-resize-handle-height @InputViewModel.CssClass"

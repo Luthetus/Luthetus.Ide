@@ -1,13 +1,13 @@
-﻿using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Themes.States;
 
 namespace Luthetus.Common.RazorLib.Themes.Models;
 
 public interface IThemeService
 {
-    public IState<ThemeState> ThemeStateWrap { get; }
+	public event Action? ThemeStateChanged;
+	
+	public ThemeState GetThemeState();
 
-    public void RegisterThemeRecord(ThemeRecord themeRecord);
-    public void DisposeThemeRecord(Key<ThemeRecord> themeKey);
+    public void ReduceRegisterAction(ThemeRecord theme);
+    public void ReduceDisposeAction(Key<ThemeRecord> themeKey);
 }

@@ -1,24 +1,25 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
-public partial class DropdownInitializer : FluxorComponent
+public partial class DropdownInitializer : ComponentBase, IDisposable
 {
 	[Inject]
-    private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
-	[Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IDropdownService DropdownService { get; set; } = null!;
 
 	private ContextBoundary? _dropdownContextBoundary;
+	
+	protected override void OnInitialized()
+	{
+		DropdownService.DropdownStateChanged += OnDropdownStateChanged;
+		base.OnInitialized();
+	}
 
     private async Task ClearActiveKeyList()
     {
-    	var firstDropdown = DropdownStateWrap.Value.DropdownList.FirstOrDefault();
+    	var firstDropdown = DropdownService.GetDropdownState().DropdownList.FirstOrDefault();
     	
     	if (firstDropdown is not null)
     	{
@@ -28,7 +29,7 @@ public partial class DropdownInitializer : FluxorComponent
     			await restoreFocusOnCloseFunc.Invoke();
     	}
     	
-        Dispatcher.Dispatch(new DropdownState.ClearAction());
+        DropdownService.ReduceClearAction();
     }
     
     private Task HandleOnFocusIn(DropdownRecord dropdown)
@@ -44,5 +45,15 @@ public partial class DropdownInitializer : FluxorComponent
     private Task HandleOnFocusOut(DropdownRecord dropdown)
     {
     	return Task.CompletedTask;
+    }
+    
+    public async void OnDropdownStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	DropdownService.DropdownStateChanged -= OnDropdownStateChanged;
     }
 }

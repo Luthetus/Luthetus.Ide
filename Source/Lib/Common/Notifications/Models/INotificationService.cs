@@ -1,18 +1,24 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
 
 namespace Luthetus.Common.RazorLib.Notifications.Models;
 
-/// <summary>
-/// TODO: SphagettiCode - Not all NotificationState Actions are mapped to a public method (2023-09-19)
-/// on this service. Furthermore, NotificationState itself is sphagetti code
-/// </summary>
 public interface INotificationService
 {
-    public IState<NotificationState> NotificationStateWrap { get; }
+	public event Action? NotificationStateChanged;
+	
+	public NotificationState GetNotificationState();
 
-    public void RegisterNotificationRecord(INotification notification);
-    public void DisposeNotificationRecord(Key<IDynamicViewModel> dynamicViewModelKey);
+    public void ReduceRegisterAction(INotification notification);
+    public void ReduceDisposeAction(Key<IDynamicViewModel> key);
+    public void ReduceMakeReadAction(Key<IDynamicViewModel> key);
+    public void ReduceUndoMakeReadAction(Key<IDynamicViewModel> key);
+    public void ReduceMakeDeletedAction(Key<IDynamicViewModel> key);
+    public void ReduceUndoMakeDeletedAction(Key<IDynamicViewModel> key);
+    public void ReduceMakeArchivedAction(Key<IDynamicViewModel> key);
+    public void ReduceUndoMakeArchivedAction(Key<IDynamicViewModel> key);
+    public void ReduceClearDefaultAction();
+    public void ReduceClearReadAction();
+    public void ReduceClearDeletedAction();
+    public void ReduceClearArchivedAction();
 }

@@ -4,7 +4,7 @@ using Fluxor;
 using Photino.Blazor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Extensions.Config.Installations.Models;
@@ -29,7 +29,6 @@ class Program
         appBuilder.Services.AddLuthetusConfigServices(hostingInformation);
 
         appBuilder.Services.AddFluxor(options => options.ScanAssemblies(
-            typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
             typeof(LuthetusIdeConfig).Assembly,
             typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly,

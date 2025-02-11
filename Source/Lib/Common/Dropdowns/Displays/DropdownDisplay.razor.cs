@@ -1,13 +1,11 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 
@@ -18,9 +16,9 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 	[Inject]
 	public IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
-	public IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
+	public IAppDimensionService AppDimensionService { get; set; } = null!;
 	[Inject]
-	public IDispatcher Dispatcher { get; set; } = null!;
+	public IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
 	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
@@ -133,7 +131,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 					Top = outTop
 				};
 
-				Dispatcher.Dispatch(new DropdownState.FitOnScreenAction(outDropdown));
+				DropdownService.ReduceFitOnScreenAction(outDropdown);
 			}
 		}
 

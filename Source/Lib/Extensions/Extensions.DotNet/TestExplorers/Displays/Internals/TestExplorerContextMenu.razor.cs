@@ -6,7 +6,7 @@ using System.Text;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -36,6 +36,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
+	[Inject]
+	private IPanelService PanelService { get; set; } = null!;
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -165,10 +167,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 				    }));
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
-					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					await treeViewProjectTestModel.LoadChildListAsync();
-					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					DotNetBackgroundTaskApi.TestExplorer.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
@@ -384,7 +386,7 @@ public partial class TestExplorerContextMenu : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
-        		TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+        		TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
@@ -414,7 +416,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 					}
 				}
 			
-				TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+				TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
 				return Task.CompletedTask;
         	}
         };
@@ -429,7 +431,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
-		Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(contextRecord.ContextKey));
+		PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(contextRecord.ContextKey);
 	
 		if (contextRecord != default)
 		{
@@ -438,7 +440,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        JsRuntime.GetLuthetusCommonApi(),
-		        Dispatcher);
+		        PanelService);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 		}

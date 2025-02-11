@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
@@ -39,6 +40,7 @@ public class DotNetBackgroundTaskApi
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
+	private readonly INotificationService _notificationService;
 	private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IState<TestExplorerState> _testExplorerStateWrap;
 
@@ -59,6 +61,7 @@ public class DotNetBackgroundTaskApi
 		IState<DotNetSolutionState> dotNetSolutionStateWrap,
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
+		INotificationService notificationService,
 		IState<TerminalState> terminalStateWrap,
         IState<TestExplorerState> testExplorerStateWrap,
         IServiceProvider serviceProvider)
@@ -78,6 +81,7 @@ public class DotNetBackgroundTaskApi
 		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
+		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
         _testExplorerStateWrap = testExplorerStateWrap;
@@ -99,6 +103,7 @@ public class DotNetBackgroundTaskApi
             _commonComponentRenderers,
             _treeViewService,
             _textEditorService,
+            _notificationService,
             _backgroundTaskService,
             _fileSystemProvider,
             _dotNetCliOutputParser,
@@ -125,6 +130,7 @@ public class DotNetBackgroundTaskApi
             _ideComponentRenderers,
 			_commonComponentRenderers,
 			_treeViewService,
+			_notificationService,
 			_dispatcher,
 			_environmentProvider,
 			_dotNetSolutionStateWrap,

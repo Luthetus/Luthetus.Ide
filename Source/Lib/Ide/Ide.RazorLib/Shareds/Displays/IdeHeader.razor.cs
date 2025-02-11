@@ -4,13 +4,11 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.FileSystems.Displays;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
@@ -19,7 +17,7 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -37,20 +35,22 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeHeader : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<IdeHeaderState> IdeHeaderStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    [Inject]
+    private IPanelService PanelService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -85,7 +85,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		AppOptionsStateWrap.StateChanged += OnAppOptionsStateChanged;
+		AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 	
 		BackgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
@@ -298,7 +298,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private void InitializeMenuView()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-		var panelState = PanelStateWrap.Value;
+		var panelState = PanelService.GetPanelState();
 		var dialogState = DialogService.GetDialogState();
 
 		foreach (var panel in panelState.PanelList)
@@ -312,7 +312,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
 					if (panelGroup is not null)
 					{
-						Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(panelGroup.Key, panel.Key));
+						PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
 						
 						var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 						
@@ -323,7 +323,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						        nameof(ContextHelper.ConstructFocusContextElementCommand),
 						        nameof(ContextHelper.ConstructFocusContextElementCommand),
 						        JsRuntimeCommonApi,
-						        Dispatcher);
+						        PanelService);
 						        
 						    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 						}
@@ -343,8 +343,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						}
 						else
 						{
-							Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true));
-							Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key));
+							PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
+							PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
 							
 							var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 						
@@ -355,7 +355,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 							        nameof(ContextHelper.ConstructFocusContextElementCommand),
 							        nameof(ContextHelper.ConstructFocusContextElementCommand),
 							        JsRuntimeCommonApi,
-							        Dispatcher);
+							        PanelService);
 							        
 							    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 							}
@@ -488,7 +488,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderFileDropdownOnClick()
 	{
 		return DropdownHelper.RenderDropdownAsync(
-			Dispatcher,
+			DropdownService,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonFileId,
 			DropdownOrientation.Bottom,
@@ -500,7 +500,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderToolsDropdownOnClick()
 	{
 		return DropdownHelper.RenderDropdownAsync(
-			Dispatcher,
+			DropdownService,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonToolsId,
 			DropdownOrientation.Bottom,
@@ -514,7 +514,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 		InitializeMenuView();
 		
 		return DropdownHelper.RenderDropdownAsync(
-			Dispatcher,
+			DropdownService,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonViewId,
 			DropdownOrientation.Bottom,
@@ -526,7 +526,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderRunDropdownOnClick()
 	{
 		 return DropdownHelper.RenderDropdownAsync(
-			Dispatcher,
+			DropdownService,
 			JsRuntimeCommonApi,
 		    IdeHeaderState.ButtonRunId,
 			DropdownOrientation.Bottom,
@@ -535,13 +535,13 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			_buttonRunElementReference);
 	}
 	
-	private async void OnAppOptionsStateChanged(object? sender, EventArgs e)
+	private async void OnAppOptionsStateChanged()
 	{
 		await InvokeAsync(StateHasChanged);
 	}
 	
 	public void Dispose()
 	{
-		AppOptionsStateWrap.StateChanged -= OnAppOptionsStateChanged;
+		AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
 	}
 }

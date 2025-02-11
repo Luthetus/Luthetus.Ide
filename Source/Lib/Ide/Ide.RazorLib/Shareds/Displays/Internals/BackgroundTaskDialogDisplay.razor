@@ -24,7 +24,7 @@
             var index = i;
             var backgroundTask = seenBackgroundTasks[index];
 
-            if (backgroundTask.Name.StartsWith("te_"))
+            if (backgroundTask.Name is not null && backgroundTask.Name.StartsWith("te_"))
             {
                 <div class="luth_te_keyword" title="@backgroundTask.BackgroundTaskKey.Guid">
                     @backgroundTask.Name
@@ -33,7 +33,7 @@
             else
             {
                 <div title="@backgroundTask.BackgroundTaskKey.Guid">
-                    @backgroundTask.Name
+                    @(backgroundTask?.Name ?? "null")
                 </div>
             }
         }

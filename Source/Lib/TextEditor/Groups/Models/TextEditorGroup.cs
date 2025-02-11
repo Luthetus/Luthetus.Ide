@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Models;
@@ -19,7 +20,7 @@ public record TextEditorGroup(
         ImmutableList<Key<TextEditorViewModel>> ViewModelKeyList,
         Category Category,
         ITextEditorService TextEditorService,
-        IDispatcher Dispatcher,
+        IPanelService PanelService,
         IDialogService DialogService,
         IJSRuntime JsRuntime)
      : ITabGroup
@@ -68,7 +69,7 @@ public record TextEditorGroup(
             await CloseAsync(new DynamicViewModelAdapterTextEditor(
                     viewModelKey,
                     TextEditorService,
-                    Dispatcher,
+                    PanelService,
                     DialogService,
                     JsRuntime))
                 .ConfigureAwait(false);
@@ -95,7 +96,7 @@ public record TextEditorGroup(
 				await CloseAsync(new DynamicViewModelAdapterTextEditor(
 	                    viewModelKey,
 	                    TextEditorService,
-	                    Dispatcher,
+	                    PanelService,
 	                    DialogService,
 	                    JsRuntime))
 	                .ConfigureAwait(false);

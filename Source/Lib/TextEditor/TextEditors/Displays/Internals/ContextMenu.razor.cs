@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -18,6 +19,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
     private IClipboardService ClipboardService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -89,7 +92,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        Dispatcher);
+					        DropdownService);
 					}
 
 					return ValueTask.CompletedTask;
@@ -116,7 +119,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        Dispatcher);
+					        DropdownService);
 					}
 
 					return ValueTask.CompletedTask;
@@ -176,7 +179,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 							TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
 						        viewModelModifier,
-						        Dispatcher);
+						        DropdownService);
 						}
 
 						return ValueTask.CompletedTask;

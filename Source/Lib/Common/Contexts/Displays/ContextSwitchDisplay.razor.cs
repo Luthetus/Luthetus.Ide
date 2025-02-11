@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Widgets.Models;
-using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
@@ -14,8 +12,8 @@ public partial class ContextSwitchDisplay : ComponentBase
 {
 	[Inject]
 	private IContextService ContextService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+	private IWidgetService WidgetService { get; set; } = null!;
 	
 	[CascadingParameter]
     public WidgetModel Widget { get; set; } = null!;
@@ -221,7 +219,7 @@ public partial class ContextSwitchDisplay : ComponentBase
                 _activeIndex = _flatMenuOptionList.Count - 1;
                 break;
             case "Enter":
-				Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
+				WidgetService.ReduceSetWidgetAction(null);
                 break;
         }
     }

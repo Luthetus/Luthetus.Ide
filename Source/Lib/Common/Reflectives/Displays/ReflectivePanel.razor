@@ -1,8 +1,4 @@
-﻿@using Fluxor.Blazor.Web.Components
-
-@inherits FluxorComponent
-
-@{ var reflectiveState = ReflectiveStateWrap.Value; }
+@{ var reflectiveState = ReflectiveService.GetReflectiveState(); }
 
 <div class="luth_reflective-panel">
 

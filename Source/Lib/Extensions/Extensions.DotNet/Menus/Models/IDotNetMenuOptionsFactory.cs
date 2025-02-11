@@ -1,6 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CSharpProjects.Models;
@@ -16,12 +17,14 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion);
 
@@ -29,6 +32,7 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord MoveProjectToSolutionFolder(
@@ -36,6 +40,7 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewNamespacePath treeViewProjectToMove,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
@@ -43,5 +48,6 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion);
 }

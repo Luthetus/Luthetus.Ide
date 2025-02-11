@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Options.States;
 
 namespace Luthetus.Common.RazorLib.Options.Displays;
 
@@ -14,7 +13,7 @@ public partial class InputAppIconSize : ComponentBase, IDisposable
 
     private int IconSizeInPixels
     {
-        get => AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels;
+        get => AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels;
         set
         {
             if (value < AppOptionsState.MINIMUM_ICON_SIZE_IN_PIXELS)
@@ -26,18 +25,18 @@ public partial class InputAppIconSize : ComponentBase, IDisposable
 
     protected override Task OnInitializedAsync()
     {
-        AppOptionsService.AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
 
         return base.OnInitializedAsync();
     }
 
-    private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void AppOptionsStateWrapOnStateChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

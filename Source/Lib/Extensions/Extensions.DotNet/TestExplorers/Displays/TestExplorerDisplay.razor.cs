@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Common.RazorLib.TreeViews.States;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
@@ -21,14 +19,10 @@ using Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays;
 
-public partial class TestExplorerDisplay : FluxorComponent
+public partial class TestExplorerDisplay : FluxorComponent, IDisposable
 {
 	[Inject]
 	private IState<TestExplorerState> TestExplorerStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<TreeViewState> TreeViewStateWrap { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -44,10 +38,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 	protected override void OnInitialized()
 	{
-		// TODO: Supress un-used property on TreeViewStateWrap...
-		// ...Its injected so that Fluxor will wire up events to re-render UI...
-		// ...Preferably a different approach would be taken here.
-		_ = TreeViewStateWrap;
+		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
 
 		Dispatcher.Dispatch(new TestExplorerState.UserInterfaceWasInitializedEffect());
 
@@ -141,5 +132,15 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private void DispatchShouldInitializeEffect()
 	{
 		Dispatcher.Dispatch(new TestExplorerState.ShouldInitializeEffect());
+	}
+	
+	private async void OnTreeViewStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public void Dispose()
+	{
+		TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
 	}
 }

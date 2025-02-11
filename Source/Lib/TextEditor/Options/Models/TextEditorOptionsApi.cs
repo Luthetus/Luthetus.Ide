@@ -190,7 +190,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
         if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
         {
-            var matchedTheme = _textEditorService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+            var matchedTheme = _textEditorService.ThemeService.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);

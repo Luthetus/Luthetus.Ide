@@ -13,9 +13,12 @@
                  ClassCssString="luth_ide_solution-explorer-display"
                  StyleCssString="height: 100%">
 
-    @{ var dotNetSolutionState = DotNetSolutionStateWrap.Value; }
+    @{
+    	var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    }
 
-	@if (AppOptionsStateWrap.Value.Options.ShowPanelTitles)
+	@if (appOptionsState.Options.ShowPanelTitles)
 	{
 	    <div class="luth_ide_section-title">
 	        Solution Explorer
@@ -23,8 +26,8 @@
 	        @if (dotNetSolutionState.IsExecutingAsyncTaskLinks > 0)
 	        {
 	        	var iconDriver = new IconDriver(
-					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+					appOptionsState.Options.IconSizeInPixels,
+					appOptionsState.Options.IconSizeInPixels);
 	            @IconLoadingFragment.Render(iconDriver)
 	        }
 	    </div>
@@ -47,8 +50,8 @@
         }
         else
         {
-            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
                     <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
                         <TreeViewContainerDisplay TreeViewContainerKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
                                                   CssStyleString="height: 100%;"

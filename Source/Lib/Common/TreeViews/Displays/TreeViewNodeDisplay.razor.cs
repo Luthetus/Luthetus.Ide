@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 
@@ -16,7 +15,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [CascadingParameter]
     public TreeViewContainer TreeViewContainer { get; set; } = null!;
@@ -114,12 +113,12 @@ public partial class TreeViewNodeDisplay : ComponentBase
 			    async () => 
 			    {
 				    await localTreeViewNoType.LoadChildListAsync().ConfigureAwait(false);
-                    TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
+                    TreeViewService.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
 			    });
         }
         else
         {
-            TreeViewService.ReRenderNode(TreeViewContainer.Key, localTreeViewNoType);
+            TreeViewService.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
         }
     }
 

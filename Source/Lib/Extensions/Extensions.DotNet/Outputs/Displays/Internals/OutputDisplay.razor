@@ -6,7 +6,10 @@
 
 <div class="luth_output-display" style="height: 100%;">
 	
-	@{ var dotNetRunParseResult = DotNetCliOutputParser.GetDotNetRunParseResult(); }
+	@{
+		var dotNetRunParseResult = DotNetCliOutputParser.GetDotNetRunParseResult();
+		var appOptionsState = AppOptionsService.GetAppOptionsState();
+	}
 	
 	<div class="luth_output-display-top-row" style="height: 1.8em;">
 		@dotNetRunParseResult.Message
@@ -18,8 +21,8 @@
 
 	<div class="luth_output-display-body" style="height: calc(100% - 1.8em);">
 	
-		<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-			<CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+		<CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+			<CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
 	            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
 	                <TreeViewContainerDisplay TreeViewContainerKey="OutputState.TreeViewContainerKey"
 	                                          CssStyleString="height: 100%;"

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Drags.Models;
@@ -9,9 +8,10 @@ using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
@@ -21,9 +21,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	[Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]

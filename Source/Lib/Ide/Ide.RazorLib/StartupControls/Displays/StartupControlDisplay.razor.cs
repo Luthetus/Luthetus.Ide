@@ -5,13 +5,12 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
-using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.StartupControls.States;
@@ -24,11 +23,13 @@ public partial class StartupControlDisplay : FluxorComponent
     [Inject]
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
-    private IState<PanelState> PanelStateWrap { get; set; } = null!;
+    private IPanelService PanelService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
@@ -81,8 +82,8 @@ public partial class StartupControlDisplay : FluxorComponent
 	
 	                if (!success)
 	                {
-	                    Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
-	                        ContextFacts.OutputContext.ContextKey));
+	                    PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+	                        ContextFacts.OutputContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
 	                }
@@ -97,8 +98,8 @@ public partial class StartupControlDisplay : FluxorComponent
 	
 	                if (!success)
 	                {
-	                    Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
-	                        ContextFacts.TerminalContext.ContextKey));
+	                    PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+	                        ContextFacts.TerminalContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	                }
@@ -121,7 +122,7 @@ public partial class StartupControlDisplay : FluxorComponent
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
-    			Dispatcher,
+    			DropdownService,
     			JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,
