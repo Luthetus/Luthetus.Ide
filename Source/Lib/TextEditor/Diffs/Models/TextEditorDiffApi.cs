@@ -1,20 +1,17 @@
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 public class TextEditorDiffApi : ITextEditorDiffApi
 {
-    private readonly IDispatcher _dispatcher;
     private readonly ITextEditorService _textEditorService;
 
-    public TextEditorDiffApi(ITextEditorService textEditorService, IDispatcher dispatcher)
+    public TextEditorDiffApi(ITextEditorService textEditorService)
     {
         _textEditorService = textEditorService;
-        _dispatcher = dispatcher;
     }
 
     public void Register(
@@ -22,21 +19,21 @@ public class TextEditorDiffApi : ITextEditorDiffApi
         Key<TextEditorViewModel> inViewModelKey,
         Key<TextEditorViewModel> outViewModelKey)
     {
-        _dispatcher.Dispatch(new TextEditorDiffState.RegisterAction(
+        ReduceRegisterAction(
             diffModelKey,
             inViewModelKey,
-            outViewModelKey));
+            outViewModelKey);
     }
 
     public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffModelKey)
     {
-        return _textEditorService.DiffStateWrap.Value.DiffModelList
+        return GetTextEditorDiffState().DiffModelList
             .FirstOrDefault(x => x.DiffKey == diffModelKey);
     }
 
     public void Dispose(Key<TextEditorDiffModel> diffModelKey)
     {
-        _dispatcher.Dispatch(new TextEditorDiffState.DisposeAction(diffModelKey));
+        ReduceDisposeAction(diffModelKey);
     }
 
     public Func<ITextEditorEditContext, Task> CalculateFactory(
@@ -111,6 +108,68 @@ public class TextEditorDiffApi : ITextEditorDiffApi
 
     public ImmutableList<TextEditorDiffModel> GetDiffModels()
     {
-        return _textEditorService.DiffStateWrap.Value.DiffModelList;
+        return GetTextEditorDiffState().DiffModelList;
+    }
+    
+    private TextEditorDiffState _textEditorDiffState = new();
+    
+    public event Action? TextEditorDiffStateChanged;
+    
+    public TextEditorDiffState GetTextEditorDiffState() => _textEditorDiffState;
+    
+    public void ReduceDisposeAction(Key<TextEditorDiffModel> diffKey)
+    {
+    	var inState = GetTextEditorDiffState();
+    
+        var inDiff = inState.DiffModelList.FirstOrDefault(
+            x => x.DiffKey == diffKey);
+
+        if (inDiff is null)
+        {
+            TextEditorDiffStateChanged?.Invoke();
+            return;
+        }
+
+        var outDiffModelList = inState.DiffModelList.Remove(inDiff);
+
+        _textEditorDiffState = new TextEditorDiffState
+        {
+            DiffModelList = outDiffModelList
+        };
+        
+        TextEditorDiffStateChanged?.Invoke();
+        return;
+    }
+
+    public void ReduceRegisterAction(
+        Key<TextEditorDiffModel> diffKey,
+        Key<TextEditorViewModel> inViewModelKey,
+        Key<TextEditorViewModel> outViewModelKey)
+    {
+    	var inState = GetTextEditorDiffState();
+    
+        var inDiff = inState.DiffModelList.FirstOrDefault(
+            x => x.DiffKey == diffKey);
+
+        if (inDiff is not null)
+        {
+            TextEditorDiffStateChanged?.Invoke();
+            return;
+        }
+
+        var diff = new TextEditorDiffModel(
+            diffKey,
+            inViewModelKey,
+            outViewModelKey);
+
+        var outDiffModelList = inState.DiffModelList.Add(diff);
+
+        _textEditorDiffState = new TextEditorDiffState
+        {
+            DiffModelList = outDiffModelList
+        };
+        
+        TextEditorDiffStateChanged?.Invoke();
+        return;
     }
 }

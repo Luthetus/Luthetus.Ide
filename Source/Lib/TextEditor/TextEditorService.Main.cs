@@ -13,7 +13,6 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -44,7 +43,6 @@ public partial class TextEditorService : ITextEditorService
     private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
-        IState<TextEditorDiffState> diffStateWrap,
         IState<TextEditorOptionsState> optionsStateWrap,
         IFindAllService findAllService,
         IDirtyResourceUriService dirtyResourceUriService,
@@ -66,7 +64,6 @@ public partial class TextEditorService : ITextEditorService
     {
     	TextEditorWorker = new(this);
     
-        DiffStateWrap = diffStateWrap;
         OptionsStateWrap = optionsStateWrap;
 		AppDimensionService = appDimensionService;
 		_serviceProvider = serviceProvider;
@@ -91,13 +88,12 @@ public partial class TextEditorService : ITextEditorService
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService, _dispatcher);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _jsRuntime);
-        DiffApi = new TextEditorDiffApi(this, _dispatcher);
+        DiffApi = new TextEditorDiffApi(this);
         OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi, _dispatcher);
         
         TextEditorState = new();
     }
 
-    public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     
     public IThemeService ThemeService { get; }

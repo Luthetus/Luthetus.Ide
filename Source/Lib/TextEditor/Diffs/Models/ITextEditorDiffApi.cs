@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
@@ -23,4 +23,15 @@ public interface ITextEditorDiffApi
     /// since the previous invocation.
     /// </summary>
     public ImmutableList<TextEditorDiffModel> GetDiffModels();
+    
+    public event Action? TextEditorDiffStateChanged;
+    
+    public TextEditorDiffState GetTextEditorDiffState();
+    
+    public void ReduceDisposeAction(Key<TextEditorDiffModel> diffKey);
+
+    public void ReduceRegisterAction(
+        Key<TextEditorDiffModel> diffKey,
+        Key<TextEditorViewModel> inViewModelKey,
+        Key<TextEditorViewModel> outViewModelKey);
 }

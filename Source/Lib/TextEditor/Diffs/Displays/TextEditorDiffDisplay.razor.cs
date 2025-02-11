@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Options.States;
@@ -14,8 +13,6 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
 public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<TextEditorDiffState> TextEditorDiffStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
@@ -66,7 +63,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorDiffStateWrap.StateChanged += TextEditorDiffWrapOnStateChanged;
+        TextEditorService.DiffApi.TextEditorDiffStateChanged += TextEditorDiffWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged += TextEditorModelsCollectionWrapOnStateChanged;
         TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrapOnStateChanged;
 
@@ -83,7 +80,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void TextEditorDiffWrapOnStateChanged(object? sender, EventArgs e) =>
+    private async void TextEditorDiffWrapOnStateChanged() =>
         await InvokeAsync(StateHasChanged);
 
     private void TextEditorModelsCollectionWrapOnStateChanged()
@@ -130,7 +127,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorDiffStateWrap.StateChanged -= TextEditorDiffWrapOnStateChanged;
+        TextEditorService.DiffApi.TextEditorDiffStateChanged -= TextEditorDiffWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged -= TextEditorModelsCollectionWrapOnStateChanged;
         TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrapOnStateChanged;
 

@@ -9,7 +9,6 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -38,8 +37,7 @@ public partial interface ITextEditorService
     public ITextEditorGroupApi GroupApi { get; }
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
-
-    public IState<TextEditorDiffState> DiffStateWrap { get; }
+    
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     
     public IThemeService ThemeService { get; }
