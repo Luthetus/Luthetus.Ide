@@ -1,7 +1,6 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -17,9 +16,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private LuthetusCommonConfig CommonConfig { get; set; } = null!;
     [Inject]
@@ -43,7 +40,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         : string.Empty;
 
     private string IconSizeInPixelsCssValue =>
-        $"{AppOptionsStateWrap.Value.Options.IconSizeInPixels.ToCssValue()}";
+        $"{AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
 
     private string DialogTitleCssStyleString =>
         "width: calc(100% -" +
@@ -52,7 +49,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         DialogService.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
 
         base.OnInitialized();
@@ -75,7 +72,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void AppOptionsStateWrapOnStateChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
@@ -133,7 +130,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         DialogService.ActiveDialogKeyChanged -= OnActiveDialogKeyChanged;
     }
 }

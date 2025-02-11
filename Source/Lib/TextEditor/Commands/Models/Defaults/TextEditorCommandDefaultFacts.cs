@@ -626,7 +626,7 @@ public static class TextEditorCommandDefaultFacts
 		        viewModelModifier,
 		        cursorModifierBag,
 		        primaryCursorModifier,
-		        commandArgs.ComponentData.Dispatcher,
+		        commandArgs.ComponentData.DropdownService,
 		        commandArgs.ComponentData);
 		    
 		    return ValueTask.CompletedTask;

@@ -5,6 +5,8 @@
 @using Luthetus.Ide.RazorLib.Editors.Displays
 @using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays
 
+@{ var panelState = PanelService.GetPanelState(); }
+
 <div class="luth_ide_body"
      style="@BodyElementDimensions.StyleString">
 
@@ -15,7 +17,7 @@
                       ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderLeftPanelAndEditor" />
      </StateHasChangedBoundary>
 
-    <ResizableColumn LeftElementDimensions="PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value).ElementDimensions"
+    <ResizableColumn LeftElementDimensions="PanelFacts.GetTopLeftPanelGroup(panelState).ElementDimensions"
                      RightElementDimensions="_editorElementDimensions"
                      ReRenderFuncAsync="ReRenderLeftPanelAndEditor" />
 
@@ -24,7 +26,7 @@
     </StateHasChangedBoundary>
     
     <ResizableColumn LeftElementDimensions="_editorElementDimensions"
-                     RightElementDimensions="PanelFacts.GetTopRightPanelGroup(PanelStateWrap.Value).ElementDimensions"
+                     RightElementDimensions="PanelFacts.GetTopRightPanelGroup(panelState).ElementDimensions"
                      ReRenderFuncAsync="ReRenderEditorAndRightPanel" />
 
     <StateHasChangedBoundary @ref="_rightPanelStateHasChangedBoundaryComponent">

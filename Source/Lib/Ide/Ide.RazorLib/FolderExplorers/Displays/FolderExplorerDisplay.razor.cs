@@ -1,10 +1,9 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -22,11 +21,13 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
-    [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -46,12 +47,12 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+        AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
         FolderExplorerStateWrap.StateChanged += OnStateChanged;
-        AppOptionsStateWrap.StateChanged += OnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             IdeBackgroundTaskApi,
@@ -67,7 +68,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             TreeViewService,
 			BackgroundTaskService,
             EnvironmentProvider,
-            Dispatcher);
+            NotificationService);
 
         base.OnInitialized();
     }
@@ -90,13 +91,18 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
+	}
+	
+	private async void OnAppOptionsStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
 	}
 
     public void Dispose()
     {
         FolderExplorerStateWrap.StateChanged -= OnStateChanged;
-        AppOptionsStateWrap.StateChanged -= OnStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

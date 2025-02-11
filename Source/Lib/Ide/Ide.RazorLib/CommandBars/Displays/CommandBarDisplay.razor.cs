@@ -4,7 +4,7 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
-using Luthetus.Common.RazorLib.Widgets.States;
+using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Ide.RazorLib.CommandBars.States;
 
 namespace Luthetus.Ide.RazorLib.CommandBars.Displays;
@@ -13,6 +13,8 @@ public partial class CommandBarDisplay : FluxorComponent
 {
 	[Inject]
 	private IState<CommandBarState> CommandBarStateWrap { get; set; } = null!;
+	[Inject]
+	private IWidgetService WidgetService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -41,6 +43,6 @@ public partial class CommandBarDisplay : FluxorComponent
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Enter")
-			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
+			WidgetService.ReduceSetWidgetAction(null);
 	}
 }

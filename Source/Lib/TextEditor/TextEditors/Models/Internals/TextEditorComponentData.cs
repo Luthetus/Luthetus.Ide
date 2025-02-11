@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -37,6 +38,7 @@ public sealed class TextEditorComponentData
 		TextEditorOptions options,
 		TextEditorViewModelDisplay textEditorViewModelDisplay,
 		IDispatcher dispatcher,
+		IDropdownService dropdownService,
 		IServiceProvider serviceProvider)
 	{
 		TextEditorHtmlElementId = textEditorHtmlElementId;
@@ -44,6 +46,7 @@ public sealed class TextEditorComponentData
 		Options = options;
 		TextEditorViewModelDisplay = textEditorViewModelDisplay;
 		Dispatcher = dispatcher;
+		DropdownService = dropdownService;
 		ServiceProvider = serviceProvider;
 	}
 
@@ -75,6 +78,7 @@ public sealed class TextEditorComponentData
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; }
 	public IDispatcher Dispatcher { get; }
+	public IDropdownService DropdownService { get; }
 	public IServiceProvider ServiceProvider { get; }
 	public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
     public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;

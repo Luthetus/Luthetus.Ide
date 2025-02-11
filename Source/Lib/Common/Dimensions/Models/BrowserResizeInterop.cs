@@ -1,7 +1,6 @@
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
@@ -15,11 +14,11 @@ namespace Luthetus.Common.RazorLib.Dimensions.Models;
 public class BrowserResizeInterop
 {
 	private readonly object _dotNetObjectReferenceLock = new();
-	private readonly IDispatcher _dispatcher;
+	private readonly IAppDimensionService _appDimensionService;
 
-	public BrowserResizeInterop(IDispatcher dispatcher)
+	public BrowserResizeInterop(IAppDimensionService appDimensionService)
 	{
-		_dispatcher = dispatcher;
+		_appDimensionService = appDimensionService;
 	}
 	
 	private DotNetObjectReference<BrowserResizeInterop>? _browserResizeInteropDotNetObjectReference;
@@ -31,7 +30,7 @@ public class BrowserResizeInterop
 	[JSInvokable]
     public void OnBrowserResize()
     {
-		_dispatcher.Dispatch(new AppDimensionState.NotifyUserAgentResizeAction());
+		_appDimensionService.ReduceNotifyUserAgentResizeAction();
     }
     
     /// <summary>

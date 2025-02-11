@@ -1,11 +1,12 @@
-@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Keymaps.Displays
-
-@inherits FluxorComponent
+@using Luthetus.Common.RazorLib.Contexts.Models
 
 <div class="luth_ide_active-context-entry">
 
-    @{ var contextRecord = ContextRecordSelection.Value; }
+    @{
+    	var contextRecord = ContextService.GetContextRecord(ContextKey);
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    }
 
     <div class="luth_ide_active-context-title">
         <button class="luth_button"
@@ -14,8 +15,8 @@
                 
             @{
             	var iconDriver = new IconDriver(
-					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+					appOptionsState.Options.IconSizeInPixels,
+					appOptionsState.Options.IconSizeInPixels);
             }
         
             @if (_isExpanded)
@@ -29,9 +30,9 @@
         </button>
 
         <em class="luth_em">
-            @if (contextRecord is not null)
+            @if (contextRecord != default(ContextRecord))
             {
-                @: @contextRecord.Value.DisplayNameFriendly
+                @: @contextRecord.DisplayNameFriendly
                 
             }
             else
@@ -42,9 +43,9 @@
     </div>
 
     <div class="luth_ide_active-context-body">
-        @if (_isExpanded && contextRecord is not null)
+        @if (_isExpanded && contextRecord != default(ContextRecord))
         {
-            <KeymapDisplay Keymap="contextRecord.Value.Keymap" />
+            <KeymapDisplay Keymap="contextRecord.Keymap" />
         }
     </div>
 </div>

@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor.Blazor.Web.Components;
-using Fluxor;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Contexts.Models;
@@ -9,14 +7,12 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
-public partial class ContextBoundaryMeasurer : FluxorComponent
+public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     private IContextService ContextService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ContextRecord ContextRecord { get; set; } = default!;
@@ -24,6 +20,12 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
     public Func<List<Key<ContextRecord>>> GetContextBoundaryHeirarchy { get; set; } = null!;
 
     private bool _previousIsSelectingInspectionTarget;
+
+	protected override void OnInitialized()
+	{
+		ContextService.ContextStateChanged += OnContextStateChanged;
+		base.OnInitialized();
+	}
 
     protected override bool ShouldRender()
     {
@@ -64,5 +66,15 @@ public partial class ContextBoundaryMeasurer : FluxorComponent
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+    
+    public async void OnContextStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	ContextService.ContextStateChanged -= OnContextStateChanged;
     }
 }

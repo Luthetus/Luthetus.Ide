@@ -6,14 +6,12 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
@@ -31,8 +29,6 @@ public partial class GitDisplay : FluxorComponent
     [Inject]
     private IState<GitState> GitStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
-    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
@@ -46,6 +42,8 @@ public partial class GitDisplay : FluxorComponent
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
     private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
 
 	private const string _dropdownMenuHtmlElementId = "luth_ide_git-display-dropdown-menu";
 
@@ -77,7 +75,7 @@ public partial class GitDisplay : FluxorComponent
 			},
 			restoreFocusOnClose: null);
 
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        DropdownService.ReduceRegisterAction(dropdownRecord);
     }
 
     private MenuRecord ConstructMenu()

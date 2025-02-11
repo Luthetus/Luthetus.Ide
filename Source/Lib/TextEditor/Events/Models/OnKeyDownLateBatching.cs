@@ -174,7 +174,7 @@ public struct OnKeyDownLateBatching
 					    	TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
 						        viewModelModifier,
-						        ComponentData.Dispatcher);
+						        ComponentData.DropdownService);
 					    }
                     }
                     break;
@@ -185,7 +185,7 @@ public struct OnKeyDownLateBatching
 				        viewModelModifier,
 				        cursorModifierBag,
 				        primaryCursorModifier,
-				        ComponentData.Dispatcher,
+				        ComponentData.DropdownService,
 				        ComponentData);
                     break;
                 case KeymapArgsKind.Text:
@@ -204,7 +204,7 @@ public struct OnKeyDownLateBatching
 								TextEditorCommandDefaultFunctions.RemoveDropdown(
 							        editContext,
 							        viewModelModifier,
-							        ComponentData.Dispatcher);
+							        ComponentData.DropdownService);
 							}
                         }
                     }

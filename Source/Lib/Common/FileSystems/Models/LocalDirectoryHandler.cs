@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 
@@ -10,16 +9,16 @@ public class LocalDirectoryHandler : IDirectoryHandler
 
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly IDispatcher _dispatcher;
+    private readonly INotificationService _notificationService;
 
     public LocalDirectoryHandler(
         IEnvironmentProvider environmentProvider,
         ICommonComponentRenderers commonComponentRenderers,
-        IDispatcher dispatcher)
+        INotificationService notificationService)
     {
         _environmentProvider = environmentProvider;
         _commonComponentRenderers = commonComponentRenderers;
-        _dispatcher = dispatcher;
+        _notificationService = notificationService;
     }
 
     public async Task CreateDirectoryAsync(
@@ -150,7 +149,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
             title,
             exception.ToString(),
             _commonComponentRenderers,
-            _dispatcher,
+            _notificationService,
             TimeSpan.FromSeconds(10));
     }
 }

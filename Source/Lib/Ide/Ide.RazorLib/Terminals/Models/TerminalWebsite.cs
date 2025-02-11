@@ -16,7 +16,7 @@ public class TerminalWebsite : ITerminal
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly IDispatcher _dispatcher;
+	private readonly INotificationService _notificationService;
 
 	public TerminalWebsite(
 		string displayName,
@@ -25,7 +25,7 @@ public class TerminalWebsite : ITerminal
 		Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
 		IBackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
-		IDispatcher dispatcher)
+		INotificationService notificationService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
@@ -34,7 +34,7 @@ public class TerminalWebsite : ITerminal
 		
 		_backgroundTaskService = backgroundTaskService;
 		_commonComponentRenderers = commonComponentRenderers;
-		_dispatcher = dispatcher;
+		_notificationService = notificationService;
 	}
 
 	public string DisplayName { get; }
@@ -126,7 +126,7 @@ public class TerminalWebsite : ITerminal
 				parsedCommand,
 				new StandardErrorCommandEvent(parsedCommand.SourceTerminalCommandRequest.CommandText + " threw an exception" + "\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

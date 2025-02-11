@@ -146,9 +146,11 @@
 
                 @if (_performingNugetQuery)
                 {
+                	var appOptionsState = AppOptionsService.GetAppOptionsState();
+                
                 	var iconDriver = new IconDriver(
-						AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-						AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+						appOptionsState.Options.IconSizeInPixels,
+						appOptionsState.Options.IconSizeInPixels);
 						
                     @IconLoadingFragment.Render(iconDriver)
                 }

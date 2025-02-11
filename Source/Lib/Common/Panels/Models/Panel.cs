@@ -1,13 +1,12 @@
 using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
-using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
-using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -29,7 +28,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         Key<ContextRecord> contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
-        IDispatcher dispatcher,
+        IPanelService panelService,
         IDialogService dialogService,
         IJSRuntime jsRuntime)
     {
@@ -40,7 +39,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         ComponentType = componentType;
         ComponentParameterMap = componentParameterMap;
 
-        Dispatcher = dispatcher;
+        PanelService = panelService;
         DialogService = dialogService;
         JsRuntime = jsRuntime;
 
@@ -59,7 +58,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-	public IDispatcher Dispatcher { get;}
+	public IPanelService PanelService { get;}
     public IDialogService DialogService { get;}
     public IJSRuntime JsRuntime { get;}
 	public Type ComponentType { get; }
@@ -181,9 +180,9 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
+					PanelService.ReduceDisposePanelTabAction(
 						panelGroup.Key,
-						Key));
+						Key);
 				}
 				else
 				{
@@ -205,9 +204,9 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					Dispatcher.Dispatch(new PanelState.DisposePanelTabAction(
+					PanelService.ReduceDisposePanelTabAction(
 						panelGroup.Key,
-						Key));
+						Key);
 				}
 				else
 				{
@@ -224,10 +223,10 @@ public record Panel : IPanelTab, IDialog, IDrag
 				? true
 				: false;
 
-			Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
+			PanelService.ReduceRegisterPanelTabAction(
 				panelGroupDropzone.PanelGroupKey,
 				this,
-				insertAtIndexZero));
+				insertAtIndexZero);
 		}
 
 		return Task.CompletedTask;

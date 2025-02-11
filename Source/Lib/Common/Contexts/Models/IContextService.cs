@@ -8,6 +8,9 @@ public interface IContextService
 	public event Action? ContextStateChanged;
     
     public ContextState GetContextState();
+    
+    public ContextRecord GetContextRecord(Key<ContextRecord> contextKey);
+    
     public ContextSwitchState GetContextSwitchState();
     
     public void ReduceSetFocusedContextHeirarchyAction(ContextHeirarchy focusedContextHeirarchy);

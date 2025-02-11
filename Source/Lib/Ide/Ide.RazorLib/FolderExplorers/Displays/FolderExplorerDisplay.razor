@@ -9,8 +9,10 @@
 <ContextBoundary ContextRecord="ContextFacts.FolderExplorerContext"
                  ClassCssString="luth_ide_folder-explorer-display"
                  StyleCssString="height: 100%">
+                 
+	@{ var appOptionsState = AppOptionsService.GetAppOptionsState(); }
     
-    @if (AppOptionsStateWrap.Value.Options.ShowPanelTitles)
+    @if (appOptionsState.Options.ShowPanelTitles)
     {
 	    <div class="luth_ide_section-title">
 	        Folder Explorer
@@ -30,8 +32,8 @@
         }
         else
         {
-            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
                     <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
                         <TreeViewContainerDisplay TreeViewContainerKey="FolderExplorerState.TreeViewContentStateKey"
                                                   CssStyleString="height: 100%;"

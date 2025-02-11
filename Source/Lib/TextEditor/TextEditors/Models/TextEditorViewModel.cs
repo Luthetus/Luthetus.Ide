@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -31,7 +32,7 @@ public sealed record TextEditorViewModel : IDisposable
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         ITextEditorService textEditorService,
-        IDispatcher dispatcher,
+        IPanelService panelService,
         IDialogService dialogService,
         IJSRuntime jsRuntime,
         VirtualizationGrid virtualizationResult,
@@ -68,7 +69,7 @@ public sealed record TextEditorViewModel : IDisposable
         DynamicViewModelAdapter = new DynamicViewModelAdapterTextEditor(
             ViewModelKey,
             TextEditorService,
-            dispatcher,
+            panelService,
             dialogService,
             jsRuntime);
 	}

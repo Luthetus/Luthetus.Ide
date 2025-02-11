@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
 public partial class TreeViewSpinnerDisplay : ComponentBase
 {
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     
 	[Parameter, EditorRequired]
 	public TreeViewSpinner TreeViewSpinner { get; set; } = null!;

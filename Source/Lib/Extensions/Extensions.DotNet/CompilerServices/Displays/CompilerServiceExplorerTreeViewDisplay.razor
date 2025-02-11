@@ -6,6 +6,8 @@
 
 <div class="luth_ide_compiler-explorer-tree-view">
     @{
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    
         <div class="luth_ide_compiler-explorer-tree-view-title">
             Compiler Explorer
             
@@ -17,8 +19,8 @@
         </div>
 
         <div class="luth_ide_compiler-explorer-tree-view-body">
-            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
                     <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
                         <TreeViewContainerDisplay TreeViewContainerKey="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"
                                                   CssStyleString="height: 100%;"

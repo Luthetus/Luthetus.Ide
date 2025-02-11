@@ -3,12 +3,10 @@ using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -20,18 +18,18 @@ using Luthetus.Ide.RazorLib.CodeSearches.States;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
-public partial class CodeSearchDisplay : FluxorComponent
+public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 {
 	[Inject]
 	private IState<CodeSearchState> CodeSearchStateWrap { get; set; } = null!;
     [Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<TreeViewState> TreeViewStateWrap { get; set; } = null!;
+	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+	[Inject]
+	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
@@ -50,7 +48,7 @@ public partial class CodeSearchDisplay : FluxorComponent
 	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -76,9 +74,7 @@ public partial class CodeSearchDisplay : FluxorComponent
 	
 	protected override void OnInitialized()
 	{
-		// Suppress unused property warning.
-		// 	(am injecting this as a hack to easily re-render when the tree view changes)
-		_ = TreeViewStateWrap;
+		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
 			TextEditorService,
@@ -119,7 +115,7 @@ public partial class CodeSearchDisplay : FluxorComponent
 			},
 			null);
 
-		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
@@ -200,5 +196,15 @@ public partial class CodeSearchDisplay : FluxorComponent
 				}
             }
         }
+    }
+    
+    public async void OnTreeViewStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

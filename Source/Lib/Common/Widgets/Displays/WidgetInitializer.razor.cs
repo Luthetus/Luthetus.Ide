@@ -1,20 +1,21 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Widgets.Models;
-using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 
 namespace Luthetus.Common.RazorLib.Widgets.Displays;
 
-public partial class WidgetInitializer : FluxorComponent
+public partial class WidgetInitializer : ComponentBase, IDisposable
 {
 	[Inject]
-    private IState<WidgetState> WidgetStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IWidgetService WidgetService { get; set; } = null!;
     
     private ContextBoundary? _widgetContextBoundary;
+    
+    protected override void OnInitialized()
+    {
+    	WidgetService.WidgetStateChanged += OnWidgetStateChanged;
+    	base.OnInitialized();
+    }
     
     private Task HandleOnFocusIn(WidgetModel widget)
     {
@@ -43,7 +44,17 @@ public partial class WidgetInitializer : FluxorComponent
     
     private Task RemoveWidget()
     {
-    	Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
+    	WidgetService.ReduceSetWidgetAction(null);
     	return Task.CompletedTask;
+    }
+    
+    private async void OnWidgetStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	WidgetService.WidgetStateChanged -= OnWidgetStateChanged;
     }
 }

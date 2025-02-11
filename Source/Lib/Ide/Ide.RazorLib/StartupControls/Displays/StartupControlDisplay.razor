@@ -42,9 +42,11 @@
                 title="Start without debugging:  @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
             
             @{
+            	var appOptionsState = AppOptionsService.GetAppOptionsState();
+            
             	var iconDriver = new IconDriver(
-					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+					appOptionsState.Options.IconSizeInPixels,
+					appOptionsState.Options.IconSizeInPixels);
             }
             
             @if (isExecuting)

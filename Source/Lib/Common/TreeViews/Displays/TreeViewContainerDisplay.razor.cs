@@ -1,10 +1,7 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
-using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -18,10 +15,8 @@ namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 /// TODO: SphagettiCode - The context menu logic feels scuffed. A field is used to track the
 /// "_mostRecentContextMenuEvent". This feels quite wrong and should be looked into. (2023-09-19)
 /// </summary>
-public partial class TreeViewContainerDisplay : FluxorComponent
+public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 {
-    [Inject]
-    private IStateSelection<TreeViewState, TreeViewContainer?> TreeViewStateSelection { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
@@ -52,10 +47,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
     protected override void OnInitialized()
     {
-        TreeViewStateSelection
-            .Select(treeViewContainer => treeViewContainer.ContainerList
-                .FirstOrDefault(x => x.Key == TreeViewContainerKey));
-
+        TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
         base.OnInitialized();
     }
 
@@ -116,7 +108,7 @@ public partial class TreeViewContainerDisplay : FluxorComponent
         if (treeViewContainerKey == Key<TreeViewContainer>.Empty || mouseEventArgs is null)
             return;
 
-        var treeViewContainer = TreeViewStateSelection.Value;
+        var treeViewContainer = TreeViewService.GetTreeViewContainer(TreeViewContainerKey);
         // Validate that the treeViewContainer did not change out from under us
         if (treeViewContainer is null || treeViewContainer.Key != treeViewContainerKey)
             return;
@@ -225,5 +217,15 @@ public partial class TreeViewContainerDisplay : FluxorComponent
             $"top: {_treeViewContextMenuCommandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
 
         return $"{left} {top}";
+    }
+    
+    public async void OnTreeViewStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

@@ -1,11 +1,8 @@
-@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Dynamics.Models
 @using Luthetus.Common.RazorLib.Notifications.Models;
 @using System.Collections.Immutable;
 
-@inherits FluxorComponent
-
-@{ var notificationState = NotificationStateWrap.Value; }
+@{ var notificationState = NotificationService.GetNotificationState(); }
 
 <div class="luth_web_notifications-view">
     <div class="luth_web_notifications-view-tabs">

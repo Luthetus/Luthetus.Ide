@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -31,14 +30,14 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
     public DynamicViewModelAdapterTextEditor(
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService,
-        IDispatcher dispatcher,
+        IPanelService panelService,
         IDialogService dialogService,
         IJSRuntime jsRuntime)
     {
         ViewModelKey = viewModelKey;
 
         TextEditorService = textEditorService;
-        Dispatcher = dispatcher;
+        PanelService = panelService;
         DialogService = dialogService;
         JsRuntime = jsRuntime;
 
@@ -59,7 +58,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
     }
 
     public ITextEditorService TextEditorService { get; }
-    public IDispatcher Dispatcher { get; }
+    public IPanelService PanelService { get; }
     public IDialogService DialogService { get; }
     public IJSRuntime JsRuntime { get; }
 
@@ -313,7 +312,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                 TabGroup = null;
             }
 
-            Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(
+            PanelService.ReduceRegisterPanelTabAction(
                 panelDropzone.PanelGroupKey,
                 new Panel(
                     Title,
@@ -328,10 +327,10 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                             ViewModelKey
                         },
                     },
-                    Dispatcher,
+                    PanelService,
                     DialogService,
                     JsRuntime),
-                true));
+                true);
 
             return Task.CompletedTask;
         }

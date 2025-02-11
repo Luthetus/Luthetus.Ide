@@ -1,22 +1,18 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Fluxor;
-using Luthetus.Common.RazorLib.Reflectives.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reflectives.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.Reflectives.Displays;
 
 public partial class ReflectiveDisplay : ComponentBase
 {
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IReflectiveService ReflectiveService { get; set; } = null!;
     [Inject]
-    private IStateSelection<ReflectiveState, ReflectiveModel?> ReflectiveStateSelection { get; set; } = null!;
-    [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<ReflectiveModel> ReflectiveModelKey { get; set; }
@@ -28,15 +24,6 @@ public partial class ReflectiveDisplay : ComponentBase
     private ErrorBoundary _errorBoundaryComponent = null!;
     private ElementReference _selectElementReference;
     private int _chosenComponentChangeCounter;
-
-    protected override void OnInitialized()
-    {
-        ReflectiveStateSelection
-            .Select(x => x.ReflectiveModelList
-                .FirstOrDefault(y => y.Key == ReflectiveModelKey));
-
-        base.OnInitialized();
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -55,7 +42,7 @@ public partial class ReflectiveDisplay : ComponentBase
 
     private void OnSelectChanged(ChangeEventArgs changeEventArgs)
     {
-        var model = ReflectiveStateSelection.Value;
+        var model = ReflectiveService.GetReflectiveModel(ReflectiveModelKey);
 
         if (model is null)
             return;
@@ -67,20 +54,20 @@ public partial class ReflectiveDisplay : ComponentBase
 
     private void WrapRecover()
     {
-        var displayState = ReflectiveStateSelection.Value;
+        var displayState = ReflectiveService.GetReflectiveModel(ReflectiveModelKey);
 
         if (displayState is null)
             return;
 
-        Dispatcher.Dispatch(new ReflectiveState.WithAction(
-            displayState.Key, inDisplayState => inDisplayState with { }));
+        ReflectiveService.ReduceWithAction(
+            displayState.Key, inDisplayState => inDisplayState with { });
 
         _errorBoundaryComponent.Recover();
     }
 
     private void DispatchDisposeAction(ReflectiveModel reflectiveModel)
     {
-        Dispatcher.Dispatch(new ReflectiveState.DisposeAction(reflectiveModel.Key));
+        ReflectiveService.ReduceDisposeAction(reflectiveModel.Key);
     }
 
     private void DispatchRegisterAction(int insertionIndex)
@@ -92,9 +79,9 @@ public partial class ReflectiveDisplay : ComponentBase
                 Guid.Empty,
                 Array.Empty<PropertyInfo>(),
                 new(),
-                Dispatcher);
+                ReflectiveService);
 
-        Dispatcher.Dispatch(new ReflectiveState.RegisterAction(model, insertionIndex));
+        ReflectiveService.ReduceRegisterAction(model, insertionIndex);
     }
 
     private bool GetIsOptionSelected(ReflectiveModel model, Guid typeGuid)

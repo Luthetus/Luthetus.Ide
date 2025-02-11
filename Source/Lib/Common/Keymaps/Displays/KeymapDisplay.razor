@@ -1,4 +1,4 @@
-﻿@using System.Text;
+@using System.Text;
 
 <div class="luth_ide_keymap">
     @{
@@ -164,7 +164,7 @@
                     </td>
 
                     @{
-                        var keymapState = KeymapStateWrap.Value;
+                        var keymapState = KeymapService.GetKeymapState();
                         var keymapLayer = keymapState.KeymapLayerList.FirstOrDefault(x => x.Key == keymapArgs.LayerKey);
                     }
 

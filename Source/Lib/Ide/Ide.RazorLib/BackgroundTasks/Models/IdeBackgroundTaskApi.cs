@@ -1,11 +1,13 @@
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -33,6 +35,8 @@ public class IdeBackgroundTaskApi
     private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
 	private readonly IDialogService _dialogService;
+	private readonly IPanelService _panelService;
+	private readonly INotificationService _notificationService;
 	private readonly IJSRuntime _jsRuntime;
 
     public IdeBackgroundTaskApi(
@@ -49,6 +53,8 @@ public class IdeBackgroundTaskApi
         IState<TerminalState> terminalStateWrap,
         IDecorationMapperRegistry decorationMapperRegistry,
         IDialogService dialogService,
+        IPanelService panelService,
+        INotificationService notificationService,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
@@ -65,6 +71,8 @@ public class IdeBackgroundTaskApi
         _terminalStateWrap = terminalStateWrap;
 		_decorationMapperRegistry = decorationMapperRegistry;
 		_dialogService = dialogService;
+		_panelService = panelService;
+		_notificationService = notificationService;
 		_jsRuntime = jsRuntime;
 
         Editor = new EditorIdeApi(
@@ -78,6 +86,8 @@ public class IdeBackgroundTaskApi
             _decorationMapperRegistry,
             _compilerServiceRegistry,
             _dialogService,
+            _panelService,
+            _notificationService,
             _dispatcher,
             _jsRuntime,
             serviceProvider);
@@ -87,7 +97,7 @@ public class IdeBackgroundTaskApi
             _fileSystemProvider,
             _commonComponentRenderers,
             _backgroundTaskService,
-            _dispatcher);
+            _notificationService);
 
         FolderExplorer = new FolderExplorerIdeApi(
             this,

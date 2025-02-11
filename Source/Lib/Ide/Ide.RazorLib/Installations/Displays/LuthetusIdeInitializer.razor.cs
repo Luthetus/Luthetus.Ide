@@ -2,18 +2,17 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Themes.States;
+using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -38,13 +37,15 @@ namespace Luthetus.Ide.RazorLib.Installations.Displays;
 public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
-    private IState<PanelState> PanelStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
+    [Inject]
+    private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
@@ -57,6 +58,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private IThemeService ThemeService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
@@ -74,7 +77,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 {
                     foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                     {
-                        Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
+                        ThemeService.ReduceRegisterAction(themeRecord);
                     }
                 }
 
@@ -88,7 +91,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 
                 Dispatcher.Dispatch(new CodeSearchState.InitializeResizeHandleDimensionUnitAction(
 					new DimensionUnit(
-						() => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+						() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
 						DimensionUnitKind.Pixels,
 						DimensionOperatorKind.Subtract,
 						DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)));
@@ -119,44 +122,44 @@ public partial class LuthetusIdeInitializer : ComponentBase
 	{
 		// Left
 		{
-			var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
-        	leftPanel.Dispatcher = Dispatcher;
+			var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelService.GetPanelState());
+        	leftPanel.PanelService = PanelService;
 		
-			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
+			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
 				leftPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
-					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
+					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 		}
 		
 		// Right
 		{
-			var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelStateWrap.Value);
-        	rightPanel.Dispatcher = Dispatcher;
+			var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelService.GetPanelState());
+        	rightPanel.PanelService = PanelService;
 		
-			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
+			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
 				rightPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
-					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
+					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 		}
 		
 		// Bottom
 		{
-			var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelStateWrap.Value);
-        	bottomPanel.Dispatcher = Dispatcher;
+			var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState());
+        	bottomPanel.PanelService = PanelService;
 		
-			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
+			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
 				bottomPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
-					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)));
+					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
 		}
 	}
 
@@ -169,8 +172,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
-        leftPanel.Dispatcher = Dispatcher;
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelService.GetPanelState());
+        leftPanel.PanelService = PanelService;
 
         // folderExplorerPanel
         var folderExplorerPanel = new Panel(
@@ -180,26 +183,26 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			ContextFacts.FolderExplorerContext.ContextKey,
             typeof(FolderExplorerDisplay),
 			null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(folderExplorerPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false));
+        PanelService.ReduceRegisterPanelAction(folderExplorerPanel);
+        PanelService.ReduceRegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false);
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(leftPanel.Key, folderExplorerPanel.Key));
+        PanelService.ReduceSetActivePanelTabAction(leftPanel.Key, folderExplorerPanel.Key);
     }
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelStateWrap.Value);
-        rightPanel.Dispatcher = Dispatcher;
+        var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelService.GetPanelState());
+        rightPanel.PanelService = PanelService;
     }
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelStateWrap.Value);
-        bottomPanel.Dispatcher = Dispatcher;
+        var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState());
+        bottomPanel.PanelService = PanelService;
 
         // terminalGroupPanel
         var terminalGroupPanel = new Panel(
@@ -209,15 +212,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			ContextFacts.TerminalContext.ContextKey,
             typeof(TerminalGroupDisplay),
             null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(terminalGroupPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
+        PanelService.ReduceRegisterPanelAction(terminalGroupPanel);
+        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false);
 		// This UI has resizable parts that need to be initialized.
         Dispatcher.Dispatch(new TerminalGroupState.InitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
-            	() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
             	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
@@ -230,14 +233,14 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			ContextFacts.ActiveContextsContext.ContextKey,
             typeof(ContextsPanelDisplay),
             null,
-            Dispatcher,
+            PanelService,
             DialogService,
             JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(activeContextsPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false));
+        PanelService.ReduceRegisterPanelAction(activeContextsPanel);
+        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false);
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key));
+        PanelService.ReduceSetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key);
     }
     
     private void AddGeneralTerminal()
@@ -257,11 +260,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							TextEditorService,
 							CompilerServiceRegistry,
 							DialogService,
-						       JsRuntime,
-							Dispatcher)),
+						    PanelService,
+							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher)
+					NotificationService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
 				}));
@@ -280,11 +283,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							TextEditorService,
 							CompilerServiceRegistry,
 							DialogService,
-						    JsRuntime,
-							Dispatcher)),
+						    PanelService,
+							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher)
+					Dispatcher,
+					NotificationService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
 				}));
@@ -308,11 +312,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							TextEditorService,
 							CompilerServiceRegistry,
 							DialogService,
-	 				       JsRuntime,
-							Dispatcher)),
+	 				       PanelService,
+							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher)
+					NotificationService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
 				}));
@@ -331,11 +335,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							TextEditorService,
 							CompilerServiceRegistry,
 							DialogService,
-	 				       JsRuntime,
-							Dispatcher)),
+	 				       PanelService,
+							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher)
+					Dispatcher,
+					NotificationService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
 				}));

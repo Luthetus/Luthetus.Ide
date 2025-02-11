@@ -1,9 +1,11 @@
 <div>
 
 	@{
+		var appOptionsState = AppOptionsService.GetAppOptionsState();
+	
 		var iconDriver = new IconDriver(
-			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
 	}
 
     @IconPackageFragment.Render(iconDriver)

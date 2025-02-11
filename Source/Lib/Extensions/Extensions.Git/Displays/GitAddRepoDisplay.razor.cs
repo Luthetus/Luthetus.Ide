@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Extensions.Git.Models;
@@ -23,11 +23,13 @@ public partial class GitAddRepoDisplay : ComponentBase
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
+    [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog Dialog { get; set; } = null!;
@@ -61,7 +63,7 @@ public partial class GitAddRepoDisplay : ComponentBase
                                 $"ERROR: {nameof(RequestInputFileForGitFolder)}",
                                 "'.git' folder did not have a parent directory.",
                                 CommonComponentRenderers,
-                                Dispatcher,
+                                NotificationService,
                                 TimeSpan.FromSeconds(10));
                             return;
                         }

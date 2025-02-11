@@ -1,14 +1,12 @@
-﻿using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.Options.States;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.Icons.Models;
 
-public class IconBase : FluxorComponent
+public class IconBase : ComponentBase
 {
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [CascadingParameter(Name = "LuthetusCommonIconWidthOverride")]
     public int? LuthetusCommonIconWidthOverride { get; set; }
@@ -19,8 +17,8 @@ public class IconBase : FluxorComponent
     public string CssStyleString { get; set; } = string.Empty;
 
     public int WidthInPixels => LuthetusCommonIconWidthOverride ??
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels;
+        AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels;
 
     public int HeightInPixels => LuthetusCommonIconHeightOverride ??
-        AppOptionsStateWrap.Value.Options.IconSizeInPixels;
+        AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels;
 }

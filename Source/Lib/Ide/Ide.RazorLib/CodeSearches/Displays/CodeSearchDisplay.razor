@@ -6,7 +6,10 @@
 @using Luthetus.Ide.RazorLib.CodeSearches.States;
 @inherits FluxorComponent
 
-@{ var codeSearchState = CodeSearchStateWrap.Value; }
+@{
+	var codeSearchState = CodeSearchStateWrap.Value;
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
+}
 
 <div class="luth_ide_find-all">
 
@@ -44,8 +47,8 @@
 
         <div>Results: @($"{codeSearchState.ResultList.Count:N0}")</div>
         
-        <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-            <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+        <CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+            <CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
                 <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
                     <TreeViewContainerDisplay TreeViewContainerKey="CodeSearchState.TreeViewCodeSearchContainerKey"
                                               CssStyleString="height: 100%;"

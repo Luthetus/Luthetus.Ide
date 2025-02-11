@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
-using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -11,7 +10,7 @@ namespace Luthetus.Common.RazorLib.Dropdowns.Models;
 public static class DropdownHelper
 {
 	public static Task RenderDropdownAsync(
-		IDispatcher dispatcher,
+		IDropdownService dropdownService,
 		LuthetusCommonJavaScriptInteropApi luthetusCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -21,7 +20,7 @@ public static class DropdownHelper
 		bool preventScroll)
 	{
 		return RenderDropdownAsync(
-			dispatcher,
+			dropdownService,
 			luthetusCommonJavaScriptInteropApi,
 			anchorHtmlElementId,
 			dropdownOrientation,
@@ -45,7 +44,7 @@ public static class DropdownHelper
 	}
 
 	public static Task RenderDropdownAsync(
-		IDispatcher dispatcher,
+		IDropdownService dropdownService,
 		LuthetusCommonJavaScriptInteropApi luthetusCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -54,7 +53,7 @@ public static class DropdownHelper
 		ElementReference? elementReferenceForReturnFocus)
 	{
 		return RenderDropdownAsync(
-			dispatcher,
+			dropdownService,
 			luthetusCommonJavaScriptInteropApi,
 			anchorHtmlElementId,
 			dropdownOrientation,
@@ -81,7 +80,7 @@ public static class DropdownHelper
 	}
 	
 	public static async Task RenderDropdownAsync(
-		IDispatcher dispatcher,
+		IDropdownService dropdownService,
 		LuthetusCommonJavaScriptInteropApi luthetusCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -115,6 +114,6 @@ public static class DropdownHelper
 			},
 			restoreFocusOnClose);
 
-        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        dropdownService.ReduceRegisterAction(dropdownRecord);
 	}
 }

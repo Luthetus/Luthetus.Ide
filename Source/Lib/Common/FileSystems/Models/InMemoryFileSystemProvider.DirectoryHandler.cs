@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 
@@ -13,18 +12,18 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
         private readonly ICommonComponentRenderers _commonComponentRenderers;
-        private readonly IDispatcher _dispatcher;
+        private readonly INotificationService _notificationService;
 
         public InMemoryDirectoryHandler(
             InMemoryFileSystemProvider inMemoryFileSystemProvider,
             IEnvironmentProvider environmentProvider,
             ICommonComponentRenderers commonComponentRenderers,
-            IDispatcher dispatcher)
+            INotificationService notificationService)
         {
             _inMemoryFileSystemProvider = inMemoryFileSystemProvider;
             _environmentProvider = environmentProvider;
             _commonComponentRenderers = commonComponentRenderers;
-            _dispatcher = dispatcher;
+            _notificationService = notificationService;
         }
 
         public Task<bool> ExistsAsync(
@@ -421,7 +420,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 title,
                 exception.ToString(),
                 _commonComponentRenderers,
-                _dispatcher,
+                _notificationService,
                 TimeSpan.FromSeconds(10));
         }
     }

@@ -51,19 +51,19 @@ public class TreeViewKeyboardEventHandler
         switch (commandArgs.KeyboardEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                TreeViewService.MoveLeft(
+                TreeViewService.ReduceMoveLeftAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                TreeViewService.MoveDown(
+                TreeViewService.ReduceMoveDownAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                TreeViewService.MoveUp(
+                TreeViewService.ReduceMoveUpAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
@@ -75,13 +75,13 @@ public class TreeViewKeyboardEventHandler
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.HOME:
-                TreeViewService.MoveHome(
+                TreeViewService.ReduceMoveHomeAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.END:
-                TreeViewService.MoveEnd(
+                TreeViewService.ReduceMoveEndAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);

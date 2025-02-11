@@ -29,6 +29,7 @@ public class GitIdeApi
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly INotificationService _notificationService;
     private readonly IDispatcher _dispatcher;
 
     public GitIdeApi(
@@ -40,6 +41,7 @@ public class GitIdeApi
 		IEnvironmentProvider environmentProvider,
 		IBackgroundTaskService backgroundTaskService,
         ICommonComponentRenderers commonComponentRenderers,
+        INotificationService notificationService,
         IDispatcher dispatcher)
     {
     	_gitBackgroundTaskApi = gitBackgroundTaskApi;
@@ -50,6 +52,7 @@ public class GitIdeApi
 		_environmentProvider = environmentProvider;
 		_backgroundTaskService = backgroundTaskService;
         _commonComponentRenderers = commonComponentRenderers;
+        _notificationService = notificationService;
         _dispatcher = dispatcher;
     }
 
@@ -340,7 +343,7 @@ public class GitIdeApi
 							"Git: committed",
 	                        commitSummary,
 							_commonComponentRenderers,
-							_dispatcher,
+							_notificationService,
 							TimeSpan.FromSeconds(5));
 	
 						return Task.CompletedTask;
@@ -355,7 +358,7 @@ public class GitIdeApi
     public void BranchNewEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
     {
         if (string.IsNullOrWhiteSpace(branchName))
-            NotificationHelper.DispatchError(nameof(BranchNewEnqueue), "branchName was null or whitespace", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
+            NotificationHelper.DispatchError(nameof(BranchNewEnqueue), "branchName was null or whitespace", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(6));
 
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),

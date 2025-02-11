@@ -6,6 +6,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -32,23 +33,23 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDialogService _dialogService;
+	private readonly IPanelService _panelService;
 	private readonly IJSRuntime _jsRuntime;
-	private readonly IDispatcher _dispatcher;
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
 		ITextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDialogService dialogService,
-        IJSRuntime jsRuntime,
-		IDispatcher dispatcher)
+		IPanelService panelService,
+        IJSRuntime jsRuntime)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_dialogService = dialogService;
+		_panelService = panelService;
 		_jsRuntime = jsRuntime;
-		_dispatcher = dispatcher;
 		
 		TextEditorModelResourceUri = new(
 			ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Id.ToString());
@@ -144,7 +145,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             TextEditorViewModelKey,
             TextEditorModelResourceUri,
             _textEditorService,
-            _dispatcher,
+            _panelService,
             _dialogService,
             _jsRuntime,
             VirtualizationGrid.Empty,
