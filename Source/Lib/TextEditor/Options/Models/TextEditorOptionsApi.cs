@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -24,7 +23,6 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private readonly IDialogService _dialogService;
     private readonly IContextService _contextService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
-    private readonly IDispatcher _dispatcher;
 
     public TextEditorOptionsApi(
         ITextEditorService textEditorService,
@@ -32,8 +30,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         IStorageService storageService,
         IDialogService dialogService,
         IContextService contextService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
-        IDispatcher dispatcher)
+        CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
@@ -41,7 +38,6 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         _dialogService = dialogService;
         _contextService = contextService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _dispatcher = dispatcher;
     }
     
     private TextEditorOptionsState _textEditorOptionsState = new();

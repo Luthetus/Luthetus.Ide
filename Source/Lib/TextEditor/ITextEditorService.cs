@@ -1,5 +1,4 @@
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -86,7 +85,6 @@ public partial interface ITextEditorService
 	    ResourceUri resourceUri,
 	    Category category,
 	    ITextEditorService textEditorService,
-	    IDispatcher dispatcher,
 	    IDialogService dialogService,
 	    IJSRuntime jsRuntime);
 	

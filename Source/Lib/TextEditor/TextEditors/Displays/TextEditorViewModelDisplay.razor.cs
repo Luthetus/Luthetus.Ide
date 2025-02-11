@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
@@ -44,7 +43,6 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Drags.Models;
@@ -76,8 +74,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 {
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    public IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
@@ -304,7 +300,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			ViewModelDisplayOptions,
 			_currentRenderBatch.Options,
 			this,
-			Dispatcher,
 			DropdownService,
 			ServiceProvider);
     }

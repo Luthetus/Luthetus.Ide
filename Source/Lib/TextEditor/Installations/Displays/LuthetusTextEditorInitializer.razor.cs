@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -29,8 +28,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 {
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IThemeService ThemeService { get; set; } = null!;
     [Inject]

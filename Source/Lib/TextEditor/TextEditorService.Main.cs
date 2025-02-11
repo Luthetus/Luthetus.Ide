@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -31,7 +30,6 @@ namespace Luthetus.TextEditor.RazorLib;
 public partial class TextEditorService : ITextEditorService
 {
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
@@ -52,7 +50,6 @@ public partial class TextEditorService : ITextEditorService
         IStorageService storageService,
         IJSRuntime jsRuntime,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        IDispatcher dispatcher,
         IPanelService panelService,
         IDialogService dialogService,
         IContextService contextService,
@@ -77,17 +74,16 @@ public partial class TextEditorService : ITextEditorService
 		JsRuntimeTextEditorApi = _jsRuntime.GetLuthetusTextEditorApi();
 		JsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _dispatcher = dispatcher;
         _dialogService = dialogService;
 
 		AutocompleteIndexer = autocompleteIndexer;
 		AutocompleteService = autocompleteService;
 
-        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService, _dispatcher);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dispatcher, _dialogService);
+        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi, _dispatcher);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi);
         
         TextEditorState = new();
     }
@@ -646,7 +642,6 @@ public partial class TextEditorService : ITextEditorService
 	    ResourceUri resourceUri,
 	    Category category,
 	    ITextEditorService textEditorService,
-	    IDispatcher dispatcher,
 	    IDialogService dialogService,
 	    IJSRuntime jsRuntime)
 	{

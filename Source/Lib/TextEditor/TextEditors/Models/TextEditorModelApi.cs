@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -16,18 +15,15 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     private readonly ITextEditorService _textEditorService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
 
     public TextEditorModelApi(
         ITextEditorService textEditorService,
         ITextEditorRegistryWrap textEditorRegistryWrap,
-        IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+        IBackgroundTaskService backgroundTaskService)
     {
         _textEditorService = textEditorService;
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _backgroundTaskService = backgroundTaskService;
-        _dispatcher = dispatcher;
     }
 
     #region CREATE_METHODS
