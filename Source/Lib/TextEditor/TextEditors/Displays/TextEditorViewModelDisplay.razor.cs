@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -83,6 +84,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     public ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    public IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
     public IAutocompleteIndexer AutocompleteIndexer { get; set; } = null!;
     [Inject]

@@ -20,7 +20,7 @@ using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Edits.States;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -36,6 +36,7 @@ public partial class TextEditorService : ITextEditorService
     private readonly IDispatcher _dispatcher;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
+    private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
@@ -48,6 +49,7 @@ public partial class TextEditorService : ITextEditorService
         IState<TextEditorDiffState> diffStateWrap,
         IState<TextEditorOptionsState> optionsStateWrap,
         IFindAllService findAllService,
+        IDirtyResourceUriService dirtyResourceUriService,
         IThemeService themeService,
         IBackgroundTaskService backgroundTaskService,
         LuthetusTextEditorConfig textEditorConfig,
@@ -73,6 +75,7 @@ public partial class TextEditorService : ITextEditorService
 		_serviceProvider = serviceProvider;
 
         FindAllService = findAllService;
+        _dirtyResourceUriService = dirtyResourceUriService;
         ThemeService = themeService;
         _backgroundTaskService = backgroundTaskService;
         TextEditorConfig = textEditorConfig;
@@ -159,9 +162,9 @@ public partial class TextEditorService : ITextEditorService
 	            if (modelModifier.WasDirty != modelModifier.IsDirty)
 	            {
 	                if (modelModifier.IsDirty)
-	                    _dispatcher.Dispatch(new DirtyResourceUriState.AddDirtyResourceUriAction(modelModifier.ResourceUri));
+	                    _dirtyResourceUriService.ReduceAddDirtyResourceUriAction(modelModifier.ResourceUri);
 	                else
-	                    _dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(modelModifier.ResourceUri));
+	                    _dirtyResourceUriService.ReduceRemoveDirtyResourceUriAction(modelModifier.ResourceUri);
 	            }
 	        }
 		}
