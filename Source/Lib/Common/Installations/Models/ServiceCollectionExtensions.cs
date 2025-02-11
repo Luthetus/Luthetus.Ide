@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
@@ -66,7 +67,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IContextService, ContextService>()
             .AddScoped<IOutlineService, OutlineService>()
             .AddScoped<IPanelService, PanelService>()
-            .AddScoped<IAppDimensionService, AppDimensionService>();
+            .AddScoped<IAppDimensionService, AppDimensionService>()
+            .AddScoped<IKeymapService, KeymapService>();
 
         return services;
     }

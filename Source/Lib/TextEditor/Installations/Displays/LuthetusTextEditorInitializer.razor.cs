@@ -8,7 +8,7 @@ using Luthetus.Common.RazorLib.Installations.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Keymaps.States;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
@@ -38,6 +38,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IContextService ContextService { get; set; } = null!;
+    [Inject]
+    private IKeymapService KeymapService { get; set; } = null!;
 	[Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -132,7 +134,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 							return Task.FromResult(menu);
 						}));
 
-                Dispatcher.Dispatch(new KeymapState.RegisterKeymapLayerAction(TextEditorKeymapDefaultFacts.HasSelectionLayer));
+                KeymapService.ReduceRegisterKeymapLayerAction(TextEditorKeymapDefaultFacts.HasSelectionLayer);
             });
             
         base.OnInitialized();
