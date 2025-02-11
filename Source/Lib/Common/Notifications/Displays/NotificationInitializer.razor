@@ -1,8 +1,7 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 @using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Common.RazorLib.Contexts.Displays
 
-@{ var notificationState = NotificationStateWrap.Value; }
+@{ var notificationState = NotificationService.GetNotificationState(); }
 
 <ContextBoundary @ref="_notificationContextBoundary"
 				 ContextRecord="ContextFacts.NotificationContext"

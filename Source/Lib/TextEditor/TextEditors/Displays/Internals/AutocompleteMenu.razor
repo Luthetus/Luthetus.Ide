@@ -5,9 +5,11 @@
 
 @if (renderBatch is not null)
 {
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
+
 	var iconDriver = new IconDriver(
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+		appOptionsState.Options.IconSizeInPixels,
+		appOptionsState.Options.IconSizeInPixels);
 
 	<div @ref="_autocompleteMenuElementReference"
 	     tab-index="-1"

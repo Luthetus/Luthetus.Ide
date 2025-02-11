@@ -5,9 +5,11 @@
 @if (renderBatchLocal is not null &&
 	 renderBatchLocal.ViewModel.ShowFindOverlay)
 {
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
+
 	var iconDriver = new IconDriver(
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+		appOptionsState.Options.IconSizeInPixels,
+		appOptionsState.Options.IconSizeInPixels);
 
 	<div class="luth_te_find-overlay"
          @onmousedown:stopPropagation="true"

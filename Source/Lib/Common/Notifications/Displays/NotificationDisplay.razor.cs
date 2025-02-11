@@ -1,10 +1,9 @@
 using System.Text;
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Htmls.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -16,11 +15,11 @@ namespace Luthetus.Common.RazorLib.Notifications.Displays;
 public partial class NotificationDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -48,7 +47,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private string CssStyleString => GetCssStyleString();
 
     private string IconSizeInPixelsCssValue =>
-        $"{AppOptionsStateWrap.Value.Options.IconSizeInPixels.ToCssValue()}";
+        $"{AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
 
     private string NotificationTitleCssStyleString =>
         "width: calc(100% -" +
@@ -57,12 +56,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
 
-    private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void AppOptionsStateWrapOnStateChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
@@ -161,12 +160,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private void DeleteNotification()
     {
-        Dispatcher.Dispatch(new NotificationState.MakeDeletedAction(Notification.DynamicViewModelKey));
+        NotificationService.ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
     }
 
     private void MarkNotificationAsRead()
     {
-        Dispatcher.Dispatch(new NotificationState.MakeReadAction(Notification.DynamicViewModelKey));
+        NotificationService.ReduceMakeReadAction(Notification.DynamicViewModelKey);
     }
 
     private Task ChangeNotificationToDialog()
@@ -199,6 +198,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     {
         _notificationOverlayCancellationTokenSource.Cancel();
 
-        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

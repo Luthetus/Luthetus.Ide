@@ -133,6 +133,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
 		var commonComponentRenderers = serviceProvider.GetRequiredService<ICommonComponentRenderers>();
 		var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
+		var notificationService = serviceProvider.GetRequiredService<INotificationService>();
 
 		var projectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectResource.ResourceUri.Value, false);
 
@@ -150,7 +151,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 			"SolutionVisualizationDrawing",
 			$"{projectAbsolutePath.NameWithExtension} discovery {discoveredFileList.Count} C# files",
 			commonComponentRenderers,
-			dispatcher,
+			notificationService,
 			TimeSpan.FromSeconds(6));
 
 		foreach (var file in discoveredFileList)

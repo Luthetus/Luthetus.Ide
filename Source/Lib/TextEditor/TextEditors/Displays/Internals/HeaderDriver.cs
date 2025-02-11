@@ -8,7 +8,6 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -287,7 +286,7 @@ public class HeaderDriver
 		    MenuOptionKind.Read,
 		    onClickFunc: () =>
 		    {
-			    _root.Dispatcher.Dispatch(new DropdownState.DisposeAction(dropdownKey));
+			    _root.DropdownService.ReduceDisposeAction(dropdownKey);
 		    	return Task.CompletedTask;
 		    }));
 		    
@@ -324,7 +323,7 @@ public class HeaderDriver
 			},
 			async () => await _root.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
 
-        _root.Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        _root.DropdownService.ReduceRegisterAction(dropdownRecord);
     }
 
     public void ShowWatchWindowDisplayDialogOnClick()

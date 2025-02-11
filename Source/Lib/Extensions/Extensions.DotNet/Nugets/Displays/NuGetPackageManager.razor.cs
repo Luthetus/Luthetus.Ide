@@ -4,7 +4,6 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.States;
@@ -19,8 +18,6 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 	private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]

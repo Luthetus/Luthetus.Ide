@@ -1,8 +1,6 @@
-@using Fluxor.Blazor.Web.Components;
-@inherits FluxorComponent
 
 @{
-	var notificationState = NotificationStateWrap.Value;
+	var notificationState = NotificationService.GetNotificationState();
 	var iconBadgeIsActive = notificationState.DefaultList.Count > 0;
 	var showIconBadgeCssClassString = iconBadgeIsActive ? "luth_active" : "";
 }

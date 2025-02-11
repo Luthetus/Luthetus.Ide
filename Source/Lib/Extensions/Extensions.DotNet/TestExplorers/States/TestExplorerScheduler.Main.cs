@@ -1,6 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 using Luthetus.Common.RazorLib.Reactives.Models;
@@ -23,6 +24,7 @@ public partial class TestExplorerScheduler : IStateScheduler
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
+    private readonly INotificationService _notificationService;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly IState<TerminalState> _terminalStateWrap;
@@ -39,6 +41,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         ITextEditorService textEditorService,
+        INotificationService notificationService,
         IBackgroundTaskService backgroundTaskService,
         IFileSystemProvider fileSystemProvider,
         DotNetCliOutputParser dotNetCliOutputParser,
@@ -52,6 +55,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
 		_textEditorService = textEditorService;
+		_notificationService = notificationService;
 		_backgroundTaskService = backgroundTaskService;
 		_fileSystemProvider = fileSystemProvider;
 		_terminalStateWrap = terminalStateWrap;

@@ -3,11 +3,16 @@ using Microsoft.Extensions.Logging;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Outlines.Models;
+using Luthetus.Common.RazorLib.Reflectives.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -61,7 +66,13 @@ public static class ServiceCollectionExtensions
 			})
             .AddScoped<CommonBackgroundTaskApi>()
             .AddScoped<BrowserResizeInterop>()
-            .AddScoped<IContextService, ContextService>();
+            .AddScoped<IContextService, ContextService>()
+            .AddScoped<IOutlineService, OutlineService>()
+            .AddScoped<IPanelService, PanelService>()
+            .AddScoped<IAppDimensionService, AppDimensionService>()
+            .AddScoped<IKeymapService, KeymapService>()
+            .AddScoped<IWidgetService, WidgetService>()
+            .AddScoped<IReflectiveService, ReflectiveService>();
 
         return services;
     }

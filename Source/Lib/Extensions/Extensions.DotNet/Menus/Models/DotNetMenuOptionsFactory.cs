@@ -45,6 +45,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
@@ -65,6 +66,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 								projectNode,
 								terminal,
 								dispatcher,
+								notificationService,
 								onAfterCompletion);
 
 							return Task.CompletedTask;
@@ -77,6 +79,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion)
 	{
@@ -88,6 +91,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 					projectReceivingReference,
 					terminal,
 					dispatcher,
+					notificationService,
 					ideBackgroundTaskApi,
 					onAfterCompletion);
 
@@ -99,6 +103,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove Project Reference", MenuOptionKind.Other,
@@ -109,6 +114,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 						treeViewCSharpProjectToProjectReference,
 						terminal,
 						dispatcher,
+						notificationService,
 						onAfterCompletion);
 
 					return Task.CompletedTask;
@@ -120,6 +126,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewNamespacePath treeViewProjectToMove,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other,
@@ -138,6 +145,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 							nextName,
 							terminal,
 							dispatcher,
+							notificationService,
 							onAfterCompletion);
 
 						return Task.CompletedTask;
@@ -151,6 +159,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove NuGet Package Reference", MenuOptionKind.Other,
@@ -161,6 +170,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 					treeViewCSharpProjectNugetPackageReference,
 					terminal,
 					dispatcher,
+					notificationService,
 					onAfterCompletion);
 
 				return Task.CompletedTask;
@@ -172,6 +182,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
 		_backgroundTaskService.Enqueue(
@@ -202,6 +213,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion)
 	{
@@ -222,7 +234,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};
@@ -250,6 +262,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
 		_backgroundTaskService.Enqueue(
@@ -268,7 +281,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};
@@ -284,6 +297,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		string solutionFolderPath,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
 		_backgroundTaskService.Enqueue(
@@ -303,7 +317,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};
@@ -313,6 +327,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 					treeViewProjectToMove,
 					terminal,
 					dispatcher,
+					notificationService,
 					() =>
 					{
 						terminal.EnqueueCommand(terminalCommandRequest);
@@ -328,6 +343,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
 		IDispatcher dispatcher,
+		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
 		_backgroundTaskService.Enqueue(
@@ -346,7 +362,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};

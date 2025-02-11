@@ -1,12 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -18,16 +15,16 @@ namespace Luthetus.Common.RazorLib.WatchWindows.Displays;
 /// tree view? Furthermore, because of this, the Text Editor css classes are not being
 /// set to the correct theme (try a non visual studio clone theme -- it doesn't work). (2023-09-19)
 /// </summary>
-public partial class WatchWindowDisplay : FluxorComponent
+public partial class WatchWindowDisplay : ComponentBase
 {
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
+    [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;
@@ -58,7 +55,7 @@ public partial class WatchWindowDisplay : FluxorComponent
                     false,
                     CommonComponentRenderers);
 
-                TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     rootNode,
                     new() { rootNode }));
@@ -84,22 +81,12 @@ public partial class WatchWindowDisplay : FluxorComponent
 			},
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        DropdownService.ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     
-    protected override ValueTask DisposeAsyncCore(bool disposing)
+    public void Dispose()
 	{
-		if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                TreeViewService.DisposeTreeViewContainer(TreeViewContainerKey);
-            }
-
-            _disposedValue = true;
-        }
-
-        return base.DisposeAsyncCore(disposing);
+		TreeViewService.ReduceDisposeContainerAction(TreeViewContainerKey);
 	}
 }

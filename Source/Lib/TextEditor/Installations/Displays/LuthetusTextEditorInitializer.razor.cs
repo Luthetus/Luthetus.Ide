@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
-using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -9,7 +8,7 @@ using Luthetus.Common.RazorLib.Installations.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Keymaps.States;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
@@ -34,11 +33,13 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private IThemeService ThemeRecordsCollectionService { get; set; } = null!;
+    private IThemeService ThemeService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IContextService ContextService { get; set; } = null!;
+    [Inject]
+    private IKeymapService KeymapService { get; set; } = null!;
 	[Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -71,11 +72,11 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                 {
                     foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                     {
-                        Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
+                        ThemeService.ReduceRegisterAction(themeRecord);
                     }
                 }
 
-                var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+                var initialThemeRecord = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
                     x => x.Key == TextEditorConfig.InitialThemeKey);
 
                 if (initialThemeRecord is not null)
@@ -133,7 +134,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 							return Task.FromResult(menu);
 						}));
 
-                Dispatcher.Dispatch(new KeymapState.RegisterKeymapLayerAction(TextEditorKeymapDefaultFacts.HasSelectionLayer));
+                KeymapService.ReduceRegisterKeymapLayerAction(TextEditorKeymapDefaultFacts.HasSelectionLayer);
             });
             
         base.OnInitialized();

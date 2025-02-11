@@ -1,11 +1,10 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Outlines.States;
+using Luthetus.Common.RazorLib.Outlines.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -14,9 +13,7 @@ public partial class ContextBoundary : ComponentBase
     [Inject]
     private IContextService ContextService { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
-    private IState<OutlineState> OutlineStateWrap { get; set; } = null!;
+    private IOutlineService OutlineService { get; set; } = null!;
 
     [CascadingParameter]
     public ContextBoundary? ParentContextBoundary { get; set; }
@@ -46,18 +43,18 @@ public partial class ContextBoundary : ComponentBase
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
     public void HandleOnFocus()
     {
-    	Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
+    	OutlineService.ReduceSetOutlineAction(
 	    	ContextRecord.ContextElementId,
 	    	null,
-	    	true));
+	    	true);
     }
     
     public void HandleOnBlur()
     {
-    	Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
+    	OutlineService.ReduceSetOutlineAction(
 	    	null,
 	    	null,
-	    	false));
+	    	false);
     }
 
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>

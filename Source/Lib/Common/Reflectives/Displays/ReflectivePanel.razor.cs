@@ -1,6 +1,3 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.Reflectives.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components;
 using System.Reflection;
@@ -8,15 +5,19 @@ using Luthetus.Common.RazorLib.Reflectives.Models;
 
 namespace Luthetus.Common.RazorLib.Reflectives.Displays;
 
-public partial class ReflectivePanel : FluxorComponent
+public partial class ReflectivePanel : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<ReflectiveState> ReflectiveStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private IReflectiveService ReflectiveService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public List<Type> ComponentTypeList { get; set; } = null!;
+    
+    protected override void OnInitialized()
+    {
+    	ReflectiveService.ReflectiveStateChanged += OnReflectiveStateChanged;
+    	base.OnInitialized();
+    }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -29,9 +30,9 @@ public partial class ReflectivePanel : FluxorComponent
                 Guid.Empty,
                 Array.Empty<PropertyInfo>(),
                 new(),
-                Dispatcher);
+                ReflectiveService);
 
-            Dispatcher.Dispatch(new ReflectiveState.RegisterAction(model, 0));
+            ReflectiveService.ReduceRegisterAction(model, 0);
         }
 
         return base.OnAfterRenderAsync(firstRender);
@@ -46,8 +47,18 @@ public partial class ReflectivePanel : FluxorComponent
             Guid.Empty,
             Array.Empty<PropertyInfo>(),
             new(),
-            Dispatcher);
+            ReflectiveService);
 
-        Dispatcher.Dispatch(new ReflectiveState.RegisterAction(model, 0));
+        ReflectiveService.ReduceRegisterAction(model, 0);
+    }
+    
+    public async void OnReflectiveStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	ReflectiveService.ReflectiveStateChanged -= OnReflectiveStateChanged;
     }
 }

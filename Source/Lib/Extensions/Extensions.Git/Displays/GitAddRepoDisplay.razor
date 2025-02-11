@@ -16,10 +16,12 @@
 
         <button class="luth_button"
                 @onclick="RequestInputFileForGitFolder">
-            @{ 
+            @{
+            	var appOptionsState = AppOptionsService.GetAppOptionsState();
+            
             	var iconDriver = new IconDriver(
-            		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-            		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+            		appOptionsState.Options.IconSizeInPixels,
+            		appOptionsState.Options.IconSizeInPixels);
             }
             @IconFolderFragment.Render(iconDriver)
         </button>

@@ -1,16 +1,18 @@
+using System.Collections.Immutable;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.JSInterop;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 
 public class TextEditorGroupApi : ITextEditorGroupApi
 {
     private readonly IDispatcher _dispatcher;
+    private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
     private readonly IJSRuntime _jsRuntime;
     private readonly ITextEditorService _textEditorService;
@@ -18,11 +20,13 @@ public class TextEditorGroupApi : ITextEditorGroupApi
     public TextEditorGroupApi(
         ITextEditorService textEditorService,
         IDispatcher dispatcher,
+        IPanelService panelService,
         IDialogService dialogService,
         IJSRuntime jsRuntime)
     {
         _textEditorService = textEditorService;
         _dispatcher = dispatcher;
+        _panelService = panelService;
         _dialogService = dialogService;
         _jsRuntime = jsRuntime;
     }
@@ -51,7 +55,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
             ImmutableList<Key<TextEditorViewModel>>.Empty,
             category.Value,
             _textEditorService,
-            _dispatcher,
+            _panelService,
             _dialogService,
             _jsRuntime);
 

@@ -17,7 +17,6 @@ public static class ServiceCollectionExtensions
         services.AddLuthetusConfigServices(hostingInformation);
 
         return services.AddFluxor(options => options.ScanAssemblies(
-            typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
             typeof(LuthetusIdeConfig).Assembly,
             typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly,

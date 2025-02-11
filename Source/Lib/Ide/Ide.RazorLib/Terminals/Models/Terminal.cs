@@ -19,6 +19,7 @@ public class Terminal : ITerminal
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly IDispatcher _dispatcher;
+	private readonly INotificationService _notificationService;
 	
 	/// <summary>The TArgs of byte is unused</summary>
 	private readonly ThrottleOptimized<byte> _throttleUiUpdateFromSetHasExecutingProcess;
@@ -30,7 +31,8 @@ public class Terminal : ITerminal
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
 		IBackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
-		IDispatcher dispatcher)
+		IDispatcher dispatcher,
+		INotificationService notificationService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
@@ -40,6 +42,7 @@ public class Terminal : ITerminal
 		_backgroundTaskService = backgroundTaskService;
 		_commonComponentRenderers = commonComponentRenderers;
 		_dispatcher = dispatcher;
+		_notificationService = notificationService;
 		
 		_throttleUiUpdateFromSetHasExecutingProcess = new(
 			DelaySetHasExecutingProcess,
@@ -163,7 +166,7 @@ public class Terminal : ITerminal
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

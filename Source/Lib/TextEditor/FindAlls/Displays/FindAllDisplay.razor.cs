@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Dropdowns.States;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
@@ -19,7 +18,7 @@ public partial class FindAllDisplay : FluxorComponent
 	[Inject]
     private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
     [Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 	[Inject]
@@ -31,6 +30,8 @@ public partial class FindAllDisplay : FluxorComponent
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
+    private IDropdownService DropdownService { get; set; } = null!;
+    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
@@ -41,7 +42,7 @@ public partial class FindAllDisplay : FluxorComponent
 	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private string SearchQuery
     {
@@ -98,7 +99,7 @@ public partial class FindAllDisplay : FluxorComponent
 			},
 			null);
 
-		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		DropdownService.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

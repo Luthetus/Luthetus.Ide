@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
@@ -14,7 +13,7 @@ public partial class InputTextEditorTheme : FluxorComponent
     [Inject]
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<ThemeState> ThemeStateWrap { get; set; } = null!;
+    private IThemeService ThemeService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -23,7 +22,7 @@ public partial class InputTextEditorTheme : FluxorComponent
 
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)
     {
-        var themeList = ThemeStateWrap.Value.ThemeList;
+        var themeList = ThemeService.GetThemeState().ThemeList;
 
         var chosenThemeKeyGuidString = changeEventArgs.Value?.ToString() ?? string.Empty;
 

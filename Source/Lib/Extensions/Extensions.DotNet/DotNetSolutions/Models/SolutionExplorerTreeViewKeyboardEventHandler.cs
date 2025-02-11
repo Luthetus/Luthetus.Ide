@@ -25,6 +25,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITextEditorService _textEditorService;
 	private readonly ITreeViewService _treeViewService;
+	private readonly INotificationService _notificationService;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IDispatcher _dispatcher;
 
@@ -34,6 +35,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			ICommonComponentRenderers commonComponentRenderers,
 			ITextEditorService textEditorService,
 			ITreeViewService treeViewService,
+			INotificationService notificationService,
 			IBackgroundTaskService backgroundTaskService,
 			IEnvironmentProvider environmentProvider,
 			IDispatcher dispatcher)
@@ -44,6 +46,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 		_commonComponentRenderers = commonComponentRenderers;
 		_textEditorService = textEditorService;
 		_treeViewService = treeViewService;
+		_notificationService = notificationService;
 		_environmentProvider = environmentProvider;
 		_dispatcher = dispatcher;
 	}
@@ -123,7 +126,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			treeViewNamespacePath.Item.AbsolutePath,
 			() =>
 			{
-				NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(7));
+				NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
 			});
 
@@ -195,7 +198,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			treeViewNamespacePath.Item.AbsolutePath,
 			() =>
 			{
-				NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(7));
+				NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(7));
 				SolutionExplorerContextMenu.ParentOfCutFile = parent;
 				return Task.CompletedTask;
 			});
@@ -226,11 +229,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		_treeViewService.ReRenderNode(
+		_treeViewService.ReduceReRenderNodeAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			treeViewModel);
 
-		_treeViewService.MoveUp(
+		_treeViewService.ReduceMoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

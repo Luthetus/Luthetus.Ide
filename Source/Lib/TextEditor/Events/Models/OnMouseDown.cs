@@ -55,7 +55,7 @@ public struct OnMouseDown
 			TextEditorCommandDefaultFunctions.RemoveDropdown(
 		        editContext,
 		        viewModelModifier,
-		        ComponentData.Dispatcher);
+		        ComponentData.DropdownService);
 		}
 
         // Remember the current cursor position prior to doing anything

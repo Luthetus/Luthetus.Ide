@@ -1,21 +1,22 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.Notifications.States;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
-public partial class NotificationInitializer : FluxorComponent
+public partial class NotificationInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<NotificationState> NotificationStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private INotificationService NotificationService { get; set; } = null!;
 
-    private bool _disposedValue;
     private ContextBoundary? _notificationContextBoundary;
+    
+    protected override void OnInitialized()
+    {
+    	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
+    	base.OnInitialized();
+    }
     
     private Task HandleOnFocusIn(INotification notification)
     {
@@ -32,23 +33,20 @@ public partial class NotificationInitializer : FluxorComponent
     	return Task.CompletedTask;
     }
     
-    protected override ValueTask DisposeAsyncCore(bool disposing)
+    public async void OnNotificationStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+	
+	public void Dispose()
 	{
-		if (!_disposedValue)
+		NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
+	
+		var notificationState = NotificationService.GetNotificationState();
+
+        foreach (var notification in notificationState.DefaultList)
         {
-            if (disposing)
-            {
-                var notificationState = NotificationStateWrap.Value;
-
-	            foreach (var notification in notificationState.DefaultList)
-	            {
-	                Dispatcher.Dispatch(new NotificationState.DisposeAction(notification.DynamicViewModelKey));
-	            }
-            }
-
-            _disposedValue = true;
+            NotificationService.ReduceDisposeAction(notification.DynamicViewModelKey);
         }
-
-        return base.DisposeAsyncCore(disposing);
 	}
 }

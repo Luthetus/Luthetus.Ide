@@ -49,6 +49,7 @@ public class DotNetSolutionIdeApi
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
+	private readonly INotificationService _notificationService;
 	private readonly IDispatcher _dispatcher;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
@@ -72,6 +73,7 @@ public class DotNetSolutionIdeApi
         IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
 		ITreeViewService treeViewService,
+		INotificationService notificationService,
 		IDispatcher dispatcher,
 		IEnvironmentProvider environmentProvider,
 		IState<DotNetSolutionState> dotNetSolutionStateWrap,
@@ -92,6 +94,7 @@ public class DotNetSolutionIdeApi
         _ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
+		_notificationService = notificationService;
 		_dispatcher = dispatcher;
 		_environmentProvider = environmentProvider;
 		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
@@ -291,7 +294,7 @@ Execution Terminal"));
 			        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
 			        e.ToString(),
 			        _commonComponentRenderers,
-			        _dispatcher,
+			        _notificationService,
 			        TimeSpan.FromSeconds(5));
 			    return Task.CompletedTask;
 			}
@@ -340,7 +343,7 @@ Execution Terminal"));
 				$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 				progressBarModel,
 				_commonComponentRenderers,
-				_dispatcher,
+				_notificationService,
 				TimeSpan.FromMilliseconds(-1));
 				
 			// var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
@@ -591,16 +594,16 @@ Execution Terminal"));
 
 		if (!_treeViewService.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
 		{
-			_treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+			_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				new() { rootNode }));
 		}
 		else
 		{
-			_treeViewService.SetRoot(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
+			_treeViewService.ReduceWithRootNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
 
-			_treeViewService.SetActiveNode(
+			_treeViewService.ReduceSetActiveNodeAction(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				true,

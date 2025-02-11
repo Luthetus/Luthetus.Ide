@@ -9,7 +9,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -42,7 +42,9 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	private INotificationService NotificationService { get; set; } = null!;
+	[Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog DialogRecord { get; set; } = null!;
@@ -174,7 +176,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 		// Close Dialog
 		DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
 
 		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,

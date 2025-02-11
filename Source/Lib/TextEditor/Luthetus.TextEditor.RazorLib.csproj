@@ -21,4 +21,8 @@
         <SupportedPlatform Include="browser" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Fluxor.Blazor.Web" Version="6.0.0" />
+    </ItemGroup>
+
 </Project>

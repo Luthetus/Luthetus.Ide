@@ -1,23 +1,24 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
-using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
-public partial class NotificationsViewDisplay : FluxorComponent
+public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<NotificationState> NotificationStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private INotificationService NotificationService { get; set; } = null!;
     
     private readonly List<INotification> _emptyEntriesToRenderList = new();
     private readonly Action _defaultClearAction = new Action(() => { });
 
     private NotificationsViewKind _chosenNotificationsViewKind = NotificationsViewKind.Notifications;
+
+	protected override void OnInitialized()
+    {
+    	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
+    	base.OnInitialized();
+    }
 
     private string GetIsActiveCssClass(
         NotificationsViewKind chosenNotificationsViewKind,
@@ -30,21 +31,31 @@ public partial class NotificationsViewDisplay : FluxorComponent
 
     private void Clear()
     {
-        Dispatcher.Dispatch(new NotificationState.ClearDefaultAction());
+        NotificationService.ReduceClearDefaultAction();
     }
 
     private void ClearRead()
     {
-        Dispatcher.Dispatch(new NotificationState.ClearReadAction());
+        NotificationService.ReduceClearReadAction();
     }
 
     private void ClearDeleted()
     {
-        Dispatcher.Dispatch(new NotificationState.ClearDeletedAction());
+        NotificationService.ReduceClearDeletedAction();
     }
 
     private void ClearArchived()
     {
-        Dispatcher.Dispatch(new NotificationState.ClearArchivedAction());
+        NotificationService.ReduceClearArchivedAction();
     }
+    
+    public async void OnNotificationStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+	
+	public void Dispose()
+	{
+		NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
+	}
 }

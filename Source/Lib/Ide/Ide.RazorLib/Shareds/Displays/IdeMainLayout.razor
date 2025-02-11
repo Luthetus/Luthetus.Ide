@@ -43,7 +43,7 @@
                 <IdeBody BodyElementDimensions="_bodyElementDimensions" />
 
                 <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                              BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelStateWrap.Value).ElementDimensions"
+                              BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
                               ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
 
                 <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
