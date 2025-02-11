@@ -16,7 +16,7 @@ using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -43,7 +43,6 @@ public partial class TextEditorService : ITextEditorService
     private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
-        IState<TextEditorOptionsState> optionsStateWrap,
         IFindAllService findAllService,
         IDirtyResourceUriService dirtyResourceUriService,
         IThemeService themeService,
@@ -64,7 +63,6 @@ public partial class TextEditorService : ITextEditorService
     {
     	TextEditorWorker = new(this);
     
-        OptionsStateWrap = optionsStateWrap;
 		AppDimensionService = appDimensionService;
 		_serviceProvider = serviceProvider;
 
@@ -94,8 +92,6 @@ public partial class TextEditorService : ITextEditorService
         TextEditorState = new();
     }
 
-    public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    
     public IThemeService ThemeService { get; }
     public IAppDimensionService AppDimensionService { get; }
     public IFindAllService FindAllService { get; }
@@ -113,7 +109,7 @@ public partial class TextEditorService : ITextEditorService
 #endif
 
     public string ThemeCssClassString => ThemeService.GetThemeState().ThemeList.FirstOrDefault(
-        x => x.Key == OptionsStateWrap.Value.Options.CommonOptions.ThemeKey)
+        x => x.Key == OptionsApi.GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
 

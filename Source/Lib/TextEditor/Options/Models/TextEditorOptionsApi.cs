@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -43,12 +43,18 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dispatcher = dispatcher;
     }
+    
+    private TextEditorOptionsState _textEditorOptionsState = new();
 
     private IDialog? _findAllDialog;
 
+	public event Action? TextEditorOptionsStateChanged;
+
+	public TextEditorOptionsState GetTextEditorOptionsState() => _textEditorOptionsState;
+
     public TextEditorOptions GetOptions()
     {
-        return _textEditorService.OptionsStateWrap.Value.Options;
+        return _textEditorService.OptionsApi.GetTextEditorOptionsState().Options;
     }
 
     public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -85,7 +91,20 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void SetTheme(ThemeRecord theme, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(theme));
+    	var inState = GetTextEditorOptionsState();
+    
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CommonOptions = inState.Options.CommonOptions with
+                {
+                    ThemeKey = theme.Key
+                },
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -93,7 +112,17 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void SetShowWhitespace(bool showWhitespace, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetShowWhitespaceAction(showWhitespace));
+    	var inState = GetTextEditorOptionsState();
+    
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                ShowWhitespace = showWhitespace,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -101,25 +130,55 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetUseMonospaceOptimizationsAction(useMonospaceOptimizations));
-
+    	var inState = GetTextEditorOptionsState();
+    
+		_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                UseMonospaceOptimizations = useMonospaceOptimizations,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
+        
         if (updateStorage)
             WriteToStorage();
     }
 
     public void SetShowNewlines(bool showNewlines, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetShowNewlinesAction(showNewlines));
-
+    	var inState = GetTextEditorOptionsState();
+    
+		_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                ShowNewlines = showNewlines,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
+        
         if (updateStorage)
             WriteToStorage();
     }
 
     public void SetKeymap(Keymap keymap, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetKeymapAction(keymap));
+    	var inState = GetTextEditorOptionsState();
+    
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                Keymap = keymap,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
 
-        var activeKeymap = _textEditorService.OptionsStateWrap.Value.Options.Keymap;
+        var activeKeymap = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
 
         if (activeKeymap is not null)
         {
@@ -134,7 +193,17 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void SetHeight(int? heightInPixels, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetHeightAction(heightInPixels));
+    	var inState = GetTextEditorOptionsState();
+    
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                TextEditorHeightInPixels = heightInPixels,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -142,7 +211,20 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetFontSizeAction(fontSizeInPixels));
+    	var inState = GetTextEditorOptionsState();
+    
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CommonOptions = inState.Options.CommonOptions with
+                {
+                    FontSizeInPixels = fontSizeInPixels
+                },
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -150,7 +232,20 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetFontFamilyAction(fontFamily));
+    	var inState = GetTextEditorOptionsState();
+    
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CommonOptions = inState.Options.CommonOptions with
+                {
+                    FontFamily = fontFamily
+                },
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -158,7 +253,17 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetCursorWidthAction(cursorWidthInPixels));
+    	var inState = GetTextEditorOptionsState();
+
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CursorWidthInPixels = cursorWidthInPixels,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -166,14 +271,23 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void SetRenderStateKey(Key<RenderState> renderStateKey)
     {
-        _dispatcher.Dispatch(new TextEditorOptionsState.SetRenderStateKeyAction(renderStateKey));
+    	var inState = GetTextEditorOptionsState();
+    
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                RenderStateKey = renderStateKey
+            },
+        };
+        TextEditorOptionsStateChanged?.Invoke();
     }
 
     public void WriteToStorage()
     {
         _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
             _textEditorService.StorageKey,
-            new TextEditorOptionsJsonDto(_textEditorService.OptionsStateWrap.Value.Options));
+            new TextEditorOptionsJsonDto(_textEditorService.OptionsApi.GetTextEditorOptionsState().Options));
     }
 
     public async Task SetFromLocalStorageAsync()
@@ -203,7 +317,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
             SetKeymap(matchedKeymap ?? TextEditorKeymapFacts.DefaultKeymap, false);
 
-            var activeKeymap = _textEditorService.OptionsStateWrap.Value.Options.Keymap;
+            var activeKeymap = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
 
             if (activeKeymap is not null)
             {

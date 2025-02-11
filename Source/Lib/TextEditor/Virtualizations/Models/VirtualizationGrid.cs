@@ -130,7 +130,7 @@ public record VirtualizationGrid
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	    var spaceKeyOutput = "&nbsp;";
 
-		if (textEditorService.OptionsStateWrap.Value.Options.ShowWhitespace)
+		if (textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
 	    {
 	        tabKeyOutput = "--->";
 	        spaceKeyOutput = "·";

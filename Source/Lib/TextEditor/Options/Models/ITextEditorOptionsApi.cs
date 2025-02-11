@@ -29,4 +29,8 @@ public interface ITextEditorOptionsApi
     /// since the previous invocation.
     /// </summary>
     public TextEditorOptions GetOptions();
+    
+    public event Action? TextEditorOptionsStateChanged;
+
+	public TextEditorOptionsState GetTextEditorOptionsState();
 }

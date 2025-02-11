@@ -6,15 +6,13 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Displays.Internals;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
 public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -65,7 +63,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     {
         TextEditorService.DiffApi.TextEditorDiffStateChanged += TextEditorDiffWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged += TextEditorModelsCollectionWrapOnStateChanged;
-        TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -100,7 +98,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
         //});
     }
 
-    private async void TextEditorOptionsStateWrapOnStateChanged(object? sender, EventArgs e) =>
+    private async void TextEditorOptionsStateWrapOnStateChanged() =>
         await InvokeAsync(StateHasChanged);
 
     private void ShowCalculationOnClick()
@@ -129,7 +127,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     {
         TextEditorService.DiffApi.TextEditorDiffStateChanged -= TextEditorDiffWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged -= TextEditorModelsCollectionWrapOnStateChanged;
-        TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
 
         _calculateDiffCancellationTokenSource.Cancel();
     }

@@ -1,9 +1,7 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 <div class="luth_te_text-editor-input-height @TextEditorService.ThemeCssClassString @TopLevelDivElementCssClassString">
 
     @{
-        var globalHeightInPixelsValueIsNull = TextEditorService.OptionsStateWrap.Value.Options.TextEditorHeightInPixels
+        var globalHeightInPixelsValueIsNull = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels
             is null;
     }
     

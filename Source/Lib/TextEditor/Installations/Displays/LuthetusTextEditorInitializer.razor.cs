@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -77,7 +77,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                     x => x.Key == TextEditorConfig.InitialThemeKey);
 
                 if (initialThemeRecord is not null)
-                    Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
+                    TextEditorService.OptionsApi.SetTheme(initialThemeRecord, updateStorage: false);
 
                 await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
                                 
