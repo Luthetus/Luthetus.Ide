@@ -13,7 +13,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -55,6 +55,7 @@ public class DotNetSolutionIdeApi
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
+	private readonly IFindAllService _findAllService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
@@ -79,6 +80,7 @@ public class DotNetSolutionIdeApi
 		IState<DotNetSolutionState> dotNetSolutionStateWrap,
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
+		IFindAllService findAllService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IState<TerminalState> terminalStateWrap,
 		DotNetCliOutputParser dotNetCliOutputParser,
@@ -100,6 +102,7 @@ public class DotNetSolutionIdeApi
 		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
+		_findAllService = findAllService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
@@ -229,8 +232,7 @@ public class DotNetSolutionIdeApi
 		{
 			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
 
-			_dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(
-				parentDirectory));
+			_findAllService.ReduceSetStartingDirectoryPathAction(parentDirectory);
 
 			_dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
 			{

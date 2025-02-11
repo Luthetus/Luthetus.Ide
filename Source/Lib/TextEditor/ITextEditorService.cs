@@ -1,5 +1,4 @@
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -9,12 +8,9 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -39,14 +35,10 @@ public partial interface ITextEditorService
     public ITextEditorGroupApi GroupApi { get; }
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
-
-    public IState<TextEditorGroupState> GroupStateWrap { get; }
-    public IState<TextEditorDiffState> DiffStateWrap { get; }
-    public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    public IState<TextEditorFindAllState> FindAllStateWrap { get; }
     
     public IThemeService ThemeService { get; }
     public IAppDimensionService AppDimensionService { get; }
+    public IFindAllService FindAllService { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
@@ -93,7 +85,6 @@ public partial interface ITextEditorService
 	    ResourceUri resourceUri,
 	    Category category,
 	    ITextEditorService textEditorService,
-	    IDispatcher dispatcher,
 	    IDialogService dialogService,
 	    IJSRuntime jsRuntime);
 	

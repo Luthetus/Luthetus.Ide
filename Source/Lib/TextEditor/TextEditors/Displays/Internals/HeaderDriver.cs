@@ -13,7 +13,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Edits.States;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -300,7 +300,7 @@ public class HeaderDriver
 		            editContext =>
 		            {
 		            	editContext.TextEditorService.ViewModelApi.Dispose(viewModel.ViewModelKey);
-		            	_root.Dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(model.ResourceUri));
+		            	_root.DirtyResourceUriService.ReduceRemoveDirtyResourceUriAction(model.ResourceUri);
 		            	editContext.TextEditorService.ModelApi.Dispose(model.ResourceUri);
 		            	return ValueTask.CompletedTask;
 		            });

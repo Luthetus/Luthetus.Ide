@@ -1,6 +1,4 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
-@{ var dirtyResourceUriState = DirtyResourceUriStateWrap.Value; }
+@{ var dirtyResourceUriState = DirtyResourceUriService.GetDirtyResourceUriState(); }
 
 <div class="luth_web_dirty-text-editor-models-view">
     <h3>DirtyResourceUriViewDisplay</h3>

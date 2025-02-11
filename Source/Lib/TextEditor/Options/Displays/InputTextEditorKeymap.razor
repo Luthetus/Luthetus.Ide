@@ -2,14 +2,12 @@
 @using Luthetus.Common.RazorLib.Keymaps.Models;
 @using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 <select @onchange="SelectedKeymapChanged"
         class="luth_select luth_te_text-editor-input-keymap @InputViewModel.CssClass"
 	    style="@InputViewModel.CssStyle">
     @{
         var keymapsList = TextEditorKeymapFacts.AllKeymapsList;
-        var chosenKeymap = TextEditorOptionsStateWrap.Value.Options.Keymap;
+        var chosenKeymap = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
         
         foreach (var keymap in keymapsList)
         {

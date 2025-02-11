@@ -1,11 +1,9 @@
-using Fluxor;
-using Luthetus.TextEditor.RazorLib.Groups.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Groups.States;
+namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 
-[FeatureState]
-public partial class TextEditorGroupState
+public record struct TextEditorGroupState
 {
     public TextEditorGroupState()
     {

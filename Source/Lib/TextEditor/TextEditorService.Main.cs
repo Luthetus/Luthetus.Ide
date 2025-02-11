@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -13,14 +12,12 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Edits.States;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -33,9 +30,9 @@ namespace Luthetus.TextEditor.RazorLib;
 public partial class TextEditorService : ITextEditorService
 {
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
+    private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
@@ -44,10 +41,8 @@ public partial class TextEditorService : ITextEditorService
     private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
-        IState<TextEditorGroupState> groupStateWrap,
-        IState<TextEditorDiffState> diffStateWrap,
-        IState<TextEditorOptionsState> optionsStateWrap,
-        IState<TextEditorFindAllState> findAllStateWrap,
+        IFindAllService findAllService,
+        IDirtyResourceUriService dirtyResourceUriService,
         IThemeService themeService,
         IBackgroundTaskService backgroundTaskService,
         LuthetusTextEditorConfig textEditorConfig,
@@ -55,7 +50,6 @@ public partial class TextEditorService : ITextEditorService
         IStorageService storageService,
         IJSRuntime jsRuntime,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        IDispatcher dispatcher,
         IPanelService panelService,
         IDialogService dialogService,
         IContextService contextService,
@@ -66,13 +60,11 @@ public partial class TextEditorService : ITextEditorService
     {
     	TextEditorWorker = new(this);
     
-        GroupStateWrap = groupStateWrap;
-        DiffStateWrap = diffStateWrap;
-        OptionsStateWrap = optionsStateWrap;
-        FindAllStateWrap = findAllStateWrap;
 		AppDimensionService = appDimensionService;
 		_serviceProvider = serviceProvider;
 
+        FindAllService = findAllService;
+        _dirtyResourceUriService = dirtyResourceUriService;
         ThemeService = themeService;
         _backgroundTaskService = backgroundTaskService;
         TextEditorConfig = textEditorConfig;
@@ -82,28 +74,23 @@ public partial class TextEditorService : ITextEditorService
 		JsRuntimeTextEditorApi = _jsRuntime.GetLuthetusTextEditorApi();
 		JsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _dispatcher = dispatcher;
         _dialogService = dialogService;
 
 		AutocompleteIndexer = autocompleteIndexer;
 		AutocompleteService = autocompleteService;
 
-        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService, _dispatcher);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dispatcher, _dialogService);
-        GroupApi = new TextEditorGroupApi(this, _dispatcher, _panelService, _dialogService, _jsRuntime);
-        DiffApi = new TextEditorDiffApi(this, _dispatcher);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi, _dispatcher);
+        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dialogService);
+        GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _jsRuntime);
+        DiffApi = new TextEditorDiffApi(this);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi);
         
         TextEditorState = new();
     }
 
-    public IState<TextEditorGroupState> GroupStateWrap { get; }
-    public IState<TextEditorDiffState> DiffStateWrap { get; }
-    public IState<TextEditorOptionsState> OptionsStateWrap { get; }
-    public IState<TextEditorFindAllState> FindAllStateWrap { get; }
-    
     public IThemeService ThemeService { get; }
     public IAppDimensionService AppDimensionService { get; }
+    public IFindAllService FindAllService { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
@@ -118,7 +105,7 @@ public partial class TextEditorService : ITextEditorService
 #endif
 
     public string ThemeCssClassString => ThemeService.GetThemeState().ThemeList.FirstOrDefault(
-        x => x.Key == OptionsStateWrap.Value.Options.CommonOptions.ThemeKey)
+        x => x.Key == OptionsApi.GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
 
@@ -159,9 +146,9 @@ public partial class TextEditorService : ITextEditorService
 	            if (modelModifier.WasDirty != modelModifier.IsDirty)
 	            {
 	                if (modelModifier.IsDirty)
-	                    _dispatcher.Dispatch(new DirtyResourceUriState.AddDirtyResourceUriAction(modelModifier.ResourceUri));
+	                    _dirtyResourceUriService.ReduceAddDirtyResourceUriAction(modelModifier.ResourceUri);
 	                else
-	                    _dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(modelModifier.ResourceUri));
+	                    _dirtyResourceUriService.ReduceRemoveDirtyResourceUriAction(modelModifier.ResourceUri);
 	            }
 	        }
 		}
@@ -655,7 +642,6 @@ public partial class TextEditorService : ITextEditorService
 	    ResourceUri resourceUri,
 	    Category category,
 	    ITextEditorService textEditorService,
-	    IDispatcher dispatcher,
 	    IDialogService dialogService,
 	    IJSRuntime jsRuntime)
 	{

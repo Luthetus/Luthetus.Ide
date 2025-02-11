@@ -3,6 +3,9 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
@@ -28,7 +31,9 @@ public static class ServiceCollectionExtensions
             .AddScoped(serviceProvider => textEditorConfig.AutocompleteIndexerFactory.Invoke(serviceProvider))
             .AddScoped<ITextEditorService, TextEditorService>()
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
-            .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>();
+            .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>()
+            .AddScoped<IFindAllService, FindAllService>()
+            .AddScoped<IDirtyResourceUriService, DirtyResourceUriService>();
         
         return services;
     }

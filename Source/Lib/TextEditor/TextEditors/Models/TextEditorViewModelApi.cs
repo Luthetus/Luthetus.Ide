@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -23,7 +22,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 {
     private readonly ITextEditorService _textEditorService;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
 
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
@@ -33,13 +31,11 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
         IJSRuntime jsRuntime,
-        IDispatcher dispatcher,
         IDialogService dialogService)
     {
         _textEditorService = textEditorService;
         _backgroundTaskService = backgroundTaskService;
         _jsRuntime = jsRuntime;
-        _dispatcher = dispatcher;
         _dialogService = dialogService;
     }
     
@@ -109,7 +105,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
             resourceUri,
             category,
             _textEditorService,
-            _dispatcher,
             _dialogService,
             _jsRuntime);
     }

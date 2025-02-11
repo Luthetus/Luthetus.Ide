@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -8,15 +6,14 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Displays;
 
-public partial class FindAllDisplay : FluxorComponent
+public partial class FindAllDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-    private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
+    private IFindAllService FindAllService { get; set; } = null!;
     [Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
@@ -27,8 +24,6 @@ public partial class FindAllDisplay : FluxorComponent
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
@@ -46,26 +41,28 @@ public partial class FindAllDisplay : FluxorComponent
 
 	private string SearchQuery
     {
-        get => TextEditorFindAllStateWrap.Value.SearchQuery;
+        get => FindAllService.GetFindAllState().SearchQuery;
         set
         {
             if (value is not null)
-                Dispatcher.Dispatch(new TextEditorFindAllState.SetSearchQueryAction(value));
+                FindAllService.ReduceSetSearchQueryAction(value);
         }
     }
 
 	private string StartingDirectoryPath
     {
-        get => TextEditorFindAllStateWrap.Value.StartingDirectoryPath;
+        get => FindAllService.GetFindAllState().StartingDirectoryPath;
         set
         {
             if (value is not null)
-                Dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(value));
+                FindAllService.ReduceSetStartingDirectoryPathAction(value);
         }
     }
     
     protected override void OnInitialized()
 	{
+		FindAllService.FindAllStateChanged += OnFindAllStateChanged;
+	
 		_treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(
 			TextEditorService,
 			TextEditorConfig,
@@ -105,11 +102,21 @@ public partial class FindAllDisplay : FluxorComponent
 
 	private void DoSearchOnClick()
     {
-    	Dispatcher.Dispatch(new TextEditorFindAllState.StartSearchAction());
+    	FindAllService.HandleStartSearchAction();
     }
 
 	private void CancelSearchOnClick()
     {
-    	Dispatcher.Dispatch(new TextEditorFindAllState.CancelSearchAction());
+    	FindAllService.ReduceCancelSearchAction();
+    }
+    
+    public async void OnFindAllStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	FindAllService.FindAllStateChanged -= OnFindAllStateChanged;
     }
 }

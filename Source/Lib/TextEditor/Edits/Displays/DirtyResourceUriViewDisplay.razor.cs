@@ -1,18 +1,16 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Edits.States;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Edits.Displays;
 
-public partial class DirtyResourceUriViewDisplay : FluxorComponent
+public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<DirtyResourceUriState> DirtyResourceUriStateWrap { get; set; } = null!;
+    private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
@@ -21,6 +19,12 @@ public partial class DirtyResourceUriViewDisplay : FluxorComponent
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    
+    protected override void OnInitialized()
+	{
+		DirtyResourceUriService.DirtyResourceUriStateChanged += OnDirtyResourceUriStateChanged;
+		base.OnInitialized();
+	}
 
     private Task OpenInEditorOnClick(string filePath)
     {
@@ -30,5 +34,15 @@ public partial class DirtyResourceUriViewDisplay : FluxorComponent
 			null,
 			new Category("main"),
 			Key<TextEditorViewModel>.NewKey());
+    }
+    
+    public async void OnDirtyResourceUriStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	DirtyResourceUriService.DirtyResourceUriStateChanged -= OnDirtyResourceUriStateChanged;
     }
 }

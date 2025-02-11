@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -9,9 +8,8 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -31,8 +29,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
     private IThemeService ThemeService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
@@ -44,8 +40,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
@@ -80,7 +74,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                     x => x.Key == TextEditorConfig.InitialThemeKey);
 
                 if (initialThemeRecord is not null)
-                    Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
+                    TextEditorService.OptionsApi.SetTheme(initialThemeRecord, updateStorage: false);
 
                 await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
                                 
