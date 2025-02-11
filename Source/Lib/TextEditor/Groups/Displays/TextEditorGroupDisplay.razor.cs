@@ -3,7 +3,6 @@ using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -12,8 +11,6 @@ namespace Luthetus.TextEditor.RazorLib.Groups.Displays;
 
 public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -44,13 +41,13 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorGroupStateWrap.StateChanged += TextEditorGroupWrapOnStateChanged;
+        TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged += TextEditorViewModelStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
 
-    private async void TextEditorGroupWrapOnStateChanged(object? sender, EventArgs e) =>
+    private async void TextEditorGroupWrapOnStateChanged() =>
         await InvokeAsync(StateHasChanged);
 
 	private async void TextEditorViewModelStateWrapOnStateChanged()
@@ -85,7 +82,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorGroupStateWrap.StateChanged -= TextEditorGroupWrapOnStateChanged;
+        TextEditorService.GroupApi.TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
 		TextEditorService.TextEditorStateChanged -= TextEditorViewModelStateWrapOnStateChanged;
     }
 }

@@ -856,7 +856,7 @@ public class TextEditorCommandDefaultFunctions
 				//       |
 				//       I ran this and it didn't work. Its for the best that it doesn't.
 				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-				var mainEditorGroup = commandArgs.TextEditorService.GroupStateWrap.Value.GroupList.SingleOrDefault();
+				var mainEditorGroup = commandArgs.TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
 				
 				if (mainEditorGroup is not null &&
 					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
@@ -1005,7 +1005,7 @@ public class TextEditorCommandDefaultFunctions
 				//       |
 				//       I ran this and it didn't work. Its for the best that it doesn't.
 				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-				var mainEditorGroup = commandArgs.TextEditorService.GroupStateWrap.Value.GroupList.SingleOrDefault();
+				var mainEditorGroup = commandArgs.TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
 				
 				if (mainEditorGroup is not null &&
 					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)

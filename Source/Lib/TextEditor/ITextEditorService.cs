@@ -12,7 +12,6 @@ using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -40,7 +39,6 @@ public partial interface ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public IState<TextEditorGroupState> GroupStateWrap { get; }
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     

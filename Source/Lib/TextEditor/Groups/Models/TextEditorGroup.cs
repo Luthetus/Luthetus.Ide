@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 /// <summary>
 /// Store the state of none or many tabs, and which tab is the active one. Each tab represents a <see cref="TextEditorViewModel"/>.
 /// </summary>
-public record TextEditorGroup(
+public record struct TextEditorGroup(
         Key<TextEditorGroup> GroupKey,
         Key<TextEditorViewModel> ActiveViewModelKey,
         ImmutableList<Key<TextEditorViewModel>> ViewModelKeyList,

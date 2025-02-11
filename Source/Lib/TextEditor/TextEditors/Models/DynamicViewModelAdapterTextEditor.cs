@@ -160,7 +160,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
 
         var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
             .MeasureElementById(
-                $"luth_te_group_{TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey.Guid}")
+                $"luth_te_group_{TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.Single().GroupKey.Guid}")
             .ConfigureAwait(false);
 
         measuredHtmlElementDimensions = measuredHtmlElementDimensions with
@@ -206,7 +206,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
 
         dropzoneList.Add(new TextEditorGroupDropzone(
             measuredHtmlElementDimensions,
-            TextEditorService.GroupStateWrap.Value.GroupList.Single().GroupKey,
+            TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.Single().GroupKey,
             elementDimensions));
 
         DropzoneList = dropzoneList;

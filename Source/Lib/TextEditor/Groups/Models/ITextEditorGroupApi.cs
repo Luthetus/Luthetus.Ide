@@ -2,6 +2,11 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using System.Collections.Immutable;
 
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+
 namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 
 public interface ITextEditorGroupApi
@@ -19,4 +24,37 @@ public interface ITextEditorGroupApi
     /// since the previous invocation.
     /// </summary>
     public ImmutableList<TextEditorGroup> GetGroups();
+    
+    // ITextEditorGroupService
+    public event Action? TextEditorGroupStateChanged;
+	
+	public TextEditorGroupState GetTextEditorGroupState();
+        
+    public void ReduceRegisterAction(TextEditorGroup group);
+
+    public void ReduceAddViewModelToGroupAction(
+        Key<TextEditorGroup> groupKey,
+        Key<TextEditorViewModel> viewModelKey);
+
+    public void ReduceRemoveViewModelFromGroupAction(
+        Key<TextEditorGroup> groupKey,
+        Key<TextEditorViewModel> viewModelKey);
+
+    public void ReduceSetActiveViewModelOfGroupAction(
+        Key<TextEditorGroup> groupKey,
+        Key<TextEditorViewModel> viewModelKey);
+
+    public void ReduceDisposeAction(Key<TextEditorGroup> groupKey);
+
+	public Task HandleAddViewModelToGroupAction(
+		Key<TextEditorGroup> groupKey,
+        Key<TextEditorViewModel> viewModelKey);
+
+	public Task HandleSetActiveViewModelOfGroupAction(
+		Key<TextEditorGroup> groupKey,
+        Key<TextEditorViewModel> viewModelKey);
+
+	public Task HandleRemoveViewModelFromGroupAction(
+		Key<TextEditorGroup> groupKey,
+        Key<TextEditorViewModel> viewModelKey);
 }

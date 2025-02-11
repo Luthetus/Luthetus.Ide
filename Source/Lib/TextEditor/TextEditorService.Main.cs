@@ -16,7 +16,6 @@ using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -45,7 +44,6 @@ public partial class TextEditorService : ITextEditorService
     private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
-        IState<TextEditorGroupState> groupStateWrap,
         IState<TextEditorDiffState> diffStateWrap,
         IState<TextEditorOptionsState> optionsStateWrap,
         IFindAllService findAllService,
@@ -68,7 +66,6 @@ public partial class TextEditorService : ITextEditorService
     {
     	TextEditorWorker = new(this);
     
-        GroupStateWrap = groupStateWrap;
         DiffStateWrap = diffStateWrap;
         OptionsStateWrap = optionsStateWrap;
 		AppDimensionService = appDimensionService;
@@ -93,14 +90,13 @@ public partial class TextEditorService : ITextEditorService
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService, _dispatcher);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dispatcher, _dialogService);
-        GroupApi = new TextEditorGroupApi(this, _dispatcher, _panelService, _dialogService, _jsRuntime);
+        GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
         OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi, _dispatcher);
         
         TextEditorState = new();
     }
 
-    public IState<TextEditorGroupState> GroupStateWrap { get; }
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     

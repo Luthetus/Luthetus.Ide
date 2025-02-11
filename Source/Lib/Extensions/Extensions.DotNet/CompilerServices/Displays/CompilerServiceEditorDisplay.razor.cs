@@ -8,7 +8,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
@@ -32,8 +31,6 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 	private IState<CompilerServiceEditorState> CompilerServiceEditorStateWrap { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 
 	private readonly Throttle _throttleEventCausingReRender = new(TimeSpan.FromMilliseconds(75));
 
@@ -54,7 +51,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		_cSharpCompilerService.CursorMovedInSyntaxTree += CSharpCompilerService_StateChanged;
 
 		CompilerServiceEditorStateWrap.StateChanged += CompilerServiceEditorStateWrap_StateChanged;
-		TextEditorGroupStateWrap.StateChanged += TextEditorGroupStateWrap_StateChanged;
+		TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupStateWrap_StateChanged;
 		TextEditorService.TextEditorStateChanged += TextEditorStateWrap_StateChanged;
 
 		base.OnInitialized();
@@ -66,7 +63,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		{
 			var localCSharpCompilerService = _cSharpCompilerService;
 			var localCompilerServiceEditorState = CompilerServiceEditorStateWrap.Value;
-			var localTextEditorGroupState = TextEditorGroupStateWrap.Value;
+			var localTextEditorGroupState = TextEditorService.GroupApi.GetTextEditorGroupState();
 			var localTextEditorState = TextEditorService.TextEditorState;
 
 			var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
@@ -123,7 +120,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		ThrottledReRender();
 	}
 
-	private async void TextEditorGroupStateWrap_StateChanged(object? sender, EventArgs e)
+	private async void TextEditorGroupStateWrap_StateChanged()
 	{
 		ThrottledReRender();
 	}
@@ -155,7 +152,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		_cSharpCompilerService.CursorMovedInSyntaxTree -= CSharpCompilerService_StateChanged;
 
 		CompilerServiceEditorStateWrap.StateChanged -= CompilerServiceEditorStateWrap_StateChanged;
-		TextEditorGroupStateWrap.StateChanged -= TextEditorGroupStateWrap_StateChanged;
+		TextEditorService.GroupApi.TextEditorGroupStateChanged -= TextEditorGroupStateWrap_StateChanged;
 		TextEditorService.TextEditorStateChanged -= TextEditorStateWrap_StateChanged;
 	}
 

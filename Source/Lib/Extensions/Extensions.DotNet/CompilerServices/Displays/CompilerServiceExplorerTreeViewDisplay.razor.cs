@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.Groups.States;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -21,8 +21,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 {
 	[Inject]
 	private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 	[Inject]
 	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
@@ -58,7 +56,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	{
 		CompilerServiceExplorerStateWrap.StateChanged += RerenderAfterEventWithArgs;
 		TextEditorService.TextEditorStateChanged += RerenderAfterEvent;
-		TextEditorGroupStateWrap.StateChanged += RerenderAfterEventWithArgs;
 
 		_compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
@@ -126,6 +123,5 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	{
 		CompilerServiceExplorerStateWrap.StateChanged -= RerenderAfterEventWithArgs;
 		TextEditorService.TextEditorStateChanged -= RerenderAfterEvent;
-		TextEditorGroupStateWrap.StateChanged -= RerenderAfterEventWithArgs;
 	}
 }
