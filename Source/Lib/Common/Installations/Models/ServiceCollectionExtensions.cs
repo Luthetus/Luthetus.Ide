@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
@@ -68,7 +69,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IOutlineService, OutlineService>()
             .AddScoped<IPanelService, PanelService>()
             .AddScoped<IAppDimensionService, AppDimensionService>()
-            .AddScoped<IKeymapService, KeymapService>();
+            .AddScoped<IKeymapService, KeymapService>()
+            .AddScoped<IWidgetService, WidgetService>();
 
         return services;
     }

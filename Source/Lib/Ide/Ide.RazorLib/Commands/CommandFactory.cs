@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Widgets.Models;
-using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
@@ -34,6 +33,7 @@ public class CommandFactory : ICommandFactory
     private readonly ITreeViewService _treeViewService;
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
+    private readonly IWidgetService _widgetService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
@@ -44,6 +44,7 @@ public class CommandFactory : ICommandFactory
 		ITreeViewService treeViewService,
 		IDialogService dialogService,
 		IPanelService panelService,
+		IWidgetService widgetService,
 		IEnvironmentProvider environmentProvider,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
@@ -53,6 +54,7 @@ public class CommandFactory : ICommandFactory
 		_treeViewService = treeViewService;
 		_dialogService = dialogService;
 		_panelService = panelService;
+		_widgetService = widgetService;
 		_environmentProvider = environmentProvider;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
@@ -488,7 +490,7 @@ public class CommandFactory : ICommandFactory
                         cssClass: null,
                         cssStyle: null);
 
-                    _dispatcher.Dispatch(new WidgetState.SetWidgetAction(_contextSwitchWidget));
+                    _widgetService.ReduceSetWidgetAction(_contextSwitchWidget);
 				});
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -524,7 +526,7 @@ public class CommandFactory : ICommandFactory
                         cssClass: null,
                         cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;");
 
-                    _dispatcher.Dispatch(new WidgetState.SetWidgetAction(_commandBarWidget));
+                    _widgetService.ReduceSetWidgetAction(_commandBarWidget);
                     return ValueTask.CompletedTask;
 				});
 		

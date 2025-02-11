@@ -1,7 +1,6 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Widgets.Models;
 
-namespace Luthetus.Common.RazorLib.Widgets.States;
+namespace Luthetus.Common.RazorLib.Widgets.Models;
 
 /// <summary>
 /// This UI is similar, but not equivalent, to <see cref="DialogState"/>.<br/>
@@ -12,8 +11,7 @@ namespace Luthetus.Common.RazorLib.Widgets.States;
 ///       will be rendered, so if the user clicks off, the widget will stop being rendered.<br/>
 /// - If the user onfocusout events from the widget, the widget will stop being rendered.<br/>
 /// </summary>
-[FeatureState]
-public partial record WidgetState(WidgetModel? Widget)
+public record struct WidgetState(WidgetModel? Widget)
 {
 	public WidgetState() : this((WidgetModel?)null)
     {
