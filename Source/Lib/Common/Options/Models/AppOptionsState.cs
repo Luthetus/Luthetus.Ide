@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.Common.RazorLib.Options.Models;
 
-public record AppOptionsState(CommonOptions Options)
+public record struct AppOptionsState(CommonOptions Options)
 {
     public const int DEFAULT_FONT_SIZE_IN_PIXELS = 20;
     public const int MINIMUM_FONT_SIZE_IN_PIXELS = 5;
