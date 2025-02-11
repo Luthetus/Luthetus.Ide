@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.Icons.Models;
 
-public class IconBase : FluxorComponent
+public class IconBase : ComponentBase
 {
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;

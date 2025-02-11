@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 
 namespace Luthetus.Common.RazorLib.Outlines.Models;

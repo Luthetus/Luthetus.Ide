@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -8,8 +7,6 @@ public partial class ContextBoundaryOverlay : ComponentBase
 {
     [Inject]
     private IContextService ContextService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public InspectableContext InspectableContext { get; set; } = default!;

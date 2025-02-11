@@ -1,6 +1,5 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -18,8 +17,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private LuthetusCommonConfig CommonConfig { get; set; } = null!;
     [Inject]

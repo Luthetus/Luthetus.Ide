@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -50,7 +49,6 @@ public record LuthetusCommonFactories
     public Func<IServiceProvider, IAppOptionsService> AppOptionsServiceFactory { get; init; } =
         serviceProvider => new AppOptionsService(
             serviceProvider.GetRequiredService<IThemeService>(),
-            serviceProvider.GetRequiredService<IDispatcher>(),
             serviceProvider.GetRequiredService<IStorageService>(),
             serviceProvider.GetRequiredService<CommonBackgroundTaskApi>(),
             serviceProvider.GetRequiredService<IBackgroundTaskService>());

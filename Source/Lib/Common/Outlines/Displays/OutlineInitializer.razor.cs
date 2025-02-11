@@ -1,7 +1,5 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Outlines.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 

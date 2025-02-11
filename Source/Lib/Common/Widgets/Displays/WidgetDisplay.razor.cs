@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
@@ -11,8 +10,6 @@ public partial class WidgetDisplay : ComponentBase
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IWidgetService WidgetService { get; set; } = null!;
     

@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Drags.Displays;
@@ -17,8 +16,6 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     private IAppDimensionService AppDimensionService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions LeftElementDimensions { get; set; }

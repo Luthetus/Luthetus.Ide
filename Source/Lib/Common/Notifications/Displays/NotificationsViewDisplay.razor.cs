@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 
@@ -10,8 +8,6 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     
     private readonly List<INotification> _emptyEntriesToRenderList = new();
     private readonly Action _defaultClearAction = new Action(() => { });

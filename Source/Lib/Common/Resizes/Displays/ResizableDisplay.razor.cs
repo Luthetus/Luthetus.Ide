@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Drags.Displays;
@@ -15,8 +14,6 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     private IDragService DragService { get; set; } = null!;
     [Inject]
     private IAppDimensionService AppDimensionService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; }

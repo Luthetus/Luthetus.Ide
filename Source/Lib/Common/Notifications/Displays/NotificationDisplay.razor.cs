@@ -1,5 +1,4 @@
 using System.Text;
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Options.Models;
@@ -17,8 +16,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]

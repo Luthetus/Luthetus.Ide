@@ -1,5 +1,3 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
@@ -10,8 +8,6 @@ public partial class WidgetInitializer : ComponentBase, IDisposable
 {
 	[Inject]
     private IWidgetService WidgetService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     
     private ContextBoundary? _widgetContextBoundary;
     

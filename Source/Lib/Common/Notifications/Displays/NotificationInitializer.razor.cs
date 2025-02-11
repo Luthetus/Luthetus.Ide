@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -11,8 +9,6 @@ public partial class NotificationInitializer : ComponentBase, IDisposable
 {
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     private ContextBoundary? _notificationContextBoundary;
     

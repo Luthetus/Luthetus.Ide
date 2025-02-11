@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text;
-using Fluxor;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -12,20 +11,17 @@ namespace Luthetus.Common.RazorLib.Options.Models;
 
 public class AppOptionsService : IAppOptionsService
 {
-    private readonly IDispatcher _dispatcher;
     private readonly IStorageService _storageService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public AppOptionsService(
 		IThemeService themeService,
-        IDispatcher dispatcher,
         IStorageService storageService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService)
     {
         ThemeService = themeService;
-        _dispatcher = dispatcher;
         _storageService = storageService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
