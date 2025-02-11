@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.WatchWindows.Displays;
 
 public partial class TreeViewEnumerableDisplay : ComponentBase
 {
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public TreeViewEnumerable TreeViewEnumerable { get; set; } = null!;

@@ -3,7 +3,7 @@ using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -23,7 +23,7 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 	[Inject]
 	private IState<CodeSearchState> CodeSearchStateWrap { get; set; } = null!;
     [Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -48,7 +48,7 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{

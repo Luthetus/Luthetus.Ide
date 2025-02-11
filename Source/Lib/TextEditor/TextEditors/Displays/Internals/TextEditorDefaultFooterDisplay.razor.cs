@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 

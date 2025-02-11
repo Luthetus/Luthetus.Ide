@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -36,7 +36,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<OutputState> OutputStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
     
@@ -46,7 +46,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
     
     protected override void OnInitialized()
     {

@@ -9,7 +9,7 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
@@ -33,7 +33,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]

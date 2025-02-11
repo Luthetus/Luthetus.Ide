@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
@@ -24,8 +23,6 @@ public partial class TestExplorerDisplay : FluxorComponent, IDisposable
 {
 	[Inject]
 	private IState<TestExplorerState> TestExplorerStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]

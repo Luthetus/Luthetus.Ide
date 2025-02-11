@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text;
 using Fluxor;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -19,22 +19,21 @@ public class AppOptionsService : IAppOptionsService
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public AppOptionsService(
-        IState<AppOptionsState> appOptionsStateWrap,
         IState<ThemeState> themeStateWrap,
         IDispatcher dispatcher,
         IStorageService storageService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService)
     {
-        AppOptionsStateWrap = appOptionsStateWrap;
         ThemeStateWrap = themeStateWrap;
         _dispatcher = dispatcher;
         _storageService = storageService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
     }
+    
+    private AppOptionsState _appOptionsState = new();
 
-    public IState<AppOptionsState> AppOptionsStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
 
 #if DEBUG
@@ -44,7 +43,7 @@ public class AppOptionsService : IAppOptionsService
 #endif
 
     public string ThemeCssClassString => ThemeStateWrap.Value.ThemeList.FirstOrDefault(
-        x => x.Key == AppOptionsStateWrap.Value.Options.ThemeKey)
+        x => x.Key == GetAppOptionsState().Options.ThemeKey)
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
 
@@ -52,10 +51,10 @@ public class AppOptionsService : IAppOptionsService
     {
         get
         {
-            if (AppOptionsStateWrap.Value.Options.FontFamily is null)
+            if (GetAppOptionsState().Options.FontFamily is null)
                 return null;
 
-            return $"font-family: {AppOptionsStateWrap.Value.Options.FontFamily};";
+            return $"font-family: {GetAppOptionsState().Options.FontFamily};";
         }
     }
 
@@ -63,16 +62,16 @@ public class AppOptionsService : IAppOptionsService
     {
         get
         {
-            var fontSizeInPixels = AppOptionsStateWrap.Value.Options.FontSizeInPixels;
+            var fontSizeInPixels = GetAppOptionsState().Options.FontSizeInPixels;
             var fontSizeInPixelsCssValue = fontSizeInPixels.ToCssValue();
 
             return $"font-size: {fontSizeInPixelsCssValue}px;";
         }
     }
     
-    public bool ShowPanelTitles => AppOptionsStateWrap.Value.Options.ShowPanelTitles;
+    public bool ShowPanelTitles => GetAppOptionsState().Options.ShowPanelTitles;
     
-    public string ShowPanelTitlesCssClass => AppOptionsStateWrap.Value.Options.ShowPanelTitles
+    public string ShowPanelTitlesCssClass => GetAppOptionsState().Options.ShowPanelTitles
     	? string.Empty
     	: "luth_ide_section-no-title";
 
@@ -81,7 +80,7 @@ public class AppOptionsService : IAppOptionsService
         get
         {
 	        var activeTheme = ThemeStateWrap.Value.ThemeList.FirstOrDefault(
-		        x => x.Key == AppOptionsStateWrap.Value.Options.ThemeKey)
+		        x => x.Key == GetAppOptionsState().Options.ThemeKey)
 		        	?? ThemeFacts.VisualStudioDarkThemeClone;
 		        
 		    var cssStyleStringBuilder = new StringBuilder("color-scheme: ");
@@ -99,15 +98,21 @@ public class AppOptionsService : IAppOptionsService
         }
     }
 
+	public event Action? AppOptionsStateChanged;
+	
+	public AppOptionsState GetAppOptionsState() => _appOptionsState;
+
     public void SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
+    	var inState = GetAppOptionsState();
+    	
+        _appOptionsState = inState with
         {
             Options = inState.Options with
             {
                 ThemeKey = themeKey
             }
-        }));
+        };
 
         if (updateStorage)
             WriteToStorage();
@@ -115,13 +120,15 @@ public class AppOptionsService : IAppOptionsService
 
     public void SetTheme(ThemeRecord theme, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
+        var inState = GetAppOptionsState();
+    	
+        _appOptionsState = inState with
         {
             Options = inState.Options with
             {
                 ThemeKey = theme.Key
             }
-        }));
+        };
 
         if (updateStorage)
             WriteToStorage();
@@ -129,13 +136,15 @@ public class AppOptionsService : IAppOptionsService
 
     public void SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
+        var inState = GetAppOptionsState();
+    	
+        _appOptionsState = inState with
         {
             Options = inState.Options with
             {
                 FontFamily = fontFamily
             }
-        }));
+        };
 
         if (updateStorage)
             WriteToStorage();
@@ -143,13 +152,15 @@ public class AppOptionsService : IAppOptionsService
 
     public void SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
+        var inState = GetAppOptionsState();
+    	
+        _appOptionsState = inState with
         {
             Options = inState.Options with
             {
                 FontSizeInPixels = fontSizeInPixels
             }
-        }));
+        };
 
         if (updateStorage)
             WriteToStorage();
@@ -157,13 +168,15 @@ public class AppOptionsService : IAppOptionsService
 
     public void SetResizeHandleWidth(int resizeHandleWidthInPixels, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
+        var inState = GetAppOptionsState();
+    	
+        _appOptionsState = inState with
         {
             Options = inState.Options with
             {
                 ResizeHandleWidthInPixels = resizeHandleWidthInPixels
             }
-        }));
+        };
 
         if (updateStorage)
             WriteToStorage();
@@ -171,13 +184,15 @@ public class AppOptionsService : IAppOptionsService
 
     public void SetResizeHandleHeight(int resizeHandleHeightInPixels, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
+        var inState = GetAppOptionsState();
+    	
+        _appOptionsState = inState with
         {
             Options = inState.Options with
             {
                 ResizeHandleHeightInPixels = resizeHandleHeightInPixels
             }
-        }));
+        };
 
         if (updateStorage)
             WriteToStorage();
@@ -185,13 +200,15 @@ public class AppOptionsService : IAppOptionsService
 
     public void SetIconSize(int iconSizeInPixels, bool updateStorage = true)
     {
-        _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
+        var inState = GetAppOptionsState();
+    	
+        _appOptionsState = inState with
         {
             Options = inState.Options with
             {
                 IconSizeInPixels = iconSizeInPixels
             }
-        }));
+        };
 
         if (updateStorage)
             WriteToStorage();
@@ -237,6 +254,6 @@ public class AppOptionsService : IAppOptionsService
     {
         _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
             StorageKey,
-            new CommonOptionsJsonDto(AppOptionsStateWrap.Value.Options));
+            new CommonOptionsJsonDto(GetAppOptionsState().Options));
     }
 }

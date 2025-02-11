@@ -17,7 +17,7 @@ public partial class InputAppTheme : IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateWrap.StateChanged += OnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
         ThemeRecordsCollectionService.ThemeStateWrap.StateChanged += OnStateChanged;
 
         base.OnInitialized();
@@ -59,9 +59,14 @@ public partial class InputAppTheme : IDisposable
         return themeKey == activeThemeKey;
     }
 
+	public async void OnAppOptionsStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateWrap.StateChanged -= OnStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
         ThemeRecordsCollectionService.ThemeStateWrap.StateChanged -= OnStateChanged;
     }
 }

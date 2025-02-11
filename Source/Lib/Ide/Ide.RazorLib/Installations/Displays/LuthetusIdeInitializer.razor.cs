@@ -13,7 +13,6 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -38,7 +37,7 @@ namespace Luthetus.Ide.RazorLib.Installations.Displays;
 public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -90,7 +89,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 
                 Dispatcher.Dispatch(new CodeSearchState.InitializeResizeHandleDimensionUnitAction(
 					new DimensionUnit(
-						() => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+						() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
 						DimensionUnitKind.Pixels,
 						DimensionOperatorKind.Subtract,
 						DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)));
@@ -127,7 +126,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
 				leftPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
 					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -141,7 +140,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
 				rightPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
 					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -155,7 +154,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
 				bottomPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
 					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
@@ -219,7 +218,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 		// This UI has resizable parts that need to be initialized.
         Dispatcher.Dispatch(new TerminalGroupState.InitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
-            	() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
             	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));

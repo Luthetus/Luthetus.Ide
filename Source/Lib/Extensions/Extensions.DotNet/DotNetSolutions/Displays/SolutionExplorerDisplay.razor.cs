@@ -3,7 +3,6 @@ using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
@@ -25,8 +24,6 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 
 public partial class SolutionExplorerDisplay : FluxorComponent
 {
-	[Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
@@ -61,7 +58,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 	private bool _disposed;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
+		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	protected override void OnInitialized()
 	{

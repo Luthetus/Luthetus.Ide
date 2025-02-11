@@ -3,16 +3,16 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
-public partial class ContextDisplay : FluxorComponent, IDisposable
+public partial class ContextDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IContextService ContextService { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<ContextRecord> ContextKey { get; set; }
@@ -22,6 +22,7 @@ public partial class ContextDisplay : FluxorComponent, IDisposable
     protected override void OnInitialized()
     {
         ContextService.ContextStateChanged += OnContextStateChanged;
+        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
         base.OnInitialized();
     }
     
@@ -30,8 +31,14 @@ public partial class ContextDisplay : FluxorComponent, IDisposable
     	await InvokeAsync(StateHasChanged);
     }
     
+    private async void OnAppOptionsStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
     public void Dispose()
     {
     	ContextService.ContextStateChanged -= OnContextStateChanged;
+    	AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

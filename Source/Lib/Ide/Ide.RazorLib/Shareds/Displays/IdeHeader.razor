@@ -10,7 +10,7 @@
 @using Luthetus.Ide.RazorLib.Shareds.States;
 
 @{
-	var borderBottomHeight =  AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels;
+	var borderBottomHeight =  AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels;
 	var contextBoundaryCssStyle = $"display: flex; justify-content: space-between; border-bottom: {borderBottomHeight}px solid var(--luth_primary-border-color);";
 }
 

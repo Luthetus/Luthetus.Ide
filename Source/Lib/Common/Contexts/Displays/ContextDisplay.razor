@@ -1,12 +1,12 @@
-@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Keymaps.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models
 
-@inherits FluxorComponent
-
 <div class="luth_ide_active-context-entry">
 
-    @{ var contextRecord = ContextService.GetContextRecord(ContextKey); }
+    @{
+    	var contextRecord = ContextService.GetContextRecord(ContextKey);
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    }
 
     <div class="luth_ide_active-context-title">
         <button class="luth_button"
@@ -15,8 +15,8 @@
                 
             @{
             	var iconDriver = new IconDriver(
-					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+					appOptionsState.Options.IconSizeInPixels,
+					appOptionsState.Options.IconSizeInPixels);
             }
         
             @if (_isExpanded)

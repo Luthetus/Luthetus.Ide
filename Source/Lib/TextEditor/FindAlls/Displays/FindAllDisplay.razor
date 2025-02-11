@@ -10,6 +10,7 @@
 
 @{
     var findAllState = TextEditorFindAllStateWrap.Value;
+    var appOptionsState = AppOptionsService.GetAppOptionsState();
 }
 
 <div class="luth_te_find-all">
@@ -60,8 +61,8 @@
 		<div>Results: @($"{findAllState.SearchResultList.Count:N0}")</div>
 	
 		<div class="luth_te_search-engine-file-system-results">
-			<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+			<CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
                     <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
                         <TreeViewContainerDisplay TreeViewContainerKey="TextEditorFindAllState.TreeViewFindAllContainerKey"
                                                   CssStyleString="height: 100%;"

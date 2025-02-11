@@ -1,5 +1,5 @@
 using Fluxor;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -12,13 +12,16 @@ public interface IAppOptionsService
     /// This is used when interacting with the <see cref="IStorageService"/> to set and get data.
     /// </summary>
     public string StorageKey { get; }
-    public IState<AppOptionsState> AppOptionsStateWrap { get; }
     public string ThemeCssClassString { get; }
     public string? FontFamilyCssStyleString { get; }
     public string FontSizeCssStyleString { get; }
     public string ColorSchemeCssStyleString { get; }
     public bool ShowPanelTitles { get; }
     public string ShowPanelTitlesCssClass { get; }
+    
+    public event Action? AppOptionsStateChanged;
+	
+	public AppOptionsState GetAppOptionsState();
 
     public void SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true);
     public void SetTheme(ThemeRecord theme, bool updateStorage = true);

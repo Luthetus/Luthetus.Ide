@@ -5,7 +5,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Reflectives.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reflectives.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.Reflectives.Displays;
 
@@ -16,7 +16,7 @@ public partial class ReflectiveDisplay : ComponentBase
     [Inject]
     private IStateSelection<ReflectiveState, ReflectiveModel?> ReflectiveStateSelection { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<ReflectiveModel> ReflectiveModelKey { get; set; }

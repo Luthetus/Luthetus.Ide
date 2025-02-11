@@ -15,9 +15,11 @@
     }
     else
     {
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    
     	var iconDriver = new IconDriver(
-			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
     
         <div class="luth_ide_c-sharp-project-form-top-inputs">
             <div class="luth_ide_form-group">

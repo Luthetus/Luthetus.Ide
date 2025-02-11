@@ -17,7 +17,7 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -40,7 +40,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	[Inject]
 	private IState<IdeHeaderState> IdeHeaderStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -85,7 +85,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		AppOptionsStateWrap.StateChanged += OnAppOptionsStateChanged;
+		AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 	
 		BackgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
@@ -535,13 +535,13 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			_buttonRunElementReference);
 	}
 	
-	private async void OnAppOptionsStateChanged(object? sender, EventArgs e)
+	private async void OnAppOptionsStateChanged()
 	{
 		await InvokeAsync(StateHasChanged);
 	}
 	
 	public void Dispose()
 	{
-		AppOptionsStateWrap.StateChanged -= OnAppOptionsStateChanged;
+		AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
 	}
 }

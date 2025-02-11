@@ -6,7 +6,7 @@
 	@{
 		var showDefaultToolbarLocal = _showDefaultToolbar;
 		
-		var appOptionsState = AppOptionsStateWrap.Value;
+		var appOptionsState = AppOptionsService.GetAppOptionsState();
 		
 		var iconDriver = new IconDriver(
 			appOptionsState.Options.IconSizeInPixels,

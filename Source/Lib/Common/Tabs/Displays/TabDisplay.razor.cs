@@ -12,7 +12,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
@@ -24,7 +24,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]

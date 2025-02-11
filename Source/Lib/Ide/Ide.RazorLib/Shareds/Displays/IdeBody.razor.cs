@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -13,7 +13,7 @@ public partial class IdeBody : ComponentBase
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions BodyElementDimensions { get; set; } = null!;
@@ -31,7 +31,7 @@ public partial class IdeBody : ComponentBase
             	33.3333,
             	DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract)
         });

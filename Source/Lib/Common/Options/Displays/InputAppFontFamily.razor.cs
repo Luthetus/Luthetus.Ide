@@ -13,7 +13,7 @@ public partial class InputAppFontFamily : ComponentBase, IDisposable
 
     public string FontFamily
     {
-        get => AppOptionsService.AppOptionsStateWrap.Value.Options.FontFamily ?? "unset";
+        get => AppOptionsService.GetAppOptionsState().Options.FontFamily ?? "unset";
         set
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -25,18 +25,18 @@ public partial class InputAppFontFamily : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
 
-    private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void AppOptionsStateWrapOnStateChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

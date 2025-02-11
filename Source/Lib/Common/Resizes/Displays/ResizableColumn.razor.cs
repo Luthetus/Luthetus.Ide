@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
 
@@ -16,7 +16,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     [Inject]
     private IAppDimensionService AppDimensionService { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -33,12 +33,12 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged += OnAppOptionsStateChanged;
+        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
         base.OnInitialized();
     }
     
-    private async void OnAppOptionsStateChanged(object? sender, EventArgs e)
+    private async void OnAppOptionsStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
@@ -100,6 +100,6 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     public void Dispose()
     {
         DragService.DragStateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged -= OnAppOptionsStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

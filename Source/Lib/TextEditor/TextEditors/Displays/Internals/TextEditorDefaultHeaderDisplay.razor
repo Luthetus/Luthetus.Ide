@@ -17,6 +17,8 @@
 	
 	            if (model is not null)
 	            {
+	            	var appOptionsState = AppOptionsService.GetAppOptionsState();
+	            
 	                /* (2024-08-09)
 	                var localHeaderButtonKindsList = HeaderButtonKinds;
 	
@@ -35,8 +37,8 @@
 	                    .ToImmutableArray();
 	                    
 	            	var iconDriver = new IconDriver(
-	            		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-	            		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	            		appOptionsState.Options.IconSizeInPixels,
+	            		appOptionsState.Options.IconSizeInPixels);
 	
 	                foreach (var headerButtonKind in localHeaderButtonKindsList)
 	                {

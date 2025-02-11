@@ -29,9 +29,11 @@
                     style="position: relative; margin-top: 10px; padding: 8px; justify-content: center; align-items: center;">
                     
                 @{
+                	var appOptionsState = AppOptionsService.GetAppOptionsState();
+                
                 	var iconDriver = new IconDriver(
-						AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-						AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+						appOptionsState.Options.IconSizeInPixels,
+						appOptionsState.Options.IconSizeInPixels);
                 }
                 @IconSettingsGearFragment.Render(iconDriver)
             </button>

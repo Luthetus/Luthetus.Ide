@@ -9,7 +9,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
@@ -30,7 +30,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -139,13 +139,15 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
     private void InitializeElementDimensions()
     {
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    
         _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(
             	40,
             	DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	appOptionsState.Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract)
         });
@@ -156,7 +158,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             	60,
             	DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	appOptionsState.Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract)
         });

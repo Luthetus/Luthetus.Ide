@@ -2,7 +2,7 @@ using System.Text;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -16,7 +16,7 @@ namespace Luthetus.Common.RazorLib.Notifications.Displays;
 public partial class NotificationDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -50,7 +50,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private string CssStyleString => GetCssStyleString();
 
     private string IconSizeInPixelsCssValue =>
-        $"{AppOptionsStateWrap.Value.Options.IconSizeInPixels.ToCssValue()}";
+        $"{AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
 
     private string NotificationTitleCssStyleString =>
         "width: calc(100% -" +
@@ -59,12 +59,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
 
-    private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void AppOptionsStateWrapOnStateChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
@@ -201,6 +201,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     {
         _notificationOverlayCancellationTokenSource.Cancel();
 
-        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

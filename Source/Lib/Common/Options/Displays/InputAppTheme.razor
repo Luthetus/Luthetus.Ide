@@ -2,7 +2,7 @@
 
 @{
     var themeState = ThemeRecordsCollectionService.ThemeStateWrap.Value;
-    var appOptionsState = AppOptionsService.AppOptionsStateWrap.Value;
+    var appOptionsState = AppOptionsService.GetAppOptionsState();
 
     var themesInScopeList = themeState.ThemeList
         .Where(x => x.ThemeScopeList.Contains(ThemeScope.App))

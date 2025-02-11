@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Themes.States;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -50,7 +50,6 @@ public record LuthetusCommonFactories
 
     public Func<IServiceProvider, IAppOptionsService> AppOptionsServiceFactory { get; init; } =
         serviceProvider => new AppOptionsService(
-            serviceProvider.GetRequiredService<IState<AppOptionsState>>(),
             serviceProvider.GetRequiredService<IState<ThemeState>>(),
             serviceProvider.GetRequiredService<IDispatcher>(),
             serviceProvider.GetRequiredService<IStorageService>(),

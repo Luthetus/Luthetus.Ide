@@ -13,7 +13,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -63,7 +63,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -291,7 +291,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         // This UI has resizable parts that need to be initialized.
         Dispatcher.Dispatch(new TestExplorerState.InitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
-            	() => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+            	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
             	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));

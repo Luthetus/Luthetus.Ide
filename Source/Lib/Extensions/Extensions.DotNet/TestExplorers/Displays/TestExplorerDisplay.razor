@@ -9,7 +9,7 @@
 
 @{
 	var testExplorerState = TestExplorerStateWrap.Value;
-	var appOptionsState = AppOptionsStateWrap.Value;
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
 
 	if (!TreeViewService.TryGetTreeViewContainer(
 			TestExplorerState.TreeViewTestExplorerKey,
@@ -28,7 +28,7 @@
                  ClassCssString="luth_ide_test-explorer"
                  StyleCssString="height: 100%; width: 100%;">
 
-	@if (AppOptionsStateWrap.Value.Options.ShowPanelTitles)
+	@if (appOptionsState.Options.ShowPanelTitles)
 	{
 	    <div class="luth_ide_section-title">
 	        Test Explorer
@@ -52,8 +52,8 @@
 				     
 				    @{
 		            	var iconDriver = new IconDriver(
-							AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-							AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+							appOptionsState.Options.IconSizeInPixels,
+							appOptionsState.Options.IconSizeInPixels);
 		            }
 		            
 					<button class="luth_button"

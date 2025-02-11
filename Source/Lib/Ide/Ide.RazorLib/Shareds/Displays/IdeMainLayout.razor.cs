@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
@@ -22,8 +21,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
     private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
@@ -56,7 +53,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     protected override void OnInitialized()
     {
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged += AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         IdeMainLayoutStateWrap.StateChanged += IdeMainLayoutStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
 
@@ -64,7 +61,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+            	AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract),
             new DimensionUnit(
@@ -92,7 +89,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void AppOptionsStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void AppOptionsStateWrapOnStateChanged()
     {
         await InvokeAsync(StateHasChanged);
     }
@@ -121,7 +118,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public void Dispose()
     {
         DragService.DragStateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsStateWrap.StateChanged -= AppOptionsStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         IdeMainLayoutStateWrap.StateChanged -= IdeMainLayoutStateWrapOnStateChanged;
         TextEditorService.OptionsStateWrap.StateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }

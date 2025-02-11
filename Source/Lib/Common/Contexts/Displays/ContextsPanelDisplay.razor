@@ -28,8 +28,8 @@
                 
             @{
             	var iconDriver = new IconDriver(
-					AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-					AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+					AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels,
+					AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels);
             }
 
             @if (isInspecting)
