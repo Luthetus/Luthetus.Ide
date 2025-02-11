@@ -45,16 +45,4 @@ public interface ITextEditorGroupApi
         Key<TextEditorViewModel> viewModelKey);
 
     public void ReduceDisposeAction(Key<TextEditorGroup> groupKey);
-
-	public Task HandleAddViewModelToGroupAction(
-		Key<TextEditorGroup> groupKey,
-        Key<TextEditorViewModel> viewModelKey);
-
-	public Task HandleSetActiveViewModelOfGroupAction(
-		Key<TextEditorGroup> groupKey,
-        Key<TextEditorViewModel> viewModelKey);
-
-	public Task HandleRemoveViewModelFromGroupAction(
-		Key<TextEditorGroup> groupKey,
-        Key<TextEditorViewModel> viewModelKey);
 }

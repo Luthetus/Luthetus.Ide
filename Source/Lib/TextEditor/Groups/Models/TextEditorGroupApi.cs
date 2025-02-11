@@ -129,12 +129,14 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         if (inGroup is null)
         {
             TextEditorGroupStateChanged?.Invoke();
+            PostScroll(groupKey, viewModelKey);
         	return;
         }
 
         if (inGroup.ViewModelKeyList.Contains(viewModelKey))
         {
             TextEditorGroupStateChanged?.Invoke();
+            PostScroll(groupKey, viewModelKey);
         	return;
         }
 
@@ -161,6 +163,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         };
         
         TextEditorGroupStateChanged?.Invoke();
+        PostScroll(groupKey, viewModelKey);
         return;
     }
 
@@ -176,6 +179,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         if (inGroup is null)
         {
             TextEditorGroupStateChanged?.Invoke();
+			PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
         	return;
         }
 
@@ -185,6 +189,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         if (indexOfViewModelKeyToRemove == -1)
         {
             TextEditorGroupStateChanged?.Invoke();
+			PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
         	return;
         }
 
@@ -240,6 +245,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         };
         
         TextEditorGroupStateChanged?.Invoke();
+		PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
         return;
     }
 
@@ -255,6 +261,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         if (inGroup is null)
         {
             TextEditorGroupStateChanged?.Invoke();
+            PostScroll(groupKey, viewModelKey);
         	return;
         }
 
@@ -269,6 +276,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         };
         
         TextEditorGroupStateChanged?.Invoke();
+        PostScroll(groupKey, viewModelKey);
         return;
     }
 
@@ -295,32 +303,6 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         TextEditorGroupStateChanged?.Invoke();
         return;
     }
-
-	public Task HandleAddViewModelToGroupAction(
-		Key<TextEditorGroup> groupKey,
-        Key<TextEditorViewModel> viewModelKey)
-	{
-		PostScroll(groupKey, viewModelKey);
-		return Task.CompletedTask;
-	}
-
-	public Task HandleSetActiveViewModelOfGroupAction(
-		Key<TextEditorGroup> groupKey,
-        Key<TextEditorViewModel> viewModelKey)
-	{
-		PostScroll(groupKey, viewModelKey);
-		return Task.CompletedTask;
-	}
-
-	public Task HandleRemoveViewModelFromGroupAction(
-		Key<TextEditorGroup> groupKey,
-        Key<TextEditorViewModel> viewModelKey)
-	{
-		// NOTE: The action has a viewModelKey, BUT it is the key for the viewModel which is being removed.
-		var group = _textEditorService.GroupApi.GetOrDefault(groupKey);
-		PostScroll(groupKey, group.ActiveViewModelKey);
-		return Task.CompletedTask;
-	}
 
 	private void PostScroll(
 		Key<TextEditorGroup> groupKey,
