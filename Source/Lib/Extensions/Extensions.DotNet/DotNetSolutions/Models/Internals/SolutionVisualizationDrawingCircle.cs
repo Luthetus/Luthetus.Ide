@@ -13,6 +13,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
@@ -104,9 +105,9 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		if (textEditorConfig.RegisterModelFunc is null)
 			return;
 
-		var dotNetSolutionStateWrap = serviceProvider.GetRequiredService<IState<DotNetSolutionState>>();
+		var dotNetBackgroundTaskApi = serviceProvider.GetRequiredService<DotNetBackgroundTaskApi>();
 
-		var dotNetSolutionModel = dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(x =>
+		var dotNetSolutionModel = dotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState().DotNetSolutionsList.FirstOrDefault(x =>
 			x.AbsolutePath.Value == dotNetSolutionResource.ResourceUri.Value);
 
 		foreach (var project in dotNetSolutionModel.DotNetProjectList)

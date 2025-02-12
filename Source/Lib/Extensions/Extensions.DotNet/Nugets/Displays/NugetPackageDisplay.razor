@@ -1,9 +1,7 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 <div class="luth_ide_nuget-package-display">
     
     @{
-        var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+        var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
         var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
     }
 

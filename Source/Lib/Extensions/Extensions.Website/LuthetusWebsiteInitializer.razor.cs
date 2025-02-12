@@ -46,8 +46,6 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-    [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
     protected override void OnInitialized()

@@ -6,18 +6,19 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.Nugets.States;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 
 namespace Luthetus.Extensions.DotNet.Nugets.Displays;
 
-public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManagerRendererType
+public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPackageManagerRendererType
 {
 	[Inject]
 	private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -40,6 +41,13 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 	{
 		get => NuGetPackageManagerStateWrap.Value.IncludePrerelease;
 		set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetIncludePrereleaseAction(value));
+	}
+
+	protected override void OnInitialized()
+	{
+		NuGetPackageManagerStateWrap.StateChanged += OnNuGetPackageManagerStateWrapStateChanged;
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+		base.OnInitialized();
 	}
 
 	private void SelectedProjectToModifyChanged(ChangeEventArgs changeEventArgs, DotNetSolutionState dotNetSolutionState)
@@ -116,5 +124,21 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 			_performingNugetQuery = false;
 			await InvokeAsync(StateHasChanged);
 		}
+	}
+	
+	private async void OnNuGetPackageManagerStateWrapStateChanged(object? sender, EventArgs e)
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	private async void OnDotNetSolutionStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public void Dispose()
+	{
+		NuGetPackageManagerStateWrap.StateChanged -= OnNuGetPackageManagerStateWrapStateChanged;
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

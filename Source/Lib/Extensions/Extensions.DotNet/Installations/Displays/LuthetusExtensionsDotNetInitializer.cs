@@ -58,8 +58,6 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IPanelService PanelService { get; set; } = null!;
 	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IStartupControlService StartupControlService { get; set; } = null!;
@@ -369,7 +367,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             MenuOptionKind.Delete,
             () =>
 			{
-				var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+				var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
 				var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 				
 				if (dotNetSolutionModel?.AbsolutePath is not null)
@@ -385,7 +383,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             MenuOptionKind.Delete,
             () =>
 			{
-				var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+				var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
 				var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 				
 				if (dotNetSolutionModel?.AbsolutePath is not null)

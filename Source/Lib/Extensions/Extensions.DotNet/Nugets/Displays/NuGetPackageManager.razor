@@ -1,8 +1,6 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 <ContextBoundary ContextRecord="ContextFacts.NuGetPackageManagerContext"
                  ClassCssString="luth_ide_nu-get-package-manager-display"
                  StyleCssString="height: 100%; width: 100%;">
@@ -19,7 +17,7 @@
 
         @{
             var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
-            var dotNetSolutionStateWrap = DotNetSolutionStateWrap.Value;
+            var dotNetSolutionStateWrap = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
         }
 
         @if (dotNetSolutionStateWrap.DotNetSolutionModel is null)

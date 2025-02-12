@@ -10,6 +10,9 @@ using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
+/// <summary>
+/// Investigate making this a record struct
+/// </summary>
 public record DotNetSolutionState(
     Key<DotNetSolutionModel>? DotNetSolutionModelKey,
     int IsExecutingAsyncTaskLinks)
