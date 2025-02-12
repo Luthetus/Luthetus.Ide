@@ -102,7 +102,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<ITerminalService, TerminalService>()
             .AddScoped<ITerminalGroupService, TerminalGroupService>()
             .AddScoped<IFolderExplorerService, FolderExplorerService>()
-            .AddScoped<IIdeMainLayoutService, IdeMainLayoutService>();
+            .AddScoped<IIdeMainLayoutService, IdeMainLayoutService>()
+            .AddScoped<IIdeHeaderService, IdeHeaderService>();
 
         return services;
     }
