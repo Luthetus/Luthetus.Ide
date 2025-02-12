@@ -27,7 +27,6 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
-using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
@@ -57,6 +56,7 @@ public class DotNetSolutionIdeApi
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
+	private readonly IStartupControlService _startupControlService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
@@ -83,6 +83,7 @@ public class DotNetSolutionIdeApi
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
+		IStartupControlService startupControlService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IState<TerminalState> terminalStateWrap,
 		DotNetCliOutputParser dotNetCliOutputParser,
@@ -106,6 +107,7 @@ public class DotNetSolutionIdeApi
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
 		_codeSearchService = codeSearchService;
+		_startupControlService = startupControlService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
@@ -625,7 +627,7 @@ Execution Terminal"));
 	
 	private void RegisterStartupControl(IDotNetProject project)
 	{
-		_dispatcher.Dispatch(new StartupControlState.RegisterStartupControlAction(
+		_startupControlService.ReduceRegisterStartupControlAction(
 			new StartupControlModel(
 				Key<IStartupControlModel>.NewKey(),
 				project.DisplayName,
@@ -634,7 +636,7 @@ Execution Terminal"));
 				null,
 				null,
 				startupControlModel => StartButtonOnClick(startupControlModel, project),
-				StopButtonOnClick)));
+				StopButtonOnClick));
 	}
 	
 	private Task StartButtonOnClick(IStartupControlModel interfaceStartupControlModel, IDotNetProject project)
@@ -665,7 +667,7 @@ Execution Terminal"));
         	ContinueWithFunc = parsedCommand =>
         	{
         		startupControlModel.ExecutingTerminalCommandRequest = null;
-        		_dispatcher.Dispatch(new StartupControlState.StateChangedAction());
+        		_startupControlService.ReduceStateChangedAction();
         	
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString(),
@@ -688,7 +690,7 @@ Execution Terminal"));
 		_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
 		startupControlModel.ExecutingTerminalCommandRequest = null;
 		
-        _dispatcher.Dispatch(new StartupControlState.StateChangedAction());
+        _startupControlService.ReduceStateChangedAction();
         return Task.CompletedTask;
     }
     

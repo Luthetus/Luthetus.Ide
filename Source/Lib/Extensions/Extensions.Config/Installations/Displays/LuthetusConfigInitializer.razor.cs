@@ -13,7 +13,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Ide.RazorLib.Shareds.States;
@@ -38,7 +38,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]

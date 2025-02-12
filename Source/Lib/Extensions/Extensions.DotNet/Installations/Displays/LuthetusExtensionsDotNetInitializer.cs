@@ -22,7 +22,7 @@ using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
@@ -61,7 +61,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -336,7 +336,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             MenuOptionKind.Create,
             () =>
 			{
-				var startupControlState = StartupControlStateWrap.Value;
+				var startupControlState = StartupControlService.GetStartupControlState();
 				var activeStartupControl = startupControlState.ActiveStartupControl;
 			
 				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
@@ -352,7 +352,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             MenuOptionKind.Create,
             () =>
 			{
-				var startupControlState = StartupControlStateWrap.Value;
+				var startupControlState = StartupControlService.GetStartupControlState();
 				var activeStartupControl = startupControlState.ActiveStartupControl;
 			
 				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
