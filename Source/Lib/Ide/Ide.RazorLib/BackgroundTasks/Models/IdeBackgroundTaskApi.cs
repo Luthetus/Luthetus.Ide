@@ -37,6 +37,7 @@ public class IdeBackgroundTaskApi
 	private readonly IDialogService _dialogService;
 	private readonly IPanelService _panelService;
 	private readonly INotificationService _notificationService;
+	private readonly IInputFileService _inputFileService;
 	private readonly IJSRuntime _jsRuntime;
 
     public IdeBackgroundTaskApi(
@@ -55,6 +56,7 @@ public class IdeBackgroundTaskApi
         IDialogService dialogService,
         IPanelService panelService,
         INotificationService notificationService,
+        IInputFileService inputFileService,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
@@ -73,6 +75,7 @@ public class IdeBackgroundTaskApi
 		_dialogService = dialogService;
 		_panelService = panelService;
 		_notificationService = notificationService;
+		_inputFileService = inputFileService;
 		_jsRuntime = jsRuntime;
 
         Editor = new EditorIdeApi(
@@ -114,7 +117,7 @@ public class IdeBackgroundTaskApi
             _ideComponentRenderers,
             _backgroundTaskService,
             _dialogService,
-            _dispatcher);
+            _inputFileService);
     }
     
     public EditorIdeApi Editor { get; }

@@ -9,6 +9,7 @@ using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.Commands;
@@ -91,7 +92,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
-            .AddScoped<ICodeSearchService, CodeSearchService>();
+            .AddScoped<ICodeSearchService, CodeSearchService>()
+            .AddScoped<IInputFileService, InputFileService>();
 
         return services;
     }

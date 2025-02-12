@@ -12,7 +12,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Displays;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
-using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
@@ -43,6 +43,8 @@ public partial class LuthetusConfigInitializer : ComponentBase
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -137,14 +139,12 @@ public partial class LuthetusConfigInitializer : ComponentBase
             }
             await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-            var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
+            InputFileService.ReduceSetOpenedTreeViewModelAction(
                 pseudoRootNode,
                 IdeComponentRenderers,
                 CommonComponentRenderers,
                 FileSystemProvider,
                 EnvironmentProvider);
-
-            Dispatcher.Dispatch(setOpenedTreeViewModelAction);
         }
 
 		/*

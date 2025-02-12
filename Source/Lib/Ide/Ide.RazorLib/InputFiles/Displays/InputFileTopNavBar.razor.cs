@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Exceptions;
-using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 
@@ -15,6 +15,8 @@ public partial class InputFileTopNavBar : ComponentBase
 {
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
+    [Inject]
+    private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -33,7 +35,7 @@ public partial class InputFileTopNavBar : ComponentBase
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
     [CascadingParameter]
-    public InputFileState InputFileState { get; set; } = null!;
+    public InputFileState InputFileState { get; set; }
     
     private bool _showInputTextEditForAddress;
 
@@ -42,36 +44,37 @@ public partial class InputFileTopNavBar : ComponentBase
     public string SearchQuery
     {
         get => InputFileState.SearchQuery;
-        set => Dispatcher.Dispatch(new InputFileState.SetSearchQueryAction(value));
+        set => InputFileService.ReduceSetSearchQueryAction(value);
     }
 
     private async Task HandleBackButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
+        InputFileService.ReduceMoveBackwardsInHistoryAction();
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 
     private async Task HandleForwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
+        InputFileService.ReduceMoveForwardsInHistoryAction();
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 
     private async Task HandleUpwardButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
+        InputFileService.ReduceOpenParentDirectoryAction(
             IdeComponentRenderers,
             CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
-            BackgroundTaskService));
+            BackgroundTaskService,
+            parentDirectoryTreeViewModel: null);
 
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 
     private async Task HandleRefreshButtonOnClick()
     {
-        Dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(BackgroundTaskService));
+        InputFileService.ReduceRefreshCurrentSelectionAction(BackgroundTaskService, currentSelection: null);
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 

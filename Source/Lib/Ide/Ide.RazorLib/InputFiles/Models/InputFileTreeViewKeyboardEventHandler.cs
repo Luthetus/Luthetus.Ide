@@ -8,14 +8,13 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
 public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly IState<InputFileState> _inputFileStateWrap;
-    private readonly IDispatcher _dispatcher;
+    private readonly IInputFileService _inputFileService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
@@ -27,8 +26,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     public InputFileTreeViewKeyboardEventHandler(
 	        ITreeViewService treeViewService,
-	        IState<InputFileState> inputFileStateWrap,
-	        IDispatcher dispatcher,
+	        IInputFileService inputFileService,
 	        IIdeComponentRenderers ideComponentRenderers,
 	        ICommonComponentRenderers commonComponentRenderers,
 	        IFileSystemProvider fileSystemProvider,
@@ -39,8 +37,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 	        IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)
     {
-        _inputFileStateWrap = inputFileStateWrap;
-        _dispatcher = dispatcher;
+        _inputFileService = inputFileService;
         _ideComponentRenderers = ideComponentRenderers;
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
@@ -131,32 +128,33 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleBackButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _dispatcher.Dispatch(new InputFileState.MoveBackwardsInHistoryAction());
-        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
+        _inputFileService.ReduceMoveBackwardsInHistoryAction();
+        ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 
     private void HandleForwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _dispatcher.Dispatch(new InputFileState.MoveForwardsInHistoryAction());
-        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
+        _inputFileService.ReduceMoveForwardsInHistoryAction();
+        ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 
     private void HandleUpwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _dispatcher.Dispatch(new InputFileState.OpenParentDirectoryAction(
+        _inputFileService.ReduceOpenParentDirectoryAction(
             _ideComponentRenderers,
             _commonComponentRenderers,
             _fileSystemProvider,
             _environmentProvider,
-            _backgroundTaskService));
+            _backgroundTaskService,
+            parentDirectoryTreeViewModel: null);
 
-        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
+        ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 
     private void HandleRefreshButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _dispatcher.Dispatch(new InputFileState.RefreshCurrentSelectionAction(_backgroundTaskService));
-        ChangeContentRootToOpenedTreeView(_inputFileStateWrap.Value);
+        _inputFileService.ReduceRefreshCurrentSelectionAction(_backgroundTaskService, currentSelection: null);
+        ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 
     private void ChangeContentRootToOpenedTreeView(InputFileState inputFileState)
@@ -175,9 +173,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         if (treeViewAbsolutePath is null)
             return;
 
-        var setSelectedTreeViewModelAction = new InputFileState.SetSelectedTreeViewModelAction(treeViewAbsolutePath);
-        
-        _dispatcher.Dispatch(setSelectedTreeViewModelAction);
+        _inputFileService.ReduceSetSelectedTreeViewModelAction(treeViewAbsolutePath);
         return;
     }
 
