@@ -185,13 +185,14 @@ public partial class TestExplorerScheduler
 
         _dotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
         {
-            ProjectTestModelList = localProjectTestModelList.ToImmutableList()
+            ProjectTestModelList = localProjectTestModelList.ToImmutableList(),
+            SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value,
         });
     }
     
-    public Task Task_DiscoverTests()
+    public ValueTask Task_DiscoverTests()
     {
-    	return _throttleDiscoverTests.RunAsync(async _ => 
+    	_throttleDiscoverTests.Run(async _ =>
     	{
 	    	var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 	        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
@@ -212,7 +213,7 @@ public partial class TestExplorerScheduler
 	    			return Task.CompletedTask;
 	    		}
 	    	};
-
+	
 			NotificationHelper.DispatchProgress(
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 				progressBarModel,
@@ -269,6 +270,14 @@ public partial class TestExplorerScheduler
 					});     
 		            await Task_SumEachProjectTestCount();
 		        }
+		        else
+		        {
+		        	progressThrottle.Run(_ => 
+					{
+						progressBarModel.SetProgress(0, "not found");
+						return Task.CompletedTask;
+					});
+		        }
 			}
 			catch (Exception e)
 			{
@@ -287,6 +296,8 @@ public partial class TestExplorerScheduler
 				});
 			}
 		});
+		
+		return ValueTask.CompletedTask;
     }
     
     public Task Task_SumEachProjectTestCount()

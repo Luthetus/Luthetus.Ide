@@ -14,8 +14,6 @@ public interface ITestExplorerService
     public void ReduceWithAction(Func<TestExplorerState, TestExplorerState> withFunc);
     public void ReduceInitializeResizeHandleDimensionUnitAction(DimensionUnit dimensionUnit);
     
-	public Task HandleDotNetSolutionStateStateHasChanged();
-
 	/// <summary>
     /// When the user interface for the test explorer is rendered,
     /// then dispatch this in order to start a task that will discover unit tests.

@@ -31,7 +31,7 @@ public partial class TestExplorerScheduler : IStateScheduler
 	private readonly IDotNetSolutionService _dotNetSolutionService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
     
-    private readonly ThrottleAsync _throttleDiscoverTests = new(TimeSpan.FromMilliseconds(100));
+    private readonly Throttle _throttleDiscoverTests = new(TimeSpan.FromMilliseconds(100));
 
     public TestExplorerScheduler(
         DotNetBackgroundTaskApi dotNetBackgroundTaskApi,

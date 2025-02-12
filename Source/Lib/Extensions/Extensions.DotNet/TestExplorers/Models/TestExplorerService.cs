@@ -6,7 +6,9 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 public class TestExplorerService : ITestExplorerService
-{  
+{
+	private readonly object _stateModificationLock = new();
+
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IDotNetSolutionService _dotNetSolutionService;
@@ -43,6 +45,8 @@ public class TestExplorerService : ITestExplorerService
     /// </summary>
     private string _intentToDiscoverTestsInSolutionFilePath = string.Empty;
     
+    private string _treeViewOwnerSolutionFilePath = string.Empty;
+    
     private TestExplorerState _testExplorerState = new();
     
     public event Action? TestExplorerStateChanged;
@@ -51,74 +55,74 @@ public class TestExplorerService : ITestExplorerService
 
     public void ReduceWithAction(Func<TestExplorerState, TestExplorerState> withFunc)
     {
-    	var inState = GetTestExplorerState();
-    
-        _testExplorerState = withFunc.Invoke(inState);
-        
-        TestExplorerStateChanged?.Invoke();
-        return;
+    	lock (_stateModificationLock)
+    	{
+	    	var inState = GetTestExplorerState();
+	    
+	        _testExplorerState = withFunc.Invoke(inState);
+	        
+	        TestExplorerStateChanged?.Invoke();
+	        return;
+	    }
     }
     
     public void ReduceInitializeResizeHandleDimensionUnitAction(DimensionUnit dimensionUnit)
     {
-    	var inState = GetTestExplorerState();
-    
-        if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
-        {
-        	TestExplorerStateChanged?.Invoke();
-        	return;
-        }
-        
-        // TreeViewElementDimensions
-        {
-        	if (inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-        	{
-        		TestExplorerStateChanged?.Invoke();
-        		return;
-        	}
-        		
-        	var existingDimensionUnit = inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList
-        		.FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-        		
-            if (existingDimensionUnit.Purpose is not null)
-            {
-            	TestExplorerStateChanged?.Invoke();
-        		return;
-            }
-        		
-        	inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-        }
-        
-        // DetailsElementDimensions
-        {
-        	if (inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-        	{
-        		TestExplorerStateChanged?.Invoke();
-        		return;
-        	}
-        		
-        	var existingDimensionUnit = inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList
-        		.FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-        		
-            if (existingDimensionUnit.Purpose is not null)
-            {
-            	TestExplorerStateChanged?.Invoke();
-        		return;
-            }
-        		
-        	inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-        }
-        
-        TestExplorerStateChanged?.Invoke();
-        return;
+    	lock (_stateModificationLock)
+    	{
+	    	var inState = GetTestExplorerState();
+	    
+	        if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+	        {
+	        	TestExplorerStateChanged?.Invoke();
+	        	return;
+	        }
+	        
+	        // TreeViewElementDimensions
+	        {
+	        	if (inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
+	        	{
+	        		TestExplorerStateChanged?.Invoke();
+	        		return;
+	        	}
+	        		
+	        	var existingDimensionUnit = inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList
+	        		.FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+	        		
+	            if (existingDimensionUnit.Purpose is not null)
+	            {
+	            	TestExplorerStateChanged?.Invoke();
+	        		return;
+	            }
+	        		
+	        	inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+	        }
+	        
+	        // DetailsElementDimensions
+	        {
+	        	if (inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
+	        	{
+	        		TestExplorerStateChanged?.Invoke();
+	        		return;
+	        	}
+	        		
+	        	var existingDimensionUnit = inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList
+	        		.FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+	        		
+	            if (existingDimensionUnit.Purpose is not null)
+	            {
+	            	TestExplorerStateChanged?.Invoke();
+	        		return;
+	            }
+	        		
+	        	inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+	        }
+	        
+	        TestExplorerStateChanged?.Invoke();
+	        return;
+	    }
     }
     
-	public Task HandleDotNetSolutionStateStateHasChanged()
-	{
-        _dotNetBackgroundTaskApi.TestExplorer.Enqueue_ConstructTreeView();
-		return Task.CompletedTask;
-	}
-
 	/// <summary>
     /// When the user interface for the test explorer is rendered,
     /// then dispatch this in order to start a task that will discover unit tests.
@@ -132,12 +136,21 @@ public class TestExplorerService : ITestExplorerService
 			return Task.CompletedTask;
 
 		var testExplorerState = GetTestExplorerState();
-
-		if (dotNetSolutionModel.AbsolutePath.Value != testExplorerState.SolutionFilePath &&
-			_intentToDiscoverTestsInSolutionFilePath != dotNetSolutionModel.AbsolutePath.Value)
+		
+		if (dotNetSolutionModel.AbsolutePath.Value != testExplorerState.SolutionFilePath)
+		{
+			ReduceWithAction(inState => inState with
+			{
+				SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
+			});
+		
+			_dotNetBackgroundTaskApi.TestExplorer.Enqueue_ConstructTreeView();
+		}
+		
+		if (_intentToDiscoverTestsInSolutionFilePath != dotNetSolutionModel.AbsolutePath.Value)
 		{
 			_intentToDiscoverTestsInSolutionFilePath = dotNetSolutionModel.AbsolutePath.Value;
-			HandleShouldDiscoverTestsEffect();
+			_dotNetBackgroundTaskApi.TestExplorer.Enqueue_DiscoverTests();
 		}
 
 		return Task.CompletedTask;
@@ -145,6 +158,27 @@ public class TestExplorerService : ITestExplorerService
 	
 	public Task HandleShouldDiscoverTestsEffect()
 	{
-        return _dotNetBackgroundTaskApi.TestExplorer.Task_DiscoverTests();
+		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
+		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+
+		if (dotNetSolutionModel is null)
+			return Task.CompletedTask;
+
+		var testExplorerState = GetTestExplorerState();
+	
+		if (dotNetSolutionModel.AbsolutePath.Value != testExplorerState.SolutionFilePath)
+		{
+			ReduceWithAction(inState => inState with
+			{
+				SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
+			});
+		
+			_dotNetBackgroundTaskApi.TestExplorer.Enqueue_ConstructTreeView();
+		}
+		
+		_intentToDiscoverTestsInSolutionFilePath = dotNetSolutionModel.AbsolutePath.Value;
+		_dotNetBackgroundTaskApi.TestExplorer.Enqueue_DiscoverTests();
+	
+        return Task.CompletedTask;
 	}
 }

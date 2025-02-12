@@ -38,7 +38,12 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
 		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
 
-		DotNetBackgroundTaskApi.TestExplorerService.HandleUserInterfaceWasInitializedEffect();
+		_ = Task.Run(async () =>
+		{
+			await DotNetBackgroundTaskApi.TestExplorerService
+				.HandleUserInterfaceWasInitializedEffect()
+				.ConfigureAwait(false);
+		});
 
 		base.OnInitialized();
 	}
@@ -129,7 +134,12 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	
 	private void DispatchShouldDiscoverTestsEffect()
 	{
-		DotNetBackgroundTaskApi.TestExplorerService.HandleShouldDiscoverTestsEffect();
+		_ = Task.Run(async () =>
+		{
+			await DotNetBackgroundTaskApi.TestExplorerService
+				.HandleShouldDiscoverTestsEffect()
+				.ConfigureAwait(false);
+		});
 	}
 	
 	private async void OnTestExplorerStateChanged()
