@@ -14,15 +14,14 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Extensions.DotNet.TestExplorers.States;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays;
 
-public partial class TestExplorerDisplay : FluxorComponent, IDisposable
+public partial class TestExplorerDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private IState<TestExplorerState> TestExplorerStateWrap { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -34,13 +33,16 @@ public partial class TestExplorerDisplay : FluxorComponent, IDisposable
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{
+		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
 		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
 
-		Dispatcher.Dispatch(new TestExplorerState.UserInterfaceWasInitializedEffect());
+		DotNetBackgroundTaskApi.TestExplorerService.HandleUserInterfaceWasInitializedEffect();
 
 		base.OnInitialized();
 	}
@@ -129,9 +131,14 @@ public partial class TestExplorerDisplay : FluxorComponent, IDisposable
 			});
 	}
 	
-	private void DispatchShouldInitializeEffect()
+	private void DispatchShouldDiscoverTestsEffect()
 	{
-		Dispatcher.Dispatch(new TestExplorerState.ShouldInitializeEffect());
+		DotNetBackgroundTaskApi.TestExplorerService.HandleShouldDiscoverTestsEffect();
+	}
+	
+	private async void OnTestExplorerStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
 	}
 	
 	private async void OnTreeViewStateChanged()
@@ -141,6 +148,7 @@ public partial class TestExplorerDisplay : FluxorComponent, IDisposable
 	
 	public void Dispose()
 	{
+		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
 		TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
 	}
 }

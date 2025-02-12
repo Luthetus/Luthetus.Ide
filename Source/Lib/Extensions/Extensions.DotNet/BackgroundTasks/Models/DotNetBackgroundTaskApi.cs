@@ -19,7 +19,7 @@ using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
-using Luthetus.Extensions.DotNet.TestExplorers.States;
+using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.Outputs.Models;
 
@@ -48,7 +48,6 @@ public class DotNetBackgroundTaskApi
 	private readonly IStartupControlService _startupControlService;
 	private readonly INotificationService _notificationService;
 	private readonly ITerminalService _terminalService;
-    private readonly IState<TestExplorerState> _testExplorerStateWrap;
 
     public DotNetBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
@@ -72,7 +71,6 @@ public class DotNetBackgroundTaskApi
 		IStartupControlService startupControlService,
 		INotificationService notificationService,
 		ITerminalService terminalService,
-        IState<TestExplorerState> testExplorerStateWrap,
         IServiceProvider serviceProvider)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -96,7 +94,6 @@ public class DotNetBackgroundTaskApi
 		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
-        _testExplorerStateWrap = testExplorerStateWrap;
 
         CompilerService = new CompilerServiceIdeApi(
 			this,
@@ -108,6 +105,11 @@ public class DotNetBackgroundTaskApi
 			_commonComponentRenderers,
 			_treeViewService,
 			_dispatcher);
+			
+		TestExplorerService = new TestExplorerService(
+			this,
+			_ideBackgroundTaskApi,
+			_dotNetSolutionStateWrap);
 
         TestExplorer = new TestExplorerScheduler(
             this,
@@ -121,7 +123,7 @@ public class DotNetBackgroundTaskApi
             _dotNetCliOutputParser,
             _dotNetSolutionStateWrap,
             _terminalService,
-            _testExplorerStateWrap,
+            TestExplorerService,
             _dispatcher);
             
         OutputService = new OutputService(this);
@@ -164,4 +166,5 @@ public class DotNetBackgroundTaskApi
     public TestExplorerScheduler TestExplorer { get; }
     public OutputScheduler Output { get; }
     public IOutputService OutputService { get; }
+    public ITestExplorerService TestExplorerService { get; }
 }

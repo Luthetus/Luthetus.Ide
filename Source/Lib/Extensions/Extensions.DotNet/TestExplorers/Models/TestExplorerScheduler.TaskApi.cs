@@ -8,7 +8,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
-namespace Luthetus.Extensions.DotNet.TestExplorers.States;
+namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 public partial class TestExplorerScheduler
 {
@@ -183,10 +183,10 @@ public partial class TestExplorerScheduler
                 false);
         }
 
-        _dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+        _dotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
         {
             ProjectTestModelList = localProjectTestModelList.ToImmutableList()
-        }));
+        });
     }
     
     public Task Task_DiscoverTests()
@@ -199,7 +199,7 @@ public partial class TestExplorerScheduler
 	        if (dotNetSolutionModel is null)
 	            return;
 	    	
-	    	var localTestExplorerState = _testExplorerStateWrap.Value;
+	    	var localTestExplorerState = _testExplorerService.GetTestExplorerState();
 	    	var cancellationTokenSource = new CancellationTokenSource();
 	    	var cancellationToken = cancellationTokenSource.Token;
 	    	
@@ -364,12 +364,12 @@ public partial class TestExplorerScheduler
             _treeViewService.ReduceWithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
         }
     
-    	_dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+    	_dotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
         {
             TotalTestCount = totalTestCount,
             NotRanTestHashSet = notRanTestHashSet,
             SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
-        }));
+        });
     
         return Task.CompletedTask;
     }

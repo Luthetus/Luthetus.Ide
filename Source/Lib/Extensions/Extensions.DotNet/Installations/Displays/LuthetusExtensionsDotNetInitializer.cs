@@ -27,7 +27,7 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays;
-using Luthetus.Extensions.DotNet.TestExplorers.States;
+using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -290,12 +290,12 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         PanelService.ReduceRegisterPanelAction(testExplorerPanel);
         PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
-        Dispatcher.Dispatch(new TestExplorerState.InitializeResizeHandleDimensionUnitAction(
+        DotNetBackgroundTaskApi.TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
             	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
-            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
+            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 
         // nuGetPanel
         var nuGetPanel = new Panel(

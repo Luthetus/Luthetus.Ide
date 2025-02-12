@@ -13,7 +13,7 @@ using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
-namespace Luthetus.Extensions.DotNet.TestExplorers.States;
+namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 /// <inheritdoc cref="IStateScheduler"/>
 public partial class TestExplorerScheduler : IStateScheduler
@@ -28,7 +28,7 @@ public partial class TestExplorerScheduler : IStateScheduler
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITerminalService _terminalService;
-	private readonly IState<TestExplorerState> _testExplorerStateWrap;
+	private readonly ITestExplorerService _testExplorerService;
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
     private readonly IDispatcher _dispatcher;
@@ -47,7 +47,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         DotNetCliOutputParser dotNetCliOutputParser,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
         ITerminalService terminalService,
-        IState<TestExplorerState> testExplorerStateWrap,
+        ITestExplorerService testExplorerService,
         IDispatcher dispatcher)
     {
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
@@ -59,7 +59,7 @@ public partial class TestExplorerScheduler : IStateScheduler
 		_backgroundTaskService = backgroundTaskService;
 		_fileSystemProvider = fileSystemProvider;
 		_terminalService = terminalService;
-		_testExplorerStateWrap = testExplorerStateWrap;
+		_testExplorerService = testExplorerService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
         _dotNetCliOutputParser = dotNetCliOutputParser;
         _dispatcher = dispatcher;

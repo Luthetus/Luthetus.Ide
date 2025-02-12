@@ -1,7 +1,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Extensions.DotNet.TestExplorers.States;
+namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 public partial class TestExplorerScheduler
 {
