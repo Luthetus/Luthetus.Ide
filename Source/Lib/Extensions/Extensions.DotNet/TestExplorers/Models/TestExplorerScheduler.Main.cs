@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
@@ -29,7 +29,7 @@ public partial class TestExplorerScheduler : IStateScheduler
     private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITerminalService _terminalService;
 	private readonly ITestExplorerService _testExplorerService;
-	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
+	private readonly IDotNetSolutionService _dotNetSolutionService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
     private readonly IDispatcher _dispatcher;
     
@@ -45,7 +45,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         IBackgroundTaskService backgroundTaskService,
         IFileSystemProvider fileSystemProvider,
         DotNetCliOutputParser dotNetCliOutputParser,
-        IState<DotNetSolutionState> dotNetSolutionStateWrap,
+        IDotNetSolutionService dotNetSolutionService,
         ITerminalService terminalService,
         ITestExplorerService testExplorerService,
         IDispatcher dispatcher)
@@ -60,7 +60,7 @@ public partial class TestExplorerScheduler : IStateScheduler
 		_fileSystemProvider = fileSystemProvider;
 		_terminalService = terminalService;
 		_testExplorerService = testExplorerService;
-        _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
+        _dotNetSolutionService = dotNetSolutionService;
         _dotNetCliOutputParser = dotNetCliOutputParser;
         _dispatcher = dispatcher;
     }

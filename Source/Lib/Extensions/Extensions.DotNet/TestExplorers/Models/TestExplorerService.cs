@@ -2,7 +2,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
@@ -10,16 +10,16 @@ public class TestExplorerService : ITestExplorerService
 {  
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
+    private readonly IDotNetSolutionService _dotNetSolutionService;
 
     public TestExplorerService(
 		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		IState<DotNetSolutionState> dotNetSolutionStateWrap)
+		IDotNetSolutionService dotNetSolutionService)
 	{
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
+        _dotNetSolutionService = dotNetSolutionService;
     }
     
     /// <summary>
@@ -126,7 +126,7 @@ public class TestExplorerService : ITestExplorerService
     /// </summary>
 	public Task HandleUserInterfaceWasInitializedEffect()
 	{
-		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
 		if (dotNetSolutionModel is null)

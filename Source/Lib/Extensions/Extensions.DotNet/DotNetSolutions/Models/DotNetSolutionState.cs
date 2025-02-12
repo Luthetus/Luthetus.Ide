@@ -8,16 +8,15 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
-namespace Luthetus.Extensions.DotNet.DotNetSolutions.States;
+namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
-[FeatureState]
-public partial record DotNetSolutionState(
+public record DotNetSolutionState(
     Key<DotNetSolutionModel>? DotNetSolutionModelKey,
     int IsExecutingAsyncTaskLinks)
 {
     public static readonly Key<TreeViewContainer> TreeViewSolutionExplorerStateKey = Key<TreeViewContainer>.NewKey();
 
-    private DotNetSolutionState() : this(Key<DotNetSolutionModel>.Empty, 0)
+    public DotNetSolutionState() : this(Key<DotNetSolutionModel>.Empty, 0)
     {
     }
 

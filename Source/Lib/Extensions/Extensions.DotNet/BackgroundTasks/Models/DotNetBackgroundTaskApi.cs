@@ -8,8 +8,6 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
-using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -19,6 +17,7 @@ using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
+using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.Outputs.Models;
@@ -40,7 +39,6 @@ public class DotNetBackgroundTaskApi
 	private readonly IDispatcher _dispatcher;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
@@ -63,7 +61,6 @@ public class DotNetBackgroundTaskApi
 		IDispatcher dispatcher,
 		IEnvironmentProvider environmentProvider,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		IState<DotNetSolutionState> dotNetSolutionStateWrap,
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
@@ -85,7 +82,6 @@ public class DotNetBackgroundTaskApi
 		_dispatcher = dispatcher;
 		_environmentProvider = environmentProvider;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
@@ -94,6 +90,8 @@ public class DotNetBackgroundTaskApi
 		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
+
+		DotNetSolutionService = new DotNetSolutionService();
 
         CompilerService = new CompilerServiceIdeApi(
 			this,
@@ -109,7 +107,7 @@ public class DotNetBackgroundTaskApi
 		TestExplorerService = new TestExplorerService(
 			this,
 			_ideBackgroundTaskApi,
-			_dotNetSolutionStateWrap);
+			DotNetSolutionService);
 
         TestExplorer = new TestExplorerScheduler(
             this,
@@ -121,7 +119,7 @@ public class DotNetBackgroundTaskApi
             _backgroundTaskService,
             _fileSystemProvider,
             _dotNetCliOutputParser,
-            _dotNetSolutionStateWrap,
+            DotNetSolutionService,
             _terminalService,
             TestExplorerService,
             _dispatcher);
@@ -149,7 +147,7 @@ public class DotNetBackgroundTaskApi
 			_notificationService,
 			_dispatcher,
 			_environmentProvider,
-			_dotNetSolutionStateWrap,
+			DotNetSolutionService,
 			_fileSystemProvider,
 			_textEditorService,
 			_findAllService,
@@ -167,4 +165,5 @@ public class DotNetBackgroundTaskApi
     public OutputScheduler Output { get; }
     public IOutputService OutputService { get; }
     public ITestExplorerService TestExplorerService { get; }
+    public IDotNetSolutionService DotNetSolutionService { get; }
 }

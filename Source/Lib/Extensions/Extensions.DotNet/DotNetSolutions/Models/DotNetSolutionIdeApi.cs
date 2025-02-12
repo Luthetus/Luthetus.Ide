@@ -27,7 +27,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
@@ -50,7 +50,7 @@ public class DotNetSolutionIdeApi
 	private readonly INotificationService _notificationService;
 	private readonly IDispatcher _dispatcher;
 	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
+	private readonly IDotNetSolutionService _dotNetSolutionService;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
@@ -77,7 +77,7 @@ public class DotNetSolutionIdeApi
 		INotificationService notificationService,
 		IDispatcher dispatcher,
 		IEnvironmentProvider environmentProvider,
-		IState<DotNetSolutionState> dotNetSolutionStateWrap,
+		IDotNetSolutionService dotNetSolutionService,
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
@@ -101,7 +101,7 @@ public class DotNetSolutionIdeApi
 		_notificationService = notificationService;
 		_dispatcher = dispatcher;
 		_environmentProvider = environmentProvider;
-		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
+		_dotNetSolutionService = dotNetSolutionService;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
@@ -211,7 +211,7 @@ public class DotNetSolutionIdeApi
 			content);
 
 		// TODO: If somehow model was registered already this won't write the state
-		_dispatcher.Dispatch(new DotNetSolutionState.RegisterAction(dotNetSolutionModel, this));
+		_dotNetSolutionService.ReduceRegisterAction(dotNetSolutionModel, this);
 
 		_dispatcher.Dispatch(new WithAction(
 			inDotNetSolutionState => inDotNetSolutionState with
@@ -322,7 +322,7 @@ Execution Terminal"));
 
 	private Task ParseSolution(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
-		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);
@@ -578,7 +578,7 @@ Execution Terminal"));
 
 	private async Task SetDotNetSolutionTreeViewAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
-		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);
@@ -716,7 +716,7 @@ Execution Terminal"));
 		string cSharpProjectName,
 		AbsolutePath cSharpProjectAbsolutePath)
 	{
-		var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
+		var inDotNetSolutionModel = _dotNetSolutionService.GetDotNetSolutionState().DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);
 
 		if (inDotNetSolutionModel is null)

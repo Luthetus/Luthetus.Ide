@@ -14,7 +14,7 @@ public partial class TestExplorerScheduler
 {
     public async ValueTask Task_ConstructTreeView()
     {
-        var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+        var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
         if (dotNetSolutionModel is null)
@@ -193,7 +193,7 @@ public partial class TestExplorerScheduler
     {
     	return _throttleDiscoverTests.RunAsync(async _ => 
     	{
-	    	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+	    	var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 	        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 	
 	        if (dotNetSolutionModel is null)
@@ -291,7 +291,7 @@ public partial class TestExplorerScheduler
     
     public Task Task_SumEachProjectTestCount()
     {
-		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
         if (dotNetSolutionModel is null)
