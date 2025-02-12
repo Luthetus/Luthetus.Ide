@@ -1,13 +1,11 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 
-namespace Luthetus.Ide.RazorLib.Shareds.States;
+namespace Luthetus.Ide.RazorLib.Shareds.Models;
 
-[FeatureState]
-public partial record IdeHeaderState(
+public record struct IdeHeaderState(
 	MenuRecord MenuFile,
 	MenuRecord MenuTools,
 	MenuRecord MenuView,

@@ -1,16 +1,14 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
 
-namespace Luthetus.Ide.RazorLib.CodeSearches.States;
+namespace Luthetus.Ide.RazorLib.CodeSearches.Models;
 
-[FeatureState]
-public partial record CodeSearchState(
+public record struct CodeSearchState(
     string Query,
     string? StartingAbsolutePathForSearch,
     CodeSearchFilterKind CodeSearchFilterKind,

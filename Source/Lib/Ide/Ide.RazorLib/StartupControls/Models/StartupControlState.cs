@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 
-namespace Luthetus.Ide.RazorLib.StartupControls.States;
+namespace Luthetus.Ide.RazorLib.StartupControls.Models;
 
-[FeatureState]
-public partial record StartupControlState(
+/// <summary>
+/// TODO: Investigate making this a record struct
+/// </summary>
+public record StartupControlState(
 	Key<IStartupControlModel> ActiveStartupControlKey,
 	ImmutableList<IStartupControlModel> StartupControlList)
 {

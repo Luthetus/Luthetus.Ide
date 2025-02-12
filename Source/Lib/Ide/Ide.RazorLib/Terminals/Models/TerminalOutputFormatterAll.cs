@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -21,18 +20,15 @@ public class TerminalOutputFormatterAll : ITerminalOutputFormatter
 	private readonly ITerminal _terminal;
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly IDispatcher _dispatcher;
 
 	public TerminalOutputFormatterAll(
 		ITerminal terminal,
 		ITextEditorService textEditorService,
-		ICompilerServiceRegistry compilerServiceRegistry,
-		IDispatcher dispatcher)
+		ICompilerServiceRegistry compilerServiceRegistry)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
-		_dispatcher = dispatcher;
 	}
 
 	public string Name { get; } = nameof(TerminalOutputFormatterAll);

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -8,8 +7,6 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
 public partial class IdeImportExportButtons : ComponentBase
 {
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
 

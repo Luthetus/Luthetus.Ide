@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Fluxor;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
@@ -12,7 +11,6 @@ public class TerminalOutput : ITerminalOutput
     private readonly ITerminal _terminal;
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly IDispatcher _dispatcher;
 	
 	private readonly List<TerminalCommandParsed> _parsedCommandList = new();
 	private readonly object _listLock = new();

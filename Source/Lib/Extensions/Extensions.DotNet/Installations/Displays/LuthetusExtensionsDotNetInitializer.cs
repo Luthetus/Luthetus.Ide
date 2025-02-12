@@ -18,11 +18,10 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
-using Luthetus.Ide.RazorLib.Shareds.States;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
@@ -43,6 +42,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
+	private IIdeHeaderService IdeHeaderService { get; set; } = null!;
+	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IDotNetCommandFactory DotNetCommandFactory { get; set; } = null!;
@@ -59,9 +60,9 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -119,7 +120,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 							return Task.CompletedTask;
 						});
 						
-					Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuFileAction(
+					IdeHeaderService.ReduceModifyMenuFileAction(
 						inMenu => 
 						{
 							var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
@@ -168,7 +169,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 					            	MenuOptionList = copyMenuOptionList
 					            };
 					        }
-						}));
+						});
 						
 					InitializeMenuRun();
 					
@@ -336,7 +337,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             MenuOptionKind.Create,
             () =>
 			{
-				var startupControlState = StartupControlStateWrap.Value;
+				var startupControlState = StartupControlService.GetStartupControlState();
 				var activeStartupControl = startupControlState.ActiveStartupControl;
 			
 				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
@@ -352,7 +353,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             MenuOptionKind.Create,
             () =>
 			{
-				var startupControlState = StartupControlStateWrap.Value;
+				var startupControlState = StartupControlService.GetStartupControlState();
 				var activeStartupControl = startupControlState.ActiveStartupControl;
 			
 				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
@@ -394,7 +395,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				return Task.CompletedTask;
 			}));
 
-        Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuRunAction(inMenu =>
+        IdeHeaderService.ReduceModifyMenuRunAction(inMenu =>
         {
         	// UI foreach enumeration was modified nightmare. (2025-02-07)
         	var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
@@ -403,7 +404,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	{
         		MenuOptionList = copyMenuOptionList
         	};
-        }));
+        });
 	}
 
 	private void BuildProjectOnClick(string projectAbsolutePathString)
@@ -435,7 +436,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanProjectOnClick(string projectAbsolutePathString)
@@ -467,7 +468,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void BuildSolutionOnClick(string solutionAbsolutePathString)
@@ -499,7 +500,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanSolutionOnClick(string solutionAbsolutePathString)
@@ -531,6 +532,6 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 }

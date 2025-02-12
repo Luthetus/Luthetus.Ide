@@ -141,7 +141,7 @@ public partial class TestExplorerScheduler
 
                 treeViewProjectTestModel.Item.TerminalCommandRequest = terminalCommandRequest;
                 
-				return _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY]
+				return _terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY]
 					.EnqueueCommandAsync(terminalCommandRequest);
             };
         }

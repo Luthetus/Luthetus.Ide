@@ -1,5 +1,4 @@
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -16,7 +15,7 @@ using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
@@ -27,16 +26,17 @@ public class IdeBackgroundTaskApi
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
-    private readonly IDispatcher _dispatcher;
     private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-    private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly ITerminalService _terminalService;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
 	private readonly IDialogService _dialogService;
 	private readonly IPanelService _panelService;
 	private readonly INotificationService _notificationService;
+	private readonly IInputFileService _inputFileService;
+	private readonly IFolderExplorerService _folderExplorerService;
 	private readonly IJSRuntime _jsRuntime;
 
     public IdeBackgroundTaskApi(
@@ -46,15 +46,16 @@ public class IdeBackgroundTaskApi
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
-        IDispatcher dispatcher,
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
-        IState<TerminalState> terminalStateWrap,
+        ITerminalService terminalService,
         IDecorationMapperRegistry decorationMapperRegistry,
         IDialogService dialogService,
         IPanelService panelService,
         INotificationService notificationService,
+        IInputFileService inputFileService,
+        IFolderExplorerService folderExplorerService,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
@@ -63,16 +64,17 @@ public class IdeBackgroundTaskApi
         _ideComponentRenderers = ideComponentRenderers;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
-        _dispatcher = dispatcher;
         _environmentProvider = environmentProvider;
 		_fileSystemProvider = fileSystemProvider;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
-        _terminalStateWrap = terminalStateWrap;
+        _terminalService = terminalService;
 		_decorationMapperRegistry = decorationMapperRegistry;
 		_dialogService = dialogService;
 		_panelService = panelService;
 		_notificationService = notificationService;
+		_inputFileService = inputFileService;
+		_folderExplorerService = folderExplorerService;
 		_jsRuntime = jsRuntime;
 
         Editor = new EditorIdeApi(
@@ -88,7 +90,6 @@ public class IdeBackgroundTaskApi
             _dialogService,
             _panelService,
             _notificationService,
-            _dispatcher,
             _jsRuntime,
             serviceProvider);
 
@@ -107,14 +108,14 @@ public class IdeBackgroundTaskApi
             _commonComponentRenderers,
             _treeViewService,
             _backgroundTaskService,
-            _dispatcher);
+            _folderExplorerService);
 
         InputFile = new InputFileIdeApi(
             this,
             _ideComponentRenderers,
             _backgroundTaskService,
             _dialogService,
-            _dispatcher);
+            _inputFileService);
     }
     
     public EditorIdeApi Editor { get; }

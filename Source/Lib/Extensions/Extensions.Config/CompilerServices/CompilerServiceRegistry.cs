@@ -18,7 +18,6 @@ using Luthetus.CompilerServices.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.TypeScript;
 using Luthetus.CompilerServices.Xml;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Extensions.Config.CompilerServices;
 
@@ -32,7 +31,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
     public ConfigCompilerServiceRegistry(
         ITextEditorService textEditorService,
         IEnvironmentProvider environmentProvider,
-        IState<TerminalState> terminalStateWrap)
+        ITerminalService terminalService)
     {
         CSharpCompilerService = new CSharpCompilerService(textEditorService);
         CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);
@@ -46,7 +45,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
         XmlCompilerService = new XmlCompilerService(textEditorService);
         CCompilerService = new CCompilerService(textEditorService);
         PythonCompilerService = new PythonCompilerService(textEditorService);
-        TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalStateWrap);
+        TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalService);
         DefaultCompilerService = new CompilerService(textEditorService);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);

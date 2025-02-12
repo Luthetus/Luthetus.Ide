@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -13,14 +11,11 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.InputFiles.States;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 
-public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
+public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, IDisposable
 {
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
@@ -28,7 +23,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
+    private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
@@ -95,16 +90,17 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     
     protected override void OnInitialized()
     {
+    	InputFileService.InputFileStateChanged += OnInputFileStateChanged;
+    	
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
             TreeViewService,
-            Dispatcher,
+            InputFileService,
             SetInputFileContentTreeViewRootFunc,
 			BackgroundTaskService);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
             TreeViewService,
-            InputFileStateWrap,
-            Dispatcher,
+            InputFileService,
             IdeComponentRenderers,
             CommonComponentRenderers,
             FileSystemProvider,
@@ -211,13 +207,21 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
 
         await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-        var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
+        InputFileService.ReduceSetOpenedTreeViewModelAction(
             pseudoRootNode,
             IdeComponentRenderers,
             CommonComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider);
-
-        Dispatcher.Dispatch(setOpenedTreeViewModelAction);
+    }
+    
+    public async void OnInputFileStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	InputFileService.InputFileStateChanged -= OnInputFileStateChanged;
     }
 }

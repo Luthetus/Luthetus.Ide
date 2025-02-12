@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -12,28 +10,26 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Displays;
 
-public partial class StartupControlDisplay : FluxorComponent
+public partial class StartupControlDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
+    [Inject]
+    private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
-    private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+    private IStartupControlService StartupControlService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     private const string _startButtonElementId = "luth_ide_startup-controls-display_id";
 
@@ -42,7 +38,7 @@ public partial class StartupControlDisplay : FluxorComponent
     
     public string? SelectedStartupControlGuidString
     {
-    	get => StartupControlStateWrap.Value.ActiveStartupControlKey.Guid.ToString();
+    	get => StartupControlService.GetStartupControlState().ActiveStartupControlKey.Guid.ToString();
     	set
     	{
     		Key<IStartupControlModel> startupControlKey = Key<IStartupControlModel>.Empty;
@@ -53,7 +49,7 @@ public partial class StartupControlDisplay : FluxorComponent
     			startupControlKey = new Key<IStartupControlModel>(guid);
     		}
     		
-    		Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControlKey));
+    		StartupControlService.ReduceSetActiveStartupControlKeyAction(startupControlKey);
     	}
     }
     
@@ -61,10 +57,17 @@ public partial class StartupControlDisplay : FluxorComponent
     
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
     	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
+    	
+    protected override void OnInitialized()
+    {
+    	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+    	StartupControlService.StartupControlStateChanged += OnStartupControlStateChanged;
+    	base.OnInitialized();
+    }
 
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
     {
-    	var localStartupControlState = StartupControlStateWrap.Value;
+    	var localStartupControlState = StartupControlService.GetStartupControlState();
     	
     	if (localStartupControlState.ActiveStartupControl is null)
 	    	return;
@@ -104,7 +107,7 @@ public partial class StartupControlDisplay : FluxorComponent
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	                }
 	                
-	                Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(TerminalFacts.EXECUTION_KEY));
+	                TerminalGroupService.ReduceSetActiveTerminalAction(TerminalFacts.EXECUTION_KEY);
 				}));
 			    
 			menuOptionList.Add(new MenuOptionRecord(
@@ -112,7 +115,7 @@ public partial class StartupControlDisplay : FluxorComponent
 			    MenuOptionKind.Other,
 			    onClickFunc: () =>
 			    {
-			    	var localStartupControlState = StartupControlStateWrap.Value;
+			    	var localStartupControlState = StartupControlService.GetStartupControlState();
 			    	
 			    	if (localStartupControlState.ActiveStartupControl is null)
 			    		return Task.CompletedTask;
@@ -162,5 +165,21 @@ public partial class StartupControlDisplay : FluxorComponent
 			//       ...tries to set focus to an HTML element, but that HTML element
 			//       was not found.
         }
+    }
+    
+    private async void OnTerminalStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnStartupControlStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+    	StartupControlService.StartupControlStateChanged -= OnStartupControlStateChanged;
     }
 }

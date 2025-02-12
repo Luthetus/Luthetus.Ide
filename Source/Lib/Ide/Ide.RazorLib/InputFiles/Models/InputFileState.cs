@@ -1,12 +1,36 @@
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 
-namespace Luthetus.Ide.RazorLib.InputFiles.States;
+namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
-public partial record InputFileState
+public record struct InputFileState(
+    int IndexInHistory,
+    ImmutableList<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
+    TreeViewAbsolutePath? SelectedTreeViewModel,
+    Func<AbsolutePath, Task> OnAfterSubmitFunc,
+    Func<AbsolutePath, Task<bool>> SelectionIsValidFunc,
+    ImmutableArray<InputFilePattern> InputFilePatternsList,
+    InputFilePattern? SelectedInputFilePattern,
+    string SearchQuery,
+    string Message)
 {
+    public InputFileState() : this(
+        -1,
+        ImmutableList<TreeViewAbsolutePath>.Empty,
+        null,
+        _ => Task.CompletedTask,
+        _ => Task.FromResult(false),
+        ImmutableArray<InputFilePattern>.Empty,
+        null,
+        string.Empty,
+        string.Empty)
+    {
+    }
+    
     public bool CanMoveBackwardsInHistory => IndexInHistory > 0;
     public bool CanMoveForwardsInHistory => IndexInHistory < OpenedTreeViewModelHistoryList.Count - 1;
 
@@ -18,7 +42,7 @@ public partial record InputFileState
         return OpenedTreeViewModelHistoryList[IndexInHistory];
     }
 
-    private static InputFileState NewOpenedTreeViewModelHistory(
+    public static InputFileState NewOpenedTreeViewModelHistory(
         InputFileState inInputFileState,
         TreeViewAbsolutePath selectedTreeViewModel,
         IIdeComponentRenderers ideComponentRenderers,

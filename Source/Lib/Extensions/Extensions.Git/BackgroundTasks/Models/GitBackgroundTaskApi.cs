@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.States;
@@ -13,7 +13,7 @@ namespace Luthetus.Extensions.Git.BackgroundTasks.Models;
 public class GitBackgroundTaskApi
 {
 	private readonly IState<GitState> _gitStateWrap;
-	private readonly IState<TerminalState> _terminalStateWrap;
+	private readonly ITerminalService _terminalService;
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly GitCliOutputParser _gitCliOutputParser;
 	private readonly IEnvironmentProvider _environmentProvider;
@@ -25,7 +25,7 @@ public class GitBackgroundTaskApi
 	public GitBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		IState<GitState> gitStateWrap,
-		IState<TerminalState> terminalStateWrap,
+		ITerminalService terminalService,
         GitCliOutputParser gitCliOutputParser,
         IEnvironmentProvider environmentProvider,
         IBackgroundTaskService backgroundTaskService,
@@ -35,7 +35,7 @@ public class GitBackgroundTaskApi
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_gitStateWrap = gitStateWrap;
-		_terminalStateWrap = terminalStateWrap;
+		_terminalService = terminalService;
 		_gitCliOutputParser = gitCliOutputParser;
 		_environmentProvider = environmentProvider;
         _backgroundTaskService = backgroundTaskService;
@@ -46,7 +46,7 @@ public class GitBackgroundTaskApi
 		Git = new GitIdeApi(
 			this,
 			_ideBackgroundTaskApi,
-			_terminalStateWrap,
+			_terminalService,
 			_gitStateWrap,
 			_gitCliOutputParser,
 			_environmentProvider,

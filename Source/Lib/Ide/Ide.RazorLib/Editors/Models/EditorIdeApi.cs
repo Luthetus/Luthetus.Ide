@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -44,7 +43,6 @@ public class EditorIdeApi
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
     private readonly INotificationService _notificationService;
-    private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
     private readonly IServiceProvider _serviceProvider;
 
@@ -61,7 +59,6 @@ public class EditorIdeApi
         IDialogService dialogService,
         IPanelService panelService,
         INotificationService notificationService,
-        IDispatcher dispatcher,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
@@ -77,7 +74,6 @@ public class EditorIdeApi
         _dialogService = dialogService;
         _panelService = panelService;
         _notificationService = notificationService;
-        _dispatcher = dispatcher;
         _jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
     }
@@ -170,7 +166,6 @@ public class EditorIdeApi
         }
 
         await CheckIfContentsWereModifiedAsync(
-                _dispatcher,
                 registerModelArgs.ResourceUri.Value,
                 model)
             .ConfigureAwait(false);
@@ -330,7 +325,6 @@ public class EditorIdeApi
     }
 
     private async Task CheckIfContentsWereModifiedAsync(
-        IDispatcher dispatcher,
         string inputFileAbsolutePathString,
         TextEditorModel textEditorModel)
     {

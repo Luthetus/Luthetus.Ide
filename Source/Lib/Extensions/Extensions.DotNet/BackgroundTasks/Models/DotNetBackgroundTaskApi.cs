@@ -11,9 +11,11 @@ using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
@@ -42,8 +44,10 @@ public class DotNetBackgroundTaskApi
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
+	private readonly ICodeSearchService _codeSearchService;
+	private readonly IStartupControlService _startupControlService;
 	private readonly INotificationService _notificationService;
-	private readonly IState<TerminalState> _terminalStateWrap;
+	private readonly ITerminalService _terminalService;
     private readonly IState<TestExplorerState> _testExplorerStateWrap;
 
     public DotNetBackgroundTaskApi(
@@ -64,8 +68,10 @@ public class DotNetBackgroundTaskApi
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
+		ICodeSearchService codeSearchService,
+		IStartupControlService startupControlService,
 		INotificationService notificationService,
-		IState<TerminalState> terminalStateWrap,
+		ITerminalService terminalService,
         IState<TestExplorerState> testExplorerStateWrap,
         IServiceProvider serviceProvider)
 	{
@@ -85,9 +91,11 @@ public class DotNetBackgroundTaskApi
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
+		_codeSearchService = codeSearchService;
+		_startupControlService = startupControlService;
 		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
-		_terminalStateWrap = terminalStateWrap;
+		_terminalService = terminalService;
         _testExplorerStateWrap = testExplorerStateWrap;
 
         CompilerService = new CompilerServiceIdeApi(
@@ -112,7 +120,7 @@ public class DotNetBackgroundTaskApi
             _fileSystemProvider,
             _dotNetCliOutputParser,
             _dotNetSolutionStateWrap,
-            _terminalStateWrap,
+            _terminalService,
             _testExplorerStateWrap,
             _dispatcher);
             
@@ -141,8 +149,10 @@ public class DotNetBackgroundTaskApi
 			_fileSystemProvider,
 			_textEditorService,
 			_findAllService,
+			_codeSearchService,
+			_startupControlService,
 			_compilerServiceRegistry,
-			_terminalStateWrap,
+			_terminalService,
 			_dotNetCliOutputParser,
 			serviceProvider);
 	}

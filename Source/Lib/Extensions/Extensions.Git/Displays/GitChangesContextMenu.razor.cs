@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.Git.States;
 
 namespace Luthetus.Extensions.Git.Displays;
@@ -14,7 +14,7 @@ namespace Luthetus.Extensions.Git.Displays;
 public partial class GitChangesContextMenu : ComponentBase
 {
     [Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
