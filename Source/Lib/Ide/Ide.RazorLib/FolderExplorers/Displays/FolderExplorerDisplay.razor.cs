@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Options.Models;
@@ -21,8 +20,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IFolderExplorerService FolderExplorerService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
     [Inject]

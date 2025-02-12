@@ -1,5 +1,3 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -23,8 +21,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	private ICodeSearchService CodeSearchService { get; set; } = null!;
     [Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]

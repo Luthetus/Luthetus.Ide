@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
@@ -36,7 +35,6 @@ public class CommandFactory : ICommandFactory
     private readonly IWidgetService _widgetService;
     private readonly ICodeSearchService _codeSearchService;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
 
     public CommandFactory(
@@ -48,7 +46,6 @@ public class CommandFactory : ICommandFactory
 		IWidgetService widgetService,
 		ICodeSearchService codeSearchService,
 		IEnvironmentProvider environmentProvider,
-        IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
     {
     	_contextService = contextService;
@@ -59,7 +56,6 @@ public class CommandFactory : ICommandFactory
 		_widgetService = widgetService;
 		_codeSearchService = codeSearchService;
 		_environmentProvider = environmentProvider;
-        _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
     }
 

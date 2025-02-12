@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -18,8 +16,6 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 
 public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, IDisposable
 {
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]

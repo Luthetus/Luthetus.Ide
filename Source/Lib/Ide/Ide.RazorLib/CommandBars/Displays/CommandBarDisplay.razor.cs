@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Ide.RazorLib.CommandBars.Models;
@@ -15,8 +13,6 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	private ICommandBarService CommandBarService { get; set; } = null!;
 	[Inject]
 	private IWidgetService WidgetService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	

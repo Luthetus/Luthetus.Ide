@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
@@ -25,8 +24,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]

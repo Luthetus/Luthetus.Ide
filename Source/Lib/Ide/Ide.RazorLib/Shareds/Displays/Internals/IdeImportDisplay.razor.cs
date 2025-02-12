@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -18,8 +17,6 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     private readonly object RequestRepoContentLock = new();
 

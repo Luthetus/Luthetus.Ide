@@ -1,5 +1,4 @@
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -27,7 +26,6 @@ public class IdeBackgroundTaskApi
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
-    private readonly IDispatcher _dispatcher;
     private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ITextEditorService _textEditorService;
@@ -48,7 +46,6 @@ public class IdeBackgroundTaskApi
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
-        IDispatcher dispatcher,
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
@@ -67,7 +64,6 @@ public class IdeBackgroundTaskApi
         _ideComponentRenderers = ideComponentRenderers;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
-        _dispatcher = dispatcher;
         _environmentProvider = environmentProvider;
 		_fileSystemProvider = fileSystemProvider;
         _textEditorService = textEditorService;
@@ -94,7 +90,6 @@ public class IdeBackgroundTaskApi
             _dialogService,
             _panelService,
             _notificationService,
-            _dispatcher,
             _jsRuntime,
             serviceProvider);
 

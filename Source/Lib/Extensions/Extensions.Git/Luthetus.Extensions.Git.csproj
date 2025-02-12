@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.4" />
+    <PackageReference Include="Fluxor.Blazor.Web" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

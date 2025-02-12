@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -32,8 +30,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
 
     private const string _startButtonElementId = "luth_ide_startup-controls-display_id";
 
