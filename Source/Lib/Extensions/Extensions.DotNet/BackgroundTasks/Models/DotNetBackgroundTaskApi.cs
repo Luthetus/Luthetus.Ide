@@ -160,6 +160,8 @@ public class DotNetBackgroundTaskApi
 			serviceProvider);
 			
 			NuGetPackageManagerService = new NuGetPackageManagerService();
+			
+			CompilerServiceEditorService = new CompilerServiceEditorService();
 	}
 
 	public DotNetSolutionIdeApi DotNetSolution { get; }
@@ -170,4 +172,5 @@ public class DotNetBackgroundTaskApi
     public ITestExplorerService TestExplorerService { get; }
     public IDotNetSolutionService DotNetSolutionService { get; }
     public INuGetPackageManagerService NuGetPackageManagerService { get; }
+    public ICompilerServiceEditorService CompilerServiceEditorService { get; }
 }
