@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -13,7 +12,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
