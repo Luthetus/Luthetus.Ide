@@ -21,10 +21,10 @@ using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 
-public partial class DotNetSolutionFormDisplay : FluxorComponent
+public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -64,6 +64,12 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 		: _parentDirectoryName;
 
 	private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
+	
+	protected override void OnInitialized()
+	{
+		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		base.OnInitialized();
+	}
 
 	private void RequestInputFileForParentDirectory()
 	{
@@ -143,7 +149,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 	        	}
 	        };
 	        	
-	        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 	}
 
@@ -209,4 +215,14 @@ Global
 	EndGlobalSection
 EndGlobal
 ";
+
+	public async void OnTerminalStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public void Dispose()
+	{
+		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+	}
 }

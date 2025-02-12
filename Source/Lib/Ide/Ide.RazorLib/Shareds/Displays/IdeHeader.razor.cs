@@ -28,7 +28,7 @@ using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Shareds.States;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
@@ -36,7 +36,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 public partial class IdeHeader : ComponentBase, IDisposable
 {
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IState<IdeHeaderState> IdeHeaderStateWrap { get; set; } = null!;
 	[Inject]

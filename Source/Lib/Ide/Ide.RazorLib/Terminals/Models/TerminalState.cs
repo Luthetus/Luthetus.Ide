@@ -3,10 +3,9 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
-namespace Luthetus.Ide.RazorLib.Terminals.States;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-[FeatureState]
-public partial record TerminalState(
+public record struct TerminalState(
 	ImmutableDictionary<Key<ITerminal>, ITerminal> TerminalMap)
 {
     public TerminalState()

@@ -11,12 +11,12 @@ using Luthetus.Ide.RazorLib.Terminals.Displays.Internals;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
-public partial class TerminalGroupDisplay : FluxorComponent
+public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IState<TerminalGroupState> TerminalGroupDisplayStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
@@ -26,6 +26,14 @@ public partial class TerminalGroupDisplay : FluxorComponent
 
 	private Key<IDynamicViewModel> _addIntegratedTerminalDialogKey = Key<IDynamicViewModel>.NewKey();
 
+	protected override void OnInitialized()
+	{
+		TerminalGroupDisplayStateWrap.StateChanged += OnTerminalGroupDisplayStateWrapStateChanged;
+    	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+    	
+		base.OnInitialized();
+	}
+
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
     {
         Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(terminalKey));
@@ -33,7 +41,7 @@ public partial class TerminalGroupDisplay : FluxorComponent
     
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
     {
-    	TerminalStateWrap.Value.TerminalMap[terminalKey]?.ClearFireAndForget();
+    	TerminalService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
     }
     
     private void AddIntegratedTerminalOnClick()
@@ -48,5 +56,21 @@ public partial class TerminalGroupDisplay : FluxorComponent
 			setFocusOnCloseElementId: null);
 
         DialogService.ReduceRegisterAction(addIntegratedTerminalDialog);
+    }
+    
+    private async void OnTerminalGroupDisplayStateWrapStateChanged(object? sender, EventArgs e)
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnTerminalStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TerminalGroupDisplayStateWrap.StateChanged -= OnTerminalGroupDisplayStateWrapStateChanged;
+    	TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
     }
 }

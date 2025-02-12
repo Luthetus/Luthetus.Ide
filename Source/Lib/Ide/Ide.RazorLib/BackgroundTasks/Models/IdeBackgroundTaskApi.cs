@@ -16,7 +16,7 @@ using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
@@ -32,7 +32,7 @@ public class IdeBackgroundTaskApi
 	private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-    private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly ITerminalService _terminalService;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
 	private readonly IDialogService _dialogService;
 	private readonly IPanelService _panelService;
@@ -51,7 +51,7 @@ public class IdeBackgroundTaskApi
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
-        IState<TerminalState> terminalStateWrap,
+        ITerminalService terminalService,
         IDecorationMapperRegistry decorationMapperRegistry,
         IDialogService dialogService,
         IPanelService panelService,
@@ -70,7 +70,7 @@ public class IdeBackgroundTaskApi
 		_fileSystemProvider = fileSystemProvider;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
-        _terminalStateWrap = terminalStateWrap;
+        _terminalService = terminalService;
 		_decorationMapperRegistry = decorationMapperRegistry;
 		_dialogService = dialogService;
 		_panelService = panelService;

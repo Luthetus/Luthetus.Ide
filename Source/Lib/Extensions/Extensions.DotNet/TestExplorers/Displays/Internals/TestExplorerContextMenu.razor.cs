@@ -25,7 +25,7 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerContextMenu : ComponentBase
 {
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
@@ -422,7 +422,7 @@ public partial class TestExplorerContextMenu : ComponentBase
         };
         
 		treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
 	private async Task SendToOutputPanelAsync(string output)

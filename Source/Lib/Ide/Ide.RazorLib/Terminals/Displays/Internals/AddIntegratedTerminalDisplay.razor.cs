@@ -39,7 +39,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	
 	[CascadingParameter]
 	public IDialog Dialog { get; set; } = null!;
@@ -78,7 +78,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
 	private void SubmitOnClick()
@@ -110,7 +110,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		terminalIntegrated.Start();
 		
-		Dispatcher.Dispatch(new TerminalState.RegisterAction(terminalIntegrated));
+		TerminalService.ReduceRegisterAction(terminalIntegrated);
 			
 		DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}

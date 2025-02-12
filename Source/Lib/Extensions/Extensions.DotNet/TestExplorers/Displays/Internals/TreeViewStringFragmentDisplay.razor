@@ -1,8 +1,6 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 @using Luthetus.Ide.RazorLib.Terminals.Models
 
-@{ var terminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY]; }
+@{ var terminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY]; }
 
 @if (terminal is null)
 {

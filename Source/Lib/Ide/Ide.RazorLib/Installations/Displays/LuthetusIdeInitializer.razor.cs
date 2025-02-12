@@ -51,6 +51,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
+    private ITerminalService TerminalService { get; set; } = null!;
+    [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
@@ -250,7 +252,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     	if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
     		LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
     	{
-    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+    		TerminalService.ReduceRegisterAction(
 		    	new TerminalWebsite(
 					"General",
 					terminal => new TerminalInteractive(terminal),
@@ -269,11 +271,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 					NotificationService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
-				}));
+				});
     	}
     	else
     	{
-    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+    		TerminalService.ReduceRegisterAction(
 		    	new Terminal(
 					"General",
 					terminal => new TerminalInteractive(terminal),
@@ -289,11 +291,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher,
-					NotificationService)
+					NotificationService,
+					TerminalService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
-				}));
+				});
     	}
     }
     
@@ -302,7 +304,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     	if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
     		LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
     	{
-    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+    		TerminalService.ReduceRegisterAction(
 		    	new TerminalWebsite(
 					"Execution",
 					terminal => new TerminalInteractive(terminal),
@@ -321,11 +323,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 					NotificationService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
-				}));
+				});
     	}
     	else
     	{
-    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+    		TerminalService.ReduceRegisterAction(
 		    	new Terminal(
 					"Execution",
 					terminal => new TerminalInteractive(terminal),
@@ -341,11 +343,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher,
-					NotificationService)
+					NotificationService,
+					TerminalService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
-				}));
+				});
     	}
     }
 }

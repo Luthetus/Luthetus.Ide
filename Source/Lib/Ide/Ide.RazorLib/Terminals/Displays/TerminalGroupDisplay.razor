@@ -1,4 +1,3 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 @using System.Collections.Immutable
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
@@ -11,7 +10,7 @@
 
     @{
         var terminalGroupDisplayState = TerminalGroupDisplayStateWrap.Value;
-        var terminalState = TerminalStateWrap.Value;
+        var terminalState = TerminalService.GetTerminalState();
 
         _ = terminalState.TerminalMap.TryGetValue(
                 terminalGroupDisplayState.ActiveTerminalKey,

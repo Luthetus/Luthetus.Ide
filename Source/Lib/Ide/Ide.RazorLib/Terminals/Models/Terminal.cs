@@ -18,8 +18,9 @@ public class Terminal : ITerminal
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly IDispatcher _dispatcher;
 	private readonly INotificationService _notificationService;
+	private readonly ITerminalService _terminalService;
+	
 	
 	/// <summary>The TArgs of byte is unused</summary>
 	private readonly ThrottleOptimized<byte> _throttleUiUpdateFromSetHasExecutingProcess;
@@ -31,8 +32,8 @@ public class Terminal : ITerminal
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
 		IBackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
-		IDispatcher dispatcher,
-		INotificationService notificationService)
+		INotificationService notificationService,
+		ITerminalService terminalService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
@@ -41,14 +42,14 @@ public class Terminal : ITerminal
 		
 		_backgroundTaskService = backgroundTaskService;
 		_commonComponentRenderers = commonComponentRenderers;
-		_dispatcher = dispatcher;
 		_notificationService = notificationService;
+		_terminalService = terminalService;
 		
 		_throttleUiUpdateFromSetHasExecutingProcess = new(
 			DelaySetHasExecutingProcess,
 			(_, _) =>
 			{
-				_dispatcher.Dispatch(new TerminalState.StateHasChangedAction());
+				_terminalService.ReduceStateHasChangedAction();
 				return Task.CompletedTask;
 			});
 	}

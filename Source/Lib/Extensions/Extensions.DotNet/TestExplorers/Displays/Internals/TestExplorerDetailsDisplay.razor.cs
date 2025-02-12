@@ -19,7 +19,7 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerDetailsDisplay : ComponentBase
 {
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]

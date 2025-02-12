@@ -10,7 +10,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalResource : CompilerServiceResource
 {
-    private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly ITerminalService _terminalService;
 
     /// <summary>
     /// The <see cref="ArgumentsTextSpan"/> and <see cref="TargetFilePathTextSpan"/> are currently

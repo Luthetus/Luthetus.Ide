@@ -39,7 +39,7 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
@@ -357,7 +357,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				}),
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				IdeBackgroundTaskApi,
@@ -365,7 +365,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				() =>
@@ -390,7 +390,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				() =>
@@ -408,7 +408,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		{
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				() => Task.CompletedTask),
@@ -429,7 +429,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				() => Task.CompletedTask),
@@ -549,7 +549,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        	}
 		        };
 		        	
-		        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			},
 			absolutePath =>

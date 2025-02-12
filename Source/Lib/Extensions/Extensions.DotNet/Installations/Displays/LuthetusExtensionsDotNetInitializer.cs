@@ -59,7 +59,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
@@ -435,7 +435,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanProjectOnClick(string projectAbsolutePathString)
@@ -467,7 +467,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void BuildSolutionOnClick(string solutionAbsolutePathString)
@@ -499,7 +499,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanSolutionOnClick(string solutionAbsolutePathString)
@@ -531,6 +531,6 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	}
         };
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 }

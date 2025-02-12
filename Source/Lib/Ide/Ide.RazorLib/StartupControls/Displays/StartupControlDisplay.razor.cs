@@ -20,7 +20,7 @@ namespace Luthetus.Ide.RazorLib.StartupControls.Displays;
 public partial class StartupControlDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
@@ -63,7 +63,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     	
     protected override void OnInitialized()
     {
-    	TerminalStateWrap.StateChanged += OnTerminalStateWrapStateChanged;
+    	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
     	StartupControlService.StartupControlStateChanged += OnStartupControlStateChanged;
     	base.OnInitialized();
     }
@@ -170,7 +170,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
         }
     }
     
-    private async void OnTerminalStateWrapStateChanged(object? sender, EventArgs e)
+    private async void OnTerminalStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
@@ -182,7 +182,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TerminalStateWrap.StateChanged -= OnTerminalStateWrapStateChanged;
+    	TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
     	StartupControlService.StartupControlStateChanged -= OnStartupControlStateChanged;
     }
 }

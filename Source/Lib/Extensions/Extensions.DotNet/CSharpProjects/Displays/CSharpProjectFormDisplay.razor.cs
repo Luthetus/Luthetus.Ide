@@ -26,10 +26,10 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 
 namespace Luthetus.Extensions.DotNet.CSharpProjects.Displays;
 
-public partial class CSharpProjectFormDisplay : FluxorComponent
+public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
@@ -73,6 +73,10 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 	protected override void OnInitialized()
 	{
 		_viewModel = new(DotNetSolutionModel, EnvironmentProvider);
+		
+		DotNetSolutionStateWrap.StateChanged += OnDotNetSolutionStateWrapStateChanged;
+		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		
 		base.OnInitialized();
 	}
 
@@ -136,7 +140,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
-			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
@@ -171,7 +175,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
@@ -186,7 +190,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 				}
 	        };
 	        	
-	        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 		finally
 		{
@@ -223,7 +227,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
 		if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
 		{
-			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	immutableView.FormattedNewCSharpProjectCommand.Value,
@@ -268,5 +272,21 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					LuthetusCommonComponentRenderers)
 				.ConfigureAwait(false);
 		}
+	}
+	
+	public async void OnDotNetSolutionStateWrapStateChanged(object? sender, EventArgs e)
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public async void OnTerminalStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public void Dispose()
+	{
+		DotNetSolutionStateWrap.StateChanged -= OnDotNetSolutionStateWrapStateChanged;
+		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

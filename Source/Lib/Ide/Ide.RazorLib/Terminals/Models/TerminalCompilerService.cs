@@ -11,7 +11,7 @@ public sealed class TerminalCompilerService : CompilerService
 {
     public TerminalCompilerService(
             ITextEditorService textEditorService,
-            IState<TerminalState> terminalStateWrap)
+            ITerminalService terminalService)
         : base(textEditorService)
     {
         _compilerServiceOptions = new()
