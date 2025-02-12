@@ -8,7 +8,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.Models;
+using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Models;
 
@@ -16,15 +17,15 @@ public class GitCliOutputParser
 {
     private readonly IDispatcher _dispatcher;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly IState<GitState> _gitStateWrap;
+    private readonly GitBackgroundTaskApi _gitBackgroundTaskApi;
 
     public GitCliOutputParser(
         IDispatcher dispatcher,
-        IState<GitState> gitStateWrap,
+		GitBackgroundTaskApi gitBackgroundTaskApi,
         IEnvironmentProvider environmentProvider)
     {
         _dispatcher = dispatcher;
-		_gitStateWrap = gitStateWrap;
+		_gitBackgroundTaskApi = gitBackgroundTaskApi;
         _environmentProvider = environmentProvider;
     }
 
@@ -48,14 +49,14 @@ public class GitCliOutputParser
 		var localRepo = _repo;
 		if (localRepo is null)
 			return;
-	
-		_dispatcher.Dispatch(new GitState.SetStatusAction(
+
+		_gitBackgroundTaskApi.Git.ReduceSetStatusAction(
 			localRepo,
 			UntrackedGitFileList.ToImmutableList(),
 			StagedGitFileList.ToImmutableList(),
 			UnstagedGitFileList.ToImmutableList(),
 			_behindByCommitCount ?? 0,
-			_aheadByCommitCount ?? 0));
+			_aheadByCommitCount ?? 0);
 	}
 	
 	public void DispatchSetBranchAction()
@@ -68,9 +69,9 @@ public class GitCliOutputParser
 		
 		if (localBranch is not null)
 		{
-			_dispatcher.Dispatch(new GitState.SetBranchAction(
+			_gitBackgroundTaskApi.Git.ReduceSetBranchAction(
 				localRepo,
-				localBranch));
+				localBranch);
 		}
 	}
 	
@@ -84,9 +85,9 @@ public class GitCliOutputParser
 		
 		if (localOrigin is not null)
 		{
-			_dispatcher.Dispatch(new GitState.SetOriginAction(
+			_gitBackgroundTaskApi.Git.ReduceSetGitOriginAction(
 				localRepo,
-				localOrigin));
+				localOrigin);
 		}
 	}
 	
@@ -100,16 +101,16 @@ public class GitCliOutputParser
 		
 		if (localBranchList is not null)
 		{
-			_dispatcher.Dispatch(new GitState.SetBranchListAction(
+			_gitBackgroundTaskApi.Git.ReduceSetBranchListAction(
 				localRepo,
-				localBranchList));
+				localBranchList);
 		}
 	}
     
     public List<TextEditorTextSpan> StatusParseEntire(string outputEntire)
     {
     	_stageKind = StageKind.None;
-		_repo = _gitStateWrap.Value.Repo;
+		_repo = _gitBackgroundTaskApi.Git.GetGitState().Repo;
 		
 		UntrackedGitFileList.Clear();
 		StagedGitFileList.Clear();

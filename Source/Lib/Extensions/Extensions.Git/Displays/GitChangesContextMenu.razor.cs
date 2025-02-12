@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 

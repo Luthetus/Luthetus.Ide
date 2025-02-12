@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.Models;
-using Luthetus.Extensions.Git.States;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;
+using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
 public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRendererType
 {
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;
@@ -26,7 +26,7 @@ public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRen
         {
             var localGitState = GitState;
 
-            Dispatcher.Dispatch(new GitState.WithAction(inState =>
+			GitBackgroundTaskApi.Git.ReduceSetGitStateWithAction(inState =>
             {
                 if (inState.Repo != localGitState.Repo)
                 {
@@ -49,7 +49,7 @@ public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRen
                 {
                     SelectedFileList = outSelectedFileList
                 };
-            }));
+            });
         }
     }
 }

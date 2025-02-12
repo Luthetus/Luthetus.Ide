@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Extensions.Git.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
@@ -19,7 +19,7 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     /// This should be written differently (2024-05-02).
     /// </summary>
     [Inject]
-    private IState<GitState> GitStateWrap { get; set; } = null!;
+    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -47,13 +47,13 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
         _treeViewKeyboardEventHandler = new GitTreeViewKeyboardEventHandler(
             TreeViewService,
             BackgroundTaskService,
-            GitStateWrap,
+			GitBackgroundTaskApi.Git,
             Dispatcher);
 
         _treeViewMouseEventHandler = new GitTreeViewMouseEventHandler(
             TreeViewService,
             BackgroundTaskService,
-            GitStateWrap,
+			GitBackgroundTaskApi.Git,
             Dispatcher,
             DialogService);
 

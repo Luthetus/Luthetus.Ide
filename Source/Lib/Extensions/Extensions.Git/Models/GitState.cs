@@ -4,9 +4,11 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Extensions.Git.Models;
 
-namespace Luthetus.Extensions.Git.States;
+namespace Luthetus.Extensions.Git.Models;
 
-[FeatureState]
+/// <summary>
+/// TODO: Investigate making this a record struct.
+/// </summary>
 public partial record GitState(
     GitRepo? Repo,
     ImmutableList<GitFile> UntrackedFileList,

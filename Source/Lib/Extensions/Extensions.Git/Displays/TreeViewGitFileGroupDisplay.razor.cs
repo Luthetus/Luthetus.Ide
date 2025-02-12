@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Extensions.Git.Models;
-using Luthetus.Extensions.Git.States;
 
 namespace Luthetus.Extensions.Git.Displays;
 

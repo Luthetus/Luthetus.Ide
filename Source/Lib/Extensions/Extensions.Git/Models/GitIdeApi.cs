@@ -1,41 +1,51 @@
 using System.Text;
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 using Luthetus.Extensions.Git.CommandLines.Models;
+using Luthetus.Extensions.Git.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.Git.Models;
 
 public class GitIdeApi
 {
+	private readonly GitTreeViews _gitTreeViews;
+    private readonly IIdeComponentRenderers _ideComponentRenderers;
+    private readonly ITreeViewService _treeViewService;
     private readonly GitBackgroundTaskApi _gitBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly ITerminalService _terminalService;
-    private readonly IState<GitState> _gitStateWrap;
 	private readonly GitCliOutputParser _gitCliOutputParser;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly INotificationService _notificationService;
     private readonly IDispatcher _dispatcher;
+    
+    private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
 
     public GitIdeApi(
+    	GitTreeViews gitTreeViews,
+        IIdeComponentRenderers ideComponentRenderers,
+        ITreeViewService treeViewService,
     	GitBackgroundTaskApi gitBackgroundTaskApi,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
         ITerminalService terminalService,
-        IState<GitState> gitStateWrap,
 		GitCliOutputParser gitCliOutputParser,
 		IEnvironmentProvider environmentProvider,
 		IBackgroundTaskService backgroundTaskService,
@@ -43,10 +53,12 @@ public class GitIdeApi
         INotificationService notificationService,
         IDispatcher dispatcher)
     {
+    	_gitTreeViews = gitTreeViews;
+        _ideComponentRenderers = ideComponentRenderers;
+        _treeViewService = treeViewService;
     	_gitBackgroundTaskApi = gitBackgroundTaskApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
         _terminalService = terminalService;
-		_gitStateWrap = gitStateWrap;
 		_gitCliOutputParser = gitCliOutputParser;
 		_environmentProvider = environmentProvider;
 		_backgroundTaskService = backgroundTaskService;
@@ -65,7 +77,7 @@ public class GitIdeApi
             "git status -u",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null)
 					return ValueTask.CompletedTask;
@@ -116,7 +128,7 @@ public class GitIdeApi
             "git get active branch name",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -157,7 +169,7 @@ public class GitIdeApi
             "git get origin name",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -198,7 +210,7 @@ public class GitIdeApi
             "git add",
             () =>
 			{
-				var localGitState = _gitStateWrap.Value;
+				var localGitState = GetGitState();
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -257,7 +269,7 @@ public class GitIdeApi
             "git unstage",
             () =>
 			{
-				var localGitState = _gitStateWrap.Value;
+				var localGitState = GetGitState();
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -316,7 +328,7 @@ public class GitIdeApi
             "git commit",
             () =>
 			{
-				var localGitState = _gitStateWrap.Value;
+				var localGitState = GetGitState();
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -365,7 +377,7 @@ public class GitIdeApi
             "git new branch",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -403,7 +415,7 @@ public class GitIdeApi
             "git branch -a",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -445,7 +457,7 @@ public class GitIdeApi
             $"git checkout {branchName}",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
                     return ValueTask.CompletedTask;
@@ -484,7 +496,7 @@ public class GitIdeApi
             "git push -u origin {branchName will go here}",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -525,7 +537,7 @@ public class GitIdeApi
             "git pull",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -564,7 +576,7 @@ public class GitIdeApi
             "git fetch",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -606,7 +618,7 @@ public class GitIdeApi
             "git log file",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -648,7 +660,7 @@ public class GitIdeApi
             "git show file",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -791,7 +803,7 @@ public class GitIdeApi
             "git diff file",
             () =>
             {
-                var localGitState = _gitStateWrap.Value;
+                var localGitState = GetGitState();
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return ValueTask.CompletedTask;
@@ -823,5 +835,239 @@ public class GitIdeApi
                 _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return ValueTask.CompletedTask;
 			});
+    }
+	
+	private GitState _gitState = new();
+	
+	public event Action? GitStateChanged;
+	
+	public GitState GetGitState() => _gitState;
+    
+    /// <summary>
+    /// If the expected path is not the actual path, then the git file list will NOT be changed.
+    /// </summary>
+    public void ReduceSetStatusAction(
+        GitRepo repo,
+        ImmutableList<GitFile> untrackedFileList,
+        ImmutableList<GitFile> stagedFileList,
+        ImmutableList<GitFile> unstagedFileList,
+        int? behindByCommitCount,
+        int? aheadByCommitCount)
+    {
+    	var inState = GetGitState();
+    
+        if (inState.Repo != repo)
+        {
+            // Git folder was changed while the text was being parsed,
+            // throw away the result since it is thereby invalid.
+            GitStateChanged?.Invoke();
+            return;
+        }
+
+        _gitState = inState with
+        {
+            UntrackedFileList = untrackedFileList,
+            StagedFileList = stagedFileList,
+            UnstagedFileList = unstagedFileList,
+            BehindByCommitCount = behindByCommitCount,
+            AheadByCommitCount = aheadByCommitCount,
+        };
+        
+        GitStateChanged?.Invoke();
+        return;
+    }
+
+    public void ReduceSetGitOriginAction(GitRepo repo, string origin)
+    {
+    	var inState = GetGitState();
+    
+        if (inState.Repo != repo)
+        {
+            // Git folder was changed while the text was being parsed,
+            // throw away the result since it is thereby invalid.
+            GitStateChanged?.Invoke();
+        	return;
+        }
+
+        _gitState = inState with
+        {
+            Origin = origin
+        };
+        
+        GitStateChanged?.Invoke();
+        return;
+    }
+    
+    public void ReduceSetBranchAction(GitRepo repo, string branch)
+    {
+    	var inState = GetGitState();
+    
+        if (inState.Repo != repo)
+        {
+            // Git folder was changed while the text was being parsed,
+            // throw away the result since it is thereby invalid.
+            GitStateChanged?.Invoke();
+        	return;
+        }
+
+        _gitState = inState with
+        {
+            Branch = branch
+        };
+        
+        GitStateChanged?.Invoke();
+        return;
+    }
+    
+    public void ReduceSetBranchListAction(GitRepo repo, List<string> branchList)
+    {
+    	var inState = GetGitState();
+    
+        if (inState.Repo != repo)
+        {
+            // Git folder was changed while the text was being parsed,
+            // throw away the result since it is thereby invalid.
+            GitStateChanged?.Invoke();
+        	return;
+        }
+
+        _gitState = inState with
+        {
+            BranchList = branchList.ToImmutableList()
+        };
+        
+        GitStateChanged?.Invoke();
+        return;
+    }
+    
+    public void ReduceSetGitFolderAction(GitRepo? repo)
+    {
+    	var inState = GetGitState();
+    
+        _gitState = inState with
+        {
+            Repo = repo,
+            UntrackedFileList = ImmutableList<GitFile>.Empty,
+            StagedFileList = ImmutableList<GitFile>.Empty,
+            UnstagedFileList = ImmutableList<GitFile>.Empty,
+            SelectedFileList = ImmutableList<GitFile>.Empty,
+            ActiveTasks = ImmutableList<GitTask>.Empty,
+            Branch = null,
+            Origin = null,
+            AheadByCommitCount = null,
+            BehindByCommitCount = null,
+            BranchList = ImmutableList<string>.Empty,
+            Upstream = null,
+        };
+        
+        GitStateChanged?.Invoke();
+        return;
+    }
+
+    public void ReduceSetGitStateWithAction(Func<GitState, GitState> withFunc)
+    {
+    	var inState = GetGitState();
+    
+        _gitState = withFunc.Invoke(inState);
+        
+        GitStateChanged?.Invoke();
+        return;
+    }
+
+	public Task HandleSetFileListAction()
+	{
+		_throttle.Run(_ =>
+        {
+            var gitState = GetGitState();
+
+            var untrackedTreeViewList = gitState.UntrackedFileList.Select(x => new TreeViewGitFile(
+                    x,
+                    _gitTreeViews,
+                    false,
+                    false))
+                .ToArray();
+
+            var untrackedFileGroupTreeView = new TreeViewGitFileGroup(
+                "Untracked",
+                _ideComponentRenderers,
+                _commonComponentRenderers,
+                true,
+                true);
+
+            untrackedFileGroupTreeView.SetChildList(untrackedTreeViewList);
+
+            var stagedTreeViewList = gitState.StagedFileList.Select(x => new TreeViewGitFile(
+                    x,
+                    _gitTreeViews,
+                    false,
+                    false))
+                .ToArray();
+
+            var stagedFileGroupTreeView = new TreeViewGitFileGroup(
+                "Staged",
+                _ideComponentRenderers,
+                _commonComponentRenderers,
+                true,
+                true);
+
+            stagedFileGroupTreeView.SetChildList(stagedTreeViewList);
+            
+            var unstagedTreeViewList = gitState.UnstagedFileList.Select(x => new TreeViewGitFile(
+                    x,
+                    _gitTreeViews,
+                    false,
+                    false))
+                .ToArray();
+
+            var unstagedFileGroupTreeView = new TreeViewGitFileGroup(
+                "Not-staged",
+                _ideComponentRenderers,
+                _commonComponentRenderers,
+                true,
+                true);
+
+            unstagedFileGroupTreeView.SetChildList(unstagedTreeViewList);
+
+            var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(
+                stagedFileGroupTreeView,
+                unstagedFileGroupTreeView,
+                untrackedFileGroupTreeView);
+
+            var firstNode = untrackedTreeViewList.FirstOrDefault();
+
+            var activeNodes = firstNode is null
+                ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
+                : new() { firstNode };
+
+            if (!_treeViewService.TryGetTreeViewContainer(GitState.TreeViewGitChangesKey, out var container))
+            {
+                _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                    GitState.TreeViewGitChangesKey,
+                    adhocRoot,
+                    activeNodes));
+            }
+            else
+            {
+                _treeViewService.ReduceWithRootNodeAction(GitState.TreeViewGitChangesKey, adhocRoot);
+
+                _treeViewService.ReduceSetActiveNodeAction(
+                    GitState.TreeViewGitChangesKey,
+                    firstNode,
+                    true,
+                    false);
+            }
+
+            return Task.CompletedTask;
+        });
+        
+        return Task.CompletedTask;
+    }
+    
+	public Task HandleSetRepoAction(GitRepo? repo)
+	{
+        if (repo is not null)
+            _gitBackgroundTaskApi.Git.RefreshEnqueue(repo);
+
+        return Task.CompletedTask;
     }
 }

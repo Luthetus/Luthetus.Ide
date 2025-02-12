@@ -4,23 +4,23 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.Models;
 
 namespace Luthetus.Extensions.Git.Models;
 
 public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly IState<GitState> _gitStateWrap;
+    private readonly GitIdeApi _gitIdeApi;
     private readonly IDispatcher _dispatcher;
 
     public GitTreeViewKeyboardEventHandler(
             ITreeViewService treeViewService,
             IBackgroundTaskService backgroundTaskService,
-            IState<GitState> gitStateWrap,
+            GitIdeApi gitIdeApi,
             IDispatcher dispatcher)
         : base(treeViewService, backgroundTaskService)
     {
-        _gitStateWrap = gitStateWrap;
+        _gitIdeApi = gitIdeApi;
         _dispatcher = dispatcher;
     }
 
@@ -32,9 +32,9 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
         if (commandArgs.KeyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
             commandArgs.KeyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
-            var localGitState = _gitStateWrap.Value;
+            var localGitState = _gitIdeApi.GetGitState();
 
-            _dispatcher.Dispatch(new GitState.WithAction(inState =>
+            _gitIdeApi.ReduceSetGitStateWithAction(inState =>
             {
                 if (inState.Repo != localGitState.Repo)
                 {
@@ -64,7 +64,7 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
                 {
                     SelectedFileList = outSelectedFileList.ToImmutableList()
                 };
-            }));
+            });
         }
 
         base.OnKeyDown(commandArgs);

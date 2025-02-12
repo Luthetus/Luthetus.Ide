@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Extensions.Git.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
@@ -20,6 +20,8 @@ public partial class GitAddRepoDisplay : ComponentBase
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
@@ -92,7 +94,7 @@ public partial class GitAddRepoDisplay : ComponentBase
     private void ConfirmGitFolderOnClick()
     {
         var repoAbsolutePath = EnvironmentProvider.AbsolutePathFactory(_repoAbsolutePathString, true);
-        Dispatcher.Dispatch(new GitState.SetRepoAction(new GitRepo(repoAbsolutePath)));
+		GitBackgroundTaskApi.Git.HandleSetRepoAction(new GitRepo(repoAbsolutePath));
 
         DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
     }

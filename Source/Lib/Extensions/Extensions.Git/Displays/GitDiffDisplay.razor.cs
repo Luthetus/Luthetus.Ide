@@ -24,7 +24,6 @@ using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.Git.Models;
-using Luthetus.Extensions.Git.States;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
@@ -32,7 +31,7 @@ namespace Luthetus.Extensions.Git.Displays;
 public partial class GitDiffDisplay : ComponentBase
 {
     [Inject]
-    private IState<GitState> GitStateWrap { get; set; } = null!;
+    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -43,8 +42,6 @@ public partial class GitDiffDisplay : ComponentBase
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-    [Inject]
-    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
@@ -82,7 +79,7 @@ public partial class GitDiffDisplay : ComponentBase
         if (firstRender)
         {
             ShowOriginalFromGitOnClick(
-                GitStateWrap.Value,
+				GitBackgroundTaskApi.Git.GetGitState(),
                 GitFile);
         }
 
