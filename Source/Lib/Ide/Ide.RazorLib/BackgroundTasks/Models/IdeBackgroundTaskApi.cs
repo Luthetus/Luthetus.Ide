@@ -38,6 +38,7 @@ public class IdeBackgroundTaskApi
 	private readonly IPanelService _panelService;
 	private readonly INotificationService _notificationService;
 	private readonly IInputFileService _inputFileService;
+	private readonly IFolderExplorerService _folderExplorerService;
 	private readonly IJSRuntime _jsRuntime;
 
     public IdeBackgroundTaskApi(
@@ -57,6 +58,7 @@ public class IdeBackgroundTaskApi
         IPanelService panelService,
         INotificationService notificationService,
         IInputFileService inputFileService,
+        IFolderExplorerService folderExplorerService,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
@@ -76,6 +78,7 @@ public class IdeBackgroundTaskApi
 		_panelService = panelService;
 		_notificationService = notificationService;
 		_inputFileService = inputFileService;
+		_folderExplorerService = folderExplorerService;
 		_jsRuntime = jsRuntime;
 
         Editor = new EditorIdeApi(
@@ -110,7 +113,7 @@ public class IdeBackgroundTaskApi
             _commonComponentRenderers,
             _treeViewService,
             _backgroundTaskService,
-            _dispatcher);
+            _folderExplorerService);
 
         InputFile = new InputFileIdeApi(
             this,

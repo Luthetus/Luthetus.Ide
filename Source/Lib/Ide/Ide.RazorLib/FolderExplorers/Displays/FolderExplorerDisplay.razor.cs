@@ -9,7 +9,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -19,7 +18,7 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<FolderExplorerState> FolderExplorerStateWrap { get; set; } = null!;
+    private IFolderExplorerService FolderExplorerService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
@@ -51,7 +50,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        FolderExplorerStateWrap.StateChanged += OnStateChanged;
+        FolderExplorerService.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
         AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
@@ -73,8 +72,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    private async void OnStateChanged(object? sender, EventArgs e) => await InvokeAsync(StateHasChanged);
-
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
@@ -95,6 +92,11 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 		return Task.CompletedTask;
 	}
 	
+	private async void OnFolderExplorerStateChanged() 
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
 	private async void OnAppOptionsStateChanged()
 	{
 		await InvokeAsync(StateHasChanged);
@@ -102,7 +104,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        FolderExplorerStateWrap.StateChanged -= OnStateChanged;
+        FolderExplorerService.FolderExplorerStateChanged -= OnFolderExplorerStateChanged;
         AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

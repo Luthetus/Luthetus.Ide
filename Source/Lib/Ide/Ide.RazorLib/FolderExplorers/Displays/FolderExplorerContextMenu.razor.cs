@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.FolderExplorers.States;
+using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 
