@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -35,7 +34,6 @@ public class DotNetBackgroundTaskApi
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
-	private readonly IDispatcher _dispatcher;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IFileSystemProvider _fileSystemProvider;
@@ -56,7 +54,6 @@ public class DotNetBackgroundTaskApi
 		IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
 		ITreeViewService treeViewService,
-		IDispatcher dispatcher,
 		IEnvironmentProvider environmentProvider,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		IFileSystemProvider fileSystemProvider,
@@ -76,7 +73,6 @@ public class DotNetBackgroundTaskApi
 		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
-		_dispatcher = dispatcher;
 		_environmentProvider = environmentProvider;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_fileSystemProvider = fileSystemProvider;
@@ -100,8 +96,7 @@ public class DotNetBackgroundTaskApi
 			_compilerServiceRegistry,
 			_ideComponentRenderers,
 			_commonComponentRenderers,
-			_treeViewService,
-			_dispatcher);
+			_treeViewService);
 			
 		TestExplorerService = new TestExplorerService(
 			this,
@@ -120,8 +115,7 @@ public class DotNetBackgroundTaskApi
             _dotNetCliOutputParser,
             DotNetSolutionService,
             _terminalService,
-            TestExplorerService,
-            _dispatcher);
+            TestExplorerService);
             
         OutputService = new OutputService(this);
             
@@ -144,7 +138,6 @@ public class DotNetBackgroundTaskApi
 			_commonComponentRenderers,
 			_treeViewService,
 			_notificationService,
-			_dispatcher,
 			_environmentProvider,
 			DotNetSolutionService,
 			_fileSystemProvider,

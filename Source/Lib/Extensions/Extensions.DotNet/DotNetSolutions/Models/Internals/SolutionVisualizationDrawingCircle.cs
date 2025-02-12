@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
-using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -133,7 +132,6 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
 		var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
 		var commonComponentRenderers = serviceProvider.GetRequiredService<ICommonComponentRenderers>();
-		var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 		var notificationService = serviceProvider.GetRequiredService<INotificationService>();
 
 		var projectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectResource.ResourceUri.Value, false);

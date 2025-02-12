@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -27,7 +26,6 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 	private readonly ITreeViewService _treeViewService;
 	private readonly INotificationService _notificationService;
 	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IDispatcher _dispatcher;
 
 	public SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
@@ -37,8 +35,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			ITreeViewService treeViewService,
 			INotificationService notificationService,
 			IBackgroundTaskService backgroundTaskService,
-			IEnvironmentProvider environmentProvider,
-			IDispatcher dispatcher)
+			IEnvironmentProvider environmentProvider)
 		: base(treeViewService, backgroundTaskService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -48,7 +45,6 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 		_treeViewService = treeViewService;
 		_notificationService = notificationService;
 		_environmentProvider = environmentProvider;
-		_dispatcher = dispatcher;
 	}
 
 	public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

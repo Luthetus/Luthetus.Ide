@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -31,7 +30,6 @@ public partial class TestExplorerScheduler : IStateScheduler
 	private readonly ITestExplorerService _testExplorerService;
 	private readonly IDotNetSolutionService _dotNetSolutionService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-    private readonly IDispatcher _dispatcher;
     
     private readonly ThrottleAsync _throttleDiscoverTests = new(TimeSpan.FromMilliseconds(100));
 
@@ -47,8 +45,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         DotNetCliOutputParser dotNetCliOutputParser,
         IDotNetSolutionService dotNetSolutionService,
         ITerminalService terminalService,
-        ITestExplorerService testExplorerService,
-        IDispatcher dispatcher)
+        ITestExplorerService testExplorerService)
     {
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -62,7 +59,6 @@ public partial class TestExplorerScheduler : IStateScheduler
 		_testExplorerService = testExplorerService;
         _dotNetSolutionService = dotNetSolutionService;
         _dotNetCliOutputParser = dotNetCliOutputParser;
-        _dispatcher = dispatcher;
     }
     
     public TreeViewGroup ContainsTestsTreeViewGroup { get; } = new("Have tests", true, true);

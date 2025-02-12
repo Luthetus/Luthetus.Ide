@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -16,14 +15,12 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewSolution solutionNode,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion);
@@ -31,7 +28,6 @@ public interface IDotNetMenuOptionsFactory
 	public MenuOptionRecord RemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion);
 
@@ -39,7 +35,6 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath treeViewProjectToMove,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion);
 
@@ -47,7 +42,6 @@ public interface IDotNetMenuOptionsFactory
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion);
 }

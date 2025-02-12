@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -23,7 +22,6 @@ public class CompilerServiceIdeApi
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
-	private readonly IDispatcher _dispatcher;
 
 	public CompilerServiceIdeApi(
         DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
@@ -33,8 +31,7 @@ public class CompilerServiceIdeApi
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
-		ITreeViewService treeViewService,
-		IDispatcher dispatcher)
+		ITreeViewService treeViewService)
 	{
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -44,7 +41,6 @@ public class CompilerServiceIdeApi
 		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
-		_dispatcher = dispatcher;
 	}
 
     /// <summary>

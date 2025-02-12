@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -15,8 +14,6 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
 public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
@@ -50,7 +47,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	{
 		_treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(
 			CommonComponentRenderers,
-			Dispatcher,
 			CompilerServiceRegistry,
 			TextEditorService,
 			NotificationService,
@@ -60,7 +56,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 
 		_treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
 			CommonComponentRenderers,
-			Dispatcher,
 			CompilerServiceRegistry,
 			TextEditorService,
 			NotificationService,

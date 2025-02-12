@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
-using Fluxor;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -48,7 +47,6 @@ public class DotNetSolutionIdeApi
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
 	private readonly INotificationService _notificationService;
-	private readonly IDispatcher _dispatcher;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IDotNetSolutionService _dotNetSolutionService;
 	private readonly IFileSystemProvider _fileSystemProvider;
@@ -75,7 +73,6 @@ public class DotNetSolutionIdeApi
 		ICommonComponentRenderers commonComponentRenderers,
 		ITreeViewService treeViewService,
 		INotificationService notificationService,
-		IDispatcher dispatcher,
 		IEnvironmentProvider environmentProvider,
 		IDotNetSolutionService dotNetSolutionService,
 		IFileSystemProvider fileSystemProvider,
@@ -99,7 +96,6 @@ public class DotNetSolutionIdeApi
 		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
 		_notificationService = notificationService;
-		_dispatcher = dispatcher;
 		_environmentProvider = environmentProvider;
 		_dotNetSolutionService = dotNetSolutionService;
 		_fileSystemProvider = fileSystemProvider;
@@ -213,14 +209,14 @@ public class DotNetSolutionIdeApi
 		// TODO: If somehow model was registered already this won't write the state
 		_dotNetSolutionService.ReduceRegisterAction(dotNetSolutionModel, this);
 
-		_dispatcher.Dispatch(new WithAction(
+		_dotNetSolutionService.ReduceWithAction(new WithAction(
 			inDotNetSolutionState => inDotNetSolutionState with
 			{
 				DotNetSolutionModelKey = dotNetSolutionModel.Key
 			}));
 
 		// TODO: Putting a hack for now to overwrite if somehow model was registered already
-		_dispatcher.Dispatch(ConstructModelReplacement(
+		_dotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
 			dotNetSolutionModel.Key,
 			dotNetSolutionModel));
 
@@ -619,7 +615,7 @@ Execution Terminal"));
 		if (dotNetSolutionModel is null)
 			return;
 
-		_dispatcher.Dispatch(ConstructModelReplacement(
+		_dotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
 			dotNetSolutionModel.Key,
 			dotNetSolutionModel));
 	}
@@ -776,7 +772,7 @@ Execution Terminal"));
 		}
 
 		// TODO: Putting a hack for now to overwrite if somehow model was registered already
-		_dispatcher.Dispatch(ConstructModelReplacement(
+		_dotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
 			outDotNetSolutionModel.Key,
 			outDotNetSolutionModel));
 

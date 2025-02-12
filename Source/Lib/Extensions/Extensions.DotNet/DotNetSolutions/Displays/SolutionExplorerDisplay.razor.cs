@@ -1,5 +1,3 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -23,8 +21,6 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 
 public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
@@ -69,8 +65,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			TreeViewService,
 			NotificationService,
 			BackgroundTaskService,
-			EnvironmentProvider,
-			Dispatcher);
+			EnvironmentProvider);
 
 		_solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,

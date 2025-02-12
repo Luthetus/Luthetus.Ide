@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -31,8 +29,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
@@ -262,7 +258,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 					EnvironmentProvider,
 					FileSystemProvider,
 					DotNetBackgroundTaskApi,
-					Dispatcher,
 					NotificationService,
 					DialogService,
 					DialogRecord,
