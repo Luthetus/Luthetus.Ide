@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -21,7 +19,7 @@ using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.Websites;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.CSharpProjects.Displays;
 
@@ -30,11 +28,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-	[Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
@@ -54,7 +48,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private DotNetBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 
@@ -66,14 +60,14 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private CSharpProjectFormViewModel _viewModel = null!;
 
-	private DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
+	private DotNetSolutionModel? DotNetSolutionModel => DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState().DotNetSolutionsList.FirstOrDefault(
 		x => x.Key == DotNetSolutionModelKey);
 
 	protected override void OnInitialized()
 	{
 		_viewModel = new(DotNetSolutionModel, EnvironmentProvider);
 		
-		DotNetSolutionStateWrap.StateChanged += OnDotNetSolutionStateWrapStateChanged;
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
 		
 		base.OnInitialized();
@@ -244,7 +238,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        	{
 				        	DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
-							CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
+							DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
 								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
 							return Task.CompletedTask;
 						}
@@ -263,8 +257,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 					immutableView,
 					EnvironmentProvider,
 					FileSystemProvider,
-					CompilerServicesBackgroundTaskApi,
-					Dispatcher,
+					DotNetBackgroundTaskApi,
 					NotificationService,
 					DialogService,
 					DialogRecord,
@@ -273,7 +266,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		}
 	}
 	
-	public async void OnDotNetSolutionStateWrapStateChanged(object? sender, EventArgs e)
+	public async void OnDotNetSolutionStateChanged()
 	{
 		await InvokeAsync(StateHasChanged);
 	}
@@ -285,7 +278,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		DotNetSolutionStateWrap.StateChanged -= OnDotNetSolutionStateWrapStateChanged;
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

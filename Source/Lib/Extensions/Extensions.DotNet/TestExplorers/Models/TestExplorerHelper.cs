@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -23,7 +22,6 @@ public static class TestExplorerHelper
 		string className,
 		string methodName,
 		ICommonComponentRenderers commonComponentRenderers,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		ITextEditorService textEditorService,

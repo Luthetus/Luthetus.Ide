@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -24,8 +22,6 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]

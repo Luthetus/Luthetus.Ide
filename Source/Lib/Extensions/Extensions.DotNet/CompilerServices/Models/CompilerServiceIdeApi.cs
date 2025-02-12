@@ -1,16 +1,14 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.CompilerServices.States;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.CompilerServices.Models;
 
@@ -19,33 +17,30 @@ public class CompilerServiceIdeApi
     private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IBackgroundTaskService _backgroundTaskService;
-	private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
+	private readonly ICompilerServiceExplorerService _compilerServiceExplorerService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
-	private readonly IDispatcher _dispatcher;
 
 	public CompilerServiceIdeApi(
         DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
         IdeBackgroundTaskApi ideBackgroundTaskApi,
 		IBackgroundTaskService backgroundTaskService,
-		IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
+		ICompilerServiceExplorerService compilerServiceExplorerService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
-		ITreeViewService treeViewService,
-		IDispatcher dispatcher)
+		ITreeViewService treeViewService)
 	{
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_backgroundTaskService = backgroundTaskService;
-		_compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
+		_compilerServiceExplorerService = compilerServiceExplorerService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
-		_dispatcher = dispatcher;
 	}
 
     /// <summary>
@@ -60,7 +55,7 @@ public class CompilerServiceIdeApi
 			"Set CompilerServiceExplorer TreeView",
 			async () =>
 			{
-				var compilerServiceExplorerState = _compilerServiceExplorerStateWrap.Value;
+				var compilerServiceExplorerState = _compilerServiceExplorerService.GetCompilerServiceExplorerState();
 
 				var xmlCompilerServiceWatchWindowObject = new WatchWindowObject(
 					_compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML),
@@ -165,8 +160,8 @@ public class CompilerServiceIdeApi
 						false);
 				}
 
-				_dispatcher.Dispatch(new CompilerServiceExplorerState.NewAction(inCompilerServiceExplorerState =>
-					new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model)));
+				_dotNetBackgroundTaskApi.CompilerServiceExplorerService.ReduceNewAction(inCompilerServiceExplorerState =>
+					new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model));
 			});
 	}
 }

@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -23,11 +22,11 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays;
-using Luthetus.Extensions.DotNet.TestExplorers.States;
+using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -58,15 +57,11 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IPanelService PanelService { get; set; } = null!;
 	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
@@ -290,12 +285,12 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         PanelService.ReduceRegisterPanelAction(testExplorerPanel);
         PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
-        Dispatcher.Dispatch(new TestExplorerState.InitializeResizeHandleDimensionUnitAction(
+        DotNetBackgroundTaskApi.TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
             	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
-            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
+            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 
         // nuGetPanel
         var nuGetPanel = new Panel(
@@ -369,7 +364,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             MenuOptionKind.Delete,
             () =>
 			{
-				var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+				var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
 				var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 				
 				if (dotNetSolutionModel?.AbsolutePath is not null)
@@ -385,7 +380,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             MenuOptionKind.Delete,
             () =>
 			{
-				var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+				var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
 				var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 				
 				if (dotNetSolutionModel?.AbsolutePath is not null)

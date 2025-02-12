@@ -1,6 +1,8 @@
-﻿<div class="luth_ide_git-origin">
+<div class="luth_ide_git-origin">
 
-    @{ var localGitState = GitStateWrap.Value; }
+    @{
+        var localGitState = GitBackgroundTaskApi.Git.GetGitState();
+    }
 
     <button class="luth_button"
             @onclick="GetOriginOnClick">

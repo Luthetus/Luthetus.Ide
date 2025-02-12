@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;

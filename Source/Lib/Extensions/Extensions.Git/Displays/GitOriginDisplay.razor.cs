@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -7,7 +6,6 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.Git.CommandLines.Models;
 using Luthetus.Extensions.Git.Models;
-using Luthetus.Extensions.Git.States;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
@@ -15,11 +13,7 @@ namespace Luthetus.Extensions.Git.Displays;
 public partial class GitOriginDisplay : ComponentBase
 {
     [Inject]
-    private IState<GitState> GitStateWrap { get; set; } = null!;
-    [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
@@ -35,7 +29,7 @@ public partial class GitOriginDisplay : ComponentBase
 
     private void GetOriginOnClick()
     {
-        var localGitState = GitStateWrap.Value;
+        var localGitState = GitBackgroundTaskApi.Git.GetGitState();
 
         if (localGitState.Repo is null)
             return;
@@ -45,7 +39,7 @@ public partial class GitOriginDisplay : ComponentBase
 
     private void SetGitOriginOnClick(string localCommandArgs)
     {
-        var localGitState = GitStateWrap.Value;
+        var localGitState = GitBackgroundTaskApi.Git.GetGitState();
 
         if (localGitState.Repo is null)
             return;

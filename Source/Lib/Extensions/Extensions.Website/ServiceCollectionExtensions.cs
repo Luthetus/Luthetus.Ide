@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Fluxor;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
@@ -15,9 +14,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddLuthetusIdeRazorLibServices(hostingInformation);
         services.AddLuthetusConfigServices(hostingInformation);
-
-        return services.AddFluxor(options => options.ScanAssemblies(
-            typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly,
-            typeof(Luthetus.Extensions.Git.Installations.Models.ServiceCollectionExtensions).Assembly));
+        
+        return services;
     }
 }

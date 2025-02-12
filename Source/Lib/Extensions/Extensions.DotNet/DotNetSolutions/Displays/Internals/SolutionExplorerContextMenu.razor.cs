@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -17,7 +16,6 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -41,8 +39,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IStartupControlService StartupControlService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
 	[Inject]
@@ -357,7 +353,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				Dispatcher,
 				NotificationService,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
@@ -365,7 +360,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewSolution,
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				Dispatcher,
 				NotificationService,
 				() =>
 				{
@@ -390,7 +384,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewSolution,
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				Dispatcher,
 				NotificationService,
 				() =>
 				{
@@ -408,7 +401,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				Dispatcher,
 				NotificationService,
 				() => Task.CompletedTask),
 		};
@@ -429,7 +421,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				Dispatcher,
 				NotificationService,
 				() => Task.CompletedTask),
 		};
