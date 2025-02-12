@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -18,18 +17,15 @@ public class NativeAppDataService : IAppDataService
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly IDispatcher _dispatcher;
 
 	public NativeAppDataService(
 		IEnvironmentProvider environmentProvider,
 		IFileSystemProvider fileSystemProvider,
-		ICommonComponentRenderers commonComponentRenderers,
-		IDispatcher dispatcher)
+		ICommonComponentRenderers commonComponentRenderers)
 	{
 		_environmentProvider = environmentProvider;
 		_fileSystemProvider = fileSystemProvider;
 		_commonComponentRenderers = commonComponentRenderers;
-		_dispatcher = dispatcher;
 	}
 	
 	private bool _isInitialized;

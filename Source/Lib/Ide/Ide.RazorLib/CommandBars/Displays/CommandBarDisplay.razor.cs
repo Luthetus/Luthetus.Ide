@@ -1,22 +1,18 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Widgets.Models;
-using Luthetus.Ide.RazorLib.CommandBars.States;
+using Luthetus.Ide.RazorLib.CommandBars.Models;
 
 namespace Luthetus.Ide.RazorLib.CommandBars.Displays;
 
-public partial class CommandBarDisplay : FluxorComponent
+public partial class CommandBarDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IState<CommandBarState> CommandBarStateWrap { get; set; } = null!;
+	private ICommandBarService CommandBarService { get; set; } = null!;
 	[Inject]
 	private IWidgetService WidgetService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	
@@ -27,6 +23,12 @@ public partial class CommandBarDisplay : FluxorComponent
 	
 	private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi => _jsRuntimeCommonApi
 		??= JsRuntime.GetLuthetusCommonApi();
+		
+	protected override void OnInitialized()
+	{
+		CommandBarService.CommandBarStateChanged += OnCommandBarStateChanged;
+		base.OnInitialized();
+	}
 	
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -44,5 +46,15 @@ public partial class CommandBarDisplay : FluxorComponent
 	{
 		if (keyboardEventArgs.Key == "Enter")
 			WidgetService.ReduceSetWidgetAction(null);
+	}
+	
+	private async void OnCommandBarStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public void Dispose()
+	{
+		CommandBarService.CommandBarStateChanged -= OnCommandBarStateChanged;
 	}
 }

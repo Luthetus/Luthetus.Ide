@@ -1,39 +1,42 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays.Internals;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
-public partial class TerminalGroupDisplay : FluxorComponent
+public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<TerminalGroupState> TerminalGroupDisplayStateWrap { get; set; } = null!;
+    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
     [Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
 
 	private Key<IDynamicViewModel> _addIntegratedTerminalDialogKey = Key<IDynamicViewModel>.NewKey();
 
+	protected override void OnInitialized()
+	{
+		TerminalGroupService.TerminalGroupStateChanged += OnTerminalGroupStateChanged;
+    	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+    	
+		base.OnInitialized();
+	}
+
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
     {
-        Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(terminalKey));
+        TerminalGroupService.ReduceSetActiveTerminalAction(terminalKey);
     }
     
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
     {
-    	TerminalStateWrap.Value.TerminalMap[terminalKey]?.ClearFireAndForget();
+    	TerminalService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
     }
     
     private void AddIntegratedTerminalOnClick()
@@ -48,5 +51,21 @@ public partial class TerminalGroupDisplay : FluxorComponent
 			setFocusOnCloseElementId: null);
 
         DialogService.ReduceRegisterAction(addIntegratedTerminalDialog);
+    }
+    
+    private async void OnTerminalGroupStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnTerminalStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TerminalGroupService.TerminalGroupStateChanged -= OnTerminalGroupStateChanged;
+    	TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
     }
 }

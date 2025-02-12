@@ -1,7 +1,5 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 @{
-	var localStartupControlState = StartupControlStateWrap.Value;
+	var localStartupControlState = StartupControlService.GetStartupControlState();
 	bool isExecuting;
 
 	if (localStartupControlState?.ActiveStartupControl is null)

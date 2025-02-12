@@ -1,10 +1,8 @@
 @using Luthetus.Common.RazorLib.Resizes.Displays
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 <div class="luth_ide_input-file-display">
     @{
-        var inputFileState = InputFileStateWrap.Value;
+        var inputFileState = InputFileService.GetInputFileState();
         
         _searchMatchTuples = new();
     }

@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
@@ -10,14 +8,14 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileBottomControls : ComponentBase
 {
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
     private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private IInputFileService InputFileService { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog? DialogRecord { get; set; }
     [CascadingParameter]
-    public InputFileState InputFileState { get; set; } = null!;
+    public InputFileState InputFileState { get; set; }
 
     private string _searchQuery = string.Empty;
 
@@ -29,7 +27,7 @@ public partial class InputFileBottomControls : ComponentBase
             .FirstOrDefault(x => x.PatternName == patternName);
 
         if (pattern is not null)
-            Dispatcher.Dispatch(new InputFileState.SetSelectedInputFilePatternAction(pattern));
+            InputFileService.ReduceSetSelectedInputFilePatternAction(pattern);
     }
 
     private string GetSelectedTreeViewModelAbsolutePathString(InputFileState inputFileState)

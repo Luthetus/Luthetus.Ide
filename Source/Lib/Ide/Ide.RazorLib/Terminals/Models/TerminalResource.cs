@@ -1,16 +1,15 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalResource : CompilerServiceResource
 {
-    private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly ITerminalService _terminalService;
 
     /// <summary>
     /// The <see cref="ArgumentsTextSpan"/> and <see cref="TargetFilePathTextSpan"/> are currently

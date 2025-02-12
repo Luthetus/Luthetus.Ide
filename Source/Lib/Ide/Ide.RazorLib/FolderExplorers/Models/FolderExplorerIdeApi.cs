@@ -1,4 +1,3 @@
-using Fluxor;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -8,7 +7,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.FolderExplorers.States;
+using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
@@ -22,7 +21,7 @@ public class FolderExplorerIdeApi
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDispatcher _dispatcher;
+    private readonly IFolderExplorerService _folderExplorerService;
 
     public FolderExplorerIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
@@ -32,7 +31,7 @@ public class FolderExplorerIdeApi
         ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         IBackgroundTaskService backgroundTaskService,
-        IDispatcher dispatcher)
+        IFolderExplorerService folderExplorerService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _fileSystemProvider = fileSystemProvider;
@@ -41,7 +40,7 @@ public class FolderExplorerIdeApi
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
         _backgroundTaskService = backgroundTaskService;
-        _dispatcher = dispatcher;
+        _folderExplorerService = folderExplorerService;
     }
 
     public void SetFolderExplorerState(AbsolutePath folderAbsolutePath)
@@ -86,21 +85,21 @@ public class FolderExplorerIdeApi
 
     private async Task SetFolderExplorerAsync(AbsolutePath folderAbsolutePath)
     {
-        _dispatcher.Dispatch(new FolderExplorerState.WithAction(
+        _folderExplorerService.ReduceWithAction(
             inFolderExplorerState => inFolderExplorerState with
             {
                 AbsolutePath = folderAbsolutePath
-            }));
+            });
 
         await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false);
     }
 
     private async Task SetFolderExplorerTreeViewAsync(AbsolutePath folderAbsolutePath)
     {
-        _dispatcher.Dispatch(new FolderExplorerState.WithAction(inFolderExplorerState => inFolderExplorerState with
+        _folderExplorerService.ReduceWithAction(inFolderExplorerState => inFolderExplorerState with
         {
             IsLoadingFolderExplorer = true
-        }));
+        });
 
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,
@@ -133,9 +132,9 @@ public class FolderExplorerIdeApi
                 false);
         }
 
-        _dispatcher.Dispatch(new FolderExplorerState.WithAction(inFolderExplorerState => inFolderExplorerState with
+        _folderExplorerService.ReduceWithAction(inFolderExplorerState => inFolderExplorerState with
         {
             IsLoadingFolderExplorer = false
-        }));
+        });
     }
 }

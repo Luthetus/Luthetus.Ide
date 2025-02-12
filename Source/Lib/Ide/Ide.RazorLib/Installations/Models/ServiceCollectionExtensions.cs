@@ -5,13 +5,20 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Ide.RazorLib.CommandBars.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Displays;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 
@@ -89,7 +96,16 @@ public static class ServiceCollectionExtensions
             .AddScoped<IdeBackgroundTaskApi>()
             .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
-            .AddScoped<IFileTemplateProvider, FileTemplateProvider>();
+            .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
+            .AddScoped<ICodeSearchService, CodeSearchService>()
+            .AddScoped<IInputFileService, InputFileService>()
+            .AddScoped<IStartupControlService, StartupControlService>()
+            .AddScoped<ITerminalService, TerminalService>()
+            .AddScoped<ITerminalGroupService, TerminalGroupService>()
+            .AddScoped<IFolderExplorerService, FolderExplorerService>()
+            .AddScoped<IIdeMainLayoutService, IdeMainLayoutService>()
+            .AddScoped<IIdeHeaderService, IdeHeaderService>()
+            .AddScoped<ICommandBarService, CommandBarService>();
 
         return services;
     }

@@ -1,26 +1,25 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.InputFiles.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly IDispatcher _dispatcher;
+    private readonly IInputFileService _inputFileService;
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
 
     public InputFileTreeViewMouseEventHandler(
         ITreeViewService treeViewService,
-        IDispatcher dispatcher,
+        IInputFileService inputFileService,
         Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 		IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)
     {
-        _dispatcher = dispatcher;
+        _inputFileService = inputFileService;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 
@@ -31,9 +30,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        var setSelectedTreeViewModelAction = new InputFileState.SetSelectedTreeViewModelAction(treeViewAbsolutePath);
-
-        _dispatcher.Dispatch(setSelectedTreeViewModelAction);
+        _inputFileService.ReduceSetSelectedTreeViewModelAction(treeViewAbsolutePath);
     }
 
     public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)

@@ -1,9 +1,8 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -11,7 +10,7 @@ public sealed class TerminalCompilerService : CompilerService
 {
     public TerminalCompilerService(
             ITextEditorService textEditorService,
-            IState<TerminalState> terminalStateWrap)
+            ITerminalService terminalService)
         : base(textEditorService)
     {
         _compilerServiceOptions = new()
