@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Extensions.Git.CommandLines.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.States;

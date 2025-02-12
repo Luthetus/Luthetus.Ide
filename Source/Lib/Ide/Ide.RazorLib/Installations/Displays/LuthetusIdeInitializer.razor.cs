@@ -18,7 +18,6 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
@@ -52,6 +51,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
+    [Inject]
+    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
@@ -222,12 +223,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
         PanelService.ReduceRegisterPanelAction(terminalGroupPanel);
         PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false);
 		// This UI has resizable parts that need to be initialized.
-        Dispatcher.Dispatch(new TerminalGroupState.InitializeResizeHandleDimensionUnitAction(
+        TerminalGroupService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
             	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
-            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
+            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 
 		// activeContextsPanel
         var activeContextsPanel = new Panel(

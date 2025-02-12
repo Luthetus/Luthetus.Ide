@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays.Internals;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
@@ -14,7 +13,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<TerminalGroupState> TerminalGroupDisplayStateWrap { get; set; } = null!;
+    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
@@ -28,7 +27,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		TerminalGroupDisplayStateWrap.StateChanged += OnTerminalGroupDisplayStateWrapStateChanged;
+		TerminalGroupService.TerminalGroupStateChanged += OnTerminalGroupStateChanged;
     	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
     	
 		base.OnInitialized();
@@ -36,7 +35,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
     {
-        Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(terminalKey));
+        TerminalGroupService.ReduceSetActiveTerminalAction(terminalKey);
     }
     
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
@@ -58,7 +57,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
         DialogService.ReduceRegisterAction(addIntegratedTerminalDialog);
     }
     
-    private async void OnTerminalGroupDisplayStateWrapStateChanged(object? sender, EventArgs e)
+    private async void OnTerminalGroupStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
@@ -70,7 +69,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TerminalGroupDisplayStateWrap.StateChanged -= OnTerminalGroupDisplayStateWrapStateChanged;
+    	TerminalGroupService.TerminalGroupStateChanged -= OnTerminalGroupStateChanged;
     	TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
     }
 }

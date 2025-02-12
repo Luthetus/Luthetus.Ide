@@ -12,13 +12,14 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Displays;
 
 public partial class StartupControlDisplay : ComponentBase, IDisposable
 {
+    [Inject]
+    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
@@ -110,7 +111,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	                }
 	                
-	                Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(TerminalFacts.EXECUTION_KEY));
+	                TerminalGroupService.ReduceSetActiveTerminalAction(TerminalFacts.EXECUTION_KEY);
 				}));
 			    
 			menuOptionList.Add(new MenuOptionRecord(

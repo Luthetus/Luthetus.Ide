@@ -97,7 +97,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<ICodeSearchService, CodeSearchService>()
             .AddScoped<IInputFileService, InputFileService>()
             .AddScoped<IStartupControlService, StartupControlService>()
-            .AddScoped<ITerminalService, TerminalService>();
+            .AddScoped<ITerminalService, TerminalService>()
+            .AddScoped<ITerminalGroupService, TerminalGroupService>();
 
         return services;
     }

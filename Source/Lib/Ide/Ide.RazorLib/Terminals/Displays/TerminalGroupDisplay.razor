@@ -9,7 +9,7 @@
                  StyleCssString="height: 100%; width: 100%; overflow: auto;">
 
     @{
-        var terminalGroupDisplayState = TerminalGroupDisplayStateWrap.Value;
+        var terminalGroupDisplayState = TerminalGroupService.GetTerminalGroupState();
         var terminalState = TerminalService.GetTerminalState();
 
         _ = terminalState.TerminalMap.TryGetValue(

@@ -20,7 +20,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;

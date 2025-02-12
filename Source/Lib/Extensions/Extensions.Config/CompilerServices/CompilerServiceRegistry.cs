@@ -18,7 +18,6 @@ using Luthetus.CompilerServices.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.TypeScript;
 using Luthetus.CompilerServices.Xml;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Extensions.Config.CompilerServices;
 
