@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Fluxor;
 using Photino.Blazor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -27,10 +26,6 @@ class Program
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
         appBuilder.Services.AddLuthetusConfigServices(hostingInformation);
-
-        appBuilder.Services.AddFluxor(options => options.ScanAssemblies(
-            typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly,
-            typeof(Luthetus.Extensions.Git.Installations.Models.ServiceCollectionExtensions).Assembly));
 
         appBuilder.RootComponents.Add<App>("app");
 

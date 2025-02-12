@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.Extensions.DotNet.CSharpProjects.Displays;

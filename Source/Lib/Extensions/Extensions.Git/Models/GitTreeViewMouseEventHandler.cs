@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -7,26 +6,23 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Extensions.Git.Displays;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.Models;
 
 namespace Luthetus.Extensions.Git.Models;
 
 public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly IState<GitState> _gitStateWrap;
-    private readonly IDispatcher _dispatcher;
+    private readonly GitIdeApi _gitIdeApi;
     private readonly IDialogService _dialogService;
 
     public GitTreeViewMouseEventHandler(
             ITreeViewService treeViewService,
             IBackgroundTaskService backgroundTaskService,
-            IState<GitState> gitStateWrap,
-            IDispatcher dispatcher,
+            GitIdeApi gitIdeApi,
             IDialogService dialogService)
         : base(treeViewService, backgroundTaskService)
     {
-        _gitStateWrap = gitStateWrap;
-        _dispatcher = dispatcher;
+        _gitIdeApi = gitIdeApi;
         _dialogService = dialogService;
     }
 

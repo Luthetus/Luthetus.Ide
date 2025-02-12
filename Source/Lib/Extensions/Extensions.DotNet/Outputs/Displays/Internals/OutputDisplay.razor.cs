@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
@@ -9,7 +8,6 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
-using Luthetus.Extensions.DotNet.Outputs.States;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.Outputs.Models;
 
@@ -33,12 +31,8 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
-    private IState<OutputState> OutputStateWrap { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
@@ -65,9 +59,9 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 			BackgroundTaskService);
     
     	DotNetCliOutputParser.StateChanged += DotNetCliOutputParser_StateChanged;
-    	OutputStateWrap.StateChanged += OutputStateWrap_StateChanged;
+    	DotNetBackgroundTaskApi.OutputService.OutputStateChanged += OnOutputStateChanged;
     	
-    	if (OutputStateWrap.Value.DotNetRunParseResultId != DotNetCliOutputParser.GetDotNetRunParseResult().Id)
+    	if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId != DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     		DotNetCliOutputParser_StateChanged();
     	
         base.OnInitialized();
@@ -77,7 +71,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     {
     	_eventThrottle.Run(_ =>
     	{
-    		if (OutputStateWrap.Value.DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
+    		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
     			
     		DotNetBackgroundTaskApi.Output.Enqueue_ConstructTreeView();
@@ -85,7 +79,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     	});
     }
     
-    public async void OutputStateWrap_StateChanged(object? sender, EventArgs e)
+    public async void OnOutputStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
@@ -113,6 +107,6 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
     	DotNetCliOutputParser.StateChanged -= DotNetCliOutputParser_StateChanged;
-    	OutputStateWrap.StateChanged -= OutputStateWrap_StateChanged;
+    	DotNetBackgroundTaskApi.OutputService.OutputStateChanged -= OnOutputStateChanged;
     }
 }

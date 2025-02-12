@@ -1,9 +1,9 @@
-﻿@using Luthetus.TextEditor.RazorLib.Diffs.Displays;
+@using Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
 <div class="luth_ide_git-diff"
      style="height: 100%;">
-    @{ 
-        var localGitState = GitStateWrap.Value;
+    @{
+        var localGitState = GitBackgroundTaskApi.Git.GetGitState();
         var localGitFile = GitFile;
     }
 

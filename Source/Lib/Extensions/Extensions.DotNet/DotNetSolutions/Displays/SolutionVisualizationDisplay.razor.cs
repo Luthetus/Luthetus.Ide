@@ -1,20 +1,20 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 
@@ -27,9 +27,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	[Inject]
 	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -57,7 +55,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		_solutionVisualizationModel = new(null, OnCompilerServiceChanged);
 
 		AppDimensionService.AppDimensionStateChanged += OnAppDimensionStateWrapChanged;
-		DotNetSolutionStateWrap.StateChanged += OnDotNetSolutionStateWrapChanged;
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 
 		SubscribeTo_DotNetSolutionCompilerService();
 		SubscribeTo_CSharpProjectCompilerService();
@@ -71,7 +69,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		if (firstRender)
 		{
 			OnAppDimensionStateWrapChanged();
-			OnDotNetSolutionStateWrapChanged(null, EventArgs.Empty);
+			OnDotNetSolutionStateChanged();
 			OnCompilerServiceChanged();
 		}
 
@@ -91,9 +89,9 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		OnCompilerServiceChanged();
 	}
 
-	private void OnDotNetSolutionStateWrapChanged(object sender, EventArgs e)
+	private void OnDotNetSolutionStateChanged()
 	{
-		_solutionVisualizationModel = new(DotNetSolutionStateWrap.Value.DotNetSolutionModel?.AbsolutePath, OnCompilerServiceChanged);
+		_solutionVisualizationModel = new(DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState().DotNetSolutionModel?.AbsolutePath, OnCompilerServiceChanged);
 		OnAppDimensionStateWrapChanged();
 	}
 
@@ -191,6 +189,6 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		DisposeFrom_CSharpCompilerService();
 
 		AppDimensionService.AppDimensionStateChanged -= OnAppDimensionStateWrapChanged;
-		DotNetSolutionStateWrap.StateChanged -= OnDotNetSolutionStateWrapChanged;
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

@@ -16,7 +16,6 @@ public static class ServiceCollectionExtensions
 		Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)
 	{
 		return services
-			.AddScoped<GitCliOutputParser>()
 			.AddScoped<GitTreeViews>(_ => _gitTreeViews)
 			.AddScoped<GitBackgroundTaskApi>();
 	}

@@ -5,16 +5,14 @@
 @using Luthetus.Common.RazorLib.TreeViews.Displays
 @using Luthetus.Common.RazorLib.TreeViews.Models;
 @using Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
-@using Luthetus.Extensions.DotNet.DotNetSolutions.States;
-
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 <ContextBoundary ContextRecord="ContextFacts.SolutionExplorerContext"
                  ClassCssString="luth_ide_solution-explorer-display"
                  StyleCssString="height: 100%">
 
     @{
-    	var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+    	var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
     	var appOptionsState = AppOptionsService.GetAppOptionsState();
     }
 
@@ -38,7 +36,7 @@
         {
             <button class="luth_button"
                     style="display: inline; margin-right: 12px; margin-bottom: 12px;"
-                    @onclick="() => DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi, CompilerServicesBackgroundTaskApi)">
+                    @onclick="() => DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi, DotNetBackgroundTaskApi)">
                 Open Solution
             </button>
 

@@ -1,26 +1,23 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.Models;
+using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
-public partial class GitInteractiveIconDisplay : FluxorComponent
+public partial class GitInteractiveIconDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<GitState> GitStateWrap { get; set; } = null!;
+    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
 
@@ -28,6 +25,12 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
     public string CssClassString { get; set; } = string.Empty;
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
+    
+    protected override void OnInitialized()
+    {
+		GitBackgroundTaskApi.Git.GitStateChanged += OnGitStateChanged;
+    	base.OnInitialized();
+    }
 
     private void HandleOnClick(GitState localGitState)
     {
@@ -64,5 +67,15 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
                 PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel.Key);
             }
         }
+    }
+    
+    private async void OnGitStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+		GitBackgroundTaskApi.Git.GitStateChanged -= OnGitStateChanged;
     }
 }
