@@ -14,6 +14,7 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
+using Luthetus.Extensions.DotNet.Nugets.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
@@ -157,6 +158,8 @@ public class DotNetBackgroundTaskApi
 			_terminalService,
 			_dotNetCliOutputParser,
 			serviceProvider);
+			
+			NuGetPackageManagerService = new NuGetPackageManagerService();
 	}
 
 	public DotNetSolutionIdeApi DotNetSolution { get; }
@@ -166,4 +169,5 @@ public class DotNetBackgroundTaskApi
     public IOutputService OutputService { get; }
     public ITestExplorerService TestExplorerService { get; }
     public IDotNetSolutionService DotNetSolutionService { get; }
+    public INuGetPackageManagerService NuGetPackageManagerService { get; }
 }

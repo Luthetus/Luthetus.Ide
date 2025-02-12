@@ -5,9 +5,8 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
-using Luthetus.Extensions.DotNet.Nugets.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -16,8 +15,6 @@ namespace Luthetus.Extensions.DotNet.Nugets.Displays;
 
 public partial class NugetPackageDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -41,7 +38,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		NuGetPackageManagerStateWrap.StateChanged += OnNuGetPackageManagerStateWrapStateChanged;
+		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		base.OnInitialized();
 	}
@@ -119,7 +116,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
         TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
-	private async void OnNuGetPackageManagerStateWrapStateChanged(object? sender, EventArgs e)
+	private async void OnNuGetPackageManagerStateChanged()
 	{
 		await InvokeAsync(StateHasChanged);
 	}
@@ -131,7 +128,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		NuGetPackageManagerStateWrap.StateChanged -= OnNuGetPackageManagerStateWrapStateChanged;
+		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

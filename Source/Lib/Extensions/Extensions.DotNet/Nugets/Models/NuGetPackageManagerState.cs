@@ -1,12 +1,9 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
-using Luthetus.Extensions.DotNet.Nugets.Models;
 
-namespace Luthetus.Extensions.DotNet.Nugets.States;
+namespace Luthetus.Extensions.DotNet.Nugets.Models;
 
-[FeatureState]
-public partial record NuGetPackageManagerState(
+public record struct NuGetPackageManagerState(
     IDotNetProject? SelectedProjectToModify,
     string NugetQuery,
     bool IncludePrerelease,

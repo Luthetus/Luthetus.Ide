@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.Nugets.States;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 
@@ -16,11 +13,7 @@ namespace Luthetus.Extensions.DotNet.Nugets.Displays;
 public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPackageManagerRendererType
 {
 	[Inject]
-	private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
-	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
 	[Inject]
@@ -33,19 +26,19 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 
 	public string NugetQuery
 	{
-		get => NuGetPackageManagerStateWrap.Value.NugetQuery;
-		set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetNugetQueryAction(value));
+		get => DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState().NugetQuery;
+		set => DotNetBackgroundTaskApi.NuGetPackageManagerService.ReduceSetNugetQueryAction(value);
 	}
 
 	public bool IncludePrerelease
 	{
-		get => NuGetPackageManagerStateWrap.Value.IncludePrerelease;
-		set => Dispatcher.Dispatch(new NuGetPackageManagerState.SetIncludePrereleaseAction(value));
+		get => DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState().IncludePrerelease;
+		set => DotNetBackgroundTaskApi.NuGetPackageManagerService.ReduceSetIncludePrereleaseAction(value);
 	}
 
 	protected override void OnInitialized()
 	{
-		NuGetPackageManagerStateWrap.StateChanged += OnNuGetPackageManagerStateWrapStateChanged;
+		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		base.OnInitialized();
 	}
@@ -65,7 +58,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 				.SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
 		}
 
-		Dispatcher.Dispatch(new NuGetPackageManagerState.SetSelectedProjectToModifyAction(selectedProject));
+		DotNetBackgroundTaskApi.NuGetPackageManagerService.ReduceSetSelectedProjectToModifyAction(selectedProject);
 	}
 
 	private bool CheckIfProjectIsSelected(IDotNetProject dotNetProject, NuGetPackageManagerState nuGetPackageManagerState)
@@ -108,11 +101,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 						.QueryForNugetPackagesAsync(query)
 						.ConfigureAwait(false);
 
-					var setMostRecentQueryResultAction =
-						new NuGetPackageManagerState.SetMostRecentQueryResultAction(
-							localNugetResult);
-
-					Dispatcher.Dispatch(setMostRecentQueryResultAction);
+					DotNetBackgroundTaskApi.NuGetPackageManagerService.ReduceSetMostRecentQueryResultAction(localNugetResult);
 				});
 		}
 		catch (Exception e)
@@ -126,7 +115,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 		}
 	}
 	
-	private async void OnNuGetPackageManagerStateWrapStateChanged(object? sender, EventArgs e)
+	private async void OnNuGetPackageManagerStateChanged()
 	{
 		await InvokeAsync(StateHasChanged);
 	}
@@ -138,7 +127,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 	
 	public void Dispose()
 	{
-		NuGetPackageManagerStateWrap.StateChanged -= OnNuGetPackageManagerStateWrapStateChanged;
+		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

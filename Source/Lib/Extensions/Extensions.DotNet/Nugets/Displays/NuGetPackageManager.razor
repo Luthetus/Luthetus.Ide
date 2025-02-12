@@ -16,7 +16,7 @@
          style="width: 100%;">
 
         @{
-            var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
+            var nuGetPackageManagerState = DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState();
             var dotNetSolutionStateWrap = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
         }
 
@@ -160,9 +160,9 @@
 
                 <hr/>
 
-                @{ var nugetResult = NuGetPackageManagerStateWrap.Value.QueryResultList; }
+                @{ var nugetResult = DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState().QueryResultList; }
 
-                @if (NuGetPackageManagerStateWrap.Value.QueryResultList.Any())
+                @if (nugetResult.Any())
                 {
                     foreach (var entry in nugetResult)
                     {

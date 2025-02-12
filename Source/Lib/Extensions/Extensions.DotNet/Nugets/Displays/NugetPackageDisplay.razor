@@ -2,7 +2,7 @@
     
     @{
         var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
-        var nuGetPackageManagerState = NuGetPackageManagerStateWrap.Value;
+        var nuGetPackageManagerState = DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState();
     }
 
     <div>
