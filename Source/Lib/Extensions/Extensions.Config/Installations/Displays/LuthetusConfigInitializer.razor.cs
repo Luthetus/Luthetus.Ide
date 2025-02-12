@@ -40,6 +40,8 @@ public partial class LuthetusConfigInitializer : ComponentBase
 	[Inject]
 	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
+	private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
+	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
@@ -168,7 +170,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
     
     private void InitializeFooterJustifyEndComponents()
     {
-    	Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+    	IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
     		new FooterJustifyEndComponent(
     			Key<FooterJustifyEndComponent>.NewKey(),
 				typeof(GitInteractiveIconDisplay),
@@ -178,9 +180,9 @@ public partial class LuthetusConfigInitializer : ComponentBase
 						nameof(GitInteractiveIconDisplay.CssStyleString),
 						"margin-right: 15px;"
 					}
-				})));
+				}));
 				
-		Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+		IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
     		new FooterJustifyEndComponent(
     			Key<FooterJustifyEndComponent>.NewKey(),
 				typeof(DirtyResourceUriInteractiveIconDisplay),
@@ -190,12 +192,12 @@ public partial class LuthetusConfigInitializer : ComponentBase
 						nameof(GitInteractiveIconDisplay.CssStyleString),
 						"margin-right: 15px;"
 					}
-				})));
+				}));
 				
-		Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+		IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
     		new FooterJustifyEndComponent(
     			Key<FooterJustifyEndComponent>.NewKey(),
 				typeof(NotificationsInteractiveIconDisplay),
-				ComponentParameterMap: null)));
+				ComponentParameterMap: null));
     }
 }

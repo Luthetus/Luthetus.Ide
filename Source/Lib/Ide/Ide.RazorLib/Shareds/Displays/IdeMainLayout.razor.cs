@@ -14,6 +14,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -24,7 +25,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
-    private IState<IdeMainLayoutState> IdeMainLayoutStateWrap { get; set; } = null!;
+    private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -54,7 +55,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        IdeMainLayoutStateWrap.StateChanged += IdeMainLayoutStateWrapOnStateChanged;
+        IdeMainLayoutService.IdeMainLayoutStateChanged += OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
         _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
@@ -103,7 +104,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
 
-    private async void IdeMainLayoutStateWrapOnStateChanged(object? sender, EventArgs e)
+    private async void OnIdeMainLayoutStateChanged()
     {
         await _bodyAndFooterStateHasChangedBoundaryComponent
         	.InvokeStateHasChangedAsync()
@@ -119,7 +120,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         DragService.DragStateChanged -= DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        IdeMainLayoutStateWrap.StateChanged -= IdeMainLayoutStateWrapOnStateChanged;
+        IdeMainLayoutService.IdeMainLayoutStateChanged -= OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }
