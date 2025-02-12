@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
@@ -18,11 +17,10 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
-using Luthetus.Ide.RazorLib.CodeSearches.States;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
@@ -39,8 +37,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
@@ -51,11 +47,17 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
+    private ITerminalService TerminalService { get; set; } = null!;
+    [Inject]
+    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
+    [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+    [Inject]
+    private ICodeSearchService CodeSearchService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
@@ -89,12 +91,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 		AddExecutionTerminal();
                 }
                 
-                Dispatcher.Dispatch(new CodeSearchState.InitializeResizeHandleDimensionUnitAction(
+                CodeSearchService.ReduceInitializeResizeHandleDimensionUnitAction(
 					new DimensionUnit(
 						() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
 						DimensionUnitKind.Pixels,
 						DimensionOperatorKind.Subtract,
-						DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)));
+						DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
 
 				InitializePanelResizeHandleDimensionUnit();
                 InitializePanelTabs();
@@ -218,12 +220,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
         PanelService.ReduceRegisterPanelAction(terminalGroupPanel);
         PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false);
 		// This UI has resizable parts that need to be initialized.
-        Dispatcher.Dispatch(new TerminalGroupState.InitializeResizeHandleDimensionUnitAction(
+        TerminalGroupService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
             	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
-            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)));
+            	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 
 		// activeContextsPanel
         var activeContextsPanel = new Panel(
@@ -248,7 +250,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     	if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
     		LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
     	{
-    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+    		TerminalService.ReduceRegisterAction(
 		    	new TerminalWebsite(
 					"General",
 					terminal => new TerminalInteractive(terminal),
@@ -267,11 +269,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 					NotificationService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
-				}));
+				});
     	}
     	else
     	{
-    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+    		TerminalService.ReduceRegisterAction(
 		    	new Terminal(
 					"General",
 					terminal => new TerminalInteractive(terminal),
@@ -287,11 +289,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher,
-					NotificationService)
+					NotificationService,
+					TerminalService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
-				}));
+				});
     	}
     }
     
@@ -300,7 +302,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     	if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
     		LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
     	{
-    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+    		TerminalService.ReduceRegisterAction(
 		    	new TerminalWebsite(
 					"Execution",
 					terminal => new TerminalInteractive(terminal),
@@ -319,11 +321,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 					NotificationService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
-				}));
+				});
     	}
     	else
     	{
-    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+    		TerminalService.ReduceRegisterAction(
 		    	new Terminal(
 					"Execution",
 					terminal => new TerminalInteractive(terminal),
@@ -339,11 +341,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							JsRuntime)),
 					BackgroundTaskService,
 					CommonComponentRenderers,
-					Dispatcher,
-					NotificationService)
+					NotificationService,
+					TerminalService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
-				}));
+				});
     	}
     }
 }

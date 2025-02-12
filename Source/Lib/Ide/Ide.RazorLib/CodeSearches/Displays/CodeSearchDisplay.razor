@@ -1,13 +1,10 @@
-@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Resizes.Displays
 @using Luthetus.Common.RazorLib.TreeViews.Displays
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 @using Luthetus.Ide.RazorLib.CodeSearches.Models;
-@using Luthetus.Ide.RazorLib.CodeSearches.States;
-@inherits FluxorComponent
 
 @{
-	var codeSearchState = CodeSearchStateWrap.Value;
+	var codeSearchState = CodeSearchService.GetCodeSearchState();
 	var appOptionsState = AppOptionsService.GetAppOptionsState();
 }
 

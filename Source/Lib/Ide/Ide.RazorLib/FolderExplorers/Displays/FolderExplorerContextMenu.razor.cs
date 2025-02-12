@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -10,14 +9,12 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.FolderExplorers.States;
+using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 
 public partial class FolderExplorerContextMenu : ComponentBase
 {
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
@@ -135,7 +132,6 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
             MenuOptionsFactory.RenameFile(
                 treeViewModel.Item,
-                Dispatcher,
                 NotificationService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
         };

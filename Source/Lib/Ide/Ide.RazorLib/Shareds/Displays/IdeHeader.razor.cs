@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -28,21 +27,19 @@ using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.Shareds.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeHeader : ComponentBase, IDisposable
 {
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private IState<IdeHeaderState> IdeHeaderStateWrap { get; set; } = null!;
+	private IIdeHeaderService IdeHeaderService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
@@ -160,8 +157,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
             menuOptionsList.Add(menuOptionPermissions);
         }
 
-		Dispatcher.Dispatch(new IdeHeaderState.SetMenuFileAction(
-			new MenuRecord(menuOptionsList)));
+		IdeHeaderService.ReduceSetMenuFileAction(new MenuRecord(menuOptionsList));
     }
 
 	private void InitializeMenuTools()
@@ -292,7 +288,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
         //    menuOptionsList.Add(menuOptionSolutionVisualization);
         //}
 
-        Dispatcher.Dispatch(new IdeHeaderState.SetMenuToolsAction(new MenuRecord(menuOptionsList)));
+        IdeHeaderService.ReduceSetMenuToolsAction(new MenuRecord(menuOptionsList));
     }
 
 	private void InitializeMenuView()
@@ -368,13 +364,11 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
 		if (menuOptionsList.Count == 0)
 		{
-			Dispatcher.Dispatch(new IdeHeaderState.SetMenuViewAction(
-				MenuRecord.GetEmpty()));
+			IdeHeaderService.ReduceSetMenuViewAction(MenuRecord.GetEmpty());
 		}
 		else
 		{
-			Dispatcher.Dispatch(new IdeHeaderState.SetMenuViewAction(
-				new MenuRecord(menuOptionsList)));
+			IdeHeaderService.ReduceSetMenuViewAction(new MenuRecord(menuOptionsList));
 		}
     }
 
@@ -493,7 +487,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			IdeHeaderState.ButtonFileId,
 			DropdownOrientation.Bottom,
 			IdeHeaderState.DropdownKeyFile,
-			IdeHeaderStateWrap.Value.MenuFile,
+			IdeHeaderService.GetIdeHeaderState().MenuFile,
 			_buttonFileElementReference);
 	}
 	
@@ -505,7 +499,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			IdeHeaderState.ButtonToolsId,
 			DropdownOrientation.Bottom,
 			IdeHeaderState.DropdownKeyTools,
-			IdeHeaderStateWrap.Value.MenuTools,
+			IdeHeaderService.GetIdeHeaderState().MenuTools,
 			_buttonToolsElementReference);
 	}
 	
@@ -519,7 +513,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			IdeHeaderState.ButtonViewId,
 			DropdownOrientation.Bottom,
 			IdeHeaderState.DropdownKeyView,
-			IdeHeaderStateWrap.Value.MenuView,
+			IdeHeaderService.GetIdeHeaderState().MenuView,
 			_buttonViewElementReference);
 	}
 	
@@ -531,7 +525,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 		    IdeHeaderState.ButtonRunId,
 			DropdownOrientation.Bottom,
 			IdeHeaderState.DropdownKeyRun,
-			IdeHeaderStateWrap.Value.MenuRun,
+			IdeHeaderService.GetIdeHeaderState().MenuRun,
 			_buttonRunElementReference);
 	}
 	

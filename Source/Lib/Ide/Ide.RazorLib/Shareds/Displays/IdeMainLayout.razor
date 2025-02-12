@@ -53,7 +53,7 @@
                               ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
 
                     <JustifyEndRenderFragment>
-                    	@{ var ideMainLayoutState = IdeMainLayoutStateWrap.Value; }
+                    	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
                     	
                     	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
                     	{

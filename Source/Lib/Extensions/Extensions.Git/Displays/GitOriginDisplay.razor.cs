@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Extensions.Git.CommandLines.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.States;
@@ -18,7 +17,7 @@ public partial class GitOriginDisplay : ComponentBase
     [Inject]
     private IState<GitState> GitStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -64,6 +63,6 @@ public partial class GitOriginDisplay : ComponentBase
         	localGitState.Repo.AbsolutePath.Value,
         	GitSetOriginTerminalCommandRequestKey);
         	
-        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
     }
 }

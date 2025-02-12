@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -7,7 +6,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Htmls.Models;
-using static Luthetus.Ide.RazorLib.InputFiles.States.InputFileState;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
@@ -17,20 +15,20 @@ public class InputFileIdeApi
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDialogService _dialogService;
-    private readonly IDispatcher _dispatcher;
+    private readonly IInputFileService _inputFileService;
 
     public InputFileIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         IIdeComponentRenderers ideComponentRenderers,
         IBackgroundTaskService backgroundTaskService,
         IDialogService dialogService,
-        IDispatcher dispatcher)
+        IInputFileService inputFileService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _ideComponentRenderers = ideComponentRenderers;
         _backgroundTaskService = backgroundTaskService;
         _dialogService = dialogService;
-        _dispatcher = dispatcher;
+        _inputFileService = inputFileService;
     }
 
     public void RequestInputFileStateForm(
@@ -57,11 +55,11 @@ public class InputFileIdeApi
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatternsList)
     {
-        _dispatcher.Dispatch(new StartInputFileStateFormAction(
+        _inputFileService.ReduceStartInputFileStateFormAction(
             message,
             onAfterSubmitFunc,
             selectionIsValidFunc,
-            inputFilePatternsList));
+            inputFilePatternsList);
 
         var inputFileDialog = new DialogViewModel(
             DialogFacts.InputFileDialogKey,

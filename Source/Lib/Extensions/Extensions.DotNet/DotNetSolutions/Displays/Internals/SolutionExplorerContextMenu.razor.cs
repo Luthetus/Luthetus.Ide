@@ -20,12 +20,11 @@ using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Extensions.DotNet.CSharpProjects.Displays;
 using Luthetus.Extensions.DotNet.Menus.Models;
 using Luthetus.Extensions.DotNet.CSharpProjects.Models;
@@ -39,9 +38,9 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
 	[Inject]
-	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -357,7 +356,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				}),
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				IdeBackgroundTaskApi,
@@ -365,7 +364,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				() =>
@@ -378,19 +377,19 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				MenuOptionKind.Other,
 				() =>
 				{
-					var startupControl = StartupControlStateWrap.Value.StartupControlList.FirstOrDefault(
+					var startupControl = StartupControlService.GetStartupControlState().StartupControlList.FirstOrDefault(
 						x => x.StartupProjectAbsolutePath.Value == treeViewModel.Item.AbsolutePath.Value);
 						
 					if (startupControl is null)
 						return Task.CompletedTask;
 					
-					Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
+					StartupControlService.ReduceSetActiveStartupControlKeyAction(startupControl.Key);
 					return Task.CompletedTask;
 				}),
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				() =>
@@ -408,7 +407,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		{
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				() => Task.CompletedTask),
@@ -429,7 +428,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
+				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				NotificationService,
 				() => Task.CompletedTask),
@@ -488,7 +487,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			MenuOptionsFactory.RenameFile(
 				treeViewModel.Item.AbsolutePath,
-				Dispatcher,
 				NotificationService,
 				async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 		};
@@ -549,7 +547,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        	}
 		        };
 		        	
-		        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			},
 			absolutePath =>

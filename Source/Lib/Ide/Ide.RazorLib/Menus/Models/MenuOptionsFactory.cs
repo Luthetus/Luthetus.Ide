@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -131,7 +130,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, IDispatcher dispatcher, INotificationService notificationService, Func<Task> onAfterCompletion)
+    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, INotificationService notificationService, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
             widgetRendererType: _ideComponentRenderers.FileFormRendererType,
@@ -148,7 +147,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
                     new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>((nextName, _, _) =>
                     {
-                        PerformRename(sourceAbsolutePath, nextName, dispatcher, notificationService, onAfterCompletion);
+                        PerformRename(sourceAbsolutePath, nextName, notificationService, onAfterCompletion);
                         return Task.CompletedTask;
                     })
                 },
@@ -400,7 +399,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, IDispatcher dispatcher, INotificationService notificationService, Func<Task> onAfterCompletion)
+    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, INotificationService notificationService, Func<Task> onAfterCompletion)
     {
         // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
@@ -410,7 +409,6 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             var temporaryRenameResult = PerformRename(
                 sourceAbsolutePath,
                 temporaryNextName,
-                dispatcher,
                 notificationService,
                 () => Task.CompletedTask);
 

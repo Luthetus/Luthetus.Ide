@@ -12,11 +12,10 @@ using Luthetus.TextEditor.RazorLib.Edits.Displays;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
-using Luthetus.Ide.RazorLib.InputFiles.States;
-using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
-using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Extensions.Git.Displays;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.AppDatas.Models;
@@ -38,11 +37,15 @@ public partial class LuthetusConfigInitializer : ComponentBase
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+	private IStartupControlService StartupControlService { get; set; } = null!;
+	[Inject]
+	private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -137,14 +140,12 @@ public partial class LuthetusConfigInitializer : ComponentBase
             }
             await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-            var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
+            InputFileService.ReduceSetOpenedTreeViewModelAction(
                 pseudoRootNode,
                 IdeComponentRenderers,
                 CommonComponentRenderers,
                 FileSystemProvider,
                 EnvironmentProvider);
-
-            Dispatcher.Dispatch(setOpenedTreeViewModelAction);
         }
 
 		/*
@@ -168,7 +169,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
     
     private void InitializeFooterJustifyEndComponents()
     {
-    	Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+    	IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
     		new FooterJustifyEndComponent(
     			Key<FooterJustifyEndComponent>.NewKey(),
 				typeof(GitInteractiveIconDisplay),
@@ -178,9 +179,9 @@ public partial class LuthetusConfigInitializer : ComponentBase
 						nameof(GitInteractiveIconDisplay.CssStyleString),
 						"margin-right: 15px;"
 					}
-				})));
+				}));
 				
-		Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+		IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
     		new FooterJustifyEndComponent(
     			Key<FooterJustifyEndComponent>.NewKey(),
 				typeof(DirtyResourceUriInteractiveIconDisplay),
@@ -190,12 +191,12 @@ public partial class LuthetusConfigInitializer : ComponentBase
 						nameof(GitInteractiveIconDisplay.CssStyleString),
 						"margin-right: 15px;"
 					}
-				})));
+				}));
 				
-		Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+		IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
     		new FooterJustifyEndComponent(
     			Key<FooterJustifyEndComponent>.NewKey(),
 				typeof(NotificationsInteractiveIconDisplay),
-				ComponentParameterMap: null)));
+				ComponentParameterMap: null));
     }
 }

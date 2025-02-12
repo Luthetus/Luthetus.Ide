@@ -21,13 +21,11 @@ using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
-using Luthetus.Ide.RazorLib.CodeSearches.States;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
-using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
@@ -56,8 +54,10 @@ public class DotNetSolutionIdeApi
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
+	private readonly ICodeSearchService _codeSearchService;
+	private readonly IStartupControlService _startupControlService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly IState<TerminalState> _terminalStateWrap;
+	private readonly ITerminalService _terminalService;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IServiceProvider _serviceProvider;
 	
@@ -81,8 +81,10 @@ public class DotNetSolutionIdeApi
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
+		ICodeSearchService codeSearchService,
+		IStartupControlService startupControlService,
 		ICompilerServiceRegistry compilerServiceRegistry,
-		IState<TerminalState> terminalStateWrap,
+		ITerminalService terminalService,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		IServiceProvider serviceProvider)
 	{
@@ -103,8 +105,10 @@ public class DotNetSolutionIdeApi
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
+		_codeSearchService = codeSearchService;
+		_startupControlService = startupControlService;
 		_compilerServiceRegistry = compilerServiceRegistry;
-		_terminalStateWrap = terminalStateWrap;
+		_terminalService = terminalService;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_serviceProvider = serviceProvider;
 	}
@@ -234,10 +238,10 @@ public class DotNetSolutionIdeApi
 
 			_findAllService.ReduceSetStartingDirectoryPathAction(parentDirectory);
 
-			_dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+			_codeSearchService.ReduceWithAction(inState => inState with
 			{
 				StartingAbsolutePathForSearch = parentDirectory
-			}));
+			});
 
 			// Set 'generalTerminal' working directory
 			{
@@ -247,7 +251,7 @@ public class DotNetSolutionIdeApi
 		        {
 		        	BeginWithFunc = parsedCommand =>
 		        	{
-		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+		        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
 Sln-Directory: '{parentDirectory}'
@@ -256,7 +260,7 @@ General Terminal"));
 		        	}
 		        };
 		        	
-		        _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 			}
 
 			// Set 'executionTerminal' working directory
@@ -267,7 +271,7 @@ General Terminal"));
 		        {
 		        	BeginWithFunc = parsedCommand =>
 		        	{
-		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+		        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
 Sln-Directory: '{parentDirectory}'
@@ -276,7 +280,7 @@ Execution Terminal"));
 		        	}
 		        };
 
-				_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+				_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 			}
 		}
 		
@@ -622,7 +626,7 @@ Execution Terminal"));
 	
 	private void RegisterStartupControl(IDotNetProject project)
 	{
-		_dispatcher.Dispatch(new StartupControlState.RegisterStartupControlAction(
+		_startupControlService.ReduceRegisterStartupControlAction(
 			new StartupControlModel(
 				Key<IStartupControlModel>.NewKey(),
 				project.DisplayName,
@@ -631,7 +635,7 @@ Execution Terminal"));
 				null,
 				null,
 				startupControlModel => StartButtonOnClick(startupControlModel, project),
-				StopButtonOnClick)));
+				StopButtonOnClick));
 	}
 	
 	private Task StartButtonOnClick(IStartupControlModel interfaceStartupControlModel, IDotNetProject project)
@@ -662,7 +666,7 @@ Execution Terminal"));
         	ContinueWithFunc = parsedCommand =>
         	{
         		startupControlModel.ExecutingTerminalCommandRequest = null;
-        		_dispatcher.Dispatch(new StartupControlState.StateChangedAction());
+        		_startupControlService.ReduceStateChangedAction();
         	
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString(),
@@ -674,7 +678,7 @@ Execution Terminal"));
         
         startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
         
-		_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
     	return Task.CompletedTask;
     }
     
@@ -682,10 +686,10 @@ Execution Terminal"));
     {
     	var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
     	
-		_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
+		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
 		startupControlModel.ExecutingTerminalCommandRequest = null;
 		
-        _dispatcher.Dispatch(new StartupControlState.StateChangedAction());
+        _startupControlService.ReduceStateChangedAction();
         return Task.CompletedTask;
     }
     
