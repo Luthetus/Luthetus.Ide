@@ -1,11 +1,9 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 
-namespace Luthetus.Extensions.DotNet.Outputs.States;
+namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
-[FeatureState]
-public partial record OutputState(Guid DotNetRunParseResultId)
+public record struct OutputState(Guid DotNetRunParseResultId)
 {
 	public static readonly Key<TreeViewContainer> TreeViewContainerKey = Key<TreeViewContainer>.NewKey();
 	

@@ -1,7 +1,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Extensions.DotNet.Outputs.States;
+namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
 public partial class OutputScheduler
 {

@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 using Luthetus.Extensions.DotNet.Outputs.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
-namespace Luthetus.Extensions.DotNet.Outputs.States;
+namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
 public partial class OutputScheduler
 {
@@ -139,7 +139,7 @@ public partial class OutputScheduler
                 false);
         }
 
-        _dispatcher.Dispatch(new OutputState.StateHasChangedAction(dotNetRunParseResult.Id));
+        _outputService.ReduceStateHasChangedAction(dotNetRunParseResult.Id);
         return ValueTask.CompletedTask;
     }
 }
