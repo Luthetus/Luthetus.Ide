@@ -18,7 +18,6 @@ using Luthetus.Extensions.DotNet.Nugets.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
-using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.Outputs.Models;
@@ -31,7 +30,6 @@ public class DotNetBackgroundTaskApi
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
-    private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
@@ -51,7 +49,6 @@ public class DotNetBackgroundTaskApi
     public DotNetBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		IBackgroundTaskService backgroundTaskService,
-        IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
         IStorageService storageService,
         IAppDataService appDataService,
 		ICompilerServiceRegistry compilerServiceRegistry,
@@ -75,7 +72,6 @@ public class DotNetBackgroundTaskApi
 		_backgroundTaskService = backgroundTaskService;
 		_storageService = storageService;
 		_appDataService = appDataService;
-        _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
@@ -93,12 +89,14 @@ public class DotNetBackgroundTaskApi
 		_terminalService = terminalService;
 
 		DotNetSolutionService = new DotNetSolutionService();
+		
+		CompilerServiceExplorerService = new CompilerServiceExplorerService();
 
         CompilerService = new CompilerServiceIdeApi(
 			this,
             _ideBackgroundTaskApi,
             _backgroundTaskService,
-			_compilerServiceExplorerStateWrap,
+			CompilerServiceExplorerService,
 			_compilerServiceRegistry,
 			_ideComponentRenderers,
 			_commonComponentRenderers,
@@ -140,7 +138,7 @@ public class DotNetBackgroundTaskApi
 			_backgroundTaskService,
 			_storageService,
 			_appDataService,
-			_compilerServiceExplorerStateWrap,
+			CompilerServiceExplorerService,
             _dotNetComponentRenderers,
             _ideComponentRenderers,
 			_commonComponentRenderers,
@@ -173,4 +171,5 @@ public class DotNetBackgroundTaskApi
     public IDotNetSolutionService DotNetSolutionService { get; }
     public INuGetPackageManagerService NuGetPackageManagerService { get; }
     public ICompilerServiceEditorService CompilerServiceEditorService { get; }
+    public ICompilerServiceExplorerService CompilerServiceExplorerService { get; }
 }

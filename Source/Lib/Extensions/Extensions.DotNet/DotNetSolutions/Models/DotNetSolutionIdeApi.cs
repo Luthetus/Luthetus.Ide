@@ -28,7 +28,7 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
-using Luthetus.Extensions.DotNet.CompilerServices.States;
+using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -42,7 +42,7 @@ public class DotNetSolutionIdeApi
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
-	private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
+	private readonly ICompilerServiceExplorerService _compilerServiceExplorerService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
@@ -69,7 +69,7 @@ public class DotNetSolutionIdeApi
 		IBackgroundTaskService backgroundTaskService,
 		IStorageService storageService,
 		IAppDataService appDataService,
-		IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
+		ICompilerServiceExplorerService compilerServiceExplorerService,
         IDotNetComponentRenderers dotNetComponentRenderers,
         IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
@@ -92,7 +92,7 @@ public class DotNetSolutionIdeApi
 		_backgroundTaskService = backgroundTaskService;
 		_storageService = storageService;
 		_appDataService = appDataService;
-		_compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
+		_compilerServiceExplorerService = compilerServiceExplorerService;
 		_compilerServiceRegistry = compilerServiceRegistry;
         _dotNetComponentRenderers = dotNetComponentRenderers;
         _ideComponentRenderers = ideComponentRenderers;

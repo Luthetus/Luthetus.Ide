@@ -3,9 +3,8 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
 
-namespace Luthetus.Extensions.DotNet.CompilerServices.States;
+namespace Luthetus.Extensions.DotNet.CompilerServices.Models;
 
-[FeatureState]
 public partial class CompilerServiceExplorerState
 {
     public static readonly Key<TreeViewContainer> TreeViewCompilerServiceExplorerContentStateKey = Key<TreeViewContainer>.NewKey();

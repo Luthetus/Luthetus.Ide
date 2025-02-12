@@ -11,7 +11,6 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
@@ -19,8 +18,6 @@ namespace Luthetus.Extensions.DotNet.CompilerServices.Displays;
 
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
 	[Inject]
 	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
@@ -54,7 +51,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 	protected override void OnInitialized()
 	{
-		CompilerServiceExplorerStateWrap.StateChanged += RerenderAfterEventWithArgs;
+		DotNetBackgroundTaskApi.CompilerServiceExplorerService.CompilerServiceExplorerStateChanged += RerenderAfterEvent;
 		TextEditorService.TextEditorStateChanged += RerenderAfterEvent;
 
 		_compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
@@ -88,11 +85,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	{
 		await InvokeAsync(StateHasChanged);
 	}
-	
-	private async void RerenderAfterEventWithArgs(object? sender, EventArgs e)
-	{
-		await InvokeAsync(StateHasChanged);
-	}
 
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
 	{
@@ -121,7 +113,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 	public void Dispose()
 	{
-		CompilerServiceExplorerStateWrap.StateChanged -= RerenderAfterEventWithArgs;
+		DotNetBackgroundTaskApi.CompilerServiceExplorerService.CompilerServiceExplorerStateChanged -= RerenderAfterEvent;
 		TextEditorService.TextEditorStateChanged -= RerenderAfterEvent;
 	}
 }
