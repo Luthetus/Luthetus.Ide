@@ -21,7 +21,7 @@ using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
-using Luthetus.Ide.RazorLib.CodeSearches.States;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -56,6 +56,7 @@ public class DotNetSolutionIdeApi
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
+	private readonly ICodeSearchService _codeSearchService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
@@ -81,6 +82,7 @@ public class DotNetSolutionIdeApi
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
+		ICodeSearchService codeSearchService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IState<TerminalState> terminalStateWrap,
 		DotNetCliOutputParser dotNetCliOutputParser,
@@ -103,6 +105,7 @@ public class DotNetSolutionIdeApi
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
+		_codeSearchService = codeSearchService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
@@ -234,10 +237,10 @@ public class DotNetSolutionIdeApi
 
 			_findAllService.ReduceSetStartingDirectoryPathAction(parentDirectory);
 
-			_dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+			_codeSearchService.ReduceWithAction(inState => inState with
 			{
 				StartingAbsolutePathForSearch = parentDirectory
-			}));
+			});
 
 			// Set 'generalTerminal' working directory
 			{

@@ -22,7 +22,7 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
-using Luthetus.Ide.RazorLib.CodeSearches.States;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
@@ -57,6 +57,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
+    private ICodeSearchService CodeSearchService { get; set; } = null!;
+    [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IThemeService ThemeService { get; set; } = null!;
@@ -89,12 +91,12 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 		AddExecutionTerminal();
                 }
                 
-                Dispatcher.Dispatch(new CodeSearchState.InitializeResizeHandleDimensionUnitAction(
+                CodeSearchService.ReduceInitializeResizeHandleDimensionUnitAction(
 					new DimensionUnit(
 						() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
 						DimensionUnitKind.Pixels,
 						DimensionOperatorKind.Subtract,
-						DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)));
+						DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
 
 				InitializePanelResizeHandleDimensionUnit();
                 InitializePanelTabs();

@@ -14,14 +14,13 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
-using Luthetus.Ide.RazorLib.CodeSearches.States;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
-public partial class CodeSearchDisplay : FluxorComponent, IDisposable
+public partial class CodeSearchDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IState<CodeSearchState> CodeSearchStateWrap { get; set; } = null!;
+	private ICodeSearchService CodeSearchService { get; set; } = null!;
     [Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -57,23 +56,24 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 
     private string InputValue
 	{
-		get => CodeSearchStateWrap.Value.Query;
+		get => CodeSearchService.GetCodeSearchState().Query;
 		set
 		{
 			if (value is null)
 				value = string.Empty;
 
-			Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+			CodeSearchService.ReduceWithAction(inState => inState with
 			{
 				Query = value,
-			}));
+			});
 
-			Dispatcher.Dispatch(new CodeSearchState.SearchEffect());
+			CodeSearchService.HandleSearchEffect();
 		}
 	}
 	
 	protected override void OnInitialized()
 	{
+		CodeSearchService.CodeSearchStateChanged += OnCodeSearchStateChanged;
 		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
@@ -121,7 +121,7 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 
 	private string GetIsActiveCssClass(CodeSearchFilterKind codeSearchFilterKind)
 	{
-		return CodeSearchStateWrap.Value.CodeSearchFilterKind == codeSearchFilterKind
+		return CodeSearchService.GetCodeSearchState().CodeSearchFilterKind == codeSearchFilterKind
 			? "luth_active"
 			: string.Empty;
 	}
@@ -157,7 +157,7 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
 			return;
 		}
 	
-		var inPreviewViewModelKey = CodeSearchStateWrap.Value.PreviewViewModelKey;
+		var inPreviewViewModelKey = CodeSearchService.GetCodeSearchState().PreviewViewModelKey;
 		var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
 
 		var filePath = treeViewCodeSearchTextSpan.Item.ResourceUri.Value;
@@ -183,11 +183,11 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
             if (viewModelKey != Key<TextEditorViewModel>.Empty &&
                 TextEditorConfig.TryShowViewModelFunc is not null)
             {
-                Dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+                CodeSearchService.ReduceWithAction(inState => inState with
                 {
                     PreviewFilePath = filePath,
                     PreviewViewModelKey = viewModelKey,
-                }));
+                });
 
                 if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty &&
                     inPreviewViewModelKey != viewModelKey)
@@ -203,8 +203,14 @@ public partial class CodeSearchDisplay : FluxorComponent, IDisposable
     	await InvokeAsync(StateHasChanged);
     }
     
+    public async void OnCodeSearchStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
     public void Dispose()
     {
+    	CodeSearchService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
     	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

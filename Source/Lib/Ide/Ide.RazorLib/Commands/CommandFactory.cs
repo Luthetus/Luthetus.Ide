@@ -21,7 +21,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Displays;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
-using Luthetus.Ide.RazorLib.CodeSearches.States;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
@@ -34,6 +34,7 @@ public class CommandFactory : ICommandFactory
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
     private readonly IWidgetService _widgetService;
+    private readonly ICodeSearchService _codeSearchService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDispatcher _dispatcher;
     private readonly IJSRuntime _jsRuntime;
@@ -45,6 +46,7 @@ public class CommandFactory : ICommandFactory
 		IDialogService dialogService,
 		IPanelService panelService,
 		IWidgetService widgetService,
+		ICodeSearchService codeSearchService,
 		IEnvironmentProvider environmentProvider,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
@@ -55,6 +57,7 @@ public class CommandFactory : ICommandFactory
 		_dialogService = dialogService;
 		_panelService = panelService;
 		_widgetService = widgetService;
+		_codeSearchService = codeSearchService;
 		_environmentProvider = environmentProvider;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
@@ -402,12 +405,12 @@ public class CommandFactory : ICommandFactory
 						if (selectedText is null)
 							return ValueTask.CompletedTask;
 						
-						_dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+						_codeSearchService.ReduceWithAction(inState => inState with
 						{
 							Query = selectedText,
-						}));
+						});
 			
-						_dispatcher.Dispatch(new CodeSearchState.SearchEffect());
+						_codeSearchService.HandleSearchEffect();
 						
 						return  ValueTask.CompletedTask;
                     });
