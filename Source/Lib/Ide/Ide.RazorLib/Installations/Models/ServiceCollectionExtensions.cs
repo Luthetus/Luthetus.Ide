@@ -14,6 +14,7 @@ using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Ide.RazorLib.CommandBars.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -103,7 +104,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<ITerminalGroupService, TerminalGroupService>()
             .AddScoped<IFolderExplorerService, FolderExplorerService>()
             .AddScoped<IIdeMainLayoutService, IdeMainLayoutService>()
-            .AddScoped<IIdeHeaderService, IdeHeaderService>();
+            .AddScoped<IIdeHeaderService, IdeHeaderService>()
+            .AddScoped<ICommandBarService, CommandBarService>();
 
         return services;
     }
