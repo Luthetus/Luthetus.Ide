@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -27,8 +26,6 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
-    [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
@@ -47,14 +44,12 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
         _treeViewKeyboardEventHandler = new GitTreeViewKeyboardEventHandler(
             TreeViewService,
             BackgroundTaskService,
-			GitBackgroundTaskApi.Git,
-            Dispatcher);
+			GitBackgroundTaskApi.Git);
 
         _treeViewMouseEventHandler = new GitTreeViewMouseEventHandler(
             TreeViewService,
             BackgroundTaskService,
 			GitBackgroundTaskApi.Git,
-            Dispatcher,
             DialogService);
 
         base.OnInitialized();

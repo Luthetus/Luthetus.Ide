@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -20,8 +18,6 @@ public partial class GitInteractiveIconDisplay : ComponentBase, IDisposable
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
 

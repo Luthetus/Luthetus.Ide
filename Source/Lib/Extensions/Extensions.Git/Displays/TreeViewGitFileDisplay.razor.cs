@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;

@@ -1,6 +1,5 @@
 using System.Text;
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -35,7 +34,6 @@ public class GitIdeApi
 	private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly INotificationService _notificationService;
-    private readonly IDispatcher _dispatcher;
     
     private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
 
@@ -50,8 +48,7 @@ public class GitIdeApi
 		IEnvironmentProvider environmentProvider,
 		IBackgroundTaskService backgroundTaskService,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService,
-        IDispatcher dispatcher)
+        INotificationService notificationService)
     {
     	_gitTreeViews = gitTreeViews;
         _ideComponentRenderers = ideComponentRenderers;
@@ -64,7 +61,6 @@ public class GitIdeApi
 		_backgroundTaskService = backgroundTaskService;
         _commonComponentRenderers = commonComponentRenderers;
         _notificationService = notificationService;
-        _dispatcher = dispatcher;
     }
 
     public Key<TerminalCommandRequest> GitTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();

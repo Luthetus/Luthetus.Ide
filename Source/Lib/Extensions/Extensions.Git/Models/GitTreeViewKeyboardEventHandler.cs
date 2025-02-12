@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -11,17 +10,14 @@ namespace Luthetus.Extensions.Git.Models;
 public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly GitIdeApi _gitIdeApi;
-    private readonly IDispatcher _dispatcher;
 
     public GitTreeViewKeyboardEventHandler(
             ITreeViewService treeViewService,
             IBackgroundTaskService backgroundTaskService,
-            GitIdeApi gitIdeApi,
-            IDispatcher dispatcher)
+            GitIdeApi gitIdeApi)
         : base(treeViewService, backgroundTaskService)
     {
         _gitIdeApi = gitIdeApi;
-        _dispatcher = dispatcher;
     }
 
     protected override void OnKeyDown(TreeViewCommandArgs commandArgs)

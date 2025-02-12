@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Text;
-using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
@@ -15,16 +14,13 @@ namespace Luthetus.Extensions.Git.Models;
 
 public class GitCliOutputParser
 {
-    private readonly IDispatcher _dispatcher;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly GitBackgroundTaskApi _gitBackgroundTaskApi;
 
     public GitCliOutputParser(
-        IDispatcher dispatcher,
 		GitBackgroundTaskApi gitBackgroundTaskApi,
         IEnvironmentProvider environmentProvider)
     {
-        _dispatcher = dispatcher;
 		_gitBackgroundTaskApi = gitBackgroundTaskApi;
         _environmentProvider = environmentProvider;
     }

@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -26,8 +24,6 @@ namespace Luthetus.Extensions.Git.Displays;
 /// </summary>
 public partial class GitDisplay : ComponentBase, IDisposable
 {
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]

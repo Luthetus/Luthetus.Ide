@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -15,8 +14,6 @@ public partial class GitOriginDisplay : ComponentBase
 {
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]

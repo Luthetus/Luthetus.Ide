@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -14,8 +13,6 @@ public partial class GitControlsDisplay : ComponentBase
 {
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
 	[Inject]

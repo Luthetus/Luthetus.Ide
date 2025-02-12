@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -18,8 +17,6 @@ public partial class GitAddRepoDisplay : ComponentBase
 {
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]

@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -50,8 +49,6 @@ public partial class GitDiffDisplay : ComponentBase
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
