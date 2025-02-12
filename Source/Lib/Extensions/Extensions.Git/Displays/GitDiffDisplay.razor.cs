@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -24,7 +23,6 @@ using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.Git.Models;
-using Luthetus.Extensions.Git.States;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
@@ -32,7 +30,7 @@ namespace Luthetus.Extensions.Git.Displays;
 public partial class GitDiffDisplay : ComponentBase
 {
     [Inject]
-    private IState<GitState> GitStateWrap { get; set; } = null!;
+    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -44,8 +42,6 @@ public partial class GitDiffDisplay : ComponentBase
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
-    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
-    [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
@@ -53,8 +49,6 @@ public partial class GitDiffDisplay : ComponentBase
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
@@ -82,7 +76,7 @@ public partial class GitDiffDisplay : ComponentBase
         if (firstRender)
         {
             ShowOriginalFromGitOnClick(
-                GitStateWrap.Value,
+				GitBackgroundTaskApi.Git.GetGitState(),
                 GitFile);
         }
 

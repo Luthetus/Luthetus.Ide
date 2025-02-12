@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
@@ -17,7 +16,6 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
-using Luthetus.Extensions.DotNet.TestExplorers.States;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
@@ -31,8 +29,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
@@ -141,7 +137,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				onClickFunc: async () =>
 				{
 					// TODO: This code is not concurrency safe with 'TestExplorerScheduler.Task_DiscoverTests()'
-					Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
+					DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState =>
 					{
 						if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is null)
 							return inState;
@@ -163,7 +159,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				            NotRanTestHashSet = mutableNotRanTestHashSet.ToImmutableHashSet(),
 				            FailedTestHashSet = mutableFailedTestHashSet.ToImmutableHashSet(),
 				        };
-				    }));
+				    });
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
 					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
@@ -173,7 +169,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 					
 					DotNetBackgroundTaskApi.TestExplorer.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
-					Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
+					DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState =>
 					{
 						if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is null)
 							return inState;
@@ -189,7 +185,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				        {
 				            NotRanTestHashSet = mutableNotRanTestHashSet.ToImmutableHashSet(),
 				        };
-				    }));
+				    });
 				}));
 				
 			if (treeViewProjectTestModel.Parent is TreeViewGroup tvg &&
@@ -397,21 +393,21 @@ public partial class TestExplorerContextMenu : ComponentBase
 				{
 					if (output.Contains("Passed!"))
 					{
-						Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+						DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
 				        {
 				            PassedTestHashSet = inState.PassedTestHashSet.Add(fullyQualifiedName),
 				            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
 				            FailedTestHashSet = inState.FailedTestHashSet.Remove(fullyQualifiedName),
-				        }));
+				        });
 					}
 					else
 					{
-						Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+						DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
 				        {
 				            FailedTestHashSet = inState.FailedTestHashSet.Add(fullyQualifiedName),
 				            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
 				            PassedTestHashSet = inState.PassedTestHashSet.Remove(fullyQualifiedName),
-				        }));
+				        });
 					}
 				}
 			

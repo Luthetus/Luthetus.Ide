@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -19,8 +18,6 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 

@@ -1,5 +1,4 @@
 using Microsoft.JSInterop;
-using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -12,7 +11,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.Commands;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
 
 namespace Luthetus.Extensions.DotNet.Commands;
@@ -24,22 +23,19 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 	private readonly ITreeViewService _treeViewService;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IJSRuntime _jsRuntime;
-	private readonly IDispatcher _dispatcher;
 
 	public DotNetCommandFactory(
         ITextEditorService textEditorService,
         IPanelService panelService,
         ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,
-		IJSRuntime jsRuntime,
-		IDispatcher dispatcher)
+		IJSRuntime jsRuntime)
 	{
 		_textEditorService = textEditorService;
 		_panelService = panelService;
         _treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
 		_jsRuntime = jsRuntime;
-		_dispatcher = dispatcher;
     }
 
 	private List<TreeViewNoType> _nodeList = new();

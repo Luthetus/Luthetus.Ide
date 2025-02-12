@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -44,7 +43,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
@@ -65,7 +63,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 								treeViewSolution,
 								projectNode,
 								terminal,
-								dispatcher,
 								notificationService,
 								onAfterCompletion);
 
@@ -78,7 +75,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion)
@@ -90,7 +86,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				PerformAddProjectToProjectReference(
 					projectReceivingReference,
 					terminal,
-					dispatcher,
 					notificationService,
 					ideBackgroundTaskApi,
 					onAfterCompletion);
@@ -102,7 +97,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 	public MenuOptionRecord RemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
@@ -113,7 +107,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 					PerformRemoveProjectToProjectReference(
 						treeViewCSharpProjectToProjectReference,
 						terminal,
-						dispatcher,
 						notificationService,
 						onAfterCompletion);
 
@@ -125,7 +118,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath treeViewProjectToMove,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
@@ -144,7 +136,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 							treeViewProjectToMove,
 							nextName,
 							terminal,
-							dispatcher,
 							notificationService,
 							onAfterCompletion);
 
@@ -158,7 +149,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
@@ -169,7 +159,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 					modifyProjectNamespacePath,
 					treeViewCSharpProjectNugetPackageReference,
 					terminal,
-					dispatcher,
 					notificationService,
 					onAfterCompletion);
 
@@ -181,7 +170,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
@@ -212,7 +200,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 	public void PerformAddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion)
@@ -261,7 +248,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 	public void PerformRemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
@@ -296,7 +282,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		TreeViewNamespacePath treeViewProjectToMove,
 		string solutionFolderPath,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
@@ -326,7 +311,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 					treeViewSolution,
 					treeViewProjectToMove,
 					terminal,
-					dispatcher,
 					notificationService,
 					() =>
 					{
@@ -342,7 +326,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		IDispatcher dispatcher,
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Options.Models;
@@ -10,8 +9,9 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
-using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.Editors.Models;
+using Luthetus.Extensions.DotNet.CompilerServices.Models;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.CompilerServices.Displays;
 
@@ -28,7 +28,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 	[Inject]
 	public IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
-	private IState<CompilerServiceEditorState> CompilerServiceEditorStateWrap { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -50,7 +50,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		_cSharpCompilerService.ResourceDisposed += CSharpCompilerService_StateChanged;
 		_cSharpCompilerService.CursorMovedInSyntaxTree += CSharpCompilerService_StateChanged;
 
-		CompilerServiceEditorStateWrap.StateChanged += CompilerServiceEditorStateWrap_StateChanged;
+		DotNetBackgroundTaskApi.CompilerServiceEditorService.CompilerServiceEditorStateChanged += OnCompilerServiceEditorStateChanged;
 		TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupStateWrap_StateChanged;
 		TextEditorService.TextEditorStateChanged += TextEditorStateWrap_StateChanged;
 
@@ -62,7 +62,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		try
 		{
 			var localCSharpCompilerService = _cSharpCompilerService;
-			var localCompilerServiceEditorState = CompilerServiceEditorStateWrap.Value;
+			var localCompilerServiceEditorState = DotNetBackgroundTaskApi.CompilerServiceEditorService.GetCompilerServiceEditorState();
 			var localTextEditorGroupState = TextEditorService.GroupApi.GetTextEditorGroupState();
 			var localTextEditorState = TextEditorService.TextEditorState;
 
@@ -125,7 +125,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		ThrottledReRender();
 	}
 
-	private async void CompilerServiceEditorStateWrap_StateChanged(object? sender, EventArgs e)
+	private async void OnCompilerServiceEditorStateChanged()
 	{
 		ThrottledReRender();
 	}
@@ -151,7 +151,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 		_cSharpCompilerService.ResourceDisposed -= CSharpCompilerService_StateChanged;
 		_cSharpCompilerService.CursorMovedInSyntaxTree -= CSharpCompilerService_StateChanged;
 
-		CompilerServiceEditorStateWrap.StateChanged -= CompilerServiceEditorStateWrap_StateChanged;
+		DotNetBackgroundTaskApi.CompilerServiceEditorService.CompilerServiceEditorStateChanged -= OnCompilerServiceEditorStateChanged;
 		TextEditorService.GroupApi.TextEditorGroupStateChanged -= TextEditorGroupStateWrap_StateChanged;
 		TextEditorService.TextEditorStateChanged -= TextEditorStateWrap_StateChanged;
 	}

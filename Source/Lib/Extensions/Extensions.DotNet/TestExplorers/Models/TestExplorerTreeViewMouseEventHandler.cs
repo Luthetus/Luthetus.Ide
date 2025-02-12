@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -12,7 +11,6 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly IDispatcher _dispatcher;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly ITextEditorService _textEditorService;
 	private readonly INotificationService _notificationService;
@@ -20,7 +18,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
 	public TestExplorerTreeViewMouseEventHandler(
 			ICommonComponentRenderers commonComponentRenderers,
-			IDispatcher dispatcher,
 			ICompilerServiceRegistry compilerServiceRegistry,
 			ITextEditorService textEditorService,
 			INotificationService notificationService,
@@ -30,7 +27,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		: base(treeViewService, backgroundTaskService)
 	{
 		_commonComponentRenderers = commonComponentRenderers;
-		_dispatcher = dispatcher;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_textEditorService = textEditorService;
 		_notificationService = notificationService;
@@ -89,7 +85,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 				className,
 				methodName,
 				_commonComponentRenderers,
-				_dispatcher,
 				_notificationService,
 				_compilerServiceRegistry,
 				_textEditorService,

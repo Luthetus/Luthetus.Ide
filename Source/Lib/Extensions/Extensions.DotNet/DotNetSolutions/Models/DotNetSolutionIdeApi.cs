@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
-using Fluxor;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -27,8 +26,8 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
-using Luthetus.Extensions.DotNet.CompilerServices.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
+using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -42,15 +41,14 @@ public class DotNetSolutionIdeApi
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
-	private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
+	private readonly ICompilerServiceExplorerService _compilerServiceExplorerService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
 	private readonly INotificationService _notificationService;
-	private readonly IDispatcher _dispatcher;
 	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
+	private readonly IDotNetSolutionService _dotNetSolutionService;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
@@ -69,15 +67,14 @@ public class DotNetSolutionIdeApi
 		IBackgroundTaskService backgroundTaskService,
 		IStorageService storageService,
 		IAppDataService appDataService,
-		IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
+		ICompilerServiceExplorerService compilerServiceExplorerService,
         IDotNetComponentRenderers dotNetComponentRenderers,
         IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
 		ITreeViewService treeViewService,
 		INotificationService notificationService,
-		IDispatcher dispatcher,
 		IEnvironmentProvider environmentProvider,
-		IState<DotNetSolutionState> dotNetSolutionStateWrap,
+		IDotNetSolutionService dotNetSolutionService,
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
@@ -92,16 +89,15 @@ public class DotNetSolutionIdeApi
 		_backgroundTaskService = backgroundTaskService;
 		_storageService = storageService;
 		_appDataService = appDataService;
-		_compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
+		_compilerServiceExplorerService = compilerServiceExplorerService;
 		_compilerServiceRegistry = compilerServiceRegistry;
         _dotNetComponentRenderers = dotNetComponentRenderers;
         _ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
 		_notificationService = notificationService;
-		_dispatcher = dispatcher;
 		_environmentProvider = environmentProvider;
-		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
+		_dotNetSolutionService = dotNetSolutionService;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
@@ -211,16 +207,16 @@ public class DotNetSolutionIdeApi
 			content);
 
 		// TODO: If somehow model was registered already this won't write the state
-		_dispatcher.Dispatch(new DotNetSolutionState.RegisterAction(dotNetSolutionModel, this));
+		_dotNetSolutionService.ReduceRegisterAction(dotNetSolutionModel, this);
 
-		_dispatcher.Dispatch(new WithAction(
+		_dotNetSolutionService.ReduceWithAction(new WithAction(
 			inDotNetSolutionState => inDotNetSolutionState with
 			{
 				DotNetSolutionModelKey = dotNetSolutionModel.Key
 			}));
 
 		// TODO: Putting a hack for now to overwrite if somehow model was registered already
-		_dispatcher.Dispatch(ConstructModelReplacement(
+		_dotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
 			dotNetSolutionModel.Key,
 			dotNetSolutionModel));
 
@@ -322,7 +318,7 @@ Execution Terminal"));
 
 	private Task ParseSolution(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
-		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);
@@ -578,7 +574,7 @@ Execution Terminal"));
 
 	private async Task SetDotNetSolutionTreeViewAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
-		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);
@@ -619,7 +615,7 @@ Execution Terminal"));
 		if (dotNetSolutionModel is null)
 			return;
 
-		_dispatcher.Dispatch(ConstructModelReplacement(
+		_dotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
 			dotNetSolutionModel.Key,
 			dotNetSolutionModel));
 	}
@@ -716,7 +712,7 @@ Execution Terminal"));
 		string cSharpProjectName,
 		AbsolutePath cSharpProjectAbsolutePath)
 	{
-		var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
+		var inDotNetSolutionModel = _dotNetSolutionService.GetDotNetSolutionState().DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);
 
 		if (inDotNetSolutionModel is null)
@@ -776,7 +772,7 @@ Execution Terminal"));
 		}
 
 		// TODO: Putting a hack for now to overwrite if somehow model was registered already
-		_dispatcher.Dispatch(ConstructModelReplacement(
+		_dotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
 			outDotNetSolutionModel.Key,
 			outDotNetSolutionModel));
 

@@ -1,4 +1,3 @@
-using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -13,7 +12,6 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly IDispatcher _dispatcher;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly ITextEditorService _textEditorService;
 	private readonly INotificationService _notificationService;
@@ -21,7 +19,6 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 
 	public TestExplorerTreeViewKeyboardEventHandler(
 			ICommonComponentRenderers commonComponentRenderers,
-			IDispatcher dispatcher,
 			ICompilerServiceRegistry compilerServiceRegistry,
 			ITextEditorService textEditorService,
 			INotificationService notificationService,
@@ -31,7 +28,6 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 		: base(treeViewService, backgroundTaskService)
 	{
 		_commonComponentRenderers = commonComponentRenderers;
-		_dispatcher = dispatcher;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_textEditorService = textEditorService;
 		_notificationService = notificationService;
@@ -108,7 +104,6 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 				className,
 				methodName,
 				_commonComponentRenderers,
-				_dispatcher,
 				_notificationService,
 				_compilerServiceRegistry,
 				_textEditorService,

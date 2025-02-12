@@ -1,5 +1,3 @@
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -13,7 +11,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
@@ -22,12 +19,8 @@ using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 
-public partial class SolutionExplorerDisplay : FluxorComponent
+public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
@@ -45,7 +38,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private DotNetBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
@@ -62,6 +55,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
 	protected override void OnInitialized()
 	{
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+	
 		_solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
 			MenuOptionsFactory,
@@ -70,8 +65,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			TreeViewService,
 			NotificationService,
 			BackgroundTaskService,
-			EnvironmentProvider,
-			Dispatcher);
+			EnvironmentProvider);
 
 		_solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
@@ -114,5 +108,15 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			null);
 
 		DialogService.ReduceRegisterAction(dialogRecord);
+	}
+	
+	public async void OnDotNetSolutionStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public void Dispose()
+	{
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

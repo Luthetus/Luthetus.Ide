@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -15,7 +13,7 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
@@ -24,12 +22,8 @@ namespace Luthetus.Extensions.Git.Displays;
 /// Long term goal is to support any arbitrary version control system.
 /// For now, implement a Git UI, this lets us get a feel for what the interface should be.
 /// </summary>
-public partial class GitDisplay : FluxorComponent
+public partial class GitDisplay : ComponentBase, IDisposable
 {
-    [Inject]
-    private IState<GitState> GitStateWrap { get; set; } = null!;
-    [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
@@ -50,6 +44,12 @@ public partial class GitDisplay : FluxorComponent
     private readonly Key<DropdownRecord> _menuDropdownKey = Key<DropdownRecord>.NewKey();
 
     private ElementReference? _menuButtonElementReference;
+    
+    protected override void OnInitialized()
+    {
+		GitBackgroundTaskApi.Git.GitStateChanged += OnGitStateChanged;
+    	base.OnInitialized();
+    }
 
 	private async Task ShowMenuDropdown(Key<DropdownRecord> dropdownKey)
     {
@@ -80,7 +80,7 @@ public partial class GitDisplay : FluxorComponent
 
     private MenuRecord ConstructMenu()
     {
-        var localGitState = GitStateWrap.Value;
+        var localGitState = GitBackgroundTaskApi.Git.GetGitState();
 
         var menuOptionsList = new List<MenuOptionRecord>();
 
@@ -263,5 +263,15 @@ public partial class GitDisplay : FluxorComponent
 
             return Task.CompletedTask;
         }
+    }
+    
+    private async void OnGitStateChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+		GitBackgroundTaskApi.Git.GitStateChanged -= OnGitStateChanged;
     }
 }

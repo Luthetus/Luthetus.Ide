@@ -1,32 +1,26 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
-using Luthetus.Extensions.DotNet.Nugets.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 namespace Luthetus.Extensions.DotNet.Nugets.Displays;
 
-public partial class NugetPackageDisplay : FluxorComponent
+public partial class NugetPackageDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IState<NuGetPackageManagerState> NuGetPackageManagerStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
-	[Inject]
-	private IDispatcher Dispatcher { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public NugetPackageRecord NugetPackageRecord { get; set; } = null!;
@@ -38,6 +32,13 @@ public partial class NugetPackageDisplay : FluxorComponent
 	private ImmutableArray<NugetPackageVersionRecord> _nugetPackageVersionsOrdered = ImmutableArray<NugetPackageVersionRecord>.Empty;
 	private string? _previousNugetPackageId;
 
+	protected override void OnInitialized()
+	{
+		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+		base.OnInitialized();
+	}
+	
 	protected override void OnParametersSet()
 	{
 		if (_previousNugetPackageId is null || _previousNugetPackageId != NugetPackageRecord.Id)
@@ -109,5 +110,21 @@ public partial class NugetPackageDisplay : FluxorComponent
         };
         	
         TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	}
+	
+	private async void OnNuGetPackageManagerStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	private async void OnDotNetSolutionStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public void Dispose()
+	{
+		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
+		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

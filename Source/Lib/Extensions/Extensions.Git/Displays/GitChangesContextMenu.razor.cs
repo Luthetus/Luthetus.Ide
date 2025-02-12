@@ -1,13 +1,12 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
-using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 

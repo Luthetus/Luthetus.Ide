@@ -2,13 +2,10 @@
 @using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Common.RazorLib.Resizes.Displays
 @using Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals
-@using Luthetus.Extensions.DotNet.TestExplorers.States
 @using Luthetus.Extensions.DotNet.TestExplorers.Models
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 @{
-	var testExplorerState = TestExplorerStateWrap.Value;
+	var testExplorerState = DotNetBackgroundTaskApi.TestExplorerService.GetTestExplorerState();
 	var appOptionsState = AppOptionsService.GetAppOptionsState();
 
 	if (!TreeViewService.TryGetTreeViewContainer(
@@ -59,7 +56,7 @@
 					<button class="luth_button"
 							style="display: inline;"
 							title="Discover tests for all projects"
-							@onclick="DispatchShouldInitializeEffect">
+							@onclick="DispatchShouldDiscoverTestsEffect">
 						@IconRefreshFragment.Render(iconDriver)
 					</button>
 					

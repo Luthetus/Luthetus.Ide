@@ -1,7 +1,5 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 @{
-	var localGitState = GitStateWrap.Value;
+    var localGitState = GitBackgroundTaskApi.Git.GetGitState();
 	
 	var appOptionsState = AppOptionsService.GetAppOptionsState();
 	
