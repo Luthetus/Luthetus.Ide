@@ -13,21 +13,13 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileTopNavBar : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;

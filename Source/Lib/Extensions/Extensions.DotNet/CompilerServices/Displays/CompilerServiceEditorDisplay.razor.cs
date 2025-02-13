@@ -26,7 +26,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 	[Inject]
 	public ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
-	public IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]

@@ -8,7 +8,7 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class TreeViewSolutionFolderDisplay : ComponentBase, ITreeViewSolutionFolderRendererType
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     
 	[Parameter, EditorRequired]
 	public SolutionFolder DotNetSolutionFolder { get; set; } = null!;

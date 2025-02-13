@@ -19,17 +19,7 @@ namespace Luthetus.Common.RazorLib.Tabs.Displays;
 public partial class TabDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	[CascadingParameter(Name=nameof(HandleTabButtonOnContextMenu)), EditorRequired]
 	public Func<TabContextMenuEventArgs, Task>? HandleTabButtonOnContextMenu { get; set; }

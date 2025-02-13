@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.Reflectives.Displays;
 public partial class ReflectiveConstructor : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     
     [CascadingParameter, EditorRequired]
     public ReflectiveModel DisplayState { get; set; } = null!;

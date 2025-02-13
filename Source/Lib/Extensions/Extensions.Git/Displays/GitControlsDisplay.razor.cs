@@ -12,9 +12,7 @@ namespace Luthetus.Extensions.Git.Displays;
 public partial class GitControlsDisplay : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
 

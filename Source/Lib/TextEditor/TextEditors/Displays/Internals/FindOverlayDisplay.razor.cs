@@ -19,9 +19,7 @@ public partial class FindOverlayDisplay : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 

@@ -12,11 +12,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
     [Inject]
     private HttpClient HttpClient { get; set; } = null!;
     [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private readonly object RequestRepoContentLock = new();
 

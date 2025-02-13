@@ -14,11 +14,7 @@ namespace Luthetus.Common.RazorLib.Panels.Displays;
 public partial class PanelGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IPanelService PanelService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IDragService DragService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 

@@ -29,15 +29,13 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
     public DynamicViewModelAdapterTextEditor(
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService,
-        IPanelService panelService,
-        IDialogService dialogService,
+        LuthetusCommonApi commonApi,
         IJSRuntime jsRuntime)
     {
         ViewModelKey = viewModelKey;
 
         TextEditorService = textEditorService;
-        PanelService = panelService;
-        DialogService = dialogService;
+        CommonApi = commonApi;
         JsRuntime = jsRuntime;
 
         ComponentType = typeof(TextEditorViewModelDisplay);
@@ -57,8 +55,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
     }
 
     public ITextEditorService TextEditorService { get; }
-    public IPanelService PanelService { get; }
-    public IDialogService DialogService { get; }
+    public LuthetusCommonApi CommonApi { get; }
     public IJSRuntime JsRuntime { get; }
 
     public Key<TextEditorViewModel> ViewModelKey { get; }

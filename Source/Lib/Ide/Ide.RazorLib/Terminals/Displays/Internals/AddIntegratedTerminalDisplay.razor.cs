@@ -21,19 +21,11 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
-	[Inject]
-	private INotificationService NotificationService { get; set; } = null!;
-	[Inject]
-	private IPanelService PanelService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	

@@ -10,7 +10,7 @@ public partial class TreeViewStringFragmentDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public TreeViewStringFragment TreeViewStringFragment { get; set; } = null!;

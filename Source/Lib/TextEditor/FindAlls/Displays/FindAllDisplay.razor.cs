@@ -15,19 +15,11 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	[Inject]
     private IFindAllService FindAllService { get; set; } = null!;
     [Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;	
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]

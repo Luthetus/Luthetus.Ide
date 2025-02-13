@@ -8,7 +8,7 @@ namespace Luthetus.Common.RazorLib.Outlines.Displays;
 public partial class OutlineInitializer : ComponentBase, IDisposable
 {
 	[Inject]
-	public IOutlineService OutlineService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	
 	/// <summary>The unit of measurement is Pixels (px)</summary>
 	public const double OUTLINE_THICKNESS = 4;

@@ -23,23 +23,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
-	[Inject]
-	private INotificationService NotificationService { get; set; } = null!;
-	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog DialogRecord { get; set; } = null!;

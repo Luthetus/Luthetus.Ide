@@ -9,7 +9,7 @@ namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 public partial class TreeViewExceptionDisplay : ComponentBase, ITreeViewExceptionRendererType
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     
     [Parameter, EditorRequired]
     public TreeViewException TreeViewException { get; set; } = null!;

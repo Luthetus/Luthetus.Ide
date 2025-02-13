@@ -24,15 +24,11 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
-	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
-	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     

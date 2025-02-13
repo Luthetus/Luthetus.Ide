@@ -19,16 +19,8 @@ public partial class GitAddRepoDisplay : ComponentBase
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog Dialog { get; set; } = null!;

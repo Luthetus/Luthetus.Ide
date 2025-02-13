@@ -8,7 +8,7 @@ namespace Luthetus.Ide.RazorLib.Namespaces.Displays;
 public partial class TreeViewNamespacePathDisplay : ComponentBase, ITreeViewNamespacePathRendererType
 {
 	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [CascadingParameter(Name="LuthetusCommonIconWidthOverride")]
     public int? LuthetusCommonIconWidthOverride { get; set; }

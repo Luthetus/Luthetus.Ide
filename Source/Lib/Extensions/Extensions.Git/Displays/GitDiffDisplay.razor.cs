@@ -29,26 +29,18 @@ namespace Luthetus.Extensions.Git.Displays;
 
 public partial class GitDiffDisplay : ComponentBase
 {
+	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IPanelService PanelService { get; set; } = null!;
-    [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]

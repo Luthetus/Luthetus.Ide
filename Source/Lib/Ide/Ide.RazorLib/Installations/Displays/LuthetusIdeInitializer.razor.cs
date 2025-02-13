@@ -35,13 +35,9 @@ namespace Luthetus.Ide.RazorLib.Installations.Displays;
 public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
@@ -51,17 +47,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private ITerminalGroupService TerminalGroupService { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
     private ICodeSearchService CodeSearchService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IThemeService ThemeService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]

@@ -24,24 +24,12 @@ namespace Luthetus.Common.RazorLib.Installations.Displays;
 /// </remarks>
 public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 {
-    [Inject]
-    private LuthetusCommonConfig CommonConfig { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IContextService ContextService { get; set; } = null!;
-    [Inject]
-    private IPanelService PanelService { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
-    [Inject]
-    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     

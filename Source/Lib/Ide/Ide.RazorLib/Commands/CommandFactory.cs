@@ -27,35 +27,20 @@ namespace Luthetus.Ide.RazorLib.Commands;
 
 public class CommandFactory : ICommandFactory
 {
-    private readonly IContextService _contextService;
+	private readonly LuthetusCommonApi _commonApi;
     private readonly ITextEditorService _textEditorService;
-    private readonly ITreeViewService _treeViewService;
-    private readonly IDialogService _dialogService;
-    private readonly IPanelService _panelService;
-    private readonly IWidgetService _widgetService;
-    private readonly ICodeSearchService _codeSearchService;
-    private readonly IEnvironmentProvider _environmentProvider;
+	private readonly ICodeSearchService _codeSearchService;   
     private readonly IJSRuntime _jsRuntime;
 
     public CommandFactory(
-    	IContextService contextService,
+    	LuthetusCommonApi commonApi,
 		ITextEditorService textEditorService,
-		ITreeViewService treeViewService,
-		IDialogService dialogService,
-		IPanelService panelService,
-		IWidgetService widgetService,
 		ICodeSearchService codeSearchService,
-		IEnvironmentProvider environmentProvider,
 		IJSRuntime jsRuntime)
     {
-    	_contextService = contextService;
+    	_commonApi = commonApi;
 		_textEditorService = textEditorService;
-		_treeViewService = treeViewService;
-		_dialogService = dialogService;
-		_panelService = panelService;
-		_widgetService = widgetService;
 		_codeSearchService = codeSearchService;
-		_environmentProvider = environmentProvider;
 		_jsRuntime = jsRuntime;
     }
 

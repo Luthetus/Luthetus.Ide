@@ -15,11 +15,7 @@ public partial class GitInteractiveIconDisplay : ComponentBase, IDisposable
     [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IPanelService PanelService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;

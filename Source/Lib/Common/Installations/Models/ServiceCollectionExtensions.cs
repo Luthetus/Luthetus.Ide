@@ -64,15 +64,8 @@ public static class ServiceCollectionExtensions
 
 				return hostingInformation.BackgroundTaskService;
 			})
-            .AddScoped<CommonBackgroundTaskApi>()
-            .AddScoped<BrowserResizeInterop>()
-            .AddScoped<IContextService, ContextService>()
-            .AddScoped<IOutlineService, OutlineService>()
-            .AddScoped<IPanelService, PanelService>()
-            .AddScoped<IAppDimensionService, AppDimensionService>()
-            .AddScoped<IKeymapService, KeymapService>()
-            .AddScoped<IWidgetService, WidgetService>()
-            .AddScoped<IReflectiveService, ReflectiveService>();
+            .AddScoped<LuthetusCommonApi>()
+            .AddScoped<BrowserResizeInterop>();
 
         return services;
     }

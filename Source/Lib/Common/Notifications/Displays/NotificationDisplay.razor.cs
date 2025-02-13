@@ -15,13 +15,7 @@ namespace Luthetus.Common.RazorLib.Notifications.Displays;
 public partial class NotificationDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public INotification Notification  { get; set; } = null!;

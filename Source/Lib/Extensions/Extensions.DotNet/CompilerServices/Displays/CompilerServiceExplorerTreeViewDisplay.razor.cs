@@ -18,13 +18,9 @@ namespace Luthetus.Extensions.DotNet.CompilerServices.Displays;
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
@@ -35,8 +31,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
 	private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
 	private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;

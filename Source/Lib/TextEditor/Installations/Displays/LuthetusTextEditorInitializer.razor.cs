@@ -29,19 +29,11 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
-    private IThemeService ThemeService { get; set; } = null!;
-    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IContextService ContextService { get; set; } = null!;
-    [Inject]
-    private IKeymapService KeymapService { get; set; } = null!;
-	[Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     public ITextEditorRegistryWrap TextEditorRegistryWrap { get; set; } = null!;
     [Inject]

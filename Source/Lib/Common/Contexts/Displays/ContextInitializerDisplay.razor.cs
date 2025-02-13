@@ -6,7 +6,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextInitializerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IContextService ContextService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     
     protected override void OnInitialized()
     {

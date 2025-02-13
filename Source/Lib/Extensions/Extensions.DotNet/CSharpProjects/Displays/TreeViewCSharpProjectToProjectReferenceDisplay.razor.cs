@@ -8,7 +8,7 @@ namespace Luthetus.Extensions.DotNet.CSharpProjects.Displays;
 public partial class TreeViewCSharpProjectToProjectReferenceDisplay : ComponentBase, ITreeViewCSharpProjectToProjectReferenceRendererType
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     
 	[Parameter, EditorRequired]
 	public CSharpProjectToProjectReference CSharpProjectToProjectReference { get; set; } = null!;

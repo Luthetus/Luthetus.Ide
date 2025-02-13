@@ -10,9 +10,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
 {
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
-    private IContextService ContextService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ContextRecord ContextRecord { get; set; } = default!;

@@ -11,7 +11,7 @@ public partial class WidgetLayerDisplay : ComponentBase
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	
     [Parameter, EditorRequired]
     public TextEditorRenderBatch? RenderBatch { get; set; }

@@ -31,8 +31,7 @@ public sealed record TextEditorViewModel : IDisposable
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         ITextEditorService textEditorService,
-        IPanelService panelService,
-        IDialogService dialogService,
+        LuthetusCommonApi commonApi,
         IJSRuntime jsRuntime,
         VirtualizationGrid virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
@@ -68,8 +67,7 @@ public sealed record TextEditorViewModel : IDisposable
         DynamicViewModelAdapter = new DynamicViewModelAdapterTextEditor(
             ViewModelKey,
             TextEditorService,
-            panelService,
-            dialogService,
+            commonApi,
             jsRuntime);
 	}
 

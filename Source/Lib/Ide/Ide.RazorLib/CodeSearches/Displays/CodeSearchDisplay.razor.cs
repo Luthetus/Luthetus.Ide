@@ -19,20 +19,14 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private ICodeSearchService CodeSearchService { get; set; } = null!;
-    [Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	

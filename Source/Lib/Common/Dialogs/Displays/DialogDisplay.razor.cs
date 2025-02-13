@@ -13,14 +13,8 @@ namespace Luthetus.Common.RazorLib.Dialogs.Displays;
 
 public partial class DialogDisplay : ComponentBase, IDisposable
 {
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private LuthetusCommonConfig CommonConfig { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IDialog Dialog { get; set; } = null!;

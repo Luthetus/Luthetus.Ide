@@ -11,9 +11,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextBoundary : ComponentBase
 {
     [Inject]
-    private IContextService ContextService { get; set; } = null!;
-    [Inject]
-    private IOutlineService OutlineService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [CascadingParameter]
     public ContextBoundary? ParentContextBoundary { get; set; }

@@ -11,11 +11,7 @@ namespace Luthetus.Common.RazorLib.Resizes.Displays;
 public partial class ResizableRow : ComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private IAppDimensionService AppDimensionService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions TopElementDimensions { get; set; }

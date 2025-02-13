@@ -7,9 +7,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextsPanelDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IContextService ContextService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	protected override void OnInitialized()
     {

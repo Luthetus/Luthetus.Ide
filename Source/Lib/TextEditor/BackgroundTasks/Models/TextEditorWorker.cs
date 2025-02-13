@@ -41,7 +41,7 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// then one queue that every event queues to that says that something happened
 /// and where the event data can be dequeued from.
 /// </summary>
-public class TextEditorWorker : IBackgroundTask
+public class TextEditorWorker : IBackgroundTaskGroup
 {
 	private readonly object _workKindQueueLock = new();
 	private readonly ITextEditorService _textEditorService;
@@ -123,7 +123,7 @@ public class TextEditorWorker : IBackgroundTask
 			RedundantTextEditorWorkQueue.Enqueue(redundantTextEditorWork);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	/// <summary>
@@ -151,7 +151,7 @@ public class TextEditorWorker : IBackgroundTask
 			UniqueTextEditorWorkQueue.Enqueue(uniqueTextEditorWork);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public void EnqueueOnDoubleClick(OnDoubleClick onDoubleClick)
@@ -162,7 +162,7 @@ public class TextEditorWorker : IBackgroundTask
 			OnDoubleClickQueue.Enqueue(onDoubleClick);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public void EnqueueOnKeyDownLateBatching(OnKeyDownLateBatching onKeyDownLateBatching)
@@ -173,7 +173,7 @@ public class TextEditorWorker : IBackgroundTask
 			OnKeyDownLateBatchingQueue.Enqueue(onKeyDownLateBatching);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public void EnqueueOnMouseDown(OnMouseDown onMouseDown)
@@ -184,7 +184,7 @@ public class TextEditorWorker : IBackgroundTask
 			OnMouseDownQueue.Enqueue(onMouseDown);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public void EnqueueOnMouseMove(OnMouseMove onMouseMove)
@@ -195,7 +195,7 @@ public class TextEditorWorker : IBackgroundTask
 			OnMouseMoveQueue.Enqueue(onMouseMove);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public void EnqueueOnScrollHorizontal(OnScrollHorizontal onScrollHorizontal)
@@ -206,7 +206,7 @@ public class TextEditorWorker : IBackgroundTask
 			OnScrollHorizontalQueue.Enqueue(onScrollHorizontal);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public void EnqueueOnScrollVertical(OnScrollVertical onScrollVertical)
@@ -217,7 +217,7 @@ public class TextEditorWorker : IBackgroundTask
 			OnScrollVerticalQueue.Enqueue(onScrollVertical);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public void EnqueueOnWheel(OnWheel onWheel)
@@ -228,7 +228,7 @@ public class TextEditorWorker : IBackgroundTask
 			OnWheelQueue.Enqueue(onWheel);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public void EnqueueOnWheelBatch(OnWheelBatch onWheelBatch)
@@ -239,7 +239,7 @@ public class TextEditorWorker : IBackgroundTask
 			OnWheelBatchQueue.Enqueue(onWheelBatch);
 		}
 		
-		_textEditorService.BackgroundTaskService.Enqueue(this);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)

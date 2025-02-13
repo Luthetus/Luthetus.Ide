@@ -19,7 +19,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	private bool _performingNugetQuery;
 	private Exception? _exceptionFromNugetQuery;

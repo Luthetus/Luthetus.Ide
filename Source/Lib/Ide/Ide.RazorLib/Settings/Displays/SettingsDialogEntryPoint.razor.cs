@@ -9,9 +9,7 @@ namespace Luthetus.Ide.RazorLib.Settings.Displays;
 public partial class SettingsDialogEntryPoint : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private IDialog _dialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),

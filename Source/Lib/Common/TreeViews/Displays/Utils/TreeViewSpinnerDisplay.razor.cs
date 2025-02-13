@@ -7,7 +7,7 @@ namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 public partial class TreeViewSpinnerDisplay : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     
 	[Parameter, EditorRequired]
 	public TreeViewSpinner TreeViewSpinner { get; set; } = null!;

@@ -6,7 +6,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextBoundaryOverlay : ComponentBase
 {
     [Inject]
-    private IContextService ContextService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public InspectableContext InspectableContext { get; set; } = default!;

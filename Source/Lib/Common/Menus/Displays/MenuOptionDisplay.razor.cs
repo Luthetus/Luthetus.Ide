@@ -13,11 +13,7 @@ namespace Luthetus.Common.RazorLib.Menus.Displays;
 public partial class MenuOptionDisplay : ComponentBase
 {
     [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	[CascadingParameter]
 	public DropdownRecord? Dropdown { get; set; }

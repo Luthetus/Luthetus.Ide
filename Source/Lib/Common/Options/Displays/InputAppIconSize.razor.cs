@@ -6,7 +6,7 @@ namespace Luthetus.Common.RazorLib.Options.Displays;
 public partial class InputAppIconSize : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;

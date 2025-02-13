@@ -15,7 +15,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private static readonly Key<TextEditorDiffModel> DiffModelKey = Key<TextEditorDiffModel>.NewKey();
 

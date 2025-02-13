@@ -28,23 +28,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private LuthetusIdeConfig IdeConfig { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
-	[Inject]
-	private INotificationService NotificationService { get; set; } = null!;
-	[Inject]
-	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]

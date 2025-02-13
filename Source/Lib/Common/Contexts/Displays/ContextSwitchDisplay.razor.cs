@@ -11,9 +11,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextSwitchDisplay : ComponentBase
 {
 	[Inject]
-	private IContextService ContextService { get; set; } = null!;
-	[Inject]
-	private IWidgetService WidgetService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	
 	[CascadingParameter]
     public WidgetModel Widget { get; set; } = null!;

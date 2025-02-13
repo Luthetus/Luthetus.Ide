@@ -8,9 +8,7 @@ namespace Luthetus.Common.RazorLib.Options.Displays;
 public partial class InputAppTheme : IDisposable
 {
     [Inject]
-    private IThemeService ThemeService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;

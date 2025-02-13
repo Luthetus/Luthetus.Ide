@@ -6,7 +6,7 @@ namespace Luthetus.Common.RazorLib.Icons.Models;
 public class IconBase : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [CascadingParameter(Name = "LuthetusCommonIconWidthOverride")]
     public int? LuthetusCommonIconWidthOverride { get; set; }

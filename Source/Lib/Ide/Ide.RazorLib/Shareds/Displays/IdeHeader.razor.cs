@@ -39,23 +39,13 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	[Inject]
 	private IIdeHeaderService IdeHeaderService { get; set; } = null!;
 	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
-    [Inject]
-    private IPanelService PanelService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
-    [Inject]
-    private IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]

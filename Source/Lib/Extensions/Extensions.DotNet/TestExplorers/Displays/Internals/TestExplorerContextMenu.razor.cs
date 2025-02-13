@@ -22,6 +22,8 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerContextMenu : ComponentBase
 {
 	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
+	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
@@ -29,10 +31,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-	private IPanelService PanelService { get; set; } = null!;
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 

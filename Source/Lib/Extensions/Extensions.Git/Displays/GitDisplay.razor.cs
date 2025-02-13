@@ -27,17 +27,11 @@ public partial class GitDisplay : ComponentBase, IDisposable
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	private const string _dropdownMenuHtmlElementId = "luth_ide_git-display-dropdown-menu";
 

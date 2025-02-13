@@ -19,17 +19,9 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IFolderExplorerService FolderExplorerService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
@@ -37,7 +29,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;

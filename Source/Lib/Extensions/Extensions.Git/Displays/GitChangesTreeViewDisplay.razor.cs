@@ -22,12 +22,6 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter]

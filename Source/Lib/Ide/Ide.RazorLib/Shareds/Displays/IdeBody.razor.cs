@@ -10,9 +10,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 public partial class IdeBody : ComponentBase
 {
     [Inject]
-    private IPanelService PanelService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions BodyElementDimensions { get; set; } = null!;

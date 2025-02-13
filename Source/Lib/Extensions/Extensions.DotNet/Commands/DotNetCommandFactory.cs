@@ -18,23 +18,17 @@ namespace Luthetus.Extensions.DotNet.Commands;
 
 public class DotNetCommandFactory : IDotNetCommandFactory
 {
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly ITextEditorService _textEditorService;
-	private readonly IPanelService _panelService;
-	private readonly ITreeViewService _treeViewService;
-	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IJSRuntime _jsRuntime;
 
 	public DotNetCommandFactory(
+		LuthetusCommonApi commonApi,
         ITextEditorService textEditorService,
-        IPanelService panelService,
-        ITreeViewService treeViewService,
-		IEnvironmentProvider environmentProvider,
 		IJSRuntime jsRuntime)
 	{
+		_commonApi = commonApi;
 		_textEditorService = textEditorService;
-		_panelService = panelService;
-        _treeViewService = treeViewService;
-		_environmentProvider = environmentProvider;
 		_jsRuntime = jsRuntime;
     }
 
