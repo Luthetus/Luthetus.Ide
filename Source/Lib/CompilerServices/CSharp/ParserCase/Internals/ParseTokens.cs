@@ -470,9 +470,6 @@ public static class ParseTokens
 
     public static void ParseEqualsToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	Console.WriteLine($"aaa parserModel.StatementBuilder.ChildList: {parserModel.StatementBuilder.ChildList.Count}");
-    	Console.WriteLine($"aaa parserModel.StatementBuilder.ChildList[0].SyntaxKind: {parserModel.StatementBuilder.ChildList[0].SyntaxKind}");
-    
     	if (parserModel.StatementBuilder.ChildList.Count == 1 &&
     		(parserModel.StatementBuilder.ChildList[0].SyntaxKind == SyntaxKind.VariableReferenceNode ||
     		 	parserModel.StatementBuilder.ChildList[0].SyntaxKind == SyntaxKind.TypeClauseNode))
