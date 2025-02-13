@@ -2109,7 +2109,19 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"someVariable = 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		//WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
+    
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void DoNotUseAwaitAsTypeClauseNodeForVariableDeclaration()
+    {
+    	var test = new Test(@"_ = await SomeMethodAsync();");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		//WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
     
