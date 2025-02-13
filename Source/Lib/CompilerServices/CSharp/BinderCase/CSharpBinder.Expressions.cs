@@ -1201,7 +1201,8 @@ public partial class CSharpBinder
 			case SyntaxKind.AwaitTokenContextualKeyword:
 				return emptyExpressionNode;
 			case SyntaxKind.AsyncTokenContextualKeyword:
-				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return emptyExpressionNode;
+				// return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.DollarSignToken:
 			case SyntaxKind.AtToken:
 				return emptyExpressionNode;
