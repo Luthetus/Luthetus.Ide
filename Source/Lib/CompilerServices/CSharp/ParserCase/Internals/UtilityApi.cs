@@ -194,10 +194,23 @@ public static class UtilityApi
     
     public static bool IsConvertibleToTypeClauseNode(SyntaxKind syntaxKind)
     {
-    	return syntaxKind == SyntaxKind.TypeClauseNode ||
-    		   syntaxKind == SyntaxKind.IdentifierToken ||
-    		   IsTypeIdentifierKeywordSyntaxKind(syntaxKind) ||
-    		   IsContextualKeywordSyntaxKind(syntaxKind);
+    	if (syntaxKind == SyntaxKind.TypeClauseNode ||
+    		syntaxKind == SyntaxKind.IdentifierToken ||
+    		IsTypeIdentifierKeywordSyntaxKind(syntaxKind))
+    	{
+    		return true;
+    	}
+    	
+    	// TODO: Perhaps for 'async' and 'await' keywords, a check for a variable declaration with the name...
+    	// ...'async' or 'await' is necessary.
+    	if (IsContextualKeywordSyntaxKind(syntaxKind) &&
+    		syntaxKind != SyntaxKind.AsyncTokenContextualKeyword &&
+    		syntaxKind != SyntaxKind.AwaitTokenContextualKeyword)
+    	{
+    		return true;
+    	}
+    	
+    	return false;
     }
     
     public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

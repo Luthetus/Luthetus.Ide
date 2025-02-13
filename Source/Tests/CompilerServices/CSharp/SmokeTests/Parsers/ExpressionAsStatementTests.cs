@@ -2629,6 +2629,17 @@ if (typeof(Apple))
 		throw new NotImplementedException();
     }
     
+    [Fact]
+    public void Aaa_LambdaFunction_CodeBlock_NoParameter_Async()
+    {
+    	var test = new Test("return async () => 3;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		
+		throw new NotImplementedException();
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");

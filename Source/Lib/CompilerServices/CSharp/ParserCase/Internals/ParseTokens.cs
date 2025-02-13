@@ -33,7 +33,13 @@ public static class ParseTokens
 			        out _))
 			{
 				compilationUnit.Binder.BindDiscard(parserModel.TokenWalker.Current, compilationUnit);
-	    		_ = parserModel.TokenWalker.Consume();
+	    		var identifierToken = parserModel.TokenWalker.Consume();
+	    		
+	    		var variableReferenceNode = new VariableReferenceNode(
+	    			identifierToken,
+        			null);
+        			
+	    		parserModel.StatementBuilder.ChildList.Add(variableReferenceNode);
 	    		return;
 			}
     	}
@@ -464,6 +470,13 @@ public static class ParseTokens
 
     public static void ParseEqualsToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	if (parserModel.StatementBuilder.ChildList.Count == 1 &&
+    		(parserModel.StatementBuilder.ChildList[0].SyntaxKind == SyntaxKind.VariableReferenceNode ||
+    		 	parserModel.StatementBuilder.ChildList[0].SyntaxKind == SyntaxKind.TypeClauseNode))
+    	{
+    		_ = parserModel.TokenWalker.Backtrack();
+    	}
+    	
     	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
 	}
 
