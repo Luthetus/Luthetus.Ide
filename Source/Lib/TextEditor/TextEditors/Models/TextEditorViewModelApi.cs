@@ -20,23 +20,18 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly ITextEditorService _textEditorService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDialogService _dialogService;
 
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
 
     public TextEditorViewModelApi(
         ITextEditorService textEditorService,
-        IBackgroundTaskService backgroundTaskService,
-        IJSRuntime jsRuntime,
-        IDialogService dialogService)
+        IJSRuntime jsRuntime)
     {
         _textEditorService = textEditorService;
-        _backgroundTaskService = backgroundTaskService;
         _jsRuntime = jsRuntime;
-        _dialogService = dialogService;
     }
     
     private Task _cursorShouldBlinkTask = Task.CompletedTask;

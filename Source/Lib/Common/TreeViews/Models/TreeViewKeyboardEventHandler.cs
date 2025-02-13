@@ -10,15 +10,11 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewKeyboardEventHandler
 {
-    protected readonly ITreeViewService TreeViewService;
-    protected readonly IBackgroundTaskService BackgroundTaskService;
+	protected readonly LuthetusCommonApi CommonApi;
 
-    public TreeViewKeyboardEventHandler(
-		ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService)
+    public TreeViewKeyboardEventHandler(LuthetusCommonApi commonApi)
     {
-        TreeViewService = treeViewService;
-		BackgroundTaskService = backgroundTaskService;
+    	CommonApi = commonApi;
     }
 
     /// <summary>

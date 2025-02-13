@@ -13,7 +13,6 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 public class TerminalIntegrated : ITerminal
 {
 	private readonly LuthetusCommonApi _commonApi;
-	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly string _pathToShellExecutable;
 
 	public TerminalIntegrated(
@@ -22,7 +21,6 @@ public class TerminalIntegrated : ITerminal
 		Func<TerminalIntegrated, ITerminalInput> terminalInputFactory,
 		Func<TerminalIntegrated, ITerminalOutput> terminalOutputFactory,
 		LuthetusCommonApi commonApi,
-		IBackgroundTaskService backgroundTaskService,
 		string pathToShellExecutable)
 	{
 		DisplayName = displayName;
@@ -31,7 +29,6 @@ public class TerminalIntegrated : ITerminal
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
 		_commonApi = commonApi;
-		_backgroundTaskService = backgroundTaskService;
 		_pathToShellExecutable = pathToShellExecutable;
 	}
 	

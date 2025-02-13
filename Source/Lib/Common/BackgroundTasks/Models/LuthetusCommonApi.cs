@@ -25,6 +25,8 @@ public class LuthetusCommonApi
             _backgroundTaskService,
             _storageService);
         
+        Options = new();
+        
         Context = new ContextService();
         Outline = new OutlineService();
         Panel = new PanelService();
@@ -32,10 +34,16 @@ public class LuthetusCommonApi
         Keymap = new KeymapService();
         Widget = new WidgetService();
         Reflective = new ReflectiveService();
+        CommonConfig = new CommonConfig();
+        JsRuntime = ;
+		HostingInformation = ;
+		ComponentRenderers = ;
+		BackgroundTaskService = ;
+		BrowserResizeInterop = ;
     }
 
     public StorageCommonApi Storage { get; }
-    public IAppOptionsService AppOptionsService { get; }
+    public IAppOptionsService Options { get; }
     public IContextService Context { get; }
     public IOutlineService Outline { get; }
     public IPanelService Panel { get; }

@@ -29,11 +29,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             ITextEditorService textEditorService,
             IMenuOptionsFactory menuOptionsFactory,
-            ICommonComponentRenderers commonComponentRenderers,
-            ITreeViewService treeViewService,
-		    IBackgroundTaskService backgroundTaskService,
-            IEnvironmentProvider environmentProvider,
-            INotificationService notificationService)
+            ITreeViewService treeViewService)
         : base(treeViewService, backgroundTaskService)
     {
         _commonApi = commonApi;

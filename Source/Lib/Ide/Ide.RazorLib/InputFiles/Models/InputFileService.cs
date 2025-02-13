@@ -132,9 +132,7 @@ public class InputFileService : IInputFileService
     public void ReduceOpenParentDirectoryAction(
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+        LuthetusCommonApi commonApi,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
     	var inState = GetInputFileState();

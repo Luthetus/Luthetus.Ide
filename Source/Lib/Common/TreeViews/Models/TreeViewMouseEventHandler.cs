@@ -9,15 +9,11 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewMouseEventHandler
 {
-    protected readonly ITreeViewService TreeViewService;
-    protected readonly IBackgroundTaskService BackgroundTaskService;
+    protected readonly LuthetusCommonApi CommonApi;
 
-    public TreeViewMouseEventHandler(
-		ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService)
+    public TreeViewMouseEventHandler(LuthetusCommonApi commonApi)
     {
-        TreeViewService = treeViewService;
-		BackgroundTaskService = backgroundTaskService;
+        CommonApi = commonApi;
     }
 
     /// <summary>

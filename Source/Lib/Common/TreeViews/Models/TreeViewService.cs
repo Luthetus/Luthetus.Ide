@@ -7,11 +7,11 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
 public class TreeViewService : ITreeViewService
 {
-    private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly LuthetusCommonApi _commonApi;
 
-    public TreeViewService(IBackgroundTaskService backgroundTaskService)
+    public TreeViewService(LuthetusCommonApi commonApi)
     {
-        _backgroundTaskService = backgroundTaskService;
+        _commonApi = commonApi;
     }
     
     private TreeViewState _treeViewState = new();

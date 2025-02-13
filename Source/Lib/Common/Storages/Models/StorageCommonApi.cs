@@ -5,15 +5,11 @@ namespace Luthetus.Common.RazorLib.Storages.Models;
 
 public class StorageCommonApi
 {
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IStorageService _storageService;
+    private readonly LuthetusCommonApi _commonApi;
 
-    public StorageCommonApi(
-        IBackgroundTaskService backgroundTaskService,
-        IStorageService storageService)
+    public StorageCommonApi(LuthetusCommonApi commonApi)
     {
-        _backgroundTaskService = backgroundTaskService;
-        _storageService = storageService;
+        _commonApi = commonApi;;
     }
 
     public void WriteToLocalStorage(string key, object value)

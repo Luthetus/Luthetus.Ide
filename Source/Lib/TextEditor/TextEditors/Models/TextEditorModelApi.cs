@@ -12,18 +12,18 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public sealed class TextEditorModelApi : ITextEditorModelApi
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly ITextEditorService _textEditorService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
-    private readonly IBackgroundTaskService _backgroundTaskService;
 
     public TextEditorModelApi(
+    	LuthetusCommonApi commonApi,
         ITextEditorService textEditorService,
-        ITextEditorRegistryWrap textEditorRegistryWrap,
-        IBackgroundTaskService backgroundTaskService)
+        ITextEditorRegistryWrap textEditorRegistryWrap)
     {
+    	_commonApi = commonApi;
         _textEditorService = textEditorService;
         _textEditorRegistryWrap = textEditorRegistryWrap;
-        _backgroundTaskService = backgroundTaskService;
     }
 
     #region CREATE_METHODS
