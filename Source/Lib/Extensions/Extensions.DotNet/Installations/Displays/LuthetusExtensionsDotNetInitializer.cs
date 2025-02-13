@@ -37,7 +37,7 @@ namespace Luthetus.Extensions.DotNet.Installations.Displays;
 public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 {
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -46,8 +46,6 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IDotNetCommandFactory DotNetCommandFactory { get; set; } = null!;
-	[Inject]
-    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]

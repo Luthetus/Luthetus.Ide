@@ -26,10 +26,6 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 {
 	[Inject]
     private LuthetusCommonApi CommonApi { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     

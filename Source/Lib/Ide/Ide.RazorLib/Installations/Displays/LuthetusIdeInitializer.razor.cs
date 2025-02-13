@@ -39,8 +39,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
@@ -54,8 +52,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private ICodeSearchService CodeSearchService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
-    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{

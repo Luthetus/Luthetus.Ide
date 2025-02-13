@@ -36,6 +36,8 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
 	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
+	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IStartupControlService StartupControlService { get; set; } = null!;
@@ -44,25 +46,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IDotNetMenuOptionsFactory DotNetMenuOptionsFactory { get; set; } = null!;
 	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
 	private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]

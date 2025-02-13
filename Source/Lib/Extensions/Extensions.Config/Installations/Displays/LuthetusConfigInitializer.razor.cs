@@ -24,15 +24,9 @@ namespace Luthetus.Extensions.Config.Installations.Displays;
 public partial class LuthetusConfigInitializer : ComponentBase
 {
     [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -41,8 +35,6 @@ public partial class LuthetusConfigInitializer : ComponentBase
 	private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IInputFileService InputFileService { get; set; } = null!;
 

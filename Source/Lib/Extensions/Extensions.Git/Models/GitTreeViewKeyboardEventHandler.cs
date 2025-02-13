@@ -9,14 +9,15 @@ namespace Luthetus.Extensions.Git.Models;
 
 public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly GitIdeApi _gitIdeApi;
 
     public GitTreeViewKeyboardEventHandler(
-            ITreeViewService treeViewService,
-            IBackgroundTaskService backgroundTaskService,
+    		LuthetusCommonApi commonApi,
             GitIdeApi gitIdeApi)
         : base(treeViewService, backgroundTaskService)
     {
+    	_commonApi = commonApi;
         _gitIdeApi = gitIdeApi;
     }
 

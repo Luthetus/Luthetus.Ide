@@ -15,9 +15,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class Terminal : ITerminal
 {
-	private readonly IBackgroundTaskService _backgroundTaskService;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly INotificationService _notificationService;
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly ITerminalService _terminalService;
 	
 	
@@ -29,9 +27,7 @@ public class Terminal : ITerminal
 		Func<Terminal, ITerminalInteractive> terminalInteractiveFactory,
 		Func<Terminal, ITerminalInput> terminalInputFactory,
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
-		IBackgroundTaskService backgroundTaskService,
-		ICommonComponentRenderers commonComponentRenderers,
-		INotificationService notificationService,
+		LuthetusCommonApi commonApi,
 		ITerminalService terminalService)
 	{
 		DisplayName = displayName;
@@ -39,9 +35,7 @@ public class Terminal : ITerminal
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_backgroundTaskService = backgroundTaskService;
-		_commonComponentRenderers = commonComponentRenderers;
-		_notificationService = notificationService;
+		_commonApi = commonApi;
 		_terminalService = terminalService;
 		
 		_throttleUiUpdateFromSetHasExecutingProcess = new(

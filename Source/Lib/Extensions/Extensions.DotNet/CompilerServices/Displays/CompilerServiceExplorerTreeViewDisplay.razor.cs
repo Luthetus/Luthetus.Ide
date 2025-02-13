@@ -28,8 +28,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
 
 	private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;

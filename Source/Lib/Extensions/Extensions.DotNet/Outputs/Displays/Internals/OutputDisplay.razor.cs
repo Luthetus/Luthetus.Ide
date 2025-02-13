@@ -15,18 +15,16 @@ namespace Luthetus.Extensions.DotNet.Outputs.Displays.Internals;
 
 public partial class OutputDisplay : ComponentBase, IDisposable
 {
+	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
     

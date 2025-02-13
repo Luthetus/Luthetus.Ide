@@ -21,11 +21,9 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 {
 	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
+	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-	[Inject]
-	private IAppDimensionService AppDimensionService { get; set; } = null!;
-	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]

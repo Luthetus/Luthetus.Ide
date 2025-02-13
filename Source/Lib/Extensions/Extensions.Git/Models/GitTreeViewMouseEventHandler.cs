@@ -12,18 +12,16 @@ namespace Luthetus.Extensions.Git.Models;
 
 public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
+    private readonly LuthetusCommonApi _commonApi;
     private readonly GitIdeApi _gitIdeApi;
-    private readonly IDialogService _dialogService;
 
     public GitTreeViewMouseEventHandler(
-            ITreeViewService treeViewService,
-            IBackgroundTaskService backgroundTaskService,
-            GitIdeApi gitIdeApi,
-            IDialogService dialogService)
+    		LuthetusCommonApi commonApi,
+            GitIdeApi gitIdeApi)
         : base(treeViewService, backgroundTaskService)
     {
+    	_commonApi = commonApi;
         _gitIdeApi = gitIdeApi;
-        _dialogService = dialogService;
     }
 
     protected override void OnDoubleClick(TreeViewCommandArgs commandArgs)

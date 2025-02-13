@@ -9,24 +9,15 @@ namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
 public class FileSystemIdeApi
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly INotificationService _notificationService;
 
     public FileSystemIdeApi(
-        IdeBackgroundTaskApi ideBackgroundTaskApi,
-        IFileSystemProvider fileSystemProvider,
-        ICommonComponentRenderers commonComponentRenderers,
-        IBackgroundTaskService backgroundTaskService,
-        INotificationService notificationService)
+    	LuthetusCommonApi commonApi,
+        IdeBackgroundTaskApi ideBackgroundTaskApi)
     {
+    	_commonApi = commonApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _fileSystemProvider = fileSystemProvider;
-        _commonComponentRenderers = commonComponentRenderers;
-        _backgroundTaskService = backgroundTaskService;
-        _notificationService = notificationService;
     }
 
     public void SaveFile(

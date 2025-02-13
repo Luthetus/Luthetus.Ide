@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    public IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private readonly Throttle _executingBackgroundTaskChangedThrottle = new(TimeSpan.FromMilliseconds(1000));
     private readonly List<IBackgroundTask> _seenBackgroundTasks = new List<IBackgroundTask>();

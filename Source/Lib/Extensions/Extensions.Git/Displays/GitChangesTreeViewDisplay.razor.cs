@@ -22,7 +22,7 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;

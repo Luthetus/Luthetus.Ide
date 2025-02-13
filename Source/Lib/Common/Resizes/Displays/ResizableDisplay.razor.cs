@@ -11,9 +11,7 @@ namespace Luthetus.Common.RazorLib.Resizes.Displays;
 public partial class ResizableDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private IAppDimensionService AppDimensionService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; }

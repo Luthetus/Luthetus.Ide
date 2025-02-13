@@ -13,17 +13,15 @@ namespace Luthetus.TextEditor.RazorLib.FindAlls.Displays;
 public partial class FindAllDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-    private IFindAllService FindAllService { get; set; } = null!;
-    [Inject]
     private LuthetusCommonApi CommonApi { get; set; } = null!;
+	[Inject]
+    private IFindAllService FindAllService { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;	
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     
     private FindAllTreeViewKeyboardEventHandler _treeViewKeymap = null!;
 	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;

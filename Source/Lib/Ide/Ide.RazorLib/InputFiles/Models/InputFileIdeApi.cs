@@ -11,23 +11,20 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
 public class InputFileIdeApi
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IDialogService _dialogService;
     private readonly IInputFileService _inputFileService;
 
     public InputFileIdeApi(
+    	LuthetusCommonApi commonApi,
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         IIdeComponentRenderers ideComponentRenderers,
-        IBackgroundTaskService backgroundTaskService,
-        IDialogService dialogService,
         IInputFileService inputFileService)
     {
+        _commonApi = commonApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _ideComponentRenderers = ideComponentRenderers;
-        _backgroundTaskService = backgroundTaskService;
-        _dialogService = dialogService;
         _inputFileService = inputFileService;
     }
 

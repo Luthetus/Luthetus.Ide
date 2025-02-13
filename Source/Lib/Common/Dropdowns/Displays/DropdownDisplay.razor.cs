@@ -16,11 +16,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 	[Inject]
 	public IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
-	public IAppDimensionService AppDimensionService { get; set; } = null!;
-	[Inject]
-	public IDropdownService DropdownService { get; set; } = null!;
-	[Inject]
-	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;

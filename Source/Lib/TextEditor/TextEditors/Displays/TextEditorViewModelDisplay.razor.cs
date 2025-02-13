@@ -85,8 +85,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     [Inject]
     public IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
-    public IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
     public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]
     public LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;

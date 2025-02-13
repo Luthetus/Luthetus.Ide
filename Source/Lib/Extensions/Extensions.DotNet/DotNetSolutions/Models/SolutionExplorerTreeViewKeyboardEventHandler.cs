@@ -19,32 +19,22 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IMenuOptionsFactory _menuOptionsFactory;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITextEditorService _textEditorService;
-	private readonly ITreeViewService _treeViewService;
-	private readonly INotificationService _notificationService;
-	private readonly IEnvironmentProvider _environmentProvider;
 
 	public SolutionExplorerTreeViewKeyboardEventHandler(
+			LuthetusCommonApi commonApi,
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
-			ICommonComponentRenderers commonComponentRenderers,
-			ITextEditorService textEditorService,
-			ITreeViewService treeViewService,
-			INotificationService notificationService,
-			IBackgroundTaskService backgroundTaskService,
-			IEnvironmentProvider environmentProvider)
+			ITextEditorService textEditorService)
 		: base(treeViewService, backgroundTaskService)
 	{
+		_commonApi = commonApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_menuOptionsFactory = menuOptionsFactory;
-		_commonComponentRenderers = commonComponentRenderers;
 		_textEditorService = textEditorService;
-		_treeViewService = treeViewService;
-		_notificationService = notificationService;
-		_environmentProvider = environmentProvider;
 	}
 
 	public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

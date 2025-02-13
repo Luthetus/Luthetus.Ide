@@ -13,27 +13,21 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class TerminalWebsite : ITerminal
 {
-	private readonly IBackgroundTaskService _backgroundTaskService;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly INotificationService _notificationService;
+	private readonly LuthetusCommonApi _commonApi;
 
 	public TerminalWebsite(
 		string displayName,
 		Func<TerminalWebsite, ITerminalInteractive> terminalInteractiveFactory,
 		Func<TerminalWebsite, ITerminalInput> terminalInputFactory,
 		Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
-		IBackgroundTaskService backgroundTaskService,
-		ICommonComponentRenderers commonComponentRenderers,
-		INotificationService notificationService)
+		LuthetusCommonApi commonApi)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_backgroundTaskService = backgroundTaskService;
-		_commonComponentRenderers = commonComponentRenderers;
-		_notificationService = notificationService;
+		_commonApi = commonApi;
 	}
 
 	public string DisplayName { get; }

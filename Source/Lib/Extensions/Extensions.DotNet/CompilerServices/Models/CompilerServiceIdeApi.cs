@@ -14,33 +14,27 @@ namespace Luthetus.Extensions.DotNet.CompilerServices.Models;
 
 public class CompilerServiceIdeApi
 {
+    private readonly LuthetusCommonApi _commonApi;
     private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICompilerServiceExplorerService _compilerServiceExplorerService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly ITreeViewService _treeViewService;
 
 	public CompilerServiceIdeApi(
+		LuthetusCommonApi commonApi,
         DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
         IdeBackgroundTaskApi ideBackgroundTaskApi,
-		IBackgroundTaskService backgroundTaskService,
 		ICompilerServiceExplorerService compilerServiceExplorerService,
 		ICompilerServiceRegistry compilerServiceRegistry,
-		IIdeComponentRenderers ideComponentRenderers,
-		ICommonComponentRenderers commonComponentRenderers,
-		ITreeViewService treeViewService)
+		IIdeComponentRenderers ideComponentRenderers)
 	{
+		_commonApi = commonApi;
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
-		_backgroundTaskService = backgroundTaskService;
 		_compilerServiceExplorerService = compilerServiceExplorerService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_ideComponentRenderers = ideComponentRenderers;
-		_commonComponentRenderers = commonComponentRenderers;
-		_treeViewService = treeViewService;
 	}
 
     /// <summary>

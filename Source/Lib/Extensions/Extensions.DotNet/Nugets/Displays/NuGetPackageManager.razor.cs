@@ -13,13 +13,11 @@ namespace Luthetus.Extensions.DotNet.Nugets.Displays;
 public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPackageManagerRendererType
 {
 	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
+	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	private bool _performingNugetQuery;
 	private Exception? _exceptionFromNugetQuery;

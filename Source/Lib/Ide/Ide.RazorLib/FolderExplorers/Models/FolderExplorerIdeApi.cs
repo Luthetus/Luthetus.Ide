@@ -14,32 +14,20 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerIdeApi
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly ITreeViewService _treeViewService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IFolderExplorerService _folderExplorerService;
 
     public FolderExplorerIdeApi(
+    	LuthetusCommonApi commonApi,
         IdeBackgroundTaskApi ideBackgroundTaskApi,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        ITreeViewService treeViewService,
-        IBackgroundTaskService backgroundTaskService,
         IFolderExplorerService folderExplorerService)
     {
+    	_commonApi = commonApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
         _ideComponentRenderers = ideComponentRenderers;
-        _commonComponentRenderers = commonComponentRenderers;
-        _treeViewService = treeViewService;
-        _backgroundTaskService = backgroundTaskService;
         _folderExplorerService = folderExplorerService;
     }
 

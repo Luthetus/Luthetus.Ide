@@ -47,4 +47,6 @@ public class LuthetusCommonApi
     public IJSRuntime JsRuntime { get; }
     public LuthetusHostingInformation HostingInformation { get; }
 	public ICommonComponentRenderers ComponentRenderers { get; }
+	public IBackgroundTaskService BackgroundTaskService { get; }
+	public BrowserResizeInterop BrowserResizeInterop { get; set; }
 }

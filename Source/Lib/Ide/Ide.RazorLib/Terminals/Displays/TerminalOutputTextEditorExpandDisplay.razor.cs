@@ -16,9 +16,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]

@@ -9,9 +9,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class IdeInfoDisplay : ComponentBase
 {
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 #region
 	[Conditional("DEBUG")]

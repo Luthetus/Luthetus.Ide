@@ -15,15 +15,7 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-	private INotificationService NotificationService { get; set; } = null!;
-	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]

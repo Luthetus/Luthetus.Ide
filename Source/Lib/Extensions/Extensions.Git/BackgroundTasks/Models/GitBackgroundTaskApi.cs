@@ -13,36 +13,24 @@ namespace Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 public class GitBackgroundTaskApi
 {
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly ITerminalService _terminalService;
 	private readonly GitTreeViews _gitTreeViews;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ITreeViewService _treeViewService;
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IBackgroundTaskService _backgroundTaskService;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly INotificationService _notificationService;
 	
 	public GitBackgroundTaskApi(
+		LuthetusCommonApi commonApi,
 		GitTreeViews gitTreeViews,
 		IIdeComponentRenderers ideComponentRenderers,
-		ITreeViewService treeViewService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		ITerminalService terminalService,
-        IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
-        ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService)
+		ITerminalService terminalService)
 	{
+		_commonApi = commonApi;
 		_gitTreeViews = gitTreeViews;
 		_ideComponentRenderers = ideComponentRenderers;
-		_treeViewService = treeViewService;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_terminalService = terminalService;
-		_environmentProvider = environmentProvider;
-        _backgroundTaskService = backgroundTaskService;
-        _commonComponentRenderers = commonComponentRenderers;
-        _notificationService = notificationService;
 
 		GitCliOutputParser = new GitCliOutputParser(
 			this,

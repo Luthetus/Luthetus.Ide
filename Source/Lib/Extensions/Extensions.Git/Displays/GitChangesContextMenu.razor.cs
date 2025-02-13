@@ -12,10 +12,10 @@ namespace Luthetus.Extensions.Git.Displays;
 
 public partial class GitChangesContextMenu : ComponentBase
 {
+	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
-	[Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
 	[CascadingParameter]
     public GitState GitState { get; set; } = null!;

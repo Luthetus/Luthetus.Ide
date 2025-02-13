@@ -16,6 +16,8 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 
 public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 {
+	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IFolderExplorerService FolderExplorerService { get; set; } = null!;
     [Inject]
@@ -26,10 +28,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;

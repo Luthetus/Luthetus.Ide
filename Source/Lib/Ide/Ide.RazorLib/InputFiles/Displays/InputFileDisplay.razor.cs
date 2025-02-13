@@ -16,16 +16,14 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 
 public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, IDisposable
 {
+	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
-    [Inject]
-    private LuthetusCommonApi CommonApi { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as

@@ -12,18 +12,19 @@ namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
 public class OutputTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly ITextEditorService _textEditorService;
 	private readonly LuthetusTextEditorConfig _textEditorConfig;
 	private readonly IServiceProvider _serviceProvider;
 
 	public OutputTreeViewKeyboardEventHandler(
+			LuthetusCommonApi commonApi,
 			ITextEditorService textEditorService,
 			LuthetusTextEditorConfig textEditorConfig,
-			IServiceProvider serviceProvider,
-			ITreeViewService treeViewService,
-			IBackgroundTaskService backgroundTaskService)
+			IServiceProvider serviceProvider)
 		: base(treeViewService, backgroundTaskService)
 	{
+		_commonApi = commonApi;
 		_textEditorService = textEditorService;
 		_textEditorConfig = textEditorConfig;
 		_serviceProvider = serviceProvider;

@@ -11,16 +11,17 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
+    private readonly LuthetusCommonApi _commonApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly ITextEditorService _textEditorService;
 
     public FolderExplorerTreeViewMouseEventHandler(
+    		LuthetusCommonApi commonApi,
             IdeBackgroundTaskApi ideBackgroundTaskApi,
-            ITextEditorService textEditorService,
-            ITreeViewService treeViewService,
-		    IBackgroundTaskService backgroundTaskService)
+            ITextEditorService textEditorService)
         : base(treeViewService, backgroundTaskService)
     {
+    	_commonApi = commonApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _textEditorService = textEditorService;
     }

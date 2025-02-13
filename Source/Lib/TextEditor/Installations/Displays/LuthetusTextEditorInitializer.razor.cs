@@ -26,14 +26,12 @@ namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 /// </remarks>
 public partial class LuthetusTextEditorInitializer : ComponentBase
 {
+	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private LuthetusCommonApi CommonApi { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     public ITextEditorRegistryWrap TextEditorRegistryWrap { get; set; } = null!;
     [Inject]

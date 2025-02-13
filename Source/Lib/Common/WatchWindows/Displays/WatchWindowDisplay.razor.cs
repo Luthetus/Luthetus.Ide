@@ -18,13 +18,7 @@ namespace Luthetus.Common.RazorLib.WatchWindows.Displays;
 public partial class WatchWindowDisplay : ComponentBase
 {
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;

@@ -23,11 +23,7 @@ namespace Luthetus.Website.RazorLib;
 public partial class LuthetusWebsiteInitializer : ComponentBase
 {
     [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -39,13 +35,9 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     [Inject]
     private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
     protected override void OnInitialized()
     {

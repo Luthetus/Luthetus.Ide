@@ -13,38 +13,28 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
 public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly IInputFileService _inputFileService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
-    private readonly IBackgroundTaskService _backgroundTaskService;
 
     public InputFileTreeViewKeyboardEventHandler(
-	        ITreeViewService treeViewService,
+    		LuthetusCommonApi commonApi,
 	        IInputFileService inputFileService,
 	        IIdeComponentRenderers ideComponentRenderers,
-	        ICommonComponentRenderers commonComponentRenderers,
-	        IFileSystemProvider fileSystemProvider,
-	        IEnvironmentProvider environmentProvider,
 	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 	        Func<Task> focusSearchInputElementFunc,
-	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
-	        IBackgroundTaskService backgroundTaskService)
+	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
         : base(treeViewService, backgroundTaskService)
     {
+    	_commonApi = commonApi;
         _inputFileService = inputFileService;
         _ideComponentRenderers = ideComponentRenderers;
-        _commonComponentRenderers = commonComponentRenderers;
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
-        _backgroundTaskService = backgroundTaskService;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

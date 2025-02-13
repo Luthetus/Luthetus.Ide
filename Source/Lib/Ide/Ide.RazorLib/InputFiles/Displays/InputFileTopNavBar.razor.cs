@@ -18,8 +18,6 @@ public partial class InputFileTopNavBar : ComponentBase
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;

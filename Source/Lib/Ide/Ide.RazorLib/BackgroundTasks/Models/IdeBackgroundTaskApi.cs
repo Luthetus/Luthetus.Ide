@@ -22,7 +22,6 @@ namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 public class IdeBackgroundTaskApi
 {
     private readonly LuthetusCommonApi _commonApi;
-    private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
@@ -34,7 +33,6 @@ public class IdeBackgroundTaskApi
 
     public IdeBackgroundTaskApi(
     	LuthetusCommonApi commonApi,
-        IBackgroundTaskService backgroundTaskService,
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
         ITextEditorService textEditorService,

@@ -10,26 +10,21 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly ITextEditorService _textEditorService;
-	private readonly INotificationService _notificationService;
 	private readonly IServiceProvider _serviceProvider;
 
 	public TestExplorerTreeViewMouseEventHandler(
-			ICommonComponentRenderers commonComponentRenderers,
+			LuthetusCommonApi commonApi,
 			ICompilerServiceRegistry compilerServiceRegistry,
 			ITextEditorService textEditorService,
-			INotificationService notificationService,
-			IServiceProvider serviceProvider,
-			ITreeViewService treeViewService,
-			IBackgroundTaskService backgroundTaskService)
+			IServiceProvider serviceProvider)
 		: base(treeViewService, backgroundTaskService)
 	{
-		_commonComponentRenderers = commonComponentRenderers;
+		_commonApi = commonApi;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_textEditorService = textEditorService;
-		_notificationService = notificationService;
 		_serviceProvider = serviceProvider;
 	}
 

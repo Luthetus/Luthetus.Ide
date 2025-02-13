@@ -18,15 +18,13 @@ namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 public partial class CodeSearchDisplay : ComponentBase, IDisposable
 {
 	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
+	[Inject]
 	private ICodeSearchService CodeSearchService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	

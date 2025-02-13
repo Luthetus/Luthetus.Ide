@@ -30,8 +30,6 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 
 	private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;

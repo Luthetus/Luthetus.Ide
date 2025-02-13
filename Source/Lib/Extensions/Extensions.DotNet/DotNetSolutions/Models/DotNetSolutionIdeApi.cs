@@ -37,19 +37,13 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 public class DotNetSolutionIdeApi
 {
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly IBackgroundTaskService _backgroundTaskService;
-	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
 	private readonly ICompilerServiceExplorerService _compilerServiceExplorerService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly ITreeViewService _treeViewService;
-	private readonly INotificationService _notificationService;
-	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IDotNetSolutionService _dotNetSolutionService;
-	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
@@ -63,19 +57,13 @@ public class DotNetSolutionIdeApi
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
 	public DotNetSolutionIdeApi(
+		LuthetusCommonApi commonApi,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		IBackgroundTaskService backgroundTaskService,
-		IStorageService storageService,
 		IAppDataService appDataService,
 		ICompilerServiceExplorerService compilerServiceExplorerService,
         IDotNetComponentRenderers dotNetComponentRenderers,
         IIdeComponentRenderers ideComponentRenderers,
-		ICommonComponentRenderers commonComponentRenderers,
-		ITreeViewService treeViewService,
-		INotificationService notificationService,
-		IEnvironmentProvider environmentProvider,
 		IDotNetSolutionService dotNetSolutionService,
-		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
@@ -85,20 +73,14 @@ public class DotNetSolutionIdeApi
 		DotNetCliOutputParser dotNetCliOutputParser,
 		IServiceProvider serviceProvider)
 	{
+		_commonApi = commonApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
-		_backgroundTaskService = backgroundTaskService;
-		_storageService = storageService;
 		_appDataService = appDataService;
 		_compilerServiceExplorerService = compilerServiceExplorerService;
 		_compilerServiceRegistry = compilerServiceRegistry;
         _dotNetComponentRenderers = dotNetComponentRenderers;
         _ideComponentRenderers = ideComponentRenderers;
-		_commonComponentRenderers = commonComponentRenderers;
-		_treeViewService = treeViewService;
-		_notificationService = notificationService;
-		_environmentProvider = environmentProvider;
 		_dotNetSolutionService = dotNetSolutionService;
-		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
 		_codeSearchService = codeSearchService;

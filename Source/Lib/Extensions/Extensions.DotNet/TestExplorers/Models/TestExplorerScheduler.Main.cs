@@ -18,14 +18,10 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 public partial class TestExplorerScheduler : IStateScheduler
 {
 	// Dependency injection
+	private readonly LuthetusCommonApi _commonApi;
     private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
-    private readonly INotificationService _notificationService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITerminalService _terminalService;
 	private readonly ITestExplorerService _testExplorerService;
 	private readonly IDotNetSolutionService _dotNetSolutionService;
@@ -34,27 +30,19 @@ public partial class TestExplorerScheduler : IStateScheduler
     private readonly Throttle _throttleDiscoverTests = new(TimeSpan.FromMilliseconds(100));
 
     public TestExplorerScheduler(
+    	LuthetusCommonApi commonApi,
         DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
         IdeBackgroundTaskApi ideBackgroundTaskApi,
-        ICommonComponentRenderers commonComponentRenderers,
-        ITreeViewService treeViewService,
         ITextEditorService textEditorService,
-        INotificationService notificationService,
-        IBackgroundTaskService backgroundTaskService,
-        IFileSystemProvider fileSystemProvider,
         DotNetCliOutputParser dotNetCliOutputParser,
         IDotNetSolutionService dotNetSolutionService,
         ITerminalService terminalService,
         ITestExplorerService testExplorerService)
     {
+    	_commonApi = commonApi;
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _commonComponentRenderers = commonComponentRenderers;
-        _treeViewService = treeViewService;
 		_textEditorService = textEditorService;
-		_notificationService = notificationService;
-		_backgroundTaskService = backgroundTaskService;
-		_fileSystemProvider = fileSystemProvider;
 		_terminalService = terminalService;
 		_testExplorerService = testExplorerService;
         _dotNetSolutionService = dotNetSolutionService;

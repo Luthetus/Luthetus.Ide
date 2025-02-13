@@ -30,50 +30,32 @@ namespace Luthetus.Ide.RazorLib.Editors.Models;
 public class EditorIdeApi
 {
     public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
-    
+
+	private readonly LuthetusCommonApi _commonApi;    
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ITextEditorService _textEditorService;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-    private readonly IDialogService _dialogService;
-    private readonly IPanelService _panelService;
-    private readonly INotificationService _notificationService;
     private readonly IJSRuntime _jsRuntime;
     private readonly IServiceProvider _serviceProvider;
 
     public EditorIdeApi(
+    	LuthetusCommonApi commonApi,
         IdeBackgroundTaskApi ideBackgroundTaskApi,
-        IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
-        ICommonComponentRenderers commonComponentRenderers,
         IIdeComponentRenderers ideComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
         IDecorationMapperRegistry decorationMapperRegistry,
         ICompilerServiceRegistry compilerServiceRegistry,
-        IDialogService dialogService,
-        IPanelService panelService,
-        INotificationService notificationService,
         IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
+    	_commonApi = commonApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _backgroundTaskService = backgroundTaskService;
         _textEditorService = textEditorService;
-        _commonComponentRenderers = commonComponentRenderers;
         _ideComponentRenderers = ideComponentRenderers;
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
         _decorationMapperRegistry = decorationMapperRegistry;
         _compilerServiceRegistry = compilerServiceRegistry;
-        _dialogService = dialogService;
-        _panelService = panelService;
-        _notificationService = notificationService;
         _jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
     }

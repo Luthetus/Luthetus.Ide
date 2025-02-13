@@ -25,8 +25,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	
 	[CascadingParameter]

@@ -22,17 +22,16 @@ namespace Luthetus.Extensions.DotNet.Menus.Models;
 
 public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 {
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 
 	public DotNetMenuOptionsFactory(
-		IBackgroundTaskService backgroundTaskService,
+		LuthetusCommonApi commonApi,
 		IDotNetComponentRenderers dotNetComponentRenderers,
-		IIdeComponentRenderers ideComponentRenderers,
-		ICommonComponentRenderers commonComponentRenderers)
+		IIdeComponentRenderers ideComponentRenderers)
 	{
+		_commonApi = commonApi;
 		_backgroundTaskService = backgroundTaskService;
 		_dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;

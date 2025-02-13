@@ -19,15 +19,13 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly ITextEditorService _textEditorService;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly ITreeViewService _treeViewService;
-    private readonly IEnvironmentProvider _environmentProvider;
-    private readonly INotificationService _notificationService;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
+            LuthetusCommonApi commonApi,
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             ITextEditorService textEditorService,
             IMenuOptionsFactory menuOptionsFactory,
@@ -38,13 +36,10 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             INotificationService notificationService)
         : base(treeViewService, backgroundTaskService)
     {
+        _commonApi = commonApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _textEditorService = textEditorService;
         _menuOptionsFactory = menuOptionsFactory;
-        _commonComponentRenderers = commonComponentRenderers;
-        _treeViewService = treeViewService;
-        _environmentProvider = environmentProvider;
-        _notificationService = notificationService;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

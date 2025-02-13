@@ -15,27 +15,15 @@ namespace Luthetus.Ide.RazorLib.Menus.Models;
 
 public class MenuOptionsFactory : IMenuOptionsFactory
 {
+	private readonly LuthetusCommonApi _commonApi;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
-    private readonly IClipboardService _clipboardService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
 
     public MenuOptionsFactory(
-        IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        IClipboardService clipboardService,
-        IBackgroundTaskService backgroundTaskService)
+    	LuthetusCommonApi commonApi,
+        IIdeComponentRenderers ideComponentRenderers)
     {
+        _commonApi = commonApi;
         _ideComponentRenderers = ideComponentRenderers;
-        _commonComponentRenderers = commonComponentRenderers;
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
-        _clipboardService = clipboardService;
-        _backgroundTaskService = backgroundTaskService;
     }
 
     public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)

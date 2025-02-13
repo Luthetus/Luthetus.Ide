@@ -35,11 +35,11 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 public partial class IdeHeader : ComponentBase, IDisposable
 {
 	[Inject]
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
+	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private IIdeHeaderService IdeHeaderService { get; set; } = null!;
-	[Inject]
-    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
@@ -50,8 +50,6 @@ public partial class IdeHeader : ComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 

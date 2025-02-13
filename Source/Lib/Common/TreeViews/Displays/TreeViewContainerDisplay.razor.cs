@@ -18,9 +18,7 @@ namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 

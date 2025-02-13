@@ -25,62 +25,44 @@ namespace Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 public class DotNetBackgroundTaskApi
 {
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly IBackgroundTaskService _backgroundTaskService;
-	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly ITreeViewService _treeViewService;
-	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
 	private readonly IStartupControlService _startupControlService;
-	private readonly INotificationService _notificationService;
 	private readonly ITerminalService _terminalService;
 
     public DotNetBackgroundTaskApi(
+    	LuthetusCommonApi commonApi,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		IBackgroundTaskService backgroundTaskService,
-        IStorageService storageService,
         IAppDataService appDataService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
-		ICommonComponentRenderers commonComponentRenderers,
-		ITreeViewService treeViewService,
-		IEnvironmentProvider environmentProvider,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
 		IStartupControlService startupControlService,
-		INotificationService notificationService,
 		ITerminalService terminalService,
         IServiceProvider serviceProvider)
 	{
+		_commonApi = commonApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
-		_backgroundTaskService = backgroundTaskService;
-		_storageService = storageService;
 		_appDataService = appDataService;
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
-		_commonComponentRenderers = commonComponentRenderers;
-		_treeViewService = treeViewService;
-		_environmentProvider = environmentProvider;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
 		_codeSearchService = codeSearchService;
 		_startupControlService = startupControlService;
-		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
 

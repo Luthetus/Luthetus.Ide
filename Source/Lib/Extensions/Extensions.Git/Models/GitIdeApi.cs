@@ -23,44 +23,32 @@ namespace Luthetus.Extensions.Git.Models;
 
 public class GitIdeApi
 {
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly GitTreeViews _gitTreeViews;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ITreeViewService _treeViewService;
     private readonly GitBackgroundTaskApi _gitBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly ITerminalService _terminalService;
 	private readonly GitCliOutputParser _gitCliOutputParser;
-	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly INotificationService _notificationService;
     
     private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
 
     public GitIdeApi(
+    	LuthetusCommonApi commonApi,
     	GitTreeViews gitTreeViews,
         IIdeComponentRenderers ideComponentRenderers,
-        ITreeViewService treeViewService,
     	GitBackgroundTaskApi gitBackgroundTaskApi,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
         ITerminalService terminalService,
-		GitCliOutputParser gitCliOutputParser,
-		IEnvironmentProvider environmentProvider,
-		IBackgroundTaskService backgroundTaskService,
-        ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService)
+		GitCliOutputParser gitCliOutputParser)
     {
+    	_commonApi = commonApi;
     	_gitTreeViews = gitTreeViews;
         _ideComponentRenderers = ideComponentRenderers;
-        _treeViewService = treeViewService;
     	_gitBackgroundTaskApi = gitBackgroundTaskApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
         _terminalService = terminalService;
 		_gitCliOutputParser = gitCliOutputParser;
-		_environmentProvider = environmentProvider;
-		_backgroundTaskService = backgroundTaskService;
-        _commonComponentRenderers = commonComponentRenderers;
-        _notificationService = notificationService;
     }
 
     public Key<TerminalCommandRequest> GitTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();

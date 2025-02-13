@@ -8,14 +8,15 @@ namespace Luthetus.Extensions.DotNet.CompilerServices.Models;
 
 public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 
 	public CompilerServiceExplorerTreeViewKeyboardEventHandler(
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService)
+		LuthetusCommonApi commonApi,
+		IdeBackgroundTaskApi ideBackgroundTaskApi)
 		: base(treeViewService, backgroundTaskService)
 	{
+		_commonApi = commonApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 	}
 
