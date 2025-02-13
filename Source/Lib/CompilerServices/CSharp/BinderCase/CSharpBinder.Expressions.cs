@@ -28,9 +28,9 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*#if DEBUG
+		#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}");
-		#endif*/
+		#endif
 		
 		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
 			UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
@@ -92,9 +92,9 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeExpression(
 		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*#if DEBUG
+		#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {expressionSecondary.SyntaxKind}");
-		#endif*/
+		#endif
 	
 		switch (expressionPrimary.SyntaxKind)
 		{
@@ -1198,6 +1198,8 @@ public partial class CSharpBinder
 			        typeClauseNode: null,
 			        functionParametersListingNode: null,
 			        objectInitializationParametersListingNode: null);
+			case SyntaxKind.AwaitTokenContextualKeyword:
+				return emptyExpressionNode;
 			case SyntaxKind.AsyncTokenContextualKeyword:
 				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.DollarSignToken:
