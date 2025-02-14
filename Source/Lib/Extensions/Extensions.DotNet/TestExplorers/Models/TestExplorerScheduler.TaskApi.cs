@@ -11,7 +11,7 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 public partial class TestExplorerScheduler
 {
-    public async ValueTask Task_ConstructTreeView()
+    public async ValueTask Do_ConstructTreeView()
     {
         var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
@@ -189,7 +189,7 @@ public partial class TestExplorerScheduler
         });
     }
     
-    public ValueTask Task_DiscoverTests()
+    public ValueTask Do_DiscoverTests()
     {
     	_throttleDiscoverTests.Run(async _ =>
     	{
