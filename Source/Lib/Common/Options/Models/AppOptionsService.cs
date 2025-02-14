@@ -11,24 +11,23 @@ namespace Luthetus.Common.RazorLib.Options.Models;
 public class AppOptionsService : IAppOptionsService
 {
     private readonly IStorageService _storageService;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public AppOptionsService(
 		IThemeService themeService,
         IStorageService storageService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService)
     {
         ThemeService = themeService;
         _storageService = storageService;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
     }
     
     private AppOptionsState _appOptionsState = new();
 
     public IThemeService ThemeService { get; }
+
+    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; }
 
 #if DEBUG
     public string StorageKey => "luthetus-common_theme-storage-key-debug"; 
@@ -260,7 +259,7 @@ public class AppOptionsService : IAppOptionsService
 
     public void WriteToStorage()
     {
-        _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
+        CommonBackgroundTaskApi.Storage.WriteToLocalStorage(
             StorageKey,
             new CommonOptionsJsonDto(GetAppOptionsState().Options));
     }
