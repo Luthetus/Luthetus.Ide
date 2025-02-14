@@ -4,7 +4,7 @@
         class="luth_select luth_te_text-editor-input-theme @InputViewModel.CssClass"
 	   style="@InputViewModel.CssStyle">
     @{
-        var themesList = ThemeService.GetThemeState().ThemeList;
+        var themesList = LuthetusCommonApi.ThemeApi.GetThemeState().ThemeList;
 
         var chosenThemeKey = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.CommonOptions?.ThemeKey
             ?? ThemeFacts.VisualStudioDarkThemeClone.Key;

@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
 public partial class InputTextEditorTheme : ComponentBase, IDisposable
 {
     [Inject]
-    private IThemeService ThemeService { get; set; } = null!;
+    private LuthetusCommonApi LuthetusCommonApi { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -23,7 +24,7 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
     
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)
     {
-        var themeList = ThemeService.GetThemeState().ThemeList;
+        var themeList = LuthetusCommonApi.ThemeApi.GetThemeState().ThemeList;
 
         var chosenThemeKeyGuidString = changeEventArgs.Value?.ToString() ?? string.Empty;
 
