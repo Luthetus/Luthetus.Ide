@@ -5,7 +5,7 @@
 @using Luthetus.Ide.RazorLib.Editors.Displays
 @using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays
 
-@{ var panelState = PanelService.GetPanelState(); }
+@{ var panelState = CommonApi.PanelApi.GetPanelState(); }
 
 <div class="luth_ide_body"
      style="@BodyElementDimensions.StyleString">

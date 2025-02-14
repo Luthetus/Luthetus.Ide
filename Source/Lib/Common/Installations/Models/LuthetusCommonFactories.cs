@@ -25,49 +25,5 @@ namespace Luthetus.Common.RazorLib.Installations.Models;
 /// </remarks>
 public record LuthetusCommonFactories
 {
-    public Func<IServiceProvider, IDragService> DragServiceFactory { get; init; } =
-        serviceProvider => new DragService();
-
-    public Func<IServiceProvider, IClipboardService> ClipboardServiceFactory { get; init; } =
-        serviceProvider => new JavaScriptInteropClipboardService(
-            serviceProvider.GetRequiredService<IJSRuntime>());
-
-    public Func<IServiceProvider, IDialogService> DialogServiceFactory { get; init; } =
-        serviceProvider => new DialogService(
-            serviceProvider.GetRequiredService<IJSRuntime>());
-
-    public Func<IServiceProvider, INotificationService> NotificationServiceFactory { get; init; } =
-        serviceProvider => new NotificationService();
-
-    public Func<IServiceProvider, IDropdownService> DropdownServiceFactory { get; init; } =
-        serviceProvider => new DropdownService();
-
-    public Func<IServiceProvider, IStorageService> StorageServiceFactory { get; init; } =
-        serviceProvider => new LocalStorageService(
-            serviceProvider.GetRequiredService<IJSRuntime>());
-
-    public Func<IServiceProvider, IAppOptionsService> AppOptionsServiceFactory { get; init; } =
-        serviceProvider => new AppOptionsService(
-            serviceProvider.GetRequiredService<IThemeService>(),
-            serviceProvider.GetRequiredService<IStorageService>(),
-            serviceProvider.GetRequiredService<CommonBackgroundTaskApi>(),
-            serviceProvider.GetRequiredService<IBackgroundTaskService>());
-
-    public Func<IServiceProvider, IThemeService> ThemeServiceFactory { get; init; } =
-        serviceProvider => new ThemeService();
-
-    public Func<IServiceProvider, ITreeViewService> TreeViewServiceFactory { get; init; } =
-        serviceProvider => new TreeViewService(serviceProvider.GetRequiredService<IBackgroundTaskService>());
-
-    /// <summary>
-    /// The default value for <see cref="EnvironmentProviderFactory"/> is based on the <see cref="LuthetusHostingKind"/>.
-    /// Therefore, the uninitialized value is null, then an if statement is performed to determine what it should default to when adding services.
-    /// </summary>
-    public Func<IServiceProvider, IEnvironmentProvider>? EnvironmentProviderFactory { get; init; }
-
-    /// <summary>
-    /// The default value for <see cref="FileSystemProviderFactory"/> is based on the <see cref="LuthetusHostingKind"/>.
-    /// Therefore, the uninitialized value is null, then an if statement is performed to determine what it should default to when adding services.
-    /// </summary>
-    public Func<IServiceProvider, IFileSystemProvider>? FileSystemProviderFactory { get; init; }
+    
 }

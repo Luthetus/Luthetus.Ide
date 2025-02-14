@@ -24,6 +24,7 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
@@ -106,7 +107,7 @@ public partial class GitDiffDisplay : ComponentBase
         var fileLastWriteTime = DateTime.UtcNow;
         var content = logFileContent;
 
-        var absolutePath = EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+        var absolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(resourceUri.Value, false);
         var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
         var compilerService = CompilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
@@ -144,8 +145,7 @@ public partial class GitDiffDisplay : ComponentBase
                 viewModelKey,
                 resourceUri,
                 TextEditorService,
-                PanelService,
-                DialogService,
+                CommonApi,
                 JsRuntime,
                 VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
@@ -176,8 +176,8 @@ public partial class GitDiffDisplay : ComponentBase
         	NotificationHelper.DispatchError(
 		        nameof(TryCreateEditorIn),
 		        e.ToString(),
-		        CommonComponentRenderers,
-		        NotificationService,
+		        CommonApi.ComponentRendererApi,
+                CommonApi.NotificationApi,
 		        TimeSpan.FromSeconds(6));
 		
 			return false;        
@@ -211,8 +211,7 @@ public partial class GitDiffDisplay : ComponentBase
                 viewModelKey,
                 originalResourceUri,
                 TextEditorService,
-                PanelService,
-                DialogService,
+                CommonApi,
                 JsRuntime,
                 VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
@@ -243,8 +242,8 @@ public partial class GitDiffDisplay : ComponentBase
         	NotificationHelper.DispatchError(
 		        nameof(TryCreateEditorOut),
 		        e.ToString(),
-		        CommonComponentRenderers,
-		        NotificationService,
+                CommonApi.ComponentRendererApi,
+		        CommonApi.NotificationApi,
 		        TimeSpan.FromSeconds(6));
 		
 			return false;        

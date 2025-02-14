@@ -94,15 +94,15 @@ public class EditorIdeApi
         {
             var resourceUri = registerModelArgs.ResourceUri;
 
-            var fileLastWriteTime = await _fileSystemProvider.File
+            var fileLastWriteTime = await _commonApi.FileSystemProviderApi.File
                 .GetLastWriteTimeAsync(resourceUri.Value)
                 .ConfigureAwait(false);
 
-            var content = await _fileSystemProvider.File
+            var content = await _commonApi.FileSystemProviderApi.File
                 .ReadAllTextAsync(resourceUri.Value)
                 .ConfigureAwait(false);
 
-            var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+            var absolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(resourceUri.Value, false);
             var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
             var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
@@ -161,7 +161,7 @@ public class EditorIdeApi
 	
 	        if (model is null)
 	        {
-	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(4));
+	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonApi.ComponentRendererApi, _commonApi.NotificationApi, TimeSpan.FromSeconds(4));
 	            return Task.FromResult(Key<TextEditorViewModel>.Empty);
 	        }
 	
@@ -178,8 +178,7 @@ public class EditorIdeApi
                 viewModelKey,
                 registerViewModelArgs.ResourceUri,
                 _textEditorService,
-                _panelService,
-                _dialogService,
+                _commonApi,
                 _jsRuntime,
                 VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
@@ -194,7 +193,7 @@ public class EditorIdeApi
 	            FindOverlayPresentationFacts.PresentationKey,
 	        }.ToImmutableArray();
 	
-	        var absolutePath = _environmentProvider.AbsolutePathFactory(
+	        var absolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(
 	            registerViewModelArgs.ResourceUri.Value,
 	            false);
 	            
@@ -250,8 +249,8 @@ public class EditorIdeApi
         	NotificationHelper.DispatchError(
 		        nameof(TryRegisterViewModelFunc),
 		        e.ToString(),
-		        _commonComponentRenderers,
-		        _notificationService,
+                _commonApi.ComponentRendererApi,
+                _commonApi.NotificationApi,
 		        TimeSpan.FromSeconds(6));
 		    return Task.FromResult(Key<TextEditorViewModel>.Empty);
         }
@@ -310,7 +309,7 @@ public class EditorIdeApi
         string inputFileAbsolutePathString,
         TextEditorModel textEditorModel)
     {
-        var fileLastWriteTime = await _fileSystemProvider.File
+        var fileLastWriteTime = await _commonApi.FileSystemProviderApi.File
             .GetLastWriteTimeAsync(inputFileAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -337,15 +336,15 @@ public class EditorIdeApi
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
                             new Func<Task>(() =>
                             {
-                                _backgroundTaskService.Enqueue(
+                                _commonApi.BackgroundTaskApi.Enqueue(
                                         Key<IBackgroundTask>.NewKey(),
                                         BackgroundTaskFacts.ContinuousQueueKey,
                                         "Check If Contexts Were Modified",
                                         async () =>
                                         {
-                                            _notificationService.ReduceDisposeAction(notificationInformativeKey);
+                                            _commonApi.NotificationApi.ReduceDisposeAction(notificationInformativeKey);
 
-                                            var content = await _fileSystemProvider.File
+                                            var content = await _commonApi.FileSystemProviderApi.File
                                                 .ReadAllTextAsync(inputFileAbsolutePathString)
                                                 .ConfigureAwait(false);
 
@@ -376,7 +375,7 @@ public class EditorIdeApi
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc),
                             new Func<Task>(() =>
                             {
-                                _notificationService.ReduceDisposeAction(notificationInformativeKey);
+                                _commonApi.NotificationApi.ReduceDisposeAction(notificationInformativeKey);
                                 return Task.CompletedTask;
                             })
                         },
@@ -385,7 +384,7 @@ public class EditorIdeApi
                 true,
                 null);
 
-            _notificationService.ReduceRegisterAction(notificationInformative);
+            _commonApi.NotificationApi.ReduceRegisterAction(notificationInformative);
         }
     }
 }

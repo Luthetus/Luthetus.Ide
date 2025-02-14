@@ -55,7 +55,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-		BackgroundTaskService.Enqueue(
+        CommonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             nameof(LuthetusIdeInitializer),
@@ -65,7 +65,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 {
                     foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                     {
-                        ThemeService.ReduceRegisterAction(themeRecord);
+                        CommonApi.ThemeApi.ReduceRegisterAction(themeRecord);
                     }
                 }
 
@@ -79,7 +79,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 
                 CodeSearchService.ReduceInitializeResizeHandleDimensionUnitAction(
 					new DimensionUnit(
-						() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+						() => CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
 						DimensionUnitKind.Pixels,
 						DimensionOperatorKind.Subtract,
 						DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
@@ -96,7 +96,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 	{
 		if (firstRender)
 		{
-			if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
+			if (CommonApi.HostingInformationApi.LuthetusHostingKind == LuthetusHostingKind.Photino)
 			{
 				await JsRuntime.GetLuthetusIdeApi()
 					.PreventDefaultBrowserKeybindings();
@@ -110,13 +110,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
 	{
 		// Left
 		{
-			var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelService.GetPanelState());
-        	leftPanel.PanelService = PanelService;
+			var leftPanel = PanelFacts.GetTopLeftPanelGroup(CommonApi.PanelApi.GetPanelState());
+        	leftPanel.PanelService = CommonApi.PanelApi;
 		
-			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
+			CommonApi.PanelApi.ReduceInitializeResizeHandleDimensionUnitAction(
 				leftPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+					() => CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
 					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -124,13 +124,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
 		
 		// Right
 		{
-			var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelService.GetPanelState());
-        	rightPanel.PanelService = PanelService;
+			var rightPanel = PanelFacts.GetTopRightPanelGroup(CommonApi.PanelApi.GetPanelState());
+        	rightPanel.PanelService = CommonApi.PanelApi;
 		
-			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
+			CommonApi.PanelApi.ReduceInitializeResizeHandleDimensionUnitAction(
 				rightPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+					() => CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
 					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -138,13 +138,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
 		
 		// Bottom
 		{
-			var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState());
-        	bottomPanel.PanelService = PanelService;
+			var bottomPanel = PanelFacts.GetBottomPanelGroup(CommonApi.PanelApi.GetPanelState());
+        	bottomPanel.PanelService = CommonApi.PanelApi;
 		
-			PanelService.ReduceInitializeResizeHandleDimensionUnitAction(
+			CommonApi.PanelApi.ReduceInitializeResizeHandleDimensionUnitAction(
 				bottomPanel.Key,
 				new DimensionUnit(
-					() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+					() => CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
 					DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
@@ -160,8 +160,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelService.GetPanelState());
-        leftPanel.PanelService = PanelService;
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(CommonApi.PanelApi.GetPanelState());
+        leftPanel.PanelService = CommonApi.PanelApi;
 
         // folderExplorerPanel
         var folderExplorerPanel = new Panel(
@@ -171,26 +171,25 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			ContextFacts.FolderExplorerContext.ContextKey,
             typeof(FolderExplorerDisplay),
 			null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(folderExplorerPanel);
-        PanelService.ReduceRegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(folderExplorerPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false);
 
         // SetActivePanelTabAction
-        PanelService.ReduceSetActivePanelTabAction(leftPanel.Key, folderExplorerPanel.Key);
+        CommonApi.PanelApi.ReduceSetActivePanelTabAction(leftPanel.Key, folderExplorerPanel.Key);
     }
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelService.GetPanelState());
-        rightPanel.PanelService = PanelService;
+        var rightPanel = PanelFacts.GetTopRightPanelGroup(CommonApi.PanelApi.GetPanelState());
+        rightPanel.PanelService = CommonApi.PanelApi;
     }
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState());
-        bottomPanel.PanelService = PanelService;
+        var bottomPanel = PanelFacts.GetBottomPanelGroup(CommonApi.PanelApi.GetPanelState());
+        bottomPanel.PanelService = CommonApi.PanelApi;
 
         // terminalGroupPanel
         var terminalGroupPanel = new Panel(
@@ -200,15 +199,14 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			ContextFacts.TerminalContext.ContextKey,
             typeof(TerminalGroupDisplay),
             null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(terminalGroupPanel);
-        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(terminalGroupPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false);
 		// This UI has resizable parts that need to be initialized.
         TerminalGroupService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
-            	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+            	() => CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
             	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -221,20 +219,19 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			ContextFacts.ActiveContextsContext.ContextKey,
             typeof(ContextsPanelDisplay),
             null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(activeContextsPanel);
-        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(activeContextsPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false);
 
         // SetActivePanelTabAction
-        PanelService.ReduceSetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key);
+        CommonApi.PanelApi.ReduceSetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key);
     }
     
     private void AddGeneralTerminal()
     {
-    	if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
-    		LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
+    	if (CommonApi.HostingInformationApi.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
+    		CommonApi.HostingInformationApi.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
     	{
     		TerminalService.ReduceRegisterAction(
 		    	new TerminalWebsite(
@@ -247,12 +244,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							terminal,
 							TextEditorService,
 							CompilerServiceRegistry,
-							DialogService,
-						    PanelService,
+                            CommonApi,
 							JsRuntime)),
-					BackgroundTaskService,
-					CommonComponentRenderers,
-					NotificationService)
+					CommonApi)
 				{
 					Key = TerminalFacts.GENERAL_KEY
 				});
@@ -270,12 +264,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							terminal,
 							TextEditorService,
 							CompilerServiceRegistry,
-							DialogService,
-						    PanelService,
+                            CommonApi,
 							JsRuntime)),
-					BackgroundTaskService,
-					CommonComponentRenderers,
-					NotificationService,
+					CommonApi,
 					TerminalService)
 				{
 					Key = TerminalFacts.GENERAL_KEY
@@ -285,8 +276,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     
     private void AddExecutionTerminal()
     {
-    	if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
-    		LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
+    	if (CommonApi.HostingInformationApi.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
+    		CommonApi.HostingInformationApi.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
     	{
     		TerminalService.ReduceRegisterAction(
 		    	new TerminalWebsite(
@@ -299,12 +290,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							terminal,
 							TextEditorService,
 							CompilerServiceRegistry,
-							DialogService,
-	 				       PanelService,
+							CommonApi,
 							JsRuntime)),
-					BackgroundTaskService,
-					CommonComponentRenderers,
-					NotificationService)
+					CommonApi)
 				{
 					Key = TerminalFacts.EXECUTION_KEY
 				});
@@ -322,12 +310,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							terminal,
 							TextEditorService,
 							CompilerServiceRegistry,
-							DialogService,
-	 				       PanelService,
+							CommonApi,
 							JsRuntime)),
-					BackgroundTaskService,
-					CommonComponentRenderers,
-					NotificationService,
+					CommonApi,
 					TerminalService)
 				{
 					Key = TerminalFacts.EXECUTION_KEY

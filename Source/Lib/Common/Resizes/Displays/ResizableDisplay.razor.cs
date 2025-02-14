@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
 
@@ -37,14 +38,14 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonApi.DragApi.DragStateChanged += DragStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonApi.DragApi.GetDragState().ShouldDisplay)
         {
 			var wasTargetOfDragging = _dragEventHandler is not null;
 
@@ -52,11 +53,11 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-				AppDimensionService.ReduceNotifyIntraAppResizeAction();
+                CommonApi.AppDimensionApi.ReduceNotifyIntraAppResizeAction();
         }
         else
         {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
+            var mouseEventArgs = CommonApi.DragApi.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -81,7 +82,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         if (Drag is not null)
             await Drag.OnDragStartAsync().ConfigureAwait(false);
 
-		DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, Drag);
+		CommonApi.DragApi.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, Drag);
     }
 
     public Task SubscribeToDragEventWithMoveHandle()
@@ -591,6 +592,6 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonApi.DragApi.DragStateChanged -= DragStateWrapOnStateChanged;
     }
 }

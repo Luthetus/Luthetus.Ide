@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.Displays.Internals;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
@@ -48,7 +49,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 			isResizable: true,
 			setFocusOnCloseElementId: null);
 
-        DialogService.ReduceRegisterAction(addIntegratedTerminalDialog);
+		CommonApi.DialogApi.ReduceRegisterAction(addIntegratedTerminalDialog);
     }
     
     private async void OnTerminalGroupStateChanged()

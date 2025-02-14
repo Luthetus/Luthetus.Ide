@@ -34,20 +34,16 @@ public class GitBackgroundTaskApi
 
 		GitCliOutputParser = new GitCliOutputParser(
 			this,
-			_environmentProvider);
+            _commonApi.EnvironmentProviderApi);
 
 		Git = new GitIdeApi(
-			_gitTreeViews,
+            _commonApi,
+            _gitTreeViews,
 			_ideComponentRenderers,
-			_treeViewService,
 			this,
 			_ideBackgroundTaskApi,
 			_terminalService,
-			GitCliOutputParser,
-			_environmentProvider,
-			_backgroundTaskService,
-            _commonComponentRenderers,
-            _notificationService);
+			GitCliOutputParser);
 	}
 	
 	public GitIdeApi Git { get; }

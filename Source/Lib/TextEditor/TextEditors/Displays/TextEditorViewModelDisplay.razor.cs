@@ -73,7 +73,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private LuthetusCommonApi CommonApi { get; set; } = null!;
+	public LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
@@ -290,7 +290,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			ViewModelDisplayOptions,
 			_currentRenderBatch.Options,
 			this,
-			DropdownService,
+			CommonApi.DropdownApi,
 			ServiceProvider);
     }
 
@@ -414,7 +414,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			        viewModelModifier,
 			        cursorModifierBag,
 			        primaryCursor,
-			        DropdownService,
+					CommonApi.DropdownApi,
 			        ComponentData);
 				
 				return ValueTask.CompletedTask;
@@ -1219,7 +1219,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
 		HORIZONTAL_scrollLeftOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollLeft;
 
-		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
+		var scrollbarBoundingClientRect = await TextEditorService.CommonApi.LuthetusCommonJavaScriptInteropApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
@@ -1249,7 +1249,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     	VERTICAL_thinksLeftMouseButtonIsDown = true;
 		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollTop;
 
-		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
+		var scrollbarBoundingClientRect = await TextEditorService.CommonApi.LuthetusCommonJavaScriptInteropApi
 			.MeasureElementById(VERTICAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 

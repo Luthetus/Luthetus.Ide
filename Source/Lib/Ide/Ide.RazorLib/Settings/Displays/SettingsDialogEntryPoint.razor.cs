@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Settings.Displays;
 
@@ -21,5 +22,5 @@ public partial class SettingsDialogEntryPoint : ComponentBase
 		null);
 
     public void DispatchRegisterDialogRecordAction() =>
-        DialogService.ReduceRegisterAction(_dialogRecord);
+		CommonApi.DialogApi.ReduceRegisterAction(_dialogRecord);
 }

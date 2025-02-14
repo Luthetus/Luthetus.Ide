@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Options.Displays;
 
@@ -13,19 +14,19 @@ public partial class InputAppFontFamily : ComponentBase, IDisposable
 
     public string FontFamily
     {
-        get => AppOptionsService.GetAppOptionsState().Options.FontFamily ?? "unset";
+        get => CommonApi.AppOptionApi.GetAppOptionsState().Options.FontFamily ?? "unset";
         set
         {
             if (string.IsNullOrWhiteSpace(value))
-                AppOptionsService.SetFontFamily(null);
+				CommonApi.AppOptionApi.SetFontFamily(null);
 
-            AppOptionsService.SetFontFamily(value.Trim());
+			CommonApi.AppOptionApi.SetFontFamily(value.Trim());
         }
     }
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+		CommonApi.AppOptionApi.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -37,6 +38,6 @@ public partial class InputAppFontFamily : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+		CommonApi.AppOptionApi.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

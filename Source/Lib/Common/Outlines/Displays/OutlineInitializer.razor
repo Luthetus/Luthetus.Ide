@@ -1,4 +1,4 @@
-@{ var localOutlineState = OutlineService.GetOutlineState(); }
+@{ var localOutlineState = CommonApi.OutlineApi.GetOutlineState(); }
 
 @if (localOutlineState.MeasuredHtmlElementDimensions is not null)
 {

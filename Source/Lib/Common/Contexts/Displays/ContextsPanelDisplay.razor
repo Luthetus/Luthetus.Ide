@@ -5,7 +5,7 @@
                  ClassCssString="luth_ide_active-contexts"
                  StyleCssString="height: 100%">
 
-    @{ var contextState = ContextService.GetContextState(); }
+    @{ var contextState = CommonApi.ContextApi.GetContextState(); }
 
 	@*
 	This components title must always show because
@@ -25,8 +25,8 @@
                 
             @{
             	var iconDriver = new IconDriver(
-					AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels,
-					AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels);
+                    CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels,
+					CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels);
             }
 
             @if (isInspecting)
@@ -42,7 +42,7 @@
         ActiveContextsDisplay
     </div>
 
-    <div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
+    <div class="luth_ide_section-body @CommonApi.AppOptionApi.ShowPanelTitlesCssClass">
 
         @{
             var contextKeysToRender = contextState.InspectedContextHeirarchy

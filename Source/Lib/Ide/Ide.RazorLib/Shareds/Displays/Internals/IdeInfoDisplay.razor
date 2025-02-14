@@ -130,10 +130,10 @@
 		BackgroundTaskWorkers:
 		<div>
 			<div>
-				ContinuousBackgroundTaskWorker: @(BackgroundTaskService.ContinuousTaskWorker.ExecuteTask?.Status.ToString() ?? "null")
+				ContinuousBackgroundTaskWorker: @(CommonApi.BackgroundTaskApi.ContinuousTaskWorker.ExecuteTask?.Status.ToString() ?? "null")
 			</div>
 			<div>
-				BlockingBackgroundTaskWorker: @(BackgroundTaskService.IndefiniteTaskWorker.ExecuteTask?.Status.ToString() ?? "null")
+                BlockingBackgroundTaskWorker: @(CommonApi.BackgroundTaskApi.IndefiniteTaskWorker.ExecuteTask?.Status.ToString() ?? "null")
 			</div>
 		</div>
 	</div>
@@ -144,14 +144,14 @@
         LuthetusHostingInformation:
 		<div>
             <div>
-                @nameof(LuthetusHostingInformation.LuthetusHostingKind): @LuthetusHostingInformation.LuthetusHostingKind
+                @nameof(CommonApi.HostingInformationApi.LuthetusHostingKind): @CommonApi.HostingInformationApi.LuthetusHostingKind
             </div>
             <div>
-                @nameof(LuthetusHostingInformation.LuthetusPurposeKind): @LuthetusHostingInformation.LuthetusPurposeKind
+                @nameof(CommonApi.HostingInformationApi.LuthetusPurposeKind): @CommonApi.HostingInformationApi.LuthetusPurposeKind
             </div>
             <div>
-                @nameof(LuthetusHostingInformation.BackgroundTaskService):
-                @if (LuthetusHostingInformation.BackgroundTaskService is null)
+                @nameof(CommonApi.HostingInformationApi.BackgroundTaskService):
+                @if (CommonApi.HostingInformationApi.BackgroundTaskService is null)
                 {
                     <text>null</text>
                 }
@@ -161,7 +161,7 @@
                 }
             </div>
             <div>
-                @nameof(LuthetusHostingInformation.GetMainWindowScreenDpiFunc): @LuthetusHostingInformation.GetMainWindowScreenDpiFunc.Invoke()
+                @nameof(CommonApi.HostingInformationApi.GetMainWindowScreenDpiFunc): @CommonApi.HostingInformationApi.GetMainWindowScreenDpiFunc.Invoke()
             </div>
 		</div>
 	</div>

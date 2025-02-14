@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -11,8 +12,8 @@ public partial class ContextsPanelDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-        ContextService.ContextStateChanged += OnContextStateChanged;
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonApi.ContextApi.ContextStateChanged += OnContextStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged += OnAppOptionsStateChanged;
         base.OnInitialized();
     }
 
@@ -22,9 +23,9 @@ public partial class ContextsPanelDisplay : ComponentBase, IDisposable
     private void DispatchToggleInspectActionOnClick(bool isInspecting)
     {
         if (isInspecting)
-            ContextService.ReduceIsSelectingInspectableContextHeirarchyAction(false);
+            CommonApi.ContextApi.ReduceIsSelectingInspectableContextHeirarchyAction(false);
         else
-            ContextService.ReduceIsSelectingInspectableContextHeirarchyAction(true);
+            CommonApi.ContextApi.ReduceIsSelectingInspectableContextHeirarchyAction(true);
     }
     
     private async void OnContextStateChanged()
@@ -39,7 +40,7 @@ public partial class ContextsPanelDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	ContextService.ContextStateChanged -= OnContextStateChanged;
-    	AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonApi.ContextApi.ContextStateChanged -= OnContextStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

@@ -12,6 +12,7 @@ using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.CompilerServices.Displays;
 

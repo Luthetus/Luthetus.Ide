@@ -9,6 +9,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 

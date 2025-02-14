@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.Exceptions;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
@@ -114,7 +115,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
                         var absoluteFilePathString = $"/{localRepo}/{entry.FullName}";
 
-                        await FileSystemProvider.File
+                        await CommonApi.FileSystemProviderApi.File
                             .WriteAllTextAsync(
                                 absoluteFilePathString,
                                 contents,

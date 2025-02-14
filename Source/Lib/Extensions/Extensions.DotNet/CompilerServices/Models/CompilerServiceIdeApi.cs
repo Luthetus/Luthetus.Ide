@@ -43,7 +43,7 @@ public class CompilerServiceIdeApi
     /// </summary>
     public void SetCompilerServiceExplorerTreeView()
 	{
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Set CompilerServiceExplorer TreeView",
@@ -118,36 +118,36 @@ public class CompilerServiceIdeApi
 					true);
 
 				var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-					new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers));
+					new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi),
+					new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, _commonApi.ComponentRendererApi));
 
 				await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-				if (!_treeViewService.TryGetTreeViewContainer(
+				if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						out var treeViewState))
 				{
-					_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+					_commonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						rootNode,
 						new() { rootNode }));
 				}
 				else
 				{
-					_treeViewService.ReduceWithRootNodeAction(
+					_commonApi.TreeViewApi.ReduceWithRootNodeAction(
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						rootNode);
 
-					_treeViewService.ReduceSetActiveNodeAction(
+					_commonApi.TreeViewApi.ReduceSetActiveNodeAction(
 						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 						rootNode,
 						true,

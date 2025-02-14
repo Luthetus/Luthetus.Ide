@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Options.Displays;
 
@@ -15,8 +16,8 @@ public partial class InputAppTheme : IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
-        ThemeService.ThemeStateChanged += OnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonApi.ThemeApi.ThemeStateChanged += OnStateChanged;
 
         base.OnInitialized();
     }
@@ -31,7 +32,7 @@ public partial class InputAppTheme : IDisposable
         if (changeEventArgs.Value is null)
             return;
 
-        var themeState = ThemeService.GetThemeState();
+        var themeState = CommonApi.ThemeApi.GetThemeState();
 
         var guidAsString = (string)changeEventArgs.Value;
 
@@ -43,7 +44,7 @@ public partial class InputAppTheme : IDisposable
             var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key.Guid == guidValue);
 
             if (existingThemeRecord is not null)
-                AppOptionsService.SetActiveThemeRecordKey(existingThemeRecord.Key);
+                CommonApi.AppOptionApi.SetActiveThemeRecordKey(existingThemeRecord.Key);
         }
     }
 
@@ -64,7 +65,7 @@ public partial class InputAppTheme : IDisposable
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
-        ThemeService.ThemeStateChanged -= OnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonApi.ThemeApi.ThemeStateChanged -= OnStateChanged;
     }
 }

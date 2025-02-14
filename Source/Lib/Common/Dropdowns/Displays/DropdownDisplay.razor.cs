@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
@@ -69,7 +70,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			// Force the initial invocation (as opposed to waiting for the event)
 			await RemeasureAndRerender();
 		}
-		else if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide && _hasPendingEvent)
+		else if (CommonApi.HostingInformationApi.LuthetusPurposeKind == LuthetusPurposeKind.Ide && _hasPendingEvent)
 		{
 			/*
 			'LuthetusPurposeKind.Ide' hack for Text Editor NuGet Package (2024-08-28)
@@ -127,7 +128,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 					Top = outTop
 				};
 
-				DropdownService.ReduceFitOnScreenAction(outDropdown);
+				CommonApi.DropdownApi.ReduceFitOnScreenAction(outDropdown);
 			}
 		}
 

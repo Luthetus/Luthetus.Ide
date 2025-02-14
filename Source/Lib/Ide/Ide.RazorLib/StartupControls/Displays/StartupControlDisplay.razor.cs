@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Displays;
 
@@ -81,7 +82,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+						CommonApi.PanelApi.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
 	                        ContextFacts.OutputContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
@@ -97,7 +98,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+	                    CommonApi.PanelApi.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
 	                        ContextFacts.TerminalContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
@@ -121,7 +122,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
-    			DropdownService,
+				CommonApi.DropdownApi,
     			JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,

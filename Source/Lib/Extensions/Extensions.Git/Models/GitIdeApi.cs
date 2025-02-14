@@ -55,7 +55,7 @@ public class GitIdeApi
 
     public void StatusEnqueue()
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git status -u",
@@ -106,7 +106,7 @@ public class GitIdeApi
 
     public void GetActiveBranchNameEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git get active branch name",
@@ -147,7 +147,7 @@ public class GitIdeApi
 
     public void GetOriginNameEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git get origin name",
@@ -188,7 +188,7 @@ public class GitIdeApi
 
     public void AddEnqueue(GitRepo repoAtTimeOfRequest)
     {
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
             "git add",
@@ -205,7 +205,7 @@ public class GitIdeApi
 		        {
 		            var relativePathString = gitFile.RelativePathString;
 		
-		            if (_environmentProvider.DirectorySeparatorChar == '\\')
+		            if (_commonApi.EnvironmentProviderApi.DirectorySeparatorChar == '\\')
 		            {
                         // The following fails (directory separator character):
                         //     git add ".\MyApp\"
@@ -213,8 +213,8 @@ public class GitIdeApi
                         // Whereas the following succeeds
                         //     git add "./MyApp/"
                         relativePathString = relativePathString.Replace(
-		                    _environmentProvider.DirectorySeparatorChar,
-		                    _environmentProvider.AltDirectorySeparatorChar);
+		                    _commonApi.EnvironmentProviderApi.DirectorySeparatorChar,
+		                    _commonApi.EnvironmentProviderApi.AltDirectorySeparatorChar);
 		            }
 		
 		            filesBuilder.Append($"\"{relativePathString}\" ");
@@ -247,7 +247,7 @@ public class GitIdeApi
 	
 	public void UnstageEnqueue(GitRepo repoAtTimeOfRequest)
     {
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
             "git unstage",
@@ -264,7 +264,7 @@ public class GitIdeApi
 		        {
 		            var relativePathString = gitFile.RelativePathString;
 		
-		            if (_environmentProvider.DirectorySeparatorChar == '\\')
+		            if (_commonApi.EnvironmentProviderApi.DirectorySeparatorChar == '\\')
 		            {
                         // The following fails (directory separator character):
                         //     git restore --staged ".\MyApp\"
@@ -272,8 +272,8 @@ public class GitIdeApi
                         // Whereas the following succeeds
                         //     git restore --staged "./MyApp/"
                         relativePathString = relativePathString.Replace(
-		                    _environmentProvider.DirectorySeparatorChar,
-		                    _environmentProvider.AltDirectorySeparatorChar);
+		                    _commonApi.EnvironmentProviderApi.DirectorySeparatorChar,
+		                    _commonApi.EnvironmentProviderApi.AltDirectorySeparatorChar);
 		            }
 		
 		            filesBuilder.Append($"\"{relativePathString}\" ");
@@ -306,7 +306,7 @@ public class GitIdeApi
 	
 	public void CommitEnqueue(GitRepo repoAtTimeOfRequest, string commitSummary)
     {
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
             "git commit",
@@ -337,8 +337,8 @@ public class GitIdeApi
 						NotificationHelper.DispatchInformative(
 							"Git: committed",
 	                        commitSummary,
-							_commonComponentRenderers,
-							_notificationService,
+                            _commonApi.ComponentRendererApi,
+                            _commonApi.NotificationApi,
 							TimeSpan.FromSeconds(5));
 	
 						return Task.CompletedTask;
@@ -353,9 +353,9 @@ public class GitIdeApi
     public void BranchNewEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
     {
         if (string.IsNullOrWhiteSpace(branchName))
-            NotificationHelper.DispatchError(nameof(BranchNewEnqueue), "branchName was null or whitespace", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(6));
+            NotificationHelper.DispatchError(nameof(BranchNewEnqueue), "branchName was null or whitespace", _commonApi.ComponentRendererApi, _commonApi.NotificationApi, TimeSpan.FromSeconds(6));
 
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git new branch",
@@ -393,7 +393,7 @@ public class GitIdeApi
 
     public void BranchGetAllEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git branch -a",
@@ -435,7 +435,7 @@ public class GitIdeApi
     
     public void BranchSetEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             $"git checkout {branchName}",
@@ -474,7 +474,7 @@ public class GitIdeApi
     
     public void PushToOriginWithTrackingEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git push -u origin {branchName will go here}",
@@ -515,7 +515,7 @@ public class GitIdeApi
 
     public void PullEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git pull",
@@ -554,7 +554,7 @@ public class GitIdeApi
     
     public void FetchEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git fetch",
@@ -596,7 +596,7 @@ public class GitIdeApi
         string relativePathToFile,
         Func<GitCliOutputParser, string, Task> callback)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git log file",
@@ -638,7 +638,7 @@ public class GitIdeApi
         string relativePathToFile,
         Func<GitCliOutputParser, string, Task> callback)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git show file",
@@ -781,7 +781,7 @@ public class GitIdeApi
         string relativePathToFile,
         Func<GitCliOutputParser, string, List<int>, Task> callback)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "git diff file",
@@ -974,7 +974,7 @@ public class GitIdeApi
             var untrackedFileGroupTreeView = new TreeViewGitFileGroup(
                 "Untracked",
                 _ideComponentRenderers,
-                _commonComponentRenderers,
+                _commonApi.ComponentRendererApi,
                 true,
                 true);
 
@@ -990,7 +990,7 @@ public class GitIdeApi
             var stagedFileGroupTreeView = new TreeViewGitFileGroup(
                 "Staged",
                 _ideComponentRenderers,
-                _commonComponentRenderers,
+                _commonApi.ComponentRendererApi,
                 true,
                 true);
 
@@ -1006,7 +1006,7 @@ public class GitIdeApi
             var unstagedFileGroupTreeView = new TreeViewGitFileGroup(
                 "Not-staged",
                 _ideComponentRenderers,
-                _commonComponentRenderers,
+                _commonApi.ComponentRendererApi,
                 true,
                 true);
 
@@ -1023,18 +1023,18 @@ public class GitIdeApi
                 ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
                 : new() { firstNode };
 
-            if (!_treeViewService.TryGetTreeViewContainer(GitState.TreeViewGitChangesKey, out var container))
+            if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(GitState.TreeViewGitChangesKey, out var container))
             {
-                _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                _commonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
                     GitState.TreeViewGitChangesKey,
                     adhocRoot,
                     activeNodes));
             }
             else
             {
-                _treeViewService.ReduceWithRootNodeAction(GitState.TreeViewGitChangesKey, adhocRoot);
+                _commonApi.TreeViewApi.ReduceWithRootNodeAction(GitState.TreeViewGitChangesKey, adhocRoot);
 
-                _treeViewService.ReduceSetActiveNodeAction(
+                _commonApi.TreeViewApi.ReduceSetActiveNodeAction(
                     GitState.TreeViewGitChangesKey,
                     firstNode,
                     true,

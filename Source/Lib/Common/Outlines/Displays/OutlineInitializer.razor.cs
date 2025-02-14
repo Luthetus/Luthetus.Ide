@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Outlines.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Outlines.Displays;
 
@@ -15,7 +16,7 @@ public partial class OutlineInitializer : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
 	{
-		OutlineService.OutlineStateChanged += OnOutlineStateChanged;
+		CommonApi.OutlineApi.OutlineStateChanged += OnOutlineStateChanged;
 		base.OnInitialized();
 	}
 
@@ -110,6 +111,6 @@ public partial class OutlineInitializer : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		OutlineService.OutlineStateChanged -= OnOutlineStateChanged;
+		CommonApi.OutlineApi.OutlineStateChanged -= OnOutlineStateChanged;
 	}
 }

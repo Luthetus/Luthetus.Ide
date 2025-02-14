@@ -32,8 +32,8 @@ public partial class WatchWindowDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _treeViewMouseEventHandler = new(TreeViewService, BackgroundTaskService);
-        _treeViewKeyboardEventHandler = new(TreeViewService, BackgroundTaskService);
+        _treeViewMouseEventHandler = new(CommonApi);
+        _treeViewKeyboardEventHandler = new(CommonApi);
         base.OnInitialized();
     }
 
@@ -41,15 +41,15 @@ public partial class WatchWindowDisplay : ComponentBase
     {
         if (firstRender)
         {
-            if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
+            if (!CommonApi.TreeViewApi.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
                 var rootNode = new TreeViewReflection(
                     WatchWindowObject,
                     true,
                     false,
-                    CommonComponentRenderers);
+                    CommonApi.ComponentRendererApi);
 
-                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                CommonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     rootNode,
                     new() { rootNode }));
@@ -75,12 +75,12 @@ public partial class WatchWindowDisplay : ComponentBase
 			},
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     
     public void Dispose()
 	{
-		TreeViewService.ReduceDisposeContainerAction(TreeViewContainerKey);
+		CommonApi.TreeViewApi.ReduceDisposeContainerAction(TreeViewContainerKey);
 	}
 }

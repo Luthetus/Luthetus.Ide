@@ -34,7 +34,7 @@ public class InputFileIdeApi
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Request InputFileState Form",
@@ -67,7 +67,7 @@ public class InputFileIdeApi
             true,
             null);
 
-        _dialogService.ReduceRegisterAction(inputFileDialog);
+        _commonApi.DialogApi.ReduceRegisterAction(inputFileDialog);
 
         return Task.CompletedTask;
     }

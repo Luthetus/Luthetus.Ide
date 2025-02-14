@@ -49,7 +49,7 @@ public class TerminalIntegrated : ITerminal
 
     public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest)
     {
-		_backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -58,7 +58,7 @@ public class TerminalIntegrated : ITerminal
     
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _backgroundTaskService.EnqueueAsync(
+		return _commonApi.BackgroundTaskApi.EnqueueAsync(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -145,7 +145,7 @@ public class TerminalIntegrated : ITerminal
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonApi.ComponentRendererApi, _commonApi.NotificationApi, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{
@@ -184,7 +184,7 @@ public class TerminalIntegrated : ITerminal
 			{
 				var terminalCommandRequest = new TerminalCommandRequest(
 		    		$"{_pathToShellExecutable} -i",
-					_environmentProvider.HomeDirectoryAbsolutePath.Value);
+                    _commonApi.EnvironmentProviderApi.HomeDirectoryAbsolutePath.Value);
 		    	
 		    	var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
 		    	ActiveTerminalCommandParsed = parsedCommand;
@@ -196,8 +196,8 @@ public class TerminalIntegrated : ITerminal
 					parsedCommand,
 					new StartedCommandEvent(-1));
 					
-				var pipeFilePath = _environmentProvider.JoinPaths(
-					_environmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+				var pipeFilePath = _commonApi.EnvironmentProviderApi.JoinPaths(
+					_commonApi.EnvironmentProviderApi.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
 					"terminal-test.txt");
 					
 				_shellCliWrapCommand = "abc" | Cli
@@ -218,7 +218,7 @@ public class TerminalIntegrated : ITerminal
 			catch (Exception e)
 			{
 				Console.WriteLine("exception shell");
-				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
+				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonApi.ComponentRendererApi, _commonApi.NotificationApi, TimeSpan.FromSeconds(14));
 			}
 			finally
 			{

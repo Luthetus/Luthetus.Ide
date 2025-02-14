@@ -179,7 +179,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "New File Action",
@@ -189,11 +189,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 {
                     var emptyFileAbsolutePathString = namespacePath.AbsolutePath.Value + fileName;
 
-                    var emptyFileAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                    var emptyFileAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(
                         emptyFileAbsolutePathString,
                         false);
 
-                    await _fileSystemProvider.File.WriteAllTextAsync(
+                    await _commonApi.FileSystemProviderApi.File.WriteAllTextAsync(
                             emptyFileAbsolutePath.Value,
                             string.Empty,
                             CancellationToken.None)
@@ -208,9 +208,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     foreach (var fileTemplate in allTemplates)
                     {
                         var templateResult = fileTemplate.ConstructFileContents.Invoke(
-                            new FileTemplateParameter(fileName, namespacePath, _environmentProvider));
+                            new FileTemplateParameter(fileName, namespacePath, _commonApi.EnvironmentProviderApi));
 
-                        await _fileSystemProvider.File.WriteAllTextAsync(
+                        await _commonApi.FileSystemProviderApi.File.WriteAllTextAsync(
                                 templateResult.FileNamespacePath.AbsolutePath.Value,
                                 templateResult.Contents,
                                 CancellationToken.None)
@@ -225,15 +225,15 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     private void PerformNewDirectory(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.Value + directoryName;
-        var directoryAbsolutePath = _environmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
+        var directoryAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(directoryAbsolutePathString, true);
 
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "New Directory Action",
             async () =>
             {
-                await _fileSystemProvider.Directory.CreateDirectoryAsync(
+                await _commonApi.FileSystemProviderApi.Directory.CreateDirectoryAsync(
                         directoryAbsolutePath.Value,
                         CancellationToken.None)
                     .ConfigureAwait(false);
@@ -244,7 +244,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     private void PerformDeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Delete File Action",
@@ -252,13 +252,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             {
                 if (absolutePath.IsDirectory)
                 {
-                    await _fileSystemProvider.Directory
+                    await _commonApi.FileSystemProviderApi.Directory
                         .DeleteAsync(absolutePath.Value, true, CancellationToken.None)
                         .ConfigureAwait(false);
                 }
                 else
                 {
-                    await _fileSystemProvider.File
+                    await _commonApi.FileSystemProviderApi.File
                         .DeleteAsync(absolutePath.Value)
                         .ConfigureAwait(false);
                 }
@@ -269,13 +269,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     private void PerformCopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Copy File Action",
             async () =>
             {
-                await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+                await _commonApi.ClipboardApi.SetClipboard(ClipboardFacts.FormatPhrase(
                         ClipboardFacts.CopyCommand,
                         ClipboardFacts.AbsolutePathDataType,
                         absolutePath.Value))
@@ -289,13 +289,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         AbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Cut File Action",
             async () =>
             {
-                await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+                await _commonApi.ClipboardApi.SetClipboard(ClipboardFacts.FormatPhrase(
                         ClipboardFacts.CutCommand,
                         ClipboardFacts.AbsolutePathDataType,
                         absolutePath.Value))
@@ -307,13 +307,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
     private void PerformPasteFile(AbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Paste File Action",
             async () =>
             {
-                var clipboardContents = await _clipboardService.ReadClipboard().ConfigureAwait(false);
+                var clipboardContents = await _commonApi.ClipboardApi.ReadClipboard().ConfigureAwait(false);
 
                 if (ClipboardFacts.TryParseString(clipboardContents, out var clipboardPhrase))
                 {
@@ -327,15 +327,15 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
                             // Should the if and else if be kept as inline awaits?
                             // If kept as inline awaits then the else if won't execute if the first one succeeds.
-                            if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
+                            if (await _commonApi.FileSystemProviderApi.Directory.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                             {
-                                clipboardAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                                clipboardAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(
                                     clipboardPhrase.Value,
                                     true);
                             }
-                            else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
+                            else if (await _commonApi.FileSystemProviderApi.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                             {
-                                clipboardAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                                clipboardAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(
                                     clipboardPhrase.Value,
                                     false);
                             }
@@ -360,7 +360,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
 
                                         var sourceAbsolutePathString = clipboardAbsolutePath.Value;
 
-                                        await _fileSystemProvider.File.CopyAsync(
+                                        await _commonApi.FileSystemProviderApi.File.CopyAsync(
                                                 sourceAbsolutePathString,
                                                 destinationAbsolutePathString)
                                             .ConfigureAwait(false);
@@ -392,7 +392,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
         {
-            var temporaryNextName = _environmentProvider.GetRandomFileName();
+            var temporaryNextName = _commonApi.EnvironmentProviderApi.GetRandomFileName();
 
             var temporaryRenameResult = PerformRename(
                 sourceAbsolutePath,
@@ -418,20 +418,20 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         try
         {
             if (sourceAbsolutePath.IsDirectory)
-                _fileSystemProvider.Directory.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
+                _commonApi.FileSystemProviderApi.Directory.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
             else
-                _fileSystemProvider.File.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
+                _commonApi.FileSystemProviderApi.File.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError("Rename Action", e.Message, _commonApi.ComponentRendererApi, notificationService, TimeSpan.FromSeconds(14));
             onAfterCompletion.Invoke();
             return default;
         }
 
         onAfterCompletion.Invoke();
 
-        return _environmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
+        return _commonApi.EnvironmentProviderApi.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
     }
 
     /// <summary>

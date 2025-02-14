@@ -273,20 +273,20 @@ public class HeaderDriver
         
         var dropdownKey = Key<DropdownRecord>.NewKey();
         
-        var buttonDimensions = await _root.TextEditorService.JsRuntimeCommonApi
+        var buttonDimensions = await _root.TextEditorService.CommonApi.LuthetusCommonJavaScriptInteropApi
 			.MeasureElementById(_reloadButtonHtmlElementId)
 			.ConfigureAwait(false);
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 		
-		var absolutePath = _root.EnvironmentProvider.AbsolutePathFactory(model.ResourceUri.Value, false);
+		var absolutePath = _root.CommonApi.EnvironmentProviderApi.AbsolutePathFactory(model.ResourceUri.Value, false);
 
 		menuOptionList.Add(new MenuOptionRecord(
 		    "Cancel",
 		    MenuOptionKind.Read,
 		    onClickFunc: () =>
 		    {
-			    _root.DropdownService.ReduceDisposeAction(dropdownKey);
+			    _root.CommonApi.DropdownApi.ReduceDisposeAction(dropdownKey);
 		    	return Task.CompletedTask;
 		    }));
 		    
@@ -321,9 +321,9 @@ public class HeaderDriver
 					menu
 				}
 			},
-			async () => await _root.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
+			async () => await _root.TextEditorService.CommonApi.LuthetusCommonJavaScriptInteropApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
 
-        _root.DropdownService.ReduceRegisterAction(dropdownRecord);
+        _root.CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
     }
 
     public void ShowWatchWindowDisplayDialogOnClick()
@@ -358,7 +358,7 @@ public class HeaderDriver
 			true,
 			null);
 
-        _root.DialogService.ReduceRegisterAction(dialogRecord);
+        _root.CommonApi.DialogApi.ReduceRegisterAction(dialogRecord);
     }
 
     public Task DoRefreshOnClick()

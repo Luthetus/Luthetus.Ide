@@ -83,9 +83,9 @@ public sealed class DisplayTracker : IDisposable
 				IsFirstDisplay = true;
                 becameDisplayed = true;
 
-                // Furthermore, subscribe to the events which indicate that the UI has changed (for example font-size)
+				// Furthermore, subscribe to the events which indicate that the UI has changed (for example font-size)
 				// so that these events are immediately handled, considering that this view model is being rendered on the UI.
-                _textEditorService.AppDimensionService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
+				_textEditorService.CommonApi.AppDimensionApi.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
             }
 			else if (Links > 1)
 			{
@@ -167,15 +167,15 @@ public sealed class DisplayTracker : IDisposable
 
             if (Links == 0)
             {
-                // This ViewModel will NO LONGER be rendered.
+				// This ViewModel will NO LONGER be rendered.
 				//
 				// The goal is to lazily update the UI, i.e.: only when a given view model is being displayed on the UI.
 				//
 				// Therefore, proceed to unsubscribe from presume that the UI this newly rendered view model is outdated,
 				// (perhaps the font-size was changed for eample)
 				//
-                // Due to lazily updating the UI, proceed to unsubscribe from the events which indicate that the UI has changed (for example font-size).
-				_textEditorService.AppDimensionService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
+				// Due to lazily updating the UI, proceed to unsubscribe from the events which indicate that the UI has changed (for example font-size).
+				_textEditorService.CommonApi.AppDimensionApi.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
             }
 			else if (Links < 0)
 			{
@@ -248,7 +248,7 @@ public sealed class DisplayTracker : IDisposable
     {
         lock (_linksLock)
 		{
-        	_textEditorService.AppDimensionService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
+        	_textEditorService.CommonApi.AppDimensionApi.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
 		}
     }
 }

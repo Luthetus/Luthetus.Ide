@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
 
@@ -25,8 +26,8 @@ public partial class ResizableRow : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonApi.DragApi.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
         base.OnInitialized();
     }
@@ -38,7 +39,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonApi.DragApi.GetDragState().ShouldDisplay)
         {
 			bool wasTargetOfDragging = _dragEventHandler is not null;
 
@@ -46,11 +47,11 @@ public partial class ResizableRow : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-				AppDimensionService.ReduceNotifyIntraAppResizeAction();
+				CommonApi.AppDimensionApi.ReduceNotifyIntraAppResizeAction();
         }
         else
         {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
+            var mouseEventArgs = CommonApi.DragApi.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -71,7 +72,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
         Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task> dragEventHandler)
     {
         _dragEventHandler = dragEventHandler;
-        DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+        CommonApi.DragApi.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
 
     private async Task DragEventHandlerResizeHandleAsync(
@@ -92,7 +93,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonApi.DragApi.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

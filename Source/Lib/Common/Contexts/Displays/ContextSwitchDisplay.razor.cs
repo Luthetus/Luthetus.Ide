@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -53,7 +54,7 @@ public partial class ContextSwitchDisplay : ComponentBase
 	{
 		if (firstRender)
 		{
-			var contextSwitchState = ContextService.GetContextSwitchState();
+			var contextSwitchState = CommonApi.ContextApi.GetContextSwitchState();
 			
 			foreach (var contextSwitchGroup in contextSwitchState.ContextSwitchGroupList)
 			{
@@ -217,7 +218,7 @@ public partial class ContextSwitchDisplay : ComponentBase
                 _activeIndex = _flatMenuOptionList.Count - 1;
                 break;
             case "Enter":
-				WidgetService.ReduceSetWidgetAction(null);
+                CommonApi.WidgetApi.ReduceSetWidgetAction(null);
                 break;
         }
     }

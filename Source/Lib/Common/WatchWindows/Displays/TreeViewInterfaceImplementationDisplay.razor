@@ -1,7 +1,7 @@
 <div title="@TreeViewInterfaceImplementation.Key.Guid">
 
 	@{
-		var appOptionsService = AppOptionsService.GetAppOptionsState();
+		var appOptionsService = CommonApi.AppOptionApi.GetAppOptionsState();
 	
 		var iconDriver = new IconDriver(
 			appOptionsService.Options.IconSizeInPixels,

@@ -34,7 +34,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+        CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private static bool _hasInitialized;
 
@@ -44,14 +44,12 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 		TextEditorService.TextEditorStateChanged += RerenderAfterEvent;
 
 		_compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
-			IdeBackgroundTaskApi,
-			TreeViewService,
-			BackgroundTaskService);
+			CommonApi,
+			IdeBackgroundTaskApi);
 
 		_compilerServiceExplorerTreeViewMouseEventHandler = new CompilerServiceExplorerTreeViewMouseEventHandler(
-			IdeBackgroundTaskApi,
-			TreeViewService,
-			BackgroundTaskService);
+            CommonApi,
+            IdeBackgroundTaskApi);
 
 		base.OnInitialized();
 	}
@@ -91,7 +89,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			},
 			restoreFocusOnClose: null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

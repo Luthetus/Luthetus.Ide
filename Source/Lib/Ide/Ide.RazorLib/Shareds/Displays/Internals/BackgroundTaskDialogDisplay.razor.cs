@@ -19,14 +19,14 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTaskChanged += ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
+        CommonApi.BackgroundTaskApi.ContinuousTaskWorker.ExecutingBackgroundTaskChanged += ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
 
         base.OnInitialized();
     }
 
     private void ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged()
     {
-        var executingBackgroundTask = BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTask;
+        var executingBackgroundTask = CommonApi.BackgroundTaskApi.ContinuousTaskWorker.ExecutingBackgroundTask;
         
         if (executingBackgroundTask is not null)
         {
@@ -59,6 +59,6 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTaskChanged -= ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
+        CommonApi.BackgroundTaskApi.ContinuousTaskWorker.ExecutingBackgroundTaskChanged -= ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
     }
 }

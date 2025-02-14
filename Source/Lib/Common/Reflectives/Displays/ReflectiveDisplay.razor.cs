@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reflectives.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Reflectives.Displays;
 
@@ -40,7 +41,7 @@ public partial class ReflectiveDisplay : ComponentBase
 
     private void OnSelectChanged(ChangeEventArgs changeEventArgs)
     {
-        var model = ReflectiveService.GetReflectiveModel(ReflectiveModelKey);
+        var model = CommonApi.ReflectiveApi.GetReflectiveModel(ReflectiveModelKey);
 
         if (model is null)
             return;
@@ -52,12 +53,12 @@ public partial class ReflectiveDisplay : ComponentBase
 
     private void WrapRecover()
     {
-        var displayState = ReflectiveService.GetReflectiveModel(ReflectiveModelKey);
+        var displayState = CommonApi.ReflectiveApi.GetReflectiveModel(ReflectiveModelKey);
 
         if (displayState is null)
             return;
 
-        ReflectiveService.ReduceWithAction(
+        CommonApi.ReflectiveApi.ReduceWithAction(
             displayState.Key, inDisplayState => inDisplayState with { });
 
         _errorBoundaryComponent.Recover();
@@ -65,7 +66,7 @@ public partial class ReflectiveDisplay : ComponentBase
 
     private void DispatchDisposeAction(ReflectiveModel reflectiveModel)
     {
-        ReflectiveService.ReduceDisposeAction(reflectiveModel.Key);
+        CommonApi.ReflectiveApi.ReduceDisposeAction(reflectiveModel.Key);
     }
 
     private void DispatchRegisterAction(int insertionIndex)
@@ -77,9 +78,9 @@ public partial class ReflectiveDisplay : ComponentBase
                 Guid.Empty,
                 Array.Empty<PropertyInfo>(),
                 new(),
-                ReflectiveService);
+                CommonApi.ReflectiveApi);
 
-        ReflectiveService.ReduceRegisterAction(model, insertionIndex);
+        CommonApi.ReflectiveApi.ReduceRegisterAction(model, insertionIndex);
     }
 
     private bool GetIsOptionSelected(ReflectiveModel model, Guid typeGuid)

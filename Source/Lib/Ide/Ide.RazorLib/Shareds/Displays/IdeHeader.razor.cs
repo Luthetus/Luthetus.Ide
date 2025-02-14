@@ -70,9 +70,9 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
-	
-		BackgroundTaskService.Enqueue(
+        CommonApi.AppOptionApi.AppOptionsStateChanged += OnAppOptionsStateChanged;
+
+        CommonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			nameof(IdeHeader),
@@ -182,7 +182,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						true,
 						null);
 
-                    DialogService.ReduceRegisterAction(CommandFactory.CodeSearchDialog);
+                    CommonApi.DialogApi.ReduceRegisterAction(CommandFactory.CodeSearchDialog);
                     return Task.CompletedTask;
 				});
 
@@ -242,7 +242,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						true,
 						null);
 			
-			        DialogService.ReduceRegisterAction(dialogRecord);
+			        CommonApi.DialogApi.ReduceRegisterAction(dialogRecord);
 			        return Task.CompletedTask;
                 });
 
@@ -282,8 +282,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private void InitializeMenuView()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-		var panelState = PanelService.GetPanelState();
-		var dialogState = DialogService.GetDialogState();
+		var panelState = CommonApi.PanelApi.GetPanelState();
+		var dialogState = CommonApi.DialogApi.GetDialogState();
 
 		foreach (var panel in panelState.PanelList)
 		{
@@ -296,7 +296,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
 					if (panelGroup is not null)
 					{
-						PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
+						CommonApi.PanelApi.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
 						
 						var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 						
@@ -307,7 +307,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						        nameof(ContextHelper.ConstructFocusContextElementCommand),
 						        nameof(ContextHelper.ConstructFocusContextElementCommand),
 						        JsRuntimeCommonApi,
-						        PanelService);
+						        CommonApi.PanelApi);
 						        
 						    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 						}
@@ -319,7 +319,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						
 						if (existingDialog is not null)
 						{
-							DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+							CommonApi.DialogApi.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
 							
 							await JsRuntimeCommonApi
 				                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
@@ -327,8 +327,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						}
 						else
 						{
-							PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
-							PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
+							CommonApi.PanelApi.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
+							CommonApi.PanelApi.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
 							
 							var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 						
@@ -339,7 +339,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 							        nameof(ContextHelper.ConstructFocusContextElementCommand),
 							        nameof(ContextHelper.ConstructFocusContextElementCommand),
 							        JsRuntimeCommonApi,
-							        PanelService);
+							        CommonApi.PanelApi);
 							        
 							    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 							}
@@ -390,7 +390,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			true,
 			null);
 
-        DialogService.ReduceRegisterAction(dialogRecord);
+        CommonApi.DialogApi.ReduceRegisterAction(dialogRecord);
 		return Task.CompletedTask;
 	}
 
@@ -405,7 +405,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 			true,
 			null);
 
-        DialogService.ReduceRegisterAction(dialogRecord);
+        CommonApi.DialogApi.ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
@@ -470,7 +470,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderFileDropdownOnClick()
 	{
 		return DropdownHelper.RenderDropdownAsync(
-			DropdownService,
+            CommonApi.DropdownApi,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonFileId,
 			DropdownOrientation.Bottom,
@@ -482,7 +482,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderToolsDropdownOnClick()
 	{
 		return DropdownHelper.RenderDropdownAsync(
-			DropdownService,
+			CommonApi.DropdownApi,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonToolsId,
 			DropdownOrientation.Bottom,
@@ -496,7 +496,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 		InitializeMenuView();
 		
 		return DropdownHelper.RenderDropdownAsync(
-			DropdownService,
+			CommonApi.DropdownApi,
 			JsRuntimeCommonApi,
 			IdeHeaderState.ButtonViewId,
 			DropdownOrientation.Bottom,
@@ -508,7 +508,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	private Task RenderRunDropdownOnClick()
 	{
 		 return DropdownHelper.RenderDropdownAsync(
-			DropdownService,
+			CommonApi.DropdownApi,
 			JsRuntimeCommonApi,
 		    IdeHeaderState.ButtonRunId,
 			DropdownOrientation.Bottom,
@@ -524,6 +524,6 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+		CommonApi.AppOptionApi.AppOptionsStateChanged -= OnAppOptionsStateChanged;
 	}
 }

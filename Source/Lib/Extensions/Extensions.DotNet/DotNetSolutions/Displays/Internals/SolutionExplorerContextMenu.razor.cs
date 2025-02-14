@@ -194,7 +194,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 								.Invoke()
 								.ConfigureAwait(false);
 
-							BackgroundTaskService.Enqueue(
+                            CommonApi.BackgroundTaskApi.Enqueue(
 								Key<IBackgroundTask>.NewKey(),
 								BackgroundTaskFacts.ContinuousQueueKey,
 								"SolutionExplorer_TreeView_MultiSelect_DeleteFiles",
@@ -206,18 +206,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 										if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
 										{
-											await FileSystemProvider.Directory
+											await CommonApi.FileSystemProviderApi.Directory
 												.DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None)
 												.ConfigureAwait(false);
 										}
 										else
 										{
-											await FileSystemProvider.File
+											await CommonApi.FileSystemProviderApi.File
 												.DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value)
 												.ConfigureAwait(false);
 										}
 
-										if (TreeViewService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
+										if (CommonApi.TreeViewApi.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
 											mostRecentContainer is not null)
 										{
 											var localParent = node.Parent;
@@ -225,7 +225,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 											if (localParent is not null)
 											{
 												await localParent.LoadChildListAsync().ConfigureAwait(false);
-												TreeViewService.ReduceReRenderNodeAction(mostRecentContainer.Key, localParent);
+												CommonApi.TreeViewApi.ReduceReRenderNodeAction(mostRecentContainer.Key, localParent);
 											}
 										}
 									}
@@ -313,7 +313,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				return Array.Empty<MenuOptionRecord>();
 		}
 
-		var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
+		var parentDirectoryAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(parentDirectory, true);
 
 		return new[]
 		{
@@ -341,14 +341,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				NotificationService,
+                CommonApi.NotificationApi,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				NotificationService,
+				CommonApi.NotificationApi,
 				() =>
 				{
 					CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
@@ -372,7 +372,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewSolution,
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				NotificationService,
+				CommonApi.NotificationApi,
 				() =>
 				{
 					CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
@@ -389,7 +389,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				NotificationService,
+				CommonApi.NotificationApi,
 				() => Task.CompletedTask),
 		};
 	}
@@ -409,7 +409,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				NotificationService,
+				CommonApi.NotificationApi,
 				() => Task.CompletedTask),
 		};
 	}
@@ -451,14 +451,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			MenuOptionsFactory.CopyFile(
 				treeViewModel.Item.AbsolutePath,
 				() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonApi.ComponentRendererApi, CommonApi.NotificationApi, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				}),
 			MenuOptionsFactory.CutFile(
 				treeViewModel.Item.AbsolutePath,
 				() => {
 					ParentOfCutFile = parentTreeViewModel;
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonApi.ComponentRendererApi, CommonApi.NotificationApi, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				}),
 			MenuOptionsFactory.DeleteFile(
@@ -466,7 +466,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			MenuOptionsFactory.RenameFile(
 				treeViewModel.Item.AbsolutePath,
-				NotificationService,
+				CommonApi.NotificationApi,
 				async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 		};
 	}
@@ -498,7 +498,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			true,
 			null);
 
-		DialogService.ReduceRegisterAction(dialogRecord);
+		CommonApi.DialogApi.ReduceRegisterAction(dialogRecord);
 		return Task.CompletedTask;
 	}
 
@@ -571,9 +571,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		TreeViewService.ReduceReRenderNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
+		CommonApi.TreeViewApi.ReduceReRenderNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
 
-		TreeViewService.ReduceMoveUpAction(
+		CommonApi.TreeViewApi.ReduceMoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

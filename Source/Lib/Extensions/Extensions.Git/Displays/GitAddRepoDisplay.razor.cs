@@ -10,6 +10,7 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
@@ -53,13 +54,13 @@ public partial class GitAddRepoDisplay : ComponentBase
                             NotificationHelper.DispatchError(
                                 $"ERROR: {nameof(RequestInputFileForGitFolder)}",
                                 "'.git' folder did not have a parent directory.",
-                                CommonComponentRenderers,
-                                NotificationService,
+                                CommonApi.ComponentRendererApi,
+                                CommonApi.NotificationApi,
                                 TimeSpan.FromSeconds(10));
                             return;
                         }
 
-                        absolutePath = EnvironmentProvider.AbsolutePathFactory(
+                        absolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(
                             absolutePath.ParentDirectory,
                             true);
                     }
@@ -82,9 +83,9 @@ public partial class GitAddRepoDisplay : ComponentBase
 
     private void ConfirmGitFolderOnClick()
     {
-        var repoAbsolutePath = EnvironmentProvider.AbsolutePathFactory(_repoAbsolutePathString, true);
+        var repoAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(_repoAbsolutePathString, true);
 		GitBackgroundTaskApi.Git.HandleSetRepoAction(new GitRepo(repoAbsolutePath));
 
-        DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
+        CommonApi.DialogApi.ReduceDisposeAction(Dialog.DynamicViewModelKey);
     }
 }

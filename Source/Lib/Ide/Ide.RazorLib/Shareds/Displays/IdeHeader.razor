@@ -10,7 +10,7 @@
 @using Luthetus.Ide.RazorLib.Shareds.Models;
 
 @{
-	var borderBottomHeight =  AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels;
+	var borderBottomHeight = CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleHeightInPixels;
 	var contextBoundaryCssStyle = $"display: flex; justify-content: space-between; border-bottom: {borderBottomHeight}px solid var(--luth_primary-border-color);";
 }
 
@@ -61,7 +61,7 @@
             Info
         </button>
 
-        @if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
+        @if (CommonApi.HostingInformationApi.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {
             <IdeImportExportButtons/>
         }

@@ -2,7 +2,7 @@
     var seenBackgroundTasks = GetThreadSafeCopyOfSeenBackgroundTasks();
 	seenBackgroundTasks.Reverse();
 
-    var executingBackgroundTask = BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTask;
+    var executingBackgroundTask = CommonApi.BackgroundTaskApi.ContinuousTaskWorker.ExecutingBackgroundTask;
 }
 
 <div class="luth_ide_background-task">

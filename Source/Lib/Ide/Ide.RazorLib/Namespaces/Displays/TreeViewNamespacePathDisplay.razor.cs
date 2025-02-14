@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Namespaces.Displays;
 
@@ -21,8 +22,8 @@ public partial class TreeViewNamespacePathDisplay : ComponentBase, ITreeViewName
     public string CssStyleString { get; set; } = string.Empty;
     
     public int WidthInPixels => LuthetusCommonIconWidthOverride ??
-        AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels;
+		CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels;
 
     public int HeightInPixels => LuthetusCommonIconHeightOverride ??
-        AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels;
+		CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels;
 }

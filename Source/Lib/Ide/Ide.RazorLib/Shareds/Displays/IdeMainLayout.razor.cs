@@ -13,6 +13,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -33,12 +34,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ElementDimensions _bodyElementDimensions = new();
     private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
 
-    private string UnselectableClassCss => DragService.GetDragState().ShouldDisplay ? "balc_unselectable" : string.Empty;
+    private string UnselectableClassCss => CommonApi.DragApi.GetDragState().ShouldDisplay ? "balc_unselectable" : string.Empty;
 
     protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonApi.DragApi.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         IdeMainLayoutService.IdeMainLayoutStateChanged += OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
@@ -46,7 +47,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+            	CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract),
             new DimensionUnit(
@@ -66,7 +67,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 .SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
 
-            await AppOptionsService
+            await CommonApi.AppOptionApi
                 .SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
         }
@@ -81,9 +82,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (_previousDragStateWrapShouldDisplay != DragService.GetDragState().ShouldDisplay)
+        if (_previousDragStateWrapShouldDisplay != CommonApi.DragApi.GetDragState().ShouldDisplay)
         {
-            _previousDragStateWrapShouldDisplay = DragService.GetDragState().ShouldDisplay;
+            _previousDragStateWrapShouldDisplay = CommonApi.DragApi.GetDragState().ShouldDisplay;
             await InvokeAsync(StateHasChanged);
         }
     }
@@ -102,8 +103,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonApi.DragApi.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         IdeMainLayoutService.IdeMainLayoutStateChanged -= OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }

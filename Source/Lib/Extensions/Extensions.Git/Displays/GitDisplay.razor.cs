@@ -15,6 +15,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
@@ -69,7 +70,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
     }
 
     private MenuRecord ConstructMenu()
@@ -169,7 +170,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
             true,
             null);
 
-        DialogService.ReduceRegisterAction(dialogViewModel);
+        CommonApi.DialogApi.ReduceRegisterAction(dialogViewModel);
     }
 
     private MenuOptionRecord GetBranchNewMenuOptionRecord(GitState localGitState)

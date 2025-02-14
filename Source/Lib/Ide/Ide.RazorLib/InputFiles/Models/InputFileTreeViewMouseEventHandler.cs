@@ -17,7 +17,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         LuthetusCommonApi commonApi,
         IInputFileService inputFileService,
         Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonApi)
     {
     	_commonApi = commonApi;
         _inputFileService = inputFileService;

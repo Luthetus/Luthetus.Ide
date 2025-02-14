@@ -45,8 +45,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     {
     	TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
     	TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
-    
-    	BackgroundTaskService.Enqueue(
+
+		CommonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             nameof(LuthetusCommonInitializer),
@@ -56,19 +56,19 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                 {
                     foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                     {
-                        ThemeService.ReduceRegisterAction(themeRecord);
+						CommonApi.ThemeApi.ReduceRegisterAction(themeRecord);
                     }
                 }
 
-                var initialThemeRecord = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+                var initialThemeRecord = CommonApi.ThemeApi.GetThemeState().ThemeList.FirstOrDefault(
                     x => x.Key == TextEditorConfig.InitialThemeKey);
 
                 if (initialThemeRecord is not null)
                     TextEditorService.OptionsApi.SetTheme(initialThemeRecord, updateStorage: false);
 
                 await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
-                                
-                ContextService.ReduceRegisterContextSwitchGroupAction(
+
+				CommonApi.ContextApi.ReduceRegisterContextSwitchGroupAction(
                 	new ContextSwitchGroup(
                 		ContextSwitchGroupKey,
 						"Text Editor",
@@ -91,7 +91,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 									{
 										viewModelList.Add(viewModel);
 										
-							        	var absolutePath = EnvironmentProvider.AbsolutePathFactory(
+							        	var absolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(
 								        	viewModel.ResourceUri.Value,
 								        	false);
 							        	
@@ -118,7 +118,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 							return Task.FromResult(menu);
 						}));
 
-                KeymapService.ReduceRegisterKeymapLayerAction(TextEditorKeymapDefaultFacts.HasSelectionLayer);
+				CommonApi.KeymapApi.ReduceRegisterKeymapLayerAction(TextEditorKeymapDefaultFacts.HasSelectionLayer);
             });
             
         base.OnInitialized();

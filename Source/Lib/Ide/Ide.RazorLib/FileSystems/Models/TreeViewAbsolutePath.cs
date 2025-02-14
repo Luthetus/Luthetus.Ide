@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
@@ -11,24 +12,18 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
 {
     public TreeViewAbsolutePath(
             AbsolutePath absolutePath,
+            LuthetusCommonApi commonApi,
             IIdeComponentRenderers ideComponentRenderers,
-            ICommonComponentRenderers commonComponentRenderers,
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
             bool isExpandable,
             bool isExpanded)
         : base(absolutePath, isExpandable, isExpanded)
     {
+        CommonApi = commonApi;
         IdeComponentRenderers = ideComponentRenderers;
-        CommonComponentRenderers = commonComponentRenderers;
-        FileSystemProvider = fileSystemProvider;
-        EnvironmentProvider = environmentProvider;
     }
 
     public IIdeComponentRenderers IdeComponentRenderers { get; }
-    public ICommonComponentRenderers CommonComponentRenderers { get; }
-    public IFileSystemProvider FileSystemProvider { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
+    public LuthetusCommonApi CommonApi { get; }
 
     public override bool Equals(object? obj)
     {
@@ -68,7 +63,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
         {
             ChildList = new List<TreeViewNoType>
             {
-                new TreeViewException(exception, false, false, CommonComponentRenderers)
+                new TreeViewException(exception, false, false, CommonApi.ComponentRendererApi)
                 {
                     Parent = this,
                     IndexAmongSiblings = 0,

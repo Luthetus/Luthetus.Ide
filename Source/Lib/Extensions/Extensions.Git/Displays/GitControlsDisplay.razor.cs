@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
@@ -66,6 +67,6 @@ public partial class GitControlsDisplay : ComponentBase
             true,
             null);
 
-        DialogService.ReduceRegisterAction(dialogViewModel);
+        CommonApi.DialogApi.ReduceRegisterAction(dialogViewModel);
     }
 }

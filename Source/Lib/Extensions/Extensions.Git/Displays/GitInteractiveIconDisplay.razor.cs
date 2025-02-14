@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
@@ -41,11 +42,11 @@ public partial class GitInteractiveIconDisplay : ComponentBase, IDisposable
             true,
             null);
 
-            DialogService.ReduceRegisterAction(dialogViewModel);
+            CommonApi.DialogApi.ReduceRegisterAction(dialogViewModel);
         }
         else
         {
-            var panelState = PanelService.GetPanelState();
+            var panelState = CommonApi.PanelApi.GetPanelState();
             var gitPanel = panelState.PanelList.FirstOrDefault(x => x.ContextRecordKey == ContextFacts.GitContext.ContextKey);
 
             if (gitPanel is null)
@@ -55,12 +56,12 @@ public partial class GitInteractiveIconDisplay : ComponentBase, IDisposable
 
             if (panelGroup is not null)
             {
-                PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, gitPanel.Key);
+                CommonApi.PanelApi.ReduceSetActivePanelTabAction(panelGroup.Key, gitPanel.Key);
             }
             else
             {
-                PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel, true);
-                PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel.Key);
+                CommonApi.PanelApi.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel, true);
+                CommonApi.PanelApi.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel.Key);
             }
         }
     }

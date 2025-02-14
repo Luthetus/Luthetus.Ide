@@ -2,7 +2,7 @@
 @using Luthetus.Common.RazorLib.Tabs.Displays;
 
 @{
-    var panelState = PanelService.GetPanelState();
+    var panelState = CommonApi.PanelApi.GetPanelState();
 
     var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 

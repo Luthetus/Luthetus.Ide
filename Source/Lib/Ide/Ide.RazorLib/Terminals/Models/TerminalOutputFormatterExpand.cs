@@ -17,6 +17,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -31,23 +32,20 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	private readonly ITerminal _terminal;
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly IDialogService _dialogService;
-	private readonly IPanelService _panelService;
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly IJSRuntime _jsRuntime;
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
 		ITextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
-		IDialogService dialogService,
-		IPanelService panelService,
+		LuthetusCommonApi commonApi,
         IJSRuntime jsRuntime)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
-		_dialogService = dialogService;
-		_panelService = panelService;
+        _commonApi = commonApi;
 		_jsRuntime = jsRuntime;
 		
 		TextEditorModelResourceUri = new(
@@ -144,8 +142,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             TextEditorViewModelKey,
             TextEditorModelResourceUri,
             _textEditorService,
-            _panelService,
-            _dialogService,
+            _commonApi,
             _jsRuntime,
             VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),

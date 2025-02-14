@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 

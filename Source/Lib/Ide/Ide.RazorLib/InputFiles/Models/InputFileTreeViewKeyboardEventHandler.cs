@@ -27,7 +27,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 	        Func<Task> focusSearchInputElementFunc,
 	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonApi)
     {
     	_commonApi = commonApi;
         _inputFileService = inputFileService;
@@ -131,10 +131,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         _inputFileService.ReduceOpenParentDirectoryAction(
             _ideComponentRenderers,
-            _commonComponentRenderers,
-            _fileSystemProvider,
-            _environmentProvider,
-            _backgroundTaskService,
+            _commonApi,
             parentDirectoryTreeViewModel: null);
 
         ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
@@ -142,7 +139,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleRefreshButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.ReduceRefreshCurrentSelectionAction(_backgroundTaskService, currentSelection: null);
+        _inputFileService.ReduceRefreshCurrentSelectionAction(_commonApi.BackgroundTaskApi, currentSelection: null);
         ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 

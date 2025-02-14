@@ -37,27 +37,22 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	private bool _disposed;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+        CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	protected override void OnInitialized()
 	{
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 	
 		_solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
+			CommonApi,
 			IdeBackgroundTaskApi,
 			MenuOptionsFactory,
-			CommonComponentRenderers,
-			TextEditorService,
-			TreeViewService,
-			NotificationService,
-			BackgroundTaskService,
-			EnvironmentProvider);
+			TextEditorService);
 
 		_solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
-			IdeBackgroundTaskApi,
-			TextEditorService,
-			TreeViewService,
-			BackgroundTaskService);
+            CommonApi,
+            IdeBackgroundTaskApi,
+			TextEditorService);
 
 		base.OnInitialized();
 	}
@@ -78,7 +73,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
@@ -93,7 +88,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			true,
 			null);
 
-		DialogService.ReduceRegisterAction(dialogRecord);
+        CommonApi.DialogApi.ReduceRegisterAction(dialogRecord);
 	}
 	
 	public async void OnDotNetSolutionStateChanged()

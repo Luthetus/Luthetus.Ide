@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 
@@ -19,15 +20,7 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -52,28 +45,24 @@ public partial class InputFileSidebar : ComponentBase
         if (firstRender)
         {
             var directoryHomeNode = new TreeViewAbsolutePath(
-                EnvironmentProvider.HomeDirectoryAbsolutePath,
+                CommonApi.EnvironmentProviderApi.HomeDirectoryAbsolutePath,
+                CommonApi,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
                 true,
                 false);
 
             var directoryRootNode = new TreeViewAbsolutePath(
-                EnvironmentProvider.RootDirectoryAbsolutePath,
+                CommonApi.EnvironmentProviderApi.RootDirectoryAbsolutePath,
+                CommonApi,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
                 true,
                 false);
 
             var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(directoryHomeNode, directoryRootNode);
 
-            if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
+            if (!CommonApi.TreeViewApi.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
-                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                CommonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null
@@ -101,7 +90,7 @@ public partial class InputFileSidebar : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

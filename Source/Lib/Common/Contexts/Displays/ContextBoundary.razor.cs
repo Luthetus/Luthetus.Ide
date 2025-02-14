@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Outlines.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -35,13 +36,13 @@ public partial class ContextBoundary : ComponentBase
         if (ParentContextBoundary is not null)
             ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyList);
         else
-            ContextService.ReduceSetFocusedContextHeirarchyAction(new(contextRecordKeyList));
+            CommonApi.ContextApi.ReduceSetFocusedContextHeirarchyAction(new(contextRecordKeyList));
     }
     
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
     public void HandleOnFocus()
     {
-    	OutlineService.ReduceSetOutlineAction(
+        CommonApi.OutlineApi.ReduceSetOutlineAction(
 	    	ContextRecord.ContextElementId,
 	    	null,
 	    	true);
@@ -49,7 +50,7 @@ public partial class ContextBoundary : ComponentBase
     
     public void HandleOnBlur()
     {
-    	OutlineService.ReduceSetOutlineAction(
+        CommonApi.OutlineApi.ReduceSetOutlineAction(
 	    	null,
 	    	null,
 	    	false);
@@ -58,7 +59,7 @@ public partial class ContextBoundary : ComponentBase
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
     public void HandleOnFocusIn()
     {
-    	if (ContextService.GetContextState().FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey)
+    	if (CommonApi.ContextApi.GetContextState().FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey)
     		DispatchSetActiveContextStatesAction(new());
     }
     

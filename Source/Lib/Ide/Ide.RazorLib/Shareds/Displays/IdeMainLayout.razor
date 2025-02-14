@@ -14,8 +14,8 @@
 @inherits LayoutComponentBase
 
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
-                 ClassCssString="@($"luth_ide_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString} {TextEditorService.ThemeCssClassString}")"
-                 StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString} {AppOptionsService.ColorSchemeCssStyleString}")">
+                 ClassCssString="@($"luth_ide_main-layout {UnselectableClassCss} {CommonApi.AppOptionApi.ThemeCssClassString} {TextEditorService.ThemeCssClassString}")"
+                 StyleCssString="@($"{CommonApi.AppOptionApi.FontSizeCssStyleString} {CommonApi.AppOptionApi.FontFamilyCssStyleString} {CommonApi.AppOptionApi.ColorSchemeCssStyleString}")">
 
     <LuthetusCommonInitializer />
     <LuthetusTextEditorInitializer />
@@ -43,7 +43,7 @@
                 <IdeBody BodyElementDimensions="_bodyElementDimensions" />
 
                 <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                              BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
+                              BottomElementDimensions="PanelFacts.GetBottomPanelGroup(CommonApi.PanelApi.GetPanelState()).ElementDimensions"
                               ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
 
                 <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"

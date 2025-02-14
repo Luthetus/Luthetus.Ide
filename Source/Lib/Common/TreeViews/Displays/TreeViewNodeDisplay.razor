@@ -4,7 +4,7 @@
 <div class="luth_tree-view">
     @if (!TreeViewNoType.IsHidden)
     {
-        <div id="@TreeViewService.GetNodeElementId(TreeViewNoType)"
+        <div id="@CommonApi.TreeViewApi.GetNodeElementId(TreeViewNoType)"
              class="luth_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
              style="padding-left: @(OffsetInPixels.ToCssValue())px;"
              tabindex="-1"
@@ -26,7 +26,7 @@
                  @onmousedown="_ => HandleExpansionChevronOnMouseDown(TreeViewNoType)">
                  
                 @{
-                	var appOptionsState = AppOptionsService.GetAppOptionsState();
+                	var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
                 
                 	var iconDriver = new IconDriver(
 						appOptionsState.Options.IconSizeInPixels,

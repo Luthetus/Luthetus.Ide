@@ -154,7 +154,7 @@ public struct OnKeyDownLateBatching
                         viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
                     {
                     	// TODO: Focusing the menu from here isn't working?
-                    	await editContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
+                    	await editContext.TextEditorService.CommonApi.LuthetusCommonJavaScriptInteropApi.FocusHtmlElementById(
                     		AutocompleteMenu.HTML_ELEMENT_ID,
                     		preventScroll: true);
                     		

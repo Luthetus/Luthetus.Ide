@@ -15,7 +15,7 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
     public GitTreeViewKeyboardEventHandler(
     		LuthetusCommonApi commonApi,
             GitIdeApi gitIdeApi)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonApi)
     {
     	_commonApi = commonApi;
         _gitIdeApi = gitIdeApi;

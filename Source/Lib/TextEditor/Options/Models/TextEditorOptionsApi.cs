@@ -19,25 +19,16 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 {
     private readonly ITextEditorService _textEditorService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
-    private readonly IStorageService _storageService;
-    private readonly IDialogService _dialogService;
-    private readonly IContextService _contextService;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
+    private readonly LuthetusCommonApi _commonApi;
 
     public TextEditorOptionsApi(
-        ITextEditorService textEditorService,
-        LuthetusTextEditorConfig textEditorConfig,
-        IStorageService storageService,
-        IDialogService dialogService,
-        IContextService contextService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi)
+		LuthetusCommonApi commonApi,
+		ITextEditorService textEditorService,
+        LuthetusTextEditorConfig textEditorConfig)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
-        _storageService = storageService;
-        _dialogService = dialogService;
-        _contextService = contextService;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
+        _commonApi = commonApi;
     }
     
     private TextEditorOptionsState _textEditorOptionsState = new();
@@ -66,7 +57,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
-        _dialogService.ReduceRegisterAction(settingsDialog);
+		_commonApi.DialogApi.ReduceRegisterAction(settingsDialog);
     }
 
     public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -82,7 +73,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
-        _dialogService.ReduceRegisterAction(_findAllDialog);
+        _commonApi.DialogApi.ReduceRegisterAction(_findAllDialog);
     }
 
     public void SetTheme(ThemeRecord theme, bool updateStorage = true)
@@ -178,7 +169,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
         if (activeKeymap is not null)
         {
-            _contextService.ReduceSetContextKeymapAction(
+			_commonApi.ContextApi.ReduceSetContextKeymapAction(
                 ContextFacts.TextEditorContext.ContextKey,
                 activeKeymap);
         }
@@ -281,14 +272,16 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void WriteToStorage()
     {
-        _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
+        IStorageService.WriteToLocalStorage(
+            _commonApi.BackgroundTaskApi,
+            _commonApi.StorageApi,
             _textEditorService.StorageKey,
             new TextEditorOptionsJsonDto(_textEditorService.OptionsApi.GetTextEditorOptionsState().Options));
     }
 
     public async Task SetFromLocalStorageAsync()
     {
-        var optionsJsonString = await _storageService.GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
+        var optionsJsonString = await _commonApi.StorageApi.GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;
@@ -300,7 +293,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
         if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
         {
-            var matchedTheme = _textEditorService.ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+            var matchedTheme = _textEditorService.CommonApi.ThemeApi.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
@@ -317,7 +310,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
             if (activeKeymap is not null)
             {
-                _contextService.ReduceSetContextKeymapAction(
+                _commonApi.ContextApi.ReduceSetContextKeymapAction(
                     ContextFacts.TextEditorContext.ContextKey,
                     activeKeymap);
             }

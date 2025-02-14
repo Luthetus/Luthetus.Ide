@@ -1,5 +1,5 @@
 @{
-	var appOptionsState = AppOptionsService.GetAppOptionsState();
+	var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
 
 	var iconDriver = new IconDriver(
 		appOptionsState.Options.IconSizeInPixels,

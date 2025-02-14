@@ -102,19 +102,19 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         if (localTreeViewNoType.IsExpanded)
         {
-            BackgroundTaskService.Enqueue(
+            CommonApi.BackgroundTaskApi.Enqueue(
                 Key<IBackgroundTask>.NewKey(),
                 BackgroundTaskFacts.ContinuousQueueKey,
         	    "TreeView.HandleExpansionChevronOnMouseDown",
 			    async () => 
 			    {
 				    await localTreeViewNoType.LoadChildListAsync().ConfigureAwait(false);
-                    TreeViewService.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
+                    CommonApi.TreeViewApi.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
 			    });
         }
         else
         {
-            TreeViewService.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
+            CommonApi.TreeViewApi.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
         }
     }
 
@@ -124,7 +124,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         TreeViewNoType treeViewNoType)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
+            CommonApi.TreeViewApi,
             TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -136,7 +136,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
             .OnMouseDownAsync(treeViewCommandArgs)
             .ConfigureAwait(false);
 
-        BackgroundTaskService.Enqueue(
+        CommonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
     	    "TreeView.ManuallyPropagateOnContextMenu",
@@ -150,7 +150,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
+            CommonApi.TreeViewApi,
             TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -166,7 +166,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
+            CommonApi.TreeViewApi,
             TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -182,7 +182,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
+            CommonApi.TreeViewApi,
             TreeViewContainer,
             TreeViewNoType,
             FocusAsync,

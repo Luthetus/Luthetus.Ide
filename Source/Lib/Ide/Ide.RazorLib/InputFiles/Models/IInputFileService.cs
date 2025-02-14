@@ -25,9 +25,7 @@ public interface IInputFileService
     public void ReduceSetOpenedTreeViewModelAction(
     	TreeViewAbsolutePath treeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider);
+        LuthetusCommonApi commonApi);
 
     public void ReduceSetSelectedInputFilePatternAction(InputFilePattern inputFilePattern);
 
@@ -37,10 +35,7 @@ public interface IInputFileService
 
     public void ReduceOpenParentDirectoryAction(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+		LuthetusCommonApi commonApi,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
 
     public void ReduceRefreshCurrentSelectionAction(
@@ -51,10 +46,7 @@ public interface IInputFileService
     
     public Task HandleOpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+		LuthetusCommonApi commonApi,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
     
     public Task HandleRefreshCurrentSelectionAction(

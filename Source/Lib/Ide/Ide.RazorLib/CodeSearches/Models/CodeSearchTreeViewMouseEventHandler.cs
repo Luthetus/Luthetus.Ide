@@ -20,7 +20,7 @@ public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			ITextEditorService textEditorService,
 			LuthetusTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider)
-		: base(treeViewService, backgroundTaskService)
+		: base(commonApi)
 	{
 		_commonApi = commonApi;
 		_textEditorService = textEditorService;

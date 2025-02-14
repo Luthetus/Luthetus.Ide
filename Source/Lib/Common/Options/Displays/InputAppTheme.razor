@@ -1,8 +1,8 @@
 @using Luthetus.Common.RazorLib.Themes.Models;
 
 @{
-    var themeState = ThemeService.GetThemeState();
-    var appOptionsState = AppOptionsService.GetAppOptionsState();
+    var themeState = CommonApi.ThemeApi.GetThemeState();
+    var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
 
     var themesInScopeList = themeState.ThemeList
         .Where(x => x.ThemeScopeList.Contains(ThemeScope.App))

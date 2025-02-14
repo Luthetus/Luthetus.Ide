@@ -35,7 +35,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -62,21 +62,19 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	protected override void OnInitialized()
 	{
 		CodeSearchService.CodeSearchStateChanged += OnCodeSearchStateChanged;
-		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+		CommonApi.TreeViewApi.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
+			CommonApi,
 			TextEditorService,
 			TextEditorConfig,
-			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			ServiceProvider);
 
 		_treeViewMouseEventHandler = new CodeSearchTreeViewMouseEventHandler(
+			CommonApi,
 			TextEditorService,
 			TextEditorConfig,
-			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			ServiceProvider);
 
 		base.OnInitialized();
 	}
@@ -103,7 +101,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
@@ -123,7 +121,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	{
 		Console.WriteLine(nameof(UpdateContent));
 	
-		if (!TreeViewService.TryGetTreeViewContainer(
+		if (!CommonApi.TreeViewApi.TryGetTreeViewContainer(
 				CodeSearchState.TreeViewCodeSearchContainerKey,
 				out var treeViewContainer))
 		{
@@ -199,6 +197,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
     	CodeSearchService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
-    	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	CommonApi.TreeViewApi.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

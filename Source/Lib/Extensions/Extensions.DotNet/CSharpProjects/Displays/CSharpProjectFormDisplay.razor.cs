@@ -20,6 +20,7 @@ using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.Websites;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.CSharpProjects.Displays;
 
@@ -53,7 +54,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		_viewModel = new(DotNetSolutionModel, EnvironmentProvider);
+		_viewModel = new(DotNetSolutionModel, CommonApi.EnvironmentProviderApi);
 		
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
@@ -101,7 +102,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private async Task ReadProjectTemplates()
 	{
-		if (LuthetusHostingInformation.LuthetusHostingKind != LuthetusHostingKind.Photino)
+		if (CommonApi.HostingInformationApi.LuthetusHostingKind != LuthetusHostingKind.Photino)
 		{
 			_viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
 			await InvokeAsync(StateHasChanged);
@@ -125,7 +126,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
-				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+				CommonApi.EnvironmentProviderApi.HomeDirectoryAbsolutePath.Value,
 				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 			{
 				ContinueWithFunc = parsedTerminalCommand =>
@@ -160,7 +161,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
-	        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+	        	CommonApi.EnvironmentProviderApi.HomeDirectoryAbsolutePath.Value,
 	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 	        {
 	        	ContinueWithFunc = parsedCommand =>
@@ -206,7 +207,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
+		if (CommonApi.HostingInformationApi.LuthetusHostingKind == LuthetusHostingKind.Photino)
 		{
 			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
@@ -224,7 +225,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{
-				        	DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+                            CommonApi.DialogApi.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
 							DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
 								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
@@ -243,13 +244,13 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		{
 			await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
 					immutableView,
-					EnvironmentProvider,
-					FileSystemProvider,
+					CommonApi.EnvironmentProviderApi,
+                    CommonApi.FileSystemProviderApi,
 					DotNetBackgroundTaskApi,
-					NotificationService,
-					DialogService,
+                    CommonApi.NotificationApi,
+					CommonApi.DialogApi,
 					DialogRecord,
-					LuthetusCommonComponentRenderers)
+                    CommonApi.ComponentRendererApi)
 				.ConfigureAwait(false);
 		}
 	}

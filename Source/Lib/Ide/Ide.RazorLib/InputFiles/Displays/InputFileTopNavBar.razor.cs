@@ -50,10 +50,7 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         InputFileService.ReduceOpenParentDirectoryAction(
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            BackgroundTaskService,
+            CommonApi,
             parentDirectoryTreeViewModel: null);
 
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
@@ -61,7 +58,7 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task HandleRefreshButtonOnClick()
     {
-        InputFileService.ReduceRefreshCurrentSelectionAction(BackgroundTaskService, currentSelection: null);
+        InputFileService.ReduceRefreshCurrentSelectionAction(CommonApi.BackgroundTaskApi, currentSelection: null);
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 
@@ -106,22 +103,22 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         try
         {
-            if (!await FileSystemProvider.Directory.ExistsAsync(address).ConfigureAwait(false))
+            if (!await CommonApi.FileSystemProviderApi.Directory.ExistsAsync(address).ConfigureAwait(false))
             {
-                if (await FileSystemProvider.File.ExistsAsync(address).ConfigureAwait(false))
+                if (await CommonApi.FileSystemProviderApi.File.ExistsAsync(address).ConfigureAwait(false))
                     throw new LuthetusIdeException($"Address provided was a file. Provide a directory instead. {address}");
 
                 throw new LuthetusIdeException($"Address provided does not exist. {address}");
             }
 
-            var absolutePath = EnvironmentProvider.AbsolutePathFactory(address, true);
+            var absolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(address, true);
             _showInputTextEditForAddress = false;
 
             await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
-            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonApi.ComponentRendererApi, CommonApi.NotificationApi, TimeSpan.FromSeconds(14));
         }
     }
 

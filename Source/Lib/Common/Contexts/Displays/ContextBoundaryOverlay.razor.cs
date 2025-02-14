@@ -1,3 +1,4 @@
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -38,7 +39,7 @@ public partial class ContextBoundaryOverlay : ComponentBase
 
     private void DispatchSetInspectionTargetActionOnClick()
     {
-        ContextService.ReduceSetInspectedContextHeirarchyAction(
+        CommonApi.ContextApi.ReduceSetInspectedContextHeirarchyAction(
             InspectableContext.ContextHeirarchy);
     }
 }

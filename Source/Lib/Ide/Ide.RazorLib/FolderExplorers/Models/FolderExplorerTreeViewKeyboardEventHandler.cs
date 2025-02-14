@@ -30,7 +30,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             ITextEditorService textEditorService,
             IMenuOptionsFactory menuOptionsFactory,
             ITreeViewService treeViewService)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonApi)
     {
         _commonApi = commonApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -115,7 +115,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             treeViewAbsolutePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonApi.ComponentRendererApi, _commonApi.NotificationApi, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -153,7 +153,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         {
             var parentDirectory = treeViewAbsolutePath.Item.ParentDirectory;
 
-            var parentDirectoryAbsolutePath = _environmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
@@ -191,7 +191,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             () =>
             {
                 FolderExplorerContextMenu.ParentOfCutFile = parent;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonApi.ComponentRendererApi, _commonApi.NotificationApi, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -223,11 +223,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        _treeViewService.ReduceReRenderNodeAction(
+        _commonApi.TreeViewApi.ReduceReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        _treeViewService.ReduceMoveUpAction(
+        _commonApi.TreeViewApi.ReduceMoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

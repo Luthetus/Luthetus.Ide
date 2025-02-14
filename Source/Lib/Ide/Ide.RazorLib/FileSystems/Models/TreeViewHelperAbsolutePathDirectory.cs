@@ -9,7 +9,7 @@ public class TreeViewHelperAbsolutePathDirectory
     {
         var directoryAbsolutePathString = directoryTreeView.Item.Value;
 
-        var directoryPathStringsList = await directoryTreeView.FileSystemProvider.Directory
+        var directoryPathStringsList = await directoryTreeView.CommonApi.FileSystemProviderApi.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -18,11 +18,9 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, true),
+                    directoryTreeView.CommonApi.EnvironmentProviderApi.AbsolutePathFactory(x, true),
+                    directoryTreeView.CommonApi,
                     directoryTreeView.IdeComponentRenderers,
-                    directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.FileSystemProvider,
-                    directoryTreeView.EnvironmentProvider,
                     true,
                     false)
                 {
@@ -30,7 +28,7 @@ public class TreeViewHelperAbsolutePathDirectory
                 };
             });
 
-        var filePathStringsList = await directoryTreeView.FileSystemProvider.Directory
+        var filePathStringsList = await directoryTreeView.CommonApi.FileSystemProviderApi.Directory
             .GetFilesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -39,11 +37,9 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, false),
+                    directoryTreeView.CommonApi.EnvironmentProviderApi.AbsolutePathFactory(x, false),
+                    directoryTreeView.CommonApi,
                     directoryTreeView.IdeComponentRenderers,
-                    directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.FileSystemProvider,
-                    directoryTreeView.EnvironmentProvider,
                     false,
                     false)
                 {

@@ -13,6 +13,7 @@ using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.Commands;
 
@@ -56,7 +57,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", JsRuntimeCommonApi, _panelService));
+					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", JsRuntimeCommonApi, _commonApi.PanelApi));
 		}
 		// CSharpReplContext
 		{
@@ -72,12 +73,12 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", JsRuntimeCommonApi, _panelService));
+					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", JsRuntimeCommonApi, _commonApi.PanelApi));
 		}
 		// SolutionExplorerContext
 		{
 			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", JsRuntimeCommonApi, _panelService);
+				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", JsRuntimeCommonApi, _commonApi.PanelApi);
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 					new KeymapArgs
@@ -107,13 +108,13 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 						if (localNodeOfViewModel is null)
 							return;
 
-						_treeViewService.ReduceSetActiveNodeAction(
+                        _commonApi.TreeViewApi.ReduceSetActiveNodeAction(
 							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 							localNodeOfViewModel,
 							false,
 							false);
 
-						var elementId = _treeViewService.GetNodeElementId(localNodeOfViewModel);
+						var elementId = _commonApi.TreeViewApi.GetNodeElementId(localNodeOfViewModel);
 
 						await focusSolutionExplorerCommand.CommandFunc
 							.Invoke(commandArgs)
@@ -148,7 +149,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 
 			if (textEditorViewModel is not null)
 			{
-				if (_treeViewService.TryGetTreeViewContainer(
+				if (_commonApi.TreeViewApi.TryGetTreeViewContainer(
 						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 						out var treeViewContainer) &&
                     treeViewContainer is not null)
@@ -169,7 +170,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
         {
             if (textEditorViewModel is not null)
             {
-                var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                var viewModelAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(
                     textEditorViewModel.ResourceUri.Value,
                     false);
 

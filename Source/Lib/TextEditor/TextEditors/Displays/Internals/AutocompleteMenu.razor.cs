@@ -13,6 +13,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -102,7 +103,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        DropdownService);
+							CommonApi.DropdownApi);
 					}
 
 					return ValueTask.CompletedTask;
@@ -224,7 +225,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 							TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
 						        viewModelModifier,
-						        DropdownService);
+						        CommonApi.DropdownApi);
 						}
 
 						return renderBatch.ViewModel.FocusAsync();

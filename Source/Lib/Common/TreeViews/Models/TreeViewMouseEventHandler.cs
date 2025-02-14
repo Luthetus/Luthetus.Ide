@@ -109,7 +109,7 @@ public class TreeViewMouseEventHandler
             // This boolean asks: Should I ALSO SELECT the nodes between the currentNode and the targetNode.
             var selectNodesBetweenCurrentAndNextActiveNode = commandArgs.MouseEventArgs.ShiftKey;
 
-            TreeViewService.ReduceSetActiveNodeAction(
+            CommonApi.TreeViewApi.ReduceSetActiveNodeAction(
                 commandArgs.TreeViewContainer.Key,
                 commandArgs.NodeThatReceivedMouseEvent,
                 addSelectedNodes,
@@ -132,7 +132,7 @@ public class TreeViewMouseEventHandler
                 else
                 {
                     // Move the active node, and open context menu
-                    TreeViewService.ReduceSetActiveNodeAction(
+                    CommonApi.TreeViewApi.ReduceSetActiveNodeAction(
                         commandArgs.TreeViewContainer.Key,
                         commandArgs.NodeThatReceivedMouseEvent,
                         false,

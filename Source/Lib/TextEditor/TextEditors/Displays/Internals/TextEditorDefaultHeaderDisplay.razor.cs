@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 

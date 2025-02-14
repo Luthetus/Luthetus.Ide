@@ -85,18 +85,14 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     	InputFileService.InputFileStateChanged += OnInputFileStateChanged;
     	
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
-            TreeViewService,
+            CommonApi,
             InputFileService,
-            SetInputFileContentTreeViewRootFunc,
-			BackgroundTaskService);
+            SetInputFileContentTreeViewRootFunc);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
-            TreeViewService,
+            CommonApi,
             InputFileService,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
             SetInputFileContentTreeViewRootFunc,
             async () =>
             {
@@ -117,8 +113,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
                     //             on an ElementReference.
                 }
             },
-            () => _searchMatchTuples,
-            BackgroundTaskService);
+            () => _searchMatchTuples);
 
         InitializeElementDimensions();
 
@@ -127,7 +122,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
     private void InitializeElementDimensions()
     {
-    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    	var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
     
         _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -159,10 +154,8 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     {
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,
+            CommonApi,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
             true,
             false);
 
@@ -202,9 +195,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         InputFileService.ReduceSetOpenedTreeViewModelAction(
             pseudoRootNode,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider);
+            CommonApi);
     }
     
     public async void OnInputFileStateChanged()

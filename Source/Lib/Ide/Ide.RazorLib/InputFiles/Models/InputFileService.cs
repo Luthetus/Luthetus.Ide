@@ -54,9 +54,7 @@ public class InputFileService : IInputFileService
     public void ReduceSetOpenedTreeViewModelAction(
     	TreeViewAbsolutePath treeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider)
+		LuthetusCommonApi commonApi)
     {
     	var inState = GetInputFileState();
     
@@ -66,9 +64,7 @@ public class InputFileService : IInputFileService
                 inState,
                 treeViewModel,
                 ideComponentRenderers,
-                commonComponentRenderers,
-                fileSystemProvider,
-                environmentProvider);
+                commonApi);
             
             InputFileStateChanged?.Invoke();
         	return;
@@ -131,7 +127,6 @@ public class InputFileService : IInputFileService
 
     public void ReduceOpenParentDirectoryAction(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
         LuthetusCommonApi commonApi,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
@@ -144,16 +139,14 @@ public class InputFileService : IInputFileService
         {
             var parentDirectory = currentSelection.Item.ParentDirectory;
 
-            var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = commonApi.EnvironmentProviderApi.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
             parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
+                commonApi,
                 ideComponentRenderers,
-                commonComponentRenderers,
-                fileSystemProvider,
-                environmentProvider,
                 false,
                 true);
         }
@@ -164,9 +157,7 @@ public class InputFileService : IInputFileService
                 inState,
                 parentDirectoryTreeViewModel,
                 ideComponentRenderers,
-                commonComponentRenderers,
-                fileSystemProvider,
-                environmentProvider);
+                commonApi);
                 
             InputFileStateChanged?.Invoke();
         	return;
@@ -215,15 +206,12 @@ public class InputFileService : IInputFileService
     
     public Task HandleOpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+		LuthetusCommonApi commonApi,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         if (parentDirectoryTreeViewModel is not null)
         {
-            backgroundTaskService.Enqueue(
+            commonApi.BackgroundTaskApi.Enqueue(
                 Key<IBackgroundTask>.NewKey(),
                 BackgroundTaskFacts.ContinuousQueueKey,
                 "Open Parent Directory",

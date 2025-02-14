@@ -35,7 +35,7 @@
 							<button class="luth_button"
 				                    @onclick="() => CloseWidgetOnClick(renderBatchLocal, widget)">
 				                @{
-				                	var appOptionsState = AppOptionsService.GetAppOptionsState();
+				                	var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
 				                
 				                	var iconDriver = new IconDriver(
 					            		appOptionsState.Options.IconSizeInPixels,

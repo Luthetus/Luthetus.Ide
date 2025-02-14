@@ -93,7 +93,7 @@ public class DotNetSolutionIdeApi
 
 	public void SetDotNetSolution(AbsolutePath inSolutionAbsolutePath)
 	{
-		_backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Set .NET Solution",
@@ -104,12 +104,12 @@ public class DotNetSolutionIdeApi
 	{
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
-		var content = await _fileSystemProvider.File.ReadAllTextAsync(
+		var content = await _commonApi.FileSystemProviderApi.File.ReadAllTextAsync(
 				dotNetSolutionAbsolutePathString,
 				CancellationToken.None)
 			.ConfigureAwait(false);
 
-		var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(
+		var solutionAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(
 			dotNetSolutionAbsolutePathString,
 			false);
 
@@ -170,9 +170,9 @@ public class DotNetSolutionIdeApi
 			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 				solutionAbsolutePath,
 				relativePathFromSolutionFileString,
-				_environmentProvider);
+				_commonApi.EnvironmentProviderApi);
 
-			project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
+			project.AbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(absolutePathString, false);
 		}
 
 		var solutionFolderList = parser.DotNetProjectList
@@ -212,7 +212,7 @@ public class DotNetSolutionIdeApi
 
 		if (parentDirectory is not null)
 		{
-			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
+			_commonApi.EnvironmentProviderApi.DeletionPermittedRegister(new(parentDirectory, true));
 
 			_findAllService.ReduceSetStartingDirectoryPathAction(parentDirectory);
 
@@ -277,8 +277,8 @@ Execution Terminal"));
 				NotificationHelper.DispatchError(
 			        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
 			        e.ToString(),
-			        _commonComponentRenderers,
-			        _notificationService,
+                    _commonApi.ComponentRendererApi,
+                    _commonApi.NotificationApi,
 			        TimeSpan.FromSeconds(5));
 			    return Task.CompletedTask;
 			}
@@ -326,8 +326,8 @@ Execution Terminal"));
 			NotificationHelper.DispatchProgress(
 				$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 				progressBarModel,
-				_commonComponentRenderers,
-				_notificationService,
+				_commonApi.ComponentRendererApi,
+				_commonApi.NotificationApi,
 				TimeSpan.FromMilliseconds(-1));
 				
 			// var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
@@ -370,7 +370,7 @@ Execution Terminal"));
 				
 					var resourceUri = new ResourceUri(project.AbsolutePath.Value);
 
-					if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
+					if (!await _commonApi.FileSystemProviderApi.File.ExistsAsync(resourceUri.Value))
 						continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 
 					var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
@@ -443,7 +443,7 @@ Execution Terminal"));
 		double currentProgress,
 		double maximumProgressAvailableToProject)
 	{
-		if (!await _fileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value))
+		if (!await _commonApi.FileSystemProviderApi.File.ExistsAsync(dotNetProject.AbsolutePath.Value))
 			return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 
 		var parentDirectory = dotNetProject.AbsolutePath.ParentDirectory;
@@ -467,12 +467,12 @@ Execution Terminal"));
 
 		async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
 		{
-			var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+			var directoryPathChildList = await _commonApi.FileSystemProviderApi.Directory.GetDirectoriesAsync(
 					directoryPathParent,
 					CancellationToken.None)
 				.ConfigureAwait(false);
 
-			var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
+			var filePathChildList = await _commonApi.FileSystemProviderApi.Directory.GetFilesAsync(
 					directoryPathParent,
 					CancellationToken.None)
 				.ConfigureAwait(false);
@@ -525,7 +525,7 @@ Execution Terminal"));
 		
 		foreach (var file in discoveredFileList)
 		{
-			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
+			var fileAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(file, false);
 
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
 
@@ -547,7 +547,7 @@ Execution Terminal"));
 
 	public void SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Set .NET Solution TreeView",
@@ -568,26 +568,26 @@ Execution Terminal"));
 			dotNetSolutionModel,
 			_dotNetComponentRenderers,
 			_ideComponentRenderers,
-			_commonComponentRenderers,
-			_fileSystemProvider,
-			_environmentProvider,
+			_commonApi.ComponentRendererApi,
+			_commonApi.FileSystemProviderApi,
+			_commonApi.EnvironmentProviderApi,
 			true,
 			true);
 
 		await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-		if (!_treeViewService.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
+		if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
 		{
-			_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+			_commonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				new() { rootNode }));
 		}
 		else
 		{
-			_treeViewService.ReduceWithRootNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
+			_commonApi.TreeViewApi.ReduceWithRootNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
 
-			_treeViewService.ReduceSetActiveNodeAction(
+			_commonApi.TreeViewApi.ReduceSetActiveNodeAction(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				true,
@@ -677,7 +677,7 @@ Execution Terminal"));
 		string cSharpProjectName,
 		AbsolutePath cSharpProjectAbsolutePath)
 	{
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Add Existing-Project To Solution",
@@ -706,7 +706,7 @@ Execution Terminal"));
 		var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
 			inDotNetSolutionModel.NamespacePath.AbsolutePath,
 			cSharpProjectAbsolutePath,
-			_environmentProvider);
+			_commonApi.EnvironmentProviderApi);
 
 		var projectIdGuid = Guid.NewGuid();
 
@@ -722,11 +722,11 @@ Execution Terminal"));
 			null,
 			cSharpProjectAbsolutePath);
 
-		dotNetSolutionModelBuilder.AddDotNetProject(cSharpProject, _environmentProvider);
+		dotNetSolutionModelBuilder.AddDotNetProject(cSharpProject, _commonApi.EnvironmentProviderApi);
 
 		var outDotNetSolutionModel = dotNetSolutionModelBuilder.Build();
 
-		await _fileSystemProvider.File.WriteAllTextAsync(
+		await _commonApi.FileSystemProviderApi.File.WriteAllTextAsync(
 				outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
 				outDotNetSolutionModel.SolutionFileContents)
 			.ConfigureAwait(false);

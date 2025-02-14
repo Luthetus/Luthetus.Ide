@@ -33,7 +33,7 @@ public class FolderExplorerIdeApi
 
     public void SetFolderExplorerState(AbsolutePath folderAbsolutePath)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Set FolderExplorer State",
@@ -42,7 +42,7 @@ public class FolderExplorerIdeApi
 
     public void SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Set FolderExplorer TreeView",
@@ -91,29 +91,27 @@ public class FolderExplorerIdeApi
 
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,
+            _commonApi,
             _ideComponentRenderers,
-            _commonComponentRenderers,
-            _fileSystemProvider,
-            _environmentProvider,
             true,
             true);
 
         await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-        if (!_treeViewService.TryGetTreeViewContainer(
+        if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 out var treeViewState))
         {
-            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            _commonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
                 new() { rootNode }));
         }
         else
         {
-            _treeViewService.ReduceWithRootNodeAction(FolderExplorerState.TreeViewContentStateKey, rootNode);
+            _commonApi.TreeViewApi.ReduceWithRootNodeAction(FolderExplorerState.TreeViewContentStateKey, rootNode);
 
-            _treeViewService.ReduceSetActiveNodeAction(
+            _commonApi.TreeViewApi.ReduceSetActiveNodeAction(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
                 true,

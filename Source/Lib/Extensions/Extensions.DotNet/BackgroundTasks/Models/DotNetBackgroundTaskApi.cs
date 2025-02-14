@@ -71,29 +71,23 @@ public class DotNetBackgroundTaskApi
 		CompilerServiceExplorerService = new CompilerServiceExplorerService();
 
         CompilerService = new CompilerServiceIdeApi(
-			this,
+            commonApi,
+            this,
             _ideBackgroundTaskApi,
-            _backgroundTaskService,
 			CompilerServiceExplorerService,
 			_compilerServiceRegistry,
-			_ideComponentRenderers,
-			_commonComponentRenderers,
-			_treeViewService);
+			_ideComponentRenderers);
 			
 		TestExplorerService = new TestExplorerService(
-			this,
+            this,
 			_ideBackgroundTaskApi,
 			DotNetSolutionService);
 
         TestExplorer = new TestExplorerScheduler(
+            commonApi,
             this,
             _ideBackgroundTaskApi,
-            _commonComponentRenderers,
-            _treeViewService,
             _textEditorService,
-            _notificationService,
-            _backgroundTaskService,
-            _fileSystemProvider,
             _dotNetCliOutputParser,
             DotNetSolutionService,
             _terminalService,
@@ -102,27 +96,19 @@ public class DotNetBackgroundTaskApi
         OutputService = new OutputService(this);
             
         Output = new OutputScheduler(
-        	this,
-			_backgroundTaskService,
+            commonApi,
+            this,
 			_dotNetCliOutputParser,
-			_treeViewService,
-			_environmentProvider,
 			OutputService);
 
         DotNetSolution = new DotNetSolutionIdeApi(
-			_ideBackgroundTaskApi,
-			_backgroundTaskService,
-			_storageService,
+            commonApi,
+            _ideBackgroundTaskApi,
 			_appDataService,
 			CompilerServiceExplorerService,
             _dotNetComponentRenderers,
             _ideComponentRenderers,
-			_commonComponentRenderers,
-			_treeViewService,
-			_notificationService,
-			_environmentProvider,
 			DotNetSolutionService,
-			_fileSystemProvider,
 			_textEditorService,
 			_findAllService,
 			_codeSearchService,

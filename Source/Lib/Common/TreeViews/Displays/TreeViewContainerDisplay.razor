@@ -2,9 +2,9 @@
 @using Luthetus.Common.RazorLib.TreeViews.Models;
 
 @{
-    var treeViewContainer = TreeViewService.GetTreeViewContainer(TreeViewContainerKey);
+    var treeViewContainer = CommonApi.TreeViewApi.GetTreeViewContainer(TreeViewContainerKey);
 
-    <div id="@TreeViewService.GetTreeViewContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
+    <div id="@CommonApi.TreeViewApi.GetTreeViewContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
          class="luth_tree-view-state luth_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"
          style="@CssStyleString"
          tabindex="0"

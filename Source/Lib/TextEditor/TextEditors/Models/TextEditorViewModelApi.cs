@@ -27,10 +27,12 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     private readonly IJSRuntime _jsRuntime;
 
     public TextEditorViewModelApi(
+        LuthetusCommonApi commonApi,
         ITextEditorService textEditorService,
         IJSRuntime jsRuntime)
     {
-        _textEditorService = textEditorService;
+        _commonApi = commonApi;
+		_textEditorService = textEditorService;
         _jsRuntime = jsRuntime;
     }
     
@@ -100,7 +102,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
             resourceUri,
             category,
             _textEditorService,
-            _dialogService,
+			_commonApi.DialogApi,
             _jsRuntime);
     }
     

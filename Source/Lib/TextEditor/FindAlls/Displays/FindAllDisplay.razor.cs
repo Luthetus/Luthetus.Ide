@@ -27,7 +27,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private string SearchQuery
     {
@@ -54,18 +54,16 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 		FindAllService.FindAllStateChanged += OnFindAllStateChanged;
 	
 		_treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(
+			CommonApi,
 			TextEditorService,
 			TextEditorConfig,
-			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			ServiceProvider);
 
 		_treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(
+			CommonApi,
 			TextEditorService,
 			TextEditorConfig,
-			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			ServiceProvider);
 
 		base.OnInitialized();
 	}
@@ -86,7 +84,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

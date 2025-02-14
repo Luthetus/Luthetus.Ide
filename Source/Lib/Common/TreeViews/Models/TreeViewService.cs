@@ -63,7 +63,7 @@ public class TreeViewService : ITreeViewService
                         }
                     });
 
-                _backgroundTaskService.Enqueue(backgroundTask);
+                _commonApi.BackgroundTaskApi.Enqueue(backgroundTask);
             });
     }
 

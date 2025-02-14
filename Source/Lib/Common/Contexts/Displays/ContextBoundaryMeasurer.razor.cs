@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -21,13 +22,13 @@ public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		ContextService.ContextStateChanged += OnContextStateChanged;
+        CommonApi.ContextApi.ContextStateChanged += OnContextStateChanged;
 		base.OnInitialized();
 	}
 
     protected override bool ShouldRender()
     {
-        var contextState = ContextService.GetContextState();
+        var contextState = CommonApi.ContextApi.GetContextState();
 
         if (_previousIsSelectingInspectionTarget != contextState.IsSelectingInspectionTarget)
             return true;
@@ -37,7 +38,7 @@ public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var contextState = ContextService.GetContextState();
+        var contextState = CommonApi.ContextApi.GetContextState();
 
         if (_previousIsSelectingInspectionTarget != contextState.IsSelectingInspectionTarget)
         {
@@ -45,7 +46,7 @@ public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
 
             if (contextState.IsSelectingInspectionTarget)
             {
-                var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+                var measuredHtmlElementDimensions = await CommonApi.LuthetusCommonJavaScriptInteropApi
                     .MeasureElementById(ContextRecord.ContextElementId)
                     .ConfigureAwait(false);
                 
@@ -56,7 +57,7 @@ public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
                     ZIndex = contextBoundaryHeirarchy.Count
                 };
 
-                ContextService.ReduceAddInspectableContextAction(
+                CommonApi.ContextApi.ReduceAddInspectableContextAction(
                     new InspectableContext(
                         new(contextBoundaryHeirarchy),
                         measuredHtmlElementDimensions));
@@ -73,6 +74,6 @@ public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	ContextService.ContextStateChanged -= OnContextStateChanged;
+        CommonApi.ContextApi.ContextStateChanged -= OnContextStateChanged;
     }
 }

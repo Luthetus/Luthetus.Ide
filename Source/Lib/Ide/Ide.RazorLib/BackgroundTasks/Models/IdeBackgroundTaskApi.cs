@@ -44,7 +44,6 @@ public class IdeBackgroundTaskApi
         IServiceProvider serviceProvider)
     {
     	_commonApi = commonApi;
-        _backgroundTaskService = backgroundTaskService;
         _ideComponentRenderers = ideComponentRenderers;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
@@ -55,9 +54,8 @@ public class IdeBackgroundTaskApi
 		_jsRuntime = jsRuntime;
 
         Editor = new EditorIdeApi(
-            this,
             _commonApi,
-            _backgroundTaskService,
+            this,
             _textEditorService,
             _ideComponentRenderers,
             _decorationMapperRegistry,
@@ -66,22 +64,19 @@ public class IdeBackgroundTaskApi
             serviceProvider);
 
         FileSystem = new FileSystemIdeApi(
-            this,
             _commonApi,
-            _backgroundTaskService);
+            this);
 
         FolderExplorer = new FolderExplorerIdeApi(
-            this,
             _commonApi,
+            this,
             _ideComponentRenderers,
-            _backgroundTaskService,
             _folderExplorerService);
 
         InputFile = new InputFileIdeApi(
-            this,
             _commonApi,
+            this,
             _ideComponentRenderers,
-            _backgroundTaskService,
             _inputFileService);
     }
     

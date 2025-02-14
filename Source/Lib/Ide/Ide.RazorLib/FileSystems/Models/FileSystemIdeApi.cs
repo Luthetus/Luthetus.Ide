@@ -26,7 +26,7 @@ public class FileSystemIdeApi
         Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
         CancellationToken cancellationToken = default)
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Save File",
@@ -50,21 +50,21 @@ public class FileSystemIdeApi
         var absolutePathString = absolutePath.Value;
 
         if (absolutePathString is not null &&
-            await _fileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
+            await _commonApi.FileSystemProviderApi.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
         {
-            await _fileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
+            await _commonApi.FileSystemProviderApi.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
         }
         else
         {
             // TODO: Save As to make new file
-            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(7));
+            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonApi.ComponentRendererApi, _commonApi.NotificationApi, TimeSpan.FromSeconds(7));
         }
 
         DateTime? fileLastWriteTime = null;
 
         if (absolutePathString is not null)
         {
-            fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
+            fileLastWriteTime = await _commonApi.FileSystemProviderApi.File.GetLastWriteTimeAsync(
                     absolutePathString,
                     CancellationToken.None)
                 .ConfigureAwait(false);

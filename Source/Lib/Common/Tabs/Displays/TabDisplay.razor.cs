@@ -55,7 +55,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonApi.DragApi.DragStateChanged += DragStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -65,7 +65,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonApi.DragApi.GetDragState().ShouldDisplay)
         {
             _dragEventHandler = null;
             _previousDragMouseEventArgs = null;
@@ -73,7 +73,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
         }
         else
         {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
+            var mouseEventArgs = CommonApi.DragApi.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -138,7 +138,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-        BackgroundTaskService.Enqueue(
+        CommonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Tab.ManuallyPropagateOnContextMenu",
@@ -184,7 +184,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
-			var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+			var measuredHtmlElementDimensions = await CommonApi.LuthetusCommonJavaScriptInteropApi
                 .MeasureElementById(HtmlId)
                 .ConfigureAwait(false);
 
@@ -235,7 +235,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         _dragEventHandler = DragEventHandlerAsync;
 
-		DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+		CommonApi.DragApi.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
     }
 
 	private Task DragEventHandlerAsync(
@@ -286,6 +286,6 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonApi.DragApi.DragStateChanged -= DragStateWrapOnStateChanged;
     }
 }

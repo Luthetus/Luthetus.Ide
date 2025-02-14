@@ -45,7 +45,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+        CommonApi.TreeViewApi.TreeViewStateChanged += OnTreeViewStateChanged;
         base.OnInitialized();
     }
 
@@ -62,7 +62,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             return;
 
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
+            CommonApi.TreeViewApi,
             treeViewContainer,
             null,
             async () =>
@@ -106,7 +106,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         if (treeViewContainerKey == Key<TreeViewContainer>.Empty || mouseEventArgs is null)
             return;
 
-        var treeViewContainer = TreeViewService.GetTreeViewContainer(TreeViewContainerKey);
+        var treeViewContainer = CommonApi.TreeViewApi.GetTreeViewContainer(TreeViewContainerKey);
         // Validate that the treeViewContainer did not change out from under us
         if (treeViewContainer is null || treeViewContainer.Key != treeViewContainerKey)
             return;
@@ -122,7 +122,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             // If dedicated context menu button or shift + F10 was pressed as opposed to
             // a mouse RightClick then use JavaScript to determine the ContextMenu position.
             contextMenuFixedPosition = await JsRuntime.GetLuthetusCommonApi()
-                .GetTreeViewContextMenuFixedPosition(TreeViewService.GetNodeElementId(treeViewContainer.ActiveNode))
+                .GetTreeViewContextMenuFixedPosition(CommonApi.TreeViewApi.GetNodeElementId(treeViewContainer.ActiveNode))
                 .ConfigureAwait(false);
 
             contextMenuTargetTreeViewNoType = treeViewContainer.ActiveNode;
@@ -147,7 +147,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         }
 
         _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
+            CommonApi.TreeViewApi,
             treeViewContainer,
             contextMenuTargetTreeViewNoType,
             async () =>
@@ -180,7 +180,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
         if (OnContextMenuFunc is not null)
 		{
-            BackgroundTaskService.Enqueue(
+            CommonApi.BackgroundTaskApi.Enqueue(
                 Key<IBackgroundTask>.NewKey(),
                 BackgroundTaskFacts.ContinuousQueueKey,
         	    "TreeView.HandleTreeViewOnContextMenu",
@@ -224,6 +224,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	CommonApi.TreeViewApi.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

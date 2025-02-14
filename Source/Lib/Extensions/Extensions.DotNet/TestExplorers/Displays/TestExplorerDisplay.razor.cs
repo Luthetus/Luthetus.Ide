@@ -15,6 +15,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays;
 

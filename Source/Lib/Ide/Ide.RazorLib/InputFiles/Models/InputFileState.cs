@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
@@ -46,16 +47,12 @@ public record struct InputFileState(
         InputFileState inInputFileState,
         TreeViewAbsolutePath selectedTreeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider)
+        LuthetusCommonApi commonApi)
     {
         var selectionClone = new TreeViewAbsolutePath(
             selectedTreeViewModel.Item,
+            commonApi,
             ideComponentRenderers,
-            commonComponentRenderers,
-            fileSystemProvider,
-            environmentProvider,
             false,
             true);
 

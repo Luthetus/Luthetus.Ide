@@ -33,28 +33,24 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+        CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
         FolderExplorerService.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
+            CommonApi,
             IdeBackgroundTaskApi,
-            TextEditorService,
-            TreeViewService,
-			BackgroundTaskService);
+            TextEditorService);
 
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
+            CommonApi,
             IdeBackgroundTaskApi,
             TextEditorService,
             MenuOptionsFactory,
-            CommonComponentRenderers,
-            TreeViewService,
-			BackgroundTaskService,
-            EnvironmentProvider,
-            NotificationService);
+            TreeViewService);
 
         base.OnInitialized();
     }
@@ -75,7 +71,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 	
@@ -92,6 +88,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         FolderExplorerService.FolderExplorerStateChanged -= OnFolderExplorerStateChanged;
-        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

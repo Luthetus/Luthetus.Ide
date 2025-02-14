@@ -19,7 +19,7 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
 			LuthetusCommonApi commonApi,
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			ITextEditorService textEditorService)
-		: base(treeViewService, backgroundTaskService)
+		: base(commonApi)
 	{
 		_commonApi = commonApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;

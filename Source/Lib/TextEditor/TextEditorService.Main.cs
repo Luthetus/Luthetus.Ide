@@ -49,40 +49,32 @@ public partial class TextEditorService : ITextEditorService
     {
     	TextEditorWorker = new(this);
     
-		AppDimensionService = appDimensionService;
 		_serviceProvider = serviceProvider;
 
         FindAllService = findAllService;
         _dirtyResourceUriService = dirtyResourceUriService;
-        ThemeService = themeService;
-        _backgroundTaskService = backgroundTaskService;
         TextEditorConfig = textEditorConfig;
         _textEditorRegistryWrap = textEditorRegistryWrap;
-        _storageService = storageService;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetLuthetusTextEditorApi();
-		JsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _dialogService = dialogService;
+		CommonApi = commonApi;
 
 		AutocompleteIndexer = autocompleteIndexer;
 		AutocompleteService = autocompleteService;
 
-        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dialogService);
-        GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _jsRuntime);
+        ModelApi = new TextEditorModelApi(CommonApi, this, _textEditorRegistryWrap);
+        ViewModelApi = new TextEditorViewModelApi(CommonApi, this, _jsRuntime);
+        GroupApi = new TextEditorGroupApi(CommonApi, this, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi);
+        OptionsApi = new TextEditorOptionsApi(CommonApi, this, TextEditorConfig);
         
         TextEditorState = new();
     }
 
-    public IThemeService ThemeService { get; }
-    public IAppDimensionService AppDimensionService { get; }
+    public LuthetusCommonApi CommonApi { get; }
     public IFindAllService FindAllService { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
-	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 	public IAutocompleteIndexer AutocompleteIndexer { get; }
 	public IAutocompleteService AutocompleteService { get; }
 	public LuthetusTextEditorConfig TextEditorConfig { get; }
@@ -93,7 +85,7 @@ public partial class TextEditorService : ITextEditorService
     public string StorageKey => "luth_te_text-editor-options";
 #endif
 
-    public string ThemeCssClassString => ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+    public string ThemeCssClassString => CommonApi.ThemeApi.GetThemeState().ThemeList.FirstOrDefault(
         x => x.Key == OptionsApi.GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
@@ -108,7 +100,7 @@ public partial class TextEditorService : ITextEditorService
     
     public TextEditorWorker TextEditorWorker { get; }
     
-    public IBackgroundTaskService BackgroundTaskService => _backgroundTaskService;
+    public IBackgroundTaskService BackgroundTaskService => CommonApi.BackgroundTaskApi;
     
     public event Action? TextEditorStateChanged;
 
@@ -667,8 +659,7 @@ public partial class TextEditorService : ITextEditorService
 	        viewModelKey,
 	        resourceUri,
 	        textEditorService,
-	        _panelService,
-	        dialogService,
+			CommonApi,
 	        jsRuntime,
 	        VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),

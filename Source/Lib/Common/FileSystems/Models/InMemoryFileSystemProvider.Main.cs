@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 
@@ -12,15 +13,12 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
     private readonly InMemoryFileHandler _file;
     private readonly InMemoryDirectoryHandler _directory;
 
-    public InMemoryFileSystemProvider(
-        IEnvironmentProvider environmentProvider,
-        ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService)
+    public InMemoryFileSystemProvider(LuthetusCommonApi commonApi)
     {
-        _environmentProvider = environmentProvider;
+        _environmentProvider = commonApi.EnvironmentProviderApi;
 
-        _file = new InMemoryFileHandler(this, _environmentProvider, commonComponentRenderers, notificationService);
-        _directory = new InMemoryDirectoryHandler(this, _environmentProvider, commonComponentRenderers, notificationService);
+        _file = new InMemoryFileHandler(this, _environmentProvider, commonApi.ComponentRendererApi, commonApi.NotificationApi);
+        _directory = new InMemoryDirectoryHandler(this, _environmentProvider, commonApi.ComponentRendererApi, commonApi.NotificationApi);
 
         Directory
             .CreateDirectoryAsync(_environmentProvider.RootDirectoryAbsolutePath.Value)

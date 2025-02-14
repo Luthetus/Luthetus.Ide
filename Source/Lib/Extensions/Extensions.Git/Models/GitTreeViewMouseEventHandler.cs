@@ -18,7 +18,7 @@ public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
     public GitTreeViewMouseEventHandler(
     		LuthetusCommonApi commonApi,
             GitIdeApi gitIdeApi)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonApi)
     {
     	_commonApi = commonApi;
         _gitIdeApi = gitIdeApi;

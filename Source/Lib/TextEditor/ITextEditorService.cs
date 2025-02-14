@@ -36,12 +36,10 @@ public partial interface ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
     
-    public IThemeService ThemeService { get; }
-    public IAppDimensionService AppDimensionService { get; }
     public IFindAllService FindAllService { get; }
+	public LuthetusCommonApi CommonApi { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
-	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 	public IAutocompleteIndexer AutocompleteIndexer { get; }
 	public IAutocompleteService AutocompleteService { get; }
 	public LuthetusTextEditorConfig TextEditorConfig { get; }

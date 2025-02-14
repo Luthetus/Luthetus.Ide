@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -241,7 +242,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                     TabGroup = null;
                 }
 
-                DialogService.ReduceRegisterAction(this);
+				CommonApi.DialogApi.ReduceRegisterAction(this);
             }
 
             // Create TextEditor Tab
@@ -270,7 +271,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                     else
                     {
                         // Is a dialog
-                        DialogService.ReduceDisposeAction(DynamicViewModelKey);
+                        CommonApi.DialogApi.ReduceDisposeAction(DynamicViewModelKey);
                     }
 
                     TabGroup = null;
@@ -302,13 +303,13 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                 else
                 {
                     // Is a dialog
-                    DialogService.ReduceDisposeAction(DynamicViewModelKey);
+                    CommonApi.DialogApi.ReduceDisposeAction(DynamicViewModelKey);
                 }
 
                 TabGroup = null;
             }
 
-            PanelService.ReduceRegisterPanelTabAction(
+			CommonApi.PanelApi.ReduceRegisterPanelTabAction(
                 panelDropzone.PanelGroupKey,
                 new Panel(
                     Title,
@@ -323,8 +324,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                             ViewModelKey
                         },
                     },
-                    PanelService,
-                    DialogService,
+                    CommonApi,
                     JsRuntime),
                 true);
 

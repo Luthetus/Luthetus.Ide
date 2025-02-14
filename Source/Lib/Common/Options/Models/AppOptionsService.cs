@@ -26,7 +26,7 @@ public class AppOptionsService : IAppOptionsService
     public string StorageKey => "luthetus-common_theme-storage-key";
 #endif
 
-    public string ThemeCssClassString => ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+    public string ThemeCssClassString => _commonApi.ThemeApi.GetThemeState().ThemeList.FirstOrDefault(
         x => x.Key == GetAppOptionsState().Options.ThemeKey)
         ?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
@@ -63,7 +63,7 @@ public class AppOptionsService : IAppOptionsService
     {
         get
         {
-	        var activeTheme = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+	        var activeTheme = _commonApi.ThemeApi.GetThemeState().ThemeList.FirstOrDefault(
 		        x => x.Key == GetAppOptionsState().Options.ThemeKey)
 		        	?? ThemeFacts.VisualStudioDarkThemeClone;
 		        
@@ -214,7 +214,7 @@ public class AppOptionsService : IAppOptionsService
 
     public async Task SetFromLocalStorageAsync()
     {
-        var optionsJsonString = await _storageService.GetValue(StorageKey).ConfigureAwait(false) as string;
+        var optionsJsonString = await _commonApi.StorageApi.GetValue(StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;
@@ -226,7 +226,7 @@ public class AppOptionsService : IAppOptionsService
 
         if (optionsJson.ThemeKey is not null)
         {
-            var matchedTheme = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+            var matchedTheme = _commonApi.ThemeApi.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.ThemeKey);
 
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
@@ -250,8 +250,10 @@ public class AppOptionsService : IAppOptionsService
 
     public void WriteToStorage()
     {
-        _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
+        IStorageService.WriteToLocalStorage(
+            _commonApi.BackgroundTaskApi,
+            _commonApi.StorageApi,
             StorageKey,
-            new CommonOptionsJsonDto(GetAppOptionsState().Options));
+			new CommonOptionsJsonDto(GetAppOptionsState().Options));
     }
 }

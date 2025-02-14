@@ -39,7 +39,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	{
 		var terminalCommandRequest = new TerminalCommandRequest(
         	"bash -c \"type bash\"",
-        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+            CommonApi.EnvironmentProviderApi.HomeDirectoryAbsolutePath.Value,
         	TypeBashTerminalCommandRequestKey)
         {
         	ContinueWithFunc = parsedCommand =>
@@ -82,13 +82,9 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 					terminal,
 					TextEditorService,
 					CompilerServiceRegistry,
-					DialogService,
-				    PanelService,
+                    CommonApi,
 					JsRuntime)),
-			BackgroundTaskService,
-			CommonComponentRenderers,
-			NotificationService,
-			EnvironmentProvider,
+            CommonApi,
 			_pathToShellExecutable)
 		{
 			Key = Key<ITerminal>.NewKey()
@@ -98,6 +94,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		TerminalService.ReduceRegisterAction(terminalIntegrated);
 			
-		DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
+		CommonApi.DialogApi.ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}
 }

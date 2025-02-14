@@ -1,7 +1,7 @@
 @using Luthetus.Common.RazorLib.FileSystems.Models;
 
 @{
-	var appOptionsState = AppOptionsService.GetAppOptionsState();
+	var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
 
 	var iconDriver = new IconDriver(
 		appOptionsState.Options.IconSizeInPixels,
@@ -53,7 +53,7 @@
                     {
                         foreach (var directory in openedTreeView.Item.GetAncestorDirectoryList())
                         {
-                            var directoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(directory, true);
+                            var directoryAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(directory, true);
                             <InputFileAddressHierarchyEntry AbsolutePath="directoryAbsolutePath" />
                         }
 

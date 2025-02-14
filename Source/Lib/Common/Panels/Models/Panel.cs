@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
@@ -28,8 +29,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         Key<ContextRecord> contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
-        IPanelService panelService,
-        IDialogService dialogService,
+        LuthetusCommonApi commonApi,
         IJSRuntime jsRuntime)
     {
         Title = title;
@@ -39,9 +39,8 @@ public record Panel : IPanelTab, IDialog, IDrag
         ComponentType = componentType;
         ComponentParameterMap = componentParameterMap;
 
-        PanelService = panelService;
-        DialogService = dialogService;
-        JsRuntime = jsRuntime;
+		CommonApi = commonApi;
+		JsRuntime = jsRuntime;
 
         _dragTabComponentType = typeof(TabDisplay);
         _dragTabComponentParameterMap = new()
@@ -58,9 +57,8 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-	public IPanelService PanelService { get;}
-    public IDialogService DialogService { get;}
-    public IJSRuntime JsRuntime { get;}
+	public LuthetusCommonApi CommonApi { get; }
+    public IJSRuntime JsRuntime { get; }
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
 	public string? DialogCssClass { get; set; }
@@ -180,7 +178,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					PanelService.ReduceDisposePanelTabAction(
+					CommonApi.PanelApi.ReduceDisposePanelTabAction(
 						panelGroup.Key,
 						Key);
 				}
@@ -195,7 +193,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				TabGroup = null;
 			}
 
-			DialogService.ReduceRegisterAction(this);
+			CommonApi.DialogApi.ReduceRegisterAction(this);
 		}
 		
 		// Create Panel Tab
@@ -204,13 +202,13 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					PanelService.ReduceDisposePanelTabAction(
+					CommonApi.PanelApi.ReduceDisposePanelTabAction(
 						panelGroup.Key,
 						Key);
 				}
 				else
 				{
-					DialogService.ReduceDisposeAction(DynamicViewModelKey);
+					CommonApi.DialogApi.ReduceDisposeAction(DynamicViewModelKey);
 				}
 
 				TabGroup = null;
@@ -223,7 +221,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				? true
 				: false;
 
-			PanelService.ReduceRegisterPanelTabAction(
+			CommonApi.PanelApi.ReduceRegisterPanelTabAction(
 				panelGroupDropzone.PanelGroupKey,
 				this,
 				insertAtIndexZero);

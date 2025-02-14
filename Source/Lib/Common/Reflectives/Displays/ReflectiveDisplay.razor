@@ -2,10 +2,10 @@
 
 <div class="luth_reflective">
 
-    @{ var model = ReflectiveService.GetReflectiveModel(ReflectiveModelKey); }
+    @{ var model = CommonApi.ReflectiveApi.GetReflectiveModel(ReflectiveModelKey); }
     
     @{
-    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    	var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
     	
     	var iconDriver = new IconDriver(
 			appOptionsState.Options.IconSizeInPixels,

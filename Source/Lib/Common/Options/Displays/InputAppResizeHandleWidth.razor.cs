@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Options.Displays;
 
@@ -13,19 +14,19 @@ public partial class InputAppResizeHandleWidth : ComponentBase, IDisposable
 
     public int ResizeHandleWidthInPixels
     {
-        get => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels;
+        get => CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleWidthInPixels;
         set
         {
             if (value < AppOptionsState.MINIMUM_RESIZE_HANDLE_WIDTH_IN_PIXELS)
                 value = AppOptionsState.MINIMUM_RESIZE_HANDLE_WIDTH_IN_PIXELS;
 
-            AppOptionsService.SetResizeHandleWidth(value);
+            CommonApi.AppOptionApi.SetResizeHandleWidth(value);
         }
     }
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -37,6 +38,6 @@ public partial class InputAppResizeHandleWidth : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

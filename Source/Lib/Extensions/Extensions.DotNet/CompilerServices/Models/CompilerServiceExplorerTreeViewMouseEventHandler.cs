@@ -13,7 +13,7 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
 	public CompilerServiceExplorerTreeViewMouseEventHandler(
 			LuthetusCommonApi commonApi,
 			IdeBackgroundTaskApi ideBackgroundTaskApi)
-		: base(treeViewService, backgroundTaskService)
+		: base(commonApi)
 	{
 		_commonApi = commonApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;

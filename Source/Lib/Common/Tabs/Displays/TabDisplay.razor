@@ -9,8 +9,8 @@
 		NotificationHelper.DispatchError(
 	        "TabGroup was null",
 	        "TabGroup was null",
-	        CommonComponentRenderers,
-	        NotificationService,
+	        CommonApi.ComponentRendererApi,
+	        CommonApi.NotificationApi,
 	        TimeSpan.FromSeconds(6));
 	}
 	
@@ -42,7 +42,7 @@
 	            @onclick="CloseTabOnClickAsync">
 	        
 	        @{
-	        	var appOptionsState = AppOptionsService.GetAppOptionsState();
+				var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
 	        
 	        	var iconDriver = new IconDriver(
 					appOptionsState.Options.IconSizeInPixels,

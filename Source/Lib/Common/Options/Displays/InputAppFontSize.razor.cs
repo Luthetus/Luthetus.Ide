@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Options.Displays;
 
@@ -13,19 +14,19 @@ public partial class InputAppFontSize : ComponentBase, IDisposable
 
     public int FontSizeInPixels
     {
-        get => AppOptionsService.GetAppOptionsState().Options.FontSizeInPixels;
+        get => CommonApi.AppOptionApi.GetAppOptionsState().Options.FontSizeInPixels;
         set
         {
             if (value < AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
                 value = AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
 
-            AppOptionsService.SetFontSize(value);
+            CommonApi.AppOptionApi.SetFontSize(value);
         }
     }
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -37,6 +38,6 @@ public partial class InputAppFontSize : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

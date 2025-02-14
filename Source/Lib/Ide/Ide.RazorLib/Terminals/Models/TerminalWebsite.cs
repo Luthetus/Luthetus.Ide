@@ -45,7 +45,7 @@ public class TerminalWebsite : ITerminal
 
     public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest)
     {
-		_backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -54,7 +54,7 @@ public class TerminalWebsite : ITerminal
     
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _backgroundTaskService.EnqueueAsync(
+		return _commonApi.BackgroundTaskApi.EnqueueAsync(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -119,7 +119,7 @@ public class TerminalWebsite : ITerminal
 				parsedCommand,
 				new StandardErrorCommandEvent(parsedCommand.SourceTerminalCommandRequest.CommandText + " threw an exception" + "\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonApi.ComponentRendererApi, _commonApi.NotificationApi, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

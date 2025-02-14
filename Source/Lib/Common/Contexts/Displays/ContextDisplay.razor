@@ -4,8 +4,8 @@
 <div class="luth_ide_active-context-entry">
 
     @{
-    	var contextRecord = ContextService.GetContextRecord(ContextKey);
-    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    	var contextRecord = CommonApi.ContextApi.GetContextRecord(ContextKey);
+    	var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
     }
 
     <div class="luth_ide_active-context-title">

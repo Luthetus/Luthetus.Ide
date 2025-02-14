@@ -2,7 +2,7 @@
 @using Luthetus.Common.RazorLib.Resizes.Displays
 
 @{
-	var dialogState = DialogService.GetDialogState();
+	var dialogState = CommonApi.DialogApi.GetDialogState();
 	var dialogStateIsActiveSelection = dialogState.ActiveDialogKey == Dialog.DynamicViewModelKey;
 }
 
@@ -36,7 +36,7 @@
              @onmousedown:stopPropagation="true">
              
             @{
-            	var appOptionsState = AppOptionsService.GetAppOptionsState();
+            	var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
             
             	var iconDriver = new IconDriver(
 					appOptionsState.Options.IconSizeInPixels,

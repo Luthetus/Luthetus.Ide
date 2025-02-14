@@ -29,11 +29,6 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
-    private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
-    
-    private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
-    	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
-    
     /// <summary>
     /// This is to say that the order of the <Luthetus...Initializer/> components
     /// in the markup matters?
@@ -45,28 +40,28 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		BackgroundTaskService.Enqueue(
+        CommonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskService.ContinuousTaskWorker.Queue.Key,
+            CommonApi.BackgroundTaskApi.ContinuousTaskWorker.Queue.Key,
             nameof(LuthetusCommonInitializer),
             async () =>
             {
-                AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
+                CommonApi.AppOptionApi.SetActiveThemeRecordKey(CommonApi.CommonConfigApi.InitialThemeKey, false);
 
-                await AppOptionsService
+                await CommonApi.AppOptionApi
                     .SetFromLocalStorageAsync()
                     .ConfigureAwait(false);
 
-				ContextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;                    
-                ContextService.ReduceRegisterContextSwitchGroupAction(
+                CommonApi.ContextApi.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;
+                CommonApi.ContextApi.ReduceRegisterContextSwitchGroupAction(
                 	new ContextSwitchGroup(
                 		ContextSwitchGroupKey,
 						"Contexts",
 						() =>
 						{
-							var contextState = ContextService.GetContextState();
-							var panelState = PanelService.GetPanelState();
-							var dialogState = DialogService.GetDialogState();
+							var contextState = CommonApi.ContextApi.GetContextState();
+							var panelState = CommonApi.PanelApi.GetPanelState();
+							var dialogState = CommonApi.DialogApi.GetDialogState();
 							var menuOptionList = new List<MenuOptionRecord>();
 							
 							foreach (var panel in panelState.PanelList)
@@ -80,7 +75,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 						
 										if (panelGroup is not null)
 										{
-											PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
+                                            CommonApi.PanelApi.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
 											
 											var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 											
@@ -90,8 +85,8 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 											        contextRecord,
 											        nameof(ContextHelper.ConstructFocusContextElementCommand),
 											        nameof(ContextHelper.ConstructFocusContextElementCommand),
-											        JsRuntimeCommonApi,
-											        PanelService);
+                                                    CommonApi.LuthetusCommonJavaScriptInteropApi,
+                                                    CommonApi.PanelApi);
 											        
 											    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 											}
@@ -103,16 +98,16 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 											
 											if (existingDialog is not null)
 											{
-												DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+                                                CommonApi.DialogApi.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
 												
-												await JsRuntimeCommonApi
-									                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
+												await CommonApi.LuthetusCommonJavaScriptInteropApi
+                                                    .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
 									                .ConfigureAwait(false);
 											}
 											else
 											{
-												PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
-												PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
+                                                CommonApi.PanelApi.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
+                                                CommonApi.PanelApi.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
 												
 												var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 											
@@ -122,8 +117,8 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 												        contextRecord,
 												        nameof(ContextHelper.ConstructFocusContextElementCommand),
 												        nameof(ContextHelper.ConstructFocusContextElementCommand),
-												        JsRuntimeCommonApi,
-												        PanelService);
+                                                        CommonApi.LuthetusCommonJavaScriptInteropApi,
+                                                        CommonApi.PanelApi);
 												        
 												    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 												}
@@ -151,28 +146,28 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 		{
 			var token = _cancellationTokenSource.Token;
 
-			if (BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask is null)
+			if (CommonApi.BackgroundTaskApi.ContinuousTaskWorker.StartAsyncTask is null)
 			{
 				_hasStartedContinuousWorker = true;
 
-				BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
-					() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
+                CommonApi.BackgroundTaskApi.ContinuousTaskWorker.StartAsyncTask = Task.Run(
+					() => CommonApi.BackgroundTaskApi.ContinuousTaskWorker.StartAsync(token),
 					token);
 			}
 
-			if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
+			if (CommonApi.HostingInformationApi.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
 			{
-				if (BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask is null)
+				if (CommonApi.BackgroundTaskApi.IndefiniteTaskWorker.StartAsyncTask is null)
 				{
 					_hasStartedIndefiniteWorker = true;
 
-					BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
-						() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
+                    CommonApi.BackgroundTaskApi.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
+						() => CommonApi.BackgroundTaskApi.IndefiniteTaskWorker.StartAsync(token),
 						token);
 				}
 			}
 
-			BrowserResizeInterop.SubscribeWindowSizeChanged(JsRuntimeCommonApi);
+            CommonApi.BrowserResizeInteropApi.SubscribeWindowSizeChanged(CommonApi.LuthetusCommonJavaScriptInteropApi);
 		}
 
 		base.OnAfterRender(firstRender);
@@ -180,14 +175,14 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	BrowserResizeInterop.DisposeWindowSizeChanged(JsRuntimeCommonApi);
+        CommonApi.BrowserResizeInteropApi.DisposeWindowSizeChanged(CommonApi.LuthetusCommonJavaScriptInteropApi);
     	_cancellationTokenSource.Cancel();
     	_cancellationTokenSource.Dispose();
     	
     	if (_hasStartedContinuousWorker)
-    		BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = null;
+            CommonApi.BackgroundTaskApi.ContinuousTaskWorker.StartAsyncTask = null;
     		
     	if (_hasStartedIndefiniteWorker)
-    		BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = null;
+            CommonApi.BackgroundTaskApi.IndefiniteTaskWorker.StartAsyncTask = null;
     }
 }

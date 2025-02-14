@@ -10,25 +10,23 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 
 public class TextEditorGroupApi : ITextEditorGroupApi
 {
     private readonly ITextEditorService _textEditorService;
-    private readonly IPanelService _panelService;
-    private readonly IDialogService _dialogService;
+    private readonly LuthetusCommonApi _commonApi;
     private readonly IJSRuntime _jsRuntime;
 
     public TextEditorGroupApi(
-        ITextEditorService textEditorService,
-        IPanelService panelService,
-        IDialogService dialogService,
-        IJSRuntime jsRuntime)
+		LuthetusCommonApi commonApi,
+		ITextEditorService textEditorService,
+		IJSRuntime jsRuntime)
     {
         _textEditorService = textEditorService;
-        _panelService = panelService;
-        _dialogService = dialogService;
+		_commonApi = commonApi;
         _jsRuntime = jsRuntime;
     }
 
@@ -56,8 +54,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
             ImmutableList<Key<TextEditorViewModel>>.Empty,
             category.Value,
             _textEditorService,
-            _panelService,
-            _dialogService,
+			_commonApi,
             _jsRuntime);
 
         ReduceRegisterAction(textEditorGroup);

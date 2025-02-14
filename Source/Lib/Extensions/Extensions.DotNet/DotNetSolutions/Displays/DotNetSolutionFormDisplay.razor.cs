@@ -15,6 +15,7 @@ using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 

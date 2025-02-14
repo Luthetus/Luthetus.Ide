@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Displays;
 
@@ -30,11 +31,11 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private string ElementDimensionsStyleCssString => Dialog.DialogElementDimensions.StyleString;
 
     private string IsMaximizedStyleCssString => Dialog.DialogIsMaximized
-        ? CommonConfig.DialogServiceOptions.IsMaximizedStyleCssString
+        ? CommonApi.CommonConfigApi.DialogServiceOptions.IsMaximizedStyleCssString
         : string.Empty;
 
     private string IconSizeInPixelsCssValue =>
-        $"{AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
+        $"{CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
 
     private string DialogTitleCssStyleString =>
         "width: calc(100% -" +
@@ -43,8 +44,8 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        DialogService.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonApi.DialogApi.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
 
         base.OnInitialized();
     }
@@ -53,7 +54,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await JsRuntime.GetLuthetusCommonApi()
+            await CommonApi.LuthetusCommonJavaScriptInteropApi
                 .FocusHtmlElementById(Dialog.DialogFocusPointHtmlElementId)
                 .ConfigureAwait(false);
         }
@@ -84,16 +85,16 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void ToggleIsMaximized()
     {
-        DialogService.ReduceSetIsMaximizedAction(
+        CommonApi.DialogApi.ReduceSetIsMaximizedAction(
             Dialog.DynamicViewModelKey,
             !Dialog.DialogIsMaximized);
     }
 
     private async Task DispatchDisposeDialogRecordAction()
     {
-        DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
+        CommonApi.DialogApi.ReduceDisposeAction(Dialog.DynamicViewModelKey);
         
-        await JsRuntime.GetLuthetusCommonApi()
+        await CommonApi.LuthetusCommonJavaScriptInteropApi
 	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
 	        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
 	        .ConfigureAwait(false);
@@ -108,7 +109,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private Task HandleOnFocusIn()
     {
-        DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
+        CommonApi.DialogApi.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
         return OnFocusInFunc.Invoke(Dialog);
     }
     
@@ -119,12 +120,12 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void HandleOnMouseDown()
     {
-        DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
+        CommonApi.DialogApi.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
     }
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        DialogService.ActiveDialogKeyChanged -= OnActiveDialogKeyChanged;
+        CommonApi.AppOptionApi.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonApi.DialogApi.ActiveDialogKeyChanged -= OnActiveDialogKeyChanged;
     }
 }

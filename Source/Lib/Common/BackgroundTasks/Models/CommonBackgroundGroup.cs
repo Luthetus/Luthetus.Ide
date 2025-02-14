@@ -117,27 +117,27 @@ public class CommonBackgroundGroup : IBackgroundTaskGroup
 			
 		switch (workKind)
 		{
-			case TextEditorWorkKind.LuthetusCommonInitializer:
+			case CommonWorkKind.LuthetusCommonInitializer:
 				var luthetusCommonInitializer = LuthetusCommonInitializerQueue.Dequeue();
-				_taskCompletionSourceWasCreated = luthetusCommonInitializer.__TaskCompletionSourceWasCreated;
-				return LuthetusCommonInitializerWork(cancellationToken);
-			case TextEditorWorkKind.Tab_ManuallyPropagateOnContextMenu:
+				_taskCompletionSourceWasCreated = false;
+                return ValueTask.CompletedTask;
+            case CommonWorkKind.Tab_ManuallyPropagateOnContextMenu:
 				var tab_ManuallyPropagateOnContextMenu = Tab_ManuallyPropagateOnContextMenuQueue.Dequeue();
-				_taskCompletionSourceWasCreated = tab_ManuallyPropagateOnContextMenu.__TaskCompletionSourceWasCreated;
-				return tab_ManuallyPropagateOnContextMenu.HandleEvent(cancellationToken);
-			case TextEditorWorkKind.TreeView_HandleTreeViewOnContextMenu:
+				_taskCompletionSourceWasCreated = false;
+				return ValueTask.CompletedTask;
+			case CommonWorkKind.TreeView_HandleTreeViewOnContextMenu:
 				var treeView_HandleTreeViewOnContextMenu = TreeView_HandleTreeViewOnContextMenuQueue.Dequeue();
 				_taskCompletionSourceWasCreated = false;
-				return treeView_HandleTreeViewOnContextMenu.HandleEvent(cancellationToken);
-		    case TextEditorWorkKind.TreeView_HandleExpansionChevronOnMouseDown:
+				return ValueTask.CompletedTask;
+            case CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown:
 		    	var treeView_HandleExpansionChevronOnMouseDown = TreeView_HandleExpansionChevronOnMouseDownQueue.Dequeue();
 				_taskCompletionSourceWasCreated = false;
-				return treeView_HandleExpansionChevronOnMouseDown.HandleEvent(cancellationToken);
-			case TextEditorWorkKind.TreeView_ManuallyPropagateOnContextMenu:
+                return ValueTask.CompletedTask;
+            case CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu:
 				var treeView_ManuallyPropagateOnContextMenu = TreeView_ManuallyPropagateOnContextMenuQueue.Dequeue();
 				_taskCompletionSourceWasCreated = false;
-				return treeView_ManuallyPropagateOnContextMenu.HandleEvent(cancellationToken);
-			default:
+                return ValueTask.CompletedTask;
+            default:
 				return ValueTask.CompletedTask;
 		}
 	}
@@ -151,7 +151,7 @@ public class CommonBackgroundGroup : IBackgroundTaskGroup
 	// DialogService
 	// JsRuntimeCommonApi
 	
-	public ValueTask LuthetusCommonInitializerWork(CancellationToken cancellationToken)
+	/*public ValueTask LuthetusCommonInitializerWork(CancellationToken cancellationToken)
 	{
 		AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
 
@@ -242,7 +242,7 @@ public class CommonBackgroundGroup : IBackgroundTaskGroup
 						
 					return Task.FromResult(menu);
 				}));
-	}
+	}*/
 }
 
 
