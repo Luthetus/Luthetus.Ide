@@ -34,7 +34,7 @@ using Luthetus.Extensions.DotNet.AppDatas.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
-public class DotNetSolutionIdeApi
+public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IBackgroundTaskService _backgroundTaskService;
@@ -108,16 +108,30 @@ public class DotNetSolutionIdeApi
 		_serviceProvider = serviceProvider;
 	}
 
-	public void SetDotNetSolution(AbsolutePath inSolutionAbsolutePath)
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(CompilerServiceIdeApi);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<DotNetSolutionIdeWorkKind> _workKindQueue = new();
+
+    private readonly object _workLock = new();
+
+    private readonly Queue<AbsolutePath> _queue_SetDotNetSolution = new();
+
+    public void Enqueue_SetDotNetSolution(AbsolutePath inSolutionAbsolutePath)
 	{
-		_backgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			BackgroundTaskFacts.ContinuousQueueKey,
-			"Set .NET Solution",
-			() => SetDotNetSolutionAsync(inSolutionAbsolutePath));
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.SetDotNetSolution);
+			_queue_SetDotNetSolution.Enqueue(inSolutionAbsolutePath);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
 	}
 
-	private async ValueTask SetDotNetSolutionAsync(AbsolutePath inSolutionAbsolutePath)
+	private async ValueTask Do_SetDotNetSolution(AbsolutePath inSolutionAbsolutePath)
 	{
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
@@ -303,7 +317,7 @@ Execution Terminal"));
 
 		await ParseSolution(dotNetSolutionModel.Key).ConfigureAwait(false);
 
-		await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
+		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
 	}
 	
 	private enum ParseSolutionStageKind
@@ -562,16 +576,19 @@ Execution Terminal"));
 		}
 	}
 
-	public void SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+	private readonly Queue<Key<DotNetSolutionModel>> _queue_SetDotNetSolutionTreeView = new();
+
+    public void Enqueue_SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
-		_backgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			BackgroundTaskFacts.ContinuousQueueKey,
-			"Set .NET Solution TreeView",
-			async () => await SetDotNetSolutionTreeViewAsync(dotNetSolutionModelKey).ConfigureAwait(false));
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.SetDotNetSolutionTreeView);
+			_queue_SetDotNetSolutionTreeView.Enqueue(dotNetSolutionModelKey);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
 	}
 
-	private async Task SetDotNetSolutionTreeViewAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+	private async ValueTask Do_SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
 		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 
@@ -687,25 +704,29 @@ Execution Terminal"));
         _startupControlService.ReduceStateChangedAction();
         return Task.CompletedTask;
     }
-    
-    public void Website_AddExistingProjectToSolution(
+
+	private readonly
+		Queue<(Key<DotNetSolutionModel> dotNetSolutionModelKey, string projectTemplateShortName, string cSharpProjectName, AbsolutePath cSharpProjectAbsolutePath)>
+		_queue_Website_AddExistingProjectToSolution = new();
+
+    public void Enqueue_Website_AddExistingProjectToSolution(
 		Key<DotNetSolutionModel> dotNetSolutionModelKey,
 		string projectTemplateShortName,
 		string cSharpProjectName,
 		AbsolutePath cSharpProjectAbsolutePath)
 	{
-		_backgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			BackgroundTaskFacts.ContinuousQueueKey,
-			"Add Existing-Project To Solution",
-			async () => await Website_AddExistingProjectToSolutionAsync(
-				dotNetSolutionModelKey,
-				projectTemplateShortName,
-				cSharpProjectName,
-				cSharpProjectAbsolutePath));
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.Website_AddExistingProjectToSolution);
+
+			_queue_Website_AddExistingProjectToSolution.Enqueue(
+                (dotNetSolutionModelKey, projectTemplateShortName, cSharpProjectName, cSharpProjectAbsolutePath));
+
+            _backgroundTaskService.EnqueueGroup(this);
+        }
 	}
 
-	private async Task Website_AddExistingProjectToSolutionAsync(
+	private async ValueTask Do_Website_AddExistingProjectToSolution(
 		Key<DotNetSolutionModel> dotNetSolutionModelKey,
 		string projectTemplateShortName,
 		string cSharpProjectName,
@@ -754,7 +775,7 @@ Execution Terminal"));
 		if (solutionTextEditorModel is not null)
 		{
 			_textEditorService.TextEditorWorker.PostUnique(
-				nameof(Website_AddExistingProjectToSolutionAsync),
+				nameof(Do_Website_AddExistingProjectToSolution),
 				editContext =>
 				{
 					var modelModifier = editContext.GetModelModifier(solutionTextEditorModel.ResourceUri);
@@ -775,7 +796,7 @@ Execution Terminal"));
 			outDotNetSolutionModel.Key,
 			outDotNetSolutionModel));
 
-		await SetDotNetSolutionTreeViewAsync(outDotNetSolutionModel.Key).ConfigureAwait(false);
+		await Do_SetDotNetSolutionTreeView(outDotNetSolutionModel.Key).ConfigureAwait(false);
 	}
 
 	/// <summary>Don't have the implementation <see cref="WithAction"/> as public scope.</summary>
@@ -809,4 +830,47 @@ Execution Terminal"));
 			};
 		});
 	}
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        DotNetSolutionIdeWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
+        }
+
+        switch (workKind)
+        {
+            case DotNetSolutionIdeWorkKind.SetDotNetSolution:
+            {
+				var args = _queue_SetDotNetSolution.Dequeue();
+                return Do_SetDotNetSolution(args);
+            }
+			case DotNetSolutionIdeWorkKind.SetDotNetSolutionTreeView:
+            {
+				var args = _queue_SetDotNetSolutionTreeView.Dequeue();
+                return Do_SetDotNetSolutionTreeView(args);
+            }
+			case DotNetSolutionIdeWorkKind.Website_AddExistingProjectToSolution:
+            {
+				var args = _queue_Website_AddExistingProjectToSolution.Dequeue();
+                return Do_Website_AddExistingProjectToSolution(
+                    args.dotNetSolutionModelKey,
+					args.projectTemplateShortName,
+					args.cSharpProjectName,
+                    args.cSharpProjectAbsolutePath);
+            }
+            default:
+            {
+                return ValueTask.CompletedTask;
+            }
+        }
+    }
 }

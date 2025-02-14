@@ -25,17 +25,11 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
-	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
 	private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
 	private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
@@ -104,7 +98,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 	private void ReloadOnClick()
 	{
-        DotNetBackgroundTaskApi.CompilerService.SetCompilerServiceExplorerTreeView();
+        DotNetBackgroundTaskApi.CompilerService.Enqueue_SetCompilerServiceExplorerTreeView();
 	}
 
 	public void Dispose()

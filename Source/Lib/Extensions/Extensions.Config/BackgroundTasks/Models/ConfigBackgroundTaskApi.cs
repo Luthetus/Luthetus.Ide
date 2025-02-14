@@ -19,7 +19,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
 
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(CommonBackgroundTaskApi);
+    public string Name { get; } = nameof(ConfigBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
