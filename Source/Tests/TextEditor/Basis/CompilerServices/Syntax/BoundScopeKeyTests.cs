@@ -1,6 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-
-namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
+﻿namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.Syntax;
 
 /// <summary>
 /// <see cref="BoundScopeKey"/>

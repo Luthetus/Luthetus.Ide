@@ -1,9 +1,7 @@
 using System.Text;
 using System.Diagnostics;
 using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 

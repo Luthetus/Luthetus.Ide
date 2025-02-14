@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;

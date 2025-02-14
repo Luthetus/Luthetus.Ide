@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Extensions.Git.Displays;
 
 namespace Luthetus.Extensions.Git.Installations.Displays;

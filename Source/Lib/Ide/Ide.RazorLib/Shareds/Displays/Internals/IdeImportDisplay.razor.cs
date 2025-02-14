@@ -1,7 +1,5 @@
 using System.IO.Compression;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.Exceptions;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;

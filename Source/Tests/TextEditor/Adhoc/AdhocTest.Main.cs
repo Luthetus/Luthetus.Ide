@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Misc;
@@ -17,7 +15,6 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.Installations.Models;
-using Luthetus.Extensions.Config.CompilerServices;
 using Luthetus.Extensions.Config.Decorations;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;

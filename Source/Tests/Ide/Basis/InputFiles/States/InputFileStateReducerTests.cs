@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.InputFiles.States;
-
-namespace Luthetus.Ide.Tests.Basis.InputFiles.States;
+﻿namespace Luthetus.Ide.Tests.Basis.InputFiles.States;
 
 /// <summary>
 /// <see cref="InputFileState.Reducer"/>

@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
-using Luthetus.Extensions.DotNet.Nugets.Models;
 
 namespace Luthetus.Extensions.DotNet.Nugets.Models;
 
