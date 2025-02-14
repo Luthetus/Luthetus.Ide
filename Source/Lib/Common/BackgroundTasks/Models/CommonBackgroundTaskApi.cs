@@ -14,6 +14,9 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 {
+	private readonly Queue<CommonWorkKind> _workKindQueue = new();
+	private readonly object _workLock = new();
+
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
     private readonly IAppOptionsService _appOptionsService;
@@ -62,6 +65,11 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     
     public void EnqueueLuthetusCommonInitializer()
     {
+    	lock (_workLock)
+    	{
+    		_workKindQueue.Enqueue(CommonWorkKind.LuthetusCommonInitializerWork);
+    	}
+    	
     	_backgroundTaskService.EnqueueGroup(this);
     }
 
@@ -72,10 +80,25 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)
 	{
-		return LuthetusCommonInitializerWork(LuthetusCommonInitializer.ContextSwitchGroupKey);
+		CommonWorkKind workKind;
+		
+		lock (_workLock)
+		{
+			if (!_workKindQueue.TryDequeue(out workKind))
+				return ValueTask.CompletedTask;
+		}
+			
+		switch (workKind)
+		{
+			case CommonWorkKind.LuthetusCommonInitializerWork:
+				return DoLuthetusCommonInitializerWork(LuthetusCommonInitializer.ContextSwitchGroupKey);
+			default:
+				return ValueTask.CompletedTask;
+		}
+		
 	}
 	
-	private async ValueTask LuthetusCommonInitializerWork(Key<ContextSwitchGroup> contextSwitchGroupKey)
+	private async ValueTask DoLuthetusCommonInitializerWork(Key<ContextSwitchGroup> contextSwitchGroupKey)
 	{
         _appOptionsService.SetActiveThemeRecordKey(_commonConfig.InitialThemeKey, false);
 
