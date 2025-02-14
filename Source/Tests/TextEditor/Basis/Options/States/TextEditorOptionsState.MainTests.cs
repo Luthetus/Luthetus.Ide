@@ -1,6 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Options.States;
-
-namespace Luthetus.TextEditor.Tests.Basis.Options.States;
+﻿namespace Luthetus.TextEditor.Tests.Basis.Options.States;
 
 /// <summary>
 /// <see cref="TextEditorOptionsState"/>

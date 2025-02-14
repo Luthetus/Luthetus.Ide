@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Extensions.Config.Installations.Models;

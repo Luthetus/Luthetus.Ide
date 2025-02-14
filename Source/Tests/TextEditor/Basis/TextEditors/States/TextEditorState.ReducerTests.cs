@@ -1,4 +1,3 @@
-using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -11,7 +10,6 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.Tests.JsRuntimes;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;

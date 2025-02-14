@@ -1,7 +1,4 @@
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 

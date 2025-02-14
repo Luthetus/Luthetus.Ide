@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Extensions.Config.Installations.Models;
 

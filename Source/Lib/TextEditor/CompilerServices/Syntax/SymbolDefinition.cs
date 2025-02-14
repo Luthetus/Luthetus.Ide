@@ -1,7 +1,3 @@
-using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 public record struct SymbolDefinition

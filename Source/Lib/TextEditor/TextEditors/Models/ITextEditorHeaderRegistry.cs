@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public interface ITextEditorHeaderRegistry

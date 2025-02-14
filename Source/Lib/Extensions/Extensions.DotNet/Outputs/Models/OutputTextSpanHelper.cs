@@ -1,7 +1,6 @@
 using System.Text;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Extensions.DotNet.Outputs.Models;
