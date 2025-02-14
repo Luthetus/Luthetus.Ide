@@ -7,6 +7,7 @@ using Luthetus.Extensions.DotNet.Installations.Models;
 using Luthetus.Extensions.Config.CompilerServices;
 using Luthetus.Extensions.Config.Decorations;
 using Luthetus.Extensions.Git.Installations.Models;
+using Luthetus.Extensions.Config.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Config.Installations.Models;
 
@@ -21,6 +22,7 @@ public static class ServiceCollectionExtensions
             .AddLuthetusExtensionsDotNetServices(hostingInformation, configure)
             .AddLuthetusExtensionsGitServices(hostingInformation, configure)
             .AddScoped<ICompilerServiceRegistry, ConfigCompilerServiceRegistry>()
-            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>();
+            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
+            .AddScoped<ConfigBackgroundTaskApi>();
     }
 }
