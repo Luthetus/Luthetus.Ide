@@ -740,6 +740,91 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         NuGetPackageManagerService.ReduceSetMostRecentQueryResultAction(localNugetResult);
     }
 
+    private readonly
+        Queue<(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName, TreeViewProjectTestModel treeViewProjectTestModel)>
+        _queue_RunTestByFullyQualifiedName = new();
+
+    public void Enqueue_RunTestByFullyQualifiedName(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName, TreeViewProjectTestModel treeViewProjectTestModel)
+    {
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName);
+            _queue_RunTestByFullyQualifiedName.Enqueue((treeViewStringFragment, fullyQualifiedName, treeViewProjectTestModel));
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+    
+    public ValueTask Do_RunTestByFullyQualifiedName(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName, TreeViewProjectTestModel treeViewProjectTestModel)
+    {
+        RunTestByFullyQualifiedName(
+            treeViewStringFragment,
+            fullyQualifiedName,
+            treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory);
+
+        return ValueTask.CompletedTask;
+    }
+
+    private void RunTestByFullyQualifiedName(
+        TreeViewStringFragment treeViewStringFragment,
+        string fullyQualifiedName,
+        string? directoryNameForTestDiscovery)
+    {
+        var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter
+            .FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
+
+        if (string.IsNullOrWhiteSpace(directoryNameForTestDiscovery) ||
+            string.IsNullOrWhiteSpace(fullyQualifiedName))
+        {
+            return;
+        }
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            dotNetTestByFullyQualifiedNameFormattedCommand.Value,
+            directoryNameForTestDiscovery,
+            treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey)
+        {
+            BeginWithFunc = parsedCommand =>
+            {
+                treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
+                _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+                return Task.CompletedTask;
+            },
+            ContinueWithFunc = parsedCommand =>
+            {
+                treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
+                var output = treeViewStringFragment.Item.TerminalCommandParsed?.OutputCache.ToString() ?? null;
+
+                if (output is not null && output.Contains("Duration:"))
+                {
+                    if (output.Contains("Passed!"))
+                    {
+                        TestExplorerService.ReduceWithAction(inState => inState with
+                        {
+                            PassedTestHashSet = inState.PassedTestHashSet.Add(fullyQualifiedName),
+                            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
+                            FailedTestHashSet = inState.FailedTestHashSet.Remove(fullyQualifiedName),
+                        });
+                    }
+                    else
+                    {
+                        TestExplorerService.ReduceWithAction(inState => inState with
+                        {
+                            FailedTestHashSet = inState.FailedTestHashSet.Add(fullyQualifiedName),
+                            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
+                            PassedTestHashSet = inState.PassedTestHashSet.Remove(fullyQualifiedName),
+                        });
+                    }
+                }
+
+                _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+                return Task.CompletedTask;
+            }
+        };
+
+        treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
+        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+    }
+
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {
         return null;

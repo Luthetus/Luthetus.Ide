@@ -219,19 +219,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 			{
 				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 				{
-					BackgroundTaskService.Enqueue(
-						Key<IBackgroundTask>.NewKey(),
-						BackgroundTaskFacts.IndefiniteQueueKey,
-						"RunTestByFullyQualifiedName",
-						() =>
-						{
-							RunTestByFullyQualifiedName(
-								treeViewStringFragment,
-								fullyQualifiedName,
-								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory);
-
-							return ValueTask.CompletedTask;
-						});
+					DotNetBackgroundTaskApi.Enqueue_RunTestByFullyQualifiedName(
+                        treeViewStringFragment,
+                        fullyQualifiedName,
+                        treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory);
 				}
 
 				return Task.CompletedTask;
@@ -357,67 +348,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 			return MenuRecord.GetEmpty();
 
 		return new MenuRecord(menuOptionRecordList);
-	}
-
-	private void RunTestByFullyQualifiedName(
-		TreeViewStringFragment treeViewStringFragment,
-		string fullyQualifiedName,
-		string? directoryNameForTestDiscovery)
-	{
-		var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter
-			.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
-
-		if (string.IsNullOrWhiteSpace(directoryNameForTestDiscovery) ||
-			string.IsNullOrWhiteSpace(fullyQualifiedName))
-		{
-			return;
-		}
-
-		var terminalCommandRequest = new TerminalCommandRequest(
-        	dotNetTestByFullyQualifiedNameFormattedCommand.Value,
-        	directoryNameForTestDiscovery,
-        	treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey)
-        {
-        	BeginWithFunc = parsedCommand =>
-        	{
-        		treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
-        		TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
-        		return Task.CompletedTask;
-        	},
-        	ContinueWithFunc = parsedCommand =>
-        	{
-        		treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
-				var output = treeViewStringFragment.Item.TerminalCommandParsed?.OutputCache.ToString() ?? null;
-				
-				if (output is not null && output.Contains("Duration:"))
-				{
-					if (output.Contains("Passed!"))
-					{
-						DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
-				        {
-				            PassedTestHashSet = inState.PassedTestHashSet.Add(fullyQualifiedName),
-				            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
-				            FailedTestHashSet = inState.FailedTestHashSet.Remove(fullyQualifiedName),
-				        });
-					}
-					else
-					{
-						DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
-				        {
-				            FailedTestHashSet = inState.FailedTestHashSet.Add(fullyQualifiedName),
-				            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
-				            PassedTestHashSet = inState.PassedTestHashSet.Remove(fullyQualifiedName),
-				        });
-					}
-				}
-			
-				TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
-				return Task.CompletedTask;
-        	}
-        };
-        
-		treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
-        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
 	private async Task SendToOutputPanelAsync(string output)
