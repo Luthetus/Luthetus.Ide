@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.AppDatas.Models;
 
@@ -13,18 +14,11 @@ public class NativeAppDataService : IAppDataService
 	/// </summary>
 	private readonly Dictionary<string, IAppData> _appDataMap = new();
 	
-	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IFileSystemProvider _fileSystemProvider;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
+	private readonly LuthetusCommonApi _commonApi;
 
-	public NativeAppDataService(
-		IEnvironmentProvider environmentProvider,
-		IFileSystemProvider fileSystemProvider,
-		ICommonComponentRenderers commonComponentRenderers)
+	public NativeAppDataService(LuthetusCommonApi commonApi)
 	{
-		_environmentProvider = environmentProvider;
-		_fileSystemProvider = fileSystemProvider;
-		_commonComponentRenderers = commonComponentRenderers;
+        _commonApi = commonApi;
 	}
 	
 	private bool _isInitialized;
@@ -36,26 +30,26 @@ public class NativeAppDataService : IAppDataService
 		{
 			_isInitialized = true;
 			
-			var directoryPath = _environmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value;
+			var directoryPath = _commonApi.EnvironmentProviderApi.SafeRoamingApplicationDataDirectoryAbsolutePath.Value;
 			
-			var directoryExists = await _fileSystemProvider.Directory
+			var directoryExists = await _commonApi.FileSystemProviderApi.Directory
 				.ExistsAsync(directoryPath)
 				.ConfigureAwait(false);
 			
 			if (!directoryExists)
 			{
-				await _fileSystemProvider.Directory
+				await _commonApi.FileSystemProviderApi.Directory
 					.CreateDirectoryAsync(directoryPath)
 					.ConfigureAwait(false);
 			}
-			
-			_environmentProvider.DeletionPermittedRegister(
+
+            _commonApi.EnvironmentProviderApi.DeletionPermittedRegister(
 				new SimplePath(directoryPath, true));
 		}
 		
 		var options = new JsonSerializerOptions { WriteIndented = true };
 	
-		await _fileSystemProvider.File.WriteAllTextAsync(
+		await _commonApi.FileSystemProviderApi.File.WriteAllTextAsync(
 		        GetFilePath(appData.AssemblyName, appData.TypeName, appData.UniqueIdentifier),
 		        JsonSerializer.Serialize(appData, options))
 	        .ConfigureAwait(false);
@@ -86,7 +80,7 @@ public class NativeAppDataService : IAppDataService
 			
 			if (!success || forceRefreshCache)
 			{
-				var appDataJson = await _fileSystemProvider.File
+				var appDataJson = await _commonApi.FileSystemProviderApi.File
 					.ReadAllTextAsync(path)
 					.ConfigureAwait(false);
 				
@@ -123,8 +117,8 @@ public class NativeAppDataService : IAppDataService
 			typeName,
 			uniqueIdentifier);
 		
-		return _environmentProvider.JoinPaths(
-	    	_environmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+		return _commonApi.EnvironmentProviderApi.JoinPaths(
+            _commonApi.EnvironmentProviderApi.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
 	    	relativePath);
 	}
 }
