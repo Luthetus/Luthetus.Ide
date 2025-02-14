@@ -1,6 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Groups.States;
-
-namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
+﻿namespace Luthetus.TextEditor.Tests.Basis.Groups.States;
 
 /// <summary>
 /// <see cref="TextEditorGroupState"/>

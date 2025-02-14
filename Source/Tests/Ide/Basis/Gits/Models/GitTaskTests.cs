@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.Gits.Models;
-
-namespace Luthetus.Ide.Tests.Basis.Gits.Models;
+﻿namespace Luthetus.Ide.Tests.Basis.Gits.Models;
 
 /// <summary>
 /// <see cref="GitTask"/>

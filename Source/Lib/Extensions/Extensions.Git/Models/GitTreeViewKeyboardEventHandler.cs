@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Extensions.Git.Models;
 
 namespace Luthetus.Extensions.Git.Models;
 

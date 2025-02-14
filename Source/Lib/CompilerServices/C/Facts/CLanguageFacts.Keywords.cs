@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.CompilerServices.C.Facts;
 
 public partial class CLanguageFacts

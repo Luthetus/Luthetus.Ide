@@ -31,42 +31,18 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 using System.Text;
 
 // CursorDriver.cs
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 
 // ScrollbarSection.razor.cs
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Drags.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Events.Models;
 
 // VirtualizationDriver.cs
-using System.Text;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 // PresentationAndSelectionDriver.cs
-using System.Collections.Immutable;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 

@@ -1,10 +1,8 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.CodeSearches.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Models;
 

@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
 
