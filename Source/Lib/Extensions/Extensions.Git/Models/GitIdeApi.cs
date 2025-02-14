@@ -123,10 +123,10 @@ public class GitIdeApi : IBackgroundTaskGroup
 
     public void RefreshEnqueue(GitRepo repoAtTimeOfRequest)
     {
-		StatusEnqueue();
-        BranchGetAllEnqueue(repoAtTimeOfRequest);
-        GetActiveBranchNameEnqueue(repoAtTimeOfRequest);
-        GetOriginNameEnqueue(repoAtTimeOfRequest);
+		Enqueue_Status();
+        Enqueue_BranchGetAll(repoAtTimeOfRequest);
+        Enqueue_GetActiveBranchName(repoAtTimeOfRequest);
+        Enqueue_GetOriginName(repoAtTimeOfRequest);
     }
 
     public void Enqueue_GetActiveBranchName(GitRepo repoAtTimeOfRequest)
@@ -490,317 +490,306 @@ public class GitIdeApi : IBackgroundTaskGroup
 
     public void Enqueue_BranchSet(GitRepo repoAtTimeOfRequest, string branchName)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            $"git checkout {branchName}",
-            () =>
-            {
-                var localGitState = GetGitState();
-
-                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return ValueTask.CompletedTask;
-
-                var argumentsString = $"checkout {branchName}";
-
-                var formattedCommand = new FormattedCommand(
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { argumentsString })
-                {
-                    HACK_ArgumentsString = argumentsString,
-                    Tag = GitCliOutputParser.TagConstants.BranchSetEnqueue,
-				};
-
-				var terminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value)
-                {
-                	ContinueWithFunc = parsedCommand =>
-                	{
-                		RefreshEnqueue(repoAtTimeOfRequest);
-                		return Task.CompletedTask;
-                	}
-                };
-                	
-                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(GitIdeApiWorkKind.BranchSet);
+            _queue_BranchSet.Enqueue((repoAtTimeOfRequest, branchName));
+            _backgroundTaskService.EnqueueGroup(this);
+        }
     }
     
-    public void Enqueue_BranchSet(GitRepo repoAtTimeOfRequest, string branchName)
+    public ValueTask Do_BranchSet(GitRepo repoAtTimeOfRequest, string branchName)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            $"git checkout {branchName}",
-            () =>
+        var localGitState = GetGitState();
+
+        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+            return ValueTask.CompletedTask;
+
+        var argumentsString = $"checkout {branchName}";
+
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { argumentsString })
+        {
+            HACK_ArgumentsString = argumentsString,
+            Tag = GitCliOutputParser.TagConstants.BranchSetEnqueue,
+		};
+
+		var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localGitState.Repo.AbsolutePath.Value)
+        {
+            ContinueWithFunc = parsedCommand =>
             {
-                var localGitState = GetGitState();
-
-                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return ValueTask.CompletedTask;
-
-                var argumentsString = $"checkout {branchName}";
-
-                var formattedCommand = new FormattedCommand(
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { argumentsString })
-                {
-                    HACK_ArgumentsString = argumentsString,
-                    Tag = GitCliOutputParser.TagConstants.BranchSetEnqueue,
-				};
-
-				var terminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value)
-                {
-                	ContinueWithFunc = parsedCommand =>
-                	{
-                		RefreshEnqueue(repoAtTimeOfRequest);
-                		return Task.CompletedTask;
-                	}
-                };
+                RefreshEnqueue(repoAtTimeOfRequest);
+                return Task.CompletedTask;
+            }
+        };
                 	
-                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
+        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		return ValueTask.CompletedTask;
     }
     
-    public void PushToOriginWithTrackingEnqueue(GitRepo repoAtTimeOfRequest)
+    public void Enqueue_PushToOriginWithTracking(GitRepo repoAtTimeOfRequest)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "git push -u origin {branchName will go here}",
-            () =>
-            {
-                var localGitState = GetGitState();
-
-                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return ValueTask.CompletedTask;
-
-				// This command will push to origin, and then set the upstream variable
-				// (unsure if this is the correct description)
-				var argumentsString = $"push -u origin {localGitState.Branch}";
-
-                var formattedCommand = new FormattedCommand(
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { argumentsString })
-                {
-                    HACK_ArgumentsString = argumentsString,
-                    Tag = GitCliOutputParser.TagConstants.PushToOriginWithTrackingEnqueue
-				};
-
-				var terminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value)
-                {
-                	ContinueWithFunc = parsedCommand =>
-                	{
-	                	RefreshEnqueue(repoAtTimeOfRequest);
-						return Task.CompletedTask;
-                	}
-                };
-                	
-                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
-    }
-
-    public void PullEnqueue(GitRepo repoAtTimeOfRequest)
-    {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "git pull",
-            () =>
-            {
-                var localGitState = GetGitState();
-
-                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return ValueTask.CompletedTask;
-
-				var argumentsString = $"pull";
-
-                var formattedCommand = new FormattedCommand(
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { argumentsString })
-                {
-                    HACK_ArgumentsString = argumentsString,
-                    Tag = GitCliOutputParser.TagConstants.PullEnqueue
-				};
-
-				var terminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value)
-                {
-                	ContinueWithFunc = parsedCommand =>
-                	{
-                		RefreshEnqueue(repoAtTimeOfRequest);
-						return Task.CompletedTask;
-                	}
-                };
-                	
-                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(GitIdeApiWorkKind.PushToOriginWithTracking);
+            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
     }
     
-    public void FetchEnqueue(GitRepo repoAtTimeOfRequest)
+    public ValueTask Do_PushToOriginWithTracking(GitRepo repoAtTimeOfRequest)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "git fetch",
-            () =>
+        var localGitState = GetGitState();
+
+        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+			return ValueTask.CompletedTask;
+
+		// This command will push to origin, and then set the upstream variable
+		// (unsure if this is the correct description)
+		var argumentsString = $"push -u origin {localGitState.Branch}";
+
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { argumentsString })
+        {
+            HACK_ArgumentsString = argumentsString,
+            Tag = GitCliOutputParser.TagConstants.PushToOriginWithTrackingEnqueue
+		};
+
+		var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localGitState.Repo.AbsolutePath.Value)
+        {
+            ContinueWithFunc = parsedCommand =>
             {
-                var localGitState = GetGitState();
-
-                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return ValueTask.CompletedTask;
-
-				var argumentsString = $"fetch";
-
-                var formattedCommand = new FormattedCommand(
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { argumentsString })
-                {
-                    HACK_ArgumentsString = argumentsString,
-                    Tag = GitCliOutputParser.TagConstants.FetchEnqueue
-				};
-
-			    var terminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value)
-                {
-                	ContinueWithFunc = parsedCommand =>
-                	{
-                		RefreshEnqueue(repoAtTimeOfRequest);
-						return Task.CompletedTask;
-                	}
-                };
+	            RefreshEnqueue(repoAtTimeOfRequest);
+				return Task.CompletedTask;
+            }
+        };
                 	
-                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
+        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		return ValueTask.CompletedTask;
+    }
+
+    public void Enqueue_Pull(GitRepo repoAtTimeOfRequest)
+    {
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(GitIdeApiWorkKind.Pull);
+            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
     }
     
-    public void LogFileEnqueue(
+    public ValueTask Do_Pull(GitRepo repoAtTimeOfRequest)
+    {
+        var localGitState = GetGitState();
+
+        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+			return ValueTask.CompletedTask;
+
+		var argumentsString = $"pull";
+
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { argumentsString })
+        {
+            HACK_ArgumentsString = argumentsString,
+            Tag = GitCliOutputParser.TagConstants.PullEnqueue
+		};
+
+		var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localGitState.Repo.AbsolutePath.Value)
+        {
+            ContinueWithFunc = parsedCommand =>
+            {
+                RefreshEnqueue(repoAtTimeOfRequest);
+				return Task.CompletedTask;
+            }
+        };
+                	
+        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		return ValueTask.CompletedTask;
+    }
+    
+    public void Enqueue_Fetch(GitRepo repoAtTimeOfRequest)
+    {
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(GitIdeApiWorkKind.Fetch);
+            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+    
+    public ValueTask Do_Fetch(GitRepo repoAtTimeOfRequest)
+    {
+        var localGitState = GetGitState();
+
+        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+			return ValueTask.CompletedTask;
+
+		var argumentsString = $"fetch";
+
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { argumentsString })
+        {
+            HACK_ArgumentsString = argumentsString,
+            Tag = GitCliOutputParser.TagConstants.FetchEnqueue
+		};
+
+		var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localGitState.Repo.AbsolutePath.Value)
+        {
+            ContinueWithFunc = parsedCommand =>
+            {
+                RefreshEnqueue(repoAtTimeOfRequest);
+				return Task.CompletedTask;
+            }
+        };
+                	
+        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		return ValueTask.CompletedTask;
+    }
+
+    private readonly
+        Queue<(GitRepo repoAtTimeOfRequest, string relativePathToFile, Func<GitCliOutputParser, string, Task> callback)>
+        _queue_general_callback = new();
+
+    public void Enqueue_LogFile(
         GitRepo repoAtTimeOfRequest,
         string relativePathToFile,
         Func<GitCliOutputParser, string, Task> callback)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "git log file",
-            () =>
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(GitIdeApiWorkKind.LogFile);
+            _queue_general_callback.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+    
+    public ValueTask Do_LogFile(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, string, Task> callback)
+    {
+        var localGitState = GetGitState();
+
+        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+			return ValueTask.CompletedTask;
+
+		var terminalCommandArgs = $"log -p {relativePathToFile}";
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { terminalCommandArgs })
+        {
+            HACK_ArgumentsString = terminalCommandArgs,
+            Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
+		};
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localGitState.Repo.AbsolutePath.Value)
+        {
+            ContinueWithFunc = parsedCommand =>
             {
-                var localGitState = GetGitState();
+                return callback.Invoke(
+                	_gitCliOutputParser,
+                	parsedCommand.OutputCache.ToString());
+            }
+        };
+                	
+        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		return ValueTask.CompletedTask;
+    }
 
-                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return ValueTask.CompletedTask;
+    public void Enqueue_ShowFile(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, string, Task> callback)
+    {
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(GitIdeApiWorkKind.ShowFile);
+            _queue_general_callback.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+    
+    public ValueTask Do_ShowFile(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, string, Task> callback)
+    {
+        var localGitState = GetGitState();
 
-				var terminalCommandArgs = $"log -p {relativePathToFile}";
-                var formattedCommand = new FormattedCommand(
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { terminalCommandArgs })
-                {
-                    HACK_ArgumentsString = terminalCommandArgs,
-                    Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
-				};
+        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+			return ValueTask.CompletedTask;
 
-                var terminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
+		// Example output:
+		/*
+		PS C:\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg> git log BlazorApp4NetCoreDbg/Pages/FetchData.razor
+		commit 87c2893b1006defc36770c166ab13fdbc6b7f959
+		Author: Luthetus <45454132+huntercfreeman@users.noreply.github.com>
+		Date:   Fri May 3 16:15:17 2024 -0400
+				
+			Abc123 3
+		*/
+				
+		var skipTextLength = "commit ".Length;
+		var takeTextLength = "87c2893b1006defc36770c166ab13fdbc6b7f959".Length;
+				
+		var logTerminalCommandArgs = $"log -p {relativePathToFile}";
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { logTerminalCommandArgs })
+        {
+            HACK_ArgumentsString = logTerminalCommandArgs,
+            Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
+		};
+
+        var logTerminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localGitState.Repo.AbsolutePath.Value)
+        {
+            ContinueWithFunc = gitHashParsedCommand =>
+            {
+                var hash = gitHashParsedCommand.OutputCache
+                	.ToString()
+                	.Substring(skipTextLength, takeTextLength)
+                	.Trim();
+                	
+                var showTerminalCommandRequest = new TerminalCommandRequest(
+                	$"git show {hash}:{relativePathToFile}",
                 	localGitState.Repo.AbsolutePath.Value)
                 {
                 	ContinueWithFunc = parsedCommand =>
                 	{
+                		var output = parsedCommand.OutputCache.ToString();
+                			
+                		if (output.StartsWith("ï»¿"))
+                			output = output["ï»¿".Length..];
+                			
                 		return callback.Invoke(
-                			_gitCliOutputParser,
-                			parsedCommand.OutputCache.ToString());
+		                	_gitCliOutputParser,
+		                	output);
                 	}
                 };
-                	
-                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
-    }
-    
-    public void ShowFileEnqueue(
-        GitRepo repoAtTimeOfRequest,
-        string relativePathToFile,
-        Func<GitCliOutputParser, string, Task> callback)
-    {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "git show file",
-            () =>
-            {
-                var localGitState = GetGitState();
-
-                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return ValueTask.CompletedTask;
-
-				// Example output:
-				/*
-				PS C:\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg> git log BlazorApp4NetCoreDbg/Pages/FetchData.razor
-				commit 87c2893b1006defc36770c166ab13fdbc6b7f959
-				Author: Luthetus <45454132+huntercfreeman@users.noreply.github.com>
-				Date:   Fri May 3 16:15:17 2024 -0400
-				
-				    Abc123 3
-				*/
-				
-				var skipTextLength = "commit ".Length;
-				var takeTextLength = "87c2893b1006defc36770c166ab13fdbc6b7f959".Length;
-				
-				var logTerminalCommandArgs = $"log -p {relativePathToFile}";
-                var formattedCommand = new FormattedCommand(
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { logTerminalCommandArgs })
-                {
-                    HACK_ArgumentsString = logTerminalCommandArgs,
-                    Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
-				};
-
-                var logTerminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value)
-                {
-                	ContinueWithFunc = gitHashParsedCommand =>
-                	{
-                		var hash = gitHashParsedCommand.OutputCache
-                			.ToString()
-                			.Substring(skipTextLength, takeTextLength)
-                			.Trim();
-                	
-                		var showTerminalCommandRequest = new TerminalCommandRequest(
-                			$"git show {hash}:{relativePathToFile}",
-                			localGitState.Repo.AbsolutePath.Value)
-                		{
-                			ContinueWithFunc = parsedCommand =>
-                			{
-                				var output = parsedCommand.OutputCache.ToString();
-                			
-                				if (output.StartsWith("ï»¿"))
-                					output = output["ï»¿".Length..];
-                			
-                				return callback.Invoke(
-		                			_gitCliOutputParser,
-		                			output);
-                			}
-                		};
                 		
-                		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(showTerminalCommandRequest);
-                		return Task.CompletedTask;
-                	}
-                };
+                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(showTerminalCommandRequest);
+                return Task.CompletedTask;
+            }
+        };
                 	
-                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(logTerminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
+        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(logTerminalCommandRequest);
+		return ValueTask.CompletedTask;
     }
     
     private List<int> GetPlusMarkedLineIndexList(string gitLogDashPOutput)
@@ -869,50 +858,60 @@ public class GitIdeApi : IBackgroundTaskGroup
 		
 		return plusMarkedLineIndexList;
 	}
-    
-    public void DiffFileEnqueue(
+
+    private readonly
+        Queue<(GitRepo repoAtTimeOfRequest, string relativePathToFile, Func<GitCliOutputParser, string, List<int>, Task> callback)>
+        _queue_DiffFile = new();
+
+    public void Enqueue_DiffFile(
         GitRepo repoAtTimeOfRequest,
         string relativePathToFile,
         Func<GitCliOutputParser, string, List<int>, Task> callback)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "git diff file",
-            () =>
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(GitIdeApiWorkKind.DiffFile);
+            _queue_DiffFile.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+    
+    public ValueTask Do_DiffFile(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, string, List<int>, Task> callback)
+    {
+        var localGitState = GetGitState();
+
+        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+			return ValueTask.CompletedTask;
+
+		var terminalCommandArgs = $"diff -p {relativePathToFile}";
+        var formattedCommand = new FormattedCommand(
+            GitCliFacts.TARGET_FILE_NAME,
+            new string[] { terminalCommandArgs })
+        {
+            HACK_ArgumentsString = terminalCommandArgs,
+            Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
+		};
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localGitState.Repo.AbsolutePath.Value)
+        {
+            ContinueWithFunc = parsedCommand =>
             {
-                var localGitState = GetGitState();
-
-                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-					return ValueTask.CompletedTask;
-
-				var terminalCommandArgs = $"diff -p {relativePathToFile}";
-                var formattedCommand = new FormattedCommand(
-                    GitCliFacts.TARGET_FILE_NAME,
-                    new string[] { terminalCommandArgs })
-                {
-                    HACK_ArgumentsString = terminalCommandArgs,
-                    Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
-				};
-
-                var terminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value)
-                {
-                	ContinueWithFunc = parsedCommand =>
-                	{
-                		var plusMarkedLineIndexList = GetPlusMarkedLineIndexList(parsedCommand.OutputCache.ToString());
+                var plusMarkedLineIndexList = GetPlusMarkedLineIndexList(parsedCommand.OutputCache.ToString());
                 	
-                		return callback.Invoke(
-                			_gitCliOutputParser,
-                			parsedCommand.OutputCache.ToString(),
-                			plusMarkedLineIndexList);
-                	}
-                };
+                return callback.Invoke(
+                	_gitCliOutputParser,
+                	parsedCommand.OutputCache.ToString(),
+                	plusMarkedLineIndexList);
+            }
+        };
                 	
-                _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
+        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		return ValueTask.CompletedTask;
     }
 	
 	private GitState _gitState = new();
@@ -1204,6 +1203,41 @@ public class GitIdeApi : IBackgroundTaskGroup
             {
                 var args = _queue_general_repoAtTimeOfRequest.Dequeue();
                 return Do_BranchGetAll(args);
+            }
+            case GitIdeApiWorkKind.BranchSet:
+            {
+                var args = _queue_BranchSet.Dequeue();
+                return Do_BranchSet(args.repoAtTimeOfRequest, args.branchName);
+            }
+            case GitIdeApiWorkKind.PushToOriginWithTracking:
+            {
+                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
+                return Do_PushToOriginWithTracking(args);
+            }
+            case GitIdeApiWorkKind.Pull:
+            {
+                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
+                return Do_Pull(args);
+            }
+            case GitIdeApiWorkKind.Fetch:
+            {
+                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
+                return Do_Fetch(args);
+            }
+            case GitIdeApiWorkKind.LogFile:
+            {
+                var args = _queue_general_callback.Dequeue();
+                return Do_LogFile(args.repoAtTimeOfRequest, args.relativePathToFile, args.callback);
+            }
+            case GitIdeApiWorkKind.ShowFile:
+            {
+                var args = _queue_general_callback.Dequeue();
+                return Do_ShowFile(args.repoAtTimeOfRequest, args.relativePathToFile, args.callback);
+            }
+            case GitIdeApiWorkKind.DiffFile:
+            {
+                var args = _queue_DiffFile.Dequeue();
+                return Do_DiffFile(args.repoAtTimeOfRequest, args.relativePathToFile, args.callback);
             }
             default:
             {

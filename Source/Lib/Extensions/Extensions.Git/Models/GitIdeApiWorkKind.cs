@@ -5,5 +5,10 @@ public enum GitIdeApiWorkKind
     Status,
     GetActiveBranchName,
     GetOriginName,
-    Add
+    Add,
+    Unstage,
+    Commit,
+    BranchNew,
+    BranchGetAll,
+    BranchSet
 }
