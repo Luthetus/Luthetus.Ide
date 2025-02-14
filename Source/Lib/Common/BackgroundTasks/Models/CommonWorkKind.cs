@@ -2,5 +2,10 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public enum CommonWorkKind
 {
-	LuthetusCommonInitializerWork
+	LuthetusCommonInitializerWork,
+    WriteToLocalStorage,
+    Tab_ManuallyPropagateOnContextMenu,
+    TreeView_HandleTreeViewOnContextMenu,
+    TreeView_HandleExpansionChevronOnMouseDown,
+    TreeView_ManuallyPropagateOnContextMenu,
 }

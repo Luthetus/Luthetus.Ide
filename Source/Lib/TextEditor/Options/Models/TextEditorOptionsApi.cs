@@ -280,7 +280,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void WriteToStorage()
     {
-        _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
+        _commonBackgroundTaskApi.Enqueue_WriteToLocalStorage(
             _textEditorService.StorageKey,
             new TextEditorOptionsJsonDto(_textEditorService.OptionsApi.GetTextEditorOptionsState().Options));
     }

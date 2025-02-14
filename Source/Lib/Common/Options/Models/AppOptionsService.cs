@@ -259,7 +259,7 @@ public class AppOptionsService : IAppOptionsService
 
     public void WriteToStorage()
     {
-        CommonBackgroundTaskApi.Storage.WriteToLocalStorage(
+        CommonBackgroundTaskApi.Enqueue_WriteToLocalStorage(
             StorageKey,
             new CommonOptionsJsonDto(GetAppOptionsState().Options));
     }

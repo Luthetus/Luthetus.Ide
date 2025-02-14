@@ -47,7 +47,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-        CommonBackgroundTaskApi.EnqueueLuthetusCommonInitializer();
+        CommonBackgroundTaskApi.Enqueue_LuthetusCommonInitializer();
 
         base.OnInitialized();
 	}
