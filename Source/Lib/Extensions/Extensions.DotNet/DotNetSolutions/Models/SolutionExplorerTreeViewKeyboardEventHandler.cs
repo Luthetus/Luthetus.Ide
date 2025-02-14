@@ -11,7 +11,6 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
 

@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.CompilerServices.Python.Facts;
 
 public partial class PythonLanguageFacts

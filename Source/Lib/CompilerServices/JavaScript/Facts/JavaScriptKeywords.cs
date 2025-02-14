@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.CompilerServices.JavaScript.Facts;
 
 public static class JavaScriptKeywords

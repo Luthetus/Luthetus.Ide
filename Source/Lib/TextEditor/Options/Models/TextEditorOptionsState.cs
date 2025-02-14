@@ -1,7 +1,6 @@
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Models;
 

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
-using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
 using Luthetus.Common.RazorLib.Options.Models;
 

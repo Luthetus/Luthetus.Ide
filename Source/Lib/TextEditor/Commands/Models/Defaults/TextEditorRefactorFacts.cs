@@ -1,6 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;

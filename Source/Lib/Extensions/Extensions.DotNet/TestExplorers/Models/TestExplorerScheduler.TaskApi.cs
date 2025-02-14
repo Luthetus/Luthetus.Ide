@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;

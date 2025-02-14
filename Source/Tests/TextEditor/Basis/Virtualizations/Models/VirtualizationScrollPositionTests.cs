@@ -1,6 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
-
-namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
+﻿namespace Luthetus.TextEditor.Tests.Basis.Virtualizations.Models;
 
 /// <summary>
 /// <see cref="VirtualizationScrollPosition"/>

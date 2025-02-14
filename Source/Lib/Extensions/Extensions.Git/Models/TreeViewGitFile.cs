@@ -1,5 +1,4 @@
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.Git.Models;

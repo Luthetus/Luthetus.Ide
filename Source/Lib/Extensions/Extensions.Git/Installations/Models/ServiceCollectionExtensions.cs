@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.Displays;
-using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Installations.Models;

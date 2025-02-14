@@ -2,8 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
@@ -13,7 +11,6 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays;

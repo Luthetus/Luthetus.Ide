@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -13,7 +12,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
 
