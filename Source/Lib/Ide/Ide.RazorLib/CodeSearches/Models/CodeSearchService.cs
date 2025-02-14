@@ -5,24 +5,18 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Models;
 
 public class CodeSearchService : ICodeSearchService
 {
 	private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ITreeViewService _treeViewService;
+    private readonly LuthetusCommonApi _commonApi;
 
-    public CodeSearchService(
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        ITreeViewService treeViewService)
+    public CodeSearchService(LuthetusCommonApi commonApi)
     {
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
-        _treeViewService = treeViewService;
+		_commonApi = commonApi;
     }
     
     private CodeSearchState _codeSearchState = new();
@@ -181,19 +175,19 @@ public class CodeSearchService : ICodeSearchService
 
             async Task RecursiveHandleSearchEffect(string directoryPathParent)
             {
-                var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+                var directoryPathChildList = await _commonApi.FileSystemProviderApi.Directory.GetDirectoriesAsync(
                         directoryPathParent,
                         cancellationToken)
                     .ConfigureAwait(false);
 
-                var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
+                var filePathChildList = await _commonApi.FileSystemProviderApi.Directory.GetFilesAsync(
                         directoryPathParent,
                         cancellationToken)
                     .ConfigureAwait(false);
 
                 foreach (var filePathChild in filePathChildList)
                 {
-                	var absolutePath = _environmentProvider.AbsolutePathFactory(filePathChild, false);
+                	var absolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(filePathChild, false);
                 
                     if (absolutePath.NameWithExtension.Contains(codeSearchState.Query))
                         ReduceAddResultAction(filePathChild);
@@ -232,8 +226,8 @@ public class CodeSearchService : ICodeSearchService
 			        (byte)GenericDecorationKind.None,
 			        new ResourceUri(x),
 			        string.Empty),
-				_environmentProvider,
-				_fileSystemProvider,
+				_commonApi.EnvironmentProviderApi,
+				_commonApi.FileSystemProviderApi,
 				false,
 				false))
 			.ToArray();
@@ -245,18 +239,18 @@ public class CodeSearchService : ICodeSearchService
 	        ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
 	        : new() { firstNode };
 	
-	    if (!_treeViewService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
+	    if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
 	    {
-	        _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+	        _commonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
 	            CodeSearchState.TreeViewCodeSearchContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        _treeViewService.ReduceWithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
+			_commonApi.TreeViewApi.ReduceWithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
 	
-	        _treeViewService.ReduceSetActiveNodeAction(
+	        _commonApi.TreeViewApi.ReduceSetActiveNodeAction(
 	            CodeSearchState.TreeViewCodeSearchContainerKey,
 	            firstNode,
 	            true,

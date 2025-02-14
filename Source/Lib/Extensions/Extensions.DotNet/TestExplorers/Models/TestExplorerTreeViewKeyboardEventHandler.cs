@@ -21,7 +21,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			ICompilerServiceRegistry compilerServiceRegistry,
 			ITextEditorService textEditorService,
 			IServiceProvider serviceProvider)
-		: base(treeViewService, backgroundTaskService)
+		: base(commonApi)
 	{
 		_commonApi = commonApi;
 		_compilerServiceRegistry = compilerServiceRegistry;
@@ -56,8 +56,8 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			NotificationHelper.DispatchInformative(
 				nameof(TestExplorerTreeViewKeyboardEventHandler),
 				$"Could not open in editor because node is not type: {nameof(TreeViewStringFragment)}",
-				_commonComponentRenderers,
-				_notificationService,
+				_commonApi.ComponentRendererApi,
+				_commonApi.NotificationApi,
 				TimeSpan.FromSeconds(5));
 
 			return Task.CompletedTask;
@@ -68,8 +68,8 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			NotificationHelper.DispatchInformative(
 				nameof(TestExplorerTreeViewKeyboardEventHandler),
 				$"Could not open in editor because node's parent does not seem to include a class name",
-				_commonComponentRenderers,
-				_notificationService,
+				_commonApi.ComponentRendererApi,
+				_commonApi.NotificationApi,
 				TimeSpan.FromSeconds(5));
 
 			return Task.CompletedTask;
@@ -80,8 +80,8 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 		NotificationHelper.DispatchInformative(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			className + ".cs",
-			_commonComponentRenderers,
-			_notificationService,
+			_commonApi.ComponentRendererApi,
+			_commonApi.NotificationApi,
 			TimeSpan.FromSeconds(5));
 
 		var methodName = treeViewStringFragment.Item.Value.Trim();
@@ -89,8 +89,8 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 		NotificationHelper.DispatchInformative(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			methodName + "()",
-			_commonComponentRenderers,
-			_notificationService,
+			_commonApi.ComponentRendererApi,
+			_commonApi.NotificationApi,
 			TimeSpan.FromSeconds(5));
 
 		_textEditorService.TextEditorWorker.PostUnique(
@@ -98,8 +98,8 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			TestExplorerHelper.ShowTestInEditorFactory(
 				className,
 				methodName,
-				_commonComponentRenderers,
-				_notificationService,
+				_commonApi.ComponentRendererApi,
+				_commonApi.NotificationApi,
 				_compilerServiceRegistry,
 				_textEditorService,
 				_serviceProvider));

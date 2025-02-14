@@ -53,7 +53,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	{
 		_solutionVisualizationModel = new(null, OnCompilerServiceChanged);
 
-		AppDimensionService.AppDimensionStateChanged += OnAppDimensionStateWrapChanged;
+        CommonApi.AppDimensionApi.AppDimensionStateChanged += OnAppDimensionStateWrapChanged;
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 
 		SubscribeTo_DotNetSolutionCompilerService();
@@ -127,7 +127,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 	}
 
 	private void SubscribeTo_DotNetSolutionCompilerService()
@@ -187,7 +187,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		DisposeFrom_CSharpProjectCompilerService();
 		DisposeFrom_CSharpCompilerService();
 
-		AppDimensionService.AppDimensionStateChanged -= OnAppDimensionStateWrapChanged;
+		CommonApi.AppDimensionApi.AppDimensionStateChanged -= OnAppDimensionStateWrapChanged;
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

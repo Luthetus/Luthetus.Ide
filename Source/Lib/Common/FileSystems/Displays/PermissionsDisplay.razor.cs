@@ -1,3 +1,4 @@
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -6,7 +7,7 @@ namespace Luthetus.Common.RazorLib.FileSystems.Displays;
 public partial class PermissionsDisplay : ComponentBase
 {
     [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private string _deleteAllowPathTextInput = string.Empty;
     private bool _deleteAllowPathIsDirectoryInput;
@@ -18,7 +19,7 @@ public partial class PermissionsDisplay : ComponentBase
         string localProtectPathTextInput,
         bool localProtectPathIsDirectoryInput)
     {
-        EnvironmentProvider.DeletionPermittedRegister(new SimplePath(
+		CommonApi.EnvironmentProviderApi.DeletionPermittedRegister(new SimplePath(
             localProtectPathTextInput,
             localProtectPathIsDirectoryInput));
     }
@@ -27,7 +28,7 @@ public partial class PermissionsDisplay : ComponentBase
         string localProtectPathTextInput,
         bool localProtectPathIsDirectoryInput)
     {
-        EnvironmentProvider.ProtectedPathsRegister(new SimplePath(
+		CommonApi.EnvironmentProviderApi.ProtectedPathsRegister(new SimplePath(
             localProtectPathTextInput,
             localProtectPathIsDirectoryInput));
     }

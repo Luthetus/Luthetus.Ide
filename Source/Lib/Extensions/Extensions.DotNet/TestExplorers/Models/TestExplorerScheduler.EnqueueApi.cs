@@ -7,7 +7,7 @@ public partial class TestExplorerScheduler
 {
 	public void Enqueue_ConstructTreeView()
     {
-        _backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.IndefiniteQueueKey,
             "Construct TreeView TestExplorer",
@@ -16,7 +16,7 @@ public partial class TestExplorerScheduler
     
     public void Enqueue_DiscoverTests()
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.IndefiniteQueueKey,
             "Discover Tests TestExplorer",

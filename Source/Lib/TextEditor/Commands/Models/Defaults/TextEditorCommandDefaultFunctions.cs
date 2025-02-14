@@ -29,6 +29,7 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -774,10 +775,10 @@ public class TextEditorCommandDefaultFunctions
 			.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
-        var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
+        var commonApi = commandArgs.ServiceProvider.GetRequiredService<LuthetusCommonApi>();
         
-		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
-		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
+		var resourceAbsolutePath = commonApi.EnvironmentProviderApi.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
+		var parentDirectoryAbsolutePath = commonApi.EnvironmentProviderApi.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
 	
 		var fileSystemProvider = commandArgs.ServiceProvider.GetRequiredService<IFileSystemProvider>();
 		
@@ -804,7 +805,7 @@ public class TextEditorCommandDefaultFunctions
 		{
 			var file = siblingFileStringList[i];
 			
-			var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false);
+			var siblingAbsolutePath = commonApi.EnvironmentProviderApi.AbsolutePathFactory(file, false);
 			
 			menuOptionList.Add(new MenuOptionRecord(
 				siblingAbsolutePath.NameWithExtension,
@@ -887,10 +888,10 @@ public class TextEditorCommandDefaultFunctions
 			.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
-        var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
+        var commonApi = commandArgs.ServiceProvider.GetRequiredService<LuthetusCommonApi>();
         
-		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
-		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
+		var resourceAbsolutePath = commonApi.EnvironmentProviderApi.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
+		var parentDirectoryAbsolutePath = commonApi.EnvironmentProviderApi.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
 	
 		var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		var compilerService = modelModifier.CompilerService;

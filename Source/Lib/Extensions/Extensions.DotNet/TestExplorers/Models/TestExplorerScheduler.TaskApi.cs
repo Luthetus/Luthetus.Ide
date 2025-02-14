@@ -27,14 +27,14 @@ public partial class TestExplorerScheduler
             x.ProjectIdGuid,
             x.AbsolutePath,
             callback => Task.CompletedTask,
-            node => _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, node)));
+            node => _commonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, node)));
 
         var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
 
         var localTreeViewProjectTestModelList = localProjectTestModelList.Select(x =>
                 (TreeViewNoType)new TreeViewProjectTestModel(
                     x,
-                    _commonComponentRenderers,
+					_commonApi.ComponentRendererApi,
                     true,
                     false))
             .ToArray();
@@ -46,7 +46,7 @@ public partial class TestExplorerScheduler
             if (string.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
                 return;
             
-            var projectFileText = await _fileSystemProvider.File.ReadAllTextAsync(treeViewProjectTestModel.Item.AbsolutePath.Value);
+            var projectFileText = await _commonApi.FileSystemProviderApi.File.ReadAllTextAsync(treeViewProjectTestModel.Item.AbsolutePath.Value);
             
             if (projectFileText.Contains("xunit"))
             {
@@ -165,18 +165,18 @@ public partial class TestExplorerScheduler
 
         var activeNodes = new List<TreeViewNoType> { ContainsTestsTreeViewGroup };
 
-        if (!_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out _))
+        if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out _))
         {
-            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            _commonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
                 TestExplorerState.TreeViewTestExplorerKey,
                 adhocRoot,
                 activeNodes));
         }
         else
         {
-            _treeViewService.ReduceWithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, adhocRoot);
+            _commonApi.TreeViewApi.ReduceWithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, adhocRoot);
 
-            _treeViewService.ReduceSetActiveNodeAction(
+            _commonApi.TreeViewApi.ReduceSetActiveNodeAction(
                 TestExplorerState.TreeViewTestExplorerKey,
                 firstNode,
                 true,
@@ -217,8 +217,8 @@ public partial class TestExplorerScheduler
 			NotificationHelper.DispatchProgress(
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 				progressBarModel,
-				_commonComponentRenderers,
-				_notificationService,
+				_commonApi.ComponentRendererApi,
+				_commonApi.NotificationApi,
 				TimeSpan.FromMilliseconds(-1));
 				
 			var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
@@ -234,7 +234,7 @@ public partial class TestExplorerScheduler
 				var completionPercentPerProject = 1.0 / (double)NoTestsTreeViewGroup.ChildList.Count;
 	    		var projectsHandled = 0;
 	    		
-	    		if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+	    		if (_commonApi.TreeViewApi.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
 		        {
 		        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
 						return;
@@ -312,7 +312,7 @@ public partial class TestExplorerScheduler
     	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
     	
     	Console.WriteLine($"NoTestsTreeViewGroup.ChildList.Count: {NoTestsTreeViewGroup.ChildList.Count}");
-    	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+    	if (_commonApi.TreeViewApi.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
         {
         	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
         		return Task.CompletedTask;
@@ -372,7 +372,7 @@ public partial class TestExplorerScheduler
             	
             nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
             
-            _treeViewService.ReduceWithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
+            _commonApi.TreeViewApi.ReduceWithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
         }
     
     	_dotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
@@ -394,7 +394,7 @@ public partial class TestExplorerScheduler
 		if (treeViewProjectTestModel.Parent is null)
 			return;
 		
-		if (!_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+		if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
 			return;
 		
 		// containsTestsTreeViewGroup
@@ -437,7 +437,7 @@ public partial class TestExplorerScheduler
 		treeViewProjectTestModel.Parent.LinkChildren(
 			treeViewProjectTestModel.Parent.ChildList,
 			treeViewProjectTestModel.Parent.ChildList);
-		_treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel.Parent);
+		_commonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel.Parent);
 				
 		if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
     	{
@@ -447,7 +447,7 @@ public partial class TestExplorerScheduler
     			containsTestsTreeViewGroup.LinkChildren(
 					containsTestsTreeViewGroup.ChildList,
 					containsTestsTreeViewGroup.ChildList);
-				_treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, containsTestsTreeViewGroup);
+				_commonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, containsTestsTreeViewGroup);
     		}
     		else
     		{
@@ -455,7 +455,7 @@ public partial class TestExplorerScheduler
     			noTestsTreeViewGroup.LinkChildren(
 					noTestsTreeViewGroup.ChildList,
 					noTestsTreeViewGroup.ChildList);
-				_treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, noTestsTreeViewGroup);
+				_commonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, noTestsTreeViewGroup);
     		}
     	}
     	else
@@ -467,7 +467,7 @@ public partial class TestExplorerScheduler
     			threwAnExceptionTreeViewGroup.LinkChildren(
 					threwAnExceptionTreeViewGroup.ChildList,
 					threwAnExceptionTreeViewGroup.ChildList);
-				_treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, threwAnExceptionTreeViewGroup);
+				_commonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, threwAnExceptionTreeViewGroup);
     		}
     		else
     		{
@@ -475,7 +475,7 @@ public partial class TestExplorerScheduler
     			notValidProjectForUnitTestTreeViewGroup.LinkChildren(
 					notValidProjectForUnitTestTreeViewGroup.ChildList,
 					notValidProjectForUnitTestTreeViewGroup.ChildList);
-				_treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, notValidProjectForUnitTestTreeViewGroup);
+				_commonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, notValidProjectForUnitTestTreeViewGroup);
     		}
     	}
 	}

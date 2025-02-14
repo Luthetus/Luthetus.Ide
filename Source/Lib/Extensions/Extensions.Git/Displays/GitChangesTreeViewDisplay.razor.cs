@@ -31,20 +31,17 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     private GitTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+        CommonApi.AppOptionApi.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
         _treeViewKeyboardEventHandler = new GitTreeViewKeyboardEventHandler(
-            TreeViewService,
-            BackgroundTaskService,
+            CommonApi,
 			GitBackgroundTaskApi.Git);
 
         _treeViewMouseEventHandler = new GitTreeViewMouseEventHandler(
-            TreeViewService,
-            BackgroundTaskService,
-			GitBackgroundTaskApi.Git,
-            DialogService);
+            CommonApi,
+			GitBackgroundTaskApi.Git);
 
         base.OnInitialized();
     }
@@ -65,7 +62,7 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

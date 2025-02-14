@@ -89,7 +89,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 				await InvokeAsync(StateHasChanged);
 			}
 
-			BackgroundTaskService.Enqueue(
+			CommonApi.BackgroundTaskApi.Enqueue(
 				Key<IBackgroundTask>.NewKey(),
 				BackgroundTaskFacts.ContinuousQueueKey,
 				"Submit NuGet Query",

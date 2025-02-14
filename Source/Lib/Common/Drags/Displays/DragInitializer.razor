@@ -4,7 +4,7 @@
      @onmouseup="DispatchSetDragStateActionOnMouseUp">
     
 	@{
-		var dragState = DragService.GetDragState();
+		var dragState = CommonApi.DragApi.GetDragState();
 		var draggableViewModel = dragState.Drag;
 	}
 

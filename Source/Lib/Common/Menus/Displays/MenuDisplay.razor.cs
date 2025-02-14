@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Menus.Displays;
 
 public partial class MenuDisplay : ComponentBase
 {
     [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [CascadingParameter(Name="ReturnFocusToParentFuncAsync")]
     public Func<Task>? ReturnFocusToParentFuncAsync { get; set; }
@@ -121,7 +122,7 @@ public partial class MenuDisplay : ComponentBase
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
             	if (Dropdown is not null)
-	                DropdownService.ReduceDisposeAction(Dropdown.Key);
+                    CommonApi.DropdownApi.ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
@@ -148,7 +149,7 @@ public partial class MenuDisplay : ComponentBase
                 break;
             case KeyboardKeyFacts.MetaKeys.ESCAPE:
             	if (Dropdown is not null)
-	                DropdownService.ReduceDisposeAction(Dropdown.Key);
+                    CommonApi.DropdownApi.ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);

@@ -5,14 +5,14 @@
                  ClassCssString="luth_ide_nu-get-package-manager-display"
                  StyleCssString="height: 100%; width: 100%;">
     
-    @if (AppOptionsService.ShowPanelTitles)
+    @if (CommonApi.AppOptionApi.ShowPanelTitles)
     {
 	    <div class="luth_ide_section-title">
 	        NuGet
 	    </div>
 	}
 
-    <div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass"
+    <div class="luth_ide_section-body @CommonApi.AppOptionApi.ShowPanelTitlesCssClass"
          style="width: 100%;">
 
         @{
@@ -144,7 +144,7 @@
 
                 @if (_performingNugetQuery)
                 {
-                	var appOptionsState = AppOptionsService.GetAppOptionsState();
+                    var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
                 
                 	var iconDriver = new IconDriver(
 						appOptionsState.Options.IconSizeInPixels,

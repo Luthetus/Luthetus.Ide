@@ -158,10 +158,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 				    });
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
-					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					CommonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					await treeViewProjectTestModel.LoadChildListAsync();
-					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					CommonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					DotNetBackgroundTaskApi.TestExplorer.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
@@ -215,7 +215,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			{
 				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 				{
-					BackgroundTaskService.Enqueue(
+					CommonApi.BackgroundTaskApi.Enqueue(
 						Key<IBackgroundTask>.NewKey(),
 						BackgroundTaskFacts.IndefiniteQueueKey,
 						"RunTestByFullyQualifiedName",
@@ -377,7 +377,7 @@ public partial class TestExplorerContextMenu : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
-        		TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+        		CommonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
@@ -407,7 +407,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 					}
 				}
 			
-				TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+				CommonApi.TreeViewApi.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
 				return Task.CompletedTask;
         	}
         };
@@ -422,7 +422,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
-		PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(contextRecord.ContextKey);
+		CommonApi.PanelApi.ReduceSetPanelTabAsActiveByContextRecordKeyAction(contextRecord.ContextKey);
 	
 		if (contextRecord != default)
 		{
@@ -431,7 +431,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        JsRuntime.GetLuthetusCommonApi(),
-		        PanelService);
+				CommonApi.PanelApi);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 		}

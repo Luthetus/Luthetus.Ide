@@ -11,15 +11,14 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
-    private IClipboardService ClipboardService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -89,7 +88,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        DropdownService);
+                            CommonApi.DropdownApi);
 					}
 
 					return ValueTask.CompletedTask;
@@ -116,7 +115,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        DropdownService);
+                            CommonApi.DropdownApi);
 					}
 
 					return ValueTask.CompletedTask;
@@ -176,7 +175,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 							TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
 						        viewModelModifier,
-						        DropdownService);
+                                CommonApi.DropdownApi);
 						}
 
 						return ValueTask.CompletedTask;

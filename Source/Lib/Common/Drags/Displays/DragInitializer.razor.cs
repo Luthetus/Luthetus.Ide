@@ -4,15 +4,16 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
 public partial class DragInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
-    private string StyleCss => DragService.GetDragState().ShouldDisplay
+    private string StyleCss => CommonApi.DragApi.GetDragState().ShouldDisplay
         ? string.Empty
         : "display: none;";
 
@@ -34,7 +35,7 @@ public partial class DragInitializer : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-    	DragService.DragStateChanged += OnDragStateChanged;
+		CommonApi.DragApi.DragStateChanged += OnDragStateChanged;
     
     	_throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second, async (args, _) =>
 	    {
@@ -43,13 +44,13 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	    		if ((args.MouseEventArgs.Buttons & 1) != 1)
 	                DispatchClearDragStateAction();
 	            else
-	                DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
+	                CommonApi.DragApi.ReduceShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
 	
 	            return;
 	    	}
 	    	else
 	    	{
-	    		var dragState = DragService.GetDragState();
+	    		var dragState = CommonApi.DragApi.GetDragState();
 				var localOnMouseOverDropzone = _onMouseOverDropzone;
 	    	
 	    		DispatchClearDragStateAction();
@@ -76,7 +77,7 @@ public partial class DragInitializer : ComponentBase, IDisposable
     {
 		_onMouseOverDropzone = null;
 		
-        DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(
+        CommonApi.DragApi.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(
         	false,
             null,
 			null);
@@ -103,6 +104,6 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		DragService.DragStateChanged -= OnDragStateChanged;
+		CommonApi.DragApi.DragStateChanged -= OnDragStateChanged;
 	}
 }

@@ -88,9 +88,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]
     public LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-    // ScrollbarSection.razor.cs
-    [Inject]
-    private IDragService DragService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
@@ -161,7 +158,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         
         // ScrollbarSection.razor.cs
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonApi.DragApi.DragStateChanged += DragStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -1235,8 +1232,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		{
 			_mouseDownEventArgs = mouseEventArgs;
 			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
-	
-			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+
+			CommonApi.DragApi.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
 		}
     }
     
@@ -1265,14 +1262,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		{
 			_mouseDownEventArgs = mouseEventArgs;
 			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
-	
-			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+
+			CommonApi.DragApi.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
 		}     
     }
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonApi.DragApi.GetDragState().ShouldDisplay)
         {
             // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
 			//       So be wary if one intends to move its assignment elsewhere.
@@ -1281,7 +1278,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         else
         {
             var localMouseDownEventArgs = _mouseDownEventArgs;
-            var dragEventArgs = DragService.GetDragState().MouseEventArgs;
+            var dragEventArgs = CommonApi.DragApi.GetDragState().MouseEventArgs;
 			var localDragEventHandler = _dragEventHandler;
 
             if (localMouseDownEventArgs is not null && dragEventArgs is not null)
@@ -1836,7 +1833,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public void Dispose()
     {
     	// ScrollbarSection.razor.cs
-    	DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+    	CommonApi.DragApi.DragStateChanged -= DragStateWrapOnStateChanged;
     
     	// TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;

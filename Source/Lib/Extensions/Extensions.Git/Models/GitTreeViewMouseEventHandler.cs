@@ -62,6 +62,6 @@ public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
             dialogViewModel.DialogElementDimensions.TopDimensionAttribute.Set(2.5, DimensionUnitKind.ViewportHeight);
         }
 
-        _dialogService.ReduceRegisterAction(dialogViewModel);
+        _commonApi.DialogApi.ReduceRegisterAction(dialogViewModel);
     }
 }

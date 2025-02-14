@@ -2,19 +2,20 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Displays;
 
 public partial class DialogInitializer : ComponentBase, IDisposable
 {
 	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
+	private LuthetusCommonApi CommonApi { get; set; } = null!;
 	
     private ContextBoundary? _dialogContextBoundary;
     
     protected override void OnInitialized()
     {
-    	DialogService.DialogStateChanged += OnDialogStateChanged;
+		CommonApi.DialogApi.DialogStateChanged += OnDialogStateChanged;
     	base.OnInitialized();
     }
     
@@ -40,6 +41,6 @@ public partial class DialogInitializer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	DialogService.DialogStateChanged -= OnDialogStateChanged;
+    	CommonApi.DialogApi.DialogStateChanged -= OnDialogStateChanged;
     }
 }

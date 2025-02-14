@@ -40,7 +40,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-		BackgroundTaskService.Enqueue(
+		CommonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			nameof(LuthetusConfigInitializer),
@@ -75,7 +75,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
     	if (solutionMostRecent is null)
     		return;
     
-    	var slnAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+    	var slnAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(
             solutionMostRecent,
             false);
 
@@ -84,16 +84,14 @@ public partial class LuthetusConfigInitializer : ComponentBase
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)
         {
-            var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
             var pseudoRootNode = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
+                CommonApi,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
                 true,
                 false);
 
@@ -108,9 +106,9 @@ public partial class LuthetusConfigInitializer : ComponentBase
 
             var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-            if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+            if (!CommonApi.TreeViewApi.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
             {
-                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                CommonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
                     InputFileContent.TreeViewContainerKey,
                     adhocRootNode,
                     activeNode is null
@@ -119,9 +117,9 @@ public partial class LuthetusConfigInitializer : ComponentBase
             }
             else
             {
-                TreeViewService.ReduceWithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+                CommonApi.TreeViewApi.ReduceWithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
 
-                TreeViewService.ReduceSetActiveNodeAction(
+                CommonApi.TreeViewApi.ReduceSetActiveNodeAction(
                     InputFileContent.TreeViewContainerKey,
                     activeNode,
                     true,
@@ -132,16 +130,14 @@ public partial class LuthetusConfigInitializer : ComponentBase
             InputFileService.ReduceSetOpenedTreeViewModelAction(
                 pseudoRootNode,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider);
+                CommonApi);
         }
 
 		/*
         if (!string.IsNullOrWhiteSpace(projectPersonalPath) &&
             await FileSystemProvider.File.ExistsAsync(projectPersonalPath).ConfigureAwait(false))
         {
-            var projectAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+            var projectAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(
                 projectPersonalPath,
                 false);
 

@@ -8,7 +8,7 @@
 <div class="luth_ide_git-changes-tree-view"
 	 style="height: 100%;">
 
-     @{ var appOptionsState = AppOptionsService.GetAppOptionsState(); }
+    @{ var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState(); }
 
     <CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
         <CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">

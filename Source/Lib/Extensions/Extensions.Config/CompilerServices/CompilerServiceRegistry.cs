@@ -17,6 +17,7 @@ using Luthetus.CompilerServices.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.TypeScript;
 using Luthetus.CompilerServices.Xml;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Config.CompilerServices;
 
@@ -29,7 +30,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
 
     public ConfigCompilerServiceRegistry(
         ITextEditorService textEditorService,
-        IEnvironmentProvider environmentProvider,
+        LuthetusCommonApi commonApi,
         ITerminalService terminalService)
     {
         CSharpCompilerService = new CSharpCompilerService(textEditorService);
@@ -39,7 +40,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
         FSharpCompilerService = new FSharpCompilerService(textEditorService);
         JavaScriptCompilerService = new JavaScriptCompilerService(textEditorService);
         JsonCompilerService = new JsonCompilerService(textEditorService);
-        RazorCompilerService = new RazorCompilerService(textEditorService, CSharpCompilerService, environmentProvider);
+        RazorCompilerService = new RazorCompilerService(textEditorService, CSharpCompilerService, commonApi.EnvironmentProviderApi);
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService);
         XmlCompilerService = new XmlCompilerService(textEditorService);
         CCompilerService = new CCompilerService(textEditorService);

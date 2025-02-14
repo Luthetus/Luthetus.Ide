@@ -28,11 +28,13 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		#if DEBUG
+        /*#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}");
-		#endif
-		
-		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
+		#else
+		Console.WriteLine("AnyMergeToken needs commented out.");
+		#endif*/
+
+        if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
 			UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
 		{
 			return HandleBinaryOperator(expressionPrimary, token, compilationUnit, ref parserModel);
@@ -92,11 +94,13 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeExpression(
 		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		#if DEBUG
+		/*#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {expressionSecondary.SyntaxKind}");
-		#endif
-	
-		switch (expressionPrimary.SyntaxKind)
+		#else
+		Console.WriteLine("AnyMergeExpression needs commented out.");
+		#endif*/
+
+        switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.BinaryExpressionNode:
 				return BinaryMergeExpression((BinaryExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);

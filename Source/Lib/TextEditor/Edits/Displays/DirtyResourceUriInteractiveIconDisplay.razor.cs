@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Edits.Displays;
 
@@ -11,7 +12,7 @@ public partial class DirtyResourceUriInteractiveIconDisplay : ComponentBase, IDi
     [Inject]
     private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;
@@ -39,7 +40,7 @@ public partial class DirtyResourceUriInteractiveIconDisplay : ComponentBase, IDi
 
     private void ShowDialogOnClick()
     {
-        DialogService.ReduceRegisterAction(_dialogRecord);
+		CommonApi.DialogApi.ReduceRegisterAction(_dialogRecord);
     }
     
     public async void OnDirtyResourceUriStateChanged()

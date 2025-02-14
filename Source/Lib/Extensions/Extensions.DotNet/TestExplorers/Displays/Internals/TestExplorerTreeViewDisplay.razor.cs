@@ -38,22 +38,16 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	protected override void OnInitialized()
 	{
 		_treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(
-			CommonComponentRenderers,
+			CommonApi,
 			CompilerServiceRegistry,
 			TextEditorService,
-			NotificationService,
-			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			ServiceProvider);
 
 		_treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
-			CommonComponentRenderers,
+			CommonApi,
 			CompilerServiceRegistry,
 			TextEditorService,
-			NotificationService,
-			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			ServiceProvider);
 
 		base.OnInitialized();
 	}
@@ -74,7 +68,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

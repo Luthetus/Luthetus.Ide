@@ -11,27 +11,21 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public class FindAllService : IFindAllService
 {
-	private readonly IFileSystemProvider _fileSystemProvider;
-	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly ITreeViewService _treeViewService;
+	private readonly LuthetusCommonApi _commonApi;
 	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
 	private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
 	
 	private readonly object _flushSearchResultsLock = new();
 	
-	public FindAllService(
-		IFileSystemProvider fileSystemProvider,
-		IEnvironmentProvider environmentProvider,
-		ITreeViewService treeViewService)
+	public FindAllService(LuthetusCommonApi commonApi)
 	{
-		_fileSystemProvider = fileSystemProvider;
-		_environmentProvider = environmentProvider;
-		_treeViewService = treeViewService;
+		_commonApi = commonApi;
 	}
 	
     /// <summary>
@@ -158,7 +152,7 @@ public class FindAllService : IFindAllService
 			{
 				await StartSearchTask(
 					progressBarModel,
-					_fileSystemProvider,
+					_commonApi.FileSystemProviderApi,
 					textEditorFindAllState,
 					cancellationToken);
 			}
@@ -333,7 +327,7 @@ public class FindAllService : IFindAllService
 	
 	    var treeViewList = groupedResults.Select(group =>
 	    {
-	    	var absolutePath = _environmentProvider.AbsolutePathFactory(
+	    	var absolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(
 	    		group.Key.Value,
 	    		false);
 	    		
@@ -355,18 +349,18 @@ public class FindAllService : IFindAllService
 	        ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
 	        : new() { firstNode };
 	
-	    if (!_treeViewService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
+	    if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
 	    {
-	        _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+	        _commonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        _treeViewService.ReduceWithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
+	        _commonApi.TreeViewApi.ReduceWithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
 	
-	        _treeViewService.ReduceSetActiveNodeAction(
+	        _commonApi.TreeViewApi.ReduceSetActiveNodeAction(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            firstNode,
 	            true,

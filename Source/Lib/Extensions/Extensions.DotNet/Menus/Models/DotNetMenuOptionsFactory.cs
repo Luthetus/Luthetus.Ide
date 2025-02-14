@@ -32,10 +32,8 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		IIdeComponentRenderers ideComponentRenderers)
 	{
 		_commonApi = commonApi;
-		_backgroundTaskService = backgroundTaskService;
 		_dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
-		_commonComponentRenderers = commonComponentRenderers;
 	}
 
 	public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
@@ -172,7 +170,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
-		_backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Remove C# Project Reference from Solution Action",
@@ -220,7 +218,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonApi.ComponentRendererApi, notificationService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};
@@ -250,7 +248,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Remove Project Reference to Project",
@@ -266,7 +264,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonApi.ComponentRendererApi, notificationService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};
@@ -284,7 +282,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Move Project to Solution Folder",
@@ -301,7 +299,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonApi.ComponentRendererApi, notificationService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};
@@ -328,7 +326,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 		INotificationService notificationService,
 		Func<Task> onAfterCompletion)
 	{
-		_backgroundTaskService.Enqueue(
+		_commonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			"Remove NuGet Package Reference from Project",
@@ -344,7 +342,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonApi.ComponentRendererApi, notificationService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};

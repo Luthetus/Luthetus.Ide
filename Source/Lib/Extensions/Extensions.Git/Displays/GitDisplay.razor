@@ -12,14 +12,14 @@
         var localGitState = GitBackgroundTaskApi.Git.GetGitState();
     }
 
-	@if (AppOptionsService.ShowPanelTitles)
+    @if (CommonApi.AppOptionApi.ShowPanelTitles)
 	{
 	    <div class="luth_ide_section-title">
 	        Git
 	    </div>
     }
 
-    <div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
+    <div class="luth_ide_section-body @CommonApi.AppOptionApi.ShowPanelTitlesCssClass">
         <CascadingValue Value="localGitState">
 
             <button @ref="_menuButtonElementReference"
@@ -29,7 +29,7 @@
                     style="position: relative; margin-top: 10px; padding: 8px; justify-content: center; align-items: center;">
                     
                 @{
-                	var appOptionsState = AppOptionsService.GetAppOptionsState();
+                    var appOptionsState = CommonApi.AppOptionApi.GetAppOptionsState();
                 
                 	var iconDriver = new IconDriver(
 						appOptionsState.Options.IconSizeInPixels,

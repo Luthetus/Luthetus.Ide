@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 
@@ -25,7 +26,7 @@ public static partial class TextEditorCommandVimFacts
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag,
-		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
+		        commandArgs.ServiceProvider.GetRequiredService<LuthetusCommonApi>().ClipboardApi);
         }
 
         public static async ValueTask ChangeLine(
@@ -44,7 +45,7 @@ public static partial class TextEditorCommandVimFacts
 			        modelModifier,
 			        viewModelModifier,
 			        cursorModifierBag,
-			        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>())
+			        commandArgs.ServiceProvider.GetRequiredService<LuthetusCommonApi>().ClipboardApi)
 				.ConfigureAwait(false);
 
             keymapVim.ActiveVimMode = VimMode.Insert;

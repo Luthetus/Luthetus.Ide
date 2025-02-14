@@ -66,7 +66,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	
 	protected override void OnInitialized()
 	{
-		BackgroundTaskService.Enqueue(
+        CommonApi.BackgroundTaskApi.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BackgroundTaskFacts.ContinuousQueueKey,
 			nameof(LuthetusExtensionsDotNetInitializer),
@@ -86,7 +86,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	{
 		if (firstRender)
 		{
-			BackgroundTaskService.Enqueue(
+			CommonApi.BackgroundTaskApi.Enqueue(
 				Key<IBackgroundTask>.NewKey(),
 				BackgroundTaskFacts.ContinuousQueueKey,
 				nameof(LuthetusExtensionsDotNetInitializer),
@@ -153,8 +153,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 						});
 						
 					InitializeMenuRun();
-					
-					PanelService.ReduceSetActivePanelTabAction(_leftPanelGroupKey, _solutionExplorerPanelKey);
+
+                    CommonApi.PanelApi.ReduceSetActivePanelTabAction(_leftPanelGroupKey, _solutionExplorerPanelKey);
 					
 					var compilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 					
@@ -179,8 +179,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 
 	private void InitializeLeftPanelTabs()
 	{
-		var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelService.GetPanelState());
-		leftPanel.PanelService = PanelService;
+		var leftPanel = PanelFacts.GetTopLeftPanelGroup(CommonApi.PanelApi.GetPanelState());
+		leftPanel.PanelService = CommonApi.PanelApi;
 
 		// solutionExplorerPanel
 		var solutionExplorerPanel = new Panel(
@@ -190,11 +190,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			ContextFacts.SolutionExplorerContext.ContextKey,
 			typeof(SolutionExplorerDisplay),
 			null,
-			PanelService,
-			DialogService,
+			CommonApi,
 			JsRuntime);
-		PanelService.ReduceRegisterPanelAction(solutionExplorerPanel);
-		PanelService.ReduceRegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false);
+		CommonApi.PanelApi.ReduceRegisterPanelAction(solutionExplorerPanel);
+		CommonApi.PanelApi.ReduceRegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false);
 		
 		// SetActivePanelTabAction
 		//
@@ -206,8 +205,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 
 	private void InitializeRightPanelTabs()
 	{
-		var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelService.GetPanelState());
-		rightPanel.PanelService = PanelService;
+		var rightPanel = PanelFacts.GetTopRightPanelGroup(CommonApi.PanelApi.GetPanelState());
+		rightPanel.PanelService = CommonApi.PanelApi;
 
         // compilerServiceExplorerPanel
         var compilerServiceExplorerPanel = new Panel(
@@ -217,11 +216,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.CompilerServiceExplorerContext.ContextKey,
             typeof(CompilerServiceExplorerDisplay),
             null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(compilerServiceExplorerPanel);
-        PanelService.ReduceRegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(compilerServiceExplorerPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false);
 
         // compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
@@ -231,17 +229,16 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.CompilerServiceEditorContext.ContextKey,
             typeof(CompilerServiceEditorDisplay),
             null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(compilerServiceEditorPanel);
-        PanelService.ReduceRegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(compilerServiceEditorPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false);
     }
 
 	private void InitializeBottomPanelTabs()
 	{
-		var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState());
-		bottomPanel.PanelService = PanelService;
+		var bottomPanel = PanelFacts.GetBottomPanelGroup(CommonApi.PanelApi.GetPanelState());
+		bottomPanel.PanelService = CommonApi.PanelApi;
 
         // outputPanel
         var outputPanel = new Panel(
@@ -251,11 +248,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(outputPanel);
-        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, outputPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(outputPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(bottomPanel.Key, outputPanel, false);
 
         // testExplorerPanel
         var testExplorerPanel = new Panel(
@@ -265,15 +261,14 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.TestExplorerContext.ContextKey,
             typeof(TestExplorerDisplay),
             null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(testExplorerPanel);
-        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(testExplorerPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
         DotNetBackgroundTaskApi.TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
-            	() => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+            	() => CommonApi.AppOptionApi.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract,
             	DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -286,11 +281,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             ContextFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
             null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(nuGetPanel);
-        PanelService.ReduceRegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(nuGetPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false);
     }
     
     private Task OpenNewDotNetSolutionDialog()
@@ -304,7 +298,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			true,
 			null);
 
-        DialogService.ReduceRegisterAction(dialogRecord);
+        CommonApi.DialogApi.ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
     
@@ -324,7 +318,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
 					BuildProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
 				else
-					NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(6));
+					NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonApi.ComponentRendererApi, CommonApi.NotificationApi, TimeSpan.FromSeconds(6));
 				return Task.CompletedTask;
 			}));
 
@@ -340,7 +334,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
 					CleanProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
 				else
-					NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(6));
+					NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonApi.ComponentRendererApi, CommonApi.NotificationApi, TimeSpan.FromSeconds(6));
 				return Task.CompletedTask;
 			}));
 
@@ -356,7 +350,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				if (dotNetSolutionModel?.AbsolutePath is not null)
 					BuildSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
 				else
-					NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(6));
+					NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonApi.ComponentRendererApi, CommonApi.NotificationApi, TimeSpan.FromSeconds(6));
 				return Task.CompletedTask;
 			}));
 
@@ -372,7 +366,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				if (dotNetSolutionModel?.AbsolutePath is not null)
 					CleanSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
 				else
-					NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(6));
+					NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonApi.ComponentRendererApi, CommonApi.NotificationApi, TimeSpan.FromSeconds(6));
 				return Task.CompletedTask;
 			}));
 
@@ -391,7 +385,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private void BuildProjectOnClick(string projectAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
-        var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+        var solutionAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(projectAbsolutePathString, false);
 		
 		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
 		if (localParentDirectory is null)
@@ -423,7 +417,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private void CleanProjectOnClick(string projectAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
-		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+		var solutionAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(projectAbsolutePathString, false);
 		
 		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
 		if (localParentDirectory is null)
@@ -455,7 +449,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private void BuildSolutionOnClick(string solutionAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+        var solutionAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(solutionAbsolutePathString, false);
 		
 		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
 		if (localParentDirectory is null)
@@ -487,7 +481,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private void CleanSolutionOnClick(string solutionAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
-		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+		var solutionAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(solutionAbsolutePathString, false);
 		
 		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
 		if (localParentDirectory is null)

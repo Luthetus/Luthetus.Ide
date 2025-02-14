@@ -1,7 +1,7 @@
 ﻿<div class="luth_permissions">
     @{
-        var localDeletionPermittedPathList = EnvironmentProvider.DeletionPermittedPathList;
-        var localProtectedPathList = EnvironmentProvider.ProtectedPathList;
+        var localDeletionPermittedPathList = CommonApi.EnvironmentProviderApi.DeletionPermittedPathList;
+        var localProtectedPathList = CommonApi.EnvironmentProviderApi.ProtectedPathList;
     }
 
     <div class="luth_permission-entry">

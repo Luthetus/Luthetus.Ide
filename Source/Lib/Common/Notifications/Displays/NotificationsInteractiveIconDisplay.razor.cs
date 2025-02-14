@@ -3,15 +3,14 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
 public partial class NotificationsInteractiveIconDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     [Parameter]
     public string CssClassString { get; set; } = string.Empty;
@@ -31,13 +30,13 @@ public partial class NotificationsInteractiveIconDisplay : ComponentBase, IDispo
 		
 	protected override void OnInitialized()
     {
-    	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
+		CommonApi.NotificationApi.NotificationStateChanged += OnNotificationStateChanged;
     	base.OnInitialized();
     }
 
     private void ShowNotificationsViewDisplayOnClick()
     {
-        DialogService.ReduceRegisterAction(NotificationsViewDisplayDialogRecord);
+		CommonApi.DialogApi.ReduceRegisterAction(NotificationsViewDisplayDialogRecord);
     }
     
     public async void OnNotificationStateChanged()
@@ -47,6 +46,6 @@ public partial class NotificationsInteractiveIconDisplay : ComponentBase, IDispo
 	
 	public void Dispose()
 	{
-		NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
+		CommonApi.NotificationApi.NotificationStateChanged -= OnNotificationStateChanged;
 	}
 }

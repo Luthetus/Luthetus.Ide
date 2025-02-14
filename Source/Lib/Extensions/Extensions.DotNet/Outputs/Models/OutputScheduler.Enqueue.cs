@@ -7,7 +7,7 @@ public partial class OutputScheduler
 {
 	public void Enqueue_ConstructTreeView()
     {
-        _backgroundTaskService.Enqueue(
+        _commonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             "Refresh Output",

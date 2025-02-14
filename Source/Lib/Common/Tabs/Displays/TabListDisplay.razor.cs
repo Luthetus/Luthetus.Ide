@@ -5,15 +5,14 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
 public partial class TabListDisplay : ComponentBase
 {
 	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
+	private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	/// <summary>
 	/// The list provided should not be modified after passing it as a parameter..
@@ -46,7 +45,7 @@ public partial class TabListDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonApi.DropdownApi.ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
 }

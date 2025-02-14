@@ -1,6 +1,6 @@
 
 @{
-	var notificationState = NotificationService.GetNotificationState();
+	var notificationState = CommonApi.NotificationApi.GetNotificationState();
 	var iconBadgeIsActive = notificationState.DefaultList.Count > 0;
 	var showIconBadgeCssClassString = iconBadgeIsActive ? "luth_active" : "";
 }

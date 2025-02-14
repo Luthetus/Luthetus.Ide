@@ -51,7 +51,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-            BackgroundTaskService.Enqueue(
+			CommonApi.BackgroundTaskApi.Enqueue(
                 Key<IBackgroundTask>.NewKey(),
                 BackgroundTaskFacts.ContinuousQueueKey,
                 "Initialize Website",
@@ -63,17 +63,17 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
                     // This code block is hacky. I want the Solution Explorer to from the get-go be fully expanded, so the user can see 'Program.cs'
                     {
-                        TreeViewService.MoveRight(
+						CommonApi.TreeViewApi.MoveRight(
 						    DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 						    false,
 						    false);
 
-                        TreeViewService.MoveRight(
+                        CommonApi.TreeViewApi.MoveRight(
 						    DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 						    false,
 						    false);
                     
-					    TreeViewService.MoveRight(
+					    CommonApi.TreeViewApi.MoveRight(
 						    DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 						    false,
 						    false);
@@ -90,37 +90,37 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
                 WebsiteProjectTemplateFacts.BlazorWasmEmptyProjectTemplate.ShortName!,
                 InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
-                FileSystemProvider,
-                EnvironmentProvider)
+				CommonApi.FileSystemProviderApi,
+				CommonApi.EnvironmentProviderApi)
             .ConfigureAwait(false);
 
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await CommonApi.FileSystemProviderApi.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_CS_CONTENTS)
             .ConfigureAwait(false);
         
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await CommonApi.FileSystemProviderApi.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS)
             .ConfigureAwait(false);
         
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await CommonApi.FileSystemProviderApi.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS)
             .ConfigureAwait(false);
             
-		/*await FileSystemProvider.File.WriteAllTextAsync(
+		/*await CommonApi.FileSystemProviderApi.File.WriteAllTextAsync(
                 InitialSolutionFacts.BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_CONTENTS)
             .ConfigureAwait(false);*/
         
         // ExampleSolution.sln
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await CommonApi.FileSystemProviderApi.File.WriteAllTextAsync(
                 InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.SLN_CONTENTS)
             .ConfigureAwait(false);
 
-        var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+        var solutionAbsolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false);
         
@@ -132,7 +132,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
 
         // Display a file from the get-go so the user is less confused on what the website is.
-        var absolutePath = EnvironmentProvider.AbsolutePathFactory(
+        var absolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(
             InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
             false);
 
@@ -157,12 +157,12 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         {
             foreach (var directory in directories)
             {
-                var childDirectories = await FileSystemProvider.Directory
+                var childDirectories = await CommonApi.FileSystemProviderApi.Directory
                     .GetDirectoriesAsync(directory)
                     .ConfigureAwait(false);
 
                 allFiles.AddRange(
-                    await FileSystemProvider.Directory.GetFilesAsync(directory).ConfigureAwait(false));
+                    await CommonApi.FileSystemProviderApi.Directory.GetFilesAsync(directory).ConfigureAwait(false));
 
                 await RecursiveStep(childDirectories, allFiles).ConfigureAwait(false);
             }
@@ -170,10 +170,10 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
         foreach (var file in allFiles)
         {
-            var absolutePath = EnvironmentProvider.AbsolutePathFactory(file, false);
+            var absolutePath = CommonApi.EnvironmentProviderApi.AbsolutePathFactory(file, false);
             var resourceUri = new ResourceUri(file);
-            var fileLastWriteTime = await FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
-            var content = await FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
+            var fileLastWriteTime = await CommonApi.FileSystemProviderApi.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
+            var content = await CommonApi.FileSystemProviderApi.File.ReadAllTextAsync(file).ConfigureAwait(false);
             
             var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
             var compilerService = CompilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);

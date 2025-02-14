@@ -1,25 +1,26 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
 public partial class DropdownInitializer : ComponentBase, IDisposable
 {
 	[Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	private ContextBoundary? _dropdownContextBoundary;
 	
 	protected override void OnInitialized()
 	{
-		DropdownService.DropdownStateChanged += OnDropdownStateChanged;
+		CommonApi.DropdownApi.DropdownStateChanged += OnDropdownStateChanged;
 		base.OnInitialized();
 	}
 
     private async Task ClearActiveKeyList()
     {
-    	var firstDropdown = DropdownService.GetDropdownState().DropdownList.FirstOrDefault();
+    	var firstDropdown = CommonApi.DropdownApi.GetDropdownState().DropdownList.FirstOrDefault();
     	
     	if (firstDropdown is not null)
     	{
@@ -29,7 +30,7 @@ public partial class DropdownInitializer : ComponentBase, IDisposable
     			await restoreFocusOnCloseFunc.Invoke();
     	}
     	
-        DropdownService.ReduceClearAction();
+        CommonApi.DropdownApi.ReduceClearAction();
     }
     
     private Task HandleOnFocusIn(DropdownRecord dropdown)
@@ -54,6 +55,6 @@ public partial class DropdownInitializer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	DropdownService.DropdownStateChanged -= OnDropdownStateChanged;
+    	CommonApi.DropdownApi.DropdownStateChanged -= OnDropdownStateChanged;
     }
 }

@@ -2,7 +2,7 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays
 
-@{ var dropdownState = DropdownService.GetDropdownState(); }
+@{ var dropdownState = CommonApi.DropdownApi.GetDropdownState(); }
 
 @if (dropdownState.DropdownList.Count > 0 && dropdownState.DropdownList.Any(x => x.ShouldShowOutOfBoundsClickDisplay))
 {

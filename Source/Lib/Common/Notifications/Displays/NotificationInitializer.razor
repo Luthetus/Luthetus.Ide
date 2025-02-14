@@ -1,7 +1,7 @@
 @using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Common.RazorLib.Contexts.Displays
 
-@{ var notificationState = NotificationService.GetNotificationState(); }
+@{ var notificationState = CommonApi.NotificationApi.GetNotificationState(); }
 
 <ContextBoundary @ref="_notificationContextBoundary"
 				 ContextRecord="ContextFacts.NotificationContext"

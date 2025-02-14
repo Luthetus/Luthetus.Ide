@@ -6,14 +6,14 @@
                  ClassCssString="luth_output-panel-display"
                  StyleCssString="height: 100%; width: 100%; overflow: auto;">
 
-	@if (AppOptionsService.ShowPanelTitles)
+	@if (CommonApi.AppOptionApi.ShowPanelTitles)
 	{
 		<div class="luth_ide_section-title">
 	        Output
 	    </div>
     }
 
-	<div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
+	<div class="luth_ide_section-body @CommonApi.AppOptionApi.ShowPanelTitlesCssClass">
 		<OutputDisplay/>
 	</div>
 </ContextBoundary>

@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -36,7 +37,7 @@ public static class TextEditorCommandDefaultFacts
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag,
-		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
+		        commandArgs.ServiceProvider.GetRequiredService<LuthetusCommonApi>().ClipboardApi);
         });
 
     public static readonly TextEditorCommand Cut = new(
@@ -58,7 +59,7 @@ public static class TextEditorCommandDefaultFacts
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag,
-		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
+		        commandArgs.ServiceProvider.GetRequiredService<LuthetusCommonApi>().ClipboardApi);
         });
 
     public static readonly TextEditorCommand PasteCommand = new(
@@ -80,7 +81,7 @@ public static class TextEditorCommandDefaultFacts
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag,
-		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
+		        commandArgs.ServiceProvider.GetRequiredService<LuthetusCommonApi>().ClipboardApi);
         });
 
     public static readonly TextEditorCommand TriggerSave = new(

@@ -2,19 +2,20 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
 public partial class NotificationInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private ContextBoundary? _notificationContextBoundary;
     
     protected override void OnInitialized()
     {
-    	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
+		CommonApi.NotificationApi.NotificationStateChanged += OnNotificationStateChanged;
     	base.OnInitialized();
     }
     
@@ -40,13 +41,13 @@ public partial class NotificationInitializer : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
+		CommonApi.NotificationApi.NotificationStateChanged -= OnNotificationStateChanged;
 	
-		var notificationState = NotificationService.GetNotificationState();
+		var notificationState = CommonApi.NotificationApi.GetNotificationState();
 
         foreach (var notification in notificationState.DefaultList)
         {
-            NotificationService.ReduceDisposeAction(notification.DynamicViewModelKey);
+            CommonApi.NotificationApi.ReduceDisposeAction(notification.DynamicViewModelKey);
         }
 	}
 }

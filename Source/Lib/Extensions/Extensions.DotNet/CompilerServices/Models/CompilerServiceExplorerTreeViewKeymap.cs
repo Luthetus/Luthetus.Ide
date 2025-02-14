@@ -12,9 +12,9 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 
 	public CompilerServiceExplorerTreeViewKeyboardEventHandler(
-		LuthetusCommonApi commonApi,
-		IdeBackgroundTaskApi ideBackgroundTaskApi)
-		: base(treeViewService, backgroundTaskService)
+			LuthetusCommonApi commonApi,
+			IdeBackgroundTaskApi ideBackgroundTaskApi)
+		: base(commonApi)
 	{
 		_commonApi = commonApi;
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;

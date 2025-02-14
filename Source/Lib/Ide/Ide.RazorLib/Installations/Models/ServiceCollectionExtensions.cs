@@ -21,6 +21,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Displays;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -112,12 +113,12 @@ public static class ServiceCollectionExtensions
     
     public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, IServiceProvider serviceProvider)
     {
-        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+        var commonApi = serviceProvider.GetRequiredService<LuthetusCommonApi>();
 
-        if (absolutePathString.StartsWith(environmentProvider.DriveExecutingFromNoDirectorySeparator))
+        if (absolutePathString.StartsWith(commonApi.EnvironmentProviderApi.DriveExecutingFromNoDirectorySeparator))
         {
             var removeDriveFromResourceUriValue = absolutePathString[
-                environmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
+                commonApi.EnvironmentProviderApi.DriveExecutingFromNoDirectorySeparator.Length..];
 
             return Task.FromResult(removeDriveFromResourceUriValue);
         }

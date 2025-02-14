@@ -1,19 +1,20 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Contexts.Displays;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Widgets.Displays;
 
 public partial class WidgetInitializer : ComponentBase, IDisposable
 {
 	[Inject]
-    private IWidgetService WidgetService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
     
     private ContextBoundary? _widgetContextBoundary;
     
     protected override void OnInitialized()
     {
-    	WidgetService.WidgetStateChanged += OnWidgetStateChanged;
+		CommonApi.WidgetApi.WidgetStateChanged += OnWidgetStateChanged;
     	base.OnInitialized();
     }
     
@@ -44,7 +45,7 @@ public partial class WidgetInitializer : ComponentBase, IDisposable
     
     private Task RemoveWidget()
     {
-    	WidgetService.ReduceSetWidgetAction(null);
+		CommonApi.WidgetApi.ReduceSetWidgetAction(null);
     	return Task.CompletedTask;
     }
     
@@ -55,6 +56,6 @@ public partial class WidgetInitializer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	WidgetService.WidgetStateChanged -= OnWidgetStateChanged;
+		CommonApi.WidgetApi.WidgetStateChanged -= OnWidgetStateChanged;
     }
 }

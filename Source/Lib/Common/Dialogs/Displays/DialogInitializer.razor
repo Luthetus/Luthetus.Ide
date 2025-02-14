@@ -1,7 +1,7 @@
 @using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Common.RazorLib.Contexts.Displays
 
-@{ var dialogList = DialogService.GetDialogState().DialogList; }
+@{ var dialogList = CommonApi.DialogApi.GetDialogState().DialogList; }
 
 <ContextBoundary @ref="_dialogContextBoundary"
 				 ContextRecord="ContextFacts.DialogContext"

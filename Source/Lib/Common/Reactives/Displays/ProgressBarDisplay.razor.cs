@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Reactives.Displays;
 
 public partial class ProgressBarDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
 	[CascadingParameter]
 	public INotification? Notification { get; set; } = null!;
@@ -35,9 +36,9 @@ public partial class ProgressBarDisplay : ComponentBase, IDisposable
 				await Task.Delay(4_000);
 		        
 				if (Notification.DeleteNotificationAfterOverlayIsDismissed)
-		            NotificationService.ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
+					CommonApi.NotificationApi.ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
 		        else
-		            NotificationService.ReduceMakeReadAction(Notification.DynamicViewModelKey);
+					CommonApi.NotificationApi.ReduceMakeReadAction(Notification.DynamicViewModelKey);
 			});
 		}
 

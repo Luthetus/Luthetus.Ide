@@ -29,7 +29,7 @@ public partial class OutputScheduler
 
 		foreach (var group in filePathGrouping)
 		{
-			var absolutePath = _environmentProvider.AbsolutePathFactory(group.Key, false);
+			var absolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(group.Key, false);
 			var groupEnumerated = group.ToList();
 			var groupNameBuilder = new StringBuilder();
 			
@@ -64,7 +64,7 @@ public partial class OutputScheduler
 			if (firstEntry is not null)
 			{
 				var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
-				var projectAbsolutePath = _environmentProvider.AbsolutePathFactory(projectText, false);
+				var projectAbsolutePath = _commonApi.EnvironmentProviderApi.AbsolutePathFactory(projectText, false);
 			
 				if (!projectManualGrouping.ContainsKey(projectText))
 				{
@@ -121,18 +121,18 @@ public partial class OutputScheduler
             ? new List<TreeViewNoType>()
             : new() { firstNode };
 
-        if (!_treeViewService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
+        if (!_commonApi.TreeViewApi.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
         {
-            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            _commonApi.TreeViewApi.ReduceRegisterContainerAction(new TreeViewContainer(
                 OutputState.TreeViewContainerKey,
                 adhocRoot,
                 activeNodes));
         }
         else
         {
-            _treeViewService.ReduceWithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
+            _commonApi.TreeViewApi.ReduceWithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
 
-            _treeViewService.ReduceSetActiveNodeAction(
+            _commonApi.TreeViewApi.ReduceSetActiveNodeAction(
                 OutputState.TreeViewContainerKey,
                 firstNode,
                 true,

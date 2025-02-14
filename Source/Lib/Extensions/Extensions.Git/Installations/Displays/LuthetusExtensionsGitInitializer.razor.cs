@@ -19,7 +19,7 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-		BackgroundTaskService.Enqueue(
+        CommonApi.BackgroundTaskApi.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             BackgroundTaskFacts.ContinuousQueueKey,
             nameof(LuthetusExtensionsGitInitializer),
@@ -39,8 +39,8 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelService.GetPanelState());
-        leftPanel.PanelService = PanelService;
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(CommonApi.PanelApi.GetPanelState());
+        leftPanel.PanelService = CommonApi.PanelApi;
 
         // gitPanel
         var gitPanel = new Panel(
@@ -50,10 +50,9 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
             ContextFacts.GitContext.ContextKey,
             typeof(GitDisplay),
             null,
-            PanelService,
-            DialogService,
+            CommonApi,
             JsRuntime);
-        PanelService.ReduceRegisterPanelAction(gitPanel);
-        PanelService.ReduceRegisterPanelTabAction(leftPanel.Key, gitPanel, false);
+        CommonApi.PanelApi.ReduceRegisterPanelAction(gitPanel);
+        CommonApi.PanelApi.ReduceRegisterPanelTabAction(leftPanel.Key, gitPanel, false);
     }
 }

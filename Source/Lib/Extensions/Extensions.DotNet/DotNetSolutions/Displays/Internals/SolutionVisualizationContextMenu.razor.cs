@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 
@@ -17,7 +18,7 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+	private LuthetusCommonApi CommonApi { get; set; } = null!;
 	
 	[CascadingParameter]
     public DropdownRecord? Dropdown { get; set; }
@@ -88,7 +89,7 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 						{
 							menuRecordsList.Add(solutionVisualizationDrawingCircle.GetMenuOptionRecord(
 								localSolutionVisualizationModel,
-								EnvironmentProvider,
+                                CommonApi.EnvironmentProviderApi,
 								TextEditorConfig,
 								ServiceProvider));
 						}

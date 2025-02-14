@@ -2,7 +2,7 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays
 
-@{ var widgetState = WidgetService.GetWidgetState(); }
+@{ var widgetState = CommonApi.WidgetApi.GetWidgetState(); }
 
 @if (widgetState.Widget is not null)
 {

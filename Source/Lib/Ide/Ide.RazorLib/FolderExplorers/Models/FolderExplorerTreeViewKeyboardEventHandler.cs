@@ -28,8 +28,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             LuthetusCommonApi commonApi,
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             ITextEditorService textEditorService,
-            IMenuOptionsFactory menuOptionsFactory,
-            ITreeViewService treeViewService)
+            IMenuOptionsFactory menuOptionsFactory)
         : base(commonApi)
     {
         _commonApi = commonApi;

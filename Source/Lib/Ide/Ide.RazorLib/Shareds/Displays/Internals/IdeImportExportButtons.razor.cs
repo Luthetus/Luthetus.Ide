@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
 public partial class IdeImportExportButtons : ComponentBase
 {
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private LuthetusCommonApi CommonApi { get; set; } = null!;
 
     private IDialog _importDialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
@@ -30,11 +31,11 @@ public partial class IdeImportExportButtons : ComponentBase
 
     private void ImportOnClick()
     {
-        DialogService.ReduceRegisterAction(_importDialogRecord);
+		CommonApi.DialogApi.ReduceRegisterAction(_importDialogRecord);
     }
     
     private void ExportOnClick()
     {
-        DialogService.ReduceRegisterAction(_exportDialogRecord);
+		CommonApi.DialogApi.ReduceRegisterAction(_exportDialogRecord);
     }
 }

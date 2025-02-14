@@ -21,8 +21,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IFolderExplorerService FolderExplorerService { get; set; } = null!;
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
@@ -49,8 +47,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             CommonApi,
             IdeBackgroundTaskApi,
             TextEditorService,
-            MenuOptionsFactory,
-            TreeViewService);
+            MenuOptionsFactory);
 
         base.OnInitialized();
     }
