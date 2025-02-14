@@ -25,8 +25,8 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
     private readonly Queue<ConfigWorkKind> _workKindQueue = new();
-
     private readonly object _workLock = new();
+
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IIdeMainLayoutService _ideMainLayoutService;
 

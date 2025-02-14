@@ -68,6 +68,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 
 	[Parameter, EditorRequired]
@@ -206,42 +208,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 								.Invoke()
 								.ConfigureAwait(false);
 
-							BackgroundTaskService.Enqueue(
-								Key<IBackgroundTask>.NewKey(),
-								BackgroundTaskFacts.ContinuousQueueKey,
-								"SolutionExplorer_TreeView_MultiSelect_DeleteFiles",
-								async () =>
-								{
-									foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
-									{
-										var treeViewNamespacePath = (TreeViewNamespacePath)node;
-
-										if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
-										{
-											await FileSystemProvider.Directory
-												.DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None)
-												.ConfigureAwait(false);
-										}
-										else
-										{
-											await FileSystemProvider.File
-												.DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value)
-												.ConfigureAwait(false);
-										}
-
-										if (TreeViewService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
-											mostRecentContainer is not null)
-										{
-											var localParent = node.Parent;
-
-											if (localParent is not null)
-											{
-												await localParent.LoadChildListAsync().ConfigureAwait(false);
-												TreeViewService.ReduceReRenderNodeAction(mostRecentContainer.Key, localParent);
-											}
-										}
-									}
-								});
+							DotNetBackgroundTaskApi.Enqueue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(
+                                commandArgs);
 						}
 					},
 					{ nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },

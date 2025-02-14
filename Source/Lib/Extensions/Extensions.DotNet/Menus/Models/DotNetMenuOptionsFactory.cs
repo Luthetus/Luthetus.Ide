@@ -400,31 +400,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 
             _backgroundTaskService.EnqueueGroup(this);
         }
-
-        _backgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			BackgroundTaskFacts.ContinuousQueueKey,
-			"Remove NuGet Package Reference from Project",
-			() =>
-			{
-				var formattedCommand = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
-					modifyProjectNamespacePath.AbsolutePath.Value,
-					treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
-
-				var terminalCommandRequest = new TerminalCommandRequest(
-					formattedCommand.Value,
-					null)
-				{
-					ContinueWithFunc = parsedCommand =>
-					{
-						NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
-						return onAfterCompletion.Invoke();
-					}
-				};
-
-				terminal.EnqueueCommand(terminalCommandRequest);
-				return ValueTask.CompletedTask;
-			});
 	}
 	
 	public ValueTask Do_PerformRemoveNuGetPackageReferenceFromProject(
