@@ -237,7 +237,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        	{
 				        	DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
-							DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
+							DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(
 								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
 							return Task.CompletedTask;
 						}

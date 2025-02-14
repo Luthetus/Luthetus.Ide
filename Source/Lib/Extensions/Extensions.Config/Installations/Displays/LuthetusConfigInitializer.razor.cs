@@ -75,7 +75,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
             solutionMostRecent,
             false);
 
-        DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(slnAbsolutePath);
+        DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(slnAbsolutePath);
 
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)

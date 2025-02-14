@@ -139,7 +139,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 						solutionAbsolutePathString,
 						false);
 
-					CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
 					return Task.CompletedTask;
 	        	}
 	        };
@@ -183,7 +183,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			solutionAbsolutePathString,
 			false);
 
-		CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
 	}
 
 	public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

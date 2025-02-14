@@ -363,7 +363,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				NotificationService,
 				() =>
 				{
-					CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
 					return Task.CompletedTask;
 				}),
 			new MenuOptionRecord(
@@ -387,7 +387,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				NotificationService,
 				() =>
 				{
-					CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
 					return Task.CompletedTask;
 				}),
 		};
@@ -533,7 +533,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        {
 		        	ContinueWithFunc = parsedCommand =>
 		        	{
-		        		CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
+		        		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
 						return Task.CompletedTask;
 		        	}
 		        };

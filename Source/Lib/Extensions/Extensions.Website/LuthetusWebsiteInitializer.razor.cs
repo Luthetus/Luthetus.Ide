@@ -137,7 +137,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         // won't open the first file correctly without this.
         TextEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.TextEditorCompilerServiceHeaderDisplay));
 
-        DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+        DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
 
         // Display a file from the get-go so the user is less confused on what the website is.
         var absolutePath = EnvironmentProvider.AbsolutePathFactory(

@@ -36,7 +36,7 @@ public record DotNetSolutionState(
             absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
-                    compilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(absolutePath);
+                    compilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(absolutePath);
 
 				return Task.CompletedTask;
             },
