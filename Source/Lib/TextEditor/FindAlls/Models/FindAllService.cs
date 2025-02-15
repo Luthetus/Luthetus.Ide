@@ -130,7 +130,7 @@ public class FindAllService : IFindAllService
 
 			_findAllState = inState with
 			{
-				SearchResultList = localSearchResultList.ToImmutableList()
+				SearchResultList = localSearchResultList
 			};
 
             goto finalize;
@@ -148,7 +148,7 @@ public class FindAllService : IFindAllService
 
 			_findAllState = inState with
 			{
-				SearchResultList = ImmutableList<TextEditorTextSpan>.Empty
+				SearchResultList = new()
 			};
 
 			goto finalize;

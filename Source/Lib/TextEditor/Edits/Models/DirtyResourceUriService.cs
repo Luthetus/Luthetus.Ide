@@ -29,9 +29,12 @@ public class DirtyResourceUriService : IDirtyResourceUriService
                 goto finalize;
             }
 
-            _dirtyResourceUriState = inState with
+            var outDirtyResourceUriList = new List<ResourceUri>(inState.DirtyResourceUriList);
+            outDirtyResourceUriList.Add(resourceUri);
+
+			_dirtyResourceUriState = inState with
             {
-                DirtyResourceUriList = inState.DirtyResourceUriList.Add(resourceUri)
+                DirtyResourceUriList = outDirtyResourceUriList
             };
 
             goto finalize;
@@ -47,10 +50,13 @@ public class DirtyResourceUriService : IDirtyResourceUriService
         {
             var inState = GetDirtyResourceUriState();
 
-            _dirtyResourceUriState = inState with
+            var outDirtyResourceUriList = new List<ResourceUri>(inState.DirtyResourceUriList);
+            outDirtyResourceUriList.Remove(resourceUri);
+
+			_dirtyResourceUriState = inState with
             {
-                DirtyResourceUriList = inState.DirtyResourceUriList.Remove(resourceUri)
-            };
+                DirtyResourceUriList = outDirtyResourceUriList
+			};
 
             goto finalize;
         }

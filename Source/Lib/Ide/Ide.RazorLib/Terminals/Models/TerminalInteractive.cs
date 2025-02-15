@@ -92,7 +92,7 @@ public class TerminalInteractive : ITerminalInteractive
 	{
 		lock (_syncRoot)
 		{
-			return _terminalCommandRequestHistory.ToImmutableList();
+			return _terminalCommandRequestHistory;
 		}
 	}
 	

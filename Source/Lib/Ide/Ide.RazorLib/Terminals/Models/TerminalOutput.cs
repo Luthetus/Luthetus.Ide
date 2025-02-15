@@ -21,10 +21,10 @@ public class TerminalOutput : ITerminalOutput
 			ITerminalOutputFormatter outputFormatter)
 		: this(terminal)
 	{
-		OutputFormatterList = new ITerminalOutputFormatter[]
+		OutputFormatterList = new List<ITerminalOutputFormatter>
 		{
 			outputFormatter
-		}.ToImmutableList();
+		};
 	}
 	
 	public TerminalOutput(
@@ -63,7 +63,7 @@ public class TerminalOutput : ITerminalOutput
 	{
 		lock (_listLock)
 		{
-			return _parsedCommandList.ToImmutableList();
+			return _parsedCommandList;
 		}
 	}
 	
@@ -79,7 +79,10 @@ public class TerminalOutput : ITerminalOutput
 	{
 		lock (_listLock)
 		{
-			OutputFormatterList = OutputFormatterList.Add(outputFormatter);
+			var outOutputFormatterList = new List<ITerminalOutputFormatter>(OutputFormatterList);
+			outOutputFormatterList.Add(outputFormatter);
+
+			OutputFormatterList = outOutputFormatterList;
 		}
 	}
 	

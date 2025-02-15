@@ -37,9 +37,9 @@ public class TerminalOutputFormatterAll : ITerminalOutputFormatter
 	{
 		return new TerminalOutputFormattedTextEditor(
 			string.Empty,
-			List<TerminalCommandParsed>.Empty,
-			List<TextEditorTextSpan>.Empty,
-			List<Symbol>.Empty);
+			new List<TerminalCommandParsed>(),
+			new List<TextEditorTextSpan>(),
+			new List<Symbol>());
 	}
 	
 	public void Dispose()

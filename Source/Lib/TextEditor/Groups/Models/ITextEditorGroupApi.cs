@@ -18,7 +18,7 @@ public interface ITextEditorGroupApi
     /// If one continually invokes this, there is no guarantee that the data had not changed
     /// since the previous invocation.
     /// </summary>
-    public ImmutableList<TextEditorGroup> GetGroups();
+    public List<TextEditorGroup> GetGroups();
     
     // ITextEditorGroupService
     public event Action? TextEditorGroupStateChanged;

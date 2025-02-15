@@ -6,8 +6,8 @@ public record struct TextEditorGroupState
 {
     public TextEditorGroupState()
     {
-        GroupList = ImmutableList<TextEditorGroup>.Empty;
+        GroupList = new();
     }
 
-    public ImmutableList<TextEditorGroup> GroupList { get; init; }
+    public List<TextEditorGroup> GroupList { get; init; }
 }
