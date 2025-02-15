@@ -178,6 +178,11 @@
                 		Bug: cannot run a program and use the IDE while the child program is running.
                 		This wasn't an issue prior so I must've lock'd state somewhere I shouldn't
                 		have and I am going to track this down.
+                		
+                		-------
+                		
+                		it also is blocking the execution terminal from writing text while the child
+                		program executes so I'm going to just fix this now before accepting the PR.
                 	</li>
                 	<li>
                 		Many optimizations have been made.
