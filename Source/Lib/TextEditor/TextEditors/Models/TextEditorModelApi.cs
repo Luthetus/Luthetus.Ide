@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -50,7 +49,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     #endregion
 
     #region READ_METHODS
-    public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
+    public List<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
     	return _textEditorService.TextEditorState.ModelGetViewModelsOrEmpty(resourceUri);
     }

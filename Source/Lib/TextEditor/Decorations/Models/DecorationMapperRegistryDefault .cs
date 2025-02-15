@@ -1,6 +1,5 @@
 ﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 
@@ -8,7 +7,7 @@ public class DecorationMapperRegistryDefault : IDecorationMapperRegistry
 {
     private Dictionary<string, IDecorationMapper> _map { get; } = new();
 
-    public ImmutableDictionary<string, IDecorationMapper> Map => _map.ToImmutableDictionary();
+    public IReadOnlyDictionary<string, IDecorationMapper> Map => _map;
 
     public DecorationMapperRegistryDefault()
     {

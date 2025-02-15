@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 /// <summary>State (i.e.: working directory)</summary>

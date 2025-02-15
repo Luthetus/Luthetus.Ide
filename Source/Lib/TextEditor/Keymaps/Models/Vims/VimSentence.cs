@@ -1,5 +1,4 @@
 ﻿using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.Keymaps.Models;
@@ -11,8 +10,8 @@ public class VimSentence
 {
     private readonly List<VimGrammarToken> _pendingSentenceList = new();
 
-    public ImmutableArray<VimGrammarToken> PendingSentenceList => _pendingSentenceList.ToImmutableArray();
-    public ImmutableArray<VimGrammarToken> MostRecentSyntacticallyCompleteSentence { get; set; } = ImmutableArray<VimGrammarToken>.Empty;
+    public List<VimGrammarToken> PendingSentenceList => _pendingSentenceList;
+    public List<VimGrammarToken> MostRecentSyntacticallyCompleteSentence { get; set; } = new();
 
     public bool TryLex(
         TextEditorKeymapVim textEditorKeymapVim,
@@ -198,13 +197,13 @@ public class VimSentence
 
     public static bool TryParseNextToken(
         TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
+		List<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgs keymapArgs,
         bool hasTextSelection,
         out TextEditorCommand? command)
     {
-        if (indexInSentence >= sentenceSnapshotList.Length)
+        if (indexInSentence >= sentenceSnapshotList.Count)
         {
             command = null;
             return false;

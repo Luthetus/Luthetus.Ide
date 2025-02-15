@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -52,10 +51,10 @@ public sealed record TextEditorViewModel : IDisposable
 
         var primaryCursor = new TextEditorCursor(true);
 
-        CursorList = new TextEditorCursor[]
+        CursorList = new List<TextEditorCursor>()
         {
             primaryCursor
-        }.ToImmutableArray();
+        };
 
         DisplayTracker = new(
             textEditorService,
@@ -79,7 +78,7 @@ public sealed record TextEditorViewModel : IDisposable
     /// <summary>
     /// The first entry of <see cref="CursorList"/> should be the PrimaryCursor
     /// </summary>
-    public ImmutableArray<TextEditorCursor> CursorList { get; init; }
+    public List<TextEditorCursor> CursorList { get; init; }
     /// <summary>
     /// This tracks which view models are actively rendered from Blazor's perspective. Thus, using this allows lazy recalculation
     /// of view model state when an underlying model changes.
@@ -194,14 +193,14 @@ public sealed record TextEditorViewModel : IDisposable
 	/// This property is intended to be used for displaying 'code lens' comments.
 	/// For example, above a property perhaps the text "3 references".
 	/// </summary>
-    public ImmutableArray<WidgetBlock> WidgetBlockList { get; init; } = ImmutableArray<WidgetBlock>.Empty;
-	/// <summary>
-	/// This property is intended to be used for displaying 'inline hints'.
-	/// For example, if the type of a lambda's parameter is not deemed obvious,
-	/// one could inline the parameter's type. This inline hint wouldn't be actual text in the document.
-	/// </summary>
-    public ImmutableArray<WidgetInline> WidgetInlineList { get; init; } = ImmutableArray<WidgetInline>.Empty;
-    public ImmutableArray<WidgetOverlay> WidgetOverlayList { get; init; } = ImmutableArray<WidgetOverlay>.Empty;
+    public List<WidgetBlock> WidgetBlockList { get; init; } = null;
+    /// <summary>
+    /// This property is intended to be used for displaying 'inline hints'.
+    /// For example, if the type of a lambda's parameter is not deemed obvious,
+    /// one could inline the parameter's type. This inline hint wouldn't be actual text in the document.
+    /// </summary>
+    public List<WidgetInline> WidgetInlineList { get; init; } = null;
+    public List<WidgetOverlay> WidgetOverlayList { get; init; } = null;
 
 	public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";

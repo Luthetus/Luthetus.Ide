@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -182,7 +181,7 @@ public partial class TextEditorService : ITextEditorService
 	                {
 	                    CursorList = cursorModifierBag.List
 	                        .Select(x => x.ToCursor())
-	                        .ToImmutableArray()
+							.ToList()
 	                };
 	            }
 	            

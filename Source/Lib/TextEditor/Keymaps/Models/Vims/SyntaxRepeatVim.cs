@@ -1,7 +1,6 @@
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
-using System.Collections.Immutable;
 using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
@@ -32,7 +31,7 @@ public static class SyntaxRepeatVim
     }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
+        List<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgs keymapArgument,
         bool hasTextSelection,
@@ -42,7 +41,7 @@ public static class SyntaxRepeatVim
 
         var numberBuilder = new StringBuilder();
 
-        for (int i = indexInSentence; i < sentenceSnapshotList.Length; i++)
+        for (int i = indexInSentence; i < sentenceSnapshotList.Count; i++)
         {
             var currentToken = sentenceSnapshotList[i];
 

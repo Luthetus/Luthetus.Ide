@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
@@ -44,7 +43,7 @@ public class HeaderDriver
 	
     public TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatch renderBatchLocal)
     {
-        var cursorSnapshotsList = new TextEditorCursor[] { renderBatchLocal.ViewModel.PrimaryCursor }.ToImmutableArray();
+        var cursorSnapshotsList = new List<TextEditorCursor> { renderBatchLocal.ViewModel.PrimaryCursor };
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(

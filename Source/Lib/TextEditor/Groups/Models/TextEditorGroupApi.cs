@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -31,14 +30,14 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 
     public void SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        ReduceSetActiveViewModelOfGroupAction(
+        SetActiveViewModelOfGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
 
     public void RemoveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        ReduceRemoveViewModelFromGroupAction(
+        RemoveViewModelFromGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
@@ -57,12 +56,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
             _dialogService,
             _jsRuntime);
 
-        ReduceRegisterAction(textEditorGroup);
-    }
-
-    public void Dispose(Key<TextEditorGroup> textEditorGroupKey)
-    {
-        ReduceDisposeAction(textEditorGroupKey);
+        Register(textEditorGroup);
     }
 
     public TextEditorGroup? GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
@@ -73,7 +67,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 
     public void AddViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        ReduceAddViewModelToGroupAction(
+        AddViewModelToGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
@@ -90,7 +84,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 	
 	public TextEditorGroupState GetTextEditorGroupState() => _textEditorGroupState;
         
-    public void ReduceRegisterAction(TextEditorGroup group)
+    public void Register(TextEditorGroup group)
     {
         lock (_stateModificationLock)
         {
@@ -117,7 +111,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 		TextEditorGroupStateChanged?.Invoke();
 	}
 
-    public void ReduceAddViewModelToGroupAction(
+    public void AddViewModelToGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -171,7 +165,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 		PostScroll(groupKey, viewModelKey);
 	}
 
-    public void ReduceRemoveViewModelFromGroupAction(
+    public void RemoveViewModelFromGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -257,7 +251,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 		PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
 	}
 
-    public void ReduceSetActiveViewModelOfGroupAction(
+    public void SetActiveViewModelOfGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -296,7 +290,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 		TextEditorGroupStateChanged?.Invoke();
 	}
 
-    public void ReduceDisposeAction(Key<TextEditorGroup> groupKey)
+    public void Dispose(Key<TextEditorGroup> groupKey)
     {
         lock (_stateModificationLock)
         {

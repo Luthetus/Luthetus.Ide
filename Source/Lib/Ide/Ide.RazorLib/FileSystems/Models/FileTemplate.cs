@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Luthetus.Ide.RazorLib.FileSystems.Models;
+﻿namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
 public class FileTemplate : IFileTemplate
 {

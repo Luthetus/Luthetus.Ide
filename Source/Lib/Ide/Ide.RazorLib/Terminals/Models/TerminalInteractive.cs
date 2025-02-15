@@ -1,5 +1,4 @@
 using System.Text;
-using System.Collections.Immutable;
 using CliWrap.EventStream;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;

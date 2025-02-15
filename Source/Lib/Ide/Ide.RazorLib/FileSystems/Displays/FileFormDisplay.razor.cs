@@ -4,7 +4,6 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Displays;
 

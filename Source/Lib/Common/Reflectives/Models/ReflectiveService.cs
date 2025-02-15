@@ -31,9 +31,8 @@ public class ReflectiveService : IReflectiveService
             if (providedInsertionIndex >= 0 && providedInsertionIndex < 1 + inState.ReflectiveModelList.Count)
                 actualInsertionIndex = providedInsertionIndex;
 
-            var outDisplayStateList = inState.ReflectiveModelList.Insert(
-                actualInsertionIndex,
-                entry);
+            var outDisplayStateList = new List<ReflectiveModel>(inState.ReflectiveModelList);
+            outDisplayStateList.Insert(actualInsertionIndex, entry);
 
             _reflectiveState = new ReflectiveState { ReflectiveModelList = outDisplayStateList };
 
@@ -52,15 +51,20 @@ public class ReflectiveService : IReflectiveService
         {
             var inState = GetReflectiveState();
 
-            var inDisplayState = inState.ReflectiveModelList.FirstOrDefault(
+            var inDisplayStateIndex = inState.ReflectiveModelList.FindIndex(
                 x => x.Key == key);
 
-            if (inDisplayState is null)
+            if (inDisplayStateIndex == -1)
                 goto finalize;
 
-            var outDisplayStateList = inState.ReflectiveModelList.Replace(
-                inDisplayState,
-                withFunc.Invoke(inDisplayState));
+            var inDisplayState = inState.ReflectiveModelList[inDisplayStateIndex];
+
+			if (inDisplayState is null)
+                goto finalize;
+
+            var outDisplayStateList = new List<ReflectiveModel>(inState.ReflectiveModelList);
+
+            outDisplayStateList[inDisplayStateIndex] = withFunc.Invoke(inDisplayState);
 
             _reflectiveState = new ReflectiveState { ReflectiveModelList = outDisplayStateList };
 
@@ -77,13 +81,19 @@ public class ReflectiveService : IReflectiveService
         {
             var inState = GetReflectiveState();
 
-            var inDisplayState = inState.ReflectiveModelList.FirstOrDefault(
+            var inDisplayStateIndex = inState.ReflectiveModelList.FindIndex(
                 x => x.Key == key);
+
+            if (inDisplayStateIndex == -1)
+                goto finalize;
+
+            var inDisplayState = inState.ReflectiveModelList[inDisplayStateIndex];
 
             if (inDisplayState is null)
                 goto finalize;
 
-            var outDisplayStateList = inState.ReflectiveModelList.Remove(inDisplayState);
+            var outDisplayStateList = new List<ReflectiveModel>(inState.ReflectiveModelList);
+            outDisplayStateList.Remove(inDisplayState);
 
             _reflectiveState = new ReflectiveState
             {

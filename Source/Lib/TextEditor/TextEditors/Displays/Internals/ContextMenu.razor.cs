@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -59,7 +58,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatch renderBatch)
     {
-        var cursorSnapshotsList = new TextEditorCursor[] { renderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
+        var cursorSnapshotsList = new List<TextEditorCursor> { renderBatch.ViewModel.PrimaryCursor };
 
         return new TextEditorCommandArgs(
             renderBatch.Model.ResourceUri,
