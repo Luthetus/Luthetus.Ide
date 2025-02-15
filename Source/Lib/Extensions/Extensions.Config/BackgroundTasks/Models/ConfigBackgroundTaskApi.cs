@@ -41,7 +41,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
 
     public ValueTask Do_InitializeFooterJustifyEndComponents()
     {
-        _ideMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
+        _ideMainLayoutService.RegisterFooterJustifyEndComponent(
             new FooterJustifyEndComponent(
                 Key<FooterJustifyEndComponent>.NewKey(),
                 typeof(GitInteractiveIconDisplay),
@@ -53,7 +53,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
                     }
                 }));
 
-        _ideMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
+        _ideMainLayoutService.RegisterFooterJustifyEndComponent(
             new FooterJustifyEndComponent(
                 Key<FooterJustifyEndComponent>.NewKey(),
                 typeof(DirtyResourceUriInteractiveIconDisplay),
@@ -65,7 +65,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
                     }
                 }));
 
-        _ideMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
+        _ideMainLayoutService.RegisterFooterJustifyEndComponent(
             new FooterJustifyEndComponent(
                 Key<FooterJustifyEndComponent>.NewKey(),
                 typeof(NotificationsInteractiveIconDisplay),

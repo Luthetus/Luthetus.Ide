@@ -66,7 +66,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
 
     private ValueTask Do_SetFolderExplorerState(AbsolutePath folderAbsolutePath)
     {
-        _folderExplorerService.ReduceWithAction(
+        _folderExplorerService.With(
             inFolderExplorerState => inFolderExplorerState with
             {
                 AbsolutePath = folderAbsolutePath
@@ -87,7 +87,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
 
     private async ValueTask Do_SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
     {
-        _folderExplorerService.ReduceWithAction(inFolderExplorerState => inFolderExplorerState with
+        _folderExplorerService.With(inFolderExplorerState => inFolderExplorerState with
         {
             IsLoadingFolderExplorer = true
         });
@@ -123,7 +123,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
                 false);
         }
 
-        _folderExplorerService.ReduceWithAction(inFolderExplorerState => inFolderExplorerState with
+        _folderExplorerService.With(inFolderExplorerState => inFolderExplorerState with
         {
             IsLoadingFolderExplorer = false
         });

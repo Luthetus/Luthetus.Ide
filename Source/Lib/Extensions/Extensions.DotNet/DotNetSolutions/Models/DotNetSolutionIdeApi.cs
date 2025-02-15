@@ -247,7 +247,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
 			_findAllService.SetStartingDirectoryPath(parentDirectory);
 
-			_codeSearchService.ReduceWithAction(inState => inState with
+			_codeSearchService.With(inState => inState with
 			{
 				StartingAbsolutePathForSearch = parentDirectory
 			});
@@ -638,7 +638,7 @@ Execution Terminal"));
 	
 	private void RegisterStartupControl(IDotNetProject project)
 	{
-		_startupControlService.ReduceRegisterStartupControlAction(
+		_startupControlService.RegisterStartupControl(
 			new StartupControlModel(
 				Key<IStartupControlModel>.NewKey(),
 				project.DisplayName,
@@ -678,7 +678,7 @@ Execution Terminal"));
         	ContinueWithFunc = parsedCommand =>
         	{
         		startupControlModel.ExecutingTerminalCommandRequest = null;
-        		_startupControlService.ReduceStateChangedAction();
+        		_startupControlService.StateChanged();
         	
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString(),
@@ -701,7 +701,7 @@ Execution Terminal"));
 		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
 		startupControlModel.ExecutingTerminalCommandRequest = null;
 		
-        _startupControlService.ReduceStateChangedAction();
+        _startupControlService.StateChanged();
         return Task.CompletedTask;
     }
 

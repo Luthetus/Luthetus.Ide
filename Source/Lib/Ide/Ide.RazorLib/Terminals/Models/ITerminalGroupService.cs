@@ -9,6 +9,6 @@ public interface ITerminalGroupService
 	
 	public TerminalGroupState GetTerminalGroupState();
 
-    public void ReduceSetActiveTerminalAction(Key<ITerminal> terminalKey);
-    public void ReduceInitializeResizeHandleDimensionUnitAction(DimensionUnit dimensionUnit);
+    public void SetActiveTerminal(Key<ITerminal> terminalKey);
+    public void InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit);
 }

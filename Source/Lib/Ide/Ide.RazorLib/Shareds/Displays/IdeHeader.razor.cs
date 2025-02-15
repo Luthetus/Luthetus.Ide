@@ -202,11 +202,11 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
         if (menuOptionsList.Count == 0)
         {
-            IdeHeaderService.ReduceSetMenuViewAction(MenuRecord.GetEmpty());
+            IdeHeaderService.SetMenuView(MenuRecord.GetEmpty());
         }
         else
         {
-            IdeHeaderService.ReduceSetMenuViewAction(new MenuRecord(menuOptionsList));
+            IdeHeaderService.SetMenuView(new MenuRecord(menuOptionsList));
         }
     }
 

@@ -6,5 +6,5 @@ public interface IFolderExplorerService
 	
 	public FolderExplorerState GetFolderExplorerState();
 
-    public void ReduceWithAction(Func<FolderExplorerState, FolderExplorerState> withFunc);
+    public void With(Func<FolderExplorerState, FolderExplorerState> withFunc);
 }

@@ -125,7 +125,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
             }
             await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-            InputFileService.ReduceSetOpenedTreeViewModelAction(
+            InputFileService.SetOpenedTreeViewModel(
                 pseudoRootNode,
                 IdeComponentRenderers,
                 CommonComponentRenderers,

@@ -429,7 +429,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 return Task.CompletedTask;
             });
 
-        _ideHeaderService.ReduceModifyMenuFileAction(
+        _ideHeaderService.ModifyMenuFile(
             inMenu =>
             {
                 var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
@@ -564,7 +564,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 return Task.CompletedTask;
             }));
 
-        _ideHeaderService.ReduceModifyMenuRunAction(inMenu =>
+        _ideHeaderService.ModifyMenuRun(inMenu =>
         {
             // UI foreach enumeration was modified nightmare. (2025-02-07)
             var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);

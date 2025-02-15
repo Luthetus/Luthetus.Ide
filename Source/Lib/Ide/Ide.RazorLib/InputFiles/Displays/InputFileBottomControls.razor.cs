@@ -27,7 +27,7 @@ public partial class InputFileBottomControls : ComponentBase
             .FirstOrDefault(x => x.PatternName == patternName);
 
         if (pattern is not null)
-            InputFileService.ReduceSetSelectedInputFilePatternAction(pattern);
+            InputFileService.SetSelectedInputFilePattern(pattern);
     }
 
     private string GetSelectedTreeViewModelAbsolutePathString(InputFileState inputFileState)

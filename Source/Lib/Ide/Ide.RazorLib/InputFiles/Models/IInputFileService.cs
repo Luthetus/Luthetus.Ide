@@ -13,28 +13,28 @@ public interface IInputFileService
 	
 	public InputFileState GetInputFileState();
 
-    public void ReduceStartInputFileStateFormAction(
+    public void StartInputFileStateForm(
         string message,
         Func<AbsolutePath, Task> onAfterSubmitFunc,
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns);
 
-    public void ReduceSetSelectedTreeViewModelAction(TreeViewAbsolutePath? SelectedTreeViewModel);
+    public void SetSelectedTreeViewModel(TreeViewAbsolutePath? SelectedTreeViewModel);
 
-    public void ReduceSetOpenedTreeViewModelAction(
+    public void SetOpenedTreeViewModel(
     	TreeViewAbsolutePath treeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider);
 
-    public void ReduceSetSelectedInputFilePatternAction(InputFilePattern inputFilePattern);
+    public void SetSelectedInputFilePattern(InputFilePattern inputFilePattern);
 
-    public void ReduceMoveBackwardsInHistoryAction();
+    public void MoveBackwardsInHistory();
 
-    public void ReduceMoveForwardsInHistoryAction();
+    public void MoveForwardsInHistory();
 
-    public void ReduceOpenParentDirectoryAction(
+    public void OpenParentDirectory(
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -42,11 +42,11 @@ public interface IInputFileService
         IBackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
 
-    public void ReduceRefreshCurrentSelectionAction(
+    public void RefreshCurrentSelection(
     	IBackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection);
 
-    public void ReduceSetSearchQueryAction(string searchQuery);
+    public void SetSearchQuery(string searchQuery);
     
     public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,

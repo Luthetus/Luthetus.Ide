@@ -6,5 +6,5 @@ public interface IIdeMainLayoutService
 	
 	public IdeMainLayoutState GetIdeMainLayoutState();
 
-	public void ReduceRegisterFooterJustifyEndComponentAction(FooterJustifyEndComponent footerJustifyEndComponent);
+	public void RegisterFooterJustifyEndComponent(FooterJustifyEndComponent footerJustifyEndComponent);
 }

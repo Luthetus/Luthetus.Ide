@@ -65,7 +65,7 @@ public class InputFileIdeApi : IBackgroundTaskGroup
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatternsList)
     {
-        _inputFileService.ReduceStartInputFileStateFormAction(
+        _inputFileService.StartInputFileStateForm(
             message,
             onAfterSubmitFunc,
             selectionIsValidFunc,

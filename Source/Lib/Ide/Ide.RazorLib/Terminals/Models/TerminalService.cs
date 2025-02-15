@@ -4,46 +4,54 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalService : ITerminalService
 {
-	private TerminalState _terminalState = new();
+    private readonly object _stateModificationLock = new();
+
+    private TerminalState _terminalState = new();
 
 	public event Action? TerminalStateChanged;
 
 	public TerminalState GetTerminalState() => _terminalState;
 
-    public void ReduceRegisterAction(ITerminal terminal)
+    public void Register(ITerminal terminal)
     {
-    	var inState = GetTerminalState();
-    
-        if (inState.TerminalMap.ContainsKey(terminal.Key))
+        lock (_stateModificationLock)
         {
-            TerminalStateChanged?.Invoke();
-            return;
+            var inState = GetTerminalState();
+
+            if (inState.TerminalMap.ContainsKey(terminal.Key))
+                goto finalize;
+
+            var nextMap = inState.TerminalMap.Add(
+                terminal.Key,
+                terminal);
+
+            _terminalState = inState with { TerminalMap = nextMap };
+
+            goto finalize;
         }
 
-        var nextMap = inState.TerminalMap.Add(
-            terminal.Key,
-            terminal);
-
-        _terminalState = inState with { TerminalMap = nextMap };
-        
+        finalize:
         TerminalStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceStateHasChangedAction()
+    public void StateHasChanged()
     {
     	TerminalStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceDisposeAction(Key<ITerminal> terminalKey)
+    public void Dispose(Key<ITerminal> terminalKey)
     {
-    	var inState = GetTerminalState();
-    
-        var nextMap = inState.TerminalMap.Remove(terminalKey);
-        _terminalState = inState with { TerminalMap = nextMap };
-        
+        lock (_stateModificationLock)
+        {
+            var inState = GetTerminalState();
+
+            var nextMap = inState.TerminalMap.Remove(terminalKey);
+            _terminalState = inState with { TerminalMap = nextMap };
+
+            goto finalize;
+        }
+
+        finalize:
         TerminalStateChanged?.Invoke();
-        return;
     }
 }

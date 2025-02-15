@@ -400,7 +400,7 @@ public class CommandFactory : ICommandFactory
 						if (selectedText is null)
 							return ValueTask.CompletedTask;
 						
-						_codeSearchService.ReduceWithAction(inState => inState with
+						_codeSearchService.With(inState => inState with
 						{
 							Query = selectedText,
 						});

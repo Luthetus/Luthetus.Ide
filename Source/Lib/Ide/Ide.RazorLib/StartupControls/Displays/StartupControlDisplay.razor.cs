@@ -47,7 +47,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     			startupControlKey = new Key<IStartupControlModel>(guid);
     		}
     		
-    		StartupControlService.ReduceSetActiveStartupControlKeyAction(startupControlKey);
+    		StartupControlService.SetActiveStartupControlKey(startupControlKey);
     	}
     }
     
@@ -105,7 +105,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	                }
 	                
-	                TerminalGroupService.ReduceSetActiveTerminalAction(TerminalFacts.EXECUTION_KEY);
+	                TerminalGroupService.SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
 				}));
 			    
 			menuOptionList.Add(new MenuOptionRecord(

@@ -222,7 +222,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 AddExecutionTerminal();
         }
 
-        _codeSearchService.ReduceInitializeResizeHandleDimensionUnitAction(
+        _codeSearchService.InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
                 () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
@@ -336,7 +336,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _panelService.RegisterPanel(terminalGroupPanel);
         _panelService.RegisterPanelTab(bottomPanel.Key, terminalGroupPanel, false);
         // This UI has resizable parts that need to be initialized.
-        _terminalGroupService.ReduceInitializeResizeHandleDimensionUnitAction(
+        _terminalGroupService.InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
                 () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
@@ -366,7 +366,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         if (_luthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
             _luthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {
-            _terminalService.ReduceRegisterAction(
+            _terminalService.Register(
                 new TerminalWebsite(
                     "General",
                     terminal => new TerminalInteractive(terminal),
@@ -389,7 +389,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         }
         else
         {
-            _terminalService.ReduceRegisterAction(
+            _terminalService.Register(
                 new Terminal(
                     "General",
                     terminal => new TerminalInteractive(terminal),
@@ -418,7 +418,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         if (_luthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
             _luthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {
-            _terminalService.ReduceRegisterAction(
+            _terminalService.Register(
                 new TerminalWebsite(
                     "Execution",
                     terminal => new TerminalInteractive(terminal),
@@ -441,7 +441,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         }
         else
         {
-            _terminalService.ReduceRegisterAction(
+            _terminalService.Register(
                 new Terminal(
                     "Execution",
                     terminal => new TerminalInteractive(terminal),
@@ -543,7 +543,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             menuOptionsList.Add(menuOptionPermissions);
         }
 
-        _ideHeaderService.ReduceSetMenuFileAction(new MenuRecord(menuOptionsList));
+        _ideHeaderService.SetMenuFile(new MenuRecord(menuOptionsList));
     }
 
     private void InitializeMenuTools()
@@ -674,7 +674,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         //    menuOptionsList.Add(menuOptionSolutionVisualization);
         //}
 
-        _ideHeaderService.ReduceSetMenuToolsAction(new MenuRecord(menuOptionsList));
+        _ideHeaderService.SetMenuTools(new MenuRecord(menuOptionsList));
     }
 
     private Task ShowPermissionsDialog()

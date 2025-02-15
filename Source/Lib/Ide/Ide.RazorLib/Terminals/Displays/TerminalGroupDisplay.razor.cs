@@ -31,7 +31,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
     {
-        TerminalGroupService.ReduceSetActiveTerminalAction(terminalKey);
+        TerminalGroupService.SetActiveTerminal(terminalKey);
     }
     
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)

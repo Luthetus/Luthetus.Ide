@@ -345,7 +345,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 					if (startupControl is null)
 						return Task.CompletedTask;
 					
-					StartupControlService.ReduceSetActiveStartupControlKeyAction(startupControl.Key);
+					StartupControlService.SetActiveStartupControlKey(startupControl.Key);
 					return Task.CompletedTask;
 				}),
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(

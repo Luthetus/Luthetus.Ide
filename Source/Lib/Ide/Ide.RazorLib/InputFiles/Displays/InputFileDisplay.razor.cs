@@ -205,7 +205,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-        InputFileService.ReduceSetOpenedTreeViewModelAction(
+        InputFileService.SetOpenedTreeViewModel(
             pseudoRootNode,
             IdeComponentRenderers,
             CommonComponentRenderers,
