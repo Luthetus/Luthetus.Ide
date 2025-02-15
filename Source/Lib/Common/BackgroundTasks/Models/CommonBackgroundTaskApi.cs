@@ -92,7 +92,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
             .ConfigureAwait(false);
 
         _contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = contextSwitchGroupKey;
-        _contextService.ReduceRegisterContextSwitchGroupAction(
+        _contextService.RegisterContextSwitchGroup(
             new ContextSwitchGroup(
                 contextSwitchGroupKey,
                 "Contexts",
@@ -114,7 +114,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 
                                 if (panelGroup is not null)
                                 {
-                                    _panelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
+                                    _panelService.SetActivePanelTab(panelGroup.Key, panel.Key);
 
                                     var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
@@ -145,8 +145,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                                     }
                                     else
                                     {
-                                        _panelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
-                                        _panelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
+                                        _panelService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
+                                        _panelService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
 
                                         var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 

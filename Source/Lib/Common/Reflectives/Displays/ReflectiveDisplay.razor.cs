@@ -59,7 +59,7 @@ public partial class ReflectiveDisplay : ComponentBase
         if (displayState is null)
             return;
 
-        ReflectiveService.ReduceWithAction(
+        ReflectiveService.With(
             displayState.Key, inDisplayState => inDisplayState with { });
 
         _errorBoundaryComponent.Recover();
@@ -67,7 +67,7 @@ public partial class ReflectiveDisplay : ComponentBase
 
     private void DispatchDisposeAction(ReflectiveModel reflectiveModel)
     {
-        ReflectiveService.ReduceDisposeAction(reflectiveModel.Key);
+        ReflectiveService.Dispose(reflectiveModel.Key);
     }
 
     private void DispatchRegisterAction(int insertionIndex)
@@ -81,7 +81,7 @@ public partial class ReflectiveDisplay : ComponentBase
                 new(),
                 ReflectiveService);
 
-        ReflectiveService.ReduceRegisterAction(model, insertionIndex);
+        ReflectiveService.Register(model, insertionIndex);
     }
 
     private bool GetIsOptionSelected(ReflectiveModel model, Guid typeGuid)

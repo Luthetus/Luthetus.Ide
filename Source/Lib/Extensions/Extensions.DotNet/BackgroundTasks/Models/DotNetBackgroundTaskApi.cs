@@ -309,8 +309,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(solutionExplorerPanel);
-        _panelService.ReduceRegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false);
+        _panelService.RegisterPanel(solutionExplorerPanel);
+        _panelService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
 
         // SetActivePanelTabAction
         //
@@ -336,8 +336,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(compilerServiceExplorerPanel);
-        _panelService.ReduceRegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false);
+        _panelService.RegisterPanel(compilerServiceExplorerPanel);
+        _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
 
         // compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
@@ -350,8 +350,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(compilerServiceEditorPanel);
-        _panelService.ReduceRegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false);
+        _panelService.RegisterPanel(compilerServiceEditorPanel);
+        _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceEditorPanel, false);
     }
 
     private void InitializeBottomPanelTabs()
@@ -370,8 +370,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(outputPanel);
-        _panelService.ReduceRegisterPanelTabAction(bottomPanel.Key, outputPanel, false);
+        _panelService.RegisterPanel(outputPanel);
+        _panelService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
 
         // testExplorerPanel
         var testExplorerPanel = new Panel(
@@ -384,8 +384,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(testExplorerPanel);
-        _panelService.ReduceRegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false);
+        _panelService.RegisterPanel(testExplorerPanel);
+        _panelService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
         TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
@@ -405,8 +405,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(nuGetPanel);
-        _panelService.ReduceRegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false);
+        _panelService.RegisterPanel(nuGetPanel);
+        _panelService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
     }
 
     public void Enqueue_LuthetusExtensionsDotNetInitializerOnAfterRender()
@@ -482,7 +482,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
         InitializeMenuRun();
 
-        _panelService.ReduceSetActivePanelTabAction(_leftPanelGroupKey, _solutionExplorerPanelKey);
+        _panelService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
 
         var compilerService = _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 

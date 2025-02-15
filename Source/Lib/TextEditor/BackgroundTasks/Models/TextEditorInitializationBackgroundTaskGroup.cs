@@ -76,7 +76,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 
         await _textEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
 
-        _contextService.ReduceRegisterContextSwitchGroupAction(
+        _contextService.RegisterContextSwitchGroup(
             new ContextSwitchGroup(
                 LuthetusTextEditorInitializer.ContextSwitchGroupKey,
                 "Text Editor",
@@ -126,7 +126,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                     return Task.FromResult(menu);
                 }));
 
-        _keymapService.ReduceRegisterKeymapLayerAction(TextEditorKeymapDefaultFacts.HasSelectionLayer);
+        _keymapService.RegisterKeymapLayer(TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)

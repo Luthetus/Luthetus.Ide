@@ -83,7 +83,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+	                    PanelService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.OutputContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
@@ -99,7 +99,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+	                    PanelService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.TerminalContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);

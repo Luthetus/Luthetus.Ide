@@ -243,7 +243,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             var leftPanel = PanelFacts.GetTopLeftPanelGroup(_panelService.GetPanelState());
             leftPanel.PanelService = _panelService;
 
-            _panelService.ReduceInitializeResizeHandleDimensionUnitAction(
+            _panelService.InitializeResizeHandleDimensionUnit(
                 leftPanel.Key,
                 new DimensionUnit(
                     () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
@@ -257,7 +257,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             var rightPanel = PanelFacts.GetTopRightPanelGroup(_panelService.GetPanelState());
             rightPanel.PanelService = _panelService;
 
-            _panelService.ReduceInitializeResizeHandleDimensionUnitAction(
+            _panelService.InitializeResizeHandleDimensionUnit(
                 rightPanel.Key,
                 new DimensionUnit(
                     () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
@@ -271,7 +271,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             var bottomPanel = PanelFacts.GetBottomPanelGroup(_panelService.GetPanelState());
             bottomPanel.PanelService = _panelService;
 
-            _panelService.ReduceInitializeResizeHandleDimensionUnitAction(
+            _panelService.InitializeResizeHandleDimensionUnit(
                 bottomPanel.Key,
                 new DimensionUnit(
                     () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
@@ -304,11 +304,11 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(folderExplorerPanel);
-        _panelService.ReduceRegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false);
+        _panelService.RegisterPanel(folderExplorerPanel);
+        _panelService.RegisterPanelTab(leftPanel.Key, folderExplorerPanel, false);
 
         // SetActivePanelTabAction
-        _panelService.ReduceSetActivePanelTabAction(leftPanel.Key, folderExplorerPanel.Key);
+        _panelService.SetActivePanelTab(leftPanel.Key, folderExplorerPanel.Key);
     }
 
     private void InitializeRightPanelTabs()
@@ -333,8 +333,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(terminalGroupPanel);
-        _panelService.ReduceRegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false);
+        _panelService.RegisterPanel(terminalGroupPanel);
+        _panelService.RegisterPanelTab(bottomPanel.Key, terminalGroupPanel, false);
         // This UI has resizable parts that need to be initialized.
         _terminalGroupService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
@@ -354,11 +354,11 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(activeContextsPanel);
-        _panelService.ReduceRegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false);
+        _panelService.RegisterPanel(activeContextsPanel);
+        _panelService.RegisterPanelTab(bottomPanel.Key, activeContextsPanel, false);
 
         // SetActivePanelTabAction
-        _panelService.ReduceSetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key);
+        _panelService.SetActivePanelTab(bottomPanel.Key, terminalGroupPanel.Key);
     }
 
     private void AddGeneralTerminal()

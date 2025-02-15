@@ -177,7 +177,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
         if (activeKeymap is not null)
         {
-            _contextService.ReduceSetContextKeymapAction(
+            _contextService.SetContextKeymap(
                 ContextFacts.TextEditorContext.ContextKey,
                 activeKeymap);
         }
@@ -316,7 +316,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
             if (activeKeymap is not null)
             {
-                _contextService.ReduceSetContextKeymapAction(
+                _contextService.SetContextKeymap(
                     ContextFacts.TextEditorContext.ContextKey,
                     activeKeymap);
             }

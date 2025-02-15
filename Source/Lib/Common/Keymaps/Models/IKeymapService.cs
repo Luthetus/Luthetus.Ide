@@ -8,6 +8,6 @@ public interface IKeymapService
     
     public KeymapState GetKeymapState();
     
-    public void ReduceRegisterKeymapLayerAction(KeymapLayer keymapLayer);
-    public void ReduceDisposeKeymapLayerAction(Key<KeymapLayer> keymapLayerKey);
+    public void RegisterKeymapLayer(KeymapLayer keymapLayer);
+    public void DisposeKeymapLayer(Key<KeymapLayer> keymapLayerKey);
 }

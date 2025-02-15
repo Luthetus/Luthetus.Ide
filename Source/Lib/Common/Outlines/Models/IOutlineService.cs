@@ -8,7 +8,7 @@ public interface IOutlineService
 	
 	public OutlineState GetOutlineState();
 
-	public void ReduceSetOutlineAction(
+	public void SetOutline(
 		string? elementId,
 		MeasuredHtmlElementDimensions? measuredHtmlElementDimensions,
 		bool needsMeasured);
@@ -20,7 +20,7 @@ public interface IOutlineService
 	/// If the element did happen to change out from under us, then this action
 	/// will not do anything.
 	/// </summary>
-	public void ReduceSetMeasurementsAction(
+	public void SetMeasurements(
 		string? elementId,
 		MeasuredHtmlElementDimensions? measuredHtmlElementDimensions);
 }

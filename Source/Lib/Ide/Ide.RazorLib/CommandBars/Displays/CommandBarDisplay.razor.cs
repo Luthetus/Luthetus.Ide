@@ -45,7 +45,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Enter")
-			WidgetService.ReduceSetWidgetAction(null);
+			WidgetService.SetWidget(null);
 	}
 	
 	private async void OnCommandBarStateChanged()

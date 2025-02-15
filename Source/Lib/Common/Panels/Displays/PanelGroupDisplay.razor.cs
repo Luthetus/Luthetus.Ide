@@ -187,16 +187,16 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
         if (panelDragEventArgs is not null)
         {
-            PanelService.ReduceDisposePanelTabAction(
+            PanelService.DisposePanelTab(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key);
 
-            PanelService.ReduceRegisterPanelTabAction(
+            PanelService.RegisterPanelTab(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 true);
 
-            PanelService.ReduceSetDragEventArgsAction(null);
+            PanelService.SetDragEventArgs(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
@@ -217,16 +217,16 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
         if (panelDragEventArgs is not null)
         {
-            PanelService.ReduceDisposePanelTabAction(
+            PanelService.DisposePanelTab(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key);
 
-            PanelService.ReduceRegisterPanelTabAction(
+            PanelService.RegisterPanelTab(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 false);
 
-            PanelService.ReduceSetDragEventArgsAction(null);
+            PanelService.SetDragEventArgs(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }

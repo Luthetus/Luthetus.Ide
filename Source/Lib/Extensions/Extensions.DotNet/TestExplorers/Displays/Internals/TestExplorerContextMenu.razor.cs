@@ -356,7 +356,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
-		PanelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(contextRecord.ContextKey);
+		PanelService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
 	
 		if (contextRecord != default)
 		{

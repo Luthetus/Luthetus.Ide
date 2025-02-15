@@ -310,7 +310,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                 TabGroup = null;
             }
 
-            PanelService.ReduceRegisterPanelTabAction(
+            PanelService.RegisterPanelTab(
                 panelDropzone.PanelGroupKey,
                 new Panel(
                     Title,

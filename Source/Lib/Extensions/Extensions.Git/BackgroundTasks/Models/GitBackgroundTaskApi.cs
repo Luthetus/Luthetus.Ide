@@ -128,8 +128,8 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _jsRuntime);
-        _panelService.ReduceRegisterPanelAction(gitPanel);
-        _panelService.ReduceRegisterPanelTabAction(leftPanel.Key, gitPanel, false);
+        _panelService.RegisterPanel(gitPanel);
+        _panelService.RegisterPanelTab(leftPanel.Key, gitPanel, false);
     }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)

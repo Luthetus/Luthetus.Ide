@@ -488,7 +488,7 @@ public class CommandFactory : ICommandFactory
                         cssClass: null,
                         cssStyle: null);
 
-                    _widgetService.ReduceSetWidgetAction(_contextSwitchWidget);
+                    _widgetService.SetWidget(_contextSwitchWidget);
 				});
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -524,7 +524,7 @@ public class CommandFactory : ICommandFactory
                         cssClass: null,
                         cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;");
 
-                    _widgetService.ReduceSetWidgetAction(_commandBarWidget);
+                    _widgetService.SetWidget(_commandBarWidget);
                     return ValueTask.CompletedTask;
 				});
 		

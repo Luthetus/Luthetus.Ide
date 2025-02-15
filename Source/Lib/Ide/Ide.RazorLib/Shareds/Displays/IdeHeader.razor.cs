@@ -146,7 +146,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
                     if (panelGroup is not null)
                     {
-                        PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
+                        PanelService.SetActivePanelTab(panelGroup.Key, panel.Key);
 
                         var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
@@ -177,8 +177,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
                         }
                         else
                         {
-                            PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
-                            PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
+                            PanelService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
+                            PanelService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
 
                             var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
