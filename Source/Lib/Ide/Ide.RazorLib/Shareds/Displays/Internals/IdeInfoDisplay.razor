@@ -172,8 +172,16 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.31 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.31 </em> (2025-02-15)</div>
                 <ul>
+                	<li>
+                		Bug: cannot run a program and use the IDE while the child program is running.
+                		This wasn't an issue prior so I must've lock'd state somewhere I shouldn't
+                		have and I am going to track this down.
+                	</li>
+                	<li>
+                		Many optimizations have been made.
+                	</li>
                 	<li>
                 		Fix: text editor initial parse race condition
                 	</li>
