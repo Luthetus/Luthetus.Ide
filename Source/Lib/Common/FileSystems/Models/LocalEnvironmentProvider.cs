@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public class LocalEnvironmentProvider : IEnvironmentProvider
@@ -10,7 +8,6 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
     public const string SafeRelativeDirectory = "Luthetus/Release/";
 	#endif
 	
-
     private readonly object _pathLock = new();
 
     public LocalEnvironmentProvider()
@@ -45,35 +42,35 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             true,
             this);
 
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	RootDirectoryAbsolutePath.Value,
             RootDirectoryAbsolutePath.IsDirectory));
 
-		ProtectedPathList = ProtectedPathList.Add(new(
+		ProtectedPathList.Add(new(
         	HomeDirectoryAbsolutePath.Value,
             HomeDirectoryAbsolutePath.IsDirectory));
         
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	ActualRoamingApplicationDataDirectoryAbsolutePath.Value,
             ActualRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
             
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	ActualLocalApplicationDataDirectoryAbsolutePath.Value,
             ActualLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
             
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
             SafeRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
             
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	SafeLocalApplicationDataDirectoryAbsolutePath.Value,
             SafeLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.
         {
-            ProtectedPathList = ProtectedPathList.Add(new SimplePath("/", true));
-            ProtectedPathList = ProtectedPathList.Add(new SimplePath("\\", true));
-            ProtectedPathList = ProtectedPathList.Add(new SimplePath("", true));
+            ProtectedPathList.Add(new SimplePath("/", true));
+            ProtectedPathList.Add(new SimplePath("\\", true));
+            ProtectedPathList.Add(new SimplePath("", true));
 
             try
             {
@@ -89,18 +86,18 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
                         {
                             DriveExecutingFromNoDirectorySeparator = driveExecutingFrom[..^1];
 
-                            ProtectedPathList = ProtectedPathList.Add(
+                            ProtectedPathList.Add(
                                 new SimplePath(DriveExecutingFromNoDirectorySeparator + '/',
                                 true));
                             
-                            ProtectedPathList = ProtectedPathList.Add(
+                            ProtectedPathList.Add(
                                 new SimplePath(DriveExecutingFromNoDirectorySeparator + '\\',
                                 true));
                         }
                         else
                         {
                             DriveExecutingFromNoDirectorySeparator = driveExecutingFrom;
-                            ProtectedPathList = ProtectedPathList.Add(new SimplePath(driveExecutingFrom, true));
+                            ProtectedPathList.Add(new SimplePath(driveExecutingFrom, true));
                         }
                     }
                 }
@@ -124,8 +121,8 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public char DirectorySeparatorChar => Path.DirectorySeparatorChar;
     public char AltDirectorySeparatorChar => Path.AltDirectorySeparatorChar;
-    public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
-    public ImmutableHashSet<SimplePath> ProtectedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
+    public HashSet<SimplePath> DeletionPermittedPathList { get; private set; } = [];
+    public HashSet<SimplePath> ProtectedPathList { get; private set; } = [];
 
     public bool IsDirectorySeparator(char character) =>
         character == DirectorySeparatorChar || character == AltDirectorySeparatorChar;
@@ -157,7 +154,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this))
                 return;
 
-            DeletionPermittedPathList = DeletionPermittedPathList.Add(simplePath);
+            DeletionPermittedPathList.Add(simplePath);
         }
     }
 
@@ -165,7 +162,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
     {
         lock (_pathLock)
         {
-            DeletionPermittedPathList = DeletionPermittedPathList.Remove(simplePath);
+            DeletionPermittedPathList.Remove(simplePath);
         }
     }
 
@@ -173,7 +170,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
     {
         lock (_pathLock)
         {
-            ProtectedPathList = ProtectedPathList.Add(simplePath);
+            ProtectedPathList.Add(simplePath);
         }
     }
 
@@ -189,7 +186,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this))
                 return;
 
-            ProtectedPathList = ProtectedPathList.Remove(simplePath);
+            ProtectedPathList.Remove(simplePath);
         }
     }
 

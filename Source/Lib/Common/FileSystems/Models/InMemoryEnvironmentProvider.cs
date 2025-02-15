@@ -4,7 +4,7 @@ namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public class InMemoryEnvironmentProvider : IEnvironmentProvider
 {
-	public const string SafeRelativeDirectory = "Luthetus/";
+    public const string SafeRelativeDirectory = "Luthetus/";
 
     private readonly object _pathLock = new();
 
@@ -25,35 +25,35 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         	true,
         	this);
         
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	RootDirectoryAbsolutePath.Value,
             RootDirectoryAbsolutePath.IsDirectory));
 
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	HomeDirectoryAbsolutePath.Value,
             HomeDirectoryAbsolutePath.IsDirectory));
         
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	ActualRoamingApplicationDataDirectoryAbsolutePath.Value,
             ActualRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
             
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	ActualLocalApplicationDataDirectoryAbsolutePath.Value,
             ActualLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
             
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
             SafeRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
             
-        ProtectedPathList = ProtectedPathList.Add(new(
+        ProtectedPathList.Add(new(
         	SafeLocalApplicationDataDirectoryAbsolutePath.Value,
             SafeLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.
         {
-            ProtectedPathList = ProtectedPathList.Add(new SimplePath("/", true));
-            ProtectedPathList = ProtectedPathList.Add(new SimplePath("\\", true));
-            ProtectedPathList = ProtectedPathList.Add(new SimplePath("", true));
+            ProtectedPathList.Add(new SimplePath("/", true));
+            ProtectedPathList.Add(new SimplePath("\\", true));
+            ProtectedPathList.Add(new SimplePath("", true));
         }
     }
 
@@ -64,8 +64,8 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
     public AbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
     public AbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
     public string DriveExecutingFromNoDirectorySeparator { get; } = string.Empty;
-    public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
-    public ImmutableHashSet<SimplePath> ProtectedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
+    public HashSet<SimplePath> DeletionPermittedPathList { get; private set; } = new();
+    public HashSet<SimplePath> ProtectedPathList { get; private set; } = new();
 
     public char DirectorySeparatorChar => '/';
     public char AltDirectorySeparatorChar => '\\';
@@ -100,7 +100,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
             if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this))
                 return;
 
-            DeletionPermittedPathList = DeletionPermittedPathList.Add(simplePath);
+            DeletionPermittedPathList.Add(simplePath);
         }
     }
 
@@ -108,7 +108,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
     {
         lock (_pathLock)
         {
-            DeletionPermittedPathList = DeletionPermittedPathList.Remove(simplePath);
+            DeletionPermittedPathList.Remove(simplePath);
         }
     }
 
@@ -116,7 +116,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
     {
         lock (_pathLock)
         {
-            ProtectedPathList = ProtectedPathList.Add(simplePath);
+            ProtectedPathList.Add(simplePath);
         }
     }
     
@@ -132,7 +132,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
             if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this))
                 return;
 
-            ProtectedPathList = ProtectedPathList.Remove(simplePath);
+            ProtectedPathList.Remove(simplePath);
         }
     }
 
