@@ -26,7 +26,7 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.Models;
 
-public class EditorIdeApi
+public class EditorIdeApi : IBackgroundTaskGroup
 {
     public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
     
@@ -76,6 +76,18 @@ public class EditorIdeApi
         _jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
     }
+
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(EditorIdeApi);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<EditorIdeApiWorkKind> _workKindQueue = new();
+    private readonly object _workLock = new();
+
+    private readonly Queue<(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)> _queue_FileContentsWereModifiedOnDisk = new();
 
     public void ShowInputFile()
     {
@@ -354,38 +366,16 @@ public class EditorIdeApi
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
                             new Func<Task>(() =>
                             {
-                                _backgroundTaskService.Enqueue(
-                                        Key<IBackgroundTask>.NewKey(),
-                                        BackgroundTaskFacts.ContinuousQueueKey,
-                                        "Check If Contexts Were Modified",
-                                        async () =>
-                                        {
-                                            _notificationService.ReduceDisposeAction(notificationInformativeKey);
+                                lock (_workLock)
+                                {
+                                    _workKindQueue.Enqueue(EditorIdeApiWorkKind.FileContentsWereModifiedOnDisk);
 
-                                            var content = await _fileSystemProvider.File
-                                                .ReadAllTextAsync(inputFileAbsolutePathString)
-                                                .ConfigureAwait(false);
+                                    _queue_FileContentsWereModifiedOnDisk.Enqueue((
+                                        inputFileAbsolutePathString, textEditorModel, fileLastWriteTime, notificationInformativeKey));
 
-                                            _textEditorService.TextEditorWorker.PostUnique(
-                                                nameof(CheckIfContentsWereModifiedAsync),
-                                                editContext =>
-                                                {
-                                                	var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
-                                                	if (modelModifier is null)
-                                                		return ValueTask.CompletedTask;
-                                                
-                                                    _textEditorService.ModelApi.Reload(
-                                                    	editContext,
-                                                        modelModifier,
-                                                        content,
-                                                        fileLastWriteTime);
+                                    _backgroundTaskService.EnqueueGroup(this);
+                                }
 
-                                                    editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-                                                    	editContext,
-                                                        modelModifier);
-                                                	return ValueTask.CompletedTask;
-                                                });
-                                        });
 								return Task.CompletedTask;
 							})
                         },
@@ -403,6 +393,65 @@ public class EditorIdeApi
                 null);
 
             _notificationService.ReduceRegisterAction(notificationInformative);
+        }
+    }
+
+    private async ValueTask Do_FileContentsWereModifiedOnDisk(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)
+    {
+        _notificationService.ReduceDisposeAction(notificationInformativeKey);
+
+        var content = await _fileSystemProvider.File
+            .ReadAllTextAsync(inputFileAbsolutePathString)
+            .ConfigureAwait(false);
+
+        _textEditorService.TextEditorWorker.PostUnique(
+            nameof(CheckIfContentsWereModifiedAsync),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+                if (modelModifier is null)
+                    return ValueTask.CompletedTask;
+
+                _textEditorService.ModelApi.Reload(
+                    editContext,
+                    modelModifier,
+                    content,
+                    fileLastWriteTime);
+
+                editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                    editContext,
+                    modelModifier);
+                return ValueTask.CompletedTask;
+            });
+    }
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        EditorIdeApiWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
+        }
+
+        switch (workKind)
+        {
+            case EditorIdeApiWorkKind.FileContentsWereModifiedOnDisk:
+            {
+                var args = _queue_FileContentsWereModifiedOnDisk.Dequeue();
+                return Do_FileContentsWereModifiedOnDisk(
+                    args.inputFileAbsolutePathString, args.textEditorModel, args.fileLastWriteTime, args.notificationInformativeKey);
+            }
+            default:
+            {
+                return ValueTask.CompletedTask;
+            }
         }
     }
 }
