@@ -12,11 +12,7 @@ public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
     [Inject]
     private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
-    private IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     

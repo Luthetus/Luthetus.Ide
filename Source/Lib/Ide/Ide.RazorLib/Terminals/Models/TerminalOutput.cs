@@ -9,8 +9,6 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 public class TerminalOutput : ITerminalOutput
 {
     private readonly ITerminal _terminal;
-	private readonly ITextEditorService _textEditorService;
-	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	
 	private readonly List<TerminalCommandParsed> _parsedCommandList = new();
 	private readonly object _listLock = new();

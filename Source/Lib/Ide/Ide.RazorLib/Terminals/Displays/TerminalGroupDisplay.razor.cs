@@ -16,8 +16,6 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
 
 	private Key<IDynamicViewModel> _addIntegratedTerminalDialogKey = Key<IDynamicViewModel>.NewKey();
 
@@ -37,20 +35,6 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
     {
     	TerminalService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
-    }
-    
-    private void AddIntegratedTerminalOnClick()
-    {
-    	var addIntegratedTerminalDialog = new DialogViewModel(
-            _addIntegratedTerminalDialogKey,
-			"Add Integrated Terminal",
-            typeof(AddIntegratedTerminalDisplay),
-            componentParameterMap: null,
-            cssClass: null,
-			isResizable: true,
-			setFocusOnCloseElementId: null);
-
-        DialogService.ReduceRegisterAction(addIntegratedTerminalDialog);
     }
     
     private async void OnTerminalGroupStateChanged()

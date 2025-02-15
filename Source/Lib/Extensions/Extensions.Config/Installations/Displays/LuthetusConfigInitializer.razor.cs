@@ -30,13 +30,9 @@ public partial class LuthetusConfigInitializer : ComponentBase
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private IStartupControlService StartupControlService { get; set; } = null!;
-	[Inject]
 	private ConfigBackgroundTaskApi ConfigBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IInputFileService InputFileService { get; set; } = null!;
 

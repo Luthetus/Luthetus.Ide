@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 
@@ -14,11 +12,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
     private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;

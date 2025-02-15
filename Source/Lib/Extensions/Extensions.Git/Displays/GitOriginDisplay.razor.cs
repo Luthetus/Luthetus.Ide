@@ -14,11 +14,7 @@ public partial class GitOriginDisplay : ComponentBase
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private GitCliOutputParser GitCliOutputParser { get; set; } = null!;
 
     private string _gitOrigin = string.Empty;
     

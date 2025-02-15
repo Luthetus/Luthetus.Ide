@@ -145,25 +145,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
             .TryFocusHtmlElementById(contextRecord.ContextElementId)
             .ConfigureAwait(false);
     }
-	
-	private async Task RestoreFocusToElementReference(ElementReference? elementReference)
-    {
-        try
-        {
-            if (elementReference is not null)
-            {
-                await elementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception)
-        {
-			// TODO: Capture specifically the exception that is fired when the JsRuntime...
-			//       ...tries to set focus to an HTML element, but that HTML element
-			//       was not found.
-        }
-    }
     
     private async void OnTerminalStateChanged()
     {

@@ -26,8 +26,6 @@ public partial class GitDisplay : ComponentBase, IDisposable
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -143,24 +141,6 @@ public partial class GitDisplay : ComponentBase, IDisposable
         }
 
         return new MenuRecord(menuOptionsList);
-    }
-
-    private async Task RestoreFocusToMenuButton()
-    {
-        try
-        {
-            if (_menuButtonElementReference is not null)
-            {
-                await _menuButtonElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
     }
 
     private void ShowAddRepoDialog()

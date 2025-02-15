@@ -28,10 +28,8 @@ public class GitCliOutputParser
 	private string? _origin;
     private string? _branch;
     private List<string> _branchList = new();
-    private int _count;
     private int? _behindByCommitCount;
     private int? _aheadByCommitCount;
-    private StringBuilder? _logFileContentBuilder;
 	private GitRepo? _repo;
 
 	public List<GitFile> UntrackedGitFileList { get; } = new();

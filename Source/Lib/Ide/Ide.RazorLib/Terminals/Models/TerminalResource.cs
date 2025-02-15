@@ -7,8 +7,6 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalResource : CompilerServiceResource
 {
-    private readonly ITerminalService _terminalService;
-
     /// <summary>
     /// The <see cref="ArgumentsTextSpan"/> and <see cref="TargetFilePathTextSpan"/> are currently
     /// mutable state. If these properties are re-written, then this lock is not needed.<br/><br/>

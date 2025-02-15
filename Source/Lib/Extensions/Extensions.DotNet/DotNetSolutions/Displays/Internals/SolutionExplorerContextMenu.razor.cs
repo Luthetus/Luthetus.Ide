@@ -56,21 +56,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private IServiceProvider ServiceProvider { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }

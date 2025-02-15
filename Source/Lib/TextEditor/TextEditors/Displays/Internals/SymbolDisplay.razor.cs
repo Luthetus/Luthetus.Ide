@@ -10,10 +10,6 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 {
     [Inject]
-    private IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
-    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-    [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]

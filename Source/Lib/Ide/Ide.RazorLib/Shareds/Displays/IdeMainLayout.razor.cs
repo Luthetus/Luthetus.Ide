@@ -26,18 +26,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
 
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
