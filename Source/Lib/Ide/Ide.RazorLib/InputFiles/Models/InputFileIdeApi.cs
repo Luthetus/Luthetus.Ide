@@ -9,7 +9,7 @@ using Luthetus.Ide.RazorLib.Htmls.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
-public class InputFileIdeApi
+public class InputFileIdeApi : IBackgroundTaskGroup
 {
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
@@ -31,25 +31,35 @@ public class InputFileIdeApi
         _inputFileService = inputFileService;
     }
 
-    public void RequestInputFileStateForm(
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(InputFileIdeApi);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<InputFileIdeApiWorkKind> _workKindQueue = new();
+    private readonly object _workLock = new();
+
+    private readonly
+        Queue<(string message, Func<AbsolutePath, Task> onAfterSubmitFunc, Func<AbsolutePath, Task<bool>> selectionIsValidFunc, ImmutableArray<InputFilePattern> inputFilePatterns)>
+        _queue_RequestInputFileStateForm = new();
+
+    public void Enqueue_RequestInputFileStateForm(
         string message,
         Func<AbsolutePath, Task> onAfterSubmitFunc,
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "Request InputFileState Form",
-            async () => await HandleRequestInputFileStateFormActionAsync(
-                    message,
-                    onAfterSubmitFunc,
-                    selectionIsValidFunc,
-                    inputFilePatterns)
-                .ConfigureAwait(false));
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(InputFileIdeApiWorkKind.RequestInputFileStateForm);
+            _queue_RequestInputFileStateForm.Enqueue((message, onAfterSubmitFunc, selectionIsValidFunc, inputFilePatterns));
+            _backgroundTaskService.EnqueueGroup(this);
+        }
     }
 
-    private Task HandleRequestInputFileStateFormActionAsync(
+    private ValueTask Do_RequestInputFileStateForm(
         string message,
         Func<AbsolutePath, Task> onAfterSubmitFunc,
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
@@ -72,6 +82,36 @@ public class InputFileIdeApi
 
         _dialogService.ReduceRegisterAction(inputFileDialog);
 
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
+    }
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        InputFileIdeApiWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
+        }
+
+        switch (workKind)
+        {
+            case InputFileIdeApiWorkKind.RequestInputFileStateForm:
+            {
+                var args = _queue_RequestInputFileStateForm.Dequeue();
+                return Do_RequestInputFileStateForm(
+                    args.message, args.onAfterSubmitFunc, args.selectionIsValidFunc, args.inputFilePatterns);
+            }
+            default:
+            {
+                return ValueTask.CompletedTask;
+            }
+        }
     }
 }

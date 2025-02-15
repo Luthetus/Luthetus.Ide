@@ -8,13 +8,23 @@ using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
-public class InputFileService : IInputFileService
+public class InputFileService : IInputFileService, IBackgroundTaskGroup
 {
 	private InputFileState _inputFileState = new();
 	
 	public event Action? InputFileStateChanged;
 	
 	public InputFileState GetInputFileState() => _inputFileState;
+
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(ConfigBackgroundTaskApi);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<InputFileServiceWorkKind> _workKindQueue = new();
+    private readonly object _workLock = new();
 
     public void ReduceStartInputFileStateFormAction(
         string message,
@@ -213,8 +223,12 @@ public class InputFileService : IInputFileService
         InputFileStateChanged?.Invoke();
         return;
     }
-    
-    public Task HandleOpenParentDirectoryAction(
+
+    private readonly
+        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonComponentRenderers commonComponentRenderers, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider, IBackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
+        _queue_OpenParentDirectoryAction = new();
+
+    public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -224,20 +238,35 @@ public class InputFileService : IInputFileService
     {
         if (parentDirectoryTreeViewModel is not null)
         {
-            backgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                BackgroundTaskFacts.ContinuousQueueKey,
-                "Open Parent Directory",
-                async () =>
-                {
-                    await parentDirectoryTreeViewModel.LoadChildListAsync().ConfigureAwait(false);
-                });
-        }
+            lock (_workLock)
+            {
+                _workKindQueue.Enqueue(InputFileServiceWorkKind.OpenParentDirectoryAction);
 
-        return Task.CompletedTask;
+                _queue_OpenParentDirectoryAction.Enqueue((
+                    ideComponentRenderers, commonComponentRenderers, fileSystemProvider, environmentProvider, backgroundTaskService, parentDirectoryTreeViewModel));
+
+                backgroundTaskService.EnqueueGroup(this);
+            }
+        }
     }
     
-    public Task HandleRefreshCurrentSelectionAction(
+    public async ValueTask Do_OpenParentDirectoryAction(
+    	IIdeComponentRenderers ideComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider,
+        IBackgroundTaskService backgroundTaskService,
+        TreeViewAbsolutePath? parentDirectoryTreeViewModel)
+    {
+        if (parentDirectoryTreeViewModel is not null)
+            await parentDirectoryTreeViewModel.LoadChildListAsync().ConfigureAwait(false);
+    }
+
+    private readonly
+        Queue<(IBackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? currentSelection)>
+        _queue_RefreshCurrentSelectionAction = new();
+
+    public void Enqueue_RefreshCurrentSelectionAction(
         IBackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection)
     {
@@ -245,17 +274,56 @@ public class InputFileService : IInputFileService
         {
             currentSelection.ChildList.Clear();
 
-            backgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                BackgroundTaskFacts.ContinuousQueueKey,
-                "Refresh Current Selection",
-                async () =>
-                {
-                    await currentSelection.LoadChildListAsync().ConfigureAwait(false);
-                    // TODO: This still needs to re-render.
-                });
+            lock (_workLock)
+            {
+                _workKindQueue.Enqueue(InputFileServiceWorkKind.RefreshCurrentSelectionAction);
+                _queue_RefreshCurrentSelectionAction.Enqueue((backgroundTaskService, currentSelection));
+                backgroundTaskService.EnqueueGroup(this);
+            }
+        }
+    }
+    
+    public async ValueTask Do_RefreshCurrentSelectionAction(
+        IBackgroundTaskService backgroundTaskService,
+    	TreeViewAbsolutePath? currentSelection)
+    {
+        if (currentSelection is not null)
+            await currentSelection.LoadChildListAsync().ConfigureAwait(false);
+    }
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        InputFileServiceWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
         }
 
-        return Task.CompletedTask;
+        switch (workKind)
+        {
+            case InputFileServiceWorkKind.OpenParentDirectoryAction:
+            {
+                var args = _queue_OpenParentDirectoryAction.Dequeue();
+                return Do_OpenParentDirectoryAction(
+                    args.ideComponentRenderers, args.commonComponentRenderers, args.fileSystemProvider, args.environmentProvider, args.backgroundTaskService, args.parentDirectoryTreeViewModel);
+            }
+            case InputFileServiceWorkKind.RefreshCurrentSelectionAction:
+            {
+                var args = _queue_RefreshCurrentSelectionAction.Dequeue();
+                return Do_RefreshCurrentSelectionAction(
+                    args.backgroundTaskService, args.currentSelection);
+            }
+            default:
+            {
+                return ValueTask.CompletedTask;
+            }
+        }
     }
 }

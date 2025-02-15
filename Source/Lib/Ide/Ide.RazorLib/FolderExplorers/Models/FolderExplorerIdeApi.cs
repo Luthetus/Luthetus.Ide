@@ -11,7 +11,7 @@ using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
-public class FolderExplorerIdeApi
+public class FolderExplorerIdeApi : IBackgroundTaskGroup
 {
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IFileSystemProvider _fileSystemProvider;
@@ -42,47 +42,29 @@ public class FolderExplorerIdeApi
         _folderExplorerService = folderExplorerService;
     }
 
-    public void SetFolderExplorerState(AbsolutePath folderAbsolutePath)
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(FolderExplorerIdeApi);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<FolderExplorerIdeApiWorkKind> _workKindQueue = new();
+    private readonly object _workLock = new();
+
+    private readonly Queue<AbsolutePath> queue_general_AbsolutePath = new();
+
+    public void Enqueue_SetFolderExplorerState(AbsolutePath folderAbsolutePath)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "Set FolderExplorer State",
-            async () => await SetFolderExplorerAsync(folderAbsolutePath).ConfigureAwait(false));
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(FolderExplorerIdeApiWorkKind.SetFolderExplorerState);
+            queue_general_AbsolutePath.Enqueue(folderAbsolutePath);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
     }
 
-    public void SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
-    {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "Set FolderExplorer TreeView",
-            async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false));
-    }
-
-    public void ShowInputFile()
-    {
-        _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
-            "Folder Explorer",
-            async absolutePath =>
-            {
-                if (absolutePath.ExactInput is not null)
-                    await SetFolderExplorerAsync(absolutePath).ConfigureAwait(false);
-            },
-            absolutePath =>
-            {
-                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(true);
-            },
-            new[]
-            {
-                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-            }.ToImmutableArray());
-    }
-
-    private async Task SetFolderExplorerAsync(AbsolutePath folderAbsolutePath)
+    private ValueTask Do_SetFolderExplorerState(AbsolutePath folderAbsolutePath)
     {
         _folderExplorerService.ReduceWithAction(
             inFolderExplorerState => inFolderExplorerState with
@@ -90,10 +72,20 @@ public class FolderExplorerIdeApi
                 AbsolutePath = folderAbsolutePath
             });
 
-        await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false);
+        return Do_SetFolderExplorerTreeView(folderAbsolutePath);
     }
 
-    private async Task SetFolderExplorerTreeViewAsync(AbsolutePath folderAbsolutePath)
+    public void Enqueue_SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
+    {
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(FolderExplorerIdeApiWorkKind.SetFolderExplorerTreeView);
+            queue_general_AbsolutePath.Enqueue(folderAbsolutePath);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+
+    private async ValueTask Do_SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
     {
         _folderExplorerService.ReduceWithAction(inFolderExplorerState => inFolderExplorerState with
         {
@@ -135,5 +127,61 @@ public class FolderExplorerIdeApi
         {
             IsLoadingFolderExplorer = false
         });
+    }
+
+    public void ShowInputFile()
+    {
+        _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+            "Folder Explorer",
+            async absolutePath =>
+            {
+                if (absolutePath.ExactInput is not null)
+                    await Do_SetFolderExplorerState(absolutePath).ConfigureAwait(false);
+            },
+            absolutePath =>
+            {
+                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
+                    return Task.FromResult(false);
+
+                return Task.FromResult(true);
+            },
+            new[]
+            {
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+            }.ToImmutableArray());
+    }
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        FolderExplorerIdeApiWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
+        }
+
+        switch (workKind)
+        {
+            case FolderExplorerIdeApiWorkKind.SetFolderExplorerState:
+            {
+                var args = queue_general_AbsolutePath.Dequeue();
+                return Do_SetFolderExplorerState(args);
+            }
+            case FolderExplorerIdeApiWorkKind.SetFolderExplorerTreeView:
+            {
+                var args = queue_general_AbsolutePath.Dequeue();
+                return Do_SetFolderExplorerTreeView(args);
+            }
+            default:
+            {
+                return ValueTask.CompletedTask;
+            }
+        }
     }
 }

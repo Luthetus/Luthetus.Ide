@@ -246,7 +246,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	
 	            var cancellationToken = model.TextEditorSaveFileHelper.GetCancellationToken();
 	
-	            _ideBackgroundTaskApi.FileSystem.SaveFile(
+	            _ideBackgroundTaskApi.FileSystem.Enqueue_SaveFile(
 	                absolutePath,
 	                innerContent,
 	                writtenDateTime =>
