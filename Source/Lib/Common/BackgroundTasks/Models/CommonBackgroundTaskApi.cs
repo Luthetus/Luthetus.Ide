@@ -13,6 +13,7 @@ using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -56,6 +57,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         _commonConfig = commonConfig;
             
         JsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
+
+        _treeViewService.CommonBackgroundTaskApi = this;
     }
 
     public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
@@ -273,6 +276,35 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
             .ConfigureAwait(false);
     }
 
+    private readonly Queue<(Key<TreeViewContainer> containerKey, TreeViewNoType treeViewNoType)> _queue_TreeViewService_LoadChildList = new();
+
+    public void Enqueue_TreeViewService_LoadChildList(Key<TreeViewContainer> containerKey, TreeViewNoType treeViewNoType)
+    {
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(CommonWorkKind.TreeViewService_LoadChildList);
+            _queue_TreeViewService_LoadChildList.Enqueue((containerKey, treeViewNoType));
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+
+    public async ValueTask Do_TreeViewService_LoadChildList(Key<TreeViewContainer> containerKey, TreeViewNoType treeViewNoType)
+    {
+        try
+        {
+            await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
+
+            _treeViewService.ReduceReRenderNodeAction(
+                containerKey,
+                treeViewNoType);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
 	{
 		return null;
@@ -318,6 +350,11 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 			{
 				var args = _treeView_ManuallyPropagateOnContextMenuQueue.Dequeue();
 				return Do_TreeView_ManuallyPropagateOnContextMenu(args.HandleTreeViewOnContextMenu, args.MouseEventArgs, args.Key, args.TreeViewNoType);
+			}
+            case CommonWorkKind.TreeViewService_LoadChildList:
+			{
+				var args = _queue_TreeViewService_LoadChildList.Dequeue();
+				return Do_TreeViewService_LoadChildList(args.containerKey, args.treeViewNoType);
 			}
 			default:
 			{

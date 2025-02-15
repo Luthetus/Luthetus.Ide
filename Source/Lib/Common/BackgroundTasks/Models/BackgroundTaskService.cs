@@ -25,16 +25,6 @@ public class BackgroundTaskService : IBackgroundTaskService
 	{
 		_queueContainerMap[backgroundTaskGroup.QueueKey].Enqueue(backgroundTaskGroup);
 	}
-	
-    public void Enqueue(IBackgroundTask backgroundTask)
-    {
-        _queueContainerMap[backgroundTask.QueueKey].Enqueue(backgroundTask);
-    }
-
-    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
-    {
-        Enqueue(new BackgroundTask(taskKey, queueKey, name, runFunc));
-    }
     
     public Task EnqueueAsync(IBackgroundTask backgroundTask)
     {

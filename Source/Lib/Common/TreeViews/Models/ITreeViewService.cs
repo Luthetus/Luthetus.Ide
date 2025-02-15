@@ -1,9 +1,15 @@
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
 public interface ITreeViewService
 {
+    /// <summary>
+    /// HACK: To avoid circular services for now, need to rewrite this.
+    /// </summary>
+    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; }
+
     public event Action? TreeViewStateChanged;
     
     public TreeViewState GetTreeViewState();

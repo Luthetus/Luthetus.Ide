@@ -8,4 +8,5 @@ public enum CommonWorkKind
     TreeView_HandleTreeViewOnContextMenu,
     TreeView_HandleExpansionChevronOnMouseDown,
     TreeView_ManuallyPropagateOnContextMenu,
+    TreeViewService_LoadChildList,
 }
