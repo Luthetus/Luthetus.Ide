@@ -63,16 +63,13 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
-	public ElementReference? _buttonFileElementReference;
+    private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
+
+    public ElementReference? _buttonFileElementReference;
     public ElementReference? _buttonToolsElementReference;
     public ElementReference? _buttonViewElementReference;
     public ElementReference? _buttonRunElementReference;
     
-    private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
-    
-    private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
-    	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
-
 	protected override void OnInitialized()
 	{
 		AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
@@ -82,26 +79,153 @@ public partial class IdeHeader : ComponentBase, IDisposable
         base.OnInitialized();
 	}
 
-	private async Task RestoreFocusToElementReference(ElementReference? elementReference)
+    public Task RenderFileDropdownOnClick()
     {
-        try
+        return DropdownHelper.RenderDropdownAsync(
+            DropdownService,
+            IdeBackgroundTaskApi.JsRuntimeCommonApi,
+            IdeHeaderState.ButtonFileId,
+            DropdownOrientation.Bottom,
+            IdeHeaderState.DropdownKeyFile,
+            IdeHeaderService.GetIdeHeaderState().MenuFile,
+            _buttonFileElementReference);
+    }
+
+    public Task RenderToolsDropdownOnClick()
+    {
+        return DropdownHelper.RenderDropdownAsync(
+            DropdownService,
+            IdeBackgroundTaskApi.JsRuntimeCommonApi,
+            IdeHeaderState.ButtonToolsId,
+            DropdownOrientation.Bottom,
+            IdeHeaderState.DropdownKeyTools,
+            IdeHeaderService.GetIdeHeaderState().MenuTools,
+            _buttonToolsElementReference);
+    }
+
+    public Task RenderViewDropdownOnClick()
+    {
+        InitializeMenuView();
+
+        return DropdownHelper.RenderDropdownAsync(
+            DropdownService,
+            IdeBackgroundTaskApi.JsRuntimeCommonApi,
+            IdeHeaderState.ButtonViewId,
+            DropdownOrientation.Bottom,
+            IdeHeaderState.DropdownKeyView,
+            IdeHeaderService.GetIdeHeaderState().MenuView,
+            _buttonViewElementReference);
+    }
+
+    public Task RenderRunDropdownOnClick()
+    {
+        return DropdownHelper.RenderDropdownAsync(
+           DropdownService,
+           IdeBackgroundTaskApi.JsRuntimeCommonApi,
+           IdeHeaderState.ButtonRunId,
+           DropdownOrientation.Bottom,
+           IdeHeaderState.DropdownKeyRun,
+           IdeHeaderService.GetIdeHeaderState().MenuRun,
+           _buttonRunElementReference);
+    }
+
+    public void InitializeMenuView()
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+        var panelState = PanelService.GetPanelState();
+        var dialogState = DialogService.GetDialogState();
+
+        foreach (var panel in panelState.PanelList)
         {
-            if (elementReference is not null)
-            {
-                await elementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
+            var menuOptionPanel = new MenuOptionRecord(
+                panel.Title,
+                MenuOptionKind.Delete,
+                async () =>
+                {
+                    var panelGroup = panel.TabGroup as PanelGroup;
+
+                    if (panelGroup is not null)
+                    {
+                        PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
+
+                        var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
+
+                        if (contextRecord != default)
+                        {
+                            var command = ContextHelper.ConstructFocusContextElementCommand(
+                                contextRecord,
+                                nameof(ContextHelper.ConstructFocusContextElementCommand),
+                                nameof(ContextHelper.ConstructFocusContextElementCommand),
+                                IdeBackgroundTaskApi.JsRuntimeCommonApi,
+                                PanelService);
+
+                            await command.CommandFunc.Invoke(null).ConfigureAwait(false);
+                        }
+                    }
+                    else
+                    {
+                        var existingDialog = dialogState.DialogList.FirstOrDefault(
+                            x => x.DynamicViewModelKey == panel.DynamicViewModelKey);
+
+                        if (existingDialog is not null)
+                        {
+                            DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+
+                            await IdeBackgroundTaskApi.JsRuntimeCommonApi
+                                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
+                                .ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
+                            PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
+
+                            var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
+
+                            if (contextRecord != default)
+                            {
+                                var command = ContextHelper.ConstructFocusContextElementCommand(
+                                    contextRecord,
+                                    nameof(ContextHelper.ConstructFocusContextElementCommand),
+                                    nameof(ContextHelper.ConstructFocusContextElementCommand),
+                                    IdeBackgroundTaskApi.JsRuntimeCommonApi,
+                                    PanelService);
+
+                                await command.CommandFunc.Invoke(null).ConfigureAwait(false);
+                            }
+                        }
+                    }
+                });
+
+            menuOptionsList.Add(menuOptionPanel);
         }
-        catch (Exception)
+
+        if (menuOptionsList.Count == 0)
         {
-			// TODO: Capture specifically the exception that is fired when the JsRuntime...
-			//       ...tries to set focus to an HTML element, but that HTML element
-			//       was not found.
+            IdeHeaderService.ReduceSetMenuViewAction(MenuRecord.GetEmpty());
+        }
+        else
+        {
+            IdeHeaderService.ReduceSetMenuViewAction(new MenuRecord(menuOptionsList));
         }
     }
-	
-	private async void OnAppOptionsStateChanged()
+
+    private Task OpenInfoDialogOnClick()
+    {
+        var dialogRecord = new DialogViewModel(
+            _infoDialogKey,
+            "Info",
+            typeof(IdeInfoDisplay),
+            null,
+            null,
+            true,
+            null);
+
+        DialogService.ReduceRegisterAction(dialogRecord);
+        return Task.CompletedTask;
+    }
+
+    private async void OnAppOptionsStateChanged()
 	{
 		await InvokeAsync(StateHasChanged);
 	}

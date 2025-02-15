@@ -232,7 +232,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion)
 	{
-		ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+		ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
 			$"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
 			referencedProject =>
 			{

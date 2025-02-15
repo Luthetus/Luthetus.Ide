@@ -131,7 +131,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
 
     public void ShowInputFile()
     {
-        _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+        _ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
             "Folder Explorer",
             async absolutePath =>
             {

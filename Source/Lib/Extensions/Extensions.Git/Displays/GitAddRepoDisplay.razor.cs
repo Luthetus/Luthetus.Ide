@@ -47,7 +47,7 @@ public partial class GitAddRepoDisplay : ComponentBase
     /// </summary>
     private void RequestInputFileForGitFolder()
     {
-        IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+        IdeBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
                 "Git Repo",
                 async absolutePath =>
                 {

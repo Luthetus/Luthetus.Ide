@@ -18,7 +18,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
 
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(ConfigBackgroundTaskApi);
+    public string Name { get; } = nameof(InputFileService);
     public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }

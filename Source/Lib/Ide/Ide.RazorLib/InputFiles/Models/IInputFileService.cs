@@ -48,7 +48,7 @@ public interface IInputFileService
 
     public void ReduceSetSearchQueryAction(string searchQuery);
     
-    public Task HandleOpenParentDirectoryAction(
+    public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -56,7 +56,7 @@ public interface IInputFileService
         IBackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
     
-    public Task HandleRefreshCurrentSelectionAction(
+    public void Enqueue_RefreshCurrentSelectionAction(
         IBackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection);
 }

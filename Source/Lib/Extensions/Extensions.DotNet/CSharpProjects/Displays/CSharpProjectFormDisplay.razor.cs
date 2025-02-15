@@ -87,7 +87,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory(string message)
 	{
-		IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+		IdeBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
 			message,
 			async absolutePath =>
 			{

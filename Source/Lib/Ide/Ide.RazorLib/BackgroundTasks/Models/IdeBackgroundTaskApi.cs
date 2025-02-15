@@ -75,8 +75,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IJSRuntime _jsRuntime;
 	private readonly IServiceProvider _serviceProvider;
 
-	private readonly LuthetusCommonJavaScriptInteropApi _jsRuntimeCommonApi;
-
     public IdeBackgroundTaskApi(
         IBackgroundTaskService backgroundTaskService,
         IStorageService storageService,
@@ -134,7 +132,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 		_jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
 
-        _jsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
+        JsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
 
         Editor = new EditorIdeApi(
             this,
@@ -181,6 +179,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     public FileSystemIdeApi FileSystem { get; }
     public FolderExplorerIdeApi FolderExplorer { get; }
     public InputFileIdeApi InputFile { get; }
+    public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
@@ -192,7 +191,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     private readonly Queue<IdeBackgroundTaskApiWorkKind> _workKindQueue = new();
     private readonly object _workLock = new();
 
-    private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
@@ -483,7 +481,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     {
         InitializeMenuFile();
         InitializeMenuTools();
-        InitializeMenuView();
+        ideHeader.InitializeMenuView();
 
         AddAltKeymap(ideHeader);
         return ValueTask.CompletedTask;
@@ -679,87 +677,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _ideHeaderService.ReduceSetMenuToolsAction(new MenuRecord(menuOptionsList));
     }
 
-    private void InitializeMenuView()
-    {
-        var menuOptionsList = new List<MenuOptionRecord>();
-        var panelState = _panelService.GetPanelState();
-        var dialogState = _dialogService.GetDialogState();
-
-        foreach (var panel in panelState.PanelList)
-        {
-            var menuOptionPanel = new MenuOptionRecord(
-                panel.Title,
-                MenuOptionKind.Delete,
-                async () =>
-                {
-                    var panelGroup = panel.TabGroup as PanelGroup;
-
-                    if (panelGroup is not null)
-                    {
-                        _panelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
-
-                        var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
-
-                        if (contextRecord != default)
-                        {
-                            var command = ContextHelper.ConstructFocusContextElementCommand(
-                                contextRecord,
-                                nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                _jsRuntimeCommonApi,
-                                _panelService);
-
-                            await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-                        }
-                    }
-                    else
-                    {
-                        var existingDialog = dialogState.DialogList.FirstOrDefault(
-                            x => x.DynamicViewModelKey == panel.DynamicViewModelKey);
-
-                        if (existingDialog is not null)
-                        {
-                            _dialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
-
-                            await _jsRuntimeCommonApi
-                                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
-                                .ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            _panelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
-                            _panelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
-
-                            var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
-
-                            if (contextRecord != default)
-                            {
-                                var command = ContextHelper.ConstructFocusContextElementCommand(
-                                    contextRecord,
-                                    nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                    nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                    _jsRuntimeCommonApi,
-                                    _panelService);
-
-                                await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-                            }
-                        }
-                    }
-                });
-
-            menuOptionsList.Add(menuOptionPanel);
-        }
-
-        if (menuOptionsList.Count == 0)
-        {
-            _ideHeaderService.ReduceSetMenuViewAction(MenuRecord.GetEmpty());
-        }
-        else
-        {
-            _ideHeaderService.ReduceSetMenuViewAction(new MenuRecord(menuOptionsList));
-        }
-    }
-
     private Task ShowPermissionsDialog()
     {
         var dialogRecord = new DialogViewModel(
@@ -791,7 +708,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     MetaKey = false,
                     LayerKey = Key<KeymapLayer>.Empty,
                 },
-                new CommonCommand("Open File Dropdown", "open-file-dropdown", false, async _ => await RenderFileDropdownOnClick(ideHeader)));
+                new CommonCommand("Open File Dropdown", "open-file-dropdown", false, async _ => await ideHeader.RenderFileDropdownOnClick()));
 
         _ = ContextFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs
@@ -804,7 +721,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     MetaKey = false,
                     LayerKey = Key<KeymapLayer>.Empty,
                 },
-                new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, async _ => await RenderToolsDropdownOnClick(ideHeader)));
+                new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, async _ => await ideHeader.RenderToolsDropdownOnClick()));
 
         _ = ContextFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs
@@ -817,7 +734,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     MetaKey = false,
                     LayerKey = Key<KeymapLayer>.Empty,
                 },
-                new CommonCommand("Open View Dropdown", "open-view-dropdown", false, async _ => await RenderViewDropdownOnClick(ideHeader)));
+                new CommonCommand("Open View Dropdown", "open-view-dropdown", false, async _ => await ideHeader.RenderViewDropdownOnClick()));
 
         _ = ContextFacts.GlobalContext.Keymap.TryRegister(
             new KeymapArgs
@@ -830,72 +747,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 MetaKey = false,
                 LayerKey = Key<KeymapLayer>.Empty,
             },
-            new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await RenderRunDropdownOnClick(ideHeader)));
-    }
-
-    private Task RenderFileDropdownOnClick(IdeHeader ideHeader)
-    {
-        return DropdownHelper.RenderDropdownAsync(
-            _dropdownService,
-            _jsRuntimeCommonApi,
-            IdeHeaderState.ButtonFileId,
-            DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyFile,
-            _ideHeaderService.GetIdeHeaderState().MenuFile,
-            ideHeader._buttonFileElementReference);
-    }
-
-    private Task RenderToolsDropdownOnClick(IdeHeader ideHeader)
-    {
-        return DropdownHelper.RenderDropdownAsync(
-            _dropdownService,
-            _jsRuntimeCommonApi,
-            IdeHeaderState.ButtonToolsId,
-            DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyTools,
-            _ideHeaderService.GetIdeHeaderState().MenuTools,
-            ideHeader._buttonToolsElementReference);
-    }
-
-    private Task RenderViewDropdownOnClick(IdeHeader ideHeader)
-    {
-        InitializeMenuView();
-
-        return DropdownHelper.RenderDropdownAsync(
-            _dropdownService,
-            _jsRuntimeCommonApi,
-            IdeHeaderState.ButtonViewId,
-            DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyView,
-            _ideHeaderService.GetIdeHeaderState().MenuView,
-            ideHeader._buttonViewElementReference);
-    }
-
-    private Task RenderRunDropdownOnClick(IdeHeader ideHeader)
-    {
-        return DropdownHelper.RenderDropdownAsync(
-           _dropdownService,
-           _jsRuntimeCommonApi,
-           IdeHeaderState.ButtonRunId,
-           DropdownOrientation.Bottom,
-           IdeHeaderState.DropdownKeyRun,
-           _ideHeaderService.GetIdeHeaderState().MenuRun,
-           ideHeader._buttonRunElementReference);
-    }
-
-    private Task OpenInfoDialogOnClick()
-    {
-        var dialogRecord = new DialogViewModel(
-            _infoDialogKey,
-            "Info",
-            typeof(IdeInfoDisplay),
-            null,
-            null,
-            true,
-            null);
-
-        _dialogService.ReduceRegisterAction(dialogRecord);
-        return Task.CompletedTask;
+            new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideHeader.RenderRunDropdownOnClick()));
     }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)

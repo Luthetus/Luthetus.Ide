@@ -91,7 +91,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
     public void ShowInputFile()
     {
-        _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+        _ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
             "TextEditor",
             absolutePath =>
             {
