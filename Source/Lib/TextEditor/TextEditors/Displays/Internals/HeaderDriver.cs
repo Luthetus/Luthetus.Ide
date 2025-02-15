@@ -299,7 +299,7 @@ public class HeaderDriver
 		            editContext =>
 		            {
 		            	editContext.TextEditorService.ViewModelApi.Dispose(viewModel.ViewModelKey);
-		            	_root.DirtyResourceUriService.ReduceRemoveDirtyResourceUriAction(model.ResourceUri);
+		            	_root.DirtyResourceUriService.RemoveDirtyResourceUri(model.ResourceUri);
 		            	editContext.TextEditorService.ModelApi.Dispose(model.ResourceUri);
 		            	return ValueTask.CompletedTask;
 		            });

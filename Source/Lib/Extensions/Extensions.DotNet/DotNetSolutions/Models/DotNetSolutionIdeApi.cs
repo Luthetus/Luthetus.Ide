@@ -245,7 +245,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		{
 			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
 
-			_findAllService.ReduceSetStartingDirectoryPathAction(parentDirectory);
+			_findAllService.SetStartingDirectoryPath(parentDirectory);
 
 			_codeSearchService.ReduceWithAction(inState => inState with
 			{

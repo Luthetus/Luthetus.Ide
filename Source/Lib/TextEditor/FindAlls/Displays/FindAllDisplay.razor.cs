@@ -45,7 +45,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
         set
         {
             if (value is not null)
-                FindAllService.ReduceSetSearchQueryAction(value);
+                FindAllService.SetSearchQuery(value);
         }
     }
 
@@ -55,7 +55,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
         set
         {
             if (value is not null)
-                FindAllService.ReduceSetStartingDirectoryPathAction(value);
+                FindAllService.SetStartingDirectoryPath(value);
         }
     }
     
@@ -107,7 +107,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 
 	private void CancelSearchOnClick()
     {
-    	FindAllService.ReduceCancelSearchAction();
+    	FindAllService.CancelSearch();
     }
     
     public async void OnFindAllStateChanged()

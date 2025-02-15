@@ -10,7 +10,9 @@ namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public class FindAllService : IFindAllService
 {
-	private readonly IFileSystemProvider _fileSystemProvider;
+    private readonly object _stateModificationLock = new();
+
+    private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly ITreeViewService _treeViewService;
 	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
@@ -40,98 +42,128 @@ public class FindAllService : IFindAllService
 	
 	public TextEditorFindAllState GetFindAllState() => _findAllState;
     
-    public void ReduceSetSearchQueryAction(string searchQuery)
+    public void SetSearchQuery(string searchQuery)
     {
-    	var inState = GetFindAllState();
-    
-        _findAllState = inState with
-        {
-        	SearchQuery = searchQuery
-        };
-        
+		lock (_stateModificationLock)
+		{
+			var inState = GetFindAllState();
+
+			_findAllState = inState with
+			{
+				SearchQuery = searchQuery
+			};
+
+            goto finalize;
+        }
+
+		finalize:
         FindAllStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceSetStartingDirectoryPathAction(string startingDirectoryPath)
+    public void SetStartingDirectoryPath(string startingDirectoryPath)
     {
-    	var inState = GetFindAllState();
-    
-        _findAllState = inState with
-        {
-        	StartingDirectoryPath = startingDirectoryPath
-        };
-        
+		lock (_stateModificationLock)
+		{
+			var inState = GetFindAllState();
+
+			_findAllState = inState with
+			{
+				StartingDirectoryPath = startingDirectoryPath
+			};
+
+            goto finalize;
+        }
+
+        finalize:
         FindAllStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceCancelSearchAction()
+    public void CancelSearch()
     {
-    	var inState = GetFindAllState();
-    
-    	_searchCancellationTokenSource.Cancel();
-    	_searchCancellationTokenSource = new();
-    	
-        _findAllState = inState with {};
-        
+		lock (_stateModificationLock)
+		{
+			var inState = GetFindAllState();
+
+			_searchCancellationTokenSource.Cancel();
+			_searchCancellationTokenSource = new();
+
+			_findAllState = inState with { };
+
+            goto finalize;
+        }
+
+        finalize:
         FindAllStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceSetProgressBarModelAction(ProgressBarModel progressBarModel)
+    public void SetProgressBarModel(ProgressBarModel progressBarModel)
     {
-    	var inState = GetFindAllState();
-    
-        _findAllState = inState with
-        {
-        	ProgressBarModel = progressBarModel,
-        };
-        
+		lock (_stateModificationLock)
+		{
+			var inState = GetFindAllState();
+
+			_findAllState = inState with
+			{
+				ProgressBarModel = progressBarModel,
+			};
+
+            goto finalize;
+        }
+
+        finalize:
         FindAllStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceFlushSearchResultsAction(List<TextEditorTextSpan> searchResultList)
+    public void FlushSearchResults(List<TextEditorTextSpan> searchResultList)
     {
-    	var inState = GetFindAllState();
-    
-    	List<TextEditorTextSpan> localSearchResultList;
-    	lock (_flushSearchResultsLock)
-    	{
-  		  localSearchResultList = new List<TextEditorTextSpan>(inState.SearchResultList);
-    		localSearchResultList.AddRange(searchResultList);
-    		searchResultList.Clear();
-    	}
-    	
-        _findAllState = inState with
-        {
-        	SearchResultList = localSearchResultList.ToImmutableList()
-        };
-        
+		lock (_stateModificationLock)
+		{
+			var inState = GetFindAllState();
+
+			List<TextEditorTextSpan> localSearchResultList;
+			lock (_flushSearchResultsLock)
+			{
+				localSearchResultList = new List<TextEditorTextSpan>(inState.SearchResultList);
+				localSearchResultList.AddRange(searchResultList);
+				searchResultList.Clear();
+			}
+
+			_findAllState = inState with
+			{
+				SearchResultList = localSearchResultList.ToImmutableList()
+			};
+
+            goto finalize;
+        }
+
+        finalize:
         FindAllStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceClearSearchAction()
+    public void ClearSearch()
     {
-    	var inState = GetFindAllState();
-    
-        _findAllState = inState with
-        {
-        	SearchResultList = ImmutableList<TextEditorTextSpan>.Empty
-        };
-        
+		lock (_stateModificationLock)
+		{
+			var inState = GetFindAllState();
+
+			_findAllState = inState with
+			{
+				SearchResultList = ImmutableList<TextEditorTextSpan>.Empty
+			};
+
+			goto finalize;
+        }
+
+        finalize:
         FindAllStateChanged?.Invoke();
-        return;
     }
 	
 	public Task HandleStartSearchAction()
 	{
     	_throttleSetSearchQuery.Run(async _ =>
 		{
-			ReduceCancelSearchAction();
-			ReduceClearSearchAction();
+			CancelSearch();
+			ClearSearch();
 			
 			var textEditorFindAllState = GetFindAllState();
 
@@ -146,7 +178,7 @@ public class FindAllService : IFindAllService
 
 			ConstructTreeView(textEditorFindAllState);
 
-			ReduceSetProgressBarModelAction(progressBarModel);
+			SetProgressBarModel(progressBarModel);
 			
 			try
 			{
@@ -186,7 +218,7 @@ public class FindAllService : IFindAllService
 		}
 		finally
 		{
-			ReduceFlushSearchResultsAction(textSpanList);
+			FlushSearchResults(textSpanList);
 		
 			if (searchException is null)
 			{
@@ -201,7 +233,7 @@ public class FindAllService : IFindAllService
 				progressBarModel.Dispose();
 				// The use of '_textEditorFindAllStateWrap.Value' is purposeful.
 				ConstructTreeView(GetFindAllState());
-				ReduceSetProgressBarModelAction(progressBarModel);
+				SetProgressBarModel(progressBarModel);
 			}
 		}
 		
@@ -313,7 +345,7 @@ public class FindAllService : IFindAllService
 					progressBarModel.Dispose();
 					// The use of 'GetFindAllState()' is purposeful.
 					ConstructTreeView(GetFindAllState());
-					ReduceSetProgressBarModelAction(progressBarModel);
+					SetProgressBarModel(progressBarModel);
 				}
 					
 				return Task.CompletedTask;
@@ -370,6 +402,6 @@ public class FindAllService : IFindAllService
 	
 	public void Dispose()
 	{
-		ReduceCancelSearchAction();
+		CancelSearch();
 	}
 }
