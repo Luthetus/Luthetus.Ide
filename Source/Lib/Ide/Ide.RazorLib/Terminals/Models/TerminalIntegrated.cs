@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class TerminalIntegrated : ITerminal
+public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
@@ -40,8 +40,18 @@ public class TerminalIntegrated : ITerminal
 		_environmentProvider = environmentProvider;
 		_pathToShellExecutable = pathToShellExecutable;
 	}
-	
-	private CancellationTokenSource _commandCancellationTokenSource = new();
+
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(Terminal);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<TerminalWorkKind> _workKindQueue = new();
+    private readonly object _workLock = new();
+
+    private CancellationTokenSource _commandCancellationTokenSource = new();
 	private Task? _shellTask;
 	private Command? _shellCliWrapCommand;
 
@@ -56,15 +66,23 @@ public class TerminalIntegrated : ITerminal
 	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
     public bool HasExecutingProcess { get; private set; }
 
+    private readonly Queue<TerminalCommandRequest> _queue_general_TerminalCommandRequest = new();
+
     public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest)
     {
-		_backgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			BackgroundTaskFacts.IndefiniteQueueKey,
-			"Enqueue Command",
-			() => HandleCommand(terminalCommandRequest));
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(TerminalWorkKind.Command);
+            _queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
     }
-    
+
+    public ValueTask DoCommand(TerminalCommandRequest terminalCommandRequest)
+    {
+        return HandleCommand(terminalCommandRequest);
+    }
+
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
 		return _backgroundTaskService.EnqueueAsync(
@@ -241,7 +259,36 @@ public class TerminalIntegrated : ITerminal
     {
         // _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
-    
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        TerminalWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
+        }
+
+        switch (workKind)
+        {
+            case TerminalWorkKind.Command:
+                {
+                    var args = _queue_general_TerminalCommandRequest.Dequeue();
+                    return DoCommand(args);
+                }
+            default:
+                {
+                    return ValueTask.CompletedTask;
+                }
+        }
+    }
+
     public void Dispose()
     {
     	KillProcess();
