@@ -35,7 +35,7 @@ public class OutputService : IOutputService
     
 	public Task HandleConstructTreeViewEffect()
 	{
-		_throttleCreateTreeView.Run(async _ => await _dotNetBackgroundTaskApi.Output.Task_ConstructTreeView());
+		_throttleCreateTreeView.Run(async _ => await _dotNetBackgroundTaskApi.Output.Do_ConstructTreeView());
         return Task.CompletedTask;
 	}
 }

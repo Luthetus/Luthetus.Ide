@@ -1,6 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
@@ -29,9 +28,9 @@ public class LuthetusTextEditorCustomThemeFacts
         ThemeColorKind.Dark,
         new() { ThemeScope.TextEditor });
 
-    public static readonly ImmutableArray<ThemeRecord> AllCustomThemesList = new[]
+    public static readonly List<ThemeRecord> AllCustomThemesList = new()
     {
         LightTheme,
         DarkTheme
-    }.ToImmutableArray();
+    };
 }

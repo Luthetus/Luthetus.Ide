@@ -1,7 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -23,7 +22,7 @@ public static class SyntaxModifierVim
     }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
+        List<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgs keymapArgument,
         bool hasTextSelection,

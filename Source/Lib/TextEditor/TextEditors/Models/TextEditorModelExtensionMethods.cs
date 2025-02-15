@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -258,7 +257,7 @@ public static class TextEditorModelExtensionMethods
         return null;
     }
 
-    public static ImmutableArray<TextEditorTextSpan> FindMatches(this ITextEditorModel model, string query)
+    public static List<TextEditorTextSpan> FindMatches(this ITextEditorModel model, string query)
     {
         var text = model.GetAllText();
         var matchedTextSpans = new List<TextEditorTextSpan>();
@@ -287,7 +286,7 @@ public static class TextEditorModelExtensionMethods
             }
         }
 
-        return matchedTextSpans.ToImmutableArray();
+        return matchedTextSpans;
     }
 
     /// <summary>

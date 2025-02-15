@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -16,7 +15,7 @@ namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 public record TextEditorGroup(
         Key<TextEditorGroup> GroupKey,
         Key<TextEditorViewModel> ActiveViewModelKey,
-        ImmutableList<Key<TextEditorViewModel>> ViewModelKeyList,
+		List<Key<TextEditorViewModel>> ViewModelKeyList,
         Category Category,
         ITextEditorService TextEditorService,
         IPanelService PanelService,

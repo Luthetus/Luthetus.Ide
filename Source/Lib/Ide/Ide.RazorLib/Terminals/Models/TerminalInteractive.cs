@@ -1,5 +1,4 @@
 using System.Text;
-using System.Collections.Immutable;
 using CliWrap.EventStream;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -88,11 +87,11 @@ public class TerminalInteractive : ITerminalInteractive
             WorkingDirectoryChanged?.Invoke();
 	}
 	
-	public ImmutableList<TerminalCommandRequest> GetTerminalCommandRequestHistory()
+	public List<TerminalCommandRequest> GetTerminalCommandRequestHistory()
 	{
 		lock (_syncRoot)
 		{
-			return _terminalCommandRequestHistory.ToImmutableList();
+			return _terminalCommandRequestHistory;
 		}
 	}
 	

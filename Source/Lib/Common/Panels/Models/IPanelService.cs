@@ -10,19 +10,19 @@ public interface IPanelService
 	
 	public PanelState GetPanelState();
 	
-	public void ReduceRegisterPanelAction(Panel panel);
-    public void ReduceDisposePanelAction(Key<Panel> panelKey);
-    public void ReduceRegisterPanelGroupAction(PanelGroup panelGroup);
-    public void ReduceDisposePanelGroupAction(Key<PanelGroup> panelGroupKey);
+	public void RegisterPanel(Panel panel);
+    public void DisposePanel(Key<Panel> panelKey);
+    public void RegisterPanelGroup(PanelGroup panelGroup);
+    public void DisposePanelGroup(Key<PanelGroup> panelGroupKey);
 
-    public void ReduceRegisterPanelTabAction(
+    public void RegisterPanelTab(
     	Key<PanelGroup> panelGroupKey,
     	IPanelTab panelTab,
     	bool insertAtIndexZero);
 
-    public void ReduceDisposePanelTabAction(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey);
-    public void ReduceSetActivePanelTabAction(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey);
-    public void ReduceSetPanelTabAsActiveByContextRecordKeyAction(Key<ContextRecord> contextRecordKey);
-    public void ReduceSetDragEventArgsAction((IPanelTab PanelTab, PanelGroup PanelGroup)? dragEventArgs);
-    public void ReduceInitializeResizeHandleDimensionUnitAction(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit);
+    public void DisposePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey);
+    public void SetActivePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey);
+    public void SetPanelTabAsActiveByContextRecordKey(Key<ContextRecord> contextRecordKey);
+    public void SetDragEventArgs((IPanelTab PanelTab, PanelGroup PanelGroup)? dragEventArgs);
+    public void InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit);
 }

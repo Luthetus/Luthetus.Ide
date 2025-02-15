@@ -48,7 +48,6 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 
 	private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
 	private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
-	private bool _disposed;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
 		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));

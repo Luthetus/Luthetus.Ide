@@ -57,7 +57,7 @@ public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
                     ZIndex = contextBoundaryHeirarchy.Count
                 };
 
-                ContextService.ReduceAddInspectableContextAction(
+                ContextService.AddInspectableContext(
                     new InspectableContext(
                         new(contextBoundaryHeirarchy),
                         measuredHtmlElementDimensions));

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -29,7 +28,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 
 	private string _nugetPackageVersionString = string.Empty;
 
-	private ImmutableArray<NugetPackageVersionRecord> _nugetPackageVersionsOrdered = ImmutableArray<NugetPackageVersionRecord>.Empty;
+	private List<NugetPackageVersionRecord> _nugetPackageVersionsOrdered = new();
 	private string? _previousNugetPackageId;
 
 	protected override void OnInitialized()
@@ -47,7 +46,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 
 			_nugetPackageVersionsOrdered = NugetPackageRecord.Versions
 				.OrderByDescending(x => x.Version)
-				.ToImmutableArray();
+				.ToList();
 
 			_nugetPackageVersionString = _nugetPackageVersionsOrdered.FirstOrDefault()
 				?.Version ?? string.Empty;

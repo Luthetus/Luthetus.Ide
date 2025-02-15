@@ -32,7 +32,7 @@ public partial class ReflectivePanel : ComponentBase, IDisposable
                 new(),
                 ReflectiveService);
 
-            ReflectiveService.ReduceRegisterAction(model, 0);
+            ReflectiveService.Register(model, 0);
         }
 
         return base.OnAfterRenderAsync(firstRender);
@@ -49,7 +49,7 @@ public partial class ReflectivePanel : ComponentBase, IDisposable
             new(),
             ReflectiveService);
 
-        ReflectiveService.ReduceRegisterAction(model, 0);
+        ReflectiveService.Register(model, 0);
     }
     
     public async void OnReflectiveStateChanged()

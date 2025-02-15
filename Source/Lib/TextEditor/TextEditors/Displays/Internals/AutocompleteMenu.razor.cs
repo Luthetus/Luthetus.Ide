@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -127,7 +126,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
         try
         {
-            var cursorList = new TextEditorCursor[] { renderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
+            var cursorList = new List<TextEditorCursor> { renderBatch.ViewModel.PrimaryCursor };
 
             var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
 

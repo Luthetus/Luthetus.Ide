@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
@@ -11,7 +10,7 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 public partial class TestExplorerScheduler
 {
-    public async ValueTask Task_ConstructTreeView()
+    public async ValueTask Do_ConstructTreeView()
     {
         var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
@@ -23,10 +22,11 @@ public partial class TestExplorerScheduler
             .Where(x => x.DotNetProjectKind == DotNetProjectKind.CSharpProject);
 
         var localProjectTestModelList = localDotNetProjectList.Select(x => new ProjectTestModel(
-            x.ProjectIdGuid,
-            x.AbsolutePath,
-            callback => Task.CompletedTask,
-            node => _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, node)));
+				x.ProjectIdGuid,
+				x.AbsolutePath,
+				callback => Task.CompletedTask,
+				node => _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, node)))
+			.ToList();
 
         var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
 
@@ -184,12 +184,12 @@ public partial class TestExplorerScheduler
 
         _dotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
         {
-            ProjectTestModelList = localProjectTestModelList.ToImmutableList(),
+            ProjectTestModelList = localProjectTestModelList,
             SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value,
         });
     }
     
-    public ValueTask Task_DiscoverTests()
+    public ValueTask Do_DiscoverTests()
     {
     	_throttleDiscoverTests.Run(async _ =>
     	{
@@ -308,7 +308,7 @@ public partial class TestExplorerScheduler
             return Task.CompletedTask;
     
     	var totalTestCount = 0;
-    	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
+    	var notRanTestHashSet = new HashSet<string>();
     	
     	Console.WriteLine($"NoTestsTreeViewGroup.ChildList.Count: {NoTestsTreeViewGroup.ChildList.Count}");
     	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
@@ -353,7 +353,7 @@ public partial class TestExplorerScheduler
             	{
             		foreach (var output in treeViewProjectTestModel.Item.TestNameFullyQualifiedList)
 	            	{
-	            		notRanTestHashSet = notRanTestHashSet.Add(output);
+	            		notRanTestHashSet.Add(output);
 	            	}
             	}
             }

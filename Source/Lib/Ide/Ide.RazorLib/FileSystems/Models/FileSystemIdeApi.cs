@@ -7,7 +7,7 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
-public class FileSystemIdeApi
+public class FileSystemIdeApi : IBackgroundTaskGroup
 {
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IFileSystemProvider _fileSystemProvider;
@@ -29,25 +29,35 @@ public class FileSystemIdeApi
         _notificationService = notificationService;
     }
 
-    public void SaveFile(
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(FileSystemIdeApi);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<FileSystemIdeApiWorkKind> _workKindQueue = new();
+    private readonly object _workLock = new();
+
+    private readonly
+        Queue<(AbsolutePath absolutePath, string content, Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc, CancellationToken cancellationToken)>
+        _queue_SaveFile = new();
+
+    public void Enqueue_SaveFile(
         AbsolutePath absolutePath,
         string content,
         Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
         CancellationToken cancellationToken = default)
     {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "Save File",
-            async () => await SaveFileAsync(
-                    absolutePath,
-                    content,
-                    onAfterSaveCompletedWrittenDateTimeFunc,
-                    cancellationToken)
-                .ConfigureAwait(false));
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(FileSystemIdeApiWorkKind.SaveFile);
+            _queue_SaveFile.Enqueue((absolutePath, content, onAfterSaveCompletedWrittenDateTimeFunc, cancellationToken));
+            _backgroundTaskService.EnqueueGroup(this);
+        }
     }
 
-    private async Task SaveFileAsync(
+    private async ValueTask Do_SaveFile(
         AbsolutePath absolutePath,
         string content,
         Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
@@ -81,5 +91,34 @@ public class FileSystemIdeApi
 
         if (onAfterSaveCompletedWrittenDateTimeFunc is not null)
             await onAfterSaveCompletedWrittenDateTimeFunc.Invoke(fileLastWriteTime);
+    }
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        FileSystemIdeApiWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
+        }
+
+        switch (workKind)
+        {
+            case FileSystemIdeApiWorkKind.SaveFile:
+            {
+                var args = _queue_SaveFile.Dequeue();
+                return Do_SaveFile(args.absolutePath, args.content, args.onAfterSaveCompletedWrittenDateTimeFunc, args.cancellationToken);
+            }
+            default:
+            {
+                return ValueTask.CompletedTask;
+            }
+        }
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -26,5 +25,5 @@ public sealed class CSharpCompilationUnit : ICompilationUnit
     /// <summary>
     /// This seems to no longer get set (noticed this on 2024-12-14).
     /// </summary>
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
+    public List<TextEditorDiagnostic> DiagnosticsList { get; init; }
 }

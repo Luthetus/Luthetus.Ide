@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.Keys.Models;
 
@@ -7,7 +6,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 /// <summary>Output Data</summary>
 public interface ITerminalOutput : IDisposable
 {
-	public ImmutableList<ITerminalOutputFormatter> OutputFormatterList { get; }
+	public List<ITerminalOutputFormatter> OutputFormatterList { get; }
 
 	/// <summary>
 	/// TODO: Make this 'Action<Key<TerminalCommandParsed>>?' so one can
@@ -28,6 +27,6 @@ public interface ITerminalOutput : IDisposable
 	
 	public ITerminalOutputFormatted GetOutputFormatted(string terminalOutputFormatterName);
 	public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey);
-	public ImmutableList<TerminalCommandParsed> GetParsedCommandList();
+	public List<TerminalCommandParsed> GetParsedCommandList();
 	public int GetParsedCommandListCount();
 }

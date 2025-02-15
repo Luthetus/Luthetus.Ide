@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -87,7 +86,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory(string message)
 	{
-		IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+		IdeBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
 			message,
 			async absolutePath =>
 			{
@@ -104,10 +103,10 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 				return Task.FromResult(true);
 			},
-			new[]
+			new()
 			{
 				new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-			}.ToImmutableArray());
+			});
 	}
 
 	private async Task ReadProjectTemplates()
@@ -237,7 +236,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        	{
 				        	DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
-							DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
+							DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(
 								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
 							return Task.CompletedTask;
 						}

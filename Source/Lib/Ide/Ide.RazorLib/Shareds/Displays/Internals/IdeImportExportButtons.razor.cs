@@ -32,9 +32,4 @@ public partial class IdeImportExportButtons : ComponentBase
     {
         DialogService.ReduceRegisterAction(_importDialogRecord);
     }
-    
-    private void ExportOnClick()
-    {
-        DialogService.ReduceRegisterAction(_exportDialogRecord);
-    }
 }

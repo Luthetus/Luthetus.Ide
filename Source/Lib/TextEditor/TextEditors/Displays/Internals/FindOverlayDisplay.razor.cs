@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -70,12 +69,14 @@ public partial class FindOverlayDisplay : ComponentBase
                         if (modelModifier is null)
                             return ValueTask.CompletedTask;
 
-                        ImmutableArray<TextEditorTextSpan> textSpanMatches = ImmutableArray<TextEditorTextSpan>.Empty;
+                        List<TextEditorTextSpan> textSpanMatches;
 
                         if (!string.IsNullOrWhiteSpace(localInputValue))
                             textSpanMatches = modelModifier.FindMatches(localInputValue);
+                        else
+                            textSpanMatches = new();
 
-                        TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+						TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
                         	editContext,
                             modelModifier,
                             FindOverlayPresentationFacts.PresentationKey,
@@ -182,7 +183,7 @@ public partial class FindOverlayDisplay : ComponentBase
                     modelModifier.CompletePendingCalculatePresentationModel(
                         FindOverlayPresentationFacts.PresentationKey,
                         FindOverlayPresentationFacts.EmptyPresentationModel,
-                        ImmutableArray<TextEditorTextSpan>.Empty);
+                        new());
                     return ValueTask.CompletedTask;
                 });
         }

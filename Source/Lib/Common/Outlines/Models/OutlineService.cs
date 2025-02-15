@@ -6,7 +6,9 @@ namespace Luthetus.Common.RazorLib.Outlines.Models;
 
 public class OutlineService : IOutlineService
 {
-	private readonly IJSRuntime _jsRuntime;
+    private readonly object _stateModificationLock = new();
+
+    private readonly IJSRuntime _jsRuntime;
 
 	public OutlineService(IJSRuntime jsRuntime)
 	{
@@ -24,62 +26,70 @@ public class OutlineService : IOutlineService
 	
 	public OutlineState GetOutlineState() => _outlineState;
 
-	public void ReduceSetOutlineAction(
+	public void SetOutline(
 		string? elementId,
 		MeasuredHtmlElementDimensions? measuredHtmlElementDimensions,
 		bool needsMeasured)
 	{
-		var inState = GetOutlineState();
-	
-		_outlineState = inState with
+		lock (_stateModificationLock)
 		{
-			ElementId = elementId,
-			MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
-			NeedsMeasured = needsMeasured,
-		};
-	
-		if (needsMeasured && elementId is not null)
-	    {
-			_ = Task.Run(async () =>
+			var inState = GetOutlineState();
+
+			_outlineState = inState with
 			{
-				var elementDimensions = await JsRuntimeCommonApi
-					.MeasureElementById(elementId)
-					.ConfigureAwait(false);
-					
-				ReduceSetMeasurementsAction(
-					elementId,
-					elementDimensions);
-			});
-			
-			// The state has changed will occur in 'ReduceSetMeasurementsAction'
-			return;
+				ElementId = elementId,
+				MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
+				NeedsMeasured = needsMeasured,
+			};
 		}
-		else
-		{
-			OutlineStateChanged?.Invoke();
-			return;
-		}
-	}
+
+        if (needsMeasured && elementId is not null)
+        {
+            _ = Task.Run(async () =>
+            {
+                var elementDimensions = await JsRuntimeCommonApi
+                    .MeasureElementById(elementId)
+                    .ConfigureAwait(false);
+
+                SetMeasurements(
+                    elementId,
+                    elementDimensions);
+            });
+
+            return; // The state has changed will occur in 'ReduceSetMeasurementsAction'
+        }
+        else
+        {
+            goto finalize;
+        }
+
+        finalize:
+        OutlineStateChanged?.Invoke();
+    }
 	
-	public void ReduceSetMeasurementsAction(
+	public void SetMeasurements(
 		string? elementId,
 		MeasuredHtmlElementDimensions? measuredHtmlElementDimensions)
 	{
-		var inState = GetOutlineState();
+		lock (_stateModificationLock)
+		{
+			var inState = GetOutlineState();
 	
-		if (inState.ElementId != elementId)
-		{
-			OutlineStateChanged?.Invoke();
-			return;
-		}
+			if (inState.ElementId != elementId)
+			{
+				goto finalize;
+			}
 			
-		_outlineState = inState with
-		{
-			MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
-			NeedsMeasured = false,
-		};
+			_outlineState = inState with
+			{
+				MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
+				NeedsMeasured = false,
+			};
 		
-		OutlineStateChanged?.Invoke();
-		return;
-	}
+			goto finalize;
+        }
+
+        finalize:
+        OutlineStateChanged?.Invoke();
+    }
 }

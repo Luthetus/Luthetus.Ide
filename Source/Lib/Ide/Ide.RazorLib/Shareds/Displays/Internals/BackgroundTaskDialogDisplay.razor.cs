@@ -13,7 +13,6 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
     private readonly List<IBackgroundTask> _seenBackgroundTasks = new List<IBackgroundTask>();
     private readonly object _seenBackgroundTasksLock = new();
 
-    private BackgroundTaskQueue _continuousBackgroundTaskWorker = null!;
 	private int _countTracked = 100;
 	private int _clearTo = 15;
 

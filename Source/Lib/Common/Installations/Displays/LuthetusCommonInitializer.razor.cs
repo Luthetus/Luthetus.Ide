@@ -3,11 +3,7 @@ using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Panels.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 
@@ -23,17 +19,9 @@ namespace Luthetus.Common.RazorLib.Installations.Displays;
 public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private LuthetusCommonConfig CommonConfig { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IContextService ContextService { get; set; } = null!;
-    [Inject]
-    private IPanelService PanelService { get; set; } = null!;
+	[Inject]
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
@@ -59,104 +47,9 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		BackgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskService.ContinuousTaskWorker.Queue.Key,
-            nameof(LuthetusCommonInitializer),
-            async () =>
-            {
-                AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
+        CommonBackgroundTaskApi.Enqueue_LuthetusCommonInitializer();
 
-                await AppOptionsService
-                    .SetFromLocalStorageAsync()
-                    .ConfigureAwait(false);
-
-				ContextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;                    
-                ContextService.ReduceRegisterContextSwitchGroupAction(
-                	new ContextSwitchGroup(
-                		ContextSwitchGroupKey,
-						"Contexts",
-						() =>
-						{
-							var contextState = ContextService.GetContextState();
-							var panelState = PanelService.GetPanelState();
-							var dialogState = DialogService.GetDialogState();
-							var menuOptionList = new List<MenuOptionRecord>();
-							
-							foreach (var panel in panelState.PanelList)
-							{
-						        var menuOptionPanel = new MenuOptionRecord(
-									panel.Title,
-						            MenuOptionKind.Delete,
-						            async () => 
-									{
-										var panelGroup = panel.TabGroup as PanelGroup;
-						
-										if (panelGroup is not null)
-										{
-											PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, panel.Key);
-											
-											var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
-											
-											if (contextRecord != default)
-											{
-												var command = ContextHelper.ConstructFocusContextElementCommand(
-											        contextRecord,
-											        nameof(ContextHelper.ConstructFocusContextElementCommand),
-											        nameof(ContextHelper.ConstructFocusContextElementCommand),
-											        JsRuntimeCommonApi,
-											        PanelService);
-											        
-											    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-											}
-										}
-										else
-										{
-											var existingDialog = dialogState.DialogList.FirstOrDefault(
-												x => x.DynamicViewModelKey == panel.DynamicViewModelKey);
-											
-											if (existingDialog is not null)
-											{
-												DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
-												
-												await JsRuntimeCommonApi
-									                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
-									                .ConfigureAwait(false);
-											}
-											else
-											{
-												PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true);
-												PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key);
-												
-												var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
-											
-												if (contextRecord != default)
-												{
-													var command = ContextHelper.ConstructFocusContextElementCommand(
-												        contextRecord,
-												        nameof(ContextHelper.ConstructFocusContextElementCommand),
-												        nameof(ContextHelper.ConstructFocusContextElementCommand),
-												        JsRuntimeCommonApi,
-												        PanelService);
-												        
-												    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-												}
-											}
-										}
-									});
-						
-						        menuOptionList.Add(menuOptionPanel);
-							}
-						
-							var menu = menuOptionList.Count == 0
-								? MenuRecord.GetEmpty()
-								: new MenuRecord(menuOptionList);
-								
-							return Task.FromResult(menu);
-						}));
-            });
-	
-		base.OnInitialized();
+        base.OnInitialized();
 	}
 
 	protected override void OnAfterRender(bool firstRender)

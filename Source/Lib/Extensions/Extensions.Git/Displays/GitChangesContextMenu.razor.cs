@@ -3,19 +3,12 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.Git.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
 public partial class GitChangesContextMenu : ComponentBase
 {
-    [Inject]
-    private ITerminalService TerminalService { get; set; } = null!;
-	[Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-
 	[CascadingParameter]
     public GitState GitState { get; set; } = null!;
     [CascadingParameter]

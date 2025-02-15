@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -28,6 +27,8 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public partial class TextEditorService : ITextEditorService
 {
+    private readonly object _stateModificationLock = new();
+
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
@@ -145,9 +146,9 @@ public partial class TextEditorService : ITextEditorService
 	            if (modelModifier.WasDirty != modelModifier.IsDirty)
 	            {
 	                if (modelModifier.IsDirty)
-	                    _dirtyResourceUriService.ReduceAddDirtyResourceUriAction(modelModifier.ResourceUri);
+	                    _dirtyResourceUriService.AddDirtyResourceUri(modelModifier.ResourceUri);
 	                else
-	                    _dirtyResourceUriService.ReduceRemoveDirtyResourceUriAction(modelModifier.ResourceUri);
+	                    _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.ResourceUri);
 	            }
 	        }
 		}
@@ -180,7 +181,7 @@ public partial class TextEditorService : ITextEditorService
 	                {
 	                    CursorList = cursorModifierBag.List
 	                        .Select(x => x.ToCursor())
-	                        .ToImmutableArray()
+							.ToList()
 	                };
 	            }
 	            
@@ -298,7 +299,7 @@ public partial class TextEditorService : ITextEditorService
 	        }
 	    }
 	    
-	    ReduceSetModelAndViewModelRangeAction(
+	    SetModelAndViewModelRange(
 	        editContext,
 	        editContext.ModelCache,
 			editContext.ViewModelCache);
@@ -577,66 +578,72 @@ public partial class TextEditorService : ITextEditorService
 	}
 	
 	// Move TextEditorState.Reducer.cs here
-	public void ReduceRegisterModelAction(TextEditorModel model)
+	public void RegisterModel(TextEditorModel model)
 	{
-		var inState = TextEditorState;
-	
-		var exists = inState._modelMap.TryGetValue(
-			model.ResourceUri, out var inModel);
-		
-		if (exists)
+		lock (_stateModificationLock)
 		{
-			TextEditorStateChanged?.Invoke();
-			return;
-	    }
-		
-		inState._modelMap.Add(model.ResourceUri, model);
-		
-		TextEditorStateChanged?.Invoke();	
-		return;
-	}
+			var inState = TextEditorState;
 	
-	public void ReduceDisposeModelAction(ResourceUri resourceUri)
+			var exists = inState._modelMap.TryGetValue(
+				model.ResourceUri, out var inModel);
+		
+			if (exists)
+                goto finalize;
+		
+			inState._modelMap.Add(model.ResourceUri, model);
+		
+			goto finalize;
+        }
+
+		finalize:
+        TextEditorStateChanged?.Invoke();
+    }
+
+	public void DisposeModel(ResourceUri resourceUri)
 	{
-		var inState = TextEditorState;
+		lock (_stateModificationLock)
+		{
+			var inState = TextEditorState;
+
+			var exists = inState._modelMap.TryGetValue(
+				resourceUri, out var inModel);
+
+			if (!exists)
+                goto finalize;
+
+			inState._modelMap.Remove(resourceUri);
+
+            goto finalize;
+        }
+
+        finalize:
+        TextEditorStateChanged?.Invoke();
+    }
 	
-		var exists = inState._modelMap.TryGetValue(
-			resourceUri, out var inModel);
-	
-	    if (!exists)
-	    {
-	        TextEditorStateChanged?.Invoke();	
-			return;
-	    }
-	
-		inState._modelMap.Remove(resourceUri);
-		
-		TextEditorStateChanged?.Invoke();	
-		return;
-	}
-	
-	public void ReduceSetModelAction(
+	public void SetModel(
 	    ITextEditorEditContext editContext,
 	    TextEditorModelModifier modelModifier)
 	{
-		var inState = TextEditorState;
+		lock (_stateModificationLock)
+		{
+			var inState = TextEditorState;
+
+			var exists = inState._modelMap.TryGetValue(
+				modelModifier.ResourceUri, out var inModel);
+
+			if (!exists)
+                goto finalize;
+
+			inState._modelMap[inModel.ResourceUri] = modelModifier.ToModel();
+
+            goto finalize;
+        }
+
+        finalize:
+        TextEditorStateChanged?.Invoke();
+    }
 	
-		var exists = inState._modelMap.TryGetValue(
-			modelModifier.ResourceUri, out var inModel);
-	
-	    if (!exists)
-	    {
-	    	TextEditorStateChanged?.Invoke();	
-			return;
-	    }
-	
-		inState._modelMap[inModel.ResourceUri] = modelModifier.ToModel();
-		
-		TextEditorStateChanged?.Invoke();	
-		return;
-	}
-	
-	public void ReduceRegisterViewModelAction(
+	public void RegisterViewModel(
 	    Key<TextEditorViewModel> viewModelKey,
 	    ResourceUri resourceUri,
 	    Category category,
@@ -659,143 +666,123 @@ public partial class TextEditorService : ITextEditorService
 		// 	- One can put a view model of any category into a group.
 		// 	- Or one could add dropzone logic that validates the category of a 'being dragged view model'
 		//     	  to ensure it belongs in that group.
-		
-		var inState = TextEditorState;
+
+		lock (_stateModificationLock)
+		{
+			var inState = TextEditorState;
+
+			var inViewModel = inState.ViewModelGetOrDefault(viewModelKey);
+
+			if (inViewModel is not null)
+                goto finalize;
+
+			if (viewModelKey == Key<TextEditorViewModel>.Empty)
+				throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
+
+			var viewModel = new TextEditorViewModel(
+				viewModelKey,
+				resourceUri,
+				textEditorService,
+				_panelService,
+				dialogService,
+				jsRuntime,
+				VirtualizationGrid.Empty,
+				new TextEditorDimensions(0, 0, 0, 0),
+				new ScrollbarDimensions(0, 0, 0, 0, 0),
+				new CharAndLineMeasurements(0, 0),
+				false,
+				category);
+
+			inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
+
+            goto finalize;
+        }
+
+        finalize:
+        TextEditorStateChanged?.Invoke();
+    }
 	
-	    var inViewModel = inState.ViewModelGetOrDefault(viewModelKey);
-	
-	    if (inViewModel is not null)
-	    {
-	    	TextEditorStateChanged?.Invoke();	
-			return;
-	    }
-	
-	    if (viewModelKey == Key<TextEditorViewModel>.Empty)
-	        throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
-	
-	    var viewModel = new TextEditorViewModel(
-	        viewModelKey,
-	        resourceUri,
-	        textEditorService,
-	        _panelService,
-	        dialogService,
-	        jsRuntime,
-	        VirtualizationGrid.Empty,
-			new TextEditorDimensions(0, 0, 0, 0),
-			new ScrollbarDimensions(0, 0, 0, 0, 0),
-			new CharAndLineMeasurements(0, 0),
-	        false,
-	        category);
-	
-		inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
-		
-		TextEditorStateChanged?.Invoke();	
-		return;
-	}
-	
-	public void ReduceRegisterViewModelExistingAction(
+	public void RegisterViewModelExisting(
 	    TextEditorViewModel viewModel)
 	{
-		var inState = TextEditorState;
+		lock (_stateModificationLock)
+		{
+			var inState = TextEditorState;
+
+			var inViewModel = inState.ViewModelGetOrDefault(viewModel.ViewModelKey);
+
+			if (inViewModel is not null)
+                goto finalize;
+
+			if (viewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
+				throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
+
+			inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
+
+            goto finalize;
+        }
+
+        finalize:
+        TextEditorStateChanged?.Invoke();
+    }
 	
-	    var inViewModel = inState.ViewModelGetOrDefault(viewModel.ViewModelKey);
-	
-	    if (inViewModel is not null)
-	    {
-	    	TextEditorStateChanged?.Invoke();	
-			return;
-	    }
-	
-	    if (viewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
-	        throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
-	
-		inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
-			
-		TextEditorStateChanged?.Invoke();	
-		return;
-	}
-	
-	public void ReduceDisposeViewModelAction(
+	public void DisposeViewModel(
 	    Key<TextEditorViewModel> viewModelKey)
 	{
-		var inState = TextEditorState;
+		lock (_stateModificationLock)
+		{
+			var inState = TextEditorState;
+
+			var inViewModel = inState.ViewModelGetOrDefault(
+				viewModelKey);
+
+			if (inViewModel is null)
+                goto finalize;
+
+			inState._viewModelMap.Remove(inViewModel.ViewModelKey);
+			inViewModel.Dispose();
+
+            goto finalize;
+        }
+
+        finalize:
+        TextEditorStateChanged?.Invoke();
+    }
 	
-	    var inViewModel = inState.ViewModelGetOrDefault(
-	        viewModelKey);
-	
-	    if (inViewModel is null)
-	    {
-			TextEditorStateChanged?.Invoke();	
-			return;
-	    }
-	        
-		inState._viewModelMap.Remove(inViewModel.ViewModelKey);
-		inViewModel.Dispose();
-		
-		TextEditorStateChanged?.Invoke();	
-		return;
-	}
-	
-	public void ReduceSetViewModelWithAction(
+	public void SetViewModelWith(
 	    ITextEditorEditContext editContext,
 	    Key<TextEditorViewModel> viewModelKey,
 	    Func<TextEditorViewModel, TextEditorViewModel> withFunc)
 	{
-		var inState = TextEditorState;
+		lock (_stateModificationLock)
+		{
+			var inState = TextEditorState;
+
+			var inViewModel = inState.ViewModelGetOrDefault(
+				viewModelKey);
+
+			if (inViewModel is null)
+                goto finalize;
+
+			var outViewModel = withFunc.Invoke(inViewModel);
+			inState._viewModelMap[inViewModel.ViewModelKey] = outViewModel;
+
+            goto finalize;
+        }
+
+        finalize:
+        TextEditorStateChanged?.Invoke();
+    }
 	
-	    var inViewModel = inState.ViewModelGetOrDefault(
-	        viewModelKey);
-	
-	    if (inViewModel is null)
-	    {
-	    	TextEditorStateChanged?.Invoke();	
-			return;
-	    }
-	
-		var outViewModel = withFunc.Invoke(inViewModel);
-	    inState._viewModelMap[inViewModel.ViewModelKey] = outViewModel;
-	    
-	    TextEditorStateChanged?.Invoke();	
-		return;
-	}
-	
-	public void ReduceSetModelAndViewModelRangeAction(
+	public void SetModelAndViewModelRange(
 	    ITextEditorEditContext editContext,
 		Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
 		Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList)
 	{
-		/*
-		Object reference not set to an instance of an object.
-			at Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorState.Reducer.ReduceSetModelAndViewModelRangeAction(TextEditorState inState, SetModelAndViewModelRangeAction setModelAndViewModelRangeAction) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\States\TextEditorState.Reducer.cs:line 174
-			at Fluxor.DependencyInjection.Wrappers.ReducerWrapper2.Fluxor.IReducer<TState>.Reduce(TState state, Object action) in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\DependencyInjection\Wrappers\ReducerWrapper.cs:line 11 at Fluxor.Feature1.ReceiveDispatchNotificationFromStore(Object action)
-			at Fluxor.Store.DequeueActions() in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\Store.cs:line 290
-			at Fluxor.Store.ActionDispatched(Object sender, ActionDispatchedEventArgs e) in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\Store.cs:line 173
-			at Fluxor.Dispatcher.DequeueActions() in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\Dispatcher.cs:line 69
-			at Fluxor.Dispatcher.Dispatch(Object action) in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\Dispatcher.cs:line 46
-			at Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ScrollbarSection.VERTICAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\ScrollbarSection.razor.cs:line 194
-			at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)
-			at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)
-			
-		If this code throws an exception it can crash the main application if using text editor as a NuGet Package
-		so I will put a try-catch here.
-		
-		I'd as well like to figure out what the issue is but it isn't obvious and this is too risky of a thing to mess up.
-		
-	    Additional note: this was happening during the solution wide parse.
-	    It was just "random" while I was using the IDE during the solution wide parse, sometimes it happened sometimes it didn't.
-	    
-		-----------------------
-		
-		I think I get what is happening. For some reason a null is being added to the
-		modelModifierList.
-		
-		I added 'if (null) continue;' sort of code but I will keep the 'try' 'catch'.
-		*/
-	
-		var inState = TextEditorState;
-	
-		try
+		lock (_stateModificationLock)
 		{
+			var inState = TextEditorState;
+
 			// Models
 			if (modelModifierList is not null)
 			{
@@ -803,19 +790,19 @@ public partial class TextEditorService : ITextEditorService
 				{
 					if (kvpModelModifier.Value is null || !kvpModelModifier.Value.WasModified)
 						continue;
-					
+
 					// Enumeration was modified shouldn't occur here because only the reducer
 					// should be adding or removing, and the reducer is thread safe.
 					var exists = inState._modelMap.TryGetValue(
-		        		kvpModelModifier.Value.ResourceUri, out var inModel);
-		
-		            if (!exists)
-		                continue;
-		                
+						kvpModelModifier.Value.ResourceUri, out var inModel);
+
+					if (!exists)
+						continue;
+
 					inState._modelMap[kvpModelModifier.Value.ResourceUri] = kvpModelModifier.Value.ToModel();
 				}
 			}
-			
+
 			// ViewModels
 			if (viewModelModifierList is not null)
 			{
@@ -823,25 +810,23 @@ public partial class TextEditorService : ITextEditorService
 				{
 					if (kvpViewModelModifier.Value is null || !kvpViewModelModifier.Value.WasModified)
 						continue;
-						
+
 					// Enumeration was modified shouldn't occur here because only the reducer
 					// should be adding or removing, and the reducer is thread safe.
 					var exists = inState._viewModelMap.TryGetValue(
-		        		kvpViewModelModifier.Value.ViewModel.ViewModelKey, out var inViewModel);
-		        		
-		        	if (!exists)
-		                continue;
-		
-	                inState._viewModelMap[kvpViewModelModifier.Value.ViewModel.ViewModelKey] = kvpViewModelModifier.Value.ViewModel;
+						kvpViewModelModifier.Value.ViewModel.ViewModelKey, out var inViewModel);
+
+					if (!exists)
+						continue;
+
+					inState._viewModelMap[kvpViewModelModifier.Value.ViewModel.ViewModelKey] = kvpViewModelModifier.Value.ViewModel;
 				}
 			}
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
-	
-	    TextEditorStateChanged?.Invoke();	
-		return;
-	}
+
+            goto finalize;
+        }
+
+        finalize:
+        TextEditorStateChanged?.Invoke();
+    }
 }

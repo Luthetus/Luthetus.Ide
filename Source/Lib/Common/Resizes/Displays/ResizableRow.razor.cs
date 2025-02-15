@@ -49,7 +49,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-				AppDimensionService.ReduceNotifyIntraAppResizeAction();
+				AppDimensionService.NotifyIntraAppResize();
         }
         else
         {

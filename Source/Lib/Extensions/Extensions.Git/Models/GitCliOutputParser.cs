@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using System.Text;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
@@ -28,10 +26,8 @@ public class GitCliOutputParser
 	private string? _origin;
     private string? _branch;
     private List<string> _branchList = new();
-    private int _count;
     private int? _behindByCommitCount;
     private int? _aheadByCommitCount;
-    private StringBuilder? _logFileContentBuilder;
 	private GitRepo? _repo;
 
 	public List<GitFile> UntrackedGitFileList { get; } = new();
@@ -47,9 +43,9 @@ public class GitCliOutputParser
 
 		_gitBackgroundTaskApi.Git.ReduceSetStatusAction(
 			localRepo,
-			UntrackedGitFileList.ToImmutableList(),
-			StagedGitFileList.ToImmutableList(),
-			UnstagedGitFileList.ToImmutableList(),
+			UntrackedGitFileList,
+			StagedGitFileList,
+			UnstagedGitFileList,
 			_behindByCommitCount ?? 0,
 			_aheadByCommitCount ?? 0);
 	}

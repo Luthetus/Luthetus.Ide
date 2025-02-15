@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -26,7 +25,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
@@ -147,13 +146,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-        BackgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			BackgroundTaskFacts.ContinuousQueueKey,
-			"Tab.ManuallyPropagateOnContextMenu",
-			async () => await localHandleTabButtonOnContextMenu
-				.Invoke(new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync))
-                .ConfigureAwait(false));
+		CommonBackgroundTaskApi.Enqueue_Tab_ManuallyPropagateOnContextMenu(
+            localHandleTabButtonOnContextMenu,
+            new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync));
     }
 
 	private async Task FocusAsync()

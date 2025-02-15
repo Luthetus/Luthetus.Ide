@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
@@ -16,8 +14,6 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 
@@ -91,18 +87,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 				await InvokeAsync(StateHasChanged);
 			}
 
-			BackgroundTaskService.Enqueue(
-				Key<IBackgroundTask>.NewKey(),
-				BackgroundTaskFacts.ContinuousQueueKey,
-				"Submit NuGet Query",
-				async () =>
-				{
-					var localNugetResult = await NugetPackageManagerProvider
-						.QueryForNugetPackagesAsync(query)
-						.ConfigureAwait(false);
-
-					DotNetBackgroundTaskApi.NuGetPackageManagerService.ReduceSetMostRecentQueryResultAction(localNugetResult);
-				});
+			DotNetBackgroundTaskApi.Enqueue_SubmitNuGetQuery(query);
 		}
 		catch (Exception e)
 		{

@@ -41,24 +41,24 @@ public partial class InputFileTopNavBar : ComponentBase
     public string SearchQuery
     {
         get => InputFileState.SearchQuery;
-        set => InputFileService.ReduceSetSearchQueryAction(value);
+        set => InputFileService.SetSearchQuery(value);
     }
 
     private async Task HandleBackButtonOnClick()
     {
-        InputFileService.ReduceMoveBackwardsInHistoryAction();
+        InputFileService.MoveBackwardsInHistory();
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 
     private async Task HandleForwardButtonOnClick()
     {
-        InputFileService.ReduceMoveForwardsInHistoryAction();
+        InputFileService.MoveForwardsInHistory();
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 
     private async Task HandleUpwardButtonOnClick()
     {
-        InputFileService.ReduceOpenParentDirectoryAction(
+        InputFileService.OpenParentDirectory(
             IdeComponentRenderers,
             CommonComponentRenderers,
             FileSystemProvider,
@@ -71,7 +71,7 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task HandleRefreshButtonOnClick()
     {
-        InputFileService.ReduceRefreshCurrentSelectionAction(BackgroundTaskService, currentSelection: null);
+        InputFileService.RefreshCurrentSelection(BackgroundTaskService, currentSelection: null);
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 

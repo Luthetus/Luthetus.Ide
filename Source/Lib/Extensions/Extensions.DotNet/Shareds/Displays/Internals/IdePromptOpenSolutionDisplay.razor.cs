@@ -14,6 +14,6 @@ public partial class IdePromptOpenSolutionDisplay : ComponentBase
 
 	private void OpenSolutionOnClick()
 	{
-        DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(AbsolutePath);
+        DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(AbsolutePath);
 	}
 }

@@ -10,13 +10,13 @@ public interface IReflectiveService
 	
 	public ReflectiveModel GetReflectiveModel(Key<ReflectiveModel> reflectiveModelKey);
     
-    public void ReduceRegisterAction(
+    public void Register(
         ReflectiveModel entry,
         int providedInsertionIndex);
 
-    public void ReduceWithAction(
+    public void With(
         Key<ReflectiveModel> key,
         Func<ReflectiveModel, ReflectiveModel> withFunc);
 
-    public void ReduceDisposeAction(Key<ReflectiveModel> key);
+    public void Dispose(Key<ReflectiveModel> key);
 }

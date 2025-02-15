@@ -13,7 +13,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
@@ -106,15 +106,8 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         if (localTreeViewNoType.IsExpanded)
         {
-            BackgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                BackgroundTaskFacts.ContinuousQueueKey,
-        	    "TreeView.HandleExpansionChevronOnMouseDown",
-			    async () => 
-			    {
-				    await localTreeViewNoType.LoadChildListAsync().ConfigureAwait(false);
-                    TreeViewService.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
-			    });
+            CommonBackgroundTaskApi.Enqueue_TreeView_HandleExpansionChevronOnMouseDown(
+                localTreeViewNoType, TreeViewContainer);
         }
         else
         {
@@ -140,15 +133,11 @@ public partial class TreeViewNodeDisplay : ComponentBase
             .OnMouseDownAsync(treeViewCommandArgs)
             .ConfigureAwait(false);
 
-        BackgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            BackgroundTaskFacts.ContinuousQueueKey,
-    	    "TreeView.ManuallyPropagateOnContextMenu",
-		    async () => await HandleTreeViewOnContextMenu.Invoke(
-                    mouseEventArgs,
-                    treeViewContainer.Key,
-                    treeViewNoType)
-                .ConfigureAwait(false));
+        CommonBackgroundTaskApi.Enqueue_TreeView_ManuallyPropagateOnContextMenu(
+            HandleTreeViewOnContextMenu,
+            mouseEventArgs,
+            treeViewContainer.Key,
+            treeViewNoType);
     }
 
     private async Task HandleOnClick(MouseEventArgs? mouseEventArgs)

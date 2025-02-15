@@ -33,7 +33,6 @@ public partial class WatchWindowDisplay : ComponentBase
 
     private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-    private bool _disposedValue;
 
     protected override void OnInitialized()
     {

@@ -38,7 +38,7 @@ public partial class ContextBoundaryOverlay : ComponentBase
 
     private void DispatchSetInspectionTargetActionOnClick()
     {
-        ContextService.ReduceSetInspectedContextHeirarchyAction(
+        ContextService.SetInspectedContextHeirarchy(
             InspectableContext.ContextHeirarchy);
     }
 }

@@ -1,15 +1,10 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
-using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
@@ -26,18 +21,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
 
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();

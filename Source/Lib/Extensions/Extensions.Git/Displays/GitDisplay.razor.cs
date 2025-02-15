@@ -1,7 +1,5 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -25,8 +23,6 @@ public partial class GitDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -145,24 +141,6 @@ public partial class GitDisplay : ComponentBase, IDisposable
         return new MenuRecord(menuOptionsList);
     }
 
-    private async Task RestoreFocusToMenuButton()
-    {
-        try
-        {
-            if (_menuButtonElementReference is not null)
-            {
-                await _menuButtonElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
     private void ShowAddRepoDialog()
     {
         var dialogViewModel = new DialogViewModel(
@@ -189,7 +167,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
                 { nameof(IFileFormRendererType.CheckForTemplates), false },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         async (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
                             await PerformBranchNewEnqueue(localGitState, fileName))
                 },
@@ -198,7 +176,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task PerformBranchNewEnqueue(GitState localGitState, string fileName)
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.BranchNewEnqueue(localGitState.Repo, fileName);
+                GitBackgroundTaskApi.Git.Enqueue_BranchNew(localGitState.Repo, fileName);
 
 			return Task.CompletedTask;
         }
@@ -226,7 +204,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-            	GitBackgroundTaskApi.Git.PushToOriginWithTrackingEnqueue(localGitState.Repo);
+            	GitBackgroundTaskApi.Git.Enqueue_PushToOriginWithTracking(localGitState.Repo);
 
 			return Task.CompletedTask;
         }
@@ -242,7 +220,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.PullEnqueue(localGitState.Repo);
+                GitBackgroundTaskApi.Git.Enqueue_Pull(localGitState.Repo);
 
             return Task.CompletedTask;
         }
@@ -258,7 +236,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.FetchEnqueue(localGitState.Repo);
+                GitBackgroundTaskApi.Git.Enqueue_Fetch(localGitState.Repo);
 
             return Task.CompletedTask;
         }

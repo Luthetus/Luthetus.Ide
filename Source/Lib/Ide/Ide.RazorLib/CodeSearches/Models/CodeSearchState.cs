@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -10,7 +9,7 @@ public record struct CodeSearchState(
     string Query,
     string? StartingAbsolutePathForSearch,
     CodeSearchFilterKind CodeSearchFilterKind,
-    ImmutableList<string> ResultList,
+    List<string> ResultList,
     string PreviewFilePath,
     Key<TextEditorViewModel> PreviewViewModelKey)
 {
@@ -20,7 +19,7 @@ public record struct CodeSearchState(
         string.Empty,
         null,
         CodeSearchFilterKind.None,
-        ImmutableList<string>.Empty,
+        new(),
         string.Empty,
         Key<TextEditorViewModel>.Empty)
     {

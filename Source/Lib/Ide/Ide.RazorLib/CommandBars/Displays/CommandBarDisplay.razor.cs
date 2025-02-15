@@ -18,7 +18,6 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	
 	public const string INPUT_HTML_ELEMENT_ID = "luth_ide_command-bar-input-id";
 	
-	private bool _previousShouldDisplay = false;
 	private LuthetusCommonJavaScriptInteropApi _jsRuntimeCommonApi;
 	
 	private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi => _jsRuntimeCommonApi
@@ -45,7 +44,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Enter")
-			WidgetService.ReduceSetWidgetAction(null);
+			WidgetService.SetWidget(null);
 	}
 	
 	private async void OnCommandBarStateChanged()

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -86,7 +85,7 @@ public partial class GitDiffDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
             
-        GitBackgroundTaskApi.Git.ShowFileEnqueue(
+        GitBackgroundTaskApi.Git.Enqueue_ShowFile(
             localGitState.Repo,
             localGitFile.RelativePathString,
             (gitCliOutputParser, logFileContent) =>
@@ -160,19 +159,19 @@ public partial class GitDiffDisplay : ComponentBase
                 false,
                 category);
 	
-	        var firstPresentationLayerKeys = new[]
+	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 	        {
 	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 	            FindOverlayPresentationFacts.PresentationKey,
 	            DiffPresentationFacts.InPresentationKey,
-	        }.ToImmutableArray();
+	        };
 	            
 	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
 		
             viewModel = viewModel with
             {
                 GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+                FirstPresentationLayerKeysList = firstPresentationLayerKeys
             };
             
             TextEditorService.ViewModelApi.Register(viewModel);
@@ -227,19 +226,19 @@ public partial class GitDiffDisplay : ComponentBase
                 false,
                 category);
 	
-	        var firstPresentationLayerKeys = new[]
+	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 	        {
 	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 	            FindOverlayPresentationFacts.PresentationKey,
 	            DiffPresentationFacts.OutPresentationKey,
-	        }.ToImmutableArray();
+	        };
 	            
 	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
 		
             viewModel = viewModel with
             {
                 GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+                FirstPresentationLayerKeysList = firstPresentationLayerKeys
             };
             
             TextEditorService.ViewModelApi.Register(viewModel);
@@ -305,7 +304,7 @@ public partial class GitDiffDisplay : ComponentBase
     	if (!(await TryCreateEditorOut(originalResourceUri, localGitFile.AbsolutePath)))
     		return;
     		
-    	GitBackgroundTaskApi.Git.DiffFileEnqueue(
+    	GitBackgroundTaskApi.Git.Enqueue_DiffFile(
             localGitState.Repo,
             localGitFile.RelativePathString,
             (gitCliOutputParser, logFileContent, plusMarkedLineIndexList) =>
@@ -366,7 +365,7 @@ public partial class GitDiffDisplay : ComponentBase
 			            modelModifier.CompletePendingCalculatePresentationModel(
 			                DiffPresentationFacts.OutPresentationKey,
 			                DiffPresentationFacts.EmptyOutPresentationModel,
-			                outResultTextSpanList.ToImmutableArray());
+			                outResultTextSpanList);
 			            Console.WriteLine("modelModifier.CompletePendingCalculatePresentationModel");
             			
             			return ValueTask.CompletedTask;

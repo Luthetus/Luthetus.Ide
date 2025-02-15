@@ -8,7 +8,7 @@ public interface ITerminalService
 
 	public TerminalState GetTerminalState();
 
-    public void ReduceRegisterAction(ITerminal terminal);
-    public void ReduceStateHasChangedAction();
-    public void ReduceDisposeAction(Key<ITerminal> terminalKey);
+    public void Register(ITerminal terminal);
+    public void StateHasChanged();
+    public void Dispose(Key<ITerminal> terminalKey);
 }

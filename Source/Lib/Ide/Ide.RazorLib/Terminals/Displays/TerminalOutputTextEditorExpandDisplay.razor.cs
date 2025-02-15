@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -42,7 +41,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	private int _indexHistory;
 	
 	private ITerminal? _previousTerminal = null;
-	private ImmutableList<TerminalCommandRequest>? _terminalCommandRequestHistory;
+	private List<TerminalCommandRequest>? _terminalCommandRequestHistory;
 	
 	private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -112,7 +111,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	
 	private TerminalCommandRequest? GetTerminalCommandRequestAtIndexHistory(
 		int indexLocal,
-		ImmutableList<TerminalCommandRequest> historyLocal)
+		List<TerminalCommandRequest> historyLocal)
 	{
 		if (indexLocal < historyLocal.Count)
 			return historyLocal[indexLocal];

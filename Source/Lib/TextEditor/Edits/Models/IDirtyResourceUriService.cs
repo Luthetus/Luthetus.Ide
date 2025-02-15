@@ -8,6 +8,6 @@ public interface IDirtyResourceUriService
 	
 	public DirtyResourceUriState GetDirtyResourceUriState();
 
-    public void ReduceAddDirtyResourceUriAction(ResourceUri resourceUri);
-    public void ReduceRemoveDirtyResourceUriAction(ResourceUri resourceUri);
+    public void AddDirtyResourceUri(ResourceUri resourceUri);
+    public void RemoveDirtyResourceUri(ResourceUri resourceUri);
 }

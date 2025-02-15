@@ -8,13 +8,13 @@ public interface IIdeHeaderService
 	
 	public IdeHeaderState GetIdeHeaderState();
 
-	public void ReduceSetMenuFileAction(MenuRecord menu);
-	public void ReduceSetMenuToolsAction(MenuRecord menu);
-	public void ReduceSetMenuViewAction(MenuRecord menu);
-	public void ReduceSetMenuRunAction(MenuRecord menu);
+	public void SetMenuFile(MenuRecord menu);
+	public void SetMenuTools(MenuRecord menu);
+	public void SetMenuView(MenuRecord menu);
+	public void SetMenuRun(MenuRecord menu);
 	
-	public void ReduceModifyMenuFileAction(Func<MenuRecord, MenuRecord> menuFunc);
-	public void ReduceModifyMenuToolsAction(Func<MenuRecord, MenuRecord> menuFunc);
-	public void ReduceModifyMenuViewAction(Func<MenuRecord, MenuRecord> menuFunc);
-	public void ReduceModifyMenuRunAction(Func<MenuRecord, MenuRecord> menuFunc);
+	public void ModifyMenuFile(Func<MenuRecord, MenuRecord> menuFunc);
+	public void ModifyMenuTools(Func<MenuRecord, MenuRecord> menuFunc);
+	public void ModifyMenuView(Func<MenuRecord, MenuRecord> menuFunc);
+	public void ModifyMenuRun(Func<MenuRecord, MenuRecord> menuFunc);
 }

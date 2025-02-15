@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;
@@ -33,15 +32,15 @@ public partial class TreeViewGitFileDisplay : ComponentBase, ITreeViewGitFileRen
                 }
 
                 var key = TreeViewGitFile.Item.AbsolutePath.Value;
-                ImmutableList<GitFile> outSelectedFileList;
+				var outSelectedFileList = new List<GitFile>(inState.SelectedFileList);
 
                 var indexOf = inState.SelectedFileList.FindIndex(x => x.AbsolutePath.Value == key);
 
                 // Toggle
                 if (indexOf != -1)
-                    outSelectedFileList = inState.SelectedFileList.RemoveAt(indexOf);
+                    outSelectedFileList.RemoveAt(indexOf);
                 else
-                    outSelectedFileList = inState.SelectedFileList.Add(TreeViewGitFile.Item);
+                    outSelectedFileList.Add(TreeViewGitFile.Item);
 
                 return inState with
                 {

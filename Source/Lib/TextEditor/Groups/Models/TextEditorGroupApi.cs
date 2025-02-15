@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -10,7 +9,9 @@ namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 
 public class TextEditorGroupApi : ITextEditorGroupApi
 {
-    private readonly ITextEditorService _textEditorService;
+	private readonly object _stateModificationLock = new();
+
+	private readonly ITextEditorService _textEditorService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
     private readonly IJSRuntime _jsRuntime;
@@ -29,14 +30,14 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 
     public void SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        ReduceSetActiveViewModelOfGroupAction(
+        SetActiveViewModelOfGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
 
     public void RemoveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        ReduceRemoveViewModelFromGroupAction(
+        RemoveViewModelFromGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
@@ -48,19 +49,14 @@ public class TextEditorGroupApi : ITextEditorGroupApi
         var textEditorGroup = new TextEditorGroup(
             textEditorGroupKey,
             Key<TextEditorViewModel>.Empty,
-            ImmutableList<Key<TextEditorViewModel>>.Empty,
+            new List<Key<TextEditorViewModel>>(),
             category.Value,
             _textEditorService,
             _panelService,
             _dialogService,
             _jsRuntime);
 
-        ReduceRegisterAction(textEditorGroup);
-    }
-
-    public void Dispose(Key<TextEditorGroup> textEditorGroupKey)
-    {
-        ReduceDisposeAction(textEditorGroupKey);
+        Register(textEditorGroup);
     }
 
     public TextEditorGroup? GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
@@ -71,12 +67,12 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 
     public void AddViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        ReduceAddViewModelToGroupAction(
+        AddViewModelToGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
 
-    public ImmutableList<TextEditorGroup> GetGroups()
+    public List<TextEditorGroup> GetGroups()
     {
         return _textEditorService.GroupApi.GetTextEditorGroupState().GroupList;
     }
@@ -88,216 +84,238 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 	
 	public TextEditorGroupState GetTextEditorGroupState() => _textEditorGroupState;
         
-    public void ReduceRegisterAction(TextEditorGroup group)
+    public void Register(TextEditorGroup group)
     {
-    	var inState = GetTextEditorGroupState();
-    
-        var inGroup = inState.GroupList.FirstOrDefault(
-            x => x.GroupKey == group.GroupKey);
-
-        if (inGroup is not null)
+        lock (_stateModificationLock)
         {
-            TextEditorGroupStateChanged?.Invoke();
-            return;
+            var inState = GetTextEditorGroupState();
+
+            var inGroup = inState.GroupList.FirstOrDefault(
+                x => x.GroupKey == group.GroupKey);
+
+            if (inGroup is not null)
+				goto finalize;
+
+			var outGroupList = new List<TextEditorGroup>(inState.GroupList);
+            outGroupList.Add(group);
+
+            _textEditorGroupState = new TextEditorGroupState
+            {
+                GroupList = outGroupList
+            };
+
+            goto finalize;
         }
 
-        var outGroupList = inState.GroupList.Add(group);
+        finalize:
+		TextEditorGroupStateChanged?.Invoke();
+	}
 
-        _textEditorGroupState = new TextEditorGroupState
-        {
-            GroupList = outGroupList
-        };
-        
-        TextEditorGroupStateChanged?.Invoke();
-        return;
-    }
-
-    public void ReduceAddViewModelToGroupAction(
+    public void AddViewModelToGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
-    	var inState = GetTextEditorGroupState();
-    
-        var inGroup = inState.GroupList.FirstOrDefault(
-            x => x.GroupKey == groupKey);
-
-        if (inGroup is null)
+        lock (_stateModificationLock)
         {
-            TextEditorGroupStateChanged?.Invoke();
-            PostScroll(groupKey, viewModelKey);
-        	return;
-        }
+            var inState = GetTextEditorGroupState();
 
-        if (inGroup.ViewModelKeyList.Contains(viewModelKey))
+            var inGroupIndex = inState.GroupList.FindIndex(
+                x => x.GroupKey == groupKey);
+
+            if (inGroupIndex == -1)
+				goto finalize;
+
+			var inGroup = inState.GroupList[inGroupIndex];
+
+            if (inGroup is null)
+				goto finalize;
+
+			if (inGroup.ViewModelKeyList.Contains(viewModelKey))
+				goto finalize;
+
+			var outViewModelKeyList = new List<Key<TextEditorViewModel>>(inGroup.ViewModelKeyList);
+            outViewModelKeyList.Add(viewModelKey);
+
+            var outGroup = inGroup with
+            {
+                ViewModelKeyList = outViewModelKeyList
+            };
+
+            if (outGroup.ViewModelKeyList.Count == 1)
+            {
+                outGroup = outGroup with
+                {
+                    ActiveViewModelKey = viewModelKey
+                };
+            }
+
+            var outGroupList = new List<TextEditorGroup>(inState.GroupList);
+            outGroupList[inGroupIndex] = outGroup;
+
+            _textEditorGroupState = new TextEditorGroupState
+            {
+                GroupList = outGroupList
+            };
+
+			goto finalize;
+		}
+
+		finalize:
+		TextEditorGroupStateChanged?.Invoke();
+		PostScroll(groupKey, viewModelKey);
+	}
+
+    public void RemoveViewModelFromGroup(
+        Key<TextEditorGroup> groupKey,
+        Key<TextEditorViewModel> viewModelKey)
+    {
+        lock (_stateModificationLock)
         {
-            TextEditorGroupStateChanged?.Invoke();
-            PostScroll(groupKey, viewModelKey);
-        	return;
-        }
+            var inState = GetTextEditorGroupState();
 
-        var outViewModelKeyList = inGroup.ViewModelKeyList.Add(viewModelKey);
+            var inGroupIndex = inState.GroupList.FindIndex(
+                x => x.GroupKey == groupKey);
 
-        var outGroup = inGroup with
+            if (inGroupIndex == -1)
+				goto finalize;
+
+			var inGroup = inState.GroupList[inGroupIndex];
+
+            if (inGroup is null)
+				goto finalize;
+
+			var indexOfViewModelKeyToRemove = inGroup.ViewModelKeyList.FindIndex(
+                x => x == viewModelKey);
+
+            if (indexOfViewModelKeyToRemove == -1)
+				goto finalize;
+
+			var viewModelKeyToRemove = inGroup.ViewModelKeyList[indexOfViewModelKeyToRemove];
+
+            var nextViewModelKeyList = new List<Key<TextEditorViewModel>>(inGroup.ViewModelKeyList);
+            nextViewModelKeyList.RemoveAt(indexOfViewModelKeyToRemove);
+
+            Key<TextEditorViewModel> nextActiveTextEditorModelKey;
+
+            if (inGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty &&
+                inGroup.ActiveViewModelKey != viewModelKeyToRemove)
+            {
+                // Because the active tab was not removed, do not bother setting a different
+                // active tab.
+                nextActiveTextEditorModelKey = inGroup.ActiveViewModelKey;
+            }
+            else
+            {
+                // The active tab was removed, therefore a new active tab must be chosen.
+
+                // This variable is done for renaming
+                var activeViewModelKeyIndex = indexOfViewModelKeyToRemove;
+
+                // If last item in list
+                if (activeViewModelKeyIndex >= inGroup.ViewModelKeyList.Count - 1)
+                {
+                    activeViewModelKeyIndex--;
+                }
+                else
+                {
+                    // ++ operation because this calculation is using the immutable list where
+                    // the view model was not removed.
+                    activeViewModelKeyIndex++;
+                }
+
+                // If removing the active will result in empty list set the active as an Empty TextEditorViewModelKey
+                if (inGroup.ViewModelKeyList.Count - 1 == 0)
+                    nextActiveTextEditorModelKey = Key<TextEditorViewModel>.Empty;
+                else
+                    nextActiveTextEditorModelKey = inGroup.ViewModelKeyList[activeViewModelKeyIndex];
+            }
+
+            var outGroupList = new List<TextEditorGroup>(inState.GroupList);
+
+            outGroupList[inGroupIndex] = inGroup with
+            {
+                ViewModelKeyList = nextViewModelKeyList,
+                ActiveViewModelKey = nextActiveTextEditorModelKey
+            };
+
+            _textEditorGroupState = new TextEditorGroupState
+            {
+                GroupList = outGroupList
+            };
+
+            goto finalize;
+		}
+
+		finalize:
+		TextEditorGroupStateChanged?.Invoke();
+		PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
+	}
+
+    public void SetActiveViewModelOfGroup(
+        Key<TextEditorGroup> groupKey,
+        Key<TextEditorViewModel> viewModelKey)
+    {
+        lock (_stateModificationLock)
         {
-            ViewModelKeyList = outViewModelKeyList
-        };
+            var inState = GetTextEditorGroupState();
 
-        if (outGroup.ViewModelKeyList.Count == 1)
-        {
-            outGroup = outGroup with
+            var inGroupIndex = inState.GroupList.FindIndex(
+                x => x.GroupKey == groupKey);
+
+            if (inGroupIndex == -1)
+				goto finalize;
+
+			var inGroup = inState.GroupList[inGroupIndex];
+
+            if (inGroup is null)
+				goto finalize;
+
+			var outGroupList = new List<TextEditorGroup>(inState.GroupList);
+
+            outGroupList[inGroupIndex] = inGroup with
             {
                 ActiveViewModelKey = viewModelKey
             };
-        }
 
-        var outGroupList = inState.GroupList.Replace(inGroup, outGroup);
-
-        _textEditorGroupState = new TextEditorGroupState
-        {
-            GroupList = outGroupList
-        };
-        
-        TextEditorGroupStateChanged?.Invoke();
-        PostScroll(groupKey, viewModelKey);
-        return;
-    }
-
-    public void ReduceRemoveViewModelFromGroupAction(
-        Key<TextEditorGroup> groupKey,
-        Key<TextEditorViewModel> viewModelKey)
-    {
-    	var inState = GetTextEditorGroupState();
-    
-        var inGroup = inState.GroupList.FirstOrDefault(
-            x => x.GroupKey == groupKey);
-
-        if (inGroup is null)
-        {
-            TextEditorGroupStateChanged?.Invoke();
-			PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
-        	return;
-        }
-
-        var indexOfViewModelKeyToRemove = inGroup.ViewModelKeyList.FindIndex(
-            x => x == viewModelKey);
-
-        if (indexOfViewModelKeyToRemove == -1)
-        {
-            TextEditorGroupStateChanged?.Invoke();
-			PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
-        	return;
-        }
-
-		var viewModelKeyToRemove = inGroup.ViewModelKeyList[indexOfViewModelKeyToRemove];
-
-        var nextViewModelKeyList = inGroup.ViewModelKeyList.RemoveAt(
-            indexOfViewModelKeyToRemove);
-
-		Key<TextEditorViewModel> nextActiveTextEditorModelKey;
-
-		if (inGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty &&
-			inGroup.ActiveViewModelKey != viewModelKeyToRemove)
-		{
-			// Because the active tab was not removed, do not bother setting a different
-			// active tab.
-			nextActiveTextEditorModelKey = inGroup.ActiveViewModelKey;
-		}
-		else
-		{
-			// The active tab was removed, therefore a new active tab must be chosen.
-
-			// This variable is done for renaming
-            var activeViewModelKeyIndex = indexOfViewModelKeyToRemove;
-
-            // If last item in list
-            if (activeViewModelKeyIndex >= inGroup.ViewModelKeyList.Count - 1)
+            _textEditorGroupState = new TextEditorGroupState
             {
-                activeViewModelKeyIndex--;
-            }
-            else
-            {
-                // ++ operation because this calculation is using the immutable list where
-				// the view model was not removed.
-                activeViewModelKeyIndex++;
-            }
+                GroupList = outGroupList
+            };
 
-            // If removing the active will result in empty list set the active as an Empty TextEditorViewModelKey
-            if (inGroup.ViewModelKeyList.Count - 1 == 0)
-                nextActiveTextEditorModelKey = Key<TextEditorViewModel>.Empty;
-            else
-                nextActiveTextEditorModelKey = inGroup.ViewModelKeyList[activeViewModelKeyIndex];
+			goto finalize;
 		}
 
-        var outGroupList = inState.GroupList.Replace(inGroup, inGroup with
-        {
-            ViewModelKeyList = nextViewModelKeyList,
-            ActiveViewModelKey = nextActiveTextEditorModelKey
-        });
+		finalize:
+		PostScroll(groupKey, viewModelKey);
+		TextEditorGroupStateChanged?.Invoke();
+	}
 
-        _textEditorGroupState = new TextEditorGroupState
-        {
-            GroupList = outGroupList
-        };
-        
-        TextEditorGroupStateChanged?.Invoke();
-		PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
-        return;
-    }
-
-    public void ReduceSetActiveViewModelOfGroupAction(
-        Key<TextEditorGroup> groupKey,
-        Key<TextEditorViewModel> viewModelKey)
+    public void Dispose(Key<TextEditorGroup> groupKey)
     {
-    	var inState = GetTextEditorGroupState();
-    
-        var inGroup = inState.GroupList.FirstOrDefault(
-            x => x.GroupKey == groupKey);
-
-        if (inGroup is null)
+        lock (_stateModificationLock)
         {
-            TextEditorGroupStateChanged?.Invoke();
-            PostScroll(groupKey, viewModelKey);
-        	return;
-        }
+            var inState = GetTextEditorGroupState();
 
-        var outGroupList = inState.GroupList.Replace(inGroup, inGroup with
-        {
-            ActiveViewModelKey = viewModelKey
-        });
+            var inGroup = inState.GroupList.FirstOrDefault(
+                x => x.GroupKey == groupKey);
 
-        _textEditorGroupState = new TextEditorGroupState
-        {
-            GroupList = outGroupList
-        };
-        
-        TextEditorGroupStateChanged?.Invoke();
-        PostScroll(groupKey, viewModelKey);
-        return;
-    }
+            if (inGroup is null)
+				goto finalize;
 
-    public void ReduceDisposeAction(Key<TextEditorGroup> groupKey)
-    {
-    	var inState = GetTextEditorGroupState();
-    
-        var inGroup = inState.GroupList.FirstOrDefault(
-            x => x.GroupKey == groupKey);
+			var outGroupList = new List<TextEditorGroup>(inState.GroupList);
+            outGroupList.Remove(inGroup);
 
-        if (inGroup is null)
-        {
-            TextEditorGroupStateChanged?.Invoke();
-        	return;
-        }
+            _textEditorGroupState = new TextEditorGroupState
+            {
+                GroupList = outGroupList
+            };
 
-        var outGroupList = inState.GroupList.Remove(inGroup);
+			goto finalize;
+		}
 
-        _textEditorGroupState = new TextEditorGroupState
-        {
-            GroupList = outGroupList
-        };
-        
-        TextEditorGroupStateChanged?.Invoke();
-        return;
-    }
+		finalize:
+		TextEditorGroupStateChanged?.Invoke();
+	}
 
 	private void PostScroll(
 		Key<TextEditorGroup> groupKey,

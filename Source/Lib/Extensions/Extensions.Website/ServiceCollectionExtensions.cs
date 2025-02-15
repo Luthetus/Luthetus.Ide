@@ -13,6 +13,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddLuthetusIdeRazorLibServices(hostingInformation);
         services.AddLuthetusConfigServices(hostingInformation);
+        services.AddScoped<WebsiteInitializationBackgroundTaskGroup>();
         
         return services;
     }

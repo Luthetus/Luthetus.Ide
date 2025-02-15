@@ -4,92 +4,107 @@ namespace Luthetus.Ide.RazorLib.StartupControls.Models;
 
 public class StartupControlService : IStartupControlService
 {
-	private StartupControlState _startupControlState = new();
+    private readonly object _stateModificationLock = new();
+
+    private StartupControlState _startupControlState = new();
 	
 	public event Action? StartupControlStateChanged;
 	
 	public StartupControlState GetStartupControlState() => _startupControlState;
 
-	public void ReduceRegisterStartupControlAction(IStartupControlModel startupControl)
+	public void RegisterStartupControl(IStartupControlModel startupControl)
 	{
-		var inState = GetStartupControlState();
-	
-		var indexOfStartupControl = inState.StartupControlList.FindIndex(
-			x => x.Key == startupControl.Key);
-			
-		if (indexOfStartupControl != -1)
+		lock (_stateModificationLock)
 		{
-			StartupControlStateChanged?.Invoke();
-			return;
-		}
-	
-		_startupControlState = inState with
-		{
-			StartupControlList = inState.StartupControlList.Add(startupControl)
-		};
-		
-		StartupControlStateChanged?.Invoke();
-		return;
-	}
-	
-	public void ReduceDisposeStartupControlAction(Key<IStartupControlModel> startupControlKey)
-	{
-		var inState = GetStartupControlState();
-	
-		var indexOfStartupControl = inState.StartupControlList.FindIndex(
-			x => x.Key == startupControlKey);
-			
-		if (indexOfStartupControl == -1)
-		{
-			StartupControlStateChanged?.Invoke();
-			return;
-		}
-		
-		var outActiveStartupControlKey = inState.ActiveStartupControlKey;
-		if (inState.ActiveStartupControlKey == startupControlKey)
-			outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
-					
-		_startupControlState = inState with
-		{
-			StartupControlList = inState.StartupControlList.RemoveAt(indexOfStartupControl),
-			ActiveStartupControlKey = outActiveStartupControlKey
-		};
-		
-		StartupControlStateChanged?.Invoke();
-		return;
-	}
-	
-	public void ReduceSetActiveStartupControlKeyAction(Key<IStartupControlModel> startupControlKey)
-	{
-		var inState = GetStartupControlState();
-	
-		var startupControl = inState.StartupControlList.FirstOrDefault(
-			x => x.Key == startupControlKey);
-	
-		if (startupControlKey == Key<IStartupControlModel>.Empty ||
-		    startupControl is null)
-		{
+			var inState = GetStartupControlState();
+
+			var indexOfStartupControl = inState.StartupControlList.FindIndex(
+				x => x.Key == startupControl.Key);
+
+			if (indexOfStartupControl != -1)
+				goto finalize;
+
+			var outStartupControlList = new List<IStartupControlModel>(inState.StartupControlList);
+			outStartupControlList.Add(startupControl);
+
 			_startupControlState = inState with
 			{
-				ActiveStartupControlKey = Key<IStartupControlModel>.Empty
+				StartupControlList = outStartupControlList
 			};
-			
-			StartupControlStateChanged?.Invoke();
-			return;
-		}
+
+            goto finalize;
+        }
+
+		finalize:
+        StartupControlStateChanged?.Invoke();
+    }
 	
-		_startupControlState = inState with
+	public void DisposeStartupControl(Key<IStartupControlModel> startupControlKey)
+	{
+		lock (_stateModificationLock)
 		{
-			ActiveStartupControlKey = startupControl.Key
-		};
-		
-		StartupControlStateChanged?.Invoke();
-		return;
-	}
+			var inState = GetStartupControlState();
+
+			var indexOfStartupControl = inState.StartupControlList.FindIndex(
+				x => x.Key == startupControlKey);
+
+			if (indexOfStartupControl == -1)
+                goto finalize;
+
+            var outActiveStartupControlKey = inState.ActiveStartupControlKey;
+			if (inState.ActiveStartupControlKey == startupControlKey)
+				outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
+
+			var outStartupControlList = new List<IStartupControlModel>(inState.StartupControlList);
+			outStartupControlList.RemoveAt(indexOfStartupControl);
+
+			_startupControlState = inState with
+			{
+				StartupControlList = outStartupControlList,
+				ActiveStartupControlKey = outActiveStartupControlKey
+			};
+
+            goto finalize;
+        }
+
+        finalize:
+        StartupControlStateChanged?.Invoke();
+    }
 	
-	public void ReduceStateChangedAction()
+	public void SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey)
+	{
+		lock (_stateModificationLock)
+		{
+			var inState = GetStartupControlState();
+
+			var startupControl = inState.StartupControlList.FirstOrDefault(
+				x => x.Key == startupControlKey);
+
+			if (startupControlKey == Key<IStartupControlModel>.Empty ||
+				startupControl is null)
+			{
+				_startupControlState = inState with
+				{
+					ActiveStartupControlKey = Key<IStartupControlModel>.Empty
+				};
+
+                goto finalize;
+            }
+
+			_startupControlState = inState with
+			{
+				ActiveStartupControlKey = startupControl.Key
+			};
+
+            goto finalize;
+        }
+
+        finalize:
+        StartupControlStateChanged?.Invoke();
+    }
+	
+	public void StateChanged()
 	{
 		StartupControlStateChanged?.Invoke();
-		return;
 	}
 }

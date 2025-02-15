@@ -42,7 +42,7 @@ public record ReflectiveModel(
             }
         }
 
-        ReflectiveService.ReduceWithAction(
+        ReflectiveService.With(
             Key,
             inState => inState with { });
 
@@ -143,7 +143,7 @@ public record ReflectiveModel(
             }
         }
 
-        ReflectiveService.ReduceWithAction(
+        ReflectiveService.With(
             refDisplayState.Key, inDisplayState => inDisplayState with
             {
                 ChosenTypeGuid = refDisplayState.ChosenTypeGuid,

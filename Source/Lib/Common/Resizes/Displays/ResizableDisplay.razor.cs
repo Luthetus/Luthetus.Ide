@@ -53,7 +53,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-				AppDimensionService.ReduceNotifyIntraAppResizeAction();
+				AppDimensionService.NotifyIntraAppResize();
         }
         else
         {

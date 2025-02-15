@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.CompilerServices.Razor.Facts;
 
 public static class RazorKeywords
@@ -13,7 +11,7 @@ public static class RazorKeywords
     public const string SECTION_KEYWORD = "section";
     public const string HELPER_KEYWORD = "helper";
 
-    public static readonly ImmutableArray<string> ALL = new[]
+    public static readonly List<string> ALL = new()
     {
         PAGE_KEYWORD,
         NAMESPACE_KEYWORD,
@@ -23,5 +21,5 @@ public static class RazorKeywords
         MODEL_KEYWORD,
         SECTION_KEYWORD,
         HELPER_KEYWORD,
-    }.ToImmutableArray();
+    };
 }

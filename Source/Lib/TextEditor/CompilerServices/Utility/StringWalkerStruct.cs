@@ -161,7 +161,7 @@ public struct StringWalkerStruct
         return PeekRange(0, substring.Length) == substring;
     }
 
-    public bool PeekForSubstringRange(ImmutableArray<string> substringsList, out string? matchedOn)
+    public bool PeekForSubstringRange(List<string> substringsList, out string? matchedOn)
     {
         foreach (var substring in substringsList)
         {
@@ -263,9 +263,9 @@ public struct StringWalkerStruct
     /// This method will return immediately upon encountering whitespace.
     /// Returns a text span with its <see cref="TextEditorTextSpan.StartingIndexInclusive"/> equal to '-1' if no word was found.
     /// </summary>
-    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(ImmutableArray<char>? additionalCharactersToBreakOnList = null)
+    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(char[]? additionalCharactersToBreakOnList = null)
     {
-        additionalCharactersToBreakOnList ??= ImmutableArray<char>.Empty;
+        additionalCharactersToBreakOnList ??= Array.Empty<char>();
 
         // The wordBuilder is appended to everytime a character is consumed.
         var wordBuilder = new StringBuilder();
@@ -276,7 +276,7 @@ public struct StringWalkerStruct
         while (!IsEof)
         {
             if (WhitespaceFacts.ALL_LIST.Contains(CurrentCharacter) ||
-                additionalCharactersToBreakOnList.Value.Contains(CurrentCharacter))
+                additionalCharactersToBreakOnList.Contains(CurrentCharacter))
             {
                 break;
             }

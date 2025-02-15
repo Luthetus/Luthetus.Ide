@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -37,9 +36,9 @@ public class TerminalOutputFormatterAll : ITerminalOutputFormatter
 	{
 		return new TerminalOutputFormattedTextEditor(
 			string.Empty,
-			ImmutableList<TerminalCommandParsed>.Empty,
-			ImmutableList<TextEditorTextSpan>.Empty,
-			ImmutableList<Symbol>.Empty);
+			new List<TerminalCommandParsed>(),
+			new List<TextEditorTextSpan>(),
+			new List<Symbol>());
 	}
 	
 	public void Dispose()

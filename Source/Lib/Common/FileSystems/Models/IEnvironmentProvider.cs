@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public partial interface IEnvironmentProvider
@@ -69,8 +67,8 @@ public partial interface IEnvironmentProvider
     /// <br/><br/>
     /// Even this though I wonder, might one want to open a solution 'read-only'?
     /// </summary>
-    public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; }
-    public ImmutableHashSet<SimplePath> ProtectedPathList { get; }
+    public HashSet<SimplePath> DeletionPermittedPathList { get; }
+    public HashSet<SimplePath> ProtectedPathList { get; }
 
     public bool IsDirectorySeparator(char input);
     public string GetRandomFileName();

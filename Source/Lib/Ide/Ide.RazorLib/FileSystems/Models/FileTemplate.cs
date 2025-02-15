@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Luthetus.Ide.RazorLib.FileSystems.Models;
+﻿namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
 public class FileTemplate : IFileTemplate
 {
@@ -9,7 +7,7 @@ public class FileTemplate : IFileTemplate
         string codeName,
         FileTemplateKind fileTemplateKind,
         Func<string, bool> isExactTemplate,
-        Func<string, ImmutableArray<IFileTemplate>> relatedFileTemplatesFunc,
+        Func<string, List<IFileTemplate>> relatedFileTemplatesFunc,
         bool initialCheckedStateWhenIsRelatedFile,
         Func<FileTemplateParameter, FileTemplateResult> constructFileContents)
     {
@@ -27,7 +25,7 @@ public class FileTemplate : IFileTemplate
     public string CodeName { get; }
     public FileTemplateKind FileTemplateKind { get; }
     public Func<string, bool> IsExactTemplate { get; }
-    public Func<string, ImmutableArray<IFileTemplate>> RelatedFileTemplatesFunc { get; }
+    public Func<string, List<IFileTemplate>> RelatedFileTemplatesFunc { get; }
     public bool InitialCheckedStateWhenIsRelatedFile { get; }
     public Func<FileTemplateParameter, FileTemplateResult> ConstructFileContents { get; }
 }

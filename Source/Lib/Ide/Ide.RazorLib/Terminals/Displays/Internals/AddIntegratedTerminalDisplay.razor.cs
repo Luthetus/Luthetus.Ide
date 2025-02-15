@@ -106,7 +106,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		terminalIntegrated.Start();
 		
-		TerminalService.ReduceRegisterAction(terminalIntegrated);
+		TerminalService.Register(terminalIntegrated);
 			
 		DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}

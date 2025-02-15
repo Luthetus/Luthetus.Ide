@@ -29,11 +29,11 @@ public record PanelGroup(
     	return _emptyTabList;
     }
 
-    /// <summary>
-    /// TODO: Make this property immutable. Until then in a hack needs to be done where this gets set...
+	/// <summary>
+	/// TODO: Make this property immutable. Until then in a hack needs to be done where this gets set...
 	///       ...for Luthetus.Ide this is done in LuthetusIdeInitializer.razor.cs (2024-04-08)
-    /// </summary>
-    public IPanelService PanelService { get; set; } = null!;
+	/// </summary>
+	public IPanelService PanelService { get; set; } = null!;
 
     public bool GetIsActive(ITab tab)
 	{
@@ -49,9 +49,9 @@ public record PanelGroup(
 			return Task.CompletedTask;
 
 		if (GetIsActive(tab))
-			PanelService.ReduceSetActivePanelTabAction(Key, Key<Panel>.Empty);
+			PanelService.SetActivePanelTab(Key, Key<Panel>.Empty);
 		else
-			PanelService.ReduceSetActivePanelTabAction(Key, panelTab.Key);
+			PanelService.SetActivePanelTab(Key, panelTab.Key);
 		
 		return Task.CompletedTask;
 	}
@@ -66,7 +66,7 @@ public record PanelGroup(
 		if (tab is not IPanelTab panelTab)
 			return Task.CompletedTask;
 
-		PanelService.ReduceDisposePanelTabAction(Key, panelTab.Key);
+		PanelService.DisposePanelTab(Key, panelTab.Key);
 		return Task.CompletedTask;
 	}
 

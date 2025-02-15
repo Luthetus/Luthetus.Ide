@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.CompilerServices.Razor.Facts;
 
 public static class CSharpRazorKeywords
@@ -19,21 +17,21 @@ public static class CSharpRazorKeywords
     public const string USING_KEYWORD = "using";
     public const string WHILE_KEYWORD = "while";
 
-    public static readonly ImmutableArray<string> ALL = new[]
+    public static readonly List<string> ALL = new()
     {
-    CASE_KEYWORD,
-    DO_KEYWORD,
-    DEFAULT_KEYWORD,
-    FOREACH_KEYWORD,
-    FOR_KEYWORD,
-    IF_KEYWORD,
-    ELSE_KEYWORD,
-    LOCK_KEYWORD,
-    SWITCH_KEYWORD,
-    TRY_KEYWORD,
-    CATCH_KEYWORD,
-    FINALLY_KEYWORD,
-    USING_KEYWORD,
-    WHILE_KEYWORD,
-}.ToImmutableArray();
+        CASE_KEYWORD,
+        DO_KEYWORD,
+        DEFAULT_KEYWORD,
+        FOREACH_KEYWORD,
+        FOR_KEYWORD,
+        IF_KEYWORD,
+        ELSE_KEYWORD,
+        LOCK_KEYWORD,
+        SWITCH_KEYWORD,
+        TRY_KEYWORD,
+        CATCH_KEYWORD,
+        FINALLY_KEYWORD,
+        USING_KEYWORD,
+        WHILE_KEYWORD,
+    };
 }

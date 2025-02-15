@@ -58,7 +58,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 			if (value is null)
 				value = string.Empty;
 
-			CodeSearchService.ReduceWithAction(inState => inState with
+			CodeSearchService.With(inState => inState with
 			{
 				Query = value,
 			});
@@ -179,7 +179,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
             if (viewModelKey != Key<TextEditorViewModel>.Empty &&
                 TextEditorConfig.TryShowViewModelFunc is not null)
             {
-                CodeSearchService.ReduceWithAction(inState => inState with
+                CodeSearchService.With(inState => inState with
                 {
                     PreviewFilePath = filePath,
                     PreviewViewModelKey = viewModelKey,

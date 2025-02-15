@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Options.Models;
@@ -12,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays;
 
@@ -113,16 +113,16 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 				if (viewModelModifier is null)
 					throw new NullReferenceException();
 
-				var firstPresentationLayerKeys = new[]
+				var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 				{
 					TerminalPresentationFacts.PresentationKey,
 					CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 					FindOverlayPresentationFacts.PresentationKey,
-				}.ToImmutableArray();
+				};
 
 				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
-					FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+					FirstPresentationLayerKeysList = firstPresentationLayerKeys
 				};
 				
 				return ValueTask.CompletedTask;

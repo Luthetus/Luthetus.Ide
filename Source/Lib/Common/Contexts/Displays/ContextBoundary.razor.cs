@@ -36,13 +36,13 @@ public partial class ContextBoundary : ComponentBase
         if (ParentContextBoundary is not null)
             ParentContextBoundary.DispatchSetActiveContextStatesAction(contextRecordKeyList);
         else
-            ContextService.ReduceSetFocusedContextHeirarchyAction(new(contextRecordKeyList));
+            ContextService.SetFocusedContextHeirarchy(new(contextRecordKeyList));
     }
     
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
     public void HandleOnFocus()
     {
-    	OutlineService.ReduceSetOutlineAction(
+    	OutlineService.SetOutline(
 	    	ContextRecord.ContextElementId,
 	    	null,
 	    	true);
@@ -50,7 +50,7 @@ public partial class ContextBoundary : ComponentBase
     
     public void HandleOnBlur()
     {
-    	OutlineService.ReduceSetOutlineAction(
+    	OutlineService.SetOutline(
 	    	null,
 	    	null,
 	    	false);

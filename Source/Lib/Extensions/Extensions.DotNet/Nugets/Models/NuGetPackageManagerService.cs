@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
 namespace Luthetus.Extensions.DotNet.Nugets.Models;
@@ -44,7 +43,7 @@ public class NuGetPackageManagerService : INuGetPackageManagerService
         return;
     }
 
-    public void ReduceSetMostRecentQueryResultAction(ImmutableArray<NugetPackageRecord> queryResultList)
+    public void ReduceSetMostRecentQueryResultAction(List<NugetPackageRecord> queryResultList)
     {
     	var inState = GetNuGetPackageManagerState();
     

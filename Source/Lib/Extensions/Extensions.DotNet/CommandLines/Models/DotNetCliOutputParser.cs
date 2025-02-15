@@ -1,5 +1,4 @@
 using System.Text;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
@@ -11,7 +10,12 @@ public class DotNetCliOutputParser
 {
 	private readonly object _listLock = new();
 	
-	private DotNetRunParseResult _dotNetRunParseResult = new();
+	private DotNetRunParseResult _dotNetRunParseResult = new(
+		message: string.Empty,
+		allDiagnosticLineList: new(),
+		errorList: new(),
+		warningList: new(),
+		otherList: new());
 
 	public event Action? StateChanged;
 	
@@ -274,16 +278,14 @@ public class DotNetCliOutputParser
 		
 		lock (_listLock)
 		{
-			var allDiagnosticLineList = diagnosticLineList.OrderBy(x => x.DiagnosticLineKind).ToImmutableList();
+			var allDiagnosticLineList = diagnosticLineList.OrderBy(x => x.DiagnosticLineKind).ToList();
 		
-			_dotNetRunParseResult = new()
-			{
-				Message = message,
-				AllDiagnosticLineList = allDiagnosticLineList,
-				ErrorList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Error).ToImmutableList(),
-				WarningList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Warning).ToImmutableList(),
-				OtherList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Other).ToImmutableList(),
-			};
+			_dotNetRunParseResult = new(
+				message: message,
+				allDiagnosticLineList: allDiagnosticLineList,
+				errorList: allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Error).ToList(),
+				warningList: allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Warning).ToList(),
+				otherList: allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Other).ToList());
 		}
 		
 		StateChanged?.Invoke();

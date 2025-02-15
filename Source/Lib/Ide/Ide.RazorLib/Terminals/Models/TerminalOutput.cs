@@ -1,16 +1,11 @@
-using System.Collections.Immutable;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalOutput : ITerminalOutput
 {
     private readonly ITerminal _terminal;
-	private readonly ITextEditorService _textEditorService;
-	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	
 	private readonly List<TerminalCommandParsed> _parsedCommandList = new();
 	private readonly object _listLock = new();
@@ -25,21 +20,21 @@ public class TerminalOutput : ITerminalOutput
 			ITerminalOutputFormatter outputFormatter)
 		: this(terminal)
 	{
-		OutputFormatterList = new ITerminalOutputFormatter[]
+		OutputFormatterList = new List<ITerminalOutputFormatter>
 		{
 			outputFormatter
-		}.ToImmutableList();
+		};
 	}
 	
 	public TerminalOutput(
 			ITerminal terminal,
-			ImmutableList<ITerminalOutputFormatter> outputFormatterList)
+			List<ITerminalOutputFormatter> outputFormatterList)
 		: this(terminal)
 	{
 		OutputFormatterList = outputFormatterList;
 	}
 	
-	public ImmutableList<ITerminalOutputFormatter> OutputFormatterList { get; private set; }
+	public List<ITerminalOutputFormatter> OutputFormatterList { get; private set; }
 	
 	public event Action? OnWriteOutput;
 	
@@ -63,11 +58,11 @@ public class TerminalOutput : ITerminalOutput
 		}
 	}
 	
-	public ImmutableList<TerminalCommandParsed> GetParsedCommandList()
+	public List<TerminalCommandParsed> GetParsedCommandList()
 	{
 		lock (_listLock)
 		{
-			return _parsedCommandList.ToImmutableList();
+			return _parsedCommandList;
 		}
 	}
 	
@@ -83,7 +78,10 @@ public class TerminalOutput : ITerminalOutput
 	{
 		lock (_listLock)
 		{
-			OutputFormatterList = OutputFormatterList.Add(outputFormatter);
+			var outOutputFormatterList = new List<ITerminalOutputFormatter>(OutputFormatterList);
+			outOutputFormatterList.Add(outputFormatter);
+
+			OutputFormatterList = outOutputFormatterList;
 		}
 	}
 	

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Options.Models;
@@ -15,10 +14,10 @@ public partial class EditorDisplay : ComponentBase
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
 
-    private static readonly ImmutableArray<HeaderButtonKind> TextEditorHeaderButtonKindsList =
+    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
         Enum.GetValues(typeof(HeaderButtonKind))
             .Cast<HeaderButtonKind>()
-            .ToImmutableArray();
+            .ToList();
 
     private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
 

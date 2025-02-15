@@ -775,7 +775,7 @@ public static class TextEditorCommandDefaultFacts
 				return;
 			
 			var findAllService = commandArgs.ServiceProvider.GetRequiredService<IFindAllService>();
-			findAllService.ReduceSetSearchQueryAction(selectedText);
+			findAllService.SetSearchQuery(selectedText);
         });
         
     /// <summary>

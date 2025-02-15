@@ -20,7 +20,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -182,14 +182,10 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
         if (OnContextMenuFunc is not null)
 		{
-            BackgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                BackgroundTaskFacts.ContinuousQueueKey,
-        	    "TreeView.HandleTreeViewOnContextMenu",
-			    async () => await OnContextMenuFunc
-                    .Invoke(_treeViewContextMenuCommandArgs)
-                    .ConfigureAwait(false));
-		}
+            CommonBackgroundTaskApi.Enqueue_TreeView_HandleTreeViewOnContextMenu(
+                OnContextMenuFunc,
+                _treeViewContextMenuCommandArgs);
+        }
 
         await InvokeAsync(StateHasChanged);
     }

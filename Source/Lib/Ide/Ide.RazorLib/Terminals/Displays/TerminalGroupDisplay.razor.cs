@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.Displays.Internals;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
@@ -16,8 +14,6 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
 
 	private Key<IDynamicViewModel> _addIntegratedTerminalDialogKey = Key<IDynamicViewModel>.NewKey();
 
@@ -31,26 +27,12 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
     {
-        TerminalGroupService.ReduceSetActiveTerminalAction(terminalKey);
+        TerminalGroupService.SetActiveTerminal(terminalKey);
     }
     
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
     {
     	TerminalService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
-    }
-    
-    private void AddIntegratedTerminalOnClick()
-    {
-    	var addIntegratedTerminalDialog = new DialogViewModel(
-            _addIntegratedTerminalDialogKey,
-			"Add Integrated Terminal",
-            typeof(AddIntegratedTerminalDisplay),
-            componentParameterMap: null,
-            cssClass: null,
-			isResizable: true,
-			setFocusOnCloseElementId: null);
-
-        DialogService.ReduceRegisterAction(addIntegratedTerminalDialog);
     }
     
     private async void OnTerminalGroupStateChanged()

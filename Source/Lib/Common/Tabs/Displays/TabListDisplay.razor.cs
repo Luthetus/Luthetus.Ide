@@ -2,14 +2,11 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
 public partial class TabListDisplay : ComponentBase
 {
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
 	private IDropdownService DropdownService { get; set; } = null!;
 

@@ -60,11 +60,16 @@ public partial class WidgetLayerDisplay : ComponentBase
     		editContext =>
     		{
     			var viewModelModifier = editContext.GetViewModelModifier(localRenderBatch.ViewModel.ViewModelKey);
-    			
-    			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+
+                var index = viewModelModifier.ViewModel.WidgetBlockList.FindIndex(x => x.Key == widget.Key);
+
+				var outWidgetBlockList = viewModelModifier.ViewModel.WidgetBlockList;
+				outWidgetBlockList.RemoveAt(index);
+
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
     			{
-    				WidgetBlockList = viewModelModifier.ViewModel.WidgetBlockList.Remove(widget)
-    			};
+    				WidgetBlockList = outWidgetBlockList
+				};
     			
     			return ValueTask.CompletedTask;
     		});

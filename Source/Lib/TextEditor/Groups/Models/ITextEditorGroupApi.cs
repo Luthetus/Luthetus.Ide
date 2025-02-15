@@ -1,6 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 
@@ -18,26 +17,24 @@ public interface ITextEditorGroupApi
     /// If one continually invokes this, there is no guarantee that the data had not changed
     /// since the previous invocation.
     /// </summary>
-    public ImmutableList<TextEditorGroup> GetGroups();
+    public List<TextEditorGroup> GetGroups();
     
     // ITextEditorGroupService
     public event Action? TextEditorGroupStateChanged;
 	
 	public TextEditorGroupState GetTextEditorGroupState();
         
-    public void ReduceRegisterAction(TextEditorGroup group);
+    public void Register(TextEditorGroup group);
 
-    public void ReduceAddViewModelToGroupAction(
+    public void AddViewModelToGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey);
 
-    public void ReduceRemoveViewModelFromGroupAction(
+    public void RemoveViewModelFromGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey);
 
-    public void ReduceSetActiveViewModelOfGroupAction(
+    public void SetActiveViewModelOfGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey);
-
-    public void ReduceDisposeAction(Key<TextEditorGroup> groupKey);
 }

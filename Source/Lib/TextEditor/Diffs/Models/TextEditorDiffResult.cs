@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -13,8 +12,8 @@ public class TextEditorDiffResult
         TextEditorDiffCell[,] diffMatrix,
         (int sourceWeight, int inIndex, int outIndex) highestSourceWeightTuple,
         string longestCommonSubsequence,
-        ImmutableList<TextEditorTextSpan> inLongestCommonSubsequenceTextSpanList,
-        ImmutableList<TextEditorTextSpan> outLongestCommonSubsequenceTextSpanList)
+        List<TextEditorTextSpan> inLongestCommonSubsequenceTextSpanList,
+        List<TextEditorTextSpan> outLongestCommonSubsequenceTextSpanList)
     {
         InText = inText;
         OutText = outText;
@@ -30,8 +29,8 @@ public class TextEditorDiffResult
     public TextEditorDiffCell[,] DiffMatrix { get; }
     public (int sourceWeight, int beforeIndex, int afterIndex) HighestSourceWeightTuple { get; }
     public string LongestCommonSubsequence { get; }
-    public ImmutableList<TextEditorTextSpan> InResultTextSpanList { get; }
-    public ImmutableList<TextEditorTextSpan> OutResultTextSpanList { get; }
+    public List<TextEditorTextSpan> InResultTextSpanList { get; }
+    public List<TextEditorTextSpan> OutResultTextSpanList { get; }
 
     /// <summary>
     /// This method aims to implement the "An O(ND) Difference Algorithm"
@@ -272,8 +271,8 @@ public class TextEditorDiffResult
             diffMatrix,
             highestSourceWeightTuple,
             longestCommonSubsequenceValue,
-            inTextSpans.ToImmutableList(),
-            outTextSpans.ToImmutableList());
+            inTextSpans,
+            outTextSpans);
 
         return diffResult;
     }
