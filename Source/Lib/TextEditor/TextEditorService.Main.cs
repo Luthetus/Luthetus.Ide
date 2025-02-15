@@ -780,83 +780,48 @@ public partial class TextEditorService : ITextEditorService
 		Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
 		Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList)
 	{
-		/*
-		Object reference not set to an instance of an object.
-			at Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorState.Reducer.ReduceSetModelAndViewModelRangeAction(TextEditorState inState, SetModelAndViewModelRangeAction setModelAndViewModelRangeAction) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\States\TextEditorState.Reducer.cs:line 174
-			at Fluxor.DependencyInjection.Wrappers.ReducerWrapper2.Fluxor.IReducer<TState>.Reduce(TState state, Object action) in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\DependencyInjection\Wrappers\ReducerWrapper.cs:line 11 at Fluxor.Feature1.ReceiveDispatchNotificationFromStore(Object action)
-			at Fluxor.Store.DequeueActions() in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\Store.cs:line 290
-			at Fluxor.Store.ActionDispatched(Object sender, ActionDispatchedEventArgs e) in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\Store.cs:line 173
-			at Fluxor.Dispatcher.DequeueActions() in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\Dispatcher.cs:line 69
-			at Fluxor.Dispatcher.Dispatch(Object action) in C:\Data\Mine\Code\Fluxor\Source\Lib\Fluxor\Dispatcher.cs:line 46
-			at Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ScrollbarSection.VERTICAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\ScrollbarSection.razor.cs:line 194
-			at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)
-			at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)
-			
-		If this code throws an exception it can crash the main application if using text editor as a NuGet Package
-		so I will put a try-catch here.
-		
-		I'd as well like to figure out what the issue is but it isn't obvious and this is too risky of a thing to mess up.
-		
-	    Additional note: this was happening during the solution wide parse.
-	    It was just "random" while I was using the IDE during the solution wide parse, sometimes it happened sometimes it didn't.
-	    
-		-----------------------
-		
-		I think I get what is happening. For some reason a null is being added to the
-		modelModifierList.
-		
-		I added 'if (null) continue;' sort of code but I will keep the 'try' 'catch'.
-		*/
-
 		lock (_stateModificationLock)
 		{
 			var inState = TextEditorState;
 
-			try
+			// Models
+			if (modelModifierList is not null)
 			{
-				// Models
-				if (modelModifierList is not null)
+				foreach (var kvpModelModifier in modelModifierList)
 				{
-					foreach (var kvpModelModifier in modelModifierList)
-					{
-						if (kvpModelModifier.Value is null || !kvpModelModifier.Value.WasModified)
-							continue;
+					if (kvpModelModifier.Value is null || !kvpModelModifier.Value.WasModified)
+						continue;
 
-						// Enumeration was modified shouldn't occur here because only the reducer
-						// should be adding or removing, and the reducer is thread safe.
-						var exists = inState._modelMap.TryGetValue(
-							kvpModelModifier.Value.ResourceUri, out var inModel);
+					// Enumeration was modified shouldn't occur here because only the reducer
+					// should be adding or removing, and the reducer is thread safe.
+					var exists = inState._modelMap.TryGetValue(
+						kvpModelModifier.Value.ResourceUri, out var inModel);
 
-						if (!exists)
-							continue;
+					if (!exists)
+						continue;
 
-						inState._modelMap[kvpModelModifier.Value.ResourceUri] = kvpModelModifier.Value.ToModel();
-					}
-				}
-
-				// ViewModels
-				if (viewModelModifierList is not null)
-				{
-					foreach (var kvpViewModelModifier in viewModelModifierList)
-					{
-						if (kvpViewModelModifier.Value is null || !kvpViewModelModifier.Value.WasModified)
-							continue;
-
-						// Enumeration was modified shouldn't occur here because only the reducer
-						// should be adding or removing, and the reducer is thread safe.
-						var exists = inState._viewModelMap.TryGetValue(
-							kvpViewModelModifier.Value.ViewModel.ViewModelKey, out var inViewModel);
-
-						if (!exists)
-							continue;
-
-						inState._viewModelMap[kvpViewModelModifier.Value.ViewModel.ViewModelKey] = kvpViewModelModifier.Value.ViewModel;
-					}
+					inState._modelMap[kvpModelModifier.Value.ResourceUri] = kvpModelModifier.Value.ToModel();
 				}
 			}
-			catch (Exception e)
+
+			// ViewModels
+			if (viewModelModifierList is not null)
 			{
-				Console.WriteLine(e);
+				foreach (var kvpViewModelModifier in viewModelModifierList)
+				{
+					if (kvpViewModelModifier.Value is null || !kvpViewModelModifier.Value.WasModified)
+						continue;
+
+					// Enumeration was modified shouldn't occur here because only the reducer
+					// should be adding or removing, and the reducer is thread safe.
+					var exists = inState._viewModelMap.TryGetValue(
+						kvpViewModelModifier.Value.ViewModel.ViewModelKey, out var inViewModel);
+
+					if (!exists)
+						continue;
+
+					inState._viewModelMap[kvpViewModelModifier.Value.ViewModel.ViewModelKey] = kvpViewModelModifier.Value.ViewModel;
+				}
 			}
 
             goto finalize;

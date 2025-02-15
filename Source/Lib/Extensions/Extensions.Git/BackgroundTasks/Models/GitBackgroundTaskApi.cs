@@ -9,7 +9,6 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Extensions.Git.Installations.Displays;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;

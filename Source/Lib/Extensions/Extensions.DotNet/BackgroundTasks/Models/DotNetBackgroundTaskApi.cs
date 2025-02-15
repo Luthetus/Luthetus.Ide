@@ -24,7 +24,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
 using Luthetus.Extensions.DotNet.Commands;
-using Luthetus.Extensions.DotNet.Installations.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;

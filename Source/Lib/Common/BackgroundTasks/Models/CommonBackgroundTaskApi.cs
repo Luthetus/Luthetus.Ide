@@ -13,7 +13,6 @@ using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
