@@ -208,14 +208,15 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
 		var solutionFolderList = parser.DotNetProjectList
 			.Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-			.Select(x => (SolutionFolder)x).ToImmutableArray();
+			.Select(x => (SolutionFolder)x)
+			.ToList();
 
 		var dotNetSolutionModel = new DotNetSolutionModel(
 			solutionAbsolutePath,
 			parser.DotNetSolutionHeader,
-			parser.DotNetProjectList.ToImmutableArray(),
+			parser.DotNetProjectList,
 			solutionFolderList,
-			parser.NestedProjectEntryList.ToImmutableArray(),
+			parser.NestedProjectEntryList,
 			parser.DotNetSolutionGlobal,
 			content);
 
@@ -414,7 +415,7 @@ Execution Terminal"));
 				}
 
 				var previousStageProgress = 0.05;
-				var dotNetProjectListLength = dotNetSolutionModel.DotNetProjectList.Length;
+				var dotNetProjectListLength = dotNetSolutionModel.DotNetProjectList.Count;
 				var projectsParsedCount = 0;
 				foreach (var project in dotNetSolutionModel.DotNetProjectList)
 				{
@@ -820,9 +821,8 @@ Execution Terminal"));
 			if (indexOfSln == -1)
 				return dotNetSolutionState;
 
-			var outDotNetSolutions = dotNetSolutionState.DotNetSolutionsList.SetItem(
-				indexOfSln,
-				outDotNetSolutionModel);
+			var outDotNetSolutions = new List<DotNetSolutionModel>(dotNetSolutionState.DotNetSolutionsList);
+			outDotNetSolutions[indexOfSln] = outDotNetSolutionModel;
 
 			return dotNetSolutionState with
 			{

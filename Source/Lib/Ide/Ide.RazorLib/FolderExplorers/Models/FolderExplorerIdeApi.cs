@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -145,10 +144,9 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
 
                 return Task.FromResult(true);
             },
-            new[]
-            {
+            [
                 new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-            }.ToImmutableArray());
+            ]);
     }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)

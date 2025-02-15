@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -24,6 +23,8 @@ public static class ParseTypes
 
     /// <summary>
     /// This method is used for generic type definition such as, 'class List&lt;T&gt; { ... }'
+    /// 
+    /// Retrospective: What is this code??? It isn't correct and it should probably just invoke the expression logic that will parse generics.
     /// </summary>
     public static GenericArgumentsListingNode HandleGenericArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
@@ -33,7 +34,7 @@ public static class ParseTypes
         {
             return new GenericArgumentsListingNode(
                 openAngleBracketToken,
-                ImmutableArray<GenericArgumentEntryNode>.Empty,
+                GenericArgumentsListingNode.__empty,
                 parserModel.TokenWalker.Consume());
         }
 
@@ -68,7 +69,7 @@ public static class ParseTypes
 
         return new GenericArgumentsListingNode(
             openAngleBracketToken,
-            mutableGenericArgumentsListing.ToImmutableArray(),
+            mutableGenericArgumentsListing,
             closeAngleBracketToken);
     }
 

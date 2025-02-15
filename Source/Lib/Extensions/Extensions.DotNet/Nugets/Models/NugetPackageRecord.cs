@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
 namespace Luthetus.Extensions.DotNet.Nugets.Models;
@@ -17,16 +16,16 @@ public record NugetPackageRecord(
 	string IconUrl,
 	string LicenseUrl,
 	string ProjectUrl,
-	ImmutableArray<string> Tags,
-	ImmutableArray<string> Authors,
-	ImmutableArray<string> Owners,
+	List<string> Tags,
+	List<string> Authors,
+	List<string> Owners,
 	long TotalDownloads,
 	bool Verified,
-	ImmutableArray<NugetPackageVersionRecord> Versions)
+	List<NugetPackageVersionRecord> Versions)
 {
 	[JsonPropertyName("@id")]
 	public string AtId { get; init; } = string.Empty;
 
 	// TODO: Pull this property's data from the JSON but it seems to not be VITAL at this moment.
-	// public ImmutableArray<string> PackageTypes { get; init; }
+	// public List<string> PackageTypes { get; init; }
 }

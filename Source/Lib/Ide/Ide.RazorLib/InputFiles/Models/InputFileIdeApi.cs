@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -42,14 +41,14 @@ public class InputFileIdeApi : IBackgroundTaskGroup
     private readonly object _workLock = new();
 
     private readonly
-        Queue<(string message, Func<AbsolutePath, Task> onAfterSubmitFunc, Func<AbsolutePath, Task<bool>> selectionIsValidFunc, ImmutableArray<InputFilePattern> inputFilePatterns)>
+        Queue<(string message, Func<AbsolutePath, Task> onAfterSubmitFunc, Func<AbsolutePath, Task<bool>> selectionIsValidFunc, List<InputFilePattern> inputFilePatterns)>
         _queue_RequestInputFileStateForm = new();
 
     public void Enqueue_RequestInputFileStateForm(
         string message,
         Func<AbsolutePath, Task> onAfterSubmitFunc,
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
-        ImmutableArray<InputFilePattern> inputFilePatterns)
+        List<InputFilePattern> inputFilePatterns)
     {
         lock (_workLock)
         {
@@ -63,7 +62,7 @@ public class InputFileIdeApi : IBackgroundTaskGroup
         string message,
         Func<AbsolutePath, Task> onAfterSubmitFunc,
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
-        ImmutableArray<InputFilePattern> inputFilePatternsList)
+        List<InputFilePattern> inputFilePatternsList)
     {
         _inputFileService.StartInputFileStateForm(
             message,

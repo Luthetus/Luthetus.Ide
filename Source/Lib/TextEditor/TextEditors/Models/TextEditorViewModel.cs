@@ -146,14 +146,14 @@ public sealed record TextEditorViewModel : IDisposable
     /// Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysList"/>.<br/><br/>
     /// When using the <see cref="FirstPresentationLayerKeysList"/> one might find their css overriden by for example, text being selected.
     /// </summary>
-    public ImmutableList<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
+    public List<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; init; } = new();
     /// <summary>
     /// <see cref="LastPresentationLayerKeysList"/> is painted after any internal workings of the text editor.<br/><br/>
     /// Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysList"/>.<br/><br/>
     /// When using the <see cref="LastPresentationLayerKeysList"/> one might find the selected text background
     /// not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysList"/>.
     /// </summary>
-    public ImmutableList<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; init; } = ImmutableList<Key<TextEditorPresentationModel>>.Empty;
+    public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; init; } = new();
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// In the command line program "Vim" one can hit 'colon' to bring up a command bar.

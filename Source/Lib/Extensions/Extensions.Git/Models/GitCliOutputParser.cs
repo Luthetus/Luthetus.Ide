@@ -44,9 +44,9 @@ public class GitCliOutputParser
 
 		_gitBackgroundTaskApi.Git.ReduceSetStatusAction(
 			localRepo,
-			UntrackedGitFileList.ToImmutableList(),
-			StagedGitFileList.ToImmutableList(),
-			UnstagedGitFileList.ToImmutableList(),
+			UntrackedGitFileList,
+			StagedGitFileList,
+			UnstagedGitFileList,
 			_behindByCommitCount ?? 0,
 			_aheadByCommitCount ?? 0);
 	}

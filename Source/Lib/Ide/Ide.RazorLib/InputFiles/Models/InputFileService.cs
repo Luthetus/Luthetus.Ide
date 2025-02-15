@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -32,7 +31,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
         string message,
         Func<AbsolutePath, Task> onAfterSubmitFunc,
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
-        ImmutableArray<InputFilePattern> inputFilePatterns)
+        List<InputFilePattern> inputFilePatterns)
     {
         lock (_stateModificationLock)
         {

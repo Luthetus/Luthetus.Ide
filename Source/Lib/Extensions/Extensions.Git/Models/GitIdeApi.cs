@@ -925,9 +925,9 @@ public class GitIdeApi : IBackgroundTaskGroup
     /// </summary>
     public void ReduceSetStatusAction(
         GitRepo repo,
-        ImmutableList<GitFile> untrackedFileList,
-        ImmutableList<GitFile> stagedFileList,
-        ImmutableList<GitFile> unstagedFileList,
+        List<GitFile> untrackedFileList,
+        List<GitFile> stagedFileList,
+        List<GitFile> unstagedFileList,
         int? behindByCommitCount,
         int? aheadByCommitCount)
     {
@@ -1010,7 +1010,7 @@ public class GitIdeApi : IBackgroundTaskGroup
 
         _gitState = inState with
         {
-            BranchList = branchList.ToImmutableList()
+            BranchList = branchList
         };
         
         GitStateChanged?.Invoke();
@@ -1024,16 +1024,16 @@ public class GitIdeApi : IBackgroundTaskGroup
         _gitState = inState with
         {
             Repo = repo,
-            UntrackedFileList = ImmutableList<GitFile>.Empty,
-            StagedFileList = ImmutableList<GitFile>.Empty,
-            UnstagedFileList = ImmutableList<GitFile>.Empty,
-            SelectedFileList = ImmutableList<GitFile>.Empty,
-            ActiveTasks = ImmutableList<GitTask>.Empty,
+            UntrackedFileList = new List<GitFile>(),
+            StagedFileList = new List<GitFile>(),
+            UnstagedFileList = new List<GitFile>(),
+            SelectedFileList = new List<GitFile>(),
+            ActiveTasks = new List<GitTask>(),
             Branch = null,
             Origin = null,
             AheadByCommitCount = null,
             BehindByCommitCount = null,
-            BranchList = ImmutableList<string>.Empty,
+            BranchList = new List<string>(),
             Upstream = null,
         };
         

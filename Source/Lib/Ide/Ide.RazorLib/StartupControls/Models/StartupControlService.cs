@@ -24,9 +24,12 @@ public class StartupControlService : IStartupControlService
 			if (indexOfStartupControl != -1)
 				goto finalize;
 
-            _startupControlState = inState with
+			var outStartupControlList = new List<IStartupControlModel>(inState.StartupControlList);
+			outStartupControlList.Add(startupControl);
+
+			_startupControlState = inState with
 			{
-				StartupControlList = inState.StartupControlList.Add(startupControl)
+				StartupControlList = outStartupControlList
 			};
 
             goto finalize;
@@ -52,9 +55,12 @@ public class StartupControlService : IStartupControlService
 			if (inState.ActiveStartupControlKey == startupControlKey)
 				outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
 
+			var outStartupControlList = new List<IStartupControlModel>(inState.StartupControlList);
+			outStartupControlList.RemoveAt(indexOfStartupControl);
+
 			_startupControlState = inState with
 			{
-				StartupControlList = inState.StartupControlList.RemoveAt(indexOfStartupControl),
+				StartupControlList = outStartupControlList,
 				ActiveStartupControlKey = outActiveStartupControlKey
 			};
 

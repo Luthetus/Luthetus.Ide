@@ -207,7 +207,7 @@ public interface ITextEditorModelApi
         TextEditorModelModifier modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
-        ImmutableArray<TextEditorTextSpan> calculatedTextSpans);
+        List<TextEditorTextSpan> calculatedTextSpans);
 
     /// <summary>
     /// If applying syntax highlighting it may be preferred to use <see cref="ApplySyntaxHighlightingAsync" />.

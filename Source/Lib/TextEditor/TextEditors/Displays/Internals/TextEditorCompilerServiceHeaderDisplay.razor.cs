@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Options.Models;
@@ -8,6 +7,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -105,11 +106,13 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	            if (!viewModelModifier.ViewModel.FirstPresentationLayerKeysList.Contains(
 	            		TextEditorDevToolsPresentationFacts.PresentationKey))
 	            {
-		            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					var copy = new List<Key<TextEditorPresentationModel>>(viewModelModifier.ViewModel.FirstPresentationLayerKeysList);
+					copy.Add(TextEditorDevToolsPresentationFacts.PresentationKey);
+
+					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 		            {
-		            	FirstPresentationLayerKeysList = viewModelModifier.ViewModel.FirstPresentationLayerKeysList
-		            		.Add(TextEditorDevToolsPresentationFacts.PresentationKey)
-		            };
+		            	FirstPresentationLayerKeysList = copy
+					};
 		        }
 	    	
 	    		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
@@ -166,8 +169,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				    sourceText: string.Empty,
 				    getTextPrecalculatedResult: string.Empty);
 		
-				var diagnosticTextSpans = new [] { textSpanStart, textSpanEnd }
-					.ToImmutableArray();
+				var diagnosticTextSpans = new List<TextEditorTextSpan> { textSpanStart, textSpanEnd };
 	
 				modelModifier.CompletePendingCalculatePresentationModel(
 					TextEditorDevToolsPresentationFacts.PresentationKey,

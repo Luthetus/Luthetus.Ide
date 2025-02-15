@@ -16,9 +16,9 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
     public DotNetSolutionModelBuilder(
         AbsolutePath absolutePath,
         DotNetSolutionHeader dotNetSolutionHeader,
-        ImmutableArray<IDotNetProject> dotNetProjectList,
-        ImmutableArray<SolutionFolder> solutionFolderList,
-        ImmutableArray<NestedProjectEntry> nestedProjectEntryList,
+        List<IDotNetProject> dotNetProjectList,
+        List<SolutionFolder> solutionFolderList,
+        List<NestedProjectEntry> nestedProjectEntryList,
         DotNetSolutionGlobal dotNetSolutionGlobal,
         string solutionFileContents)
     {
@@ -45,9 +45,9 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
     public Key<DotNetSolutionModel> Key { get; init; }
     public AbsolutePath AbsolutePath { get; init; }
     public DotNetSolutionHeader DotNetSolutionHeader { get; init; }
-    public ImmutableArray<IDotNetProject> DotNetProjectList { get; private set; }
-    public ImmutableArray<SolutionFolder> SolutionFolderList { get; init; }
-    public ImmutableArray<NestedProjectEntry> NestedProjectEntryList { get; init; }
+    public List<IDotNetProject> DotNetProjectList { get; private set; }
+    public List<SolutionFolder> SolutionFolderList { get; init; }
+    public List<NestedProjectEntry> NestedProjectEntryList { get; init; }
     public DotNetSolutionGlobal DotNetSolutionGlobal { get; init; }
     public string SolutionFileContents { get; private set; }
 
@@ -88,7 +88,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
 
                 IDotNetProject? lastValidProjectToken = null;
 
-                for (var i = DotNetProjectList.Length - 1; i >= 0; i--)
+                for (var i = DotNetProjectList.Count - 1; i >= 0; i--)
                 {
                     var entry = DotNetProjectList[i];
 
@@ -154,7 +154,7 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                 newProjectToken = dotNetProject;
             }
 
-            DotNetProjectList = DotNetProjectList.Add(newProjectToken);
+            DotNetProjectList.Add(newProjectToken);
 
             SolutionFileContents = SolutionFileContents.Insert(
                 newProjectToken.OpenAssociatedGroupToken.TextSpan.StartingIndexInclusive,

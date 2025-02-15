@@ -58,7 +58,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                 { nameof(IFileFormRendererType.CheckForTemplates), false },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
 						{
                             Enqueue_PerformNewFile(
@@ -84,7 +84,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                 { nameof(IFileFormRendererType.CheckForTemplates), true },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
 						{
                             Enqueue_PerformNewFile(
@@ -110,7 +110,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                 { nameof(IFileFormRendererType.IsDirectory), true },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         (directoryName, _, _) =>
 						{
                             Enqueue_PerformNewDirectory(directoryName, parentDirectory, onAfterCompletion);
@@ -155,7 +155,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                 { nameof(IFileFormRendererType.IsDirectory), sourceAbsolutePath.IsDirectory },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>((nextName, _, _) =>
+                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
                     {
                         PerformRename(sourceAbsolutePath, nextName, notificationService, onAfterCompletion);
                         return Task.CompletedTask;
@@ -195,13 +195,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
     }
 
     private readonly
-        Queue<(string fileName, IFileTemplate? exactMatchFileTemplate, ImmutableArray<IFileTemplate> relatedMatchFileTemplatesList, NamespacePath namespacePath, Func<Task> onAfterCompletion)>
+        Queue<(string fileName, IFileTemplate? exactMatchFileTemplate, List<IFileTemplate> relatedMatchFileTemplatesList, NamespacePath namespacePath, Func<Task> onAfterCompletion)>
         _queue_PerformNewFile = new();
 
     private void Enqueue_PerformNewFile(
         string fileName,
         IFileTemplate? exactMatchFileTemplate,
-        ImmutableArray<IFileTemplate> relatedMatchFileTemplatesList,
+        List<IFileTemplate> relatedMatchFileTemplatesList,
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
@@ -223,7 +223,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
     private async ValueTask Do_PerformNewFile(
         string fileName,
         IFileTemplate? exactMatchFileTemplate,
-        ImmutableArray<IFileTemplate> relatedMatchFileTemplatesList,
+        List<IFileTemplate> relatedMatchFileTemplatesList,
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {

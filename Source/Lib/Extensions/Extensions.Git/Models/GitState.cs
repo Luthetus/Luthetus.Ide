@@ -9,15 +9,15 @@ namespace Luthetus.Extensions.Git.Models;
 /// </summary>
 public partial record GitState(
     GitRepo? Repo,
-    ImmutableList<GitFile> UntrackedFileList,
-    ImmutableList<GitFile> StagedFileList,
-    ImmutableList<GitFile> UnstagedFileList,
-    ImmutableList<GitFile> SelectedFileList,
-    ImmutableList<GitTask> ActiveTasks,
+    List<GitFile> UntrackedFileList,
+    List<GitFile> StagedFileList,
+    List<GitFile> UnstagedFileList,
+    List<GitFile> SelectedFileList,
+    List<GitTask> ActiveTasks,
     string? Origin,
     string? Branch,
     string? Upstream,
-    ImmutableList<string> BranchList,
+	List<string> BranchList,
     int? BehindByCommitCount,
     int? AheadByCommitCount)
 {
@@ -26,15 +26,15 @@ public partial record GitState(
     public GitState()
         : this(
               null,
-              ImmutableList<GitFile>.Empty,
-              ImmutableList<GitFile>.Empty,
-              ImmutableList<GitFile>.Empty,
-              ImmutableList<GitFile>.Empty,
-              ImmutableList<GitTask>.Empty,
+              new(),
+              new(),
+              new(),
+              new(),
+              new(),
               null,
               null,
               null,
-              ImmutableList<string>.Empty,
+              new(),
               null,
               null)
     {

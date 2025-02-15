@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -85,10 +84,10 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 
 				return Task.FromResult(true);
 			},
-			new[]
+			new()
 			{
 				new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-			}.ToImmutableArray());
+			});
 	}
 
 	private async Task StartNewDotNetSolutionCommandOnClick()

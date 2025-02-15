@@ -208,13 +208,8 @@ public class DotNetSolutionParser : IParser
                 {
                     localDotNetSolutionGlobalSectionBuilder.AssociatedEntryGroup = builtGroup;
 
-                    var outList = _dotNetSolutionGlobal.DotNetSolutionGlobalSectionList.Add(
+                    _dotNetSolutionGlobal.DotNetSolutionGlobalSectionList.Add(
                         localDotNetSolutionGlobalSectionBuilder.Build());
-
-                    _dotNetSolutionGlobal = _dotNetSolutionGlobal with
-                    {
-                        DotNetSolutionGlobalSectionList = outList
-                    };
                 }));
 
             localDotNetSolutionGlobalSectionBuilder.GlobalSectionArgument =
@@ -229,7 +224,7 @@ public class DotNetSolutionParser : IParser
                 openAssociatedGroupToken,
                 builtGroup =>
                 {
-                    if (builtGroup.AssociatedEntryList.Length == 4)
+                    if (builtGroup.AssociatedEntryList.Count == 4)
                     {
                         var i = 0;
 

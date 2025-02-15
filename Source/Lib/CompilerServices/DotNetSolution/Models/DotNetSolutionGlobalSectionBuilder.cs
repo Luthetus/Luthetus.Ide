@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 
@@ -8,7 +7,7 @@ public class DotNetSolutionGlobalSectionBuilder
 {
     public SyntaxToken? GlobalSectionArgument { get; set; }
     public SyntaxToken? GlobalSectionOrder { get; set; }
-    public AssociatedEntryGroup AssociatedEntryGroup { get; set; } = new(openAssociatedGroupToken: default, ImmutableArray<IAssociatedEntry>.Empty, closeAssociatedGroupToken: default);
+    public AssociatedEntryGroup AssociatedEntryGroup { get; set; } = new(openAssociatedGroupToken: default, new List<IAssociatedEntry>(), closeAssociatedGroupToken: default);
 
     public DotNetSolutionGlobalSection Build()
     {

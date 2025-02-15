@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -82,10 +81,10 @@ public partial class GitAddRepoDisplay : ComponentBase
 
                     return Task.FromResult(true);
                 },
-                new[]
+                new()
                 {
                     new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-                }.ToImmutableArray());
+                });
     }
 
     private void ConfirmGitFolderOnClick()

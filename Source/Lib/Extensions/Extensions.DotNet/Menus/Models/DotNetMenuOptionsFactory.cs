@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -140,7 +139,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				{ nameof(IFileFormRendererType.IsDirectory), false },
 				{
 					nameof(IFileFormRendererType.OnAfterSubmitFunc),
-					new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>((nextName, _, _) =>
+					new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
 					{
 						Enqueue_PerformMoveProjectToSolutionFolder(
 							treeViewSolution,
@@ -264,12 +263,12 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				return Task.FromResult(
 					absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
 			},
-			(new[]
+			new()
 			{
 				new InputFilePattern(
 					"C# Project",
 					absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-			}).ToImmutableArray());
+			});
 	}
 
 	private readonly

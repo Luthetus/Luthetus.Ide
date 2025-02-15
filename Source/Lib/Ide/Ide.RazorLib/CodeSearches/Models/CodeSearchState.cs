@@ -10,7 +10,7 @@ public record struct CodeSearchState(
     string Query,
     string? StartingAbsolutePathForSearch,
     CodeSearchFilterKind CodeSearchFilterKind,
-    ImmutableList<string> ResultList,
+    List<string> ResultList,
     string PreviewFilePath,
     Key<TextEditorViewModel> PreviewViewModelKey)
 {
@@ -20,7 +20,7 @@ public record struct CodeSearchState(
         string.Empty,
         null,
         CodeSearchFilterKind.None,
-        ImmutableList<string>.Empty,
+        new(),
         string.Empty,
         Key<TextEditorViewModel>.Empty)
     {

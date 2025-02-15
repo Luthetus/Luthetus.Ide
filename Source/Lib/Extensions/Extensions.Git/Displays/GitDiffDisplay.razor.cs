@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -160,19 +159,19 @@ public partial class GitDiffDisplay : ComponentBase
                 false,
                 category);
 	
-	        var firstPresentationLayerKeys = new[]
+	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 	        {
 	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 	            FindOverlayPresentationFacts.PresentationKey,
 	            DiffPresentationFacts.InPresentationKey,
-	        }.ToImmutableArray();
+	        };
 	            
 	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
 		
             viewModel = viewModel with
             {
                 GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+                FirstPresentationLayerKeysList = firstPresentationLayerKeys
             };
             
             TextEditorService.ViewModelApi.Register(viewModel);
@@ -227,19 +226,19 @@ public partial class GitDiffDisplay : ComponentBase
                 false,
                 category);
 	
-	        var firstPresentationLayerKeys = new[]
+	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 	        {
 	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 	            FindOverlayPresentationFacts.PresentationKey,
 	            DiffPresentationFacts.OutPresentationKey,
-	        }.ToImmutableArray();
+	        };
 	            
 	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
 		
             viewModel = viewModel with
             {
                 GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+                FirstPresentationLayerKeysList = firstPresentationLayerKeys
             };
             
             TextEditorService.ViewModelApi.Register(viewModel);
@@ -366,7 +365,7 @@ public partial class GitDiffDisplay : ComponentBase
 			            modelModifier.CompletePendingCalculatePresentationModel(
 			                DiffPresentationFacts.OutPresentationKey,
 			                DiffPresentationFacts.EmptyOutPresentationModel,
-			                outResultTextSpanList.ToImmutableArray());
+			                outResultTextSpanList);
 			            Console.WriteLine("modelModifier.CompletePendingCalculatePresentationModel");
             			
             			return ValueTask.CompletedTask;

@@ -29,13 +29,13 @@ public class TerminalOutput : ITerminalOutput
 	
 	public TerminalOutput(
 			ITerminal terminal,
-			ImmutableList<ITerminalOutputFormatter> outputFormatterList)
+			List<ITerminalOutputFormatter> outputFormatterList)
 		: this(terminal)
 	{
 		OutputFormatterList = outputFormatterList;
 	}
 	
-	public ImmutableList<ITerminalOutputFormatter> OutputFormatterList { get; private set; }
+	public List<ITerminalOutputFormatter> OutputFormatterList { get; private set; }
 	
 	public event Action? OnWriteOutput;
 	
@@ -59,7 +59,7 @@ public class TerminalOutput : ITerminalOutput
 		}
 	}
 	
-	public ImmutableList<TerminalCommandParsed> GetParsedCommandList()
+	public List<TerminalCommandParsed> GetParsedCommandList()
 	{
 		lock (_listLock)
 		{

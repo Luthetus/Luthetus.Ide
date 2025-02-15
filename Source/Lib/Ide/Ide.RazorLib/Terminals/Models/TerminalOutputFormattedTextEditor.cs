@@ -8,9 +8,9 @@ public class TerminalOutputFormattedTextEditor : ITerminalOutputFormatted
 {
 	public TerminalOutputFormattedTextEditor(
 		string text,
-		ImmutableList<TerminalCommandParsed> parsedCommandList,
-		ImmutableList<TextEditorTextSpan> textSpanList,
-		ImmutableList<Symbol> symbolList)
+		List<TerminalCommandParsed> parsedCommandList,
+		List<TextEditorTextSpan> textSpanList,
+		List<Symbol> symbolList)
 	{
 		Text = text;
 		ParsedCommandList = parsedCommandList;
@@ -19,7 +19,7 @@ public class TerminalOutputFormattedTextEditor : ITerminalOutputFormatted
 	}
 
 	public string Text { get; }
-	public ImmutableList<TerminalCommandParsed> ParsedCommandList { get; }
-	public ImmutableList<TextEditorTextSpan> TextSpanList { get; }
-	public ImmutableList<Symbol> SymbolList { get; }
+	public List<TerminalCommandParsed> ParsedCommandList { get; }
+	public List<TextEditorTextSpan> TextSpanList { get; }
+	public List<Symbol> SymbolList { get; }
 }

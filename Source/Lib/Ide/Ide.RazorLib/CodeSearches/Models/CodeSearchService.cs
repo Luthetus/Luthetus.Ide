@@ -84,10 +84,13 @@ public class CodeSearchService : ICodeSearchService
         {
             var inState = GetCodeSearchState();
 
-            _codeSearchState = inState with
+            var outResultList = new List<string>(inState.ResultList);
+            outResultList.Add(result);
+
+			_codeSearchState = inState with
             {
-                ResultList = inState.ResultList.Add(result)
-            };
+                ResultList = outResultList
+			};
             goto finalize;
         }
 
@@ -103,7 +106,7 @@ public class CodeSearchService : ICodeSearchService
 
             _codeSearchState = inState with
             {
-                ResultList = ImmutableList<string>.Empty
+                ResultList = new()
             };
             goto finalize;
         }

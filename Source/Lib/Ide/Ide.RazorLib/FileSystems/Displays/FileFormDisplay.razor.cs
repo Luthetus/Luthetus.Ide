@@ -16,7 +16,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
     [Parameter, EditorRequired]
     public string FileName { get; set; } = string.Empty;
     [Parameter, EditorRequired]
-    public Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task> OnAfterSubmitFunc { get; set; } = null!;
+    public Func<string, IFileTemplate?, List<IFileTemplate>, Task> OnAfterSubmitFunc { get; set; } = null!;
     
     [Parameter]
     public bool IsDirectory { get; set; }
@@ -84,8 +84,8 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
                     .Invoke(async () => await OnAfterSubmitFunc.Invoke(
                         _fileName,
                         _fileTemplatesDisplay?.ExactMatchFileTemplate,
-                        _fileTemplatesDisplay?.RelatedMatchFileTemplates ?? ImmutableArray<IFileTemplate>.Empty))
-                    .ConfigureAwait(false);
+                        _fileTemplatesDisplay?.RelatedMatchFileTemplates ?? new())
+                    .ConfigureAwait(false));
             }
         }
     }

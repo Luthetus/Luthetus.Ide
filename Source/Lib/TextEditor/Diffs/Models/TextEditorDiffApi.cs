@@ -94,12 +94,12 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             inModelModifier.CompletePendingCalculatePresentationModel(
                 DiffPresentationFacts.InPresentationKey,
                 DiffPresentationFacts.EmptyInPresentationModel,
-                diffResult.InResultTextSpanList.ToImmutableArray());
+                diffResult.InResultTextSpanList);
             
             outModelModifier.CompletePendingCalculatePresentationModel(
                 DiffPresentationFacts.OutPresentationKey,
                 DiffPresentationFacts.EmptyOutPresentationModel,
-                diffResult.OutResultTextSpanList.ToImmutableArray());
+                diffResult.OutResultTextSpanList);
 
             return Task.CompletedTask;
         };

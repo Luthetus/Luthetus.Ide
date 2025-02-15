@@ -797,20 +797,44 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 {
                     if (output.Contains("Passed!"))
                     {
-                        TestExplorerService.ReduceWithAction(inState => inState with
+                        TestExplorerService.ReduceWithAction(inState =>
                         {
-                            PassedTestHashSet = inState.PassedTestHashSet.Add(fullyQualifiedName),
-                            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
-                            FailedTestHashSet = inState.FailedTestHashSet.Remove(fullyQualifiedName),
+                            var passedTestHashSet = new HashSet<string>(inState.PassedTestHashSet);
+                            passedTestHashSet.Add(fullyQualifiedName);
+
+                            var notRanTestHashSet = new HashSet<string>(inState.NotRanTestHashSet);
+                            notRanTestHashSet.Remove(fullyQualifiedName);
+
+                            var failedTestHashSet = new HashSet<string>(inState.FailedTestHashSet);
+                            failedTestHashSet.Remove(fullyQualifiedName);
+
+                            return inState with
+                            {
+                                PassedTestHashSet = passedTestHashSet,
+                                NotRanTestHashSet = notRanTestHashSet,
+                                FailedTestHashSet = failedTestHashSet,
+                            };
                         });
                     }
                     else
                     {
-                        TestExplorerService.ReduceWithAction(inState => inState with
+                        TestExplorerService.ReduceWithAction(inState =>
                         {
-                            FailedTestHashSet = inState.FailedTestHashSet.Add(fullyQualifiedName),
-                            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
-                            PassedTestHashSet = inState.PassedTestHashSet.Remove(fullyQualifiedName),
+							var failedTestHashSet = new HashSet<string>(inState.FailedTestHashSet);
+							failedTestHashSet.Add(fullyQualifiedName);
+
+							var notRanTestHashSet = new HashSet<string>(inState.NotRanTestHashSet);
+							notRanTestHashSet.Remove(fullyQualifiedName);
+
+							var passedTestHashSet = new HashSet<string>(inState.PassedTestHashSet);
+							passedTestHashSet.Remove(fullyQualifiedName);
+
+                            return inState with
+                            {
+                                FailedTestHashSet = failedTestHashSet,
+                                NotRanTestHashSet = notRanTestHashSet,
+                                PassedTestHashSet = passedTestHashSet,
+                            };
                         });
                     }
                 }

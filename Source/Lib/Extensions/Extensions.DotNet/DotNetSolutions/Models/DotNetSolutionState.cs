@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -22,7 +21,7 @@ public record DotNetSolutionState(
     {
     }
 
-    public ImmutableList<DotNetSolutionModel> DotNetSolutionsList { get; init; } = ImmutableList<DotNetSolutionModel>.Empty;
+    public List<DotNetSolutionModel> DotNetSolutionsList { get; init; } = new();
 
     public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
         x.Key == DotNetSolutionModelKey);
@@ -48,11 +47,11 @@ public record DotNetSolutionState(
                 return Task.FromResult(
                     absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
             },
-            new[]
+            new()
             {
                 new InputFilePattern(
                     ".NET Solution",
                     absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-            }.ToImmutableArray());
+            });
     }
 }

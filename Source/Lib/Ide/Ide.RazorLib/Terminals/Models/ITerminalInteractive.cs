@@ -11,7 +11,7 @@ public interface ITerminalInteractive : IDisposable
 	public event Action? WorkingDirectoryChanged;
 	
 	public void SetWorkingDirectory(string workingDirectoryAbsolutePathString);
-	public ImmutableList<TerminalCommandRequest> GetTerminalCommandRequestHistory();
+	public List<TerminalCommandRequest> GetTerminalCommandRequestHistory();
 	
 	/// <summary>
 	/// Some terminal commands will map to "interactive" commands that are

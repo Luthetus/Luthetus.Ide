@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -17,7 +16,7 @@ public interface IInputFileService
         string message,
         Func<AbsolutePath, Task> onAfterSubmitFunc,
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
-        ImmutableArray<InputFilePattern> inputFilePatterns);
+        List<InputFilePattern> inputFilePatterns);
 
     public void SetSelectedTreeViewModel(TreeViewAbsolutePath? SelectedTreeViewModel);
 

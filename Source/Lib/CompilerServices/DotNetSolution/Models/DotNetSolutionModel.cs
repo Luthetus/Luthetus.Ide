@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
@@ -11,9 +10,9 @@ public record DotNetSolutionModel : IDotNetSolution
     public DotNetSolutionModel(
         AbsolutePath absolutePath,
         DotNetSolutionHeader dotNetSolutionHeader,
-        ImmutableArray<IDotNetProject> dotNetProjectList,
-        ImmutableArray<SolutionFolder> solutionFolderList,
-        ImmutableArray<NestedProjectEntry> nestedProjectEntryList,
+        List<IDotNetProject> dotNetProjectList,
+		List<SolutionFolder> solutionFolderList,
+		List<NestedProjectEntry> nestedProjectEntryList,
         DotNetSolutionGlobal dotNetSolutionGlobal,
         string solutionFileContents)
     {
@@ -29,9 +28,9 @@ public record DotNetSolutionModel : IDotNetSolution
     public Key<DotNetSolutionModel> Key { get; init; }
     public AbsolutePath AbsolutePath { get; init; }
     public DotNetSolutionHeader DotNetSolutionHeader { get; init; }
-    public ImmutableArray<IDotNetProject> DotNetProjectList { get; init; }
-    public ImmutableArray<SolutionFolder> SolutionFolderList { get; init; }
-    public ImmutableArray<NestedProjectEntry> NestedProjectEntryList { get; init; }
+    public List<IDotNetProject> DotNetProjectList { get; init; }
+    public List<SolutionFolder> SolutionFolderList { get; init; }
+    public List<NestedProjectEntry> NestedProjectEntryList { get; init; }
     public DotNetSolutionGlobal DotNetSolutionGlobal { get; init; }
     public string SolutionFileContents { get; init; }
 

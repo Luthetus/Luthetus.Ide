@@ -168,7 +168,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
                 { nameof(IFileFormRendererType.CheckForTemplates), false },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
+                    new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
                         async (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
                             await PerformBranchNewEnqueue(localGitState, fileName))
                 },

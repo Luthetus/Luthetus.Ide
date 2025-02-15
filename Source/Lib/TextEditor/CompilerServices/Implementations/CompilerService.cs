@@ -221,7 +221,7 @@ public class CompilerService : ICompilerService
 
 			var diagnosticTextSpans = GetDiagnosticsFor(modelModifier.ResourceUri)
 				.Select(x => x.TextSpan)
-				.ToArray();
+				.ToList();
 
 			modelModifier.CompletePendingCalculatePresentationModel(
 				CompilerServiceDiagnosticPresentationFacts.PresentationKey,

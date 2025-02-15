@@ -220,7 +220,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorModelModifier modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
-        ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
+        List<TextEditorTextSpan> calculatedTextSpans)
     {
         modelModifier.CompletePendingCalculatePresentationModel(
             presentationKey,

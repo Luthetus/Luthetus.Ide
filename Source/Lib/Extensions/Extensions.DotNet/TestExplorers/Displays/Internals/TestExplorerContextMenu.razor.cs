@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -141,10 +140,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 					{
 						if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is null)
 							return inState;
-					
-						var mutablePassedTestHashSet = inState.PassedTestHashSet.ToHashSet();
-						var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
-						var mutableFailedTestHashSet = inState.FailedTestHashSet.ToHashSet();
+
+						var mutablePassedTestHashSet = new HashSet<string>(inState.PassedTestHashSet);
+						var mutableNotRanTestHashSet = new HashSet<string>(inState.NotRanTestHashSet);
+						var mutableFailedTestHashSet = new HashSet<string>(inState.FailedTestHashSet);
 						
 						foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.TestNameFullyQualifiedList)
 						{
@@ -155,9 +154,9 @@ public partial class TestExplorerContextMenu : ComponentBase
 						
 						return inState with
 				        {
-				            PassedTestHashSet = mutablePassedTestHashSet.ToImmutableHashSet(),
-				            NotRanTestHashSet = mutableNotRanTestHashSet.ToImmutableHashSet(),
-				            FailedTestHashSet = mutableFailedTestHashSet.ToImmutableHashSet(),
+				            PassedTestHashSet = mutablePassedTestHashSet,
+				            NotRanTestHashSet = mutableNotRanTestHashSet,
+				            FailedTestHashSet = mutableFailedTestHashSet,
 				        };
 				    });
 			        
@@ -183,7 +182,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 						
 						return inState with
 				        {
-				            NotRanTestHashSet = mutableNotRanTestHashSet.ToImmutableHashSet(),
+				            NotRanTestHashSet = mutableNotRanTestHashSet,
 				        };
 				    });
 				}));

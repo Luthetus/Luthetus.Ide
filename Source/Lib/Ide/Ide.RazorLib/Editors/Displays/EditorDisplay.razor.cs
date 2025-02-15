@@ -15,10 +15,10 @@ public partial class EditorDisplay : ComponentBase
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
 
-    private static readonly ImmutableArray<HeaderButtonKind> TextEditorHeaderButtonKindsList =
+    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
         Enum.GetValues(typeof(HeaderButtonKind))
             .Cast<HeaderButtonKind>()
-            .ToImmutableArray();
+            .ToList();
 
     private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
 

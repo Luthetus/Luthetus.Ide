@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
@@ -506,12 +505,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 				return Task.FromResult(absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
 			},
-			new[]
+			new()
 			{
 				new InputFilePattern(
 					"C# Project",
 					absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-			}.ToImmutableArray());
+			});
 	}
 
 	private Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)

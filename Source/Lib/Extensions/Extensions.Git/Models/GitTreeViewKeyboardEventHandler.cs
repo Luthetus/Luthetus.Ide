@@ -57,7 +57,7 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 
                 return inState with
                 {
-                    SelectedFileList = outSelectedFileList.ToImmutableList()
+                    SelectedFileList = outSelectedFileList
                 };
             });
         }

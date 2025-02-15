@@ -88,7 +88,7 @@ public class TerminalInteractive : ITerminalInteractive
             WorkingDirectoryChanged?.Invoke();
 	}
 	
-	public ImmutableList<TerminalCommandRequest> GetTerminalCommandRequestHistory()
+	public List<TerminalCommandRequest> GetTerminalCommandRequestHistory()
 	{
 		lock (_syncRoot)
 		{

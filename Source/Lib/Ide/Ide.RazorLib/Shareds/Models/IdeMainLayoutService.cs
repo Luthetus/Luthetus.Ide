@@ -22,10 +22,12 @@ public class IdeMainLayoutService : IIdeMainLayoutService
 			if (existingComponent is not null)
                 goto finalize;
 
-            _ideMainLayoutState = inState with
+			var outFooterJustifyEndComponentList = new List<FooterJustifyEndComponent>(inState.FooterJustifyEndComponentList);
+			outFooterJustifyEndComponentList.Add(footerJustifyEndComponent);
+
+			_ideMainLayoutState = inState with
 			{
-				FooterJustifyEndComponentList = inState.FooterJustifyEndComponentList.Add(
-					footerJustifyEndComponent)
+				FooterJustifyEndComponentList = outFooterJustifyEndComponentList
 			};
 
 			goto finalize;

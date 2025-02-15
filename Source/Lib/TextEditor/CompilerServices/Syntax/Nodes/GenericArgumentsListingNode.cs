@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
@@ -7,9 +5,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class GenericArgumentsListingNode : ISyntaxNode
 {
+    public static readonly List<GenericArgumentEntryNode> __empty = new();
+
     public GenericArgumentsListingNode(
         SyntaxToken openAngleBracketToken,
-        ImmutableArray<GenericArgumentEntryNode> genericArgumentEntryNodeList,
+        List<GenericArgumentEntryNode> genericArgumentEntryNodeList,
         SyntaxToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
@@ -21,7 +21,7 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
 	private bool _childListIsDirty = true;
 
     public SyntaxToken OpenAngleBracketToken { get; }
-    public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeList { get; }
+    public List<GenericArgumentEntryNode> GenericArgumentEntryNodeList { get; }
     public SyntaxToken CloseAngleBracketToken { get; }
 
     public bool IsFabricated { get; init; }
@@ -35,8 +35,8 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
     	// OpenAngleBracketToken, GenericArgumentEntryNodeList.Length, CloseAngleBracketToken
     	var childCount =
     		1 +                                   // OpenAngleBracketToken,
-    		GenericArgumentEntryNodeList.Length + // GenericArgumentEntryNodeList.Length,
-    		1;                                    // CloseAngleBracketToken
+    		GenericArgumentEntryNodeList.Count + // GenericArgumentEntryNodeList.Count,
+            1;                                    // CloseAngleBracketToken
     		
         var childList = new ISyntax[childCount];
 		var i = 0;

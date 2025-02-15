@@ -8,11 +8,11 @@ namespace Luthetus.Ide.RazorLib.StartupControls.Models;
 /// </summary>
 public record StartupControlState(
 	Key<IStartupControlModel> ActiveStartupControlKey,
-	ImmutableList<IStartupControlModel> StartupControlList)
+	List<IStartupControlModel> StartupControlList)
 {
 	public StartupControlState() : this(
 		Key<IStartupControlModel>.Empty,
-		ImmutableList<IStartupControlModel>.Empty)
+		new())
 	{
 	}
 	

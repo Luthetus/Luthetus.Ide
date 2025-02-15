@@ -8,9 +8,9 @@ public static class TerminalFacts
     public static readonly Key<ITerminal> EXECUTION_KEY = Key<ITerminal>.NewKey();
     public static readonly Key<ITerminal> GENERAL_KEY = Key<ITerminal>.NewKey();
 
-    public static readonly ImmutableArray<Key<ITerminal>> WELL_KNOWN_KEYS = new[]
+    public static readonly List<Key<ITerminal>> WELL_KNOWN_KEYS = new()
     {
         EXECUTION_KEY,
         GENERAL_KEY,
-    }.ToImmutableArray();
+    };
 }

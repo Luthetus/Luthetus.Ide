@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -89,13 +88,13 @@ public partial class CSharpFacts
             	IsKeywordType = true
             };
 
-        public static readonly ImmutableArray<TypeDefinitionNode> TypeDefinitionNodes = new[]
+        public static readonly List<TypeDefinitionNode> TypeDefinitionNodes = new[]
         {
             Void,
             Int,
             String,
             Bool,
             Var
-        }.ToImmutableArray();
+        }.ToList();
     }
 }

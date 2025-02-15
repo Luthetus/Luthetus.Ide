@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -109,10 +108,10 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
                 return Task.FromResult(true);
             },
-            new[]
+            new()
             {
                     new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
-            }.ToImmutableArray());
+            });
     }
 
     public async Task RegisterModelFunc(RegisterModelArgs registerModelArgs)
@@ -217,11 +216,11 @@ public class EditorIdeApi : IBackgroundTaskGroup
                 false,
                 registerViewModelArgs.Category);
 	
-	        var firstPresentationLayerKeys = new[]
+	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 	        {
 	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 	            FindOverlayPresentationFacts.PresentationKey,
-	        }.ToImmutableArray();
+	        };
 	
 	        var absolutePath = _environmentProvider.AbsolutePathFactory(
 	            registerViewModelArgs.ResourceUri.Value,
@@ -233,7 +232,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             {
                 OnSaveRequested = HandleOnSaveRequested,
                 GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+                FirstPresentationLayerKeysList = firstPresentationLayerKeys
             };
             
             _textEditorService.ViewModelApi.Register(viewModel);

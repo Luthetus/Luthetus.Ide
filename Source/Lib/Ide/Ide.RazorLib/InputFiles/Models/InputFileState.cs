@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -8,22 +7,22 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
 public record struct InputFileState(
     int IndexInHistory,
-    ImmutableList<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
+	List<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
     TreeViewAbsolutePath? SelectedTreeViewModel,
     Func<AbsolutePath, Task> OnAfterSubmitFunc,
     Func<AbsolutePath, Task<bool>> SelectionIsValidFunc,
-    ImmutableArray<InputFilePattern> InputFilePatternsList,
+    List<InputFilePattern> InputFilePatternsList,
     InputFilePattern? SelectedInputFilePattern,
     string SearchQuery,
     string Message)
 {
     public InputFileState() : this(
         -1,
-        ImmutableList<TreeViewAbsolutePath>.Empty,
+		new(),
         null,
         _ => Task.CompletedTask,
         _ => Task.FromResult(false),
-        ImmutableArray<InputFilePattern>.Empty,
+		new(),
         null,
         string.Empty,
         string.Empty)
@@ -61,7 +60,7 @@ public record struct InputFileState(
         selectionClone.IsExpanded = true;
         selectionClone.ChildList = selectedTreeViewModel.ChildList;
         
-        var nextHistory = inInputFileState.OpenedTreeViewModelHistoryList;
+        var nextHistory = new List<TreeViewAbsolutePath>(inInputFileState.OpenedTreeViewModelHistoryList);
 
         // If not at end of history the more recent history is
         // replaced by the to be selected TreeViewModel
@@ -71,12 +70,12 @@ public record struct InputFileState(
             var startingIndexToRemove = inInputFileState.IndexInHistory + 1;
             var countToRemove = historyCount - startingIndexToRemove;
 
-            nextHistory = inInputFileState.OpenedTreeViewModelHistoryList.RemoveRange(
+			nextHistory.RemoveRange(
                 startingIndexToRemove,
                 countToRemove);
         }
 
-        nextHistory = nextHistory.Add(selectionClone);
+        nextHistory.Add(selectionClone);
 
         return inInputFileState with
         {

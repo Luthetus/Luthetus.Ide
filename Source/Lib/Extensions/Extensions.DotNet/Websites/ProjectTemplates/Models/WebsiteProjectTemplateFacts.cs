@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
@@ -19,17 +18,17 @@ public static class WebsiteProjectTemplateFacts
 			"[C#],F#,VB",
 			"Common/Console");
 
-		WebsiteProjectTemplatesContainer = new[]
+		WebsiteProjectTemplatesContainer = new List<ProjectTemplate>
 		{
 			BlazorWasmEmptyProjectTemplate,
 			ConsoleAppProjectTemplate,
-		}.ToImmutableArray();
+		};
 	}
 
 	public static ProjectTemplate BlazorWasmEmptyProjectTemplate { get; }
 	public static ProjectTemplate ConsoleAppProjectTemplate { get; }
 
-	public static ImmutableArray<ProjectTemplate> WebsiteProjectTemplatesContainer { get; }
+	public static List<ProjectTemplate> WebsiteProjectTemplatesContainer { get; }
 
 	public static async Task HandleNewCSharpProjectAsync(
 		string projectTemplateShortName,
