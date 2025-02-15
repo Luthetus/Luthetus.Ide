@@ -20,7 +20,7 @@ public class ContextService : IContextService
     
     public ContextSwitchState GetContextSwitchState() => _contextSwitchState;
     
-    public void ReduceSetFocusedContextHeirarchyAction(ContextHeirarchy focusedContextHeirarchy)
+    public void SetFocusedContextHeirarchy(ContextHeirarchy focusedContextHeirarchy)
     {
     	lock (_stateModificationLock)
     	{
@@ -30,13 +30,15 @@ public class ContextService : IContextService
 	        {
 	            FocusedContextHeirarchy = focusedContextHeirarchy
 	        };
-	        
-	        ContextStateChanged?.Invoke();
-	        return;
+
+			goto finalize;
     	}
+
+		finalize:
+        ContextStateChanged?.Invoke();
     }
     
-    public void ReduceToggleSelectInspectedContextHeirarchyAction()
+    public void ToggleSelectInspectedContextHeirarchy()
     {
     	lock (_stateModificationLock)
     	{
@@ -60,12 +62,14 @@ public class ContextService : IContextService
 	            InspectedContextHeirarchy = outInspectedContextHeirarchy,
 	        };
 	        
-	        ContextStateChanged?.Invoke();
-	        return;
+	        goto finalize;
 	    }
+
+        finalize:
+        ContextStateChanged?.Invoke();
     }
-    
-    public void ReduceIsSelectingInspectableContextHeirarchyAction(bool value)
+
+    public void IsSelectingInspectableContextHeirarchy(bool value)
     {
     	lock (_stateModificationLock)
     	{
@@ -77,10 +81,9 @@ public class ContextService : IContextService
 	            {
 	                IsSelectingInspectionTarget = true
 	            };
-	            
-	            ContextStateChanged?.Invoke();
-	        	return;
-	        }
+
+                goto finalize;
+            }
 	        else
 	        {
 	        	var outInspectableContextList = new List<InspectableContext>();
@@ -91,14 +94,16 @@ public class ContextService : IContextService
 	                InspectedContextHeirarchy = null,
 	                InspectableContextList = outInspectableContextList,
 	            };
-	            
-	            ContextStateChanged?.Invoke();
-		        return;
+
+				goto finalize;
 	        }
 	    }
+
+        finalize:
+        ContextStateChanged?.Invoke();
     }
     
-    public void ReduceSetInspectedContextHeirarchyAction(ContextHeirarchy? inspectedContextHeirarchy)
+    public void SetInspectedContextHeirarchy(ContextHeirarchy? inspectedContextHeirarchy)
     {
     	lock (_stateModificationLock)
     	{
@@ -112,13 +117,15 @@ public class ContextService : IContextService
 	            InspectedContextHeirarchy = inspectedContextHeirarchy,
 	            InspectableContextList = outInspectableContextList,
 	        };
-	        
-	        ContextStateChanged?.Invoke();
-	        return;
-	    }
+
+			goto finalize;
+        }
+
+        finalize:
+        ContextStateChanged?.Invoke();
     }
     
-    public void ReduceAddInspectableContextAction(InspectableContext inspectableContext)
+    public void AddInspectableContext(InspectableContext inspectableContext)
     {
     	lock (_stateModificationLock)
     	{
@@ -132,12 +139,14 @@ public class ContextService : IContextService
 	        	InspectableContextList = outInspectableContextList
 	        };
 	        
-	        ContextStateChanged?.Invoke();
-	        return;
+	        goto finalize;
 	    }
+
+        finalize:
+        ContextStateChanged?.Invoke();
     }
     
-    public void ReduceSetContextKeymapAction(Key<ContextRecord> contextKey, IKeymap keymap)
+    public void SetContextKeymap(Key<ContextRecord> contextKey, IKeymap keymap)
     {
     	lock (_stateModificationLock)
     	{
@@ -149,17 +158,15 @@ public class ContextService : IContextService
 	        if (inContextRecord != default)
 	        {
 	            _contextState = inState;
-	            ContextStateChanged?.Invoke();
-	        	return;
-	        }
+				goto finalize;
+            }
 	            
 	        var index = inState.AllContextsList.FindIndex(x => x.ContextKey == inContextRecord.ContextKey);
 	        if (index == -1)
 	        {
 	        	_contextState = inState;
-	        	ContextStateChanged?.Invoke();
-	        	return;
-	        }
+                goto finalize;
+            }
 	
 	        inState.AllContextsList[index] = inContextRecord with
 	        {
@@ -167,12 +174,14 @@ public class ContextService : IContextService
 	        };
 	
 	        _contextState = inState with { };
-	        ContextStateChanged?.Invoke();
-	        return;
-	    }
+            goto finalize;
+        }
+
+        finalize:
+        ContextStateChanged?.Invoke();
     }
 	
-    public void ReduceRegisterContextSwitchGroupAction(ContextSwitchGroup contextSwitchGroup)
+    public void RegisterContextSwitchGroup(ContextSwitchGroup contextSwitchGroup)
     {
     	lock (_stateModificationLock)
     	{
@@ -181,9 +190,8 @@ public class ContextService : IContextService
 	    	if (inState.ContextSwitchGroupList.Any(x =>
 	    			x.Key == contextSwitchGroup.Key))
 	    	{
-	    		ContextSwitchStateChanged?.Invoke();
-	        	return;
-	    	}
+                goto finalize;
+            }
 	    
 	    	var outContextSwitchGroupList = new List<ContextSwitchGroup>(inState.ContextSwitchGroupList);
 	    	outContextSwitchGroupList.Add(contextSwitchGroup);
@@ -193,8 +201,10 @@ public class ContextService : IContextService
 	            ContextSwitchGroupList = outContextSwitchGroupList
 	        };
 	        
-	        ContextSwitchStateChanged?.Invoke();
-	        return;
+	        goto finalize;
 	    }
+
+        finalize:
+        ContextStateChanged?.Invoke();
     }
 }

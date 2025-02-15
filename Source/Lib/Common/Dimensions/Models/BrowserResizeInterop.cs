@@ -29,7 +29,7 @@ public class BrowserResizeInterop
 	[JSInvokable]
     public void OnBrowserResize()
     {
-		_appDimensionService.ReduceNotifyUserAgentResizeAction();
+		_appDimensionService.NotifyUserAgentResize();
     }
     
     /// <summary>

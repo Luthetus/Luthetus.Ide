@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -48,10 +46,6 @@ public record SemanticResultRazor
     /// a single C# class. The resulting string is here.
     /// </summary>
     public string ClassContents { get; }
-
-    public ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)> DiagnosticTextSpanTuples { get; init; } = ImmutableList<(TextEditorDiagnostic diagnostic, TextEditorTextSpan textSpan)>.Empty;
-
-    public ImmutableList<(string message, TextEditorTextSpan textSpan)> SymbolMessageTextSpanTuples { get; init; } = ImmutableList<(string message, TextEditorTextSpan textSpan)>.Empty;
 
     public TextEditorTextSpan? MapAdhocCSharpTextSpanToSource(
         ResourceUri sourceResourceUri,

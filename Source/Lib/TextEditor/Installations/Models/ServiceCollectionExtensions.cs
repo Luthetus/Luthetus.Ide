@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
@@ -32,7 +33,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>()
             .AddScoped<IFindAllService, FindAllService>()
-            .AddScoped<IDirtyResourceUriService, DirtyResourceUriService>();
+            .AddScoped<IDirtyResourceUriService, DirtyResourceUriService>()
+            .AddScoped<TextEditorInitializationBackgroundTaskGroup>();
         
         return services;
     }

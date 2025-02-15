@@ -9,14 +9,14 @@ public interface IFindAllService : IDisposable
 	
 	public TextEditorFindAllState GetFindAllState();
     
-    public void ReduceSetSearchQueryAction(string searchQuery);
+    public void SetSearchQuery(string searchQuery);
 
-    public void ReduceSetStartingDirectoryPathAction(string startingDirectoryPath);
+    public void SetStartingDirectoryPath(string startingDirectoryPath);
 
-    public void ReduceCancelSearchAction();
+    public void CancelSearch();
 
 	/// <summary>Intended for use only by the 'Effector'</summary>
-    public void ReduceSetProgressBarModelAction(ProgressBarModel progressBarModel);
+    public void SetProgressBarModel(ProgressBarModel progressBarModel);
 
 	/// <summary>
     /// While the search task is being executed, any search results are being
@@ -30,9 +30,9 @@ public interface IFindAllService : IDisposable
     ///
     /// Then, the search will continue.
     /// </summary>
-    public void ReduceFlushSearchResultsAction(List<TextEditorTextSpan> searchResultList);
+    public void FlushSearchResults(List<TextEditorTextSpan> searchResultList);
 
-    public void ReduceClearSearchAction();
+    public void ClearSearch();
 	
 	public Task HandleStartSearchAction();
 }

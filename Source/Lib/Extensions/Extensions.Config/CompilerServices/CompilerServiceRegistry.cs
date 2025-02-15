@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
@@ -24,8 +23,8 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
 {
     private readonly Dictionary<string, ICompilerService> _map = new();
 
-    public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
-    public ImmutableList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToImmutableList();
+    public IReadOnlyDictionary<string, ICompilerService> Map => _map;
+    public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToList();
 
     public ConfigCompilerServiceRegistry(
         ITextEditorService textEditorService,

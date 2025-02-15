@@ -1,5 +1,4 @@
 using System.Text;
-using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -15,6 +14,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -103,8 +103,8 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 		return new TerminalOutputFormattedTextEditor(
 			outputBuilder.ToString(),
 			parsedCommandList,
-			outTextSpanList.ToImmutableList(),
-			outSymbolList.ToImmutableList());
+			outTextSpanList,
+			outSymbolList);
 	}
 	
 	private void CreateTextEditor()
@@ -152,16 +152,16 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             false,
             new Category("terminal"));
 
-        var firstPresentationLayerKeys = new[]
+        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>()
         {
             TerminalPresentationFacts.PresentationKey,
             CompilerServiceDiagnosticPresentationFacts.PresentationKey,
             FindOverlayPresentationFacts.PresentationKey,
-        }.ToImmutableArray();
+        };
             
         viewModel = viewModel with
         {
-            FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+            FirstPresentationLayerKeysList = firstPresentationLayerKeys
         };
         
         _textEditorService.ViewModelApi.Register(viewModel);

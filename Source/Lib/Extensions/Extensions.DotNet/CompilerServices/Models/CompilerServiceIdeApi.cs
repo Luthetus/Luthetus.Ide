@@ -11,7 +11,7 @@ using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.CompilerServices.Models;
 
-public class CompilerServiceIdeApi
+public class CompilerServiceIdeApi : IBackgroundTaskGroup
 {
     private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
@@ -42,125 +42,166 @@ public class CompilerServiceIdeApi
 		_treeViewService = treeViewService;
 	}
 
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(CompilerServiceIdeApi);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<CompilerServiceIdeWorkKind> _workKindQueue = new();
+
+    private readonly object _workLock = new();
+
+    public void Enqueue_SetCompilerServiceExplorerTreeView()
+	{
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(CompilerServiceIdeWorkKind.SetCompilerServiceExplorerTreeView);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+
     /// <summary>
     /// TODO: Iterate over _compilerServiceExplorerStateWrap.Value.CompilerServiceList instead...
 	///       ...of invoking 'GetCompilerService' with hardcoded values.
     /// </summary>
-    public void SetCompilerServiceExplorerTreeView()
+    public async ValueTask Do_SetCompilerServiceExplorerTreeView()
 	{
-		_backgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			BackgroundTaskFacts.ContinuousQueueKey,
-			"Set CompilerServiceExplorer TreeView",
-			async () =>
-			{
-				var compilerServiceExplorerState = _compilerServiceExplorerService.GetCompilerServiceExplorerState();
+		var compilerServiceExplorerState = _compilerServiceExplorerService.GetCompilerServiceExplorerState();
 
-				var xmlCompilerServiceWatchWindowObject = new WatchWindowObject(
-					_compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML).GetType(),
-					"XML",
-					true);
+		var xmlCompilerServiceWatchWindowObject = new WatchWindowObject(
+			_compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML).GetType(),
+			"XML",
+			true);
 
-				var dotNetSolutionCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION).GetType(),
-					".NET Solution",
-					true);
+		var dotNetSolutionCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION).GetType(),
+			".NET Solution",
+			true);
 
-				var cSharpProjectCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT).GetType(),
-					"C# Project",
-					true);
+		var cSharpProjectCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT).GetType(),
+			"C# Project",
+			true);
 
-				var cSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS).GetType(),
-					"C#",
-					true);
+		var cSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS).GetType(),
+			"C#",
+			true);
 
-				var razorCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP).GetType(),
-					"Razor",
-					true);
+		var razorCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP).GetType(),
+			"Razor",
+			true);
 
-				var cssCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS).GetType(),
-					"Css",
-					true);
+		var cssCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS).GetType(),
+			"Css",
+			true);
 
-				var fSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP).GetType(),
-					"F#",
-					true);
+		var fSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP).GetType(),
+			"F#",
+			true);
 
-				var javaScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT).GetType(),
-					"JavaScript",
-					true);
+		var javaScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT).GetType(),
+			"JavaScript",
+			true);
 
-				var typeScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT).GetType(),
-					"TypeScript",
-					true);
+		var typeScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT).GetType(),
+			"TypeScript",
+			true);
 
-				var jsonCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON).GetType(),
-					"JSON",
-					true);
+		var jsonCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON).GetType(),
+			"JSON",
+			true);
 
-				var terminalCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL).GetType(),
-					"Terminal",
-					true);
+		var terminalCompilerServiceWatchWindowObject = new WatchWindowObject(
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL).GetType(),
+			"Terminal",
+			true);
 
-				var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-					new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
-					new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers));
+		var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
+			new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+			new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers));
 
-				await rootNode.LoadChildListAsync().ConfigureAwait(false);
+		await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-				if (!_treeViewService.TryGetTreeViewContainer(
-						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
-						out var treeViewState))
-				{
-					_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
-						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
-						rootNode,
-						new() { rootNode }));
-				}
-				else
-				{
-					_treeViewService.ReduceWithRootNodeAction(
-						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
-						rootNode);
+		if (!_treeViewService.TryGetTreeViewContainer(
+				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
+				out var treeViewState))
+		{
+			_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
+				rootNode,
+				new() { rootNode }));
+		}
+		else
+		{
+			_treeViewService.ReduceWithRootNodeAction(
+				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
+				rootNode);
 
-					_treeViewService.ReduceSetActiveNodeAction(
-						CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
-						rootNode,
-						true,
-						false);
-				}
+			_treeViewService.ReduceSetActiveNodeAction(
+				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
+				rootNode,
+				true,
+				false);
+		}
 
-				_dotNetBackgroundTaskApi.CompilerServiceExplorerService.ReduceNewAction(inCompilerServiceExplorerState =>
-					new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model));
-			});
+		_dotNetBackgroundTaskApi.CompilerServiceExplorerService.ReduceNewAction(inCompilerServiceExplorerState =>
+			new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model));
 	}
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        CompilerServiceIdeWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
+        }
+
+        switch (workKind)
+        {
+            case CompilerServiceIdeWorkKind.SetCompilerServiceExplorerTreeView:
+            {
+                return Do_SetCompilerServiceExplorerTreeView();
+            }
+            default:
+            {
+                return ValueTask.CompletedTask;
+            }
+        }
+    }
 }

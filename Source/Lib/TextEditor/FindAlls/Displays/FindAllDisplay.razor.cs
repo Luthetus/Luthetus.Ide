@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -16,14 +15,10 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
     private IFindAllService FindAllService { get; set; } = null!;
     [Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;	
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
@@ -45,7 +40,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
         set
         {
             if (value is not null)
-                FindAllService.ReduceSetSearchQueryAction(value);
+                FindAllService.SetSearchQuery(value);
         }
     }
 
@@ -55,7 +50,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
         set
         {
             if (value is not null)
-                FindAllService.ReduceSetStartingDirectoryPathAction(value);
+                FindAllService.SetStartingDirectoryPath(value);
         }
     }
     
@@ -107,7 +102,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 
 	private void CancelSearchOnClick()
     {
-    	FindAllService.ReduceCancelSearchAction();
+    	FindAllService.CancelSearch();
     }
     
     public async void OnFindAllStateChanged()

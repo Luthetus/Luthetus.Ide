@@ -59,12 +59,12 @@ public partial class GitInteractiveIconDisplay : ComponentBase, IDisposable
 
             if (panelGroup is not null)
             {
-                PanelService.ReduceSetActivePanelTabAction(panelGroup.Key, gitPanel.Key);
+                PanelService.SetActivePanelTab(panelGroup.Key, gitPanel.Key);
             }
             else
             {
-                PanelService.ReduceRegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel, true);
-                PanelService.ReduceSetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, gitPanel.Key);
+                PanelService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, gitPanel, true);
+                PanelService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, gitPanel.Key);
             }
         }
     }

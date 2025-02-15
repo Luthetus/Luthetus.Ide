@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
@@ -10,7 +9,9 @@ namespace Luthetus.Ide.RazorLib.CodeSearches.Models;
 
 public class CodeSearchService : ICodeSearchService
 {
-	private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
+    private readonly object _stateModificationLock = new();
+
+    private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ITreeViewService _treeViewService;
@@ -31,120 +32,128 @@ public class CodeSearchService : ICodeSearchService
     
     public CodeSearchState GetCodeSearchState() => _codeSearchState;
     
-    public void ReduceWithAction(Func<CodeSearchState, CodeSearchState> withFunc)
+    public void With(Func<CodeSearchState, CodeSearchState> withFunc)
     {
-    	var inState = GetCodeSearchState();
-    
-        var outState = withFunc.Invoke(inState);
+        lock (_stateModificationLock)
+        {
+            var inState = GetCodeSearchState();
 
-        if (outState.Query.StartsWith("f:"))
-        {
-            outState = outState with
-            {
-                CodeSearchFilterKind = CodeSearchFilterKind.Files
-            };
-        }
-        else if (outState.Query.StartsWith("t:"))
-        {
-            outState = outState with
-            {
-                CodeSearchFilterKind = CodeSearchFilterKind.Types
-            };
-        }
-        else if (outState.Query.StartsWith("m:"))
-        {
-            outState = outState with
-            {
-                CodeSearchFilterKind = CodeSearchFilterKind.Members
-            };
-        }
-        else
-        {
-            outState = outState with
-            {
-                CodeSearchFilterKind = CodeSearchFilterKind.None
-            };
-        }
+            var outState = withFunc.Invoke(inState);
 
-        _codeSearchState = outState;
-        CodeSearchStateChanged?.Invoke();
-        return;
-    }
-
-    public void ReduceAddResultAction(string result)
-    {
-    	var inState = GetCodeSearchState();
-    
-        _codeSearchState = inState with
-        {
-            ResultList = inState.ResultList.Add(result)
-        };
-        CodeSearchStateChanged?.Invoke();
-        return;
-    }
-
-    public void ReduceClearResultListAction()
-    {
-    	var inState = GetCodeSearchState();
-    
-        _codeSearchState = inState with
-        {
-            ResultList = ImmutableList<string>.Empty
-        };
-        CodeSearchStateChanged?.Invoke();
-        return;
-    }
-    
-    public void ReduceInitializeResizeHandleDimensionUnitAction(DimensionUnit dimensionUnit)
-    {
-    	var inState = GetCodeSearchState();
-    
-        if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
-        {
-        	CodeSearchStateChanged?.Invoke();
-        	return;
-        }
-        
-        // TopContentElementDimensions
-        {
-        	if (inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
-        	{
-        		CodeSearchStateChanged?.Invoke();
-        		return;
-        	}
-        		
-        	var existingDimensionUnit = inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
-        		.FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-        		
-            if (existingDimensionUnit.Purpose is not null)
+            if (outState.Query.StartsWith("f:"))
             {
-            	CodeSearchStateChanged?.Invoke();
-        		return;
+                outState = outState with
+                {
+                    CodeSearchFilterKind = CodeSearchFilterKind.Files
+                };
             }
-        		
-        	inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-        }
-        
-        // BottomContentElementDimensions
-        {
-        	if (inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
-        	{
-        		CodeSearchStateChanged?.Invoke();
-        		return;
-        	}
-        		
-        	var existingDimensionUnit = inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-            if (existingDimensionUnit.Purpose is not null)
+            else if (outState.Query.StartsWith("t:"))
             {
-            	CodeSearchStateChanged?.Invoke();
-        		return;
+                outState = outState with
+                {
+                    CodeSearchFilterKind = CodeSearchFilterKind.Types
+                };
             }
-        		
-        	inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+            else if (outState.Query.StartsWith("m:"))
+            {
+                outState = outState with
+                {
+                    CodeSearchFilterKind = CodeSearchFilterKind.Members
+                };
+            }
+            else
+            {
+                outState = outState with
+                {
+                    CodeSearchFilterKind = CodeSearchFilterKind.None
+                };
+            }
+
+            _codeSearchState = outState;
+            goto finalize;
         }
-        
+
+        finalize:
         CodeSearchStateChanged?.Invoke();
-        return;
+    }
+
+    public void AddResult(string result)
+    {
+        lock (_stateModificationLock)
+        {
+            var inState = GetCodeSearchState();
+
+            var outResultList = new List<string>(inState.ResultList);
+            outResultList.Add(result);
+
+			_codeSearchState = inState with
+            {
+                ResultList = outResultList
+			};
+            goto finalize;
+        }
+
+        finalize:
+        CodeSearchStateChanged?.Invoke();
+    }
+
+    public void ClearResultList()
+    {
+        lock (_stateModificationLock)
+        {
+            var inState = GetCodeSearchState();
+
+            _codeSearchState = inState with
+            {
+                ResultList = new()
+            };
+            goto finalize;
+        }
+
+        finalize:
+        CodeSearchStateChanged?.Invoke();
+    }
+    
+    public void InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
+    {
+        lock (_stateModificationLock)
+        {
+            var inState = GetCodeSearchState();
+
+            if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
+                goto finalize;
+
+            // TopContentElementDimensions
+            {
+                if (inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
+                    goto finalize;
+
+                var existingDimensionUnit = inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
+                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+
+                if (existingDimensionUnit.Purpose is not null)
+                    goto finalize;
+
+                inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+            }
+
+            // BottomContentElementDimensions
+            {
+                if (inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
+                    goto finalize;
+
+                var existingDimensionUnit = inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+                if (existingDimensionUnit.Purpose is not null)
+                    goto finalize;
+
+                inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+            }
+
+            goto finalize;
+        }
+
+        finalize:
+        CodeSearchStateChanged?.Invoke();
     }
 
     /// <summary>
@@ -161,7 +170,7 @@ public class CodeSearchService : ICodeSearchService
     {
         _throttle.Run(async _ =>
         {
-            ReduceClearResultListAction();
+            ClearResultList();
 
             var codeSearchState = GetCodeSearchState();
             ConstructTreeView(codeSearchState);
@@ -196,7 +205,7 @@ public class CodeSearchService : ICodeSearchService
                 	var absolutePath = _environmentProvider.AbsolutePathFactory(filePathChild, false);
                 
                     if (absolutePath.NameWithExtension.Contains(codeSearchState.Query))
-                        ReduceAddResultAction(filePathChild);
+                        AddResult(filePathChild);
                 }
 
                 foreach (var directoryPathChild in directoryPathChildList)

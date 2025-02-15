@@ -2,30 +2,34 @@ namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
 public class AppDimensionService : IAppDimensionService
 {
-	private AppDimensionState _appDimensionState;
+    private readonly object _stateModificationLock = new();
+
+    private AppDimensionState _appDimensionState;
 	
 	public event Action? AppDimensionStateChanged;
 	
 	public AppDimensionState GetAppDimensionState() => _appDimensionState;
 	
-	public void ReduceSetAppDimensionsAction(Func<AppDimensionState, AppDimensionState> withFunc)
+	public void SetAppDimensions(Func<AppDimensionState, AppDimensionState> withFunc)
 	{
-		var inState = GetAppDimensionState();
-		
-		_appDimensionState = withFunc.Invoke(inState);
-		AppDimensionStateChanged?.Invoke();
-		return;
-	}
+		lock (_stateModificationLock)
+		{
+			var inState = GetAppDimensionState();
+			_appDimensionState = withFunc.Invoke(inState);
+			goto finalize;
+        }
 
-	public void ReduceNotifyIntraAppResizeAction()
-	{
-		AppDimensionStateChanged?.Invoke();
-		return;
-	}
+		finalize:
+        AppDimensionStateChanged?.Invoke();
+    }
 
-	public void ReduceNotifyUserAgentResizeAction()
+	public void NotifyIntraAppResize()
 	{
 		AppDimensionStateChanged?.Invoke();
-		return;
-	}
+    }
+
+	public void NotifyUserAgentResize()
+	{
+		AppDimensionStateChanged?.Invoke();
+    }
 }

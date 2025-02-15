@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 
@@ -14,11 +12,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
     private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
@@ -187,16 +181,16 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
         if (panelDragEventArgs is not null)
         {
-            PanelService.ReduceDisposePanelTabAction(
+            PanelService.DisposePanelTab(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key);
 
-            PanelService.ReduceRegisterPanelTabAction(
+            PanelService.RegisterPanelTab(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 true);
 
-            PanelService.ReduceSetDragEventArgsAction(null);
+            PanelService.SetDragEventArgs(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
@@ -217,16 +211,16 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
         if (panelDragEventArgs is not null)
         {
-            PanelService.ReduceDisposePanelTabAction(
+            PanelService.DisposePanelTab(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key);
 
-            PanelService.ReduceRegisterPanelTabAction(
+            PanelService.RegisterPanelTab(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 false);
 
-            PanelService.ReduceSetDragEventArgsAction(null);
+            PanelService.SetDragEventArgs(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }

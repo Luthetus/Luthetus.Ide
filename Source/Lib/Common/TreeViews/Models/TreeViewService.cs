@@ -11,7 +11,9 @@ public class TreeViewService : ITreeViewService
     {
         _backgroundTaskService = backgroundTaskService;
     }
-    
+
+    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; }
+
     private TreeViewState _treeViewState = new();
     
     public event Action? TreeViewStateChanged;
@@ -40,28 +42,9 @@ public class TreeViewService : ITreeViewService
 			selectNodesBetweenCurrentAndNextActiveNode,
             treeViewNoType =>
             {
-                var backgroundTask = new BackgroundTask(
-                    Key<IBackgroundTask>.NewKey(),
-                    BackgroundTaskFacts.ContinuousQueueKey,
-                    "TreeView.LoadChildListAsync()",
-                    async () =>
-                    {
-                        try
-                        {
-                            await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
-
-                            ReduceReRenderNodeAction(
-                            	containerKey,
-                                treeViewNoType);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                            throw;
-                        }
-                    });
-
-                _backgroundTaskService.Enqueue(backgroundTask);
+                CommonBackgroundTaskApi.Enqueue_TreeViewService_LoadChildList(
+                    containerKey,
+                    treeViewNoType);
             });
     }
 

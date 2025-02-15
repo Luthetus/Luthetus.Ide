@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -8,127 +7,166 @@ using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
-public class InputFileService : IInputFileService
+public class InputFileService : IInputFileService, IBackgroundTaskGroup
 {
-	private InputFileState _inputFileState = new();
+    private readonly object _stateModificationLock = new();
+
+    private InputFileState _inputFileState = new();
 	
 	public event Action? InputFileStateChanged;
 	
 	public InputFileState GetInputFileState() => _inputFileState;
 
-    public void ReduceStartInputFileStateFormAction(
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(InputFileService);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<InputFileServiceWorkKind> _workKindQueue = new();
+    private readonly object _workLock = new();
+
+    public void StartInputFileStateForm(
         string message,
         Func<AbsolutePath, Task> onAfterSubmitFunc,
         Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
-        ImmutableArray<InputFilePattern> inputFilePatterns)
+        List<InputFilePattern> inputFilePatterns)
     {
-    	var inState = GetInputFileState();
-    
-        _inputFileState = inState with
+        lock (_stateModificationLock)
         {
-            SelectionIsValidFunc = selectionIsValidFunc,
-            OnAfterSubmitFunc = onAfterSubmitFunc,
-            InputFilePatternsList = inputFilePatterns,
-            SelectedInputFilePattern = inputFilePatterns.First(),
-            Message = message
-        };
-        
+            var inState = GetInputFileState();
+
+            _inputFileState = inState with
+            {
+                SelectionIsValidFunc = selectionIsValidFunc,
+                OnAfterSubmitFunc = onAfterSubmitFunc,
+                InputFilePatternsList = inputFilePatterns,
+                SelectedInputFilePattern = inputFilePatterns.First(),
+                Message = message
+            };
+
+            goto finalize;
+        }
+
+        finalize:
         InputFileStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceSetSelectedTreeViewModelAction(TreeViewAbsolutePath? selectedTreeViewModel)
+    public void SetSelectedTreeViewModel(TreeViewAbsolutePath? selectedTreeViewModel)
     {
-    	var inState = GetInputFileState();
-    
-        _inputFileState = inState with
+        lock (_stateModificationLock)
         {
-            SelectedTreeViewModel = selectedTreeViewModel
-        };
-        
+            var inState = GetInputFileState();
+
+            _inputFileState = inState with
+            {
+                SelectedTreeViewModel = selectedTreeViewModel
+            };
+
+            goto finalize;
+        }
+
+        finalize:
         InputFileStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceSetOpenedTreeViewModelAction(
+    public void SetOpenedTreeViewModel(
     	TreeViewAbsolutePath treeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
-    	var inState = GetInputFileState();
-    
-        if (treeViewModel.Item.IsDirectory)
+        lock (_stateModificationLock)
         {
-            _inputFileState = InputFileState.NewOpenedTreeViewModelHistory(
-                inState,
-                treeViewModel,
-                ideComponentRenderers,
-                commonComponentRenderers,
-                fileSystemProvider,
-                environmentProvider);
-            
-            InputFileStateChanged?.Invoke();
-        	return;
+            var inState = GetInputFileState();
+
+            if (treeViewModel.Item.IsDirectory)
+            {
+                _inputFileState = InputFileState.NewOpenedTreeViewModelHistory(
+                    inState,
+                    treeViewModel,
+                    ideComponentRenderers,
+                    commonComponentRenderers,
+                    fileSystemProvider,
+                    environmentProvider);
+
+                goto finalize;
+            }
+
+            _inputFileState = inState;
+
+            goto finalize;
         }
 
-        _inputFileState = inState;
-        
+        finalize:
         InputFileStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceSetSelectedInputFilePatternAction(InputFilePattern inputFilePattern)
+    public void SetSelectedInputFilePattern(InputFilePattern inputFilePattern)
     {
-    	var inState = GetInputFileState();
-    
-        _inputFileState = inState with
+        lock (_stateModificationLock)
         {
-            SelectedInputFilePattern = inputFilePattern
-        };
-        
-        InputFileStateChanged?.Invoke();
-        return;
-    }
+            var inState = GetInputFileState();
 
-    public void ReduceMoveBackwardsInHistoryAction()
-    {
-    	var inState = GetInputFileState();
-    
-        if (inState.CanMoveBackwardsInHistory)
-        {
-            _inputFileState = inState with { IndexInHistory = inState.IndexInHistory - 1 };
-            
-            InputFileStateChanged?.Invoke();
-        	return;
+            _inputFileState = inState with
+            {
+                SelectedInputFilePattern = inputFilePattern
+            };
+
+            goto finalize;
         }
 
-        _inputFileState = inState;
-        
+        finalize:
         InputFileStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceMoveForwardsInHistoryAction()
+    public void MoveBackwardsInHistory()
     {
-    	var inState = GetInputFileState();
-    
-        if (inState.CanMoveForwardsInHistory)
+        lock (_stateModificationLock)
         {
-            _inputFileState = inState with { IndexInHistory = inState.IndexInHistory + 1 };
-            
-            InputFileStateChanged?.Invoke();
-        	return;
+            var inState = GetInputFileState();
+
+            if (inState.CanMoveBackwardsInHistory)
+            {
+                _inputFileState = inState with { IndexInHistory = inState.IndexInHistory - 1 };
+
+                goto finalize;
+            }
+
+            _inputFileState = inState;
+
+            goto finalize;
         }
 
-        _inputFileState = inState;
-        
+        finalize:
         InputFileStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceOpenParentDirectoryAction(
+    public void MoveForwardsInHistory()
+    {
+        lock (_stateModificationLock)
+        {
+            var inState = GetInputFileState();
+
+            if (inState.CanMoveForwardsInHistory)
+            {
+                _inputFileState = inState with { IndexInHistory = inState.IndexInHistory + 1 };
+
+                goto finalize;
+            }
+
+            _inputFileState = inState;
+
+            goto finalize;
+        }
+
+        finalize:
+        InputFileStateChanged?.Invoke();
+    }
+
+    public void OpenParentDirectory(
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -136,85 +174,103 @@ public class InputFileService : IInputFileService
         IBackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
-    	var inState = GetInputFileState();
-    
-        var currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
-
-        // If has a ParentDirectory select it
-        if (currentSelection.Item.ParentDirectory is not null)
+        lock (_stateModificationLock)
         {
-            var parentDirectory = currentSelection.Item.ParentDirectory;
+            var inState = GetInputFileState();
 
-            var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(
-                parentDirectory,
-                true);
+            var currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
 
-            parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
-                parentDirectoryAbsolutePath,
-                ideComponentRenderers,
-                commonComponentRenderers,
-                fileSystemProvider,
-                environmentProvider,
-                false,
-                true);
+            // If has a ParentDirectory select it
+            if (currentSelection.Item.ParentDirectory is not null)
+            {
+                var parentDirectory = currentSelection.Item.ParentDirectory;
+
+                var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(
+                    parentDirectory,
+                    true);
+
+                parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
+                    parentDirectoryAbsolutePath,
+                    ideComponentRenderers,
+                    commonComponentRenderers,
+                    fileSystemProvider,
+                    environmentProvider,
+                    false,
+                    true);
+            }
+
+            if (parentDirectoryTreeViewModel is not null)
+            {
+                _inputFileState = InputFileState.NewOpenedTreeViewModelHistory(
+                    inState,
+                    parentDirectoryTreeViewModel,
+                    ideComponentRenderers,
+                    commonComponentRenderers,
+                    fileSystemProvider,
+                    environmentProvider);
+
+                goto finalize;
+            }
+
+            _inputFileState = inState;
+
+            goto finalize;
         }
 
-        if (parentDirectoryTreeViewModel is not null)
-        {
-            _inputFileState = InputFileState.NewOpenedTreeViewModelHistory(
-                inState,
-                parentDirectoryTreeViewModel,
-                ideComponentRenderers,
-                commonComponentRenderers,
-                fileSystemProvider,
-                environmentProvider);
-                
-            InputFileStateChanged?.Invoke();
-        	return;
-        }
-
-        _inputFileState = inState;
-        
+        finalize:
         InputFileStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceRefreshCurrentSelectionAction(
+    public void RefreshCurrentSelection(
     	IBackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection)
     {
-    	var inState = GetInputFileState();
-    
-        currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
-        
-        _inputFileState = inState;
-        
-        InputFileStateChanged?.Invoke();
-        return;
-    }
-
-    public void ReduceSetSearchQueryAction(string searchQuery)
-    {
-    	var inState = GetInputFileState();
-    
-        var openedTreeViewModel = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
-
-        foreach (var treeViewModel in openedTreeViewModel.ChildList)
+        lock (_stateModificationLock)
         {
-            var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
+            var inState = GetInputFileState();
 
-            treeViewModel.IsHidden = !treeViewAbsolutePath.Item.NameWithExtension.Contains(
-                searchQuery,
-                StringComparison.InvariantCultureIgnoreCase);
+            currentSelection = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
+
+            _inputFileState = inState;
+
+            goto finalize;
         }
 
-        _inputFileState = inState with { SearchQuery = searchQuery };
-        
+        finalize:
         InputFileStateChanged?.Invoke();
-        return;
     }
-    
-    public Task HandleOpenParentDirectoryAction(
+
+    public void SetSearchQuery(string searchQuery)
+    {
+        lock (_stateModificationLock)
+        {
+            var inState = GetInputFileState();
+
+            var openedTreeViewModel = inState.OpenedTreeViewModelHistoryList[inState.IndexInHistory];
+
+            foreach (var treeViewModel in openedTreeViewModel.ChildList)
+            {
+                var treeViewAbsolutePath = (TreeViewAbsolutePath)treeViewModel;
+
+                treeViewModel.IsHidden = !treeViewAbsolutePath.Item.NameWithExtension.Contains(
+                    searchQuery,
+                    StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            _inputFileState = inState with { SearchQuery = searchQuery };
+
+            goto finalize;
+        }
+
+        finalize:
+        InputFileStateChanged?.Invoke();
+    }
+
+    private readonly
+        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonComponentRenderers commonComponentRenderers, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider, IBackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
+        _queue_OpenParentDirectoryAction = new();
+
+    public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
@@ -224,20 +280,35 @@ public class InputFileService : IInputFileService
     {
         if (parentDirectoryTreeViewModel is not null)
         {
-            backgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                BackgroundTaskFacts.ContinuousQueueKey,
-                "Open Parent Directory",
-                async () =>
-                {
-                    await parentDirectoryTreeViewModel.LoadChildListAsync().ConfigureAwait(false);
-                });
-        }
+            lock (_workLock)
+            {
+                _workKindQueue.Enqueue(InputFileServiceWorkKind.OpenParentDirectoryAction);
 
-        return Task.CompletedTask;
+                _queue_OpenParentDirectoryAction.Enqueue((
+                    ideComponentRenderers, commonComponentRenderers, fileSystemProvider, environmentProvider, backgroundTaskService, parentDirectoryTreeViewModel));
+
+                backgroundTaskService.EnqueueGroup(this);
+            }
+        }
     }
     
-    public Task HandleRefreshCurrentSelectionAction(
+    public async ValueTask Do_OpenParentDirectoryAction(
+    	IIdeComponentRenderers ideComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
+        IFileSystemProvider fileSystemProvider,
+        IEnvironmentProvider environmentProvider,
+        IBackgroundTaskService backgroundTaskService,
+        TreeViewAbsolutePath? parentDirectoryTreeViewModel)
+    {
+        if (parentDirectoryTreeViewModel is not null)
+            await parentDirectoryTreeViewModel.LoadChildListAsync().ConfigureAwait(false);
+    }
+
+    private readonly
+        Queue<(IBackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? currentSelection)>
+        _queue_RefreshCurrentSelectionAction = new();
+
+    public void Enqueue_RefreshCurrentSelectionAction(
         IBackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection)
     {
@@ -245,17 +316,56 @@ public class InputFileService : IInputFileService
         {
             currentSelection.ChildList.Clear();
 
-            backgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                BackgroundTaskFacts.ContinuousQueueKey,
-                "Refresh Current Selection",
-                async () =>
-                {
-                    await currentSelection.LoadChildListAsync().ConfigureAwait(false);
-                    // TODO: This still needs to re-render.
-                });
+            lock (_workLock)
+            {
+                _workKindQueue.Enqueue(InputFileServiceWorkKind.RefreshCurrentSelectionAction);
+                _queue_RefreshCurrentSelectionAction.Enqueue((backgroundTaskService, currentSelection));
+                backgroundTaskService.EnqueueGroup(this);
+            }
+        }
+    }
+    
+    public async ValueTask Do_RefreshCurrentSelectionAction(
+        IBackgroundTaskService backgroundTaskService,
+    	TreeViewAbsolutePath? currentSelection)
+    {
+        if (currentSelection is not null)
+            await currentSelection.LoadChildListAsync().ConfigureAwait(false);
+    }
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    {
+        return null;
+    }
+
+    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    {
+        InputFileServiceWorkKind workKind;
+
+        lock (_workLock)
+        {
+            if (!_workKindQueue.TryDequeue(out workKind))
+                return ValueTask.CompletedTask;
         }
 
-        return Task.CompletedTask;
+        switch (workKind)
+        {
+            case InputFileServiceWorkKind.OpenParentDirectoryAction:
+            {
+                var args = _queue_OpenParentDirectoryAction.Dequeue();
+                return Do_OpenParentDirectoryAction(
+                    args.ideComponentRenderers, args.commonComponentRenderers, args.fileSystemProvider, args.environmentProvider, args.backgroundTaskService, args.parentDirectoryTreeViewModel);
+            }
+            case InputFileServiceWorkKind.RefreshCurrentSelectionAction:
+            {
+                var args = _queue_RefreshCurrentSelectionAction.Dequeue();
+                return Do_RefreshCurrentSelectionAction(
+                    args.backgroundTaskService, args.currentSelection);
+            }
+            default:
+            {
+                return ValueTask.CompletedTask;
+            }
+        }
     }
 }

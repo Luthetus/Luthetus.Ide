@@ -35,14 +35,6 @@ public partial class MenuDisplay : ComponentBase
     /// </summary>
     private int _activeMenuOptionRecordIndex = -1;
 
-	/// <summary>
-	/// The <see cref="MenuRecord"/>, which is provided to this component, is most often asynchronously calculated.
-	///
-	/// i.e.: The initial <see cref="MenuRecord"/> parameter is <see cref="MenuRecord.Empty"/>,
-	///       then the actual is passed in afterwards when the async task completes.
-	/// </summary>
-	private MenuRecord? _previousMenuRecord;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

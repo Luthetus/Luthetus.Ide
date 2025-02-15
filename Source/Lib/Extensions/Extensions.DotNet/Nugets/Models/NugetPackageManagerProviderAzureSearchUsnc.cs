@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Net.Http.Json;
 using System.Text;
 using System.Web;
@@ -16,7 +15,7 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
 
 	public string ProviderWebsiteUrlNoFormatting { get; } = "https://azuresearch-usnc.nuget.org/";
 
-	public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
+	public async Task<List<NugetPackageRecord>> QueryForNugetPackagesAsync(
 		string queryValue,
 		bool includePrerelease = false,
 		CancellationToken cancellationToken = default)
@@ -27,7 +26,7 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
 			.ConfigureAwait(false);
 	}
 
-	public async Task<ImmutableArray<NugetPackageRecord>> QueryForNugetPackagesAsync(
+	public async Task<List<NugetPackageRecord>> QueryForNugetPackagesAsync(
 		INugetPackageManagerQuery nugetPackageManagerQuery,
 		CancellationToken cancellationToken = default)
 	{
@@ -40,9 +39,9 @@ public class NugetPackageManagerProviderAzureSearchUsnc : INugetPackageManagerPr
 			.ConfigureAwait(false);
 
 		if (nugetPackages is not null)
-			return nugetPackages.Data.ToImmutableArray();
+			return nugetPackages.Data;
 
-		return ImmutableArray<NugetPackageRecord>.Empty;
+		return new();
 	}
 
 	public INugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)

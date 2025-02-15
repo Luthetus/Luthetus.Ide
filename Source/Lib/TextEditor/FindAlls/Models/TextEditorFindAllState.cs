@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -9,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 public record struct TextEditorFindAllState(
 	string SearchQuery,
 	string StartingDirectoryPath,
-	ImmutableList<TextEditorTextSpan> SearchResultList,
+	List<TextEditorTextSpan> SearchResultList,
 	ProgressBarModel? ProgressBarModel)
 {
 	public static readonly Key<TreeViewContainer> TreeViewFindAllContainerKey = Key<TreeViewContainer>.NewKey();
@@ -17,7 +16,7 @@ public record struct TextEditorFindAllState(
     public TextEditorFindAllState() : this(
     	string.Empty,
     	string.Empty,
-    	ImmutableList<TextEditorTextSpan>.Empty,
+    	new(),
     	null)
     {
     }

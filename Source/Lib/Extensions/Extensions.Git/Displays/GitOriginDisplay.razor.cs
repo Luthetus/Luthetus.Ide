@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -14,11 +13,7 @@ public partial class GitOriginDisplay : ComponentBase
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private GitCliOutputParser GitCliOutputParser { get; set; } = null!;
 
     private string _gitOrigin = string.Empty;
     
@@ -33,7 +28,7 @@ public partial class GitOriginDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
         
-        GitBackgroundTaskApi.Git.GetOriginNameEnqueue(localGitState.Repo);
+        GitBackgroundTaskApi.Git.Enqueue_GetOriginName(localGitState.Repo);
     }
 
     private void SetGitOriginOnClick(string localCommandArgs)

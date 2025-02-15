@@ -2,20 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Common.RazorLib.Notifications.Displays;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Edits.Displays;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
-using Luthetus.Ide.RazorLib.Shareds.Models;
-using Luthetus.Extensions.Git.Displays;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.AppDatas.Models;
+using Luthetus.Extensions.Config.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Config.Installations.Displays;
 
@@ -34,28 +28,15 @@ public partial class LuthetusConfigInitializer : ComponentBase
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private IStartupControlService StartupControlService { get; set; } = null!;
-	[Inject]
-	private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
+	private ConfigBackgroundTaskApi ConfigBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IInputFileService InputFileService { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{
-		BackgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			BackgroundTaskFacts.ContinuousQueueKey,
-			nameof(LuthetusConfigInitializer),
-			() =>
-			{
-				InitializeFooterJustifyEndComponents();
-                return ValueTask.CompletedTask;
-            });
-			
+        ConfigBackgroundTaskApi.Enqueue_InitializeFooterJustifyEndComponents();
 		base.OnInitialized();
 	}
 
@@ -85,7 +66,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
             solutionMostRecent,
             false);
 
-        DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(slnAbsolutePath);
+        DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(slnAbsolutePath);
 
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)
@@ -135,7 +116,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
             }
             await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-            InputFileService.ReduceSetOpenedTreeViewModelAction(
+            InputFileService.SetOpenedTreeViewModel(
                 pseudoRootNode,
                 IdeComponentRenderers,
                 CommonComponentRenderers,
@@ -160,38 +141,5 @@ public partial class LuthetusConfigInitializer : ComponentBase
 			Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
         }
         */
-    }
-    
-    private void InitializeFooterJustifyEndComponents()
-    {
-    	IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
-    		new FooterJustifyEndComponent(
-    			Key<FooterJustifyEndComponent>.NewKey(),
-				typeof(GitInteractiveIconDisplay),
-				new Dictionary<string, object?>
-				{
-					{
-						nameof(GitInteractiveIconDisplay.CssStyleString),
-						"margin-right: 15px;"
-					}
-				}));
-				
-		IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
-    		new FooterJustifyEndComponent(
-    			Key<FooterJustifyEndComponent>.NewKey(),
-				typeof(DirtyResourceUriInteractiveIconDisplay),
-				new Dictionary<string, object?>
-				{
-					{
-						nameof(GitInteractiveIconDisplay.CssStyleString),
-						"margin-right: 15px;"
-					}
-				}));
-				
-		IdeMainLayoutService.ReduceRegisterFooterJustifyEndComponentAction(
-    		new FooterJustifyEndComponent(
-    			Key<FooterJustifyEndComponent>.NewKey(),
-				typeof(NotificationsInteractiveIconDisplay),
-				ComponentParameterMap: null));
     }
 }

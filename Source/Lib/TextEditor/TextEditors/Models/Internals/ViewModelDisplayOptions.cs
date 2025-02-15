@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
@@ -64,7 +63,7 @@ public sealed class ViewModelDisplayOptions
     /// <summary>
     /// <see cref="HeaderButtonKinds"/> contains the enum value that represents a button displayed in the optional component: <see cref="TextEditorHeader"/>.
     /// </summary>
-    public ImmutableArray<HeaderButtonKind>? HeaderButtonKinds { get; set; }
+    public List<HeaderButtonKind>? HeaderButtonKinds { get; set; }
 
     /// <summary>
     /// If set to null then no footer will render.

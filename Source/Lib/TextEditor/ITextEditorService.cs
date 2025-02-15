@@ -46,6 +46,12 @@ public partial interface ITextEditorService
 	public IAutocompleteService AutocompleteService { get; }
 	public LuthetusTextEditorConfig TextEditorConfig { get; }
 	
+	/// <summary>
+	/// Capture a reference to this if re-using it within the same "context" otherwise it will change out from under you.
+	/// 
+	/// TODO: Make this private and make a method 'GetTextEditorState()' that returns the private field...
+	/// ...because it is more self documenting that there is something "odd" going on.
+	/// </summary>
 	public TextEditorState TextEditorState { get; }
 	
 	public TextEditorWorker TextEditorWorker { get; }
@@ -76,11 +82,11 @@ public partial interface ITextEditorService
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey);
 		
-	public void ReduceRegisterModelAction(TextEditorModel model);
-	public void ReduceDisposeModelAction(ResourceUri resourceUri);
-	public void ReduceSetModelAction(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier);
+	public void RegisterModel(TextEditorModel model);
+	public void DisposeModel(ResourceUri resourceUri);
+	public void SetModel(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier);
 	
-	public void ReduceRegisterViewModelAction(
+	public void RegisterViewModel(
 	    Key<TextEditorViewModel> viewModelKey,
 	    ResourceUri resourceUri,
 	    Category category,
@@ -88,16 +94,16 @@ public partial interface ITextEditorService
 	    IDialogService dialogService,
 	    IJSRuntime jsRuntime);
 	
-	public void ReduceRegisterViewModelExistingAction(TextEditorViewModel viewModel);
+	public void RegisterViewModelExisting(TextEditorViewModel viewModel);
 	
-	public void ReduceDisposeViewModelAction(Key<TextEditorViewModel> viewModelKey);
+	public void DisposeViewModel(Key<TextEditorViewModel> viewModelKey);
 	
-	public void ReduceSetViewModelWithAction(
+	public void SetViewModelWith(
 	    ITextEditorEditContext editContext,
 	    Key<TextEditorViewModel> viewModelKey,
 	    Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 	
-	public void ReduceSetModelAndViewModelRangeAction(
+	public void SetModelAndViewModelRange(
 	    ITextEditorEditContext editContext,
 		Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
 		Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList);

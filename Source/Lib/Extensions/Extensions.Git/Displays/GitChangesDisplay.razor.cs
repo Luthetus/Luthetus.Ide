@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
@@ -7,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.Extensions.Git.Displays;
 
@@ -64,14 +64,14 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         if (viewModelModifier is null)
                             return ValueTask.CompletedTask;
 
-                        var presentationKeys = new[]
+                        var presentationKeys = new List<Key<TextEditorPresentationModel>>
                         {
                             DiffPresentationFacts.InPresentationKey,
                         };
 
                         viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                         {
-                            FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
+                            FirstPresentationLayerKeysList = presentationKeys
                         };
                         
                         return ValueTask.CompletedTask;
@@ -113,14 +113,14 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         if (viewModelModifier is null)
                             return ValueTask.CompletedTask;
 
-                        var presentationKeys = new[]
+                        var presentationKeys = new List<Key<TextEditorPresentationModel>>()
                         {
                             DiffPresentationFacts.OutPresentationKey,
                         };
 
                         viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                         {
-                            FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
+                            FirstPresentationLayerKeysList = presentationKeys
                         };
 
                         return ValueTask.CompletedTask;

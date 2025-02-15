@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -29,7 +28,7 @@ public sealed class CompilationUnit : ICompilationUnit, ISyntaxNode
         diagnosticsListBuilder.AddRange(Parser.DiagnosticsList);
         diagnosticsListBuilder.AddRange(Binder.DiagnosticsList);
 
-        DiagnosticsList = diagnosticsListBuilder.ToImmutableArray();
+        DiagnosticsList = diagnosticsListBuilder;
     }
 
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
@@ -39,7 +38,7 @@ public sealed class CompilationUnit : ICompilationUnit, ISyntaxNode
     public ILexer Lexer { get; }
     public IParser Parser { get; }
     public IBinder Binder { get; }
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
+    public List<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;

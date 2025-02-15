@@ -1,6 +1,5 @@
 ﻿using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Displays;
 
@@ -12,21 +11,21 @@ public partial class FileTemplatesDisplay : ComponentBase
     [Parameter, EditorRequired]
     public string FileName { get; set; } = null!;
 
-    private ImmutableArray<FileTemplatesFormWrapper> _fileTemplatesFormWrappersList = ImmutableArray<FileTemplatesFormWrapper>.Empty;
-    private ImmutableArray<FileTemplatesFormWrapper> _relatedMatchWrappersList = ImmutableArray<FileTemplatesFormWrapper>.Empty;
+    private List<FileTemplatesFormWrapper> _fileTemplatesFormWrappersList = new();
+    private List<FileTemplatesFormWrapper> _relatedMatchWrappersList = new();
     private FileTemplatesFormWrapper? _exactMatchWrapper;
     public IFileTemplate? ExactMatchFileTemplate => _exactMatchWrapper?.FileTemplate;
 
-    public ImmutableArray<IFileTemplate>? RelatedMatchFileTemplates => _relatedMatchWrappersList
+    public List<IFileTemplate>? RelatedMatchFileTemplates => _relatedMatchWrappersList
         .Where(x => x.IsChecked)
         .Select(x => x.FileTemplate)
-        .ToImmutableArray();
+        .ToList();
 
     protected override void OnInitialized()
     {
         _fileTemplatesFormWrappersList = FileTemplateProvider.FileTemplatesList
             .Select(x => new FileTemplatesFormWrapper(x, true))
-            .ToImmutableArray();
+            .ToList();
 
         base.OnInitialized();
     }
@@ -47,7 +46,7 @@ public partial class FileTemplatesDisplay : ComponentBase
     {
         if (_exactMatchWrapper is null)
         {
-            _relatedMatchWrappersList = ImmutableArray<FileTemplatesFormWrapper>.Empty;
+            _relatedMatchWrappersList = new();
             return;
         }
 
@@ -55,6 +54,6 @@ public partial class FileTemplatesDisplay : ComponentBase
 
         _relatedMatchWrappersList = relatedMatches
             .Select(rel => _fileTemplatesFormWrappersList.First(wrap => rel.Id == wrap.FileTemplate.Id))
-            .ToImmutableArray();
+            .ToList();
     }
 }

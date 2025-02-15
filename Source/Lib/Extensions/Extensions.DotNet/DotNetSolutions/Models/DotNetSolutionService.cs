@@ -25,7 +25,8 @@ public class DotNetSolutionService : IDotNetSolutionService
             return;
         }
 
-        var nextList = inState.DotNetSolutionsList.Add(argumentDotNetSolutionModel);
+        var nextList = new List<DotNetSolutionModel>(inState.DotNetSolutionsList);
+        nextList.Add(argumentDotNetSolutionModel);
 
         _dotNetSolutionState = inState with
         {
@@ -50,7 +51,8 @@ public class DotNetSolutionService : IDotNetSolutionService
         	return;
         }
 
-        var nextList = inState.DotNetSolutionsList.Remove(dotNetSolutionModel);
+        var nextList = new List<DotNetSolutionModel>(inState.DotNetSolutionsList);
+        nextList.Remove(dotNetSolutionModel);
 
         _dotNetSolutionState = inState with
         {

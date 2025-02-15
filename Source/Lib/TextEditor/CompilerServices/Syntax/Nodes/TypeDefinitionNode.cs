@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
@@ -77,15 +76,15 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	
 	public bool IsKeywordType { get; init; }
 
-    public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
+    public FunctionDefinitionNode[] GetFunctionDefinitionNodes()
     {
         if (CodeBlockNode is null)
-            return ImmutableArray<FunctionDefinitionNode>.Empty;
+            return Array.Empty<FunctionDefinitionNode>();
 
         return CodeBlockNode.GetChildList()
             .Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             .Select(fd => (FunctionDefinitionNode)fd)
-            .ToImmutableArray();
+            .ToArray();
     }
     
     public ISyntaxNode[] GetMemberList()

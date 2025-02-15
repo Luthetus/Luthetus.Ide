@@ -49,7 +49,7 @@ public class WebsiteDotNetCliHelper
 			cSharpProjectAbsolutePathString,
 			false);
 
-		compilerServicesBackgroundTaskApi.DotNetSolution.Website_AddExistingProjectToSolution(
+		compilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_Website_AddExistingProjectToSolution(
 			immutableView.DotNetSolutionModel.Key,
 			immutableView.ProjectTemplateShortNameValue,
 			immutableView.CSharpProjectNameValue,

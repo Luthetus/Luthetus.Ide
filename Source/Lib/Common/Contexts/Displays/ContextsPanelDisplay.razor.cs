@@ -24,9 +24,9 @@ public partial class ContextsPanelDisplay : ComponentBase, IDisposable
     private void DispatchToggleInspectActionOnClick(bool isInspecting)
     {
         if (isInspecting)
-            ContextService.ReduceIsSelectingInspectableContextHeirarchyAction(false);
+            ContextService.IsSelectingInspectableContextHeirarchy(false);
         else
-            ContextService.ReduceIsSelectingInspectableContextHeirarchyAction(true);
+            ContextService.IsSelectingInspectableContextHeirarchy(true);
     }
     
     private async void OnContextStateChanged()

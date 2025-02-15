@@ -44,7 +44,7 @@ public partial class WidgetInitializer : ComponentBase, IDisposable
     
     private Task RemoveWidget()
     {
-    	WidgetService.ReduceSetWidgetAction(null);
+    	WidgetService.SetWidget(null);
     	return Task.CompletedTask;
     }
     

@@ -1,17 +1,18 @@
 ﻿using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
 public static class FileTemplateFacts
 {
+    private static readonly List<IFileTemplate> _empty = new();
+
     public static readonly IFileTemplate CSharpClass = new FileTemplate(
         "C# Class",
         "luth_ide_c-sharp-class",
         FileTemplateKind.CSharp,
         filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.C_SHARP_CLASS),
-        _ => ImmutableArray<IFileTemplate>.Empty,
+        _ => _empty,
         true,
         CSharpClassCreateFileFunc);
 
@@ -20,7 +21,7 @@ public static class FileTemplateFacts
         "luth_ide_razor-codebehind-class",
         FileTemplateKind.Razor,
         filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND),
-        _ => ImmutableArray<IFileTemplate>.Empty,
+        _ => _empty,
         true,
         RazorCodebehindCreateFileFunc);
 
@@ -29,7 +30,7 @@ public static class FileTemplateFacts
         "luth_ide_razor-markup-class",
         FileTemplateKind.Razor,
         filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
-        _ => new[] { RazorCodebehind }.ToImmutableArray(),
+        _ => _empty,
         true,
         RazorMarkupCreateFileFunc);
 

@@ -4,48 +4,64 @@ namespace Luthetus.TextEditor.RazorLib.Edits.Models;
 
 public class DirtyResourceUriService : IDirtyResourceUriService
 {
-	private DirtyResourceUriState _dirtyResourceUriState = new();
+    private readonly object _stateModificationLock = new();
+
+    private DirtyResourceUriState _dirtyResourceUriState = new();
 	
 	public event Action DirtyResourceUriStateChanged;
 	
 	public DirtyResourceUriState GetDirtyResourceUriState() => _dirtyResourceUriState;
 
-    public void ReduceAddDirtyResourceUriAction(ResourceUri resourceUri)
+    public void AddDirtyResourceUri(ResourceUri resourceUri)
     {
-    	var inState = GetDirtyResourceUriState();
-    
-        if (resourceUri.Value.StartsWith(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix) ||
-			resourceUri.Value.StartsWith(ResourceUriFacts.Git_ReservedResourceUri_Prefix))
+        lock (_stateModificationLock)
         {
-            DirtyResourceUriStateChanged?.Invoke();
-            return;
-        }
-       else if (resourceUri == ResourceUriFacts.SettingsPreviewTextEditorResourceUri ||
-			    resourceUri == ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri)
-        {
-            DirtyResourceUriStateChanged?.Invoke();
-            return;
+            var inState = GetDirtyResourceUriState();
+
+            if (resourceUri.Value.StartsWith(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix) ||
+                resourceUri.Value.StartsWith(ResourceUriFacts.Git_ReservedResourceUri_Prefix))
+            {
+                goto finalize;
+            }
+            else if (resourceUri == ResourceUriFacts.SettingsPreviewTextEditorResourceUri ||
+                     resourceUri == ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri)
+            {
+                goto finalize;
+            }
+
+            var outDirtyResourceUriList = new List<ResourceUri>(inState.DirtyResourceUriList);
+            outDirtyResourceUriList.Add(resourceUri);
+
+			_dirtyResourceUriState = inState with
+            {
+                DirtyResourceUriList = outDirtyResourceUriList
+            };
+
+            goto finalize;
         }
 
-		_dirtyResourceUriState = inState with
-        {
-            DirtyResourceUriList = inState.DirtyResourceUriList.Add(resourceUri)
-        };
-        
+        finalize:
         DirtyResourceUriStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceRemoveDirtyResourceUriAction(ResourceUri resourceUri)
+    public void RemoveDirtyResourceUri(ResourceUri resourceUri)
     {
-    	var inState = GetDirtyResourceUriState();
-    
-        _dirtyResourceUriState = inState with
+        lock (_stateModificationLock)
         {
-            DirtyResourceUriList = inState.DirtyResourceUriList.Remove(resourceUri)
-        };
-        
+            var inState = GetDirtyResourceUriState();
+
+            var outDirtyResourceUriList = new List<ResourceUri>(inState.DirtyResourceUriList);
+            outDirtyResourceUriList.Remove(resourceUri);
+
+			_dirtyResourceUriState = inState with
+            {
+                DirtyResourceUriList = outDirtyResourceUriList
+			};
+
+            goto finalize;
+        }
+
+        finalize:
         DirtyResourceUriStateChanged?.Invoke();
-        return;
     }
 }

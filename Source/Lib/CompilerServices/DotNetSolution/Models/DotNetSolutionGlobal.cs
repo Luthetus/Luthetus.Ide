@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.DotNetSolution.Models;
@@ -10,7 +9,7 @@ public record DotNetSolutionGlobal
     /// modified. (2023-10-10))
     /// </summary>
     public SyntaxToken? OpenAssociatedGroupToken { get; set; }
-    public ImmutableArray<DotNetSolutionGlobalSection> DotNetSolutionGlobalSectionList { get; init; } = ImmutableArray<DotNetSolutionGlobalSection>.Empty;
+    public List<DotNetSolutionGlobalSection> DotNetSolutionGlobalSectionList { get; init; } = new();
     /// <summary>
     /// TODO: Remove the "set;" hack. Added so one can shift text spans when the .sln content is
     /// modified. (2023-10-10))

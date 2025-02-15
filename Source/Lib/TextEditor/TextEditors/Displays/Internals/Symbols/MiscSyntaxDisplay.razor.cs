@@ -5,9 +5,6 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.Symbols;
 
 public partial class MiscSyntaxDisplay : ComponentBase
 {
-	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
-	
 	[Parameter, EditorRequired]
 	public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
 }

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
@@ -10,11 +9,9 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
@@ -56,19 +53,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
-	[Inject]
-	private IServiceProvider ServiceProvider { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
@@ -206,42 +197,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 								.Invoke()
 								.ConfigureAwait(false);
 
-							BackgroundTaskService.Enqueue(
-								Key<IBackgroundTask>.NewKey(),
-								BackgroundTaskFacts.ContinuousQueueKey,
-								"SolutionExplorer_TreeView_MultiSelect_DeleteFiles",
-								async () =>
-								{
-									foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
-									{
-										var treeViewNamespacePath = (TreeViewNamespacePath)node;
-
-										if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
-										{
-											await FileSystemProvider.Directory
-												.DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None)
-												.ConfigureAwait(false);
-										}
-										else
-										{
-											await FileSystemProvider.File
-												.DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value)
-												.ConfigureAwait(false);
-										}
-
-										if (TreeViewService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
-											mostRecentContainer is not null)
-										{
-											var localParent = node.Parent;
-
-											if (localParent is not null)
-											{
-												await localParent.LoadChildListAsync().ConfigureAwait(false);
-												TreeViewService.ReduceReRenderNodeAction(mostRecentContainer.Key, localParent);
-											}
-										}
-									}
-								});
+							DotNetBackgroundTaskApi.Enqueue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(
+                                commandArgs);
 						}
 					},
 					{ nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
@@ -363,7 +320,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				NotificationService,
 				() =>
 				{
-					CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
 					return Task.CompletedTask;
 				}),
 			new MenuOptionRecord(
@@ -377,7 +334,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 					if (startupControl is null)
 						return Task.CompletedTask;
 					
-					StartupControlService.ReduceSetActiveStartupControlKeyAction(startupControl.Key);
+					StartupControlService.SetActiveStartupControlKey(startupControl.Key);
 					return Task.CompletedTask;
 				}),
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
@@ -387,7 +344,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				NotificationService,
 				() =>
 				{
-					CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
 					return Task.CompletedTask;
 				}),
 		};
@@ -516,7 +473,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 	private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
 	{
-		IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+		IdeBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
 			"Existing C# Project to add to solution",
 			absolutePath =>
 			{
@@ -533,7 +490,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        {
 		        	ContinueWithFunc = parsedCommand =>
 		        	{
-		        		CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
+		        		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
 						return Task.CompletedTask;
 		        	}
 		        };
@@ -548,12 +505,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 				return Task.FromResult(absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
 			},
-			new[]
+			new()
 			{
 				new InputFilePattern(
 					"C# Project",
 					absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-			}.ToImmutableArray());
+			});
 	}
 
 	private Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)

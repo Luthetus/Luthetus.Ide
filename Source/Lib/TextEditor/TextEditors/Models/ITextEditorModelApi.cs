@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -60,7 +59,7 @@ public interface ITextEditorModelApi
     public Dictionary<ResourceUri, TextEditorModel> GetModels();
     public int GetModelsCount();
     public TextEditorModel? GetOrDefault(ResourceUri resourceUri);
-    public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
+    public List<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
     public string? GetAllText(ResourceUri resourceUri);
     #endregion
 
@@ -207,7 +206,7 @@ public interface ITextEditorModelApi
         TextEditorModelModifier modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
-        ImmutableArray<TextEditorTextSpan> calculatedTextSpans);
+        List<TextEditorTextSpan> calculatedTextSpans);
 
     /// <summary>
     /// If applying syntax highlighting it may be preferred to use <see cref="ApplySyntaxHighlightingAsync" />.

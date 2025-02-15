@@ -8,7 +8,7 @@ public class WordAutocompleteIndexer : IAutocompleteIndexer
 {
     private readonly ConcurrentBag<string> _indexedStringsList = new();
 
-    public ImmutableArray<string> IndexedStringsList => _indexedStringsList.ToImmutableArray();
+    public ConcurrentBag<string> IndexedStringsList => _indexedStringsList;
 
     public Task IndexTextEditorAsync(TextEditorModel textEditorModel)
     {

@@ -178,7 +178,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					PanelService.ReduceDisposePanelTabAction(
+					PanelService.DisposePanelTab(
 						panelGroup.Key,
 						Key);
 				}
@@ -202,7 +202,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					PanelService.ReduceDisposePanelTabAction(
+					PanelService.DisposePanelTab(
 						panelGroup.Key,
 						Key);
 				}
@@ -221,7 +221,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				? true
 				: false;
 
-			PanelService.ReduceRegisterPanelTabAction(
+			PanelService.RegisterPanelTab(
 				panelGroupDropzone.PanelGroupKey,
 				this,
 				insertAtIndexZero);

@@ -8,10 +8,10 @@ public interface ICodeSearchService
     
     public CodeSearchState GetCodeSearchState();
     
-    public void ReduceWithAction(Func<CodeSearchState, CodeSearchState> withFunc);
-    public void ReduceAddResultAction(string result);
-    public void ReduceClearResultListAction();
-    public void ReduceInitializeResizeHandleDimensionUnitAction(DimensionUnit dimensionUnit);
+    public void With(Func<CodeSearchState, CodeSearchState> withFunc);
+    public void AddResult(string result);
+    public void ClearResultList();
+    public void InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit);
 
     /// <summary>
     /// TODO: This method makes use of <see cref="IThrottle"/> and yet is accessing...

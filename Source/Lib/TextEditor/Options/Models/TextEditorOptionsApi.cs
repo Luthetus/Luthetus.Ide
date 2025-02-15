@@ -177,7 +177,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
         if (activeKeymap is not null)
         {
-            _contextService.ReduceSetContextKeymapAction(
+            _contextService.SetContextKeymap(
                 ContextFacts.TextEditorContext.ContextKey,
                 activeKeymap);
         }
@@ -280,7 +280,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void WriteToStorage()
     {
-        _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
+        _commonBackgroundTaskApi.Enqueue_WriteToLocalStorage(
             _textEditorService.StorageKey,
             new TextEditorOptionsJsonDto(_textEditorService.OptionsApi.GetTextEditorOptionsState().Options));
     }
@@ -316,7 +316,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
             if (activeKeymap is not null)
             {
-                _contextService.ReduceSetContextKeymapAction(
+                _contextService.SetContextKeymap(
                     ContextFacts.TextEditorContext.ContextKey,
                     activeKeymap);
             }

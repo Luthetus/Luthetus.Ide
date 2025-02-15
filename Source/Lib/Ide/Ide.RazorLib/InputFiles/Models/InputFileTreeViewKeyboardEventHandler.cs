@@ -126,19 +126,19 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleBackButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.ReduceMoveBackwardsInHistoryAction();
+        _inputFileService.MoveBackwardsInHistory();
         ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 
     private void HandleForwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.ReduceMoveForwardsInHistoryAction();
+        _inputFileService.MoveForwardsInHistory();
         ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 
     private void HandleUpwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.ReduceOpenParentDirectoryAction(
+        _inputFileService.OpenParentDirectory(
             _ideComponentRenderers,
             _commonComponentRenderers,
             _fileSystemProvider,
@@ -151,7 +151,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleRefreshButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.ReduceRefreshCurrentSelectionAction(_backgroundTaskService, currentSelection: null);
+        _inputFileService.RefreshCurrentSelection(_backgroundTaskService, currentSelection: null);
         ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 
@@ -171,7 +171,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         if (treeViewAbsolutePath is null)
             return;
 
-        _inputFileService.ReduceSetSelectedTreeViewModelAction(treeViewAbsolutePath);
+        _inputFileService.SetSelectedTreeViewModel(treeViewAbsolutePath);
         return;
     }
 

@@ -172,8 +172,21 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.31 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.31 </em> (2025-02-15)</div>
                 <ul>
+                	<li>
+                		Remove most of the Immutable type usage.
+                		(it is believed to store data as a tree, where each entry in the collection
+                		 is a reference type 'Node' instance. Just using a List now).
+                	</li>
+                	<li>
+                		Many optimizations have been made.
+                		The IBackgroundTaskService no longer boxes the structs by way of
+                		IBackgroundTaskGroup.
+                	</li>
+                	<li>
+                		Fix: text editor initial parse race condition
+                	</li>
                 	<li>
                 		Fix: async lambdas breaking parse.
                 	</li>

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -107,20 +106,20 @@ public record TextEditorState
 		return 0;
     }
     
-    public ImmutableArray<TextEditorViewModel> ModelGetViewModelsOrEmpty(ResourceUri resourceUri)
+    public List<TextEditorViewModel> ModelGetViewModelsOrEmpty(ResourceUri resourceUri)
     {
     	try
     	{
     		return _viewModelMap.Values
     			.Where(x => x.ResourceUri == resourceUri)
-            	.ToImmutableArray();;
+            	.ToList();
     	}
     	catch (Exception e)
 		{
 			Console.WriteLine(e);
 		}
 		
-		return ImmutableArray<TextEditorViewModel>.Empty;
+		return new();
     }
     
     public TextEditorViewModel? ViewModelGetOrDefault(Key<TextEditorViewModel> viewModelKey)

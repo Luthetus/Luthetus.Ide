@@ -20,8 +20,6 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 	
-	private TypeClauseNode _typeClauseNode;
-
     public TypeClauseNode TypeClauseNode { get; private set; }
     
     public SyntaxToken IdentifierToken { get; }

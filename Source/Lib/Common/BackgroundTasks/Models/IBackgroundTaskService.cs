@@ -65,10 +65,7 @@ public interface IBackgroundTaskService
 	///
 	/// Once all the old code is moved over then the 'Enqueue' method group will be removed.
 	/// </summary>
-	// public void EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup);
-
-    public void Enqueue(IBackgroundTask backgroundTask);
-    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc);
+	public void EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup);
     
     public Task EnqueueAsync(IBackgroundTask backgroundTask);
     public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc);

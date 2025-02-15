@@ -22,5 +22,5 @@ public interface IWidgetService
 	///           we should track where the user's focus is, then restore that focus once the
 	///           widget is closed.
 	/// </summary>
-    public void ReduceSetWidgetAction(WidgetModel? widget);
+    public void SetWidget(WidgetModel? widget);
 }

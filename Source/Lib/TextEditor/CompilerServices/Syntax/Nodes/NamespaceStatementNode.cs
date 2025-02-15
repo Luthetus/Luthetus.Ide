@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -38,17 +37,16 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     /// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
     /// which contains all top level type definitions of the <see cref="NamespaceStatementNode"/>.
     /// </summary>
-    public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
+    public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
     {
     	var localCodeBlockNode = CodeBlockNode;
     
     	if (localCodeBlockNode is null)
-    		return ImmutableArray<TypeDefinitionNode>.Empty;
+    		return Array.Empty<TypeDefinitionNode>();
     
         return localCodeBlockNode.GetChildList()
             .Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-            .Select(td => (TypeDefinitionNode)td)
-            .ToImmutableArray();
+            .Select(td => (TypeDefinitionNode)td);
     }
     
     #region ICodeBlockOwner_Methods

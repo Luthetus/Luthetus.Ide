@@ -24,7 +24,7 @@ public static class ContextHelper
 
                 if (!success)
                 {
-                    panelService.ReduceSetPanelTabAsActiveByContextRecordKeyAction(
+                    panelService.SetPanelTabAsActiveByContextRecordKey(
                         contextRecord.ContextKey);
 
                     _ = await TrySetFocus().ConfigureAwait(false);

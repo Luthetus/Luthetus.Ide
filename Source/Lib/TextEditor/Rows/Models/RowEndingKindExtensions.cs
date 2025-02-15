@@ -1,5 +1,4 @@
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Rows.Models;
 
@@ -50,13 +49,15 @@ public static class RowEndingKindExtensions
         };
     }
 
-    public static ImmutableArray<LineEndKind> GetRowEndingsUserAllowedToUse(this LineEndKind rowEndingKind)
+    public static List<LineEndKind> GetRowEndingsUserAllowedToUse(this LineEndKind rowEndingKind)
     {
-        return new[]
-        {
-            LineEndKind.CarriageReturn,
-            LineEndKind.LineFeed,
-            LineEndKind.CarriageReturnLineFeed,
-        }.ToImmutableArray();
-    }
+        return _rowEndingsUserAllowedToUse;
+	}
+
+    private static readonly List<LineEndKind> _rowEndingsUserAllowedToUse = new()
+    {
+		LineEndKind.CarriageReturn,
+		LineEndKind.LineFeed,
+		LineEndKind.CarriageReturnLineFeed,
+	};
 }

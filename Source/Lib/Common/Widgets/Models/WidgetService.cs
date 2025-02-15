@@ -6,7 +6,9 @@ namespace Luthetus.Common.RazorLib.Widgets.Models;
 
 public class WidgetService : IWidgetService
 {
-	private readonly IJSRuntime _jsRuntime;
+    private readonly object _stateModificationLock = new();
+
+    private readonly IJSRuntime _jsRuntime;
 
 	public WidgetService(IJSRuntime jsRuntime)
 	{
@@ -40,29 +42,36 @@ public class WidgetService : IWidgetService
 	///           we should track where the user's focus is, then restore that focus once the
 	///           widget is closed.
 	/// </summary>
-    public void ReduceSetWidgetAction(WidgetModel? widget)
+    public void SetWidget(WidgetModel? widget)
     {
-    	var inState = GetWidgetState();
-    
-    	if (widget != inState.Widget)
-    	{
-    		if (widget is null)
-    		{
-    			_ = Task.Run(async () =>
-    			{
-    				await JsRuntimeCommonApi
-		                .FocusHtmlElementById(IDynamicViewModel.DefaultSetFocusOnCloseElementId)
-		                .ConfigureAwait(false);
-    			});
-    		}
-    	}
-    
-        _widgetState = inState with
-        {
-            Widget = widget,
-        };
-        
+		var sideEffect = false;
+
+		lock (_stateModificationLock)
+		{
+			var inState = GetWidgetState();
+
+			if (widget != inState.Widget && (widget is null))
+				sideEffect = true;
+
+			_widgetState = inState with
+			{
+				Widget = widget,
+			};
+
+			goto finalize;
+        }
+
+		finalize:
         WidgetStateChanged?.Invoke();
-        return;
+
+		if (sideEffect)
+		{
+            _ = Task.Run(async () =>
+            {
+                await JsRuntimeCommonApi
+                    .FocusHtmlElementById(IDynamicViewModel.DefaultSetFocusOnCloseElementId)
+                    .ConfigureAwait(false);
+            });
+        }
     }
 }

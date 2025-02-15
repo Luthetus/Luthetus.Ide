@@ -33,7 +33,7 @@ else if (syntaxViewModelLocal.TargetNode is GenericArgumentsListingNode genericA
 {
 	<text>&lt;</text>
 		
-	@for (int badIndex = 0; badIndex < genericArgumentsListingNode.GenericArgumentEntryNodeList.Length; badIndex++)
+	@for (int badIndex = 0; badIndex < genericArgumentsListingNode.GenericArgumentEntryNodeList.Count; badIndex++)
 	{
 		var index = badIndex;
 		var genericArgument = genericArgumentsListingNode.GenericArgumentEntryNodeList[index];
@@ -45,7 +45,7 @@ else if (syntaxViewModelLocal.TargetNode is GenericArgumentsListingNode genericA
 			depth: syntaxViewModelLocal.Depth + 1);
         <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		
-		if (index < genericArgumentsListingNode.GenericArgumentEntryNodeList.Length - 1)
+		if (index < genericArgumentsListingNode.GenericArgumentEntryNodeList.Count - 1)
 		{
 			<text>,</text>
 		}

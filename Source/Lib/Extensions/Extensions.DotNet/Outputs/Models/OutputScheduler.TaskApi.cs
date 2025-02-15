@@ -8,7 +8,7 @@ namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
 public partial class OutputScheduler
 {
-	public ValueTask Task_ConstructTreeView()
+	public ValueTask Do_ConstructTreeView()
     {
     	var dotNetRunParseResult = _dotNetCliOutputParser.GetDotNetRunParseResult();
     	

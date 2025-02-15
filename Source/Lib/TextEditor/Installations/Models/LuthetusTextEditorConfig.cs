@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -28,7 +27,7 @@ public record LuthetusTextEditorConfig
     /// <br/><br/>
     /// Adding more themes here will allow them to be selected from the settings theme dropdown.
     /// </summary>
-    public ImmutableArray<ThemeRecord>? CustomThemeRecordList { get; init; } = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList;
+    public List<ThemeRecord>? CustomThemeRecordList { get; init; } = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList;
     /// <summary>
     /// Default value if left null is: <see cref="WordAutocompleteService"/>
     /// </summary>

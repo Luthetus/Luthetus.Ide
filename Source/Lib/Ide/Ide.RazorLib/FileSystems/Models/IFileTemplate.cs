@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Luthetus.Ide.RazorLib.FileSystems.Models;
+﻿namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
 public interface IFileTemplate
 {
@@ -27,7 +25,7 @@ public interface IFileTemplate
     /// '.razor' file and them being then prompted if they want to make
     /// a codebehind as well. The codebehind is the related file.
     /// </summary>
-    public Func<string, ImmutableArray<IFileTemplate>> RelatedFileTemplatesFunc { get; }
+    public Func<string, List<IFileTemplate>> RelatedFileTemplatesFunc { get; }
     /// <summary>
     /// When the user types ".razor" is the codebehind template input element checked
     /// by default?

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -27,7 +26,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     #region CREATE_METHODS
     public void RegisterCustom(TextEditorModel model)
     {
-        _textEditorService.ReduceRegisterModelAction(model);
+        _textEditorService.RegisterModel(model);
     }
 
     public void RegisterTemplated(
@@ -45,12 +44,12 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
             _textEditorRegistryWrap.DecorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
             _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod));
 
-        _textEditorService.ReduceRegisterModelAction(model);
+        _textEditorService.RegisterModel(model);
     }
     #endregion
 
     #region READ_METHODS
-    public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
+    public List<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
     	return _textEditorService.TextEditorState.ModelGetViewModelsOrEmpty(resourceUri);
     }
@@ -220,7 +219,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorModelModifier modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
-        ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
+        List<TextEditorTextSpan> calculatedTextSpans)
     {
         modelModifier.CompletePendingCalculatePresentationModel(
             presentationKey,
@@ -284,7 +283,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     #region DELETE_METHODS
     public void Dispose(ResourceUri resourceUri)
     {
-        _textEditorService.ReduceDisposeModelAction(resourceUri);
+        _textEditorService.DisposeModel(resourceUri);
     }
     #endregion
 }

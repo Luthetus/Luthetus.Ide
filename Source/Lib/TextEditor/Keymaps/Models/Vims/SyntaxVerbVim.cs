@@ -1,5 +1,4 @@
 ﻿using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.Keymaps.Models;
@@ -49,7 +48,7 @@ public static class SyntaxVerbVim
     }
 
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
-        ImmutableArray<VimGrammarToken> sentenceSnapshotList,
+		List<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
         KeymapArgs keymapArgument,
         bool hasTextSelection,
@@ -59,7 +58,7 @@ public static class SyntaxVerbVim
 
         var currentToken = sentenceSnapshotList[indexInSentence];
 
-        if (indexInSentence + 1 < sentenceSnapshotList.Length)
+        if (indexInSentence + 1 < sentenceSnapshotList.Count)
         {
             var nextToken = sentenceSnapshotList[indexInSentence + 1];
 
@@ -102,7 +101,7 @@ public static class SyntaxVerbVim
                     return true;
             }
         }
-        else if (indexInSentence + 1 < sentenceSnapshotList.Length)
+        else if (indexInSentence + 1 < sentenceSnapshotList.Count)
         {
             // Track locally the displacement of the user's cursor after the
             // inner text editor command is invoked.

@@ -8,8 +8,8 @@ public interface IStartupControlService
 	
 	public StartupControlState GetStartupControlState();
 
-	public void ReduceRegisterStartupControlAction(IStartupControlModel startupControl);
-	public void ReduceDisposeStartupControlAction(Key<IStartupControlModel> startupControlKey);
-	public void ReduceSetActiveStartupControlKeyAction(Key<IStartupControlModel> startupControlKey);
-	public void ReduceStateChangedAction();
+	public void RegisterStartupControl(IStartupControlModel startupControl);
+	public void DisposeStartupControl(Key<IStartupControlModel> startupControlKey);
+	public void SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey);
+	public void StateChanged();
 }

@@ -4,7 +4,9 @@ namespace Luthetus.Common.RazorLib.Reflectives.Models;
 
 public class ReflectiveService : IReflectiveService
 {
-	private ReflectiveState _reflectiveState = new();
+    private readonly object _stateModificationLock = new();
+
+    private ReflectiveState _reflectiveState = new();
 	
 	public event Action? ReflectiveStateChanged;
 	
@@ -13,79 +15,95 @@ public class ReflectiveService : IReflectiveService
 	public ReflectiveModel GetReflectiveModel(Key<ReflectiveModel> reflectiveModelKey) =>
 		_reflectiveState.ReflectiveModelList.FirstOrDefault(x => x.Key == reflectiveModelKey);
     
-    public void ReduceRegisterAction(
+    public void Register(
         ReflectiveModel entry,
         int providedInsertionIndex)
     {
-    	var inState = GetReflectiveState();
-    
-        if (inState.ReflectiveModelList.Any(x => x.Key == entry.Key))
+        lock (_stateModificationLock)
         {
-            ReflectiveStateChanged?.Invoke();
-            return;
+            var inState = GetReflectiveState();
+
+            if (inState.ReflectiveModelList.Any(x => x.Key == entry.Key))
+                goto finalize;
+
+            var actualInsertionIndex = 0;
+
+            if (providedInsertionIndex >= 0 && providedInsertionIndex < 1 + inState.ReflectiveModelList.Count)
+                actualInsertionIndex = providedInsertionIndex;
+
+            var outDisplayStateList = new List<ReflectiveModel>(inState.ReflectiveModelList);
+            outDisplayStateList.Insert(actualInsertionIndex, entry);
+
+            _reflectiveState = new ReflectiveState { ReflectiveModelList = outDisplayStateList };
+
+            goto finalize;
         }
 
-        var actualInsertionIndex = 0;
-
-        if (providedInsertionIndex >= 0 && providedInsertionIndex < 1 + inState.ReflectiveModelList.Count)
-            actualInsertionIndex = providedInsertionIndex;
-
-        var outDisplayStateList = inState.ReflectiveModelList.Insert(
-            actualInsertionIndex,
-            entry);
-
-        _reflectiveState = new ReflectiveState { ReflectiveModelList = outDisplayStateList };
-        
+        finalize:
         ReflectiveStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceWithAction(
+    public void With(
         Key<ReflectiveModel> key,
         Func<ReflectiveModel, ReflectiveModel> withFunc)
     {
-    	var inState = GetReflectiveState();
-    
-        var inDisplayState = inState.ReflectiveModelList.FirstOrDefault(
-            x => x.Key == key);
-
-        if (inDisplayState is null)
+        lock (_stateModificationLock)
         {
-            ReflectiveStateChanged?.Invoke();
-        	return;
+            var inState = GetReflectiveState();
+
+            var inDisplayStateIndex = inState.ReflectiveModelList.FindIndex(
+                x => x.Key == key);
+
+            if (inDisplayStateIndex == -1)
+                goto finalize;
+
+            var inDisplayState = inState.ReflectiveModelList[inDisplayStateIndex];
+
+			if (inDisplayState is null)
+                goto finalize;
+
+            var outDisplayStateList = new List<ReflectiveModel>(inState.ReflectiveModelList);
+
+            outDisplayStateList[inDisplayStateIndex] = withFunc.Invoke(inDisplayState);
+
+            _reflectiveState = new ReflectiveState { ReflectiveModelList = outDisplayStateList };
+
+            goto finalize;
         }
 
-        var outDisplayStateList = inState.ReflectiveModelList.Replace(
-            inDisplayState,
-            withFunc.Invoke(inDisplayState));
-
-        _reflectiveState = new ReflectiveState { ReflectiveModelList = outDisplayStateList };
-        
+        finalize:
         ReflectiveStateChanged?.Invoke();
-        return;
     }
 
-    public void ReduceDisposeAction(Key<ReflectiveModel> key)
+    public void Dispose(Key<ReflectiveModel> key)
     {
-    	var inState = GetReflectiveState();
-    
-        var inDisplayState = inState.ReflectiveModelList.FirstOrDefault(
-            x => x.Key == key);
-
-        if (inDisplayState is null)
+        lock (_stateModificationLock)
         {
-            ReflectiveStateChanged?.Invoke();
-        	return;
+            var inState = GetReflectiveState();
+
+            var inDisplayStateIndex = inState.ReflectiveModelList.FindIndex(
+                x => x.Key == key);
+
+            if (inDisplayStateIndex == -1)
+                goto finalize;
+
+            var inDisplayState = inState.ReflectiveModelList[inDisplayStateIndex];
+
+            if (inDisplayState is null)
+                goto finalize;
+
+            var outDisplayStateList = new List<ReflectiveModel>(inState.ReflectiveModelList);
+            outDisplayStateList.Remove(inDisplayState);
+
+            _reflectiveState = new ReflectiveState
+            {
+                ReflectiveModelList = outDisplayStateList
+            };
+
+            goto finalize;
         }
 
-        var outDisplayStateList = inState.ReflectiveModelList.Remove(inDisplayState);
-
-        _reflectiveState = new ReflectiveState
-        {
-            ReflectiveModelList = outDisplayStateList
-        };
-        
+        finalize:
         ReflectiveStateChanged?.Invoke();
-        return;
     }
 }
