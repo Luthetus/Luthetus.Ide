@@ -52,7 +52,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 	}
 
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.IndefiniteQueueKey;
     public string Name { get; } = nameof(Terminal);
     public bool EarlyBatchEnabled { get; } = false;
 
