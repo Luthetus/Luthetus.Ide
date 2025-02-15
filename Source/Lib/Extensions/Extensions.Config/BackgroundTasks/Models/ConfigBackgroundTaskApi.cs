@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.TextEditor.RazorLib.Edits.Displays;
 using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Extensions.Git.Displays;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Extensions.Config.BackgroundTasks.Models;
 
