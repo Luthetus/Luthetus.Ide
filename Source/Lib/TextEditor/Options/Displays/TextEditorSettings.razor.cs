@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
