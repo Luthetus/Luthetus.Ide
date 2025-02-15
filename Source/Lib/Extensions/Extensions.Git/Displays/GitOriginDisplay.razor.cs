@@ -33,7 +33,7 @@ public partial class GitOriginDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
         
-        GitBackgroundTaskApi.Git.GetOriginNameEnqueue(localGitState.Repo);
+        GitBackgroundTaskApi.Git.Enqueue_GetOriginName(localGitState.Repo);
     }
 
     private void SetGitOriginOnClick(string localCommandArgs)

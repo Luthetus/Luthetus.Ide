@@ -10,5 +10,11 @@ public enum GitIdeApiWorkKind
     Commit,
     BranchNew,
     BranchGetAll,
-    BranchSet
+    BranchSet,
+    PushToOriginWithTracking,
+    Pull,
+    Fetch,
+    LogFile,
+    ShowFile,
+    DiffFile
 }

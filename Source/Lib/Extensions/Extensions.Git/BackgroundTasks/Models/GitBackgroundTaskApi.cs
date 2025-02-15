@@ -8,10 +8,18 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Extensions.Git.Installations.Displays;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Extensions.Git.Displays;
+using Microsoft.JSInterop;
 
 namespace Luthetus.Extensions.Git.BackgroundTasks.Models;
 
-public class GitBackgroundTaskApi
+public class GitBackgroundTaskApi : IBackgroundTaskGroup
 {
 	private readonly ITerminalService _terminalService;
 	private readonly GitTreeViews _gitTreeViews;
@@ -22,8 +30,11 @@ public class GitBackgroundTaskApi
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly INotificationService _notificationService;
-	
-	public GitBackgroundTaskApi(
+    private readonly IPanelService _panelService;
+    private readonly IDialogService _dialogService;
+    private readonly IJSRuntime _jsRuntime;
+
+    public GitBackgroundTaskApi(
 		GitTreeViews gitTreeViews,
 		IIdeComponentRenderers ideComponentRenderers,
 		ITreeViewService treeViewService,
@@ -32,7 +43,10 @@ public class GitBackgroundTaskApi
         IEnvironmentProvider environmentProvider,
         IBackgroundTaskService backgroundTaskService,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IPanelService panelService,
+        IDialogService dialogService,
+        IJSRuntime jsRuntime)
 	{
 		_gitTreeViews = gitTreeViews;
 		_ideComponentRenderers = ideComponentRenderers;
@@ -43,8 +57,11 @@ public class GitBackgroundTaskApi
         _backgroundTaskService = backgroundTaskService;
         _commonComponentRenderers = commonComponentRenderers;
         _notificationService = notificationService;
+        _panelService = panelService;
+        _dialogService = dialogService;
+        _jsRuntime = jsRuntime;
 
-		GitCliOutputParser = new GitCliOutputParser(
+        GitCliOutputParser = new GitCliOutputParser(
 			this,
 			_environmentProvider);
 
@@ -64,4 +81,82 @@ public class GitBackgroundTaskApi
 	
 	public GitIdeApi Git { get; }
 	public GitCliOutputParser GitCliOutputParser { get; }
+
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public string Name { get; } = nameof(GitIdeApi);
+    public bool EarlyBatchEnabled { get; } = false;
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly Queue<GitBackgroundTaskApiWorkKind> _workKindQueue = new();
+    private readonly object _workLock = new();
+
+    public void Enqueue_LuthetusExtensionsGitInitializerOnInit()
+    {
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(GitBackgroundTaskApiWorkKind.LuthetusExtensionsGitInitializerOnInit);
+            _backgroundTaskService.EnqueueGroup(this);
+        }
+    }
+	
+	public ValueTask Do_LuthetusExtensionsGitInitializerOnInit()
+    {
+        InitializePanelTabs();
+        return ValueTask.CompletedTask;
+    }
+
+    private void InitializePanelTabs()
+    {
+        InitializeLeftPanelTabs();
+    }
+
+    private void InitializeLeftPanelTabs()
+    {
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_panelService.GetPanelState());
+        leftPanel.PanelService = _panelService;
+
+        // gitPanel
+        var gitPanel = new Panel(
+        "Git Changes",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            ContextFacts.GitContext.ContextKey,
+            typeof(GitDisplay),
+            null,
+            _panelService,
+            _dialogService,
+            _jsRuntime);
+        _panelService.ReduceRegisterPanelAction(gitPanel);
+        _panelService.ReduceRegisterPanelTabAction(leftPanel.Key, gitPanel, false);
+    }
+
+    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+	{
+		return null;
+	}
+	
+	public ValueTask HandleEvent(CancellationToken cancellationToken)
+	{
+        GitBackgroundTaskApiWorkKind workKind;
+		
+		lock (_workLock)
+		{
+			if (!_workKindQueue.TryDequeue(out workKind))
+				return ValueTask.CompletedTask;
+		}
+			
+		switch (workKind)
+		{
+			case GitBackgroundTaskApiWorkKind.LuthetusExtensionsGitInitializerOnInit:
+			{
+				return Do_LuthetusExtensionsGitInitializerOnInit();
+			}
+			default:
+			{
+				return ValueTask.CompletedTask;
+			}
+		}
+	}
 }

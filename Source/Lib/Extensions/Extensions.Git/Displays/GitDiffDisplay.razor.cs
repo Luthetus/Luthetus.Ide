@@ -86,7 +86,7 @@ public partial class GitDiffDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
             
-        GitBackgroundTaskApi.Git.ShowFileEnqueue(
+        GitBackgroundTaskApi.Git.Enqueue_ShowFile(
             localGitState.Repo,
             localGitFile.RelativePathString,
             (gitCliOutputParser, logFileContent) =>
@@ -305,7 +305,7 @@ public partial class GitDiffDisplay : ComponentBase
     	if (!(await TryCreateEditorOut(originalResourceUri, localGitFile.AbsolutePath)))
     		return;
     		
-    	GitBackgroundTaskApi.Git.DiffFileEnqueue(
+    	GitBackgroundTaskApi.Git.Enqueue_DiffFile(
             localGitState.Repo,
             localGitFile.RelativePathString,
             (gitCliOutputParser, logFileContent, plusMarkedLineIndexList) =>

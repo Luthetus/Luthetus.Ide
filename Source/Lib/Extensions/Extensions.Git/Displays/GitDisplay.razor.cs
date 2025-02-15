@@ -198,7 +198,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task PerformBranchNewEnqueue(GitState localGitState, string fileName)
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.BranchNewEnqueue(localGitState.Repo, fileName);
+                GitBackgroundTaskApi.Git.Enqueue_BranchNew(localGitState.Repo, fileName);
 
 			return Task.CompletedTask;
         }
@@ -226,7 +226,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-            	GitBackgroundTaskApi.Git.PushToOriginWithTrackingEnqueue(localGitState.Repo);
+            	GitBackgroundTaskApi.Git.Enqueue_PushToOriginWithTracking(localGitState.Repo);
 
 			return Task.CompletedTask;
         }
@@ -242,7 +242,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.PullEnqueue(localGitState.Repo);
+                GitBackgroundTaskApi.Git.Enqueue_Pull(localGitState.Repo);
 
             return Task.CompletedTask;
         }
@@ -258,7 +258,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.FetchEnqueue(localGitState.Repo);
+                GitBackgroundTaskApi.Git.Enqueue_Fetch(localGitState.Repo);
 
             return Task.CompletedTask;
         }

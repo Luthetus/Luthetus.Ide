@@ -222,7 +222,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 					DotNetBackgroundTaskApi.Enqueue_RunTestByFullyQualifiedName(
                         treeViewStringFragment,
                         fullyQualifiedName,
-                        treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory);
+                        treeViewProjectTestModel);
 				}
 
 				return Task.CompletedTask;
