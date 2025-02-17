@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -212,7 +211,7 @@ public static class TextEditorCommandDefaultFacts
                 
             modelModifier.CompilerService.ResourceWasModified(
 				modelModifier.ResourceUri,
-				ImmutableArray<TextEditorTextSpan>.Empty);
+				Array.Empty<TextEditorTextSpan>());
 		    return ValueTask.CompletedTask;
         });
 

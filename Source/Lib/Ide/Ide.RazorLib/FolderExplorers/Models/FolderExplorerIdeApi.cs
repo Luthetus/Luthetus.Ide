@@ -109,7 +109,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
             _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
-                new() { rootNode }));
+                new List<TreeViewNoType>() { rootNode }));
         }
         else
         {

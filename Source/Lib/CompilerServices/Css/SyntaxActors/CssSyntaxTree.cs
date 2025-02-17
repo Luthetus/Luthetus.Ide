@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
@@ -47,7 +46,7 @@ public class CssSyntaxTree
                 (byte)CssDecorationKind.None,
                 stringWalker.ResourceUri,
                 stringWalker.SourceText),
-            cssDocumentChildren.ToImmutableArray());
+            cssDocumentChildren);
 
         var cssSyntaxUnit = new CssSyntaxUnit(
             cssDocumentSyntax,
@@ -89,7 +88,7 @@ public class CssSyntaxTree
 
                 var commentToken = new CssCommentSyntax(
                     commentTextSpan,
-                    ImmutableArray<ICssSyntax>.Empty);
+					Array.Empty<ICssSyntax>());
 
                 cssDocumentChildren.Add(commentToken);
 
@@ -183,12 +182,12 @@ public class CssSyntaxTree
                     case CssSyntaxKind.PropertyName:
                         childSyntax = new CssPropertyNameSyntax(
                             childTextSpan,
-                            ImmutableArray<ICssSyntax>.Empty);
+                            Array.Empty<ICssSyntax>());
                         break;
                     case CssSyntaxKind.PropertyValue:
                         childSyntax = new CssPropertyValueSyntax(
                             childTextSpan,
-                            ImmutableArray<ICssSyntax>.Empty);
+                            Array.Empty<ICssSyntax>());
                         break;
                     default:
                         throw new LuthetusTextEditorException($"The {nameof(CssSyntaxKind)} of" +
@@ -272,7 +271,7 @@ public class CssSyntaxTree
 
         var identifierSyntax = new CssIdentifierSyntax(
             identifierTextSpan,
-            ImmutableArray<ICssSyntax>.Empty);
+            Array.Empty<ICssSyntax>());
 
         cssDocumentChildren.Add(identifierSyntax);
     }

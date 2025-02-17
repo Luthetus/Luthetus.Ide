@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.CompilerServices.C.Facts;
 
 public partial class CLanguageFacts
@@ -27,22 +25,22 @@ public partial class CLanguageFacts
             // public const string MACRO_OPERATOR_SINGLE_HASHTAG = " macro operator"; // TODO: This used to be the string literal value of "# macro operator". Which is correct?
             // public const string MACRO_OPERATOR_DOUBLE_HASHTAG = " macro operator"; // TODO: This used to be the string literal value of "## macro operator". Which is correct?
 
-            public static readonly ImmutableArray<string> All = new[]
+            public static readonly IReadOnlyList<string> All = new List<string>
             {
-            INCLUDE,
-            DEFINE,
-            UNDEF,
-            IF,
-            IFDEF,
-            IFNDEF,
-            ERROR,
-            FILE,
-            LINE,
-            DATE,
-            TIME,
-            TIMESTAMP,
-            PRAGMA,
-        }.ToImmutableArray();
+                INCLUDE,
+                DEFINE,
+                UNDEF,
+                IF,
+                IFDEF,
+                IFNDEF,
+                ERROR,
+                FILE,
+                LINE,
+                DATE,
+                TIME,
+                TIMESTAMP,
+                PRAGMA,
+            };
         }
 
         public class Variables
@@ -53,14 +51,14 @@ public partial class CLanguageFacts
             public const string TIME = "__TIME__";
             public const string TIMESTAMP = "__TIMESTAMP__";
 
-            public static readonly ImmutableArray<string> All = new[]
+            public static readonly IReadOnlyList<string> All = new List<string>
             {
-            FILE,
-            LINE,
-            DATE,
-            TIME,
-            TIMESTAMP,
-        }.ToImmutableArray();
+                FILE,
+                LINE,
+                DATE,
+                TIME,
+                TIMESTAMP,
+            };
         }
     }
 }

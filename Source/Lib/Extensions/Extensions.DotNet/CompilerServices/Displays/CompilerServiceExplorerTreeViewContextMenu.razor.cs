@@ -20,7 +20,7 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 
 		// Default case
 		{
-			return MenuRecord.GetEmpty();
+			return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 		}
 	}
 }

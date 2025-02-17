@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.ListExtensions;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
@@ -119,7 +120,7 @@ public class TreeViewService : ITreeViewService
         var outContainer = inContainer with
         {
             RootNode = node,
-            SelectedNodeList = new() { node }
+            SelectedNodeList = new List<TreeViewNoType>() { node }
         };
 
         var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
@@ -587,7 +588,7 @@ public class TreeViewService : ITreeViewService
 
 				outContainer = inContainer with
 	            {
-	                SelectedNodeList = TreeViewNoType.GetEmptyTreeViewNoTypeList()
+	                SelectedNodeList = Array.Empty<TreeViewNoType>()
 	            };
 			}
 			else if (!addSelectedNodes)
@@ -596,7 +597,7 @@ public class TreeViewService : ITreeViewService
 
 				outContainer = inContainer with
 	            {
-	                SelectedNodeList = new()
+	                SelectedNodeList = new List<TreeViewNoType>()
 					{
 						nextActiveNode
 					}

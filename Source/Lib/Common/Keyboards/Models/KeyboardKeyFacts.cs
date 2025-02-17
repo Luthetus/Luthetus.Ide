@@ -310,7 +310,7 @@ public static class KeyboardKeyFacts
         public const string PAGE_UP = "PageUp";
         public const string PAGE_DOWN = "PageDown";
 
-        public static readonly List<string> AllList = new()
+        public static readonly IReadOnlyList<string> AllList = new List<string>()
         {
             BACKSPACE,
             ESCAPE,
@@ -328,7 +328,7 @@ public static class KeyboardKeyFacts
         public const char NEW_LINE = '\n';
         public const char SPACE = ' ';
 
-        public static readonly List<char> AllList = new()
+        public static readonly IReadOnlyList<char> AllList = new List<char>()
         {
             TAB,
             CARRIAGE_RETURN,
@@ -347,7 +347,7 @@ public static class KeyboardKeyFacts
         public const string ENTER_CODE = "Enter";
         public const string SPACE_CODE = "Space";
 
-        public static readonly List<string> AllList = new()
+        public static readonly IReadOnlyList<string> AllList = new List<string>()
         {
             TAB_CODE,
             ENTER_CODE,
@@ -395,7 +395,7 @@ public static class KeyboardKeyFacts
         public const char FORWARD_SLASH = '/';
         public const char BACK_SLASH = '\\';
 
-        public static readonly List<char> AllList = new()
+        public static readonly IReadOnlyList<char> AllList = new List<char>()
         {
             OPEN_CURLY_BRACE,
             CLOSE_CURLY_BRACE,
@@ -442,7 +442,7 @@ public static class KeyboardKeyFacts
         public const string HOME = "Home";
         public const string END = "End";
 
-        public static readonly List<string> AllList = new()
+        public static readonly IReadOnlyList<string> AllList = new List<string>()
         {
             ARROW_LEFT,
             ARROW_DOWN,
@@ -462,7 +462,7 @@ public static class KeyboardKeyFacts
         public const string HOME = "Home";
         public const string END = "End";
 
-        public static readonly List<string> AllList = new()
+        public static readonly IReadOnlyList<string> AllList = new List<string>()
         {
             ARROW_LEFT,
             ARROW_DOWN,
@@ -480,7 +480,7 @@ public static class KeyboardKeyFacts
         public const string ARROW_UP = "k";
         public const string ARROW_RIGHT = "l";
 
-        public static readonly List<string> AllList = new()
+        public static readonly IReadOnlyList<string> AllList = new List<string>()
         {
             ARROW_LEFT,
             ARROW_DOWN,
@@ -496,7 +496,7 @@ public static class KeyboardKeyFacts
         public const string ARROW_UP = "KeyK";
         public const string ARROW_RIGHT = "KeyL";
 
-        public static readonly List<string> AllList = new()
+        public static readonly IReadOnlyList<string> AllList = new List<string>()
         {
             ARROW_LEFT,
             ARROW_DOWN,

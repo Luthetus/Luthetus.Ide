@@ -1,18 +1,31 @@
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.ListExtensions;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -20,25 +33,13 @@ using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.Outputs.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
 using Luthetus.Extensions.DotNet.Commands;
-using Luthetus.Common.RazorLib.Panels.Models;
-using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays;
-using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
-using Luthetus.Common.RazorLib.Dialogs.Models;
-using Microsoft.JSInterop;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
-using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.Common.RazorLib.Menus.Models;
-using Luthetus.Ide.RazorLib.Shareds.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
@@ -467,7 +468,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                     var menuOptionNew = new MenuOptionRecord(
                         "New",
                         MenuOptionKind.Other,
-                        subMenu: new MenuRecord(new() { menuOptionNewDotNetSolution }));
+                        subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution }));
 
                     var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
                     copyMenuOptionList.Insert(0, menuOptionNew);

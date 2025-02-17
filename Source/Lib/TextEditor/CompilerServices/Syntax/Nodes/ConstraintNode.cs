@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
@@ -14,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class ConstraintNode : ISyntaxNode
 {
-    public ConstraintNode(ImmutableArray<SyntaxToken> innerTokens)
+    public ConstraintNode(IReadOnlyList<SyntaxToken> innerTokens)
     {
         InnerTokens = innerTokens;
     }
@@ -26,7 +24,7 @@ public sealed class ConstraintNode : ISyntaxNode
     /// TODO: For now, just grab all tokens and put them in an array...
     /// ...In the future parse the tokens. (2023-10-19)
     /// </summary>
-    public ImmutableArray<SyntaxToken> InnerTokens { get; }
+    public IReadOnlyList<SyntaxToken> InnerTokens { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;

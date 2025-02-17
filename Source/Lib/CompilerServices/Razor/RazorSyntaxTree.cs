@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -309,7 +308,7 @@ public class RazorSyntaxTree
         {
             injectedLanguageFragmentSyntaxes.Add(
                 new InjectedLanguageFragmentNode(
-                    ImmutableArray<IHtmlSyntax>.Empty,
+                    Array.Empty<IHtmlSyntax>(),
                     new TextEditorTextSpan(
                         stringWalker.PositionIndex,
                         stringWalker.PositionIndex +
@@ -371,7 +370,7 @@ public class RazorSyntaxTree
                     // Track text span of the "@" sign
                     injectedLanguageFragmentSyntaxes.Add(
                         new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             new TextEditorTextSpan(
                                 injectedLanguageFragmentSyntaxStartingPositionIndex,
                                 stringWalker.PositionIndex + 1,
@@ -420,7 +419,7 @@ public class RazorSyntaxTree
                     {
                         injectedLanguageFragmentSyntaxes.Add(
                             new InjectedLanguageFragmentNode(
-                                ImmutableArray<IHtmlSyntax>.Empty,
+                                Array.Empty<IHtmlSyntax>(),
                                 new TextEditorTextSpan(
                                     stringWalker.PositionIndex,
                                     stringWalker.PositionIndex +
@@ -493,7 +492,7 @@ public class RazorSyntaxTree
         {
             injectedLanguageFragmentSyntaxes.Add(
                 new InjectedLanguageFragmentNode(
-                    ImmutableArray<IHtmlSyntax>.Empty,
+                    Array.Empty<IHtmlSyntax>(),
                     new TextEditorTextSpan(
                         stringWalker.PositionIndex,
                         stringWalker.PositionIndex +
@@ -523,7 +522,7 @@ public class RazorSyntaxTree
                     {
                         injectedLanguageFragmentSyntaxes.Add(
                             new InjectedLanguageFragmentNode(
-                                ImmutableArray<IHtmlSyntax>.Empty,
+                                Array.Empty<IHtmlSyntax>(),
                                 new TextEditorTextSpan(
                                     stringWalker.PositionIndex,
                                     stringWalker.PositionIndex +
@@ -591,7 +590,7 @@ public class RazorSyntaxTree
         {
             injectedLanguageFragmentSyntaxes.Add(
                 new InjectedLanguageFragmentNode(
-                    ImmutableArray<IHtmlSyntax>.Empty,
+                    Array.Empty<IHtmlSyntax>(),
                     new TextEditorTextSpan(
                         stringWalker.PositionIndex,
                         stringWalker.PositionIndex +
@@ -857,7 +856,7 @@ public class RazorSyntaxTree
         {
             injectedLanguageFragmentSyntaxes.Add(
                 new InjectedLanguageFragmentNode(
-                    ImmutableArray<IHtmlSyntax>.Empty,
+                    Array.Empty<IHtmlSyntax>(),
                     new TextEditorTextSpan(
                         stringWalker.PositionIndex,
                         stringWalker.PositionIndex +
@@ -937,7 +936,7 @@ public class RazorSyntaxTree
                 stringWalker.SourceText);
 
             var commentStartSyntax = new InjectedLanguageFragmentNode(
-                ImmutableArray<IHtmlSyntax>.Empty,
+                Array.Empty<IHtmlSyntax>(),
                 commentStartTextSpan);
 
             injectedLanguageFragmentSyntaxes.Add(commentStartSyntax);
@@ -965,7 +964,7 @@ public class RazorSyntaxTree
                 stringWalker.SourceText);
 
         var commentValueSyntax = new InjectedLanguageFragmentNode(
-            ImmutableArray<IHtmlSyntax>.Empty,
+            Array.Empty<IHtmlSyntax>(),
             commentValueTextSpan);
 
         injectedLanguageFragmentSyntaxes.Add(commentValueSyntax);
@@ -980,7 +979,7 @@ public class RazorSyntaxTree
                 stringWalker.SourceText);
 
             var commentEndSyntax = new InjectedLanguageFragmentNode(
-                ImmutableArray<IHtmlSyntax>.Empty,
+                Array.Empty<IHtmlSyntax>(),
                 commentEndTextSpan);
 
             injectedLanguageFragmentSyntaxes.Add(commentEndSyntax);
@@ -1009,7 +1008,7 @@ public class RazorSyntaxTree
                 stringWalker.SourceText);
 
             var commentStartSyntax = new InjectedLanguageFragmentNode(
-                ImmutableArray<IHtmlSyntax>.Empty,
+                Array.Empty<IHtmlSyntax>(),
                 commentStartTextSpan);
 
             injectedLanguageFragmentSyntaxes.Add(commentStartSyntax);
@@ -1139,7 +1138,7 @@ public class RazorSyntaxTree
                 {
                     tagSyntaxes.Add(
                         new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             new TextEditorTextSpan(
                                 stringWalker.PositionIndex,
                                 stringWalker.PositionIndex +
@@ -1213,7 +1212,7 @@ public class RazorSyntaxTree
                 {
                     tagSyntaxes.Add(
                         new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             new TextEditorTextSpan(
                                 stringWalker.PositionIndex,
                                 stringWalker.PositionIndex +
@@ -1271,7 +1270,7 @@ public class RazorSyntaxTree
                 {
                     tagSyntaxes.Add(
                         new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             new TextEditorTextSpan(
                                 stringWalker.PositionIndex,
                                 stringWalker.PositionIndex +
@@ -1405,7 +1404,7 @@ public class RazorSyntaxTree
                         };
 
                         injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             razorMethodTextSpan));
 
                         break;
@@ -1452,7 +1451,7 @@ public class RazorSyntaxTree
                         };
 
                         injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             razorStringLiteralTextSpan));
 
                         break;
@@ -1467,7 +1466,7 @@ public class RazorSyntaxTree
                         };
 
                         injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             razorKeywordTextSpan));
 
                         break;
@@ -1482,7 +1481,7 @@ public class RazorSyntaxTree
                         };
 
                         injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             razorCommentTextSpan));
 
                         break;
@@ -1497,7 +1496,7 @@ public class RazorSyntaxTree
                         };
 
                         injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentNode(
-                            ImmutableArray<IHtmlSyntax>.Empty,
+                            Array.Empty<IHtmlSyntax>(),
                             razorCommentTextSpan));
 
                         break;

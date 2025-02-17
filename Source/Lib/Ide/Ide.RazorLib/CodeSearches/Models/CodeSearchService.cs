@@ -250,9 +250,9 @@ public class CodeSearchService : ICodeSearchService
 	    var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewList);
 	    var firstNode = treeViewList.FirstOrDefault();
 	
-	    var activeNodes = firstNode is null
-	        ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
-	        : new() { firstNode };
+	    IReadOnlyList<TreeViewNoType> activeNodes = firstNode is null
+	        ? Array.Empty<TreeViewNoType>()
+	        : new List<TreeViewNoType> { firstNode };
 	
 	    if (!_treeViewService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
 	    {

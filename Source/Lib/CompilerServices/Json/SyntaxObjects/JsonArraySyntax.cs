@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.Json.SyntaxEnums;
 
@@ -8,19 +7,19 @@ public class JsonArraySyntax : IJsonSyntax
 {
     public JsonArraySyntax(
         TextEditorTextSpan textEditorTextSpan,
-        ImmutableArray<JsonObjectSyntax> childJsonObjectSyntaxes)
+		IReadOnlyList<JsonObjectSyntax> childJsonObjectSyntaxes)
     {
         TextEditorTextSpan = textEditorTextSpan;
         ChildJsonObjectSyntaxes = childJsonObjectSyntaxes;
     }
 
     public TextEditorTextSpan TextEditorTextSpan { get; }
-    public ImmutableArray<JsonObjectSyntax> ChildJsonObjectSyntaxes { get; }
-    public ImmutableArray<IJsonSyntax> ChildJsonSyntaxes => new IJsonSyntax[]
+    public IReadOnlyList<JsonObjectSyntax> ChildJsonObjectSyntaxes { get; }
+    public IReadOnlyList<IJsonSyntax> ChildJsonSyntaxes => new List<IJsonSyntax>
     {
 
     }.Union(ChildJsonObjectSyntaxes)
-        .ToImmutableArray();
+        .ToList();
 
     public JsonSyntaxKind JsonSyntaxKind => JsonSyntaxKind.Array;
 }

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.Css.SyntaxEnums;
 
@@ -8,5 +7,5 @@ public interface ICssSyntax
 {
     public CssSyntaxKind CssSyntaxKind { get; }
     public TextEditorTextSpan TextEditorTextSpan { get; }
-    public ImmutableArray<ICssSyntax> ChildCssSyntaxes { get; }
+    public IReadOnlyList<ICssSyntax> ChildCssSyntaxes { get; }
 }

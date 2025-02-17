@@ -7,17 +7,17 @@ namespace Luthetus.Common.RazorLib.Contexts.Models;
 /// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
 /// </summary>
 public record struct ContextState(
-    List<ContextRecord> AllContextsList,
+    IReadOnlyList<ContextRecord> AllContextsList,
     ContextHeirarchy FocusedContextHeirarchy,
     ContextHeirarchy? InspectedContextHeirarchy,
-    List<InspectableContext> InspectableContextList,
+    IReadOnlyList<InspectableContext> InspectableContextList,
     bool IsSelectingInspectionTarget)
 {
     public ContextState() : this(
-        new List<ContextRecord>(),
-        new(new List<Key<ContextRecord>>()),
+        Array.Empty<ContextRecord>(),
+        new(Array.Empty<Key<ContextRecord>>()),
         null,
-        new List<InspectableContext>(),
+        Array.Empty<InspectableContext>(),
         false)
     {
         FocusedContextHeirarchy = new ContextHeirarchy(new List<Key<ContextRecord>>

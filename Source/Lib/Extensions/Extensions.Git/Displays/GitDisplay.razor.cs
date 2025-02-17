@@ -95,7 +95,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
             var menuOptionNew = new MenuOptionRecord(
                 "Repo",
                 MenuOptionKind.Other,
-                subMenu: new MenuRecord(new() { menuOption }));
+                subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOption }));
 
             menuOptionsList.Add(menuOptionNew);
         }
@@ -109,7 +109,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
             var menuOptionNew = new MenuOptionRecord(
                 "Branch",
                 MenuOptionKind.Other,
-                subMenu: new MenuRecord(new()
+                subMenu: new MenuRecord(new List<MenuOptionRecord>
                 { 
                     branchNewMenuOption,
                     branchCheckoutMenuOption,
@@ -128,7 +128,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
             var menuOptionNew = new MenuOptionRecord(
                 "Actions",
                 MenuOptionKind.Other,
-                subMenu: new MenuRecord(new()
+                subMenu: new MenuRecord(new List<MenuOptionRecord>
                 {
                     pushMenuOption,
                     pullMenuOption,

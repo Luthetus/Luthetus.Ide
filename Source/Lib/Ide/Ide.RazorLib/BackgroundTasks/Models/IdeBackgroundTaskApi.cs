@@ -523,7 +523,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
                 MenuOptionKind.Other,
-                subMenu: new MenuRecord(new()
+                subMenu: new MenuRecord(new List<MenuOptionRecord>()
                 {
                     menuOptionOpenFile,
                     menuOptionOpenDirectory,

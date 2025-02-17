@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Models;
 
-public partial record ContextSwitchState(List<ContextSwitchGroup> ContextSwitchGroupList)
+public partial record ContextSwitchState(IReadOnlyList<ContextSwitchGroup> ContextSwitchGroupList)
 {
 	public ContextSwitchState() : this(new List<ContextSwitchGroup>())
 	{

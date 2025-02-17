@@ -9,12 +9,11 @@ namespace Luthetus.Common.RazorLib.Dialogs.Models;
 /// </summary>
 public record struct DialogState
 {
-    public DialogState()
-    {
-        DialogList = new List<IDialog>();
-    }
+	public DialogState()
+	{
+	}
 
-    public List<IDialog> DialogList { get; init; }
+    public IReadOnlyList<IDialog> DialogList { get; init; } = Array.Empty<IDialog>();
     /// <summary>
     /// The active dialog is either:<br/><br/>
     /// -the one which has focus within it,<br/>

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -22,7 +21,7 @@ public interface ITextEditorDiffApi
     /// If one continually invokes this, there is no guarantee that the data had not changed
     /// since the previous invocation.
     /// </summary>
-    public ImmutableList<TextEditorDiffModel> GetDiffModels();
+    public IReadOnlyList<TextEditorDiffModel> GetDiffModels();
     
     public event Action? TextEditorDiffStateChanged;
     

@@ -13,16 +13,16 @@ namespace Luthetus.Common.RazorLib.Notifications.Models;
 /// This is odd. Perhaps use one list and filter it?
 /// </summary>
 public record struct NotificationState(
-    List<INotification> DefaultList,
-    List<INotification> ReadList,
-    List<INotification> ArchivedList,
-    List<INotification> DeletedList)
+    IReadOnlyList<INotification> DefaultList,
+    IReadOnlyList<INotification> ReadList,
+    IReadOnlyList<INotification> ArchivedList,
+    IReadOnlyList<INotification> DeletedList)
 {
     public NotificationState() : this(
-        new List<INotification>(),
-        new List<INotification>(),
-        new List<INotification>(),
-        new List<INotification>())
+        Array.Empty<INotification>(),
+        Array.Empty<INotification>(),
+        Array.Empty<INotification>(),
+        Array.Empty<INotification>())
     {
         
     }

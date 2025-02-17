@@ -168,7 +168,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                     }
 
                     var menu = menuOptionList.Count == 0
-                        ? MenuRecord.GetEmpty()
+                        ? new MenuRecord(MenuRecord.NoMenuOptionsExistList)
                         : new MenuRecord(menuOptionList);
 
                     return Task.FromResult(menu);

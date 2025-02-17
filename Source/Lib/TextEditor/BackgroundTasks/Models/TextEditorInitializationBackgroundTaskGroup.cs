@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
@@ -120,7 +120,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                     }
 
                     var menu = menuOptionList.Count == 0
-                        ? MenuRecord.GetEmpty()
+                        ? new MenuRecord(MenuRecord.NoMenuOptionsExistList)
                         : new MenuRecord(menuOptionList);
 
                     return Task.FromResult(menu);

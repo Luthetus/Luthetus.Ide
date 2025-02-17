@@ -56,7 +56,7 @@ public partial class WatchWindowDisplay : ComponentBase
                 TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     rootNode,
-                    new() { rootNode }));
+                    new List<TreeViewNoType>() { rootNode }));
             }
         }
 
