@@ -7,22 +7,22 @@ namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
 public record struct InputFileState(
     int IndexInHistory,
-	List<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
+	IReadOnlyList<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
     TreeViewAbsolutePath? SelectedTreeViewModel,
     Func<AbsolutePath, Task> OnAfterSubmitFunc,
     Func<AbsolutePath, Task<bool>> SelectionIsValidFunc,
-    List<InputFilePattern> InputFilePatternsList,
+    IReadOnlyList<InputFilePattern> InputFilePatternsList,
     InputFilePattern? SelectedInputFilePattern,
     string SearchQuery,
     string Message)
 {
     public InputFileState() : this(
         -1,
-		new(),
+		Array.Empty<TreeViewAbsolutePath>(),
         null,
         _ => Task.CompletedTask,
         _ => Task.FromResult(false),
-		new(),
+		Array.Empty<InputFilePattern>(),
         null,
         string.Empty,
         string.Empty)

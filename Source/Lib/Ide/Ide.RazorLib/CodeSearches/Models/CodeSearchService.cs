@@ -105,7 +105,7 @@ public class CodeSearchService : ICodeSearchService
 
             _codeSearchState = inState with
             {
-                ResultList = new()
+                ResultList = new List<string>()
             };
             goto finalize;
         }

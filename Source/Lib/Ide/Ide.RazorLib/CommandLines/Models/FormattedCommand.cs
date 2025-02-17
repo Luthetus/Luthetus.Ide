@@ -4,14 +4,14 @@ namespace Luthetus.Ide.RazorLib.CommandLines.Models;
 
 public class FormattedCommand
 {
-    public FormattedCommand(string targetFileName, IEnumerable<string> argumentsList)
+    public FormattedCommand(string targetFileName, IReadOnlyList<string> argumentsList)
     {
         TargetFileName = targetFileName;
         ArgumentsList = argumentsList;
     }
 
     public string TargetFileName { get; }
-    public IEnumerable<string> ArgumentsList { get; }
+    public IReadOnlyList<string> ArgumentsList { get; }
 
     /// <summary>
     /// This property is being used tentatively during the development of an
