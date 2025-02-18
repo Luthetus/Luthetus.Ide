@@ -1,3 +1,4 @@
+using Microsoft.JSInterop;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -13,6 +14,15 @@ using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Outlines.Models;
 using Luthetus.Common.RazorLib.Reflectives.Models;
+using Luthetus.Common.RazorLib.Drags.Models;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -47,7 +57,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton(commonConfig)
             .AddSingleton(hostingInformation)
             .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
-			.AddCommonFactories(hostingInformation, commonConfig)
 			.AddScoped<IBackgroundTaskService>(sp => 
             {
 				hostingInformation.BackgroundTaskService.SetContinuousTaskWorker(new BackgroundTaskWorker(
@@ -72,48 +81,29 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAppDimensionService, AppDimensionService>()
             .AddScoped<IKeymapService, KeymapService>()
             .AddScoped<IWidgetService, WidgetService>()
-            .AddScoped<IReflectiveService, ReflectiveService>();
+            .AddScoped<IReflectiveService, ReflectiveService>()
+            .AddScoped<IClipboardService, JavaScriptInteropClipboardService>()
+            .AddScoped<IDialogService, DialogService>()
+            .AddScoped<INotificationService, NotificationService>()
+            .AddScoped<IDragService, DragService>()
+            .AddScoped<IDropdownService, DropdownService>()
+            .AddScoped<IAppOptionsService, AppOptionsService>()
+            .AddScoped<IStorageService, LocalStorageService>()
+            .AddScoped<IThemeService, ThemeService>()
+            .AddScoped<ITreeViewService, TreeViewService>();
 
-        return services;
-    }
-
-    private static IServiceCollection AddCommonFactories(
-        this IServiceCollection services,
-        LuthetusHostingInformation hostingInformation,
-        LuthetusCommonConfig commonConfig)
-    {
-        services
-            .AddScoped(sp => commonConfig.CommonFactories.ClipboardServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonConfig.CommonFactories.DialogServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonConfig.CommonFactories.NotificationServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonConfig.CommonFactories.DragServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonConfig.CommonFactories.DropdownServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonConfig.CommonFactories.AppOptionsServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonConfig.CommonFactories.StorageServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonConfig.CommonFactories.ThemeServiceFactory.Invoke(sp))
-            .AddScoped(sp => commonConfig.CommonFactories.TreeViewServiceFactory.Invoke(sp));
-
-        if (commonConfig.CommonFactories.EnvironmentProviderFactory is not null &&
-            commonConfig.CommonFactories.FileSystemProviderFactory is not null)
+        switch (hostingInformation.LuthetusHostingKind)
         {
-            services.AddScoped(sp => commonConfig.CommonFactories.EnvironmentProviderFactory.Invoke(sp));
-            services.AddScoped(sp => commonConfig.CommonFactories.FileSystemProviderFactory.Invoke(sp));
+            case LuthetusHostingKind.Photino:
+                services.AddScoped<IEnvironmentProvider, LocalEnvironmentProvider>();
+                services.AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
+                break;
+            default:
+                services.AddScoped<IEnvironmentProvider, InMemoryEnvironmentProvider>();
+                services.AddScoped<IFileSystemProvider, InMemoryFileSystemProvider>();
+                break;
         }
-        else
-        {
-            switch (hostingInformation.LuthetusHostingKind)
-            {
-                case LuthetusHostingKind.Photino:
-                    services.AddScoped<IEnvironmentProvider, LocalEnvironmentProvider>();
-                    services.AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
-                    break;
-                default:
-                    services.AddScoped<IEnvironmentProvider, InMemoryEnvironmentProvider>();
-                    services.AddScoped<IFileSystemProvider, InMemoryFileSystemProvider>();
-                    break;
-            }
-        }
-
+        
         return services;
     }
 

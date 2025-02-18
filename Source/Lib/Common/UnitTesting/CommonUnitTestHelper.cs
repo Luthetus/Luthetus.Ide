@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -64,19 +64,11 @@ public class CommonUnitTestHelper
         IServiceCollection services,
         LuthetusHostingInformation hostingInformation)
     {
-        return services.AddLuthetusCommonServices(hostingInformation, commonOptions =>
-        {
-            var outLuthetusCommonFactories = commonOptions.CommonFactories with
-            {
-                ClipboardServiceFactory = _ => new InMemoryClipboardService(),
-                StorageServiceFactory = _ => new DoNothingStorageService(),
-            };
-
-            return commonOptions with
-            {
-                CommonFactories = outLuthetusCommonFactories
-            };
-        }); ;
+        services.AddLuthetusCommonServices(hostingInformation);
+        
+        return services
+        	.AddScoped<IClipboardService, InMemoryClipboardService>()
+        	.AddScoped<IStorageService, DoNothingStorageService>();
     }
 
     private void ValidateDependencies()
