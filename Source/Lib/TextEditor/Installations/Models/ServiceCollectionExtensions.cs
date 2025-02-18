@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -27,8 +28,8 @@ public static class ServiceCollectionExtensions
         services
             .AddSingleton(textEditorConfig)
             .AddSingleton<ILuthetusTextEditorComponentRenderers>(_textEditorComponentRenderers)
-            .AddScoped(serviceProvider => textEditorConfig.AutocompleteServiceFactory.Invoke(serviceProvider))
-            .AddScoped(serviceProvider => textEditorConfig.AutocompleteIndexerFactory.Invoke(serviceProvider))
+            .AddScoped<IAutocompleteService, WordAutocompleteService>()
+            .AddScoped<IAutocompleteIndexer, WordAutocompleteIndexer>()
             .AddScoped<ITextEditorService, TextEditorService>()
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>()

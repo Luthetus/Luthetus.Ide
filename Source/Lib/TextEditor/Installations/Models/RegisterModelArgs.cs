@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
-public class RegisterModelArgs
+public struct RegisterModelArgs
 {
     public RegisterModelArgs(
         ResourceUri resourceUri,
