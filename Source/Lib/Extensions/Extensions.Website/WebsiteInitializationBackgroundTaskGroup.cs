@@ -258,7 +258,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
             }
             default:
             {
-                Console.WriteLine($"{nameof(Aaa)} {nameof(HandleEvent)} default case");
+                Console.WriteLine($"{nameof(WebsiteInitializationBackgroundTaskGroup)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
             }
         }
