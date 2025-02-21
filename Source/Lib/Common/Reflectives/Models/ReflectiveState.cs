@@ -2,10 +2,9 @@ namespace Luthetus.Common.RazorLib.Reflectives.Models;
 
 public record struct ReflectiveState
 {
-    public ReflectiveState()
-    {
-        ReflectiveModelList = new();
-    }
+	public ReflectiveState()
+	{
+	}
 
-    public List<ReflectiveModel> ReflectiveModelList { get; init; }
+    public IReadOnlyList<ReflectiveModel> ReflectiveModelList { get; init; } = Array.Empty<ReflectiveModel>();
 }

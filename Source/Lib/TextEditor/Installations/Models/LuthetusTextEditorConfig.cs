@@ -29,14 +29,6 @@ public record LuthetusTextEditorConfig
     /// </summary>
     public List<ThemeRecord>? CustomThemeRecordList { get; init; } = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList;
     /// <summary>
-    /// Default value if left null is: <see cref="WordAutocompleteService"/>
-    /// </summary>
-    public Func<IServiceProvider, IAutocompleteService> AutocompleteServiceFactory { get; init; } = serviceProvider => new WordAutocompleteService((WordAutocompleteIndexer)serviceProvider.GetRequiredService<IAutocompleteIndexer>());
-    /// <summary>
-    /// Default value if left null is: <see cref="WordAutocompleteIndexer"/>
-    /// </summary>
-    public Func<IServiceProvider, IAutocompleteIndexer> AutocompleteIndexerFactory { get; init; } = serviceProvider => new WordAutocompleteIndexer();
-    /// <summary>
     /// When a user wants to customize the text editor, this settings dialog will be rendered.
     /// </summary>
     public SettingsDialogConfig SettingsDialogConfig { get; init; } = new();

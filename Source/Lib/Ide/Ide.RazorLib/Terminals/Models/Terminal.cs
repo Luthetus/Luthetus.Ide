@@ -254,7 +254,8 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(Terminal)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

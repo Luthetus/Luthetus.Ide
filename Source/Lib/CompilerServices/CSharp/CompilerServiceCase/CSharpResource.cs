@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -17,7 +16,7 @@ public sealed class CSharpResource : ICompilerServiceResource
 	public ResourceUri ResourceUri { get; }
     public ICompilerService CompilerService { get; }
 	public CSharpCompilationUnit? CompilationUnit { get; set; }
-	public IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<SyntaxToken>.Empty;
+	public IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = Array.Empty<SyntaxToken>();
 	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; internal set; }
 	
 	ICompilationUnit? ICompilerServiceResource.CompilationUnit => CompilationUnit;

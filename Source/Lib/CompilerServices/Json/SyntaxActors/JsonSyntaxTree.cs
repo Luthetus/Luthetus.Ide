@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
@@ -53,7 +52,7 @@ public class JsonSyntaxTree
                 (byte)JsonDecorationKind.None,
                 stringWalker.ResourceUri,
                 stringWalker.SourceText),
-            jsonDocumentChildren.ToImmutableArray());
+            jsonDocumentChildren);
 
         var jsonSyntaxUnit = new JsonSyntaxUnit(
             jsonDocumentSyntax,
@@ -186,7 +185,7 @@ public class JsonSyntaxTree
                 (byte)JsonDecorationKind.None,
                 stringWalker.ResourceUri,
                 stringWalker.SourceText),
-            jsonPropertySyntaxes.ToImmutableArray());
+            jsonPropertySyntaxes);
 
         return jsonObjectSyntax;
     }
@@ -231,7 +230,7 @@ public class JsonSyntaxTree
                 (byte)JsonDecorationKind.PropertyKey,
                 stringWalker.ResourceUri,
                 stringWalker.SourceText),
-            ImmutableArray<IJsonSyntax>.Empty);
+			Array.Empty<IJsonSyntax>());
 
         return jsonPropertyKey;
     }
@@ -356,7 +355,7 @@ public class JsonSyntaxTree
                 (byte)JsonDecorationKind.None,
                 stringWalker.ResourceUri,
                 stringWalker.SourceText),
-            jsonObjectSyntaxes.ToImmutableArray());
+            jsonObjectSyntaxes);
     }
 
     /// <summary>
@@ -409,7 +408,7 @@ public class JsonSyntaxTree
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
-        var firstWordTuple = stringWalker.ReadWordTuple(new()
+        var firstWordTuple = stringWalker.ReadWordTuple(new List<char>
         {
             ','
         });

@@ -42,7 +42,7 @@ public partial class InputFileContextMenu : ComponentBase
 
         if (commandArgs.NodeThatReceivedMouseEvent is null)
 		{
-			var menuRecord = MenuRecord.GetEmpty();
+			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -56,7 +56,7 @@ public partial class InputFileContextMenu : ComponentBase
 
         if (treeViewModel is not TreeViewAbsolutePath treeViewAbsolutePath)
 		{
-			var menuRecord = MenuRecord.GetEmpty();
+			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}

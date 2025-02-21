@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
@@ -14,11 +13,11 @@ public class AttributeNode : IHtmlSyntaxNode
         AttributeNameSyntax = attributeNameSyntax;
         AttributeValueSyntax = attributeValueSyntax;
 
-        ChildContent = new IHtmlSyntax[]
+        ChildContent = new List<IHtmlSyntax>
         {
-        AttributeNameSyntax,
-        AttributeValueSyntax,
-        }.ToImmutableArray();
+            AttributeNameSyntax,
+            AttributeValueSyntax,
+        };
 
         Children = ChildContent;
     }
@@ -26,8 +25,8 @@ public class AttributeNode : IHtmlSyntaxNode
     public AttributeNameNode AttributeNameSyntax { get; }
     public AttributeValueNode AttributeValueSyntax { get; }
 
-    public ImmutableArray<IHtmlSyntax> ChildContent { get; }
-    public ImmutableArray<IHtmlSyntax> Children { get; }
+    public IReadOnlyList<IHtmlSyntax> ChildContent { get; }
+    public IReadOnlyList<IHtmlSyntax> Children { get; }
 
     public TextEditorTextSpan TextEditorTextSpan => new(
         AttributeNameSyntax.TextEditorTextSpan.StartingIndexInclusive,

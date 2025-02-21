@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.ListExtensions;
 
 namespace Luthetus.Common.RazorLib.Contexts.Models;
 
@@ -51,7 +52,7 @@ public class ContextService : IContextService
 	
 	        if (!outIsSelectingInspectionTarget)
 	        {
-	            outInspectableContextList = new();
+	            outInspectableContextList = new List<InspectableContext>();
 	            outInspectedContextHeirarchy = null;
 	        }
 	
@@ -167,13 +168,15 @@ public class ContextService : IContextService
 	        	_contextState = inState;
                 goto finalize;
             }
+            
+            var outAllContextsList = new List<ContextRecord>(inState.AllContextsList);
 	
-	        inState.AllContextsList[index] = inContextRecord with
+	        outAllContextsList[index] = inContextRecord with
 	        {
 	            Keymap = keymap
 	        };
 	
-	        _contextState = inState with { };
+	        _contextState = inState with { AllContextsList = outAllContextsList };
             goto finalize;
         }
 

@@ -1111,9 +1111,9 @@ public class GitIdeApi : IBackgroundTaskGroup
 
             var firstNode = untrackedTreeViewList.FirstOrDefault();
 
-            var activeNodes = firstNode is null
-                ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
-                : new() { firstNode };
+            IReadOnlyList<TreeViewNoType> activeNodes = firstNode is null
+                ? Array.Empty<TreeViewNoType>()
+                : new List<TreeViewNoType> { firstNode };
 
             if (!_treeViewService.TryGetTreeViewContainer(GitState.TreeViewGitChangesKey, out var container))
             {

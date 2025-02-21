@@ -60,7 +60,8 @@ public partial class TestExplorerScheduler : IBackgroundTaskGroup
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(TestExplorerScheduler)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

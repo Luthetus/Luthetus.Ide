@@ -1,13 +1,11 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 public record struct TextEditorDiffState
 {
     public TextEditorDiffState()
     {
-        DiffModelList = ImmutableList<TextEditorDiffModel>.Empty;
+        DiffModelList = Array.Empty<TextEditorDiffModel>();
     }
 
-    public ImmutableList<TextEditorDiffModel> DiffModelList { get; init; }
+    public IReadOnlyList<TextEditorDiffModel> DiffModelList { get; init; }
 }

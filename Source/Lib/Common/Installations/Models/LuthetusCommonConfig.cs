@@ -13,8 +13,11 @@ namespace Luthetus.Common.RazorLib.Installations.Models;
 /// </remarks>
 public record LuthetusCommonConfig
 {
+	public LuthetusCommonConfig()
+	{
+	}
+
     /// <summary>The <see cref="Key{ThemeRecord}"/> to be used when the application starts</summary>
     public Key<ThemeRecord> InitialThemeKey { get; init; } = ThemeFacts.VisualStudioDarkThemeClone.Key;
-    public LuthetusCommonFactories CommonFactories { get; init; } = new();
-    public DialogServiceOptions DialogServiceOptions { get; init; } = new();
+    public string IsMaximizedStyleCssString { get; init; } = "width: 100vw; height: 100vh; left: 0; top: 0;";
 }

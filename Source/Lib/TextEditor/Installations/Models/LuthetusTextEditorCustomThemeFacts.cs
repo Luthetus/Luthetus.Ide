@@ -18,7 +18,7 @@ public class LuthetusTextEditorCustomThemeFacts
         "luth_light-theme",
         ThemeContrastKind.Default,
         ThemeColorKind.Light,
-        new() { ThemeScope.TextEditor });
+        new ThemeScope[] { ThemeScope.TextEditor });
 
     public static readonly ThemeRecord DarkTheme = new ThemeRecord(
         new Key<ThemeRecord>(Guid.Parse("56d64327-03c2-48a3-b086-11b101826efb")),
@@ -26,7 +26,7 @@ public class LuthetusTextEditorCustomThemeFacts
         "luth_dark-theme",
         ThemeContrastKind.Default,
         ThemeColorKind.Dark,
-        new() { ThemeScope.TextEditor });
+        new ThemeScope[] { ThemeScope.TextEditor });
 
     public static readonly List<ThemeRecord> AllCustomThemesList = new()
     {

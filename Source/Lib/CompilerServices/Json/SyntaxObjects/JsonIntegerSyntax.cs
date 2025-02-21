@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.Json.SyntaxEnums;
 
@@ -13,7 +12,7 @@ public class JsonIntegerSyntax : IJsonSyntax
     }
 
     public TextEditorTextSpan TextEditorTextSpan { get; }
-    public ImmutableArray<IJsonSyntax> ChildJsonSyntaxes => ImmutableArray<IJsonSyntax>.Empty;
+    public IReadOnlyList<IJsonSyntax> ChildJsonSyntaxes => Array.Empty<IJsonSyntax>();
 
     public JsonSyntaxKind JsonSyntaxKind => JsonSyntaxKind.Integer;
 }

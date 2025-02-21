@@ -8,4 +8,4 @@ public record ThemeRecord(
     string CssClassString,
     ThemeContrastKind ThemeContrastKind,
     ThemeColorKind ThemeColorKind,
-    List<ThemeScope> ThemeScopeList);
+    IReadOnlyList<ThemeScope> ThemeScopeList);

@@ -193,7 +193,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
         if (menuOptionsList.Count == 0)
         {
-            IdeHeaderService.SetMenuView(MenuRecord.GetEmpty());
+            IdeHeaderService.SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
         }
         else
         {

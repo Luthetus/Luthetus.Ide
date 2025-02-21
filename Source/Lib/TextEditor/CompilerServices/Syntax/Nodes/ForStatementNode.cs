@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -11,7 +10,7 @@ public sealed class ForStatementNode : ICodeBlockOwner
     public ForStatementNode(
         SyntaxToken keywordToken,
         SyntaxToken openParenthesisToken,
-        ImmutableArray<ISyntax> initializationSyntaxList,
+        IReadOnlyList<ISyntax> initializationSyntaxList,
         SyntaxToken initializationStatementDelimiterToken,
         IExpressionNode conditionExpressionNode,
         SyntaxToken conditionStatementDelimiterToken,
@@ -35,7 +34,7 @@ public sealed class ForStatementNode : ICodeBlockOwner
 
     public SyntaxToken KeywordToken { get; }
     public SyntaxToken OpenParenthesisToken { get; }
-    public ImmutableArray<ISyntax> InitializationSyntaxList { get; }
+    public IReadOnlyList<ISyntax> InitializationSyntaxList { get; }
     public SyntaxToken InitializationStatementDelimiterToken { get; }
     public IExpressionNode ConditionExpressionNode { get; }
     public SyntaxToken ConditionStatementDelimiterToken { get; }
@@ -102,7 +101,7 @@ public sealed class ForStatementNode : ICodeBlockOwner
         var childCount =
         	1 +                               // KeywordToken,
         	1 +                               // OpenParenthesisToken,
-        	InitializationSyntaxList.Length + // InitializationSyntaxList.Length
+        	InitializationSyntaxList.Count +  // InitializationSyntaxList.Length
         	1 +                               // InitializationStatementDelimiterToken,
         	1 +                               // ConditionExpressionNode,
         	1 +                               // ConditionStatementDelimiterToken,

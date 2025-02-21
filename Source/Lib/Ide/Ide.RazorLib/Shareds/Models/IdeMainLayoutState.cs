@@ -1,8 +1,8 @@
 namespace Luthetus.Ide.RazorLib.Shareds.Models;
 
-public record struct IdeMainLayoutState(List<FooterJustifyEndComponent> FooterJustifyEndComponentList)
+public record struct IdeMainLayoutState(IReadOnlyList<FooterJustifyEndComponent> FooterJustifyEndComponentList)
 {
-	public IdeMainLayoutState() : this(new List<FooterJustifyEndComponent>())
+	public IdeMainLayoutState() : this(Array.Empty<FooterJustifyEndComponent>())
 	{
 	}
 }

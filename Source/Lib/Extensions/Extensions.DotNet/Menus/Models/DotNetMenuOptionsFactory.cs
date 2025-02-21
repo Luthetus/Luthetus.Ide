@@ -481,7 +481,8 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(DotNetMenuOptionsFactory)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

@@ -16,19 +16,22 @@ namespace Luthetus.Common.RazorLib.Panels.Models;
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
 public record struct PanelState(
-	List<PanelGroup> PanelGroupList,
-	List<Panel> PanelList,
+	IReadOnlyList<PanelGroup> PanelGroupList,
+	IReadOnlyList<Panel> PanelList,
 	(IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs)
 {
-    public PanelState() : this(new List<PanelGroup>(), new List<Panel>(), null)
+    public PanelState() : this(Array.Empty<PanelGroup>(), Array.Empty<Panel>(), null)
     {
         var topLeftGroup = ConstructTopLeftGroup();
         var topRightGroup = ConstructTopRightGroup();
         var bottomGroup = ConstructBottomGroup();
-
-        PanelGroupList.Add(topLeftGroup);
-        PanelGroupList.Add(topRightGroup);
-        PanelGroupList.Add(bottomGroup);
+        
+        var outPanelGroupList = new List<PanelGroup>();
+        outPanelGroupList.Add(topLeftGroup);
+        outPanelGroupList.Add(topRightGroup);
+        outPanelGroupList.Add(bottomGroup);
+        
+        PanelGroupList = outPanelGroupList;
     }
 
     private static PanelGroup ConstructTopLeftGroup()
@@ -37,7 +40,7 @@ public record struct PanelState(
             PanelFacts.LeftPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            PanelGroup.GetEmptyTabList());
+            Array.Empty<IPanelTab>());
 
         leftPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -54,7 +57,7 @@ public record struct PanelState(
             PanelFacts.RightPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            PanelGroup.GetEmptyTabList());
+            Array.Empty<IPanelTab>());
 
         rightPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -71,7 +74,7 @@ public record struct PanelState(
             PanelFacts.BottomPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            PanelGroup.GetEmptyTabList());
+            Array.Empty<IPanelTab>());
 
         bottomPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {

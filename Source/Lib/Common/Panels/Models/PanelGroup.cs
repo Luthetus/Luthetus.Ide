@@ -16,19 +16,9 @@ public record PanelGroup(
 	    Key<PanelGroup> Key,
 	    Key<Panel> ActiveTabKey,
 	    ElementDimensions ElementDimensions,
-	    List<IPanelTab> TabList)
+	    IReadOnlyList<IPanelTab> TabList)
 	: ITabGroup
 {
-	private static readonly List<IPanelTab> _emptyTabList = new List<IPanelTab>();
-        
-    public static List<IPanelTab> GetEmptyTabList()
-    {
-    	if (_emptyTabList.Count != 0)
-    		Console.WriteLine($"{nameof(PanelGroup)} {nameof(GetEmptyTabList)} if (_emptyTabList.Count != 0)");
-    		
-    	return _emptyTabList;
-    }
-
 	/// <summary>
 	/// TODO: Make this property immutable. Until then in a hack needs to be done where this gets set...
 	///       ...for Luthetus.Ide this is done in LuthetusIdeInitializer.razor.cs (2024-04-08)

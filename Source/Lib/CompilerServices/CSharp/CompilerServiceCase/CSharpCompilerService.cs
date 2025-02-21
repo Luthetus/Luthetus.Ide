@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
@@ -411,7 +410,7 @@ public sealed class CSharpCompilerService : CompilerService
 	
 	            modelModifier.CompilerService.ResourceWasModified(
 	            	modelModifier.ResourceUri,
-	            	ImmutableArray<TextEditorTextSpan>.Empty);
+	            	Array.Empty<TextEditorTextSpan>());
 	            	
 	            return ValueTask.CompletedTask;
 	        });

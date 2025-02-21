@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -226,7 +225,7 @@ public class ParseDefaultKeywords
     	var forStatementNode = new ForStatementNode(
 	        forKeywordToken,
 	        openParenthesisToken,
-	        ImmutableArray<ISyntax>.Empty,
+	        Array.Empty<ISyntax>(),
 	        initializationStatementDelimiterToken: default,
 	        conditionExpressionNode: null,
 	        conditionStatementDelimiterToken: default,

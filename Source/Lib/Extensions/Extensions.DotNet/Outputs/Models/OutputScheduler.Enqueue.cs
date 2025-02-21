@@ -47,7 +47,8 @@ public partial class OutputScheduler : IBackgroundTaskGroup
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(OutputScheduler)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

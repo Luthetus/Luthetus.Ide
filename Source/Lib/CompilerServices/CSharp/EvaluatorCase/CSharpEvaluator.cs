@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -21,7 +20,7 @@ public class CSharpEvaluator
         _sourceText = sourceText;
     }
 
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
+    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToList();
 
     public EvaluatorResult Evaluate()
     {

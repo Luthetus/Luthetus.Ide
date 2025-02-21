@@ -37,7 +37,7 @@
 
     <div class="luth_web_notifications-view-body">
         @{
-            var entriesToRenderList = _emptyEntriesToRenderList;
+            IReadOnlyList<INotification> entriesToRenderList;
             var clearOnClick = _defaultClearAction;
 
             switch (_chosenNotificationsViewKind)
@@ -58,6 +58,9 @@
                     entriesToRenderList = notificationState.ArchivedList;
                     clearOnClick = ClearArchived;
                     break;
+            	default:
+            		entriesToRenderList = Array.Empty<INotification>();
+            		break;
             }
 
             <button class="luth_button"

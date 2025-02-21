@@ -7,41 +7,41 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Contexts.Displays;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.FileSystems.Displays;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.Commands;
-using Luthetus.Common.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Contexts.Models;
-using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
-using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Ide.RazorLib.Shareds.Displays;
-using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
-using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.Common.RazorLib.Dropdowns.Models;
-using Luthetus.Common.RazorLib.FileSystems.Displays;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
-using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
@@ -523,7 +523,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
                 MenuOptionKind.Other,
-                subMenu: new MenuRecord(new()
+                subMenu: new MenuRecord(new List<MenuOptionRecord>()
                 {
                     menuOptionOpenFile,
                     menuOptionOpenDirectory,
@@ -778,7 +778,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(IdeBackgroundTaskApi)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

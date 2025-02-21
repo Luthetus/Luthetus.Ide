@@ -7,19 +7,10 @@ namespace Luthetus.Common.RazorLib.Menus.Models;
 /// and modify the shallow copy if modification of the list
 /// after exposing it publically is necessary.
 /// </summary>
-public record MenuRecord(List<MenuOptionRecord> MenuOptionList)
+public record MenuRecord(IReadOnlyList<MenuOptionRecord> MenuOptionList)
 {
-    private static readonly MenuRecord _empty = new MenuRecord(
-        new List<MenuOptionRecord>
-        {
-            new("No menu options exist for this item.", MenuOptionKind.Other)
-        });
-        
-    public static MenuRecord GetEmpty()
+	public static readonly IReadOnlyList<MenuOptionRecord> NoMenuOptionsExistList = new List<MenuOptionRecord>
     {
-    	if (_empty.MenuOptionList.Count != 1)
-    		Console.WriteLine($"{nameof(MenuRecord)} {nameof(GetEmpty)} if (Empty.Count != 1)");
-    		
-    	return _empty;
-    }
+        new("No menu options exist for this item.", MenuOptionKind.Other)
+    };
 }

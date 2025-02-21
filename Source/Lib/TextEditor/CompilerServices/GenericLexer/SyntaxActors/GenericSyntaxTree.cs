@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
@@ -74,7 +73,7 @@ public class GenericSyntaxTree
                 (byte)GenericDecorationKind.None,
                 stringWalker.ResourceUri,
                 stringWalker.SourceText),
-            documentChildList.ToImmutableArray());
+            documentChildList);
 
         return new GenericSyntaxUnit(genericDocumentSyntax, diagnosticBag);
     }
@@ -344,8 +343,8 @@ public class GenericSyntaxTree
             out var genericSyntax);
 
         var children = success && genericSyntax is not null
-            ? new[] { genericSyntax }.ToImmutableArray()
-            : ImmutableArray<IGenericSyntax>.Empty;
+            ? new[] { genericSyntax }
+            : Array.Empty<IGenericSyntax>();
 
         return new GenericPreprocessorDirectiveSyntax(textSpan, children);
     }

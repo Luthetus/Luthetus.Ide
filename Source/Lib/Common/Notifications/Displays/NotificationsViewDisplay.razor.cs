@@ -9,7 +9,6 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
     
-    private readonly List<INotification> _emptyEntriesToRenderList = new();
     private readonly Action _defaultClearAction = new Action(() => { });
 
     private NotificationsViewKind _chosenNotificationsViewKind = NotificationsViewKind.Notifications;

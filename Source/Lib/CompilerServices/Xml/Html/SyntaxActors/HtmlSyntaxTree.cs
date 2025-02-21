@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -355,7 +354,7 @@ public static class HtmlSyntaxTree
             // Track text span of the "@" sign (example in .razor files)
             injectedLanguageFragmentSyntaxes.Add(
                 new InjectedLanguageFragmentNode(
-                    ImmutableArray<IHtmlSyntax>.Empty,
+                    Array.Empty<IHtmlSyntax>(),
                     new TextEditorTextSpan(
                         injectedLanguageFragmentSyntaxStartingPositionIndex,
                         stringWalker.PositionIndex + 1,

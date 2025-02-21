@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
@@ -183,10 +182,10 @@ EndProject
     }
 
     private void UnsafeShiftTextAfterInsertion(
-        ImmutableArray<(SyntaxToken token, Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?> withFunc)> tokenTuplesToShift,
+        IReadOnlyList<(SyntaxToken token, Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?> withFunc)> tokenTuplesToShift,
         TextEditorTextSpan insertedTextSpan)
     {
-        for (int i = 0; i < tokenTuplesToShift.Length; i++)
+        for (int i = 0; i < tokenTuplesToShift.Count; i++)
         {
             var tokenTuple = tokenTuplesToShift[i];
 
@@ -203,7 +202,7 @@ EndProject
         }
     }
 
-    private ImmutableArray<(SyntaxToken token, Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?> withFunc)> GetAllTokens()
+    private IReadOnlyList<(SyntaxToken token, Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?> withFunc)> GetAllTokens()
     {
         var tokens = new List<(SyntaxToken token, Func<SyntaxToken, TextEditorTextSpan, SyntaxToken?> withFunc)>();
 
@@ -258,6 +257,6 @@ EndProject
                 })));
         }
 
-        return tokens.ToImmutableArray();
+        return tokens;
     }
 }
