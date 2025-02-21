@@ -570,7 +570,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(MenuOptionsFactory)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

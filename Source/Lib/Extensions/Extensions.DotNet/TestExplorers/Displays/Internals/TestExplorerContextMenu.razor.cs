@@ -216,6 +216,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 			MenuOptionKind.Other,
 			onClickFunc: () =>
 			{
+				Console.WriteLine($"aaa {treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is null}");
+			
 				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 				{
 					DotNetBackgroundTaskApi.Enqueue_RunTestByFullyQualifiedName(

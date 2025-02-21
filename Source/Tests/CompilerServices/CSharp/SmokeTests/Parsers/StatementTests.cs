@@ -834,8 +834,28 @@ finally
 		
 		var returnStatementNode = (ReturnStatementNode)lambdaExpressionNode.CodeBlockNode.GetChildList().Single();
     }
-    
-    [Fact]
+
+	[Fact]
+	public void LambdaExpressionNode_CodeBlockStatementBody_Aaa()
+	{
+		// Wrapping the lambda expression in a ParenthesizedExpressionNode in order
+		// to trigger the expression loop while parsing the inner expression
+		// (rather than having it parsed as a statement).
+		var test = new Test(@"return x => { Console.WriteLine(x); });");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
+		Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaExpressionNode.SyntaxKind);
+		Assert.False(lambdaExpressionNode.CodeBlockNodeIsExpression);
+		Assert.NotNull(lambdaExpressionNode.CodeBlockNode);
+
+		var returnStatementNode = (ReturnStatementNode)lambdaExpressionNode.CodeBlockNode.GetChildList().Single();
+	}
+
+	[Fact]
     public void ReturnStatement()
     {
     	var test = new Test(@"return 2;");

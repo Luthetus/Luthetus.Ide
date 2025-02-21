@@ -292,6 +292,7 @@ public class TextEditorWorker : IBackgroundTaskGroup
 				_taskCompletionSourceWasCreated = false;
 				return onWheelBatch.HandleEvent(cancellationToken);
 			default:
+				Console.WriteLine($"{nameof(TextEditorWorker)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
 		}
 	}

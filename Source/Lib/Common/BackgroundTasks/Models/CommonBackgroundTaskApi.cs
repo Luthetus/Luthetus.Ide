@@ -1,4 +1,5 @@
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -12,7 +13,6 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -357,6 +357,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 			}
 			default:
 			{
+				Console.WriteLine($"{nameof(CommonBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
 			}
 		}

@@ -152,7 +152,8 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(TextEditorInitializationBackgroundTaskGroup)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

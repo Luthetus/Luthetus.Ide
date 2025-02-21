@@ -154,6 +154,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 			}
 			default:
 			{
+				Console.WriteLine($"{nameof(GitBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
 			}
 		}
