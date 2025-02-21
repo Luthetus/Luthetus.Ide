@@ -884,6 +884,11 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 var args = _queue_SubmitNuGetQuery.Dequeue();
                 return Do_SubmitNuGetQuery(args);
             }
+            case DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName:
+            {
+                var args = _queue_RunTestByFullyQualifiedName.Dequeue();
+                return Do_RunTestByFullyQualifiedName(args.treeViewStringFragment, args.fullyQualifiedName, args.treeViewProjectTestModel);
+            }
             default:
             {
                 Console.WriteLine($"{nameof(DotNetBackgroundTaskApi)} {nameof(HandleEvent)} default case");
