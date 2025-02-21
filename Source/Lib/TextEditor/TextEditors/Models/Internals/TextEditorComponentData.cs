@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -92,7 +91,7 @@ public sealed class TextEditorComponentData
     {
         _throttleApplySyntaxHighlighting.Run(_ =>
         {
-            modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+            modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, Array.Empty<TextEditorTextSpan>());
 			return Task.CompletedTask;
         });
     }

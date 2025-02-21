@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -238,7 +237,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
 		dotNetSolutionCompilerService.ResourceWasModified(
 			new ResourceUri(solutionAbsolutePath.Value),
-			ImmutableArray<TextEditorTextSpan>.Empty);
+			Array.Empty<TextEditorTextSpan>());
 
 		var parentDirectory = solutionAbsolutePath.ParentDirectory;
 
@@ -616,7 +615,7 @@ Execution Terminal"));
 			_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
-				new() { rootNode }));
+				new List<TreeViewNoType> { rootNode }));
 		}
 		else
 		{
@@ -869,7 +868,8 @@ Execution Terminal"));
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(DotNetSolutionIdeApi)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

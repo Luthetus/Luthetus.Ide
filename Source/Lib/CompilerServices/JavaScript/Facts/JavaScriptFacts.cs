@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
 namespace Luthetus.CompilerServices.JavaScript.Facts;
@@ -11,11 +10,11 @@ public static class JavaScriptFacts
     public const string COMMENT_SINGLE_LINE_START = "//";
     public const string COMMENT_MULTI_LINE_START = "/*";
 
-    public static readonly ImmutableArray<char> COMMENT_SINGLE_LINE_ENDINGS = new[]
+    public static readonly IReadOnlyList<char> COMMENT_SINGLE_LINE_ENDINGS = new List<char>
     {
         WhitespaceFacts.CARRIAGE_RETURN,
         WhitespaceFacts.LINE_FEED,
-    }.ToImmutableArray();
+    };
 
     public const string COMMENT_MULTI_LINE_END = "*/";
 }

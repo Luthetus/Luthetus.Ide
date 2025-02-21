@@ -109,7 +109,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
             _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
-                new() { rootNode }));
+                new List<TreeViewNoType>() { rootNode }));
         }
         else
         {
@@ -178,7 +178,8 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(FolderExplorerIdeApi)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

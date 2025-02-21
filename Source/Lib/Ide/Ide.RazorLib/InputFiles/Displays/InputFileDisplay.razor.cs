@@ -189,8 +189,8 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
                 InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
-                    ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
-                    : new() { activeNode }));
+                    ? Array.Empty<TreeViewNoType>()
+                    : new List<TreeViewNoType> { activeNode }));
         }
         else
         {

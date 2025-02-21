@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
     
-public class TryShowViewModelArgs
+public struct TryShowViewModelArgs
 {
     public TryShowViewModelArgs(
         Key<TextEditorViewModel> viewModelKey,

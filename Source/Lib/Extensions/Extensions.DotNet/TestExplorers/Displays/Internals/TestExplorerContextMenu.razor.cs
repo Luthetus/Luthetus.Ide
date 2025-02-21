@@ -82,7 +82,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		}
 
 		if (commandArgs.NodeThatReceivedMouseEvent is null)
-			return MenuRecord.GetEmpty();
+			return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 
 		var menuRecordsList = new List<MenuOptionRecord>();
 
@@ -201,7 +201,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		}
 
 		if (!menuRecordsList.Any())
-			return MenuRecord.GetEmpty();
+			return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 
 		return new MenuRecord(menuRecordsList);
 	}
@@ -216,6 +216,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 			MenuOptionKind.Other,
 			onClickFunc: () =>
 			{
+				Console.WriteLine($"aaa {treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is null}");
+			
 				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 				{
 					DotNetBackgroundTaskApi.Enqueue_RunTestByFullyQualifiedName(
@@ -329,7 +331,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				menuOption = new(
 					node.GetType().Name,
 					MenuOptionKind.Other,
-					subMenu: MenuRecord.GetEmpty());
+					subMenu: new MenuRecord(MenuRecord.NoMenuOptionsExistList));
 			}
 
 			menuOptionRecordList.Add(menuOption);
@@ -344,7 +346,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		}
 
 		if (!menuOptionRecordList.Any())
-			return MenuRecord.GetEmpty();
+			return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 
 		return new MenuRecord(menuOptionRecordList);
 	}

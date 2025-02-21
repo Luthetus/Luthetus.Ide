@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -25,7 +24,7 @@ public class CLexer : Lexer
 
     public static readonly GenericPreprocessorDefinition CPreprocessorDefinition = new(
         "#",
-        ImmutableArray<DeliminationExtendedSyntaxDefinition>.Empty);
+        Array.Empty<DeliminationExtendedSyntaxDefinition>());
 
     public static readonly GenericLanguageDefinition CLanguageDefinition = new GenericLanguageDefinition(
         "\"",

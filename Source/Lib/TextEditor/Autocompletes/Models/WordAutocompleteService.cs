@@ -2,12 +2,12 @@ namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 public class WordAutocompleteService : IAutocompleteService
 {
-    private readonly WordAutocompleteIndexer _wordAutocompleteIndexer;
+    private readonly IAutocompleteIndexer _autocompleteIndexer;
     private readonly List<string> _emptyResult = new();
 
-    public WordAutocompleteService(WordAutocompleteIndexer wordAutocompleteIndexer)
+    public WordAutocompleteService(IAutocompleteIndexer autocompleteIndexer)
     {
-        _wordAutocompleteIndexer = wordAutocompleteIndexer;
+        _autocompleteIndexer = autocompleteIndexer;
     }
 
     public List<string> GetAutocompleteOptions(string word)
@@ -24,7 +24,7 @@ public class WordAutocompleteService : IAutocompleteService
 		// 	at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
     	try
     	{
-	        var indexedStrings = _wordAutocompleteIndexer.IndexedStringsList;
+	        var indexedStrings = _autocompleteIndexer.IndexedStringsList;
 	        return new List<string>(indexedStrings.Where(x => x.StartsWith(word)).Take(5));
         }
         catch (Exception e)

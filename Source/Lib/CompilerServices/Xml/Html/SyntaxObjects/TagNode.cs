@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
@@ -10,8 +9,8 @@ public class TagNode : IHtmlSyntaxNode
     public TagNode(
         TagNameNode? openTagNameNode,
         TagNameNode? closeTagNameNode,
-        ImmutableArray<AttributeNode> attributeNodes,
-        ImmutableArray<IHtmlSyntax> childHtmlSyntaxes,
+		IReadOnlyList<AttributeNode> attributeNodes,
+		IReadOnlyList<IHtmlSyntax> childHtmlSyntaxes,
         HtmlSyntaxKind htmlSyntaxKind,
         bool hasSpecialHtmlCharacter = false)
     {
@@ -40,16 +39,16 @@ public class TagNode : IHtmlSyntaxNode
         if (CloseTagNameNode is not null)
             childrenAsList.Add(CloseTagNameNode);
 
-        Children = childrenAsList.ToImmutableArray();
+        Children = childrenAsList;
     }
 
     public TagNameNode? OpenTagNameNode { get; }
     public TagNameNode? CloseTagNameNode { get; }
-    public ImmutableArray<AttributeNode> AttributeNodes { get; }
+    public IReadOnlyList<AttributeNode> AttributeNodes { get; }
     public bool HasSpecialHtmlCharacter { get; }
 
-    public ImmutableArray<IHtmlSyntax> ChildContent { get; }
-    public ImmutableArray<IHtmlSyntax> Children { get; }
+    public IReadOnlyList<IHtmlSyntax> ChildContent { get; }
+    public IReadOnlyList<IHtmlSyntax> Children { get; }
     public HtmlSyntaxKind HtmlSyntaxKind { get; }
 
     public TextEditorTextSpan TextEditorTextSpan => new(

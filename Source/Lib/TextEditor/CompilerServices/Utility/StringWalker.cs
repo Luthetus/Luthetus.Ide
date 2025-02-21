@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
@@ -265,7 +264,7 @@ public class StringWalker
     /// This method will return immediately upon encountering whitespace.
     /// Returns a text span with its <see cref="TextEditorTextSpan.StartingIndexInclusive"/> equal to '-1' if no word was found.
     /// </summary>
-    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(List<char>? additionalCharactersToBreakOnList = null)
+    public (TextEditorTextSpan textSpan, string value) ReadWordTuple(IReadOnlyList<char>? additionalCharactersToBreakOnList = null)
     {
         additionalCharactersToBreakOnList ??= _emptyAdditionalCharactersToBreakOnList;
 

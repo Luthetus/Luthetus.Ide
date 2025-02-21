@@ -87,7 +87,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		if (commandArgs.TreeViewContainer.ActiveNode is null)
 		{
-			var menuRecord = MenuRecord.GetEmpty();
+			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -141,7 +141,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		if (!menuOptionList.Any())
 		{
-			var menuRecord = MenuRecord.GetEmpty();
+			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -208,7 +208,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		if (!menuOptionList.Any())
 		{
-			var menuRecord = MenuRecord.GetEmpty();
+			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -240,7 +240,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			});
 
 		var createOptions = new MenuOptionRecord("Add", MenuOptionKind.Create,
-			subMenu: new MenuRecord(new()
+			subMenu: new MenuRecord(new List<MenuOptionRecord>
 			{
 				addNewCSharpProject,
 				addExistingCSharpProject,
@@ -363,16 +363,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		};
 	}
 
-	private List<MenuOptionRecord> GetTreeViewLightWeightNugetPackageRecordMenuOptions(
+	private IReadOnlyList<MenuOptionRecord> GetTreeViewLightWeightNugetPackageRecordMenuOptions(
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference)
 	{
 		if (treeViewCSharpProjectNugetPackageReference.Parent
 				is not TreeViewCSharpProjectNugetPackageReferences treeViewCSharpProjectNugetPackageReferences)
 		{
-			return MenuRecord.GetEmpty().MenuOptionList;
+			return MenuRecord.NoMenuOptionsExistList;
 		}
 
-		return new()
+		return new List<MenuOptionRecord>
 		{
 			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,

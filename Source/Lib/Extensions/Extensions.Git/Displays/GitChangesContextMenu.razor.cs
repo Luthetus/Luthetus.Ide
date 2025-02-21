@@ -60,7 +60,7 @@ public partial class GitChangesContextMenu : ComponentBase
 
         if (commandArgs.NodeThatReceivedMouseEvent is null)
 		{
-			var menuRecord = MenuRecord.GetEmpty();
+			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -69,7 +69,7 @@ public partial class GitChangesContextMenu : ComponentBase
 
         if (!menuRecordsList.Any())
 		{
-			var menuRecord = MenuRecord.GetEmpty();
+			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return menuRecord;
 		}
@@ -88,7 +88,7 @@ public partial class GitChangesContextMenu : ComponentBase
 
 		if (!menuOptionRecordList.Any())
 		{
-			var menuRecord = MenuRecord.GetEmpty();
+			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
 			return Task.FromResult(menuRecord);
 		}

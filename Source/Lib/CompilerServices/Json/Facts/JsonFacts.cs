@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
 namespace Luthetus.CompilerServices.Json.Facts;
@@ -6,11 +5,11 @@ namespace Luthetus.CompilerServices.Json.Facts;
 public static class JsonFacts
 {
     public const string COMMENT_LINE_START = "//";
-    public static readonly ImmutableArray<char> COMMENT_LINE_ENDINGS = new[]
+    public static readonly IReadOnlyList<char> COMMENT_LINE_ENDINGS = new List<char>
     {
         WhitespaceFacts.CARRIAGE_RETURN,
         WhitespaceFacts.LINE_FEED,
-    }.ToImmutableArray();
+    };
 
     public const string COMMENT_BLOCK_START = "/*";
     public const string COMMENT_BLOCK_END = "*/";
@@ -47,11 +46,11 @@ public static class JsonFacts
     /// </summary>
     public const string BOOLEAN_FALSE_STRING_VALUE = "false";
 
-    public static readonly ImmutableArray<string> BOOLEAN_ALL_STRING_VALUES = new[]
+    public static readonly IReadOnlyList<string> BOOLEAN_ALL_STRING_VALUES = new List<string>
     {
-    BOOLEAN_TRUE_STRING_VALUE,
-    BOOLEAN_FALSE_STRING_VALUE,
-}.ToImmutableArray();
+        BOOLEAN_TRUE_STRING_VALUE,
+        BOOLEAN_FALSE_STRING_VALUE,
+    };
 
     /// <summary>
     /// Json schema does not directly state that null is to be case sensitive.

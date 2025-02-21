@@ -11,10 +11,10 @@ public record struct IdeHeaderState(
 	MenuRecord MenuRun)
 {
 	public IdeHeaderState() : this(
-		new MenuRecord(new List<MenuOptionRecord>()),
-		new MenuRecord(new List<MenuOptionRecord>()),
-		new MenuRecord(new List<MenuOptionRecord>()),
-		new MenuRecord(new List<MenuOptionRecord>()))
+		new MenuRecord(Array.Empty<MenuOptionRecord>()),
+		new MenuRecord(Array.Empty<MenuOptionRecord>()),
+		new MenuRecord(Array.Empty<MenuOptionRecord>()),
+		new MenuRecord(Array.Empty<MenuOptionRecord>()))
 	{
 	}
 

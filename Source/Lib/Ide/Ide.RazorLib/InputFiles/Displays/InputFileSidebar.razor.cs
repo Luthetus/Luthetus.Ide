@@ -76,8 +76,8 @@ public partial class InputFileSidebar : ComponentBase
                     TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null
-                        ? TreeViewNoType.GetEmptyTreeViewNoTypeList()
-                        : new() { directoryHomeNode }));
+                        ? Array.Empty<TreeViewNoType>()
+                        : new List<TreeViewNoType> { directoryHomeNode }));
             }
         }
 

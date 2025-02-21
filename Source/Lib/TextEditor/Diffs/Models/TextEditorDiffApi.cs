@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -105,7 +104,7 @@ public class TextEditorDiffApi : ITextEditorDiffApi
         };
     }
 
-    public ImmutableList<TextEditorDiffModel> GetDiffModels()
+    public IReadOnlyList<TextEditorDiffModel> GetDiffModels()
     {
         return GetTextEditorDiffState().DiffModelList;
     }
@@ -129,9 +128,10 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             return;
         }
 
-        var outDiffModelList = inState.DiffModelList.Remove(inDiff);
+		var outDiffModelList = new List<TextEditorDiffModel>(inState.DiffModelList);
+		outDiffModelList.Remove(inDiff);
 
-        _textEditorDiffState = new TextEditorDiffState
+		_textEditorDiffState = new TextEditorDiffState
         {
             DiffModelList = outDiffModelList
         };
@@ -161,7 +161,8 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             inViewModelKey,
             outViewModelKey);
 
-        var outDiffModelList = inState.DiffModelList.Add(diff);
+        var outDiffModelList = new List<TextEditorDiffModel>(inState.DiffModelList);
+        outDiffModelList.Add(diff);
 
         _textEditorDiffState = new TextEditorDiffState
         {

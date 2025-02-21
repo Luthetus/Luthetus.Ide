@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Luthetus.CompilerServices.Python.Facts;
 
 public partial class PythonLanguageFacts
@@ -8,12 +6,12 @@ public partial class PythonLanguageFacts
     {
         public class Directives
         {
-            public static readonly ImmutableArray<string> All = ImmutableArray<string>.Empty;
+            public static readonly IReadOnlyList<string> All = Array.Empty<string>();
         }
 
         public class Variables
         {
-            public static readonly ImmutableArray<string> All = ImmutableArray<string>.Empty;
+            public static readonly IReadOnlyList<string> All = Array.Empty<string>();
         }
     }
 }

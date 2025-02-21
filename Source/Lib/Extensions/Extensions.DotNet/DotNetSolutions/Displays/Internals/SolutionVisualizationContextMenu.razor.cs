@@ -115,7 +115,7 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 			}));
 
 		if (!menuRecordsList.Any())
-			return Task.FromResult(MenuRecord.GetEmpty());
+			return Task.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
 
 		return Task.FromResult(new MenuRecord(menuRecordsList));
 	}

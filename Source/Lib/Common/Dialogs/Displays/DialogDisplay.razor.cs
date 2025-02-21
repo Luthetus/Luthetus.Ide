@@ -36,7 +36,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private string ElementDimensionsStyleCssString => Dialog.DialogElementDimensions.StyleString;
 
     private string IsMaximizedStyleCssString => Dialog.DialogIsMaximized
-        ? CommonConfig.DialogServiceOptions.IsMaximizedStyleCssString
+        ? CommonConfig.IsMaximizedStyleCssString
         : string.Empty;
 
     private string IconSizeInPixelsCssValue =>

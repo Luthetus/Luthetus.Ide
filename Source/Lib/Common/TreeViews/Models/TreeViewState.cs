@@ -19,9 +19,9 @@ namespace Luthetus.Common.RazorLib.TreeViews.Models;
 /// but what if someone modifies it.
 /// have property be IReadOnlyList and private List that is the?
 /// </summary>
-public record struct TreeViewState(List<TreeViewContainer> ContainerList)
+public record struct TreeViewState(IReadOnlyList<TreeViewContainer> ContainerList)
 {
-    public TreeViewState() : this(new List<TreeViewContainer>())
+    public TreeViewState() : this(Array.Empty<TreeViewContainer>())
     {
     }
 }

@@ -7,7 +7,7 @@ public static class TerminalFacts
     public static readonly Key<ITerminal> EXECUTION_KEY = Key<ITerminal>.NewKey();
     public static readonly Key<ITerminal> GENERAL_KEY = Key<ITerminal>.NewKey();
 
-    public static readonly List<Key<ITerminal>> WELL_KNOWN_KEYS = new()
+    public static readonly IReadOnlyList<Key<ITerminal>> WELL_KNOWN_KEYS = new List<Key<ITerminal>>()
     {
         EXECUTION_KEY,
         GENERAL_KEY,

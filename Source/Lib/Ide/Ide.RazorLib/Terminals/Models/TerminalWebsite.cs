@@ -281,14 +281,15 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         switch (workKind)
         {
             case TerminalWorkKind.Command:
-                {
-                    var args = _queue_general_TerminalCommandRequest.Dequeue();
-                    return DoCommand(args);
-                }
+            {
+                var args = _queue_general_TerminalCommandRequest.Dequeue();
+                return DoCommand(args);
+            }
             default:
-                {
-                    return ValueTask.CompletedTask;
-                }
+            {
+                Console.WriteLine($"{nameof(TerminalWebsite)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
+            }
         }
     }
 

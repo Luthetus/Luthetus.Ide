@@ -819,7 +819,7 @@ public class TextEditorCommandDefaultFunctions
 		MenuRecord menu;
 		
 		if (menuOptionList.Count == 0)
-			menu = MenuRecord.GetEmpty();
+			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 		else
 			menu = new MenuRecord(menuOptionList);
 		
@@ -972,7 +972,7 @@ public class TextEditorCommandDefaultFunctions
 		MenuRecord menu;
 		
 		if (menuOptionList.Count == 0)
-			menu = MenuRecord.GetEmpty();
+			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
 		else
 			menu = new MenuRecord(menuOptionList);
 		

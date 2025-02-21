@@ -158,7 +158,7 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 			_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
-				new() { rootNode }));
+				new List<TreeViewNoType> { rootNode }));
 		}
 		else
 		{
@@ -200,7 +200,8 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
             }
             default:
             {
-                return ValueTask.CompletedTask;
+                Console.WriteLine($"{nameof(CompilerServiceIdeApi)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
             }
         }
     }

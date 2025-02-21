@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -91,7 +90,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
 				modelModifier.CompilerService.ResourceWasModified(
 					_textSpanTuple.TextEditorTextSpan.ResourceUri,
-					ImmutableArray<TextEditorTextSpan>.Empty);
+					Array.Empty<TextEditorTextSpan>());
                 return ValueTask.CompletedTask;
             });
 	}

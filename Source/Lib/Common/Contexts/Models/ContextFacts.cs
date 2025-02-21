@@ -143,7 +143,7 @@ public static class ContextFacts
         "dropdown",
         IKeymap.Empty);
 
-    public static readonly List<ContextRecord> AllContextsList = new()
+    public static readonly IReadOnlyList<ContextRecord> AllContextsList = new List<ContextRecord>()
     {
         GlobalContext,
         ActiveContextsContext,

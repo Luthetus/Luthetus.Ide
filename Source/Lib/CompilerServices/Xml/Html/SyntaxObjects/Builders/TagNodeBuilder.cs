@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
 namespace Luthetus.CompilerServices.Xml.Html.SyntaxObjects.Builders;
@@ -17,8 +16,8 @@ public class TagNodeBuilder
         return new TagNode(
             OpenTagNameSyntax,
             CloseTagNameSyntax,
-            AttributeSyntaxes.ToImmutableArray(),
-            Children.ToImmutableArray(),
+            AttributeSyntaxes,
+            Children,
             HtmlSyntaxKind,
             HasSpecialHtmlCharacter);
     }

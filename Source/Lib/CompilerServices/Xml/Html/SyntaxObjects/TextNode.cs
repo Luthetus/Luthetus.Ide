@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
@@ -10,12 +9,12 @@ public class TextNode : IHtmlSyntaxNode
     {
         TextEditorTextSpan = textEditorTextSpan;
 
-        ChildContent = ImmutableArray<IHtmlSyntax>.Empty;
-        Children = ImmutableArray<IHtmlSyntax>.Empty;
+        ChildContent = Array.Empty<IHtmlSyntax>();
+        Children = Array.Empty<IHtmlSyntax>();
     }
 
-    public ImmutableArray<IHtmlSyntax> ChildContent { get; }
-    public ImmutableArray<IHtmlSyntax> Children { get; }
+    public IReadOnlyList<IHtmlSyntax> ChildContent { get; }
+    public IReadOnlyList<IHtmlSyntax> Children { get; }
     public TextEditorTextSpan TextEditorTextSpan { get; }
 
     public HtmlSyntaxKind HtmlSyntaxKind => HtmlSyntaxKind.TextNode;

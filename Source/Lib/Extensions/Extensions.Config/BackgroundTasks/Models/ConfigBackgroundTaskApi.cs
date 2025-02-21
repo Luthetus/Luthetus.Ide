@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.TextEditor.RazorLib.Edits.Displays;
@@ -97,6 +97,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
 			}
 			default:
 			{
+				Console.WriteLine($"{nameof(ConfigBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
 			}
 		}

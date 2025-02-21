@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxEnums;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
@@ -12,6 +11,6 @@ public class GenericCommentMultiLineSyntax : IGenericSyntax
     }
 
     public TextEditorTextSpan TextSpan { get; }
-    public ImmutableArray<IGenericSyntax> ChildList => ImmutableArray<IGenericSyntax>.Empty;
+    public IReadOnlyList<IGenericSyntax> ChildList => Array.Empty<IGenericSyntax>();
     public GenericSyntaxKind GenericSyntaxKind => GenericSyntaxKind.CommentMultiLine;
 }
