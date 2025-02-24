@@ -35,7 +35,7 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Length, CloseBraceToken
+    	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Count, CloseBraceToken
     	var childCount = 
     		1 +                                                // OpenBraceToken
     		ObjectInitializationParameterEntryNodeList.Count + // ObjectInitializationParameterEntryNodeList.Count

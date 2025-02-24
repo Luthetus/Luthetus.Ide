@@ -1929,12 +1929,11 @@ public partial class CSharpBinder
     		if (token.SyntaxKind != SyntaxKind.IdentifierToken)
     			return lambdaExpressionNode;
     	
-    		var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+    		var variableDeclarationNode = new VariableDeclarationNode(
 		        TypeFacts.Empty.ToTypeClause(),
 		        token,
 		        VariableKind.Local,
-		        compilationUnit,
-		        ref parserModel);
+		        isInitialized: false);
 		        
     		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
     	}
@@ -2521,37 +2520,28 @@ public partial class CSharpBinder
 					ISyntax syntax;
 					
 					if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-						syntax = ((AmbiguousIdentifierExpressionNode)node).Token;
-					else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
-						syntax = ((TypeClauseNode)node).TypeIdentifierToken;
-					else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
-						syntax = ((VariableReferenceNode)node).VariableIdentifierToken;
-					else
-						return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, node);
-				
-					var variableDeclarationNode = new VariableDeclarationNode(
-				        TypeFacts.Empty.ToTypeClause(),
-				        UtilityApi.ConvertToIdentifierToken(syntax, compilationUnit, ref parserModel),
-				        VariableKind.Local,
-				        false);
-				        
-		    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
-				}
-			}
-		}
-		else if (ambiguousParenthesizedExpressionNode.NodeList is not null)
-		{
-			if (ambiguousParenthesizedExpressionNode.NodeList.Count >= 1)
-			{
-				foreach (var node in ambiguousParenthesizedExpressionNode.NodeList)
-				{
 					if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 					{
 						lambdaExpressionNode.AddVariableDeclarationNode((VariableDeclarationNode)node);
 					}
 					else
 					{
-						Console.WriteLine("aaa went else branch of -> if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)");
+						if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+							syntax = ((AmbiguousIdentifierExpressionNode)node).Token;
+						else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
+							syntax = ((TypeClauseNode)node).TypeIdentifierToken;
+						else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
+							syntax = ((VariableReferenceNode)node).VariableIdentifierToken;
+						else
+							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, node);
+					
+						var variableDeclarationNode = new VariableDeclarationNode(
+					        TypeFacts.Empty.ToTypeClause(),
+					        UtilityApi.ConvertToIdentifierToken(syntax, compilationUnit, ref parserModel),
+					        VariableKind.Local,
+					        false);
+					        
+			    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
 					}
 				}
 			}

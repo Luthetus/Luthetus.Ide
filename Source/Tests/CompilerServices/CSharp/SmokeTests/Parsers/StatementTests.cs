@@ -1259,6 +1259,25 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
     }
     
     [Fact]
+    public void Asdfg()
+    {
+    	var test = new Test(
+@"
+Select(node => 
+{
+	{
+	}
+});
+
+		
+");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
     public void InfiniteLoopBug()
     {
     	var test = new Test(

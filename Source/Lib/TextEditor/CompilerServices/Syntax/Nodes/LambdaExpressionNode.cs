@@ -106,11 +106,22 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	_childList = new ISyntax[]
-        {
-            ResultTypeClauseNode
-        };
-        
+    	// ResultTypeClauseNode, VariableDeclarationNodeList.Count
+    	var childCount = 
+    		1 +                                // ResultTypeClauseNode
+    		VariableDeclarationNodeList.Count; // VariableDeclarationNodeList.Count
+    	
+    	var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = ResultTypeClauseNode;
+		foreach (var item in VariableDeclarationNodeList)
+		{
+			childList[i++] = item;
+		}
+		
+		_childList = childList;
+
     	_childListIsDirty = false;
     	return _childList;
     }

@@ -687,7 +687,8 @@ public partial class CSharpBinder : IBinder
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
-					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode &&
+					inOwner.SyntaxKind != SyntaxKind.LambdaExpressionNode)
 				{
 					outBuilder.ChildList.Add(inOwner);
 				}
