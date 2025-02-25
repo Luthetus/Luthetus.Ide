@@ -272,11 +272,7 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseOpenBraceToken(SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-		// Lambda expression's are done via the expression loop, then use custom deferred parsing.
-		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.LambdaExpressionNode)
-			return;
-		
-    	if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
+		if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
     		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan is not null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
@@ -337,7 +333,7 @@ public static class ParseTokens
 
 		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)
 			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-		
+        
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
     }
 

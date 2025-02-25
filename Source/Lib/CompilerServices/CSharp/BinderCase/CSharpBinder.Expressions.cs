@@ -2098,8 +2098,6 @@ public partial class CSharpBinder
 	
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		lambdaExpressionNode.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-		
 		compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	lambdaExpressionNode,
         	lambdaExpressionNode.GetReturnTypeClauseNode(),
@@ -2112,10 +2110,7 @@ public partial class CSharpBinder
 	
 	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		var closeBraceToken = new SyntaxToken(SyntaxKind.CloseBraceToken, parserModel.TokenWalker.Current.TextSpan);
-	
-		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-		
+		var closeBraceToken = new SyntaxToken(SyntaxKind.CloseBraceToken, parserModel.TokenWalker.Current.TextSpan);		
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
 	}
 	
