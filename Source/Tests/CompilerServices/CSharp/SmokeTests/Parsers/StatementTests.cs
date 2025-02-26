@@ -28,6 +28,7 @@ public class StatementTests
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
 		public CSharpLexerOutput LexerOutput { get; set; }
+		
 		public IBinder Binder => CompilationUnit.Binder;
 		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}
@@ -56,8 +57,10 @@ public class StatementTests
     public void TypeDefinitionNode_Class_Test()
     {
     	var test = new Test(@"public class Aaa { }");
-		
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionNode.SyntaxKind);
     }
@@ -815,44 +818,84 @@ finally
 		Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaExpressionNode.SyntaxKind);
     }
     
-    [Fact]
-    public void LambdaExpressionNode_CodeBlockStatementBody()
-    {
-    	// Wrapping the lambda expression in a ParenthesizedExpressionNode in order
-    	// to trigger the expression loop while parsing the inner expression
-    	// (rather than having it parsed as a statement).
-    	var test = new Test(@"(x => { return x; });");
+	[Fact]
+	public void LambdaExpressionNode_ExpressionBody_Default()
+	{
+		var test = new Test(@"return x => 3;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		
-		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
-		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
-		Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaExpressionNode.SyntaxKind);
-		Assert.False(lambdaExpressionNode.CodeBlockNodeIsExpression);
-		Assert.NotNull(lambdaExpressionNode.CodeBlockNode);
-		
-		var returnStatementNode = (ReturnStatementNode)lambdaExpressionNode.CodeBlockNode.GetChildList().Single();
-    }
+		throw new NotImplementedException();
+	}
+    
+	[Fact]
+	public void LambdaExpressionNode_ExpressionBody_Empty()
+	{
+		var test = new Test(@"return x => ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+	}
 
 	[Fact]
-	public void LambdaExpressionNode_CodeBlockStatementBody_Aaa()
+	public void LambdaExpressionNode_StatementBody_Default()
 	{
-		// Wrapping the lambda expression in a ParenthesizedExpressionNode in order
-		// to trigger the expression loop while parsing the inner expression
-		// (rather than having it parsed as a statement).
-		var test = new Test(@"return x => { Console.WriteLine(x); });");
+		var test = new Test(@"return x => { return 3; };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+	}
 
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+	[Fact]
+	public void LambdaExpressionNode_StatementBody_Empty()
+	{
+		var test = new Test(@"return x => { };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+	}
 
-		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
-		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
-		Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaExpressionNode.SyntaxKind);
-		Assert.False(lambdaExpressionNode.CodeBlockNodeIsExpression);
-		Assert.NotNull(lambdaExpressionNode.CodeBlockNode);
+	[Fact]
+	public void LambdaExpressionNode_StatementBody_DoesNotCompile()
+	{
+		var test = new Test(@"return x => { 3 };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+	}
+    
+    [Fact]
+	public void Ddd()
+	{
+		var test = new Test(@"public class MyClass { }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+	}
 
-		var returnStatementNode = (ReturnStatementNode)lambdaExpressionNode.CodeBlockNode.GetChildList().Single();
+	[Fact]
+	public void LambdaExpressionNode_ExpressionBody_DoubleExpressionBody()
+	{
+		var test = new Test(@"return x => y => 3;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void LambdaExpressionNode_ExpressionBody_AndStatementBody()
+	{
+		var test = new Test(@"return x => y => { return 3; };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void LambdaExpressionNode_StatementBody_DoubleStatementBody()
+	{
+		var test = new Test(@"return x => { return y => { return 3; }; };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+	}
+
+	[Fact]
+	public void LambdaExpressionNode_StatementBody_AndExpressionBody()
+	{
+		var test = new Test(@"return x => { return y => 3; };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
 	}
 
 	[Fact]
@@ -1213,6 +1256,45 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
     public void ForLoop()
     {
     	var test = new Test(@"for (int i = 0; i < 5; i++)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void KeywordOperators()
+    {
+    	var test = new Test(@"Console.WriteLine(nameof(x));");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void Asdfg()
+    {
+		var aaa =
+"""""""""
+{
+	textEditorService.PostUnique(
+		nameof(Aaa),
+		editContext =>
+		{
+		    var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+		
+		    textEditorService.ModelApi.InsertTextUnsafe(
+		        editContext,
+				modelModifier,
+				cursorModificationBag,
+		        "zyx",
+		        CancellationToken.None);
+		    return Task.CompletedTask;
+		});
+}
+""""""""";
+
+    	var test = new Test(aaa);
+
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
     	throw new NotImplementedException("See ExpressionAsStatementTests");

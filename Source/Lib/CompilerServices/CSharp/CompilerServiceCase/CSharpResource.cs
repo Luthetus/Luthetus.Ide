@@ -52,13 +52,11 @@ public sealed class CSharpResource : ICompilerServiceResource
     {
         var localCompilationUnit = CompilationUnit;
 
-        if (localCompilationUnit is null)
+        if (localCompilationUnit?.DiagnosticList is null)
             return Array.Empty<TextEditorDiagnostic>();
 
-		// TODO: (2024-12-12)
-        /*return localCompilationUnit.DiagnosticsList
+        return localCompilationUnit.DiagnosticList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-            .ToArray();*/
-        return Array.Empty<TextEditorDiagnostic>();
+            .ToArray();
     }
 }

@@ -22,7 +22,7 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
         ExpressionNode = expressionNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken PropertyIdentifierToken { get; set; }
@@ -33,7 +33,7 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParameterEntryNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

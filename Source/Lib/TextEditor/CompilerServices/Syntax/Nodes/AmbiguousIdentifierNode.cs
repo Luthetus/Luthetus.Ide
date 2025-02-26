@@ -14,7 +14,7 @@ public sealed class AmbiguousIdentifierNode : ISyntaxNode
         IdentifierToken = identifierToken;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken IdentifierToken { get; }
@@ -22,7 +22,7 @@ public sealed class AmbiguousIdentifierNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

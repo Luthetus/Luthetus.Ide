@@ -16,7 +16,7 @@ public class JsonSyntaxTree
     {
         // Items to return wrapped in a JsonSyntaxUnit
         var jsonDocumentChildren = new List<IJsonSyntax>();
-        var textEditorJsonDiagnosticBag = new DiagnosticBag();
+        var textEditorJsonDiagnosticBag = new List<TextEditorDiagnostic>();
 
         // Step through the string 'character by character'
         var stringWalker = new StringWalker(resourceUri, content);
@@ -70,7 +70,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonObjectSyntax ConsumeObject(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -104,7 +104,7 @@ public class JsonSyntaxTree
             {
                 pendingJsonPropertyKeySyntax = ConsumePropertyKey(
                     stringWalker,
-                    diagnosticBag);
+                    diagnosticList);
             }
             else if (!foundPropertyDelimiterBetweenKeyAndValue)
             {
@@ -125,7 +125,7 @@ public class JsonSyntaxTree
             {
                 pendingJsonPropertyValueSyntax = ConsumePropertyValue(
                     stringWalker,
-                    diagnosticBag);
+                    diagnosticList);
 
                 var jsonPropertySyntax = new JsonPropertySyntax(
                     new TextEditorTextSpan(
@@ -169,13 +169,13 @@ public class JsonSyntaxTree
 
         if (stringWalker.IsEof)
         {
-            diagnosticBag.ReportEndOfFileUnexpected(
+            /*diagnosticBag.ReportEndOfFileUnexpected(
                 new TextEditorTextSpan(
                     stringWalker.PositionIndex,
                     stringWalker.PositionIndex + 1,
                     (byte)JsonDecorationKind.Error,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    stringWalker.SourceText));*/
         }
 
         var jsonObjectSyntax = new JsonObjectSyntax(
@@ -199,7 +199,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonPropertyKeySyntax ConsumePropertyKey(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         // +1 to not include the quote that begins the key's text
         var startingPositionIndex = stringWalker.PositionIndex + 1;
@@ -214,13 +214,13 @@ public class JsonSyntaxTree
 
         if (stringWalker.IsEof)
         {
-            diagnosticBag.ReportEndOfFileUnexpected(
+            /*diagnosticBag.ReportEndOfFileUnexpected(
                 new TextEditorTextSpan(
                     stringWalker.PositionIndex,
                     stringWalker.PositionIndex + 1,
                     (byte)JsonDecorationKind.Error,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    stringWalker.SourceText));*/
         }
 
         var jsonPropertyKey = new JsonPropertyKeySyntax(
@@ -246,7 +246,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonPropertyValueSyntax ConsumePropertyValue(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         int startingPositionIndex = stringWalker.PositionIndex;
 
@@ -256,13 +256,13 @@ public class JsonSyntaxTree
         {
             underlyingJsonSyntax = ConsumeArray(
                 stringWalker,
-                diagnosticBag);
+                diagnosticList);
         }
         else if (stringWalker.CurrentCharacter == JsonFacts.OBJECT_START)
         {
             underlyingJsonSyntax = ConsumeObject(
                 stringWalker,
-                diagnosticBag);
+                diagnosticList);
         }
         else
         {
@@ -270,25 +270,25 @@ public class JsonSyntaxTree
             {
                 underlyingJsonSyntax = ConsumeString(
                     stringWalker,
-                    diagnosticBag);
+                    diagnosticList);
             }
             else
             {
                 underlyingJsonSyntax = ConsumeAmbiguousValue(
                     stringWalker,
-                    diagnosticBag);
+                    diagnosticList);
             }
         }
 
         if (stringWalker.IsEof)
         {
-            diagnosticBag.ReportEndOfFileUnexpected(
+            /*diagnosticBag.ReportEndOfFileUnexpected(
                 new TextEditorTextSpan(
                     stringWalker.PositionIndex,
                     stringWalker.PositionIndex + 1,
                     (byte)JsonDecorationKind.Error,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    stringWalker.SourceText));*/
         }
 
         var jsonPropertyValue = new JsonPropertyValueSyntax(
@@ -312,7 +312,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonArraySyntax ConsumeArray(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         // +1 to not include the bracket that begins this values's text
         var startingPositionIndex = stringWalker.PositionIndex + 1;
@@ -342,7 +342,7 @@ public class JsonSyntaxTree
             {
                 var jsonObjectSyntax = ConsumeObject(
                     stringWalker,
-                    diagnosticBag);
+                    diagnosticList);
 
                 jsonObjectSyntaxes.Add(jsonObjectSyntax);
             }
@@ -367,7 +367,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonStringSyntax ConsumeString(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         // +1 to not include the quote that begins this values's text
         var startingPositionIndex = stringWalker.PositionIndex + 1;
@@ -404,7 +404,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static IJsonSyntax ConsumeAmbiguousValue(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 

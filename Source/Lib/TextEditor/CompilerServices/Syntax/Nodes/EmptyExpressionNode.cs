@@ -31,7 +31,7 @@ public sealed class EmptyExpressionNode : IExpressionNode
         ResultTypeClauseNode = typeClauseNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode ResultTypeClauseNode { get; }
@@ -40,7 +40,7 @@ public sealed class EmptyExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

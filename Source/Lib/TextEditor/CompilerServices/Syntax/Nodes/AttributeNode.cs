@@ -12,7 +12,7 @@ public sealed class AttributeNode : ISyntaxNode
         CloseSquareBracketToken = closeSquareBracketToken;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken OpenSquareBracketToken { get; }
@@ -22,7 +22,7 @@ public sealed class AttributeNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

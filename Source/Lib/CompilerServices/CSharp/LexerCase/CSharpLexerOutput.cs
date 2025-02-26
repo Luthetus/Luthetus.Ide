@@ -10,7 +10,6 @@ public struct CSharpLexerOutput
     {
     	SyntaxTokenList = new();
     	MiscTextSpanList = new();
-    	DiagnosticBag = new();
     }
     
     public List<SyntaxToken> SyntaxTokenList { get; }
@@ -18,5 +17,4 @@ public struct CSharpLexerOutput
     /// MiscTextSpanList contains the comments and the escape characters.
     /// </summary>
     public List<TextEditorTextSpan> MiscTextSpanList { get; }
-    public DiagnosticBag DiagnosticBag { get; }
 }

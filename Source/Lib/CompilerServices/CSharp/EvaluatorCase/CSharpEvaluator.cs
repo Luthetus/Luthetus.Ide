@@ -10,7 +10,6 @@ public class CSharpEvaluator
 {
     private readonly CompilationUnit _compilationUnit;
     private readonly string _sourceText;
-    private readonly DiagnosticBag _diagnosticBag = new();
 
     public CSharpEvaluator(
         CompilationUnit compilationUnit,
@@ -20,11 +19,9 @@ public class CSharpEvaluator
         _sourceText = sourceText;
     }
 
-    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToList();
-
     public EvaluatorResult Evaluate()
     {
-        if (_compilationUnit.DiagnosticsList.Any(x =>
+        if (_compilationUnit.DiagnosticList.Any(x =>
                 x.DiagnosticLevel == TextEditorDiagnosticLevel.Error))
         {
             throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");

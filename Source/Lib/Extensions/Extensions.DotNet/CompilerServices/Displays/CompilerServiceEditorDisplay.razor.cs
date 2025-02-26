@@ -1,62 +1,28 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
-using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Extensions.DotNet.CompilerServices.Models;
-using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.CompilerServices.Displays;
 
-public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
+public partial class CompilerServiceEditorDisplay : ComponentBase
 {
-	/// <summary>
-	/// Start with <see cref="CSharpCompilerService"/>,
-	/// then make <see cref="CompilerServiceEditorDisplay"/> more generic, to accept just an
-	/// <see cref="TextEditor.RazorLib.CompilerServices.Interfaces.ILuthCompilerService"/>
-	/// (2024-01-28)
-	/// </summary>
+	/*[Inject]
+	public ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	public ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-	[Inject]
-	public IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
 
-	private readonly Throttle _throttleEventCausingReRender = new(TimeSpan.FromMilliseconds(75));
-
-	private CSharpCompilerService _cSharpCompilerService = null!;
-
-	private bool _shouldRecalculateViewModel = true;
-	private CompilerServiceEditorViewModel _viewModel = null!;
-
+	private MarkupString? _markupString;
+	
 	protected override void OnInitialized()
 	{
         // TODO: This must be removed as it puts a requirement to have the CSharpCompilerService...
         //       ...instead generalize this component to iterate over the CompilerServiceRegistry.CompilerServiceList
         _cSharpCompilerService = (CSharpCompilerService)CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
-
-		_cSharpCompilerService.ResourceRegistered += CSharpCompilerService_StateChanged;
-		_cSharpCompilerService.ResourceParsed += CSharpCompilerService_StateChanged;
-		_cSharpCompilerService.ResourceDisposed += CSharpCompilerService_StateChanged;
-		_cSharpCompilerService.CursorMovedInSyntaxTree += CSharpCompilerService_StateChanged;
-
-		DotNetBackgroundTaskApi.CompilerServiceEditorService.CompilerServiceEditorStateChanged += OnCompilerServiceEditorStateChanged;
-		TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupStateWrap_StateChanged;
-		TextEditorService.TextEditorStateChanged += TextEditorStateWrap_StateChanged;
-
 		base.OnInitialized();
 	}
-
+	
 	private void RecalculateViewModel()
 	{
 		try
@@ -114,61 +80,45 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 			// Eat this exception
 		}
 	}
-
-	private async void TextEditorStateWrap_StateChanged()
+	
+	private void HandleOnClick()
 	{
-		ThrottledReRender();
+		WriteChildrenIndentedRecursive();
 	}
 
-	private async void TextEditorGroupStateWrap_StateChanged()
-	{
-		ThrottledReRender();
-	}
-
-	private async void OnCompilerServiceEditorStateChanged()
-	{
-		ThrottledReRender();
-	}
-
-	private async void CSharpCompilerService_StateChanged()
-	{
-		ThrottledReRender();
-	}
-
-	private void ThrottledReRender()
-	{
-		_throttleEventCausingReRender.Run(async _ =>
+	/// <summary>
+	/// TODO: It is probably more efficient to do this as a RenderFragment (maybe the name I'm looking for  is RenderTreeBuilder), rather than MarkupString.
+	/// </summary>
+	private void WriteChildrenIndentedRecursive(
+		ISyntaxNode node,
+		StringBuilder? stringBuilderLocal = null,
+		string name = "node",
+		int indentation = 0)
+    {
+    	stringBuilderLocal ??= new();
+    	
+    	stringBuilderLocal.Append($"<div class=\"luth_compiler-service-editor-indentation-{indentation}\">");
+    	stringBuilderLocal.Append(node.SyntaxKind);
+    	
+    	// For the child tokens
+    	var childIndentation = indentation + 1;
+		foreach (var child in node.GetChildList())
 		{
-			_shouldRecalculateViewModel = true;
-			await InvokeAsync(StateHasChanged);
-		});
-	}
-
-	public void Dispose()
-	{
-		_cSharpCompilerService.ResourceRegistered -= CSharpCompilerService_StateChanged;
-		_cSharpCompilerService.ResourceParsed -= CSharpCompilerService_StateChanged;
-		_cSharpCompilerService.ResourceDisposed -= CSharpCompilerService_StateChanged;
-		_cSharpCompilerService.CursorMovedInSyntaxTree -= CSharpCompilerService_StateChanged;
-
-		DotNetBackgroundTaskApi.CompilerServiceEditorService.CompilerServiceEditorStateChanged -= OnCompilerServiceEditorStateChanged;
-		TextEditorService.GroupApi.TextEditorGroupStateChanged -= TextEditorGroupStateWrap_StateChanged;
-		TextEditorService.TextEditorStateChanged -= TextEditorStateWrap_StateChanged;
-	}
-
-	private class CompilerServiceEditorViewModel
-	{
-		public CSharpCompilerService? LocalCSharpCompilerService { get; set; }
-		public CompilerServiceEditorState? LocalCompilerServiceEditorState { get; set; }
-		public TextEditorGroupState? LocalTextEditorGroupState { get; set; }
-		public TextEditorState? LocalTextEditorState { get; set; }
-		public TextEditorGroup? EditorTextEditorGroup { get; set; }
-		public Key<TextEditorViewModel> ActiveViewModelKey { get; set; }
-		public TextEditorViewModel? ViewModel { get; set; }
-		public ICompilerServiceResource? InterfaceCompilerServiceResource { get; set; }
-		public CSharpResource? CSharpResource { get; set; }
-		public TextEditorModel? TextEditorModel { get; set; }
-		public int? PrimaryCursorPositionIndex { get; set; }
-		public ISyntaxNode? SyntaxNode { get; set; }
-	}
+			if (child is ISyntaxNode syntaxNode)
+			{
+				WriteChildrenIndentedRecursive(syntaxNode, stringBuilderLocal: stringBuilderLocal, indentation: childIndentation);
+			}
+			else if (child is SyntaxToken syntaxToken)
+			{
+				stringBuilderLocal.Append($"<div class=\"luth_compiler-service-editor-indentation-{childIndentation}\">");
+				stringBuilderLocal.Append($"{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
+				stringBuilderLocal.Append($"</div>");
+			}
+		}
+		
+		stringBuilderLocal.Append($"</div>");
+		
+		if (indentation == 0)
+			_markupString = (MarkupString)stringBuilderLocal.ToString();
+    }*/
 }

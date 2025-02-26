@@ -10,7 +10,7 @@ public sealed class GenericArgumentEntryNode : ISyntaxNode
         TypeClauseNode = typeClauseNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode TypeClauseNode { get; }
@@ -18,7 +18,7 @@ public sealed class GenericArgumentEntryNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentEntryNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

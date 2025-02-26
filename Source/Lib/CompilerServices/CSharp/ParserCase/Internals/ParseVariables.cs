@@ -81,8 +81,8 @@ public static class ParseVariables
             if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.SyntaxKind ==
                 SyntaxKind.VarTokenContextualKeyword)
             {
-                parserModel.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
-                    consumedIdentifierToken.TextSpan);
+                /*compilationUnit.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
+                    consumedIdentifierToken.TextSpan);*/
             }
         }
 

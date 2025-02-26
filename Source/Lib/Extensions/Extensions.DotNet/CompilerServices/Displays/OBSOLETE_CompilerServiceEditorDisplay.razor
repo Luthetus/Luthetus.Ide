@@ -1,0 +1,77 @@
+@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+@using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+@using Luthetus.Extensions.DotNet.CompilerServices.Displays.Internals
+@using Luthetus.Extensions.DotNet.CompilerServices.Models;
+
+<ContextBoundary ContextRecord="ContextFacts.CompilerServiceEditorContext"
+                 ClassCssString="luth_ide_compiler-service-editor"
+                 StyleCssString="height: 100%">
+                 
+    @if (AppOptionsService.ShowPanelTitles)
+    {
+	    <div class="luth_ide_section-title">
+	        Compiler Service Editor Display
+	    </div>
+    }
+
+    <div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
+
+        @{
+            if (_shouldRecalculateViewModel)
+                RecalculateViewModel();
+
+            var localViewModel = _viewModel;
+        }
+
+        @if (localViewModel.ActiveViewModelKey == Key<TextEditorViewModel>.Empty)
+        {
+            <div>activeViewModelKey is Empty</div>
+        }
+        else if (localViewModel.ViewModel is null)
+        {
+            <div>viewModel is not null</div>
+        }
+        else if (localViewModel.InterfaceCompilerServiceResource is null)
+        {
+            <div>interfaceCompilerServiceResource is null</div>
+        }
+        else if (localViewModel.CSharpResource is null)
+        {
+            <div>cSharpResource is null</div>
+        }
+        else if (localViewModel.CSharpResource.CompilationUnit is null)
+        {
+            <div>cSharpResource.CompilationUnit is null</div>
+        }
+        else if (localViewModel.TextEditorModel is null)
+        {
+            <div>textEditorModel is null</div>
+        }
+        else if (localViewModel.LocalCSharpCompilerService.Binder is null)
+        {
+            <div>localCSharpCompilerService.Binder is null</div>
+        }
+        else if (localViewModel.SyntaxNode is null)
+        {
+            <div>syntaxNode is null</div>
+        }
+        else
+        {
+            <div>
+                <div title="activeViewModelKey">@localViewModel.ActiveViewModelKey.Guid</div>
+                <div title="resourceUri">@localViewModel.CSharpResource.ResourceUri.Value</div>
+
+                <CascadingValue Value="localViewModel.LocalCSharpCompilerService">
+                    <CascadingValue Value="localViewModel.CSharpResource">
+                        <SyntaxDisplay Syntax="localViewModel.SyntaxNode" />
+                    </CascadingValue>
+                </CascadingValue>
+            </div>
+        }
+    </div>
+</ContextBoundary>

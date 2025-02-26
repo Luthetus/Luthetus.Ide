@@ -9,7 +9,6 @@ public class Lexer : ILexer
 {
     protected readonly StringWalker _stringWalker;
     protected readonly List<SyntaxToken> _syntaxTokenList = new();
-    protected readonly DiagnosticBag _diagnosticBag = new();
 
     public Lexer(
         ResourceUri resourceUri,
@@ -28,7 +27,6 @@ public class Lexer : ILexer
     public LexerKeywords LexerKeywords { get; }
 
     public List<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
-    public List<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToList();
 
     public virtual void Lex()
     {

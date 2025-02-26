@@ -12,7 +12,7 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
         CloseBraceToken = closeBraceToken;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken OpenBraceToken { get; }
@@ -30,12 +30,12 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     	return this;
     }
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Length, CloseBraceToken
+    	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Count, CloseBraceToken
     	var childCount = 
     		1 +                                                // OpenBraceToken
     		ObjectInitializationParameterEntryNodeList.Count + // ObjectInitializationParameterEntryNodeList.Count

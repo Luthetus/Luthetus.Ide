@@ -33,11 +33,9 @@ public static class CSharpParser
 	        compilationUnit);
         
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
-        var diagnosticBag = new DiagnosticBag();
 
         var parserModel = new CSharpParserModel(
-            new TokenWalker(lexerOutput.SyntaxTokenList, diagnosticBag),
-            diagnosticBag,
+            new TokenWalker(lexerOutput.SyntaxTokenList),
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
             
@@ -46,26 +44,18 @@ public static class CSharpParser
 		#endif
 		
 		var loopCount = 0;
-		
-		var multiplier = 2.8;
-		
-		// 1 is just for padding. This loop limit is expected to be
-		// correct from 'tokenCount * 2' alone.
-		//
-		// *3 because deferred parsing for the open and close braces.
-		// So, perhaps they'd be parsed in the statement loop twice.
-		//
-		// +1 feels nice for avoiding any false positives.
-		//
-		// Am seeing 9 files out of 1,660 hit this exception
-        var loopLimit = Math.Ceiling(parserModel.TokenWalker.TokenList.Count * multiplier) + 1;
+        var loopLimit = 3 * parserModel.TokenWalker.TokenList.Count;
         
         while (true)
         {
+        	// loopCount++;
         	if (loopCount++ > loopLimit)
         	{
         		++ErrorCount;
-        		throw new NotImplementedException($"ErrorCount:{ErrorCount};;; if (loopCount++ > Math.Ceiling(parserModel.TokenWalker.TokenList.Count * {multiplier}) + 1)");
+        		
+        		Console.WriteLine(
+        			$"ErrorCount:{ErrorCount}; ResourceUri:{compilationUnit.ResourceUri.Value}; loopLimit:{loopLimit}; tokenCount:{lexerOutput.SyntaxTokenList.Count};");
+        		break;
         	}
 
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
@@ -271,18 +261,31 @@ public static class CSharpParser
             compilationUnit.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
         }
 		
-        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(
-            parserModel.DiagnosticBag.ToArray()
-                .Union(compilationUnit.Binder.DiagnosticsList)
-                .Union(lexerOutput.DiagnosticBag.ToList())
-                .ToArray());
+        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build();
                 
         globalCodeBlockNode.SetCodeBlockNode(
         	topLevelStatementsCodeBlock,
-        	parserModel.DiagnosticBag,
+        	compilationUnit.__DiagnosticList,
         	parserModel.TokenWalker);
                 
 		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
 		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
-    }
+		
+		// Console.WriteLine($"aaa: {compilationUnit.DiagnosticsList.Count} {compilationUnit.ResourceUri.Value}");
+
+		/*if (loopCount > loopLimit)
+    	{
+    		++ErrorCount;
+    		
+    		Console.WriteLine(
+    			$"ErrorCount:{ErrorCount}; ResourceUri:{compilationUnit.ResourceUri.Value}; loopLimit:{loopLimit}; loopCount:{loopCount}; tokenCount:{lexerOutput.SyntaxTokenList.Count};");
+    		// break;
+    	}*/
+
+		/*#if DEBUG
+		Console.WriteLine($"loopCount: {loopCount}, tokenCount: {lexerOutput.SyntaxTokenList.Count}");
+		#else
+		Console.WriteLine($"{nameof(CSharpParser)}.{nameof(Parse)} has debug BOTTOM 'Console.Write...' that needs commented out.");
+		#endif*/
+	}
 }

@@ -77,7 +77,6 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 /// </summary>
 public interface ILexer
 {
-    public List<TextEditorDiagnostic> DiagnosticList { get; }
     public List<SyntaxToken> SyntaxTokenList { get; }
     public ResourceUri ResourceUri { get; }
     public string SourceText { get; }

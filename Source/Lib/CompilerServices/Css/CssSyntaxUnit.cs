@@ -7,16 +7,12 @@ public class CssSyntaxUnit
 {
     public CssSyntaxUnit(
         CssDocumentSyntax cssDocumentSyntax,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         CssDocumentSyntax = cssDocumentSyntax;
-        this.diagnosticBag = diagnosticBag;
+        DiagnosticList = diagnosticList;
     }
 
     public CssDocumentSyntax CssDocumentSyntax { get; }
-    /// <summary>
-    /// TODO: Why is this named "diagnosticBag" and in the constructor "this.diagnosticBag is used"...
-    ///       ...(am seeing this on 2024-07-12, I presume about a year after it was written).
-    /// </summary> 
-    public DiagnosticBag diagnosticBag { get; }
+    public List<TextEditorDiagnostic> DiagnosticList { get; }
 }
