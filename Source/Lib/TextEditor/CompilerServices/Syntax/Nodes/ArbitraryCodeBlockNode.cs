@@ -12,7 +12,7 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
         ParentCodeBlockOwner = parentCodeBlockOwner;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public ICodeBlockOwner ParentCodeBlockOwner { get; }
@@ -67,7 +67,7 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 	}
 	#endregion
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

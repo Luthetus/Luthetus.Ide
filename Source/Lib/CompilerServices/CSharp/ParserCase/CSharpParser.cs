@@ -37,7 +37,6 @@ public static class CSharpParser
 
         var parserModel = new CSharpParserModel(
             new TokenWalker(lexerOutput.SyntaxTokenList, diagnosticBag),
-            diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
             
@@ -46,14 +45,17 @@ public static class CSharpParser
 		#endif
 		
 		var loopCount = 0;
-        var loopLimit = Math.Ceiling(parserModel.TokenWalker.TokenList.Count / 2.0 * 3.0);
+        var loopLimit = parserModel.TokenWalker.TokenList.Count + 61;
         
         while (true)
         {
         	if (loopCount++ > loopLimit)
         	{
         		++ErrorCount;
-        		throw new NotImplementedException($"ErrorCount:{ErrorCount};;; if (Math.Ceiling(parserModel.TokenWalker.TokenList.Count / 2 * 3))");
+        		
+        		Console.WriteLine(
+        			$"ErrorCount:{ErrorCount}; ResourceUri:{compilationUnit.ResourceUri.Value}; loopLimit:{loopLimit}; tokenCount:{lexerOutput.SyntaxTokenList.Count};");
+        		break;
         	}
 
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
@@ -259,26 +261,34 @@ public static class CSharpParser
             compilationUnit.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
         }
 		
-        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(
-            parserModel.DiagnosticBag.ToArray()
-                .Union(compilationUnit.Binder.DiagnosticsList)
-                .Union(lexerOutput.DiagnosticBag.ToList())
-                .ToArray());
+        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build();
                 
         globalCodeBlockNode.SetCodeBlockNode(
         	topLevelStatementsCodeBlock,
-        	parserModel.DiagnosticBag,
+        	compilationUnit.DiagnosticBag,
         	parserModel.TokenWalker);
                 
 		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
+		compilationUnit.DiagnosticsList = compilationUnit.DiagnosticBag.ToList();
 		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
+		
+		// Console.WriteLine($"aaa: {compilationUnit.DiagnosticsList.Count} {compilationUnit.ResourceUri.Value}");
 
 		/*
-		#if DEBUG
+		if (loopCount > loopLimit)
+    	{
+    		++ErrorCount;
+    		
+    		Console.WriteLine(
+    			$"ErrorCount:{ErrorCount}; ResourceUri:{compilationUnit.ResourceUri.Value}; loopLimit:{loopLimit}; loopCount:{loopCount}; tokenCount:{lexerOutput.SyntaxTokenList.Count};");
+    		// break;
+    	}
+    	*/
+
+		/*#if DEBUG
 		Console.WriteLine($"loopCount: {loopCount}, tokenCount: {lexerOutput.SyntaxTokenList.Count}");
 		#else
 		Console.WriteLine($"{nameof(CSharpParser)}.{nameof(Parse)} has debug BOTTOM 'Console.Write...' that needs commented out.");
-		#endif
-		*/
+		#endif*/
 	}
 }

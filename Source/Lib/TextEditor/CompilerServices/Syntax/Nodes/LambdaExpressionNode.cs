@@ -27,7 +27,7 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
     	ResultTypeClauseNode = resultTypeClauseNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode ResultTypeClauseNode { get; }
@@ -101,7 +101,7 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
     	_childListIsDirty = true;
     }
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

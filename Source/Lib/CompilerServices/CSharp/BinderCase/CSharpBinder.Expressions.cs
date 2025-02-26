@@ -526,9 +526,9 @@ public partial class CSharpBinder
 			
 			if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)
 			{
-				parserModel.DiagnosticBag.ReportTodoException(
+				/*parserModel.DiagnosticBag.ReportTodoException(
 		    		parserModel.TokenWalker.Current.TextSpan,
-		    		"if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");
+		    		"if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");*/
 				return decidedExpression;
 			}
 		
@@ -874,6 +874,8 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.SetCloseAngleBracketToken(token);
 				return constructorInvocationExpressionNode;
 			case SyntaxKind.OpenBraceToken:
+				// SkipObjectInitialization(compilationUnit, ref parserModel);
+				
 				var objectInitializationParametersListingNode = new ObjectInitializationParametersListingNode(
 					token,
 			        new List<ObjectInitializationParameterEntryNode>(),
@@ -2175,6 +2177,58 @@ public partial class CSharpBinder
 			));
 	}
 	
+	/// <summary>
+	/// Turn off object initialization for a moment and see if any of the infinite loop exceptions get fixed.
+	///
+	/// Count of infinite loop heuristic exceptions.
+	/// =============
+	/// No Skip:   14
+	/// With Skip: 11
+	///
+	/// Conclusion
+	/// ==========
+	/// It is believed that the object initializations that contained lambda expressions with statement body
+	/// were no longer parsed and therefore did not cause an exception anymore.
+	///
+	/// The 'out' is suspicious.
+	/// </summary>
+	/*public void SkipObjectInitialization(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		#if DEBUG
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		#endif
+		
+		var openTokenIndex = parserModel.TokenWalker.Index;
+		var openBraceToken = parserModel.TokenWalker.Consume();
+    	
+    	var openBraceCounter = 1;
+		
+		while (true)
+		{
+			if (parserModel.TokenWalker.IsEof)
+				break;
+
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			{
+				++openBraceCounter;
+			}
+			else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+			{
+				if (--openBraceCounter <= 0)
+					break;
+			}
+
+			_ = parserModel.TokenWalker.Consume();
+		}
+		
+		var closeTokenIndex = parserModel.TokenWalker.Index;
+		var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+		
+		#if DEBUG
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		#endif
+	}*/
+	
 	public IExpressionNode ParseMemberAccessToken(IExpressionNode expressionPrimary, SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		/*
@@ -2514,7 +2568,6 @@ public partial class CSharpBinder
 				{
 					ISyntax syntax;
 					
-					if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 					if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 					{
 						lambdaExpressionNode.AddVariableDeclarationNode((VariableDeclarationNode)node);

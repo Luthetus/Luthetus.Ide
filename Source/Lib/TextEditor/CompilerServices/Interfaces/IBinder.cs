@@ -11,7 +11,6 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 /// </summary>
 public interface IBinder
 {
-    public TextEditorDiagnostic[] DiagnosticsList { get; }
     public Symbol[] SymbolsList { get; }
 	
 	/// <summary>

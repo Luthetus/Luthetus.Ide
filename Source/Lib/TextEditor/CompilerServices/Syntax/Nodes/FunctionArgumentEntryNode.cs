@@ -23,7 +23,7 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
         HasRefKeyword = hasRefKeyword;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public VariableDeclarationNode VariableDeclarationNode { get; }
@@ -37,7 +37,7 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentEntryNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

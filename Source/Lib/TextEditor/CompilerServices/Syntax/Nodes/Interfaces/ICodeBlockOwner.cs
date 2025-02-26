@@ -24,9 +24,9 @@ public interface ICodeBlockOwner : ISyntaxNode
 		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
     	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
     	//
-    	diagnosticBag.ReportTodoException(
+    	/*diagnosticBag.ReportTodoException(
     		tokenWalker.Current.TextSpan,
-    		"Scope must be set by either OpenBraceToken and CloseBraceToken; or by StatementDelimiterToken, but not both.");
+    		"Scope must be set by either OpenBraceToken and CloseBraceToken; or by StatementDelimiterToken, but not both.");*/
 	}
 		
 	public static void ThrowAlreadyAssignedCodeBlockNodeException(DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
@@ -34,8 +34,8 @@ public interface ICodeBlockOwner : ISyntaxNode
 		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
     	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
     	//
-    	diagnosticBag.ReportTodoException(
+    	/*diagnosticBag.ReportTodoException(
     		tokenWalker.Current.TextSpan,
-    		$"The {nameof(CodeBlockNode)} was already assigned.");
+    		$"The {nameof(CodeBlockNode)} was already assigned.");*/
 	}
 }

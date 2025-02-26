@@ -16,7 +16,7 @@ public sealed class WithExpressionNode : IExpressionNode
     	ResultTypeClauseNode = resultTypeClauseNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken IdentifierToken { get; }
@@ -27,7 +27,7 @@ public sealed class WithExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.WithExpressionNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

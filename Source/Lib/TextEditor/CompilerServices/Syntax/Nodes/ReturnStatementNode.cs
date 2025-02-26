@@ -10,7 +10,7 @@ public sealed class ReturnStatementNode : IExpressionNode
         ExpressionNode = expressionNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken KeywordToken { get; }
@@ -20,7 +20,7 @@ public sealed class ReturnStatementNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

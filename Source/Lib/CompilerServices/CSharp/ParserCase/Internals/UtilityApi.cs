@@ -246,9 +246,9 @@ public static class UtilityApi
 	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
 	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
 	    	//
-	    	parserModel.DiagnosticBag.ReportTodoException(
+	    	/*compilationUnit.DiagnosticBag.ReportTodoException(
 	    		parserModel.TokenWalker.Current.TextSpan,
-	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");
+	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");*/
 	    	
 	    	// TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
 	    	return null;
@@ -277,9 +277,9 @@ public static class UtilityApi
 	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
 	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
 	    	//
-	    	parserModel.DiagnosticBag.ReportTodoException(
+	    	/*compilationUnit.DiagnosticBag.ReportTodoException(
 	    		parserModel.TokenWalker.Current.TextSpan,
-	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(SyntaxKind.IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
+	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(SyntaxKind.IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");*/
 	    		
 	    	// TODO: Returning default when it can't be converted might be a fine idea? It isn't as bad as returning null.
 	    	return default;

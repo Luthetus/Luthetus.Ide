@@ -46,11 +46,7 @@ public class Parser : IParser
 		
         DiagnosticsList = model.DiagnosticBag.ToArray();
 
-        var topLevelStatementsCodeBlock = model.CurrentCodeBlockBuilder.Build(
-            DiagnosticsList
-                .Union(Binder.DiagnosticsList)
-                .Union(Lexer.DiagnosticList)
-                .ToArray());
+        var topLevelStatementsCodeBlock = model.CurrentCodeBlockBuilder.Build();
 
         return new CompilationUnit(
             topLevelStatementsCodeBlock,

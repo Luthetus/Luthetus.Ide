@@ -17,7 +17,7 @@ public sealed class FunctionArgumentsListingNode : IExpressionNode
         CloseParenthesisToken = closeParenthesisToken;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken OpenParenthesisToken { get; }
@@ -28,7 +28,7 @@ public sealed class FunctionArgumentsListingNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentsListingNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

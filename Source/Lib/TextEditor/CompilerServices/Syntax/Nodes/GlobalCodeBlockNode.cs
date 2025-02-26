@@ -23,7 +23,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 {
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     // ICodeBlockOwner properties.
@@ -76,7 +76,7 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 	}
 	#endregion
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (CodeBlockNode is not null)
     		return CodeBlockNode.GetChildList();

@@ -22,7 +22,7 @@ public sealed class GenericParametersListingNode : IExpressionNode
         CloseAngleBracketToken = closeAngleBracketToken;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken OpenAngleBracketToken { get; }
@@ -41,7 +41,7 @@ public sealed class GenericParametersListingNode : IExpressionNode
     	return this;
     }
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

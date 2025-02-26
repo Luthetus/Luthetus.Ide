@@ -30,7 +30,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         InheritedTypeClauseNode = inheritedTypeClauseNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private ISyntaxNode[] _memberList = Array.Empty<ISyntaxNode>();
 	private bool _childListIsDirty = true;
 	private bool _memberListIsDirty = true;
@@ -170,7 +170,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return this;
     }
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

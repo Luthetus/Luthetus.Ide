@@ -17,7 +17,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
         CodeBlockNode = codeBlockNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken KeywordToken { get; }
@@ -89,7 +89,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	}
 	#endregion
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

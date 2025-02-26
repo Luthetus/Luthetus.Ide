@@ -47,7 +47,6 @@ public partial class CSharpBinder : IBinder
     public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
-    public TextEditorDiagnostic[] DiagnosticsList => Array.Empty<TextEditorDiagnostic>();
     
     Symbol[] IBinder.SymbolsList => Symbols;
     
@@ -157,7 +156,7 @@ public partial class CSharpBinder : IBinder
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            compilationUnit.BinderSession.DiagnosticBag.ReportAlreadyDefinedFunction(
+            compilationUnit.DiagnosticBag.ReportAlreadyDefinedFunction(
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
                 functionIdentifierText);
         }
@@ -239,7 +238,7 @@ public partial class CSharpBinder : IBinder
                 	variableDeclarationNode);
             }
 
-            compilationUnit.BinderSession.DiagnosticBag.ReportAlreadyDefinedVariable(
+            compilationUnit.DiagnosticBag.ReportAlreadyDefinedVariable(
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 text);
         }
@@ -307,9 +306,9 @@ public partial class CSharpBinder : IBinder
                 variableIdentifierToken,
                 variableDeclarationNode);
 
-            compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
+            /*compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
                 variableIdentifierToken.TextSpan,
-                text);
+                text);*/
         }
 
         CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
@@ -341,15 +340,15 @@ public partial class CSharpBinder : IBinder
         {
             if (UtilityApi.IsContextualKeywordSyntaxKind(text))
             {
-                compilationUnit.BinderSession.DiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
+                /*compilationUnit.BinderSession.DiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                    text);
+                    text);*/
             }
             else
             {
-                compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
+                /*compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                    text);
+                    text);*/
             }
         }
 
@@ -400,9 +399,9 @@ public partial class CSharpBinder : IBinder
         }
         else
         {
-            compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedFunction(
+            /*compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedFunction(
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
-                functionInvocationIdentifierText);
+                functionInvocationIdentifierText);*/
         }
     }
 
@@ -673,7 +672,7 @@ public partial class CSharpBinder : IBinder
     	// Update CodeBlockOwner
     	if (inOwner is not null)
     	{
-	        inOwner.SetCodeBlockNode(inBuilder.Build(), parserModel.DiagnosticBag, parserModel.TokenWalker);
+	        inOwner.SetCodeBlockNode(inBuilder.Build(), compilationUnit.DiagnosticBag, parserModel.TokenWalker);
 			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 				compilationUnit.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit);

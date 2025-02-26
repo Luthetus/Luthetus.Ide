@@ -10,7 +10,7 @@ public sealed class ObjectInitializationNode : ISyntaxNode
         CloseBraceToken = closeBraceToken;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public SyntaxToken OpenBraceToken { get; }
@@ -19,7 +19,7 @@ public sealed class ObjectInitializationNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

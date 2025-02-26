@@ -22,8 +22,6 @@ public sealed class CSharpCompilationUnit : ICompilationUnit
     public CSharpBinderSession BinderSession { get; set; }
     public ISyntaxNode RootCodeBlockNode { get; set; }
     
-    /// <summary>
-    /// This seems to no longer get set (noticed this on 2024-12-14).
-    /// </summary>
-    public List<TextEditorDiagnostic> DiagnosticsList { get; init; }
+	public DiagnosticBag DiagnosticBag { get; } = new();
+    public IReadOnlyList<TextEditorDiagnostic> DiagnosticsList { get; set; } = Array.Empty<TextEditorDiagnostic>();
 }
