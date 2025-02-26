@@ -67,24 +67,5 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 	}
 	#endregion
     
-    public IReadOnlyList<ISyntax> GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	var childCount = 0;
-    	if (CodeBlockNode is not null)
-    		childCount++;
-            
-        var childList = new ISyntax[childCount];
-		var i = 0;
-
-    	if (CodeBlockNode is not null)
-    		childList[i++] = CodeBlockNode;
-            
-        _childList = childList;
-        
-    	_childListIsDirty = false;
-    	return _childList;
-    }
+    public IReadOnlyList<ISyntax> GetChildList() => CodeBlockNode.GetChildList();
 }

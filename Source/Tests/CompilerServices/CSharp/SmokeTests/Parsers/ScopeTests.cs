@@ -1199,7 +1199,7 @@ ccc;
 			    Assert.Equal(27, arbitraryScope.EndingIndexExclusive);
 			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
 			    
-			    Assert.Equal(2, arbitraryScope.CodeBlockOwner.GetChildList().Length);
+			    Assert.Equal(2, arbitraryScope.CodeBlockOwner.GetChildList().Count);
 			    Assert.Equal(SyntaxKind.OpenBraceToken, arbitraryScope.CodeBlockOwner.GetChildList()[0].SyntaxKind);
 			    Assert.Equal(SyntaxKind.VariableReferenceNode, arbitraryScope.CodeBlockOwner.CodeBlockNode.GetChildList().Single().SyntaxKind);
 			}

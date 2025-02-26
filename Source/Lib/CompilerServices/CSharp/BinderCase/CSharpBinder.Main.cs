@@ -156,10 +156,10 @@ public partial class CSharpBinder : IBinder
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            DiagnosticHelper.ReportAlreadyDefinedFunction(
+            /*DiagnosticHelper.ReportAlreadyDefinedFunction(
             	compilationUnit.__DiagnosticList,
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
-                functionIdentifierText);
+                functionIdentifierText);*/
         }
     }
 
@@ -239,10 +239,10 @@ public partial class CSharpBinder : IBinder
                 	variableDeclarationNode);
             }
 
-            DiagnosticHelper.ReportAlreadyDefinedVariable(
+            /*DiagnosticHelper.ReportAlreadyDefinedVariable(
             	compilationUnit.__DiagnosticList,
                 variableDeclarationNode.IdentifierToken.TextSpan,
-                text);
+                text);*/
         }
         else
         {
@@ -521,7 +521,9 @@ public partial class CSharpBinder : IBinder
         ref CSharpParserModel parserModel)
     {
         /*#if DEBUG
-    	Console.Write($"NewSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------NewSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------NewSBin: has console.write... that needs commented out");
     	#endif*/
     
     	if (codeBlockOwner.ScopeIndexKey is not null)
@@ -551,7 +553,9 @@ public partial class CSharpBinder : IBinder
         compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserModel);
         
         /*#if DEBUG
-    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------NewSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------NewSBout: has console.write... that needs commented out");
     	#endif*/
     }
     
@@ -597,7 +601,9 @@ public partial class CSharpBinder : IBinder
     	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	/*#if DEBUG
-    	Console.Write($"SetSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------SetSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------SetSBin: has console.write... that needs commented out");
     	#endif*/
     
     	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
@@ -607,7 +613,9 @@ public partial class CSharpBinder : IBinder
 		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
 		
 		/*#if DEBUG
-    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------SetSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------SetSBout: has console.write... that needs commented out");
     	#endif*/
     }
 
@@ -645,7 +653,9 @@ public partial class CSharpBinder : IBinder
         ref CSharpParserModel parserModel)
     {
     	/*#if DEBUG
-    	Console.Write($"{nameof(CloseScope)}: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------{nameof(CloseScope)}in: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------{nameof(CloseScope)}in: has console.write... that needs commented out");
     	#endif*/
     
     	// Check if it is the global scope, if so return early.
@@ -697,7 +707,9 @@ public partial class CSharpBinder : IBinder
 		}
 		
 		/*#if DEBUG
-    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------{nameof(CloseScope)}out: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------{nameof(CloseScope)}out: has console.write... that needs commented out");
     	#endif*/
     }
 

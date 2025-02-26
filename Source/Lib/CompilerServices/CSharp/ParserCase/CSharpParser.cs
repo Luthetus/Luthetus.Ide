@@ -44,10 +44,11 @@ public static class CSharpParser
 		#endif
 		
 		var loopCount = 0;
-        var loopLimit = parserModel.TokenWalker.TokenList.Count + 61;
+        var loopLimit = 3 * parserModel.TokenWalker.TokenList.Count;
         
         while (true)
         {
+        	// loopCount++;
         	if (loopCount++ > loopLimit)
         	{
         		++ErrorCount;
@@ -272,16 +273,14 @@ public static class CSharpParser
 		
 		// Console.WriteLine($"aaa: {compilationUnit.DiagnosticsList.Count} {compilationUnit.ResourceUri.Value}");
 
-		/*
-		if (loopCount > loopLimit)
+		/*if (loopCount > loopLimit)
     	{
     		++ErrorCount;
     		
     		Console.WriteLine(
     			$"ErrorCount:{ErrorCount}; ResourceUri:{compilationUnit.ResourceUri.Value}; loopLimit:{loopLimit}; loopCount:{loopCount}; tokenCount:{lexerOutput.SyntaxTokenList.Count};");
     		// break;
-    	}
-    	*/
+    	}*/
 
 		/*#if DEBUG
 		Console.WriteLine($"loopCount: {loopCount}, tokenCount: {lexerOutput.SyntaxTokenList.Count}");

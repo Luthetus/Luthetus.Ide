@@ -2022,7 +2022,7 @@ Func(decimalPercentProgress);
     	var test = new Test(@"Person");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		Console.WriteLine($"topCodeBlock: {topCodeBlock.GetChildList().Length}");
+		Console.WriteLine($"topCodeBlock: {topCodeBlock.GetChildList().Count}");
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     

@@ -2082,20 +2082,17 @@ public partial class CSharpBinder
 		// But, we can only add a "short circuit" for 'CloseBraceToken and lambdaExpressionNode'
 		// if we have seen the 'OpenBraceToken'.
 		
-		parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, lambdaExpressionNode));
-		
 		if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 		{
-			parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, lambdaExpressionNode));
 			OpenLambdaExpressionScope(lambdaExpressionNode, openBraceToken, compilationUnit, ref parserModel);
-			SkipLambdaExpressionStatements(lambdaExpressionNode, compilationUnit, ref parserModel);
+			return SkipLambdaExpressionStatements(lambdaExpressionNode, compilationUnit, ref parserModel);
 		}
 		else
 		{
+			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, lambdaExpressionNode));
 			OpenLambdaExpressionScope(lambdaExpressionNode, openBraceToken, compilationUnit, ref parserModel);
+			return EmptyExpressionNode.Empty;
 		}
-		
-		return EmptyExpressionNode.Empty;
 	}
 	
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -2126,7 +2123,7 @@ public partial class CSharpBinder
 	///       preserve the other features of the text editor.
 	///       (rather than lambda expression statements clobbering the entire syntax highlighting of the file).
 	/// </summary>
-	public void SkipLambdaExpressionStatements(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public IExpressionNode SkipLambdaExpressionStatements(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
@@ -2175,6 +2172,8 @@ public partial class CSharpBinder
 					closeTokenIndex,
 					lambdaCodeBlockBuilder)
 			));
+			
+		return lambdaExpressionNode;
 	}
 	
 	/// <summary>
