@@ -15,7 +15,7 @@ namespace Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 public class DotNetSolutionParser : IParser
 {
     private readonly TokenWalker _tokenWalker;
-    private readonly DiagnosticBag _diagnosticBag = new();
+    private readonly List<TextEditorDiagnostic> _diagnosticList = new();
     private readonly Stack<AssociatedEntryGroupBuilder> _associatedEntryGroupBuilderStack = new();
     private readonly List<IDotNetProject> _dotNetProjectList = new();
     private readonly List<NestedProjectEntry> _nestedProjectEntryList = new();
@@ -28,10 +28,9 @@ public class DotNetSolutionParser : IParser
     public DotNetSolutionParser(DotNetSolutionLexer lexer)
     {
         Lexer = lexer;
-        _tokenWalker = new TokenWalker(lexer.SyntaxTokenList, _diagnosticBag);
+        _tokenWalker = new TokenWalker(lexer.SyntaxTokenList);
     }
 
-    public TextEditorDiagnostic[] DiagnosticsList => _diagnosticBag.ToArray();
     public DotNetSolutionLexer Lexer { get; }
 
     public DotNetSolutionHeader DotNetSolutionHeader => _dotNetSolutionHeader;

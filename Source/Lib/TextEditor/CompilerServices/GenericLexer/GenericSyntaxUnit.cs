@@ -6,12 +6,12 @@ public class GenericSyntaxUnit
 {
     public GenericSyntaxUnit(
         GenericDocumentSyntax genericDocumentSyntax,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         GenericDocumentSyntax = genericDocumentSyntax;
-        DiagnosticBag = diagnosticBag;
+        DiagnosticList = diagnosticList;
     }
 
     public GenericDocumentSyntax GenericDocumentSyntax { get; }
-    public DiagnosticBag DiagnosticBag { get; }
+    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList { get; }
 }

@@ -18,7 +18,7 @@ public class CssSyntaxTree
     {
         // Items to return wrapped in a CssSyntaxUnit
         var cssDocumentChildren = new List<ICssSyntax>();
-        var textEditorCssDiagnosticBag = new DiagnosticBag();
+        var textEditorCssDiagnosticBag = new List<TextEditorDiagnostic>();
 
         // Step through the string 'character by character'
         var stringWalker = new StringWalker(resourceUri, sourceText);
@@ -63,7 +63,7 @@ public class CssSyntaxTree
     private static void ConsumeComment(
         StringWalker stringWalker,
         List<ICssSyntax> cssDocumentChildren,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var commentStartingPositionIndex = stringWalker.PositionIndex;
 
@@ -105,7 +105,7 @@ public class CssSyntaxTree
     private static void ConsumeStyleBlock(
         StringWalker stringWalker,
         List<ICssSyntax> cssDocumentChildren,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var expectedStyleBlockChild = CssSyntaxKind.PropertyName;
 
@@ -126,7 +126,7 @@ public class CssSyntaxTree
 
                 if (stringWalker.PeekForSubstring(CssFacts.COMMENT_START))
                 {
-                    ConsumeComment(stringWalker, cssDocumentChildren, diagnosticBag);
+                    ConsumeComment(stringWalker, cssDocumentChildren, diagnosticList);
                     continue;
                 }
             }
@@ -230,9 +230,9 @@ public class CssSyntaxTree
                     stringWalker.ResourceUri,
                     stringWalker.SourceText);
 
-                diagnosticBag.ReportUnexpectedToken(
+                /*diagnosticBag.ReportUnexpectedToken(
                     unexpectedTokenTextSpan,
-                    stringWalker.CurrentCharacter.ToString());
+                    stringWalker.CurrentCharacter.ToString());*/
 
                 continue;
             }
@@ -247,7 +247,7 @@ public class CssSyntaxTree
     private static void ConsumeIdentifier(
         StringWalker stringWalker,
         List<ICssSyntax> cssDocumentChildren,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 

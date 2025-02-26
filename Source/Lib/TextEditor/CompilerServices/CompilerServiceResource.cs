@@ -51,8 +51,6 @@ public class CompilerServiceResource : ICompilerServiceResource
         if (localCompilationUnit is null)
             return Array.Empty<TextEditorDiagnostic>();
 
-        return localCompilationUnit.DiagnosticsList
-            .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-            .ToArray();
+        return localCompilationUnit.DiagnosticList;
     }
 }

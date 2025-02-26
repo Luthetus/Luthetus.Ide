@@ -20,7 +20,7 @@ public class GenericSyntaxTree
     public virtual GenericSyntaxUnit ParseText(ResourceUri resourceUri, string content)
     {
         var documentChildList = new List<IGenericSyntax>();
-        var diagnosticBag = new DiagnosticBag();
+        var diagnosticList = new List<TextEditorDiagnostic>();
 
         var stringWalker = new StringWalker(resourceUri, content);
 
@@ -28,22 +28,22 @@ public class GenericSyntaxTree
         {
             if (stringWalker.PeekForSubstring(GenericLanguageDefinition.StringStart))
             {
-                var genericStringSyntax = ParseString(stringWalker, diagnosticBag);
+                var genericStringSyntax = ParseString(stringWalker, diagnosticList);
                 documentChildList.Add(genericStringSyntax);
             }
             else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.CommentSingleLineStart))
             {
-                var genericCommentSingleLineSyntax = ParseCommentSingleLine(stringWalker, diagnosticBag);
+                var genericCommentSingleLineSyntax = ParseCommentSingleLine(stringWalker, diagnosticList);
                 documentChildList.Add(genericCommentSingleLineSyntax);
             }
             else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.CommentMultiLineStart))
             {
-                var genericCommentMultiLineSyntax = ParseCommentMultiLine(stringWalker, diagnosticBag);
+                var genericCommentMultiLineSyntax = ParseCommentMultiLine(stringWalker, diagnosticList);
                 documentChildList.Add(genericCommentMultiLineSyntax);
             }
             else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.FunctionInvocationStart))
             {
-                if (TryParseFunctionIdentifier(stringWalker, diagnosticBag, out var genericFunctionSyntax) &&
+                if (TryParseFunctionIdentifier(stringWalker, diagnosticList, out var genericFunctionSyntax) &&
                     genericFunctionSyntax is not null)
                 {
                     documentChildList.Add(genericFunctionSyntax);
@@ -52,7 +52,7 @@ public class GenericSyntaxTree
             else if (!WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) &&
                      !KeyboardKeyFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
             {
-                if (TryParseKeyword(stringWalker, diagnosticBag, out var genericKeywordSyntax) &&
+                if (TryParseKeyword(stringWalker, diagnosticList, out var genericKeywordSyntax) &&
                     genericKeywordSyntax is not null)
                 {
                     documentChildList.Add(genericKeywordSyntax);
@@ -60,7 +60,7 @@ public class GenericSyntaxTree
             }
             else if (stringWalker.PeekForSubstring(GenericLanguageDefinition.PreprocessorDefinition.TransitionSubstring))
             {
-                var genericCommentMultiLineSyntax = ParsePreprocessorDirective(stringWalker, diagnosticBag);
+                var genericCommentMultiLineSyntax = ParsePreprocessorDirective(stringWalker, diagnosticList);
                 documentChildList.Add(genericCommentMultiLineSyntax);
             }
 
@@ -75,12 +75,12 @@ public class GenericSyntaxTree
                 stringWalker.SourceText),
             documentChildList);
 
-        return new GenericSyntaxUnit(genericDocumentSyntax, diagnosticBag);
+        return new GenericSyntaxUnit(genericDocumentSyntax, diagnosticList);
     }
 
     public virtual GenericCommentSingleLineSyntax ParseCommentSingleLine(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -98,13 +98,13 @@ public class GenericSyntaxTree
 
         if (stringWalker.IsEof)
         {
-            diagnosticBag.ReportEndOfFileUnexpected(
+            /*diagnosticList.ReportEndOfFileUnexpected(
                 new TextEditorTextSpan(
                     startingPositionIndex,
                     stringWalker.PositionIndex,
                     (byte)GenericDecorationKind.Error,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    stringWalker.SourceText));*/
         }
 
         var commentTextEditorTextSpan = new TextEditorTextSpan(
@@ -119,7 +119,7 @@ public class GenericSyntaxTree
 
     public virtual GenericCommentMultiLineSyntax ParseCommentMultiLine(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -133,13 +133,13 @@ public class GenericSyntaxTree
 
         if (stringWalker.IsEof)
         {
-            diagnosticBag.ReportEndOfFileUnexpected(
+            /*diagnosticList.ReportEndOfFileUnexpected(
                 new TextEditorTextSpan(
                     startingPositionIndex,
                     stringWalker.PositionIndex,
                     (byte)GenericDecorationKind.Error,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    stringWalker.SourceText));*/
         }
 
         var commentTextEditorTextSpan = new TextEditorTextSpan(
@@ -154,7 +154,7 @@ public class GenericSyntaxTree
 
     public virtual GenericStringSyntax ParseString(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -168,12 +168,12 @@ public class GenericSyntaxTree
 
         if (stringWalker.IsEof)
         {
-            diagnosticBag.ReportEndOfFileUnexpected(new TextEditorTextSpan(
+            /*diagnosticList.ReportEndOfFileUnexpected(new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
                 (byte)GenericDecorationKind.Error,
                 stringWalker.ResourceUri,
-                stringWalker.SourceText));
+                stringWalker.SourceText));*/
         }
 
         var stringTextEditorTextSpan = new TextEditorTextSpan(
@@ -192,7 +192,7 @@ public class GenericSyntaxTree
     /// </summary>
     private bool TryParseKeyword(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         out GenericKeywordSyntax? genericKeywordSyntax)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
@@ -241,7 +241,7 @@ public class GenericSyntaxTree
 
     private bool TryParseFunctionIdentifier(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         out GenericFunctionSyntax? genericFunctionSyntax)
     {
         var rememberPositionIndex = stringWalker.PositionIndex;
@@ -300,7 +300,7 @@ public class GenericSyntaxTree
 
     private GenericPreprocessorDirectiveSyntax ParsePreprocessorDirective(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -339,7 +339,7 @@ public class GenericSyntaxTree
 
         var success = TryParsePreprocessorDirectiveDeliminationExtendedSyntaxes(
             stringWalker,
-            diagnosticBag,
+            diagnosticList,
             out var genericSyntax);
 
         var children = success && genericSyntax is not null
@@ -351,7 +351,7 @@ public class GenericSyntaxTree
 
     private bool TryParsePreprocessorDirectiveDeliminationExtendedSyntaxes(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         out IGenericSyntax? genericSyntax)
     {
         var entryPositionIndex = stringWalker.PositionIndex;

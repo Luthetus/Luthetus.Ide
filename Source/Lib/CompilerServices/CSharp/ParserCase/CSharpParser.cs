@@ -33,10 +33,9 @@ public static class CSharpParser
 	        compilationUnit);
         
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
-        var diagnosticBag = new DiagnosticBag();
 
         var parserModel = new CSharpParserModel(
-            new TokenWalker(lexerOutput.SyntaxTokenList, diagnosticBag),
+            new TokenWalker(lexerOutput.SyntaxTokenList),
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
             
@@ -265,11 +264,10 @@ public static class CSharpParser
                 
         globalCodeBlockNode.SetCodeBlockNode(
         	topLevelStatementsCodeBlock,
-        	compilationUnit.DiagnosticBag,
+        	compilationUnit.__DiagnosticList,
         	parserModel.TokenWalker);
                 
 		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
-		compilationUnit.DiagnosticsList = compilationUnit.DiagnosticBag.ToList();
 		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
 		
 		// Console.WriteLine($"aaa: {compilationUnit.DiagnosticsList.Count} {compilationUnit.ResourceUri.Value}");

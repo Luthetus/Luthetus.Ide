@@ -156,7 +156,8 @@ public partial class CSharpBinder : IBinder
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            compilationUnit.DiagnosticBag.ReportAlreadyDefinedFunction(
+            DiagnosticHelper.ReportAlreadyDefinedFunction(
+            	compilationUnit.__DiagnosticList,
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
                 functionIdentifierText);
         }
@@ -238,7 +239,8 @@ public partial class CSharpBinder : IBinder
                 	variableDeclarationNode);
             }
 
-            compilationUnit.DiagnosticBag.ReportAlreadyDefinedVariable(
+            DiagnosticHelper.ReportAlreadyDefinedVariable(
+            	compilationUnit.__DiagnosticList,
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 text);
         }
@@ -672,7 +674,7 @@ public partial class CSharpBinder : IBinder
     	// Update CodeBlockOwner
     	if (inOwner is not null)
     	{
-	        inOwner.SetCodeBlockNode(inBuilder.Build(), compilationUnit.DiagnosticBag, parserModel.TokenWalker);
+	        inOwner.SetCodeBlockNode(inBuilder.Build(), compilationUnit.__DiagnosticList, parserModel.TokenWalker);
 			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 				compilationUnit.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit);

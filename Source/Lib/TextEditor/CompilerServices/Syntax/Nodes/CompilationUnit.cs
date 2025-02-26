@@ -30,8 +30,8 @@ public sealed class CompilationUnit : ICompilationUnit, ISyntaxNode
     public ILexer Lexer { get; }
     public IParser Parser { get; }
     public IBinder Binder { get; }
-    public DiagnosticBag DiagnosticBag { get; } = new();
-    public IReadOnlyList<TextEditorDiagnostic> DiagnosticsList { get; set; } = Array.Empty<TextEditorDiagnostic>();
+    public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
+    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;

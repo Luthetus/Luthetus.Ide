@@ -12,14 +12,12 @@ public class ParserModel : IParserModel
         IBinder binder,
         IBinderSession binderSession,
         TokenWalker tokenWalker,
-        DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder)
     {
         Binder = binder;
         BinderSession = binderSession;
         TokenWalker = tokenWalker;
-        DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
         
@@ -34,7 +32,6 @@ public class ParserModel : IParserModel
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; } = new();
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
-    public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
 }

@@ -34,17 +34,13 @@ public class Parser : IParser
     {
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
-        var diagnosticBag = new DiagnosticBag();
 
         var model = new ParserModel(
             Binder,
             BinderSession,
-            new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),
-            diagnosticBag,
+            new TokenWalker(Lexer.SyntaxTokenList),
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
-		
-        DiagnosticsList = model.DiagnosticBag.ToArray();
 
         var topLevelStatementsCodeBlock = model.CurrentCodeBlockBuilder.Build();
 

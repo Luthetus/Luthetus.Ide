@@ -115,7 +115,6 @@ public interface IParserModel
     /// </summary>
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     
-    public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
 }

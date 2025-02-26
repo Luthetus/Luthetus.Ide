@@ -6,12 +6,10 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 public class TokenWalker
 {
-    private readonly DiagnosticBag _diagnosticBag;
-
     private int _index;
 	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
 
-    public TokenWalker(List<SyntaxToken> tokenList, DiagnosticBag diagnosticBag)
+    public TokenWalker(List<SyntaxToken> tokenList)
     {
     	if (tokenList.Count > 0 &&
     		tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
@@ -20,7 +18,6 @@ public class TokenWalker
     	}
     
         TokenList = tokenList;
-        _diagnosticBag = diagnosticBag;
     }
 
 	public int ConsumeCounter { get; private set; }
@@ -115,10 +112,10 @@ public class TokenWalker
 
         var fabricatedToken = this.FabricateToken(expectedSyntaxKind);
 
-        _diagnosticBag.ReportUnexpectedToken(
+        /*_diagnosticBag.ReportUnexpectedToken(
             fabricatedToken.TextSpan,
             currentToken.SyntaxKind.ToString(),
-            expectedSyntaxKind.ToString());
+            expectedSyntaxKind.ToString());*/
 
         return fabricatedToken;
     }
@@ -133,10 +130,10 @@ public class TokenWalker
 
         var fabricatedToken = this.FabricateToken(fabricationKind);
 
-        _diagnosticBag.ReportUnexpectedToken(
+        /*_diagnosticBag.ReportUnexpectedToken(
             fabricatedToken.TextSpan,
             currentToken.SyntaxKind.ToString(),
-            fabricationKind.ToString());
+            fabricationKind.ToString());*/
 
         return fabricatedToken;
     }

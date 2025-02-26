@@ -22,6 +22,6 @@ public sealed class CSharpCompilationUnit : ICompilationUnit
     public CSharpBinderSession BinderSession { get; set; }
     public ISyntaxNode RootCodeBlockNode { get; set; }
     
-	public DiagnosticBag DiagnosticBag { get; } = new();
-    public IReadOnlyList<TextEditorDiagnostic> DiagnosticsList { get; set; } = Array.Empty<TextEditorDiagnostic>();
+	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
+    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
 }
