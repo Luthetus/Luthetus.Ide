@@ -14,12 +14,10 @@ public struct CSharpParserModel
 {
     public CSharpParserModel(
         TokenWalker tokenWalker,
-        DiagnosticBag diagnosticBag,
         CSharpCodeBlockBuilder globalCodeBlockBuilder,
         CSharpCodeBlockBuilder currentCodeBlockBuilder)
     {
     	TokenWalker = tokenWalker;
-        DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
         
@@ -68,7 +66,6 @@ public struct CSharpParserModel
     /// </summary>
     public CSharpParserContextKind ParserContextKind { get; set; }
     
-    public DiagnosticBag DiagnosticBag { get; }
     public CSharpCodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CSharpCodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
 }

@@ -55,6 +55,8 @@ public partial class ExpressionAsStatementTests
 		var test = new Test(@"1 + 1");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
 		
@@ -63,7 +65,9 @@ public partial class ExpressionAsStatementTests
 		
 	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
 	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
+	    
+	    Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+	    
 	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	    
@@ -98,6 +102,8 @@ public partial class ExpressionAsStatementTests
     {
 		var test = new Test(@"1 + SomeMethod()");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -710,6 +716,8 @@ var ccc = $""abc {aaa} 123 {bbb}"";
     {
     	var test = new Test("(7)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -2313,7 +2321,7 @@ Func(decimalPercentProgress);
     	var test = new Test(@"Person");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		Console.WriteLine($"topCodeBlock: {topCodeBlock.GetChildList().Length}");
+		Console.WriteLine($"topCodeBlock: {topCodeBlock.GetChildList().Count}");
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     }

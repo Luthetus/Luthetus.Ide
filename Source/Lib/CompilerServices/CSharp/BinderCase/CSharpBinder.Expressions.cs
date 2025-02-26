@@ -45,8 +45,6 @@ public partial class CSharpBinder
 				return BinaryMergeToken((BinaryExpressionNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeToken((ParenthesizedExpressionNode)expressionPrimary, token, compilationUnit, ref parserModel);
-			//case SyntaxKind.CommaSeparatedExpressionNode:
-			//	return CommaSeparatedMergeToken((CommaSeparatedExpressionNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			case SyntaxKind.LambdaExpressionNode:
@@ -101,8 +99,6 @@ public partial class CSharpBinder
 				return InterpolatedStringMergeExpression((InterpolatedStringNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
-			//case SyntaxKind.CommaSeparatedExpressionNode:
-			//	return CommaSeparatedMergeExpression((CommaSeparatedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.LambdaExpressionNode:
@@ -530,9 +526,9 @@ public partial class CSharpBinder
 			
 			if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)
 			{
-				parserModel.DiagnosticBag.ReportTodoException(
+				/*parserModel.DiagnosticBag.ReportTodoException(
 		    		parserModel.TokenWalker.Current.TextSpan,
-		    		"if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");
+		    		"if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");*/
 				return decidedExpression;
 			}
 		
@@ -817,37 +813,6 @@ public partial class CSharpBinder
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), binaryExpressionNode, expressionSecondary);
 	}
 	
-	public IExpressionNode CommaSeparatedMergeToken(
-		CommaSeparatedExpressionNode commaSeparatedExpressionNode, SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{
-		if (token.SyntaxKind == SyntaxKind.CommaToken)
-		{
-			if (!commaSeparatedExpressionNode.CloseParenthesisToken.ConstructorWasInvoked)
-			{
-				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, commaSeparatedExpressionNode));
-				return EmptyExpressionNode.Empty;
-			}
-		}
-		else if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-		{
-			return commaSeparatedExpressionNode;
-		}
-		
-		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), commaSeparatedExpressionNode, token);
-	}
-	
-	public IExpressionNode CommaSeparatedMergeExpression(
-		CommaSeparatedExpressionNode commaSeparatedExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{
-		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken || parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-		{
-			commaSeparatedExpressionNode.AddInnerExpressionNode(expressionSecondary);
-			return commaSeparatedExpressionNode;
-		}
-	
-		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), commaSeparatedExpressionNode, expressionSecondary);
-	}
-	
 	public IExpressionNode ConstructorInvocationMergeToken(
 		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
@@ -909,6 +874,8 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.SetCloseAngleBracketToken(token);
 				return constructorInvocationExpressionNode;
 			case SyntaxKind.OpenBraceToken:
+				// SkipObjectInitialization(compilationUnit, ref parserModel);
+				
 				var objectInitializationParametersListingNode = new ObjectInitializationParametersListingNode(
 					token,
 			        new List<ObjectInitializationParameterEntryNode>(),
@@ -1964,12 +1931,11 @@ public partial class CSharpBinder
     		if (token.SyntaxKind != SyntaxKind.IdentifierToken)
     			return lambdaExpressionNode;
     	
-    		var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+    		var variableDeclarationNode = new VariableDeclarationNode(
 		        TypeFacts.Empty.ToTypeClause(),
 		        token,
 		        VariableKind.Local,
-		        compilationUnit,
-		        ref parserModel);
+		        isInitialized: false);
 		        
     		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
     	}
@@ -2116,26 +2082,21 @@ public partial class CSharpBinder
 		// But, we can only add a "short circuit" for 'CloseBraceToken and lambdaExpressionNode'
 		// if we have seen the 'OpenBraceToken'.
 		
-		parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, lambdaExpressionNode));
-		
 		if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 		{
-			parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, lambdaExpressionNode));
 			OpenLambdaExpressionScope(lambdaExpressionNode, openBraceToken, compilationUnit, ref parserModel);
-			SkipLambdaExpressionStatements(lambdaExpressionNode, compilationUnit, ref parserModel);
+			return SkipLambdaExpressionStatements(lambdaExpressionNode, compilationUnit, ref parserModel);
 		}
 		else
 		{
+			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, lambdaExpressionNode));
 			OpenLambdaExpressionScope(lambdaExpressionNode, openBraceToken, compilationUnit, ref parserModel);
+			return EmptyExpressionNode.Empty;
 		}
-		
-		return EmptyExpressionNode.Empty;
 	}
 	
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		lambdaExpressionNode.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-		
 		compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	lambdaExpressionNode,
         	lambdaExpressionNode.GetReturnTypeClauseNode(),
@@ -2148,10 +2109,7 @@ public partial class CSharpBinder
 	
 	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		var closeBraceToken = new SyntaxToken(SyntaxKind.CloseBraceToken, parserModel.TokenWalker.Current.TextSpan);
-	
-		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-		
+		var closeBraceToken = new SyntaxToken(SyntaxKind.CloseBraceToken, parserModel.TokenWalker.Current.TextSpan);		
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
 	}
 	
@@ -2165,7 +2123,7 @@ public partial class CSharpBinder
 	///       preserve the other features of the text editor.
 	///       (rather than lambda expression statements clobbering the entire syntax highlighting of the file).
 	/// </summary>
-	public void SkipLambdaExpressionStatements(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public IExpressionNode SkipLambdaExpressionStatements(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
@@ -2214,7 +2172,61 @@ public partial class CSharpBinder
 					closeTokenIndex,
 					lambdaCodeBlockBuilder)
 			));
+			
+		return lambdaExpressionNode;
 	}
+	
+	/// <summary>
+	/// Turn off object initialization for a moment and see if any of the infinite loop exceptions get fixed.
+	///
+	/// Count of infinite loop heuristic exceptions.
+	/// =============
+	/// No Skip:   14
+	/// With Skip: 11
+	///
+	/// Conclusion
+	/// ==========
+	/// It is believed that the object initializations that contained lambda expressions with statement body
+	/// were no longer parsed and therefore did not cause an exception anymore.
+	///
+	/// The 'out' is suspicious.
+	/// </summary>
+	/*public void SkipObjectInitialization(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		#if DEBUG
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		#endif
+		
+		var openTokenIndex = parserModel.TokenWalker.Index;
+		var openBraceToken = parserModel.TokenWalker.Consume();
+    	
+    	var openBraceCounter = 1;
+		
+		while (true)
+		{
+			if (parserModel.TokenWalker.IsEof)
+				break;
+
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			{
+				++openBraceCounter;
+			}
+			else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+			{
+				if (--openBraceCounter <= 0)
+					break;
+			}
+
+			_ = parserModel.TokenWalker.Consume();
+		}
+		
+		var closeTokenIndex = parserModel.TokenWalker.Index;
+		var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+		
+		#if DEBUG
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		#endif
+	}*/
 	
 	public IExpressionNode ParseMemberAccessToken(IExpressionNode expressionPrimary, SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
@@ -2555,38 +2567,28 @@ public partial class CSharpBinder
 				{
 					ISyntax syntax;
 					
-					if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-						syntax = ((AmbiguousIdentifierExpressionNode)node).Token;
-					else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
-						syntax = ((TypeClauseNode)node).TypeIdentifierToken;
-					else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
-						syntax = ((VariableReferenceNode)node).VariableIdentifierToken;
-					else
-						return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, node);
-				
-					var variableDeclarationNode = new VariableDeclarationNode(
-				        TypeFacts.Empty.ToTypeClause(),
-				        UtilityApi.ConvertToIdentifierToken(syntax, compilationUnit, ref parserModel),
-				        VariableKind.Local,
-				        false);
-				        
-		    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
-				}
-			}
-		}
-		else if (ambiguousParenthesizedExpressionNode.NodeList is not null)
-		{
-			if (ambiguousParenthesizedExpressionNode.NodeList.Count >= 1)
-			{
-				foreach (var node in ambiguousParenthesizedExpressionNode.NodeList)
-				{
 					if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 					{
 						lambdaExpressionNode.AddVariableDeclarationNode((VariableDeclarationNode)node);
 					}
 					else
 					{
-						Console.WriteLine("aaa went else branch of -> if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)");
+						if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+							syntax = ((AmbiguousIdentifierExpressionNode)node).Token;
+						else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
+							syntax = ((TypeClauseNode)node).TypeIdentifierToken;
+						else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
+							syntax = ((VariableReferenceNode)node).VariableIdentifierToken;
+						else
+							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, node);
+					
+						var variableDeclarationNode = new VariableDeclarationNode(
+					        TypeFacts.Empty.ToTypeClause(),
+					        UtilityApi.ConvertToIdentifierToken(syntax, compilationUnit, ref parserModel),
+					        VariableKind.Local,
+					        false);
+					        
+			    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
 					}
 				}
 			}

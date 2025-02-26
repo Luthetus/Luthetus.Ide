@@ -7,12 +7,12 @@ public class JsonSyntaxUnit
 {
     public JsonSyntaxUnit(
         JsonDocumentSyntax jsonDocumentSyntax,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
         JsonDocumentSyntax = jsonDocumentSyntax;
-        DiagnosticBag = diagnosticBag;
+        DiagnosticList = diagnosticList;
     }
 
     public JsonDocumentSyntax JsonDocumentSyntax { get; }
-    public DiagnosticBag DiagnosticBag { get; }
+    public List<TextEditorDiagnostic> DiagnosticList { get; }
 }

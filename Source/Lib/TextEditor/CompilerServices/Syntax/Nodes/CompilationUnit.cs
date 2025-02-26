@@ -21,29 +21,22 @@ public sealed class CompilationUnit : ICompilationUnit, ISyntaxNode
         Lexer = lexer ?? new Lexer(ResourceUri.Empty, null, null);
         Parser = parser ?? new Parser(Lexer);
         Binder = binder ?? new Binder();
-
-        var diagnosticsListBuilder = new List<TextEditorDiagnostic>();
-
-        diagnosticsListBuilder.AddRange(Lexer.DiagnosticList);
-        diagnosticsListBuilder.AddRange(Parser.DiagnosticsList);
-        diagnosticsListBuilder.AddRange(Binder.DiagnosticsList);
-
-        DiagnosticsList = diagnosticsListBuilder;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public ISyntaxNode RootCodeBlockNode { get; }
     public ILexer Lexer { get; }
     public IParser Parser { get; }
     public IBinder Binder { get; }
-    public List<TextEditorDiagnostic> DiagnosticsList { get; init; }
+    public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
+    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

@@ -123,7 +123,7 @@ public class RazorSyntaxTree
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>
     public List<IHtmlSyntaxNode> ParseInjectedLanguageFragment(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         // current character is '@'
@@ -131,13 +131,13 @@ public class RazorSyntaxTree
 
         if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
         {
-            diagnosticBag.ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(
+            /*diagnosticBag.ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(
                 new TextEditorTextSpan(
                     stringWalker.PositionIndex,
                     stringWalker.PositionIndex + 1,
                     (byte)HtmlDecorationKind.None,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    stringWalker.SourceText));*/
 
             return new List<IHtmlSyntaxNode>();
         }
@@ -161,7 +161,7 @@ public class RazorSyntaxTree
             {
                 return ReadRazorKeyword(
                     stringWalker,
-                    diagnosticBag,
+                    diagnosticList,
                     injectedLanguageDefinition,
                     foundString);
             }
@@ -179,7 +179,7 @@ public class RazorSyntaxTree
             {
                 return ReadCSharpRazorKeyword(
                     stringWalker,
-                    diagnosticBag,
+                    diagnosticList,
                     injectedLanguageDefinition,
                     foundString);
             }
@@ -189,7 +189,7 @@ public class RazorSyntaxTree
         {
             return ReadComment(
                 stringWalker,
-                diagnosticBag,
+                diagnosticList,
                 injectedLanguageDefinition);
         }
 
@@ -197,7 +197,7 @@ public class RazorSyntaxTree
         {
             return ReadSingleLineTextOutputWithoutAddingHtmlElement(
                 stringWalker,
-                diagnosticBag,
+                diagnosticList,
                 injectedLanguageDefinition);
         }
 
@@ -205,7 +205,7 @@ public class RazorSyntaxTree
         {
             return ReadCodeBlock(
                 stringWalker,
-                diagnosticBag,
+                diagnosticList,
                 injectedLanguageDefinition,
                 false);
         }
@@ -213,13 +213,13 @@ public class RazorSyntaxTree
         // TODO: Check for invalid expressions
         return ReadInlineExpression(
             stringWalker,
-            diagnosticBag,
+            diagnosticList,
             injectedLanguageDefinition);
     }
 
     public void ParseTagName(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         TextEditorTextSpan textSpan)
     {
@@ -258,7 +258,7 @@ public class RazorSyntaxTree
 
     public static AttributeNameNode ParseAttributeName(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
@@ -287,7 +287,7 @@ public class RazorSyntaxTree
 
     public static AttributeValueNode ParseAttributeValue(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         throw new NotImplementedException();
@@ -296,7 +296,7 @@ public class RazorSyntaxTree
     /// <summary> The @code{...} section must be wrapped in an adhoc class definition so that Roslyn can syntax highlight methods. <br/><br/> The @{...} code blocks must be wrapped in an adhoc method.</summary>
     private List<IHtmlSyntaxNode> ReadCodeBlock(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         bool isClassLevelCodeBlock)
     {
@@ -338,7 +338,7 @@ public class RazorSyntaxTree
 
                     var tagSyntax = HtmlSyntaxTree.HtmlSyntaxTreeStateMachine.ParseTag(
                         stringWalker,
-                        diagnosticBag,
+                        diagnosticList,
                         injectedLanguageDefinition);
 
                     injectedLanguageFragmentSyntaxes.Add(tagSyntax);
@@ -383,7 +383,7 @@ public class RazorSyntaxTree
 
                     injectedLanguageFragmentSyntaxes.AddRange(ReadSingleLineTextOutputWithoutAddingHtmlElement(
                         stringWalker,
-                        diagnosticBag,
+                        diagnosticList,
                         injectedLanguageDefinition));
 
                     var necessaryWhitespacePadding =
@@ -461,27 +461,27 @@ public class RazorSyntaxTree
 
     private List<IHtmlSyntaxNode> ReadInlineExpression(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         if (stringWalker.CurrentCharacter == RazorFacts.EXPLICIT_EXPRESSION_START)
         {
             return ReadExplicitInlineExpression(
                 stringWalker,
-                diagnosticBag,
+                diagnosticList,
                 injectedLanguageDefinition);
         }
 
         return ReadImplicitInlineExpression(
             stringWalker,
-            diagnosticBag,
+            diagnosticList,
             injectedLanguageDefinition);
     }
 
     /// <summary>Example: @(myVariable)</summary>
     private List<IHtmlSyntaxNode> ReadExplicitInlineExpression(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -544,7 +544,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @myVariable</summary>
     private List<IHtmlSyntaxNode> ReadImplicitInlineExpression(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -580,7 +580,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @if (true) { ... } else { ... }</summary>
     private List<IHtmlSyntaxNode> ReadCSharpRazorKeyword(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string matchedOn)
     {
@@ -614,7 +614,7 @@ public class RazorSyntaxTree
 
                     if (!TryReadCodeBlock(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.DO_KEYWORD,
                             out var codeBlockTagSyntaxes) ||
@@ -627,7 +627,7 @@ public class RazorSyntaxTree
 
                     if (TryReadWhileOfDoWhile(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.DO_KEYWORD,
                             out var whileOfDoWhileTagSyntaxes) &&
@@ -647,7 +647,7 @@ public class RazorSyntaxTree
 
                     if (!TryReadExplicitInlineExpression(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.FOR_KEYWORD,
                             out var explicitExpressionTagSyntaxes) ||
@@ -660,7 +660,7 @@ public class RazorSyntaxTree
 
                     if (TryReadCodeBlock(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.FOR_KEYWORD,
                             out var codeBlockTagSyntaxes) &&
@@ -678,7 +678,7 @@ public class RazorSyntaxTree
 
                     if (!TryReadExplicitInlineExpression(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.FOREACH_KEYWORD,
                             out var explicitExpressionTagSyntaxes) ||
@@ -691,7 +691,7 @@ public class RazorSyntaxTree
 
                     if (TryReadCodeBlock(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.FOREACH_KEYWORD,
                             out var codeBlockTagSyntaxes) &&
@@ -709,7 +709,7 @@ public class RazorSyntaxTree
 
                     if (!TryReadExplicitInlineExpression(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.IF_KEYWORD,
                             out var explicitExpressionTagSyntaxes) ||
@@ -722,7 +722,7 @@ public class RazorSyntaxTree
 
                     if (TryReadCodeBlock(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.IF_KEYWORD,
                             out var codeBlockTagSyntaxes) &&
@@ -735,7 +735,7 @@ public class RazorSyntaxTree
 
                     while (TryReadElseIf(
                                stringWalker,
-                               diagnosticBag,
+                               diagnosticList,
                                injectedLanguageDefinition,
                                CSharpRazorKeywords.IF_KEYWORD,
                                out var elseIfTagSyntaxes) &&
@@ -753,7 +753,7 @@ public class RazorSyntaxTree
 
                     if (TryReadElse(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.IF_KEYWORD,
                             out var elseTagSyntaxes) &&
@@ -775,7 +775,7 @@ public class RazorSyntaxTree
 
                     if (!TryReadExplicitInlineExpression(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.SWITCH_KEYWORD,
                             out var explicitExpressionTagSyntaxes) ||
@@ -788,7 +788,7 @@ public class RazorSyntaxTree
 
                     if (TryReadCodeBlock(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.SWITCH_KEYWORD,
                             out var codeBlockTagSyntaxes) &&
@@ -814,7 +814,7 @@ public class RazorSyntaxTree
 
                     if (!TryReadExplicitInlineExpression(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.IF_KEYWORD,
                             out var explicitExpressionTagSyntaxes) ||
@@ -827,7 +827,7 @@ public class RazorSyntaxTree
 
                     if (TryReadCodeBlock(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             CSharpRazorKeywords.IF_KEYWORD,
                             out var codeBlockTagSyntaxes) &&
@@ -846,7 +846,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @page "/counter"</summary>
     private List<IHtmlSyntaxNode> ReadRazorKeyword(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string matchedOn)
     {
@@ -893,7 +893,7 @@ public class RazorSyntaxTree
 
                     if (TryReadCodeBlock(
                             stringWalker,
-                            diagnosticBag,
+                            diagnosticList,
                             injectedLanguageDefinition,
                             keywordText,
                             out var codeBlockTagSyntaxes) &&
@@ -919,7 +919,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @* This is a razor comment *@</summary>
     private List<IHtmlSyntaxNode> ReadComment(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -991,7 +991,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @* This is a razor comment *@</summary>
     private List<IHtmlSyntaxNode> ReadSingleLineTextOutputWithoutAddingHtmlElement(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -1029,7 +1029,7 @@ public class RazorSyntaxTree
 
     private bool TryReadCodeBlock(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1046,7 +1046,7 @@ public class RazorSyntaxTree
 
                 var codeBlockTagSyntaxes = ReadCodeBlock(
                     stringWalker,
-                    diagnosticBag,
+                    diagnosticList,
                     injectedLanguageDefinition,
                     isClassLevelCodeBlock);
 
@@ -1057,7 +1057,7 @@ public class RazorSyntaxTree
             if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
-            diagnosticBag.ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(
+            /*diagnosticBag.ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(
                 RazorFacts.TRANSITION_SUBSTRING,
                 keywordText,
                 new TextEditorTextSpan(
@@ -1065,7 +1065,7 @@ public class RazorSyntaxTree
                     stringWalker.PositionIndex + 1,
                     (byte)HtmlDecorationKind.None,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    stringWalker.SourceText));*/
 
             break;
         }
@@ -1076,7 +1076,7 @@ public class RazorSyntaxTree
 
     private bool TryReadExplicitInlineExpression(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1089,7 +1089,7 @@ public class RazorSyntaxTree
             {
                 var explicitExpressionTagSyntaxes = ReadExplicitInlineExpression(
                     stringWalker,
-                    diagnosticBag,
+                    diagnosticList,
                     injectedLanguageDefinition);
 
                 tagSyntaxes = explicitExpressionTagSyntaxes;
@@ -1099,7 +1099,7 @@ public class RazorSyntaxTree
             if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
                 continue;
 
-            diagnosticBag.ReportRazorExplicitExpressionPredicateWasExpected(
+            /*diagnosticBag.ReportRazorExplicitExpressionPredicateWasExpected(
                 RazorFacts.TRANSITION_SUBSTRING,
                 keywordText,
                 new TextEditorTextSpan(
@@ -1107,7 +1107,7 @@ public class RazorSyntaxTree
                     stringWalker.PositionIndex + 1,
                     (byte)HtmlDecorationKind.None,
                     stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    stringWalker.SourceText));*/
 
             break;
         }
@@ -1118,7 +1118,7 @@ public class RazorSyntaxTree
 
     private bool TryReadElseIf(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1154,7 +1154,7 @@ public class RazorSyntaxTree
 
                 if (!TryReadExplicitInlineExpression(
                         stringWalker,
-                        diagnosticBag,
+                        diagnosticList,
                         injectedLanguageDefinition,
                         CSharpRazorKeywords.IF_KEYWORD,
                         out var explicitExpressionTagSyntaxes) ||
@@ -1167,7 +1167,7 @@ public class RazorSyntaxTree
 
                 if (TryReadCodeBlock(
                         stringWalker,
-                        diagnosticBag,
+                        diagnosticList,
                         injectedLanguageDefinition,
                         CSharpRazorKeywords.ELSE_KEYWORD,
                         out var codeBlockTagSyntaxes) &&
@@ -1195,7 +1195,7 @@ public class RazorSyntaxTree
 
     private bool TryReadElse(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1228,7 +1228,7 @@ public class RazorSyntaxTree
 
                 if (TryReadCodeBlock(
                         stringWalker,
-                        diagnosticBag,
+                        diagnosticList,
                         injectedLanguageDefinition,
                         CSharpRazorKeywords.ELSE_KEYWORD,
                         out var codeBlockTagSyntaxes) &&
@@ -1253,7 +1253,7 @@ public class RazorSyntaxTree
 
     private bool TryReadWhileOfDoWhile(
         StringWalker stringWalker,
-        DiagnosticBag diagnosticBag,
+        List<TextEditorDiagnostic> diagnosticList,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1286,7 +1286,7 @@ public class RazorSyntaxTree
 
                 if (TryReadExplicitInlineExpression(
                         stringWalker,
-                        diagnosticBag,
+                        diagnosticList,
                         injectedLanguageDefinition,
                         CSharpRazorKeywords.ELSE_KEYWORD,
                         out var explicitExpressionTagSyntaxes) &&

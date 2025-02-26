@@ -15,27 +15,27 @@ public interface ICodeBlockOwner : ISyntaxNode
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	
-	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
-	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
+	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker);
+	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker);
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker);
 	
-	public static void ThrowMultipleScopeDelimiterException(DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
+	public static void ThrowMultipleScopeDelimiterException(List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
     	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
     	//
-    	diagnosticBag.ReportTodoException(
+    	/*diagnosticBag.ReportTodoException(
     		tokenWalker.Current.TextSpan,
-    		"Scope must be set by either OpenBraceToken and CloseBraceToken; or by StatementDelimiterToken, but not both.");
+    		"Scope must be set by either OpenBraceToken and CloseBraceToken; or by StatementDelimiterToken, but not both.");*/
 	}
 		
-	public static void ThrowAlreadyAssignedCodeBlockNodeException(DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
+	public static void ThrowAlreadyAssignedCodeBlockNodeException(List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
     	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
     	//
-    	diagnosticBag.ReportTodoException(
+    	/*diagnosticBag.ReportTodoException(
     		tokenWalker.Current.TextSpan,
-    		$"The {nameof(CodeBlockNode)} was already assigned.");
+    		$"The {nameof(CodeBlockNode)} was already assigned.");*/
 	}
 }

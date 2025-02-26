@@ -7,31 +7,31 @@ public class HtmlSyntaxUnit
 {
     public HtmlSyntaxUnit(
         TagNode rootTagSyntax,
-        DiagnosticBag diagnosticBag)
+        List<TextEditorDiagnostic> diagnosticList)
     {
-        DiagnosticBag = diagnosticBag;
         RootTagSyntax = rootTagSyntax;
+        DiagnosticList = diagnosticList;
     }
 
     public TagNode RootTagSyntax { get; }
-    public DiagnosticBag DiagnosticBag { get; }
+    public List<TextEditorDiagnostic> DiagnosticList { get; }
 
     public class HtmlSyntaxUnitBuilder
     {
-        public HtmlSyntaxUnitBuilder(TagNode rootTagSyntax, DiagnosticBag diagnosticBag)
+        public HtmlSyntaxUnitBuilder(TagNode rootTagSyntax, List<TextEditorDiagnostic> diagnosticList)
         {
             RootTagSyntax = rootTagSyntax;
-            DiagnosticBag = diagnosticBag;
+            DiagnosticList = diagnosticList;
         }
 
         public TagNode RootTagSyntax { get; }
-        public DiagnosticBag DiagnosticBag { get; }
+        public List<TextEditorDiagnostic> DiagnosticList { get; }
 
         public HtmlSyntaxUnit Build()
         {
             return new HtmlSyntaxUnit(
                 RootTagSyntax,
-                DiagnosticBag);
+                DiagnosticList);
         }
     }
 }

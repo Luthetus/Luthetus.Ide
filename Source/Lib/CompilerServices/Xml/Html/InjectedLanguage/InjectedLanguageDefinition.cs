@@ -10,10 +10,10 @@ public class InjectedLanguageDefinition
     public InjectedLanguageDefinition(
         string transitionSubstring,
         string transitionSubstringEscaped,
-        Func<StringWalker, DiagnosticBag, InjectedLanguageDefinition, List<IHtmlSyntaxNode>> parseInjectedLanguageFunc,
-        Action<StringWalker, DiagnosticBag, InjectedLanguageDefinition, TextEditorTextSpan>? parseTagName,
-        Func<StringWalker, DiagnosticBag, InjectedLanguageDefinition, AttributeNameNode>? parseAttributeName,
-        Func<StringWalker, DiagnosticBag, InjectedLanguageDefinition, AttributeValueNode>? parseAttributeValue)
+        Func<StringWalker, List<TextEditorDiagnostic>, InjectedLanguageDefinition, List<IHtmlSyntaxNode>> parseInjectedLanguageFunc,
+        Action<StringWalker, List<TextEditorDiagnostic>, InjectedLanguageDefinition, TextEditorTextSpan>? parseTagName,
+        Func<StringWalker, List<TextEditorDiagnostic>, InjectedLanguageDefinition, AttributeNameNode>? parseAttributeName,
+        Func<StringWalker, List<TextEditorDiagnostic>, InjectedLanguageDefinition, AttributeValueNode>? parseAttributeValue)
     {
         TransitionSubstring = transitionSubstring;
         TransitionSubstringEscaped = transitionSubstringEscaped;
@@ -28,17 +28,17 @@ public class InjectedLanguageDefinition
     /// <summary> If <see cref="TransitionSubstring"/> is found then a peek is done to ensure the upcoming text is not equal to <see cref="TransitionSubstringEscaped"/>. <br/><br/> Should both <see cref="TransitionSubstring"/> and <see cref="TransitionSubstringEscaped"/> be found, then the injected language Lexer will NOT be invoked.</summary>
     public string TransitionSubstringEscaped { get; set; }
 
-    public Func<StringWalker, DiagnosticBag, InjectedLanguageDefinition, List<IHtmlSyntaxNode>>
+    public Func<StringWalker, List<TextEditorDiagnostic>, InjectedLanguageDefinition, List<IHtmlSyntaxNode>>
         ParseInjectedLanguageFunc
     { get; }
 
-    public Action<StringWalker, DiagnosticBag, InjectedLanguageDefinition, TextEditorTextSpan>? ParseTagName { get; }
+    public Action<StringWalker, List<TextEditorDiagnostic>, InjectedLanguageDefinition, TextEditorTextSpan>? ParseTagName { get; }
 
-    public Func<StringWalker, DiagnosticBag, InjectedLanguageDefinition, AttributeNameNode>?
+    public Func<StringWalker, List<TextEditorDiagnostic>, InjectedLanguageDefinition, AttributeNameNode>?
         ParseAttributeName
     { get; }
 
-    public Func<StringWalker, DiagnosticBag, InjectedLanguageDefinition, AttributeValueNode>?
+    public Func<StringWalker, List<TextEditorDiagnostic>, InjectedLanguageDefinition, AttributeValueNode>?
         ParseAttributeValue
     { get; }
 }

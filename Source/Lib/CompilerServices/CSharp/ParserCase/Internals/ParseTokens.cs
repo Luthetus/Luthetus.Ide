@@ -110,7 +110,7 @@ public static class ParseTokens
 				parserModel.StatementBuilder.ChildList.Add(expressionNode);
 				return;
 			default:
-				parserModel.DiagnosticBag.ReportTodoException(parserModel.TokenWalker.Current.TextSpan, $"nameof(ParseIdentifierToken) default case");
+				// compilationUnit.DiagnosticBag.ReportTodoException(parserModel.TokenWalker.Current.TextSpan, $"nameof(ParseIdentifierToken) default case");
 				return;
 		}
     }
@@ -263,7 +263,7 @@ public static class ParseTokens
     public static void ParseColonToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var colonToken = parserModel.TokenWalker.Consume();
-        parserModel.DiagnosticBag.ReportTodoException(colonToken.TextSpan, "Colon is in unexpected place.");
+        // compilationUnit.DiagnosticBag.ReportTodoException(colonToken.TextSpan, "Colon is in unexpected place.");
     }
 
 	/// <summary>
@@ -272,11 +272,7 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseOpenBraceToken(SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-		// Lambda expression's are done via the expression loop, then use custom deferred parsing.
-		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.LambdaExpressionNode)
-			return;
-		
-    	if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
+		if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
     		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan is not null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
@@ -307,7 +303,7 @@ public static class ParseTokens
 		
 		// This has to come after the 'DeferParsingOfChildScope(...)'
 		// or it makes an ArbitraryCodeBlockNode when it comes back around.
-		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, compilationUnit.__DiagnosticList, parserModel.TokenWalker);
     }
 
 	/// <summary>
@@ -336,8 +332,8 @@ public static class ParseTokens
 		}
 
 		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-		
+			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, compilationUnit.__DiagnosticList, parserModel.TokenWalker);
+        
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
     }
 
@@ -409,9 +405,9 @@ public static class ParseTokens
     
     	if (parserModel.StatementBuilder.ChildList.Count != 0)
     	{
-    		parserModel.DiagnosticBag.ReportTodoException(
+    		/*compilationUnit.DiagnosticBag.ReportTodoException(
 	    		openSquareBracketToken.TextSpan,
-	    		$"Unexpected '{nameof(SyntaxKind.OpenSquareBracketToken)}'");
+	    		$"Unexpected '{nameof(SyntaxKind.OpenSquareBracketToken)}'");*/
 	    	return;
 	    }
     	var openSquareBracketCounter = 1;
@@ -497,7 +493,7 @@ public static class ParseTokens
             ICodeBlockOwner nextCodeBlockOwner = namespaceStatementNode;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
             
-            namespaceStatementNode.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
+            namespaceStatementNode.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, compilationUnit.__DiagnosticList, parserModel.TokenWalker);
 
             compilationUnit.Binder.AddNamespaceToCurrentScope(
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
@@ -508,7 +504,7 @@ public static class ParseTokens
         	while (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
         		   parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
         	{
-        		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
+        		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, compilationUnit.__DiagnosticList, parserModel.TokenWalker);
 	        	compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
         	}
         }
@@ -896,7 +892,7 @@ public static class ParseTokens
                 ParseContextualKeywords.HandleUnrecognizedTokenContextualKeyword(compilationUnit, ref parserModel);
                 break;
             default:
-            	parserModel.DiagnosticBag.ReportTodoException(parserModel.TokenWalker.Current.TextSpan, $"Implement the {parserModel.TokenWalker.Current.SyntaxKind.ToString()} contextual keyword.");
+            	// compilationUnit.DiagnosticBag.ReportTodoException(parserModel.TokenWalker.Current.TextSpan, $"Implement the {parserModel.TokenWalker.Current.SyntaxKind.ToString()} contextual keyword.");
             	break;
         }
     }

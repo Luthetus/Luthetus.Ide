@@ -8,4 +8,6 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 public interface ICompilationUnit
 {
 	public ISyntaxNode RootCodeBlockNode { get; }
+	public List<TextEditorDiagnostic> __DiagnosticList { get; }
+    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList { get; }
 }

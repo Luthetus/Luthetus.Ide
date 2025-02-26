@@ -19,7 +19,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
     {
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
     
     public SyntaxToken OpenParenthesisToken { get; }
@@ -46,7 +46,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
     	return this;
     }
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

@@ -17,7 +17,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
         IsInitialized = isInitialized;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 	
     public TypeClauseNode TypeClauseNode { get; private set; }
@@ -56,7 +56,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     	return this;
     }
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

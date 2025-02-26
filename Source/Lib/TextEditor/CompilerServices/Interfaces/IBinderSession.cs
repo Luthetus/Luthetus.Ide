@@ -32,7 +32,6 @@ public interface IBinderSession
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     
-    public DiagnosticBag DiagnosticBag { get; }
     public List<IScope> ScopeList { get; }
     /// <summary>
     /// Key is the name of the type, prefixed with the ScopeKey and '_' to separate the ScopeKey from the type.

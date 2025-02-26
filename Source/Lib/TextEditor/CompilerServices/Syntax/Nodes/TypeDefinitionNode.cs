@@ -30,7 +30,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         InheritedTypeClauseNode = inheritedTypeClauseNode;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private ISyntaxNode[] _memberList = Array.Empty<ISyntaxNode>();
 	private bool _childListIsDirty = true;
 	private bool _memberListIsDirty = true;
@@ -118,10 +118,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return null;
     }
     
-	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
+	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		if (OpenCodeBlockTextSpan is not null)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
 	
 		OpenCodeBlockTextSpan = openCodeBlockTextSpan;
     	
@@ -129,10 +129,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return this;
 	}
 	
-	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
+	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		if (CloseCodeBlockTextSpan is not null)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
 	
 		CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
     	
@@ -140,10 +140,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return this;
 	}
 	
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		if (CodeBlockNode is not null)
-			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticBag, tokenWalker);
+			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
 	
 		CodeBlockNode = codeBlockNode;
     	
@@ -170,7 +170,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return this;
     }
     
-    public ISyntax[] GetChildList()
+    public IReadOnlyList<ISyntax> GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;

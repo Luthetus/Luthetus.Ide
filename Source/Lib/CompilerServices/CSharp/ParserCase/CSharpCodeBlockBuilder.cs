@@ -75,9 +75,4 @@ public class CSharpCodeBlockBuilder
     {
         return new CodeBlockNode(ChildList.ToArray());
     }
-
-    public CodeBlockNode Build(TextEditorDiagnostic[] diagnostics)
-    {
-        return new CodeBlockNode(ChildList.ToArray(), diagnostics);
-    }
 }

@@ -47,7 +47,6 @@ public partial class CSharpBinder : IBinder
     public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
-    public TextEditorDiagnostic[] DiagnosticsList => Array.Empty<TextEditorDiagnostic>();
     
     Symbol[] IBinder.SymbolsList => Symbols;
     
@@ -157,9 +156,10 @@ public partial class CSharpBinder : IBinder
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            compilationUnit.BinderSession.DiagnosticBag.ReportAlreadyDefinedFunction(
+            /*DiagnosticHelper.ReportAlreadyDefinedFunction(
+            	compilationUnit.__DiagnosticList,
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
-                functionIdentifierText);
+                functionIdentifierText);*/
         }
     }
 
@@ -239,9 +239,10 @@ public partial class CSharpBinder : IBinder
                 	variableDeclarationNode);
             }
 
-            compilationUnit.BinderSession.DiagnosticBag.ReportAlreadyDefinedVariable(
+            /*DiagnosticHelper.ReportAlreadyDefinedVariable(
+            	compilationUnit.__DiagnosticList,
                 variableDeclarationNode.IdentifierToken.TextSpan,
-                text);
+                text);*/
         }
         else
         {
@@ -307,9 +308,9 @@ public partial class CSharpBinder : IBinder
                 variableIdentifierToken,
                 variableDeclarationNode);
 
-            compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
+            /*compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
                 variableIdentifierToken.TextSpan,
-                text);
+                text);*/
         }
 
         CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
@@ -341,15 +342,15 @@ public partial class CSharpBinder : IBinder
         {
             if (UtilityApi.IsContextualKeywordSyntaxKind(text))
             {
-                compilationUnit.BinderSession.DiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
+                /*compilationUnit.BinderSession.DiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                    text);
+                    text);*/
             }
             else
             {
-                compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
+                /*compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                    text);
+                    text);*/
             }
         }
 
@@ -400,9 +401,9 @@ public partial class CSharpBinder : IBinder
         }
         else
         {
-            compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedFunction(
+            /*compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedFunction(
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
-                functionInvocationIdentifierText);
+                functionInvocationIdentifierText);*/
         }
     }
 
@@ -520,7 +521,9 @@ public partial class CSharpBinder : IBinder
         ref CSharpParserModel parserModel)
     {
         /*#if DEBUG
-    	Console.Write($"NewSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------NewSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------NewSBin: has console.write... that needs commented out");
     	#endif*/
     
     	if (codeBlockOwner.ScopeIndexKey is not null)
@@ -550,7 +553,9 @@ public partial class CSharpBinder : IBinder
         compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserModel);
         
         /*#if DEBUG
-    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------NewSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------NewSBout: has console.write... that needs commented out");
     	#endif*/
     }
     
@@ -596,7 +601,9 @@ public partial class CSharpBinder : IBinder
     	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	/*#if DEBUG
-    	Console.Write($"SetSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------SetSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------SetSBin: has console.write... that needs commented out");
     	#endif*/
     
     	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
@@ -606,7 +613,9 @@ public partial class CSharpBinder : IBinder
 		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
 		
 		/*#if DEBUG
-    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------SetSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------SetSBout: has console.write... that needs commented out");
     	#endif*/
     }
 
@@ -644,7 +653,9 @@ public partial class CSharpBinder : IBinder
         ref CSharpParserModel parserModel)
     {
     	/*#if DEBUG
-    	Console.Write($"{nameof(CloseScope)}: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------{nameof(CloseScope)}in: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------{nameof(CloseScope)}in: has console.write... that needs commented out");
     	#endif*/
     
     	// Check if it is the global scope, if so return early.
@@ -673,7 +684,7 @@ public partial class CSharpBinder : IBinder
     	// Update CodeBlockOwner
     	if (inOwner is not null)
     	{
-	        inOwner.SetCodeBlockNode(inBuilder.Build(), parserModel.DiagnosticBag, parserModel.TokenWalker);
+	        inOwner.SetCodeBlockNode(inBuilder.Build(), compilationUnit.__DiagnosticList, parserModel.TokenWalker);
 			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 				compilationUnit.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit);
@@ -687,7 +698,8 @@ public partial class CSharpBinder : IBinder
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
-					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode &&
+					inOwner.SyntaxKind != SyntaxKind.LambdaExpressionNode)
 				{
 					outBuilder.ChildList.Add(inOwner);
 				}
@@ -695,7 +707,9 @@ public partial class CSharpBinder : IBinder
 		}
 		
 		/*#if DEBUG
-    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"-------{nameof(CloseScope)}out: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#else
+    	Console.WriteLine($"-------{nameof(CloseScope)}out: has console.write... that needs commented out");
     	#endif*/
     }
 
