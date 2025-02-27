@@ -1594,8 +1594,6 @@ public partial class CSharpBinder : IBinder
         	}
         }
         
-        Console.WriteLine($"possibleNodeList.Count: {possibleNodeList.Count}");
-        
         if (possibleNodeList.Count <= 0)
         {
         	if (fallbackDefinitionNode is not null)
@@ -1623,7 +1621,7 @@ public partial class CSharpBinder : IBinder
         	return null;
         }
         	
-        return possibleNodeList.MinBy(node =>
+        var closestNode = possibleNodeList.MinBy(node =>
         {
         	// TODO: Wasteful re-invocation of this method, can probably do this in one invocation.
         	var nodePositionIndices = GetNodePositionIndices(node);
@@ -1632,6 +1630,34 @@ public partial class CSharpBinder : IBinder
         	
         	return positionIndex - nodePositionIndices.StartInclusiveIndex;
         });
+        
+        if (closestNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+        	return GetChildNodeOrSelfByPositionIndex(closestNode, positionIndex);
+        
+        return closestNode;
+    }
+    
+    public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, int positionIndex)
+    {
+    	switch (node.SyntaxKind)
+    	{
+    		case SyntaxKind.VariableDeclarationNode:
+    		
+    			var variableDeclarationNode = (VariableDeclarationNode)node;
+    		
+    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
+    			{
+    				if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
+        				variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex)
+        			{
+        				return variableDeclarationNode.TypeClauseNode;
+        			}
+    			}
+    			
+    			goto default;
+    		default:
+    			return node;
+    	}
     }
     
     /// <summary>

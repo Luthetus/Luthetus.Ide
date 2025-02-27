@@ -15,6 +15,7 @@ public class Binder : IBinder
     public TextEditorDiagnostic[] DiagnosticsList { get; } = Array.Empty<TextEditorDiagnostic>();
     public Symbol[] SymbolsList { get; } = Array.Empty<Symbol>();
     public IReadOnlyDictionary<ResourceUri, List<IScope>> ScopeList { get; } = new Dictionary<ResourceUri, List<IScope>>();
+    public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions { get; } = new Dictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode>();
 
     public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {

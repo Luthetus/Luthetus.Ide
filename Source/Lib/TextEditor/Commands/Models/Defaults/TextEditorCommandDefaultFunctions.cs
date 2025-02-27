@@ -15,6 +15,8 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -918,20 +920,53 @@ public class TextEditorCommandDefaultFunctions
 		}
 		else
 		{
-			menuOptionList.Add(new MenuOptionRecord(
-				"syntaxNode was NOT null",
-				MenuOptionKind.Other,
-				onClickFunc: async () => {}));
+			if (syntaxNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+			{
+				var allTypeDefinitions = compilerService.Binder.AllTypeDefinitions;
+				
+				var typeClauseNode = (TypeClauseNode)syntaxNode;
+				
+				var typeDefinitionList = allTypeDefinitions.Where(x =>
+						x.Key.TypeIdentifier == typeClauseNode.TypeIdentifierToken.TextSpan.GetText())
+					.Take(5)
+					.ToList();
+				
+				if (typeDefinitionList.Count == 0)
+				{
+					menuOptionList.Add(new MenuOptionRecord(
+						"type not found",
+						MenuOptionKind.Other,
+						onClickFunc: async () => {}));
+				}
+				else
+				{
+					foreach (var typeDefinition in typeDefinitionList)
+					{
+						var usingStatementText = $"using {typeDefinition.Key.NamespaceIdentifier};";
+						
+						menuOptionList.Add(new MenuOptionRecord(
+							$"Copy: {usingStatementText}",
+							MenuOptionKind.Other,
+							onClickFunc: async () =>
+							{
+								var clipboardService = commandArgs.ServiceProvider.GetRequiredService<IClipboardService>();
+								await clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
+							}));
+					}
+				}
+			}
+			else
+			{
+				menuOptionList.Add(new MenuOptionRecord(
+					syntaxNode.SyntaxKind.ToString(),
+					MenuOptionKind.Other,
+					onClickFunc: async () => {}));
+			}
 			/*
 			
 			// The ISyntaxNode.Parent property is being removed. (2024-11-11)
 	    	// ==============================================================
 	    	// TODO: Rewrite this block of code but find the parent node by "querying" the Binder.
-			
-			menuOptionList.Add(new MenuOptionRecord(
-				syntaxNode.SyntaxKind.ToString(),
-				MenuOptionKind.Other,
-				OnClickFunc: async () => {}));
 				
 			if (syntaxNode.SyntaxKind == SyntaxKind.PropertyDefinitionNode)
 			{
