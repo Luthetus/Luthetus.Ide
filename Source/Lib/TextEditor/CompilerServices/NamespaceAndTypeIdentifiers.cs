@@ -1,4 +1,4 @@
-namespace Luthetus.CompilerServices.CSharp.BinderCase;
+namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public record struct NamespaceAndTypeIdentifiers(string NamespaceIdentifier, string TypeIdentifier)
 {

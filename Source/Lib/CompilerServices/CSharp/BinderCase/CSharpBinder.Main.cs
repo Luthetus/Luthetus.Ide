@@ -446,6 +446,28 @@ public partial class CSharpBinder : IBinder
         {
         	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
         }
+        else
+        {
+        	if (TryGetTypeDefinitionHierarchically(
+	        		compilationUnit,
+	                compilationUnit.BinderSession.ResourceUri,
+	                compilationUnit.BinderSession.CurrentScopeIndexKey,
+	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
+	                out var typeDefinitionNode) &&
+	            typeDefinitionNode is not null)
+	        {
+	            return;
+	        }
+	        else
+	        {
+	            // TODO: Diagnostics need to take the syntax token...
+	        	// ...so they can lazily invoke TextSpan.GetText().
+	        	DiagnosticHelper.ReportUndefinedTypeOrNamespace(
+	            	compilationUnit.__DiagnosticList,
+	                typeClauseNode.TypeIdentifierToken.TextSpan,
+	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	        }
+        }
     }
 
     public void BindTypeIdentifier(
@@ -1560,7 +1582,7 @@ public partial class CSharpBinder : IBinder
     		{
     			fallbackDefinitionNode = node;
     		}
-        
+        	
         	var nodePositionIndices = GetNodePositionIndices(node);
         	if (nodePositionIndices == (-1, -1))
         		continue;
@@ -1599,7 +1621,7 @@ public partial class CSharpBinder : IBinder
         	return null;
         }
         	
-        return possibleNodeList.MinBy(node =>
+        var closestNode = possibleNodeList.MinBy(node =>
         {
         	// TODO: Wasteful re-invocation of this method, can probably do this in one invocation.
         	var nodePositionIndices = GetNodePositionIndices(node);
@@ -1608,6 +1630,34 @@ public partial class CSharpBinder : IBinder
         	
         	return positionIndex - nodePositionIndices.StartInclusiveIndex;
         });
+        
+        if (closestNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+        	return GetChildNodeOrSelfByPositionIndex(closestNode, positionIndex);
+        
+        return closestNode;
+    }
+    
+    public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, int positionIndex)
+    {
+    	switch (node.SyntaxKind)
+    	{
+    		case SyntaxKind.VariableDeclarationNode:
+    		
+    			var variableDeclarationNode = (VariableDeclarationNode)node;
+    		
+    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
+    			{
+    				if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
+        				variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex)
+        			{
+        				return variableDeclarationNode.TypeClauseNode;
+        			}
+    			}
+    			
+    			goto default;
+    		default:
+    			return node;
+    	}
     }
     
     /// <summary>
@@ -1738,8 +1788,23 @@ public partial class CSharpBinder : IBinder
     		{
     			var variableDeclarationNode = (VariableDeclarationNode)syntaxNode;
     			
+    			int? startingIndexInclusive = null;
+    			int? endingIndexExclusive = null;
+    			
+    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
+    			{
+    				startingIndexInclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+    				endingIndexExclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive;
+    			}
+    			
     			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
-    				return (variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive, variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive);
+    			{
+    				startingIndexInclusive ??= variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+    				endingIndexExclusive = variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive;
+    			}
+    			
+    			if (startingIndexInclusive is not null && endingIndexExclusive is not null)
+    				return (startingIndexInclusive.Value, endingIndexExclusive.Value);
     			
     			goto default;
     		}
