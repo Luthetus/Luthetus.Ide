@@ -446,6 +446,28 @@ public partial class CSharpBinder : IBinder
         {
         	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
         }
+        else
+        {
+        	if (TryGetTypeDefinitionHierarchically(
+	        		compilationUnit,
+	                compilationUnit.BinderSession.ResourceUri,
+	                compilationUnit.BinderSession.CurrentScopeIndexKey,
+	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
+	                out var typeDefinitionNode) &&
+	            typeDefinitionNode is not null)
+	        {
+	            return;
+	        }
+	        else
+	        {
+	            // TODO: Diagnostics need to take the syntax token...
+	        	// ...so they can lazily invoke TextSpan.GetText().
+	        	DiagnosticHelper.ReportUndefinedTypeOrNamespace(
+	            	compilationUnit.__DiagnosticList,
+	                typeClauseNode.TypeIdentifierToken.TextSpan,
+	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	        }
+        }
     }
 
     public void BindTypeIdentifier(
@@ -1560,7 +1582,7 @@ public partial class CSharpBinder : IBinder
     		{
     			fallbackDefinitionNode = node;
     		}
-        
+        	
         	var nodePositionIndices = GetNodePositionIndices(node);
         	if (nodePositionIndices == (-1, -1))
         		continue;
@@ -1571,6 +1593,8 @@ public partial class CSharpBinder : IBinder
         		possibleNodeList.Add(node);
         	}
         }
+        
+        Console.WriteLine($"possibleNodeList.Count: {possibleNodeList.Count}");
         
         if (possibleNodeList.Count <= 0)
         {
@@ -1738,8 +1762,23 @@ public partial class CSharpBinder : IBinder
     		{
     			var variableDeclarationNode = (VariableDeclarationNode)syntaxNode;
     			
+    			int? startingIndexInclusive = null;
+    			int? endingIndexExclusive = null;
+    			
+    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
+    			{
+    				startingIndexInclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+    				endingIndexExclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive;
+    			}
+    			
     			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
-    				return (variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive, variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive);
+    			{
+    				startingIndexInclusive ??= variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+    				endingIndexExclusive = variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive;
+    			}
+    			
+    			if (startingIndexInclusive is not null && endingIndexExclusive is not null)
+    				return (startingIndexInclusive.Value, endingIndexExclusive.Value);
     			
     			goto default;
     		}

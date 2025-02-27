@@ -918,6 +918,10 @@ public class TextEditorCommandDefaultFunctions
 		}
 		else
 		{
+			menuOptionList.Add(new MenuOptionRecord(
+				"syntaxNode was NOT null",
+				MenuOptionKind.Other,
+				onClickFunc: async () => {}));
 			/*
 			
 			// The ISyntaxNode.Parent property is being removed. (2024-11-11)
