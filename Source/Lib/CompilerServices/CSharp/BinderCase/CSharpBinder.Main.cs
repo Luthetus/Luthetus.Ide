@@ -526,6 +526,61 @@ public partial class CSharpBinder : IBinder
             innerTokens,
             closeSquareBracketToken);
     }
+    
+    public void BindTypeDefinitionNode(
+        TypeDefinitionNode typeDefinitionNode,
+        CSharpCompilationUnit compilationUnit,
+        bool shouldOverwrite = false)
+    {
+        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
+        var currentNamespaceStatementText = compilationUnit.BinderSession.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
+
+        typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
+        
+        if (TryGetTypeDefinitionNodeByScope(
+        		compilationUnit,
+        		compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+        		typeIdentifierText,
+        		out var existingTypeDefinitionNode))
+        {
+        	if (shouldOverwrite || existingTypeDefinitionNode.IsFabricated)
+        	{
+        		SetTypeDefinitionNodeByScope(
+        			compilationUnit,
+        			compilationUnit.BinderSession.ResourceUri,
+	        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+	        		typeIdentifierText,
+	        		typeDefinitionNode);
+        	}
+        	else
+        	{
+        		DiagnosticHelper.ReportAlreadyDefinedType(
+	            	compilationUnit.__DiagnosticList,
+	                typeDefinitionNode.TypeIdentifierToken.TextSpan,
+	                typeIdentifierText);
+        	}
+        }
+        else
+        {
+        	_ = TryAddTypeDefinitionNodeByScope(
+        		compilationUnit,
+    			compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+        		typeIdentifierText,
+        		typeDefinitionNode);
+        }
+
+        var success = _allTypeDefinitions.TryAdd(namespaceAndTypeIdentifiers, typeDefinitionNode);
+        if (!success)
+        {
+        	var entryFromAllTypeDefinitions = _allTypeDefinitions[namespaceAndTypeIdentifiers];
+        	
+        	if (shouldOverwrite || entryFromAllTypeDefinitions.IsFabricated)
+        		_allTypeDefinitions[namespaceAndTypeIdentifiers] = typeDefinitionNode;
+        }
+    }
 
 	/// <summary>
 	/// If the 'codeBlockBuilder.ScopeIndexKey' is null then a scope will be instantiated
@@ -733,54 +788,6 @@ public partial class CSharpBinder : IBinder
     	#else
     	Console.WriteLine($"-------{nameof(CloseScope)}out: has console.write... that needs commented out");
     	#endif*/
-    }
-
-    public void BindTypeDefinitionNode(
-        TypeDefinitionNode typeDefinitionNode,
-        CSharpCompilationUnit compilationUnit,
-        bool shouldOverwrite = false)
-    {
-        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
-        var currentNamespaceStatementText = compilationUnit.BinderSession.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
-        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
-
-        typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
-        
-        if (TryGetTypeDefinitionNodeByScope(
-        		compilationUnit,
-        		compilationUnit.BinderSession.ResourceUri,
-        		compilationUnit.BinderSession.CurrentScopeIndexKey,
-        		typeIdentifierText,
-        		out var existingTypeDefinitionNode))
-        {
-        	if (shouldOverwrite || existingTypeDefinitionNode.IsFabricated)
-        	{
-        		SetTypeDefinitionNodeByScope(
-        			compilationUnit,
-        			compilationUnit.BinderSession.ResourceUri,
-	        		compilationUnit.BinderSession.CurrentScopeIndexKey,
-	        		typeIdentifierText,
-	        		typeDefinitionNode);
-        	}
-        }
-        else
-        {
-        	_ = TryAddTypeDefinitionNodeByScope(
-        		compilationUnit,
-    			compilationUnit.BinderSession.ResourceUri,
-        		compilationUnit.BinderSession.CurrentScopeIndexKey,
-        		typeIdentifierText,
-        		typeDefinitionNode);
-        }
-
-        var success = _allTypeDefinitions.TryAdd(namespaceAndTypeIdentifiers, typeDefinitionNode);
-        if (!success)
-        {
-        	var entryFromAllTypeDefinitions = _allTypeDefinitions[namespaceAndTypeIdentifiers];
-        	
-        	if (shouldOverwrite || entryFromAllTypeDefinitions.IsFabricated)
-        		_allTypeDefinitions[namespaceAndTypeIdentifiers] = typeDefinitionNode;
-        }
     }
 
     /// <summary>This method will handle the <see cref="SymbolDefinition"/>, but also invoke <see cref="AddSymbolReference"/> because each definition is being treated as a reference itself.</summary>
@@ -1830,47 +1837,45 @@ public partial class CSharpBinder : IBinder
     
     public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+    	switch (codeBlockOwner.SyntaxKind)
     	{
-    		var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
-        	compilationUnit.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit);
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-    	{
-    		var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
-    		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-	    	{
-	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
-	    	}
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.ForeachStatementNode)
-    	{
-    		var foreachStatementNode = (ForeachStatementNode)codeBlockOwner;
-    		compilationUnit.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, compilationUnit);
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
-    	{
-    		var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
-    		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-			{
-				compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
-			}
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.LambdaExpressionNode)
-    	{
-    		var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
-    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
-	    	{
-	    		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
-	    	}
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.TryStatementCatchNode)
-    	{
-    		var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
+    		case SyntaxKind.NamespaceStatementNode:
+    			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
+	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
+	        	compilationUnit.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit);
+	        	return;
+	        case SyntaxKind.FunctionDefinitionNode:
+	        	var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
+	    		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+		    	{
+		    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+		    	}
+		    	return;
+		    case SyntaxKind.ForeachStatementNode:
+		    	var foreachStatementNode = (ForeachStatementNode)codeBlockOwner;
+    			compilationUnit.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, compilationUnit);
+    			return;
+    		case SyntaxKind.ConstructorDefinitionNode:
+    			var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
+	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+				{
+					compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+				}
+		    	return;
+			case SyntaxKind.LambdaExpressionNode:
+				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
+	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
+		    	{
+		    		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+		    	}
+		    	return;
+		    case SyntaxKind.TryStatementCatchNode:
+		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
     		
-    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
-	    		compilationUnit.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit);
+	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
+		    		compilationUnit.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit);
+		    		
+		    	return;
     	}
     }
 }
