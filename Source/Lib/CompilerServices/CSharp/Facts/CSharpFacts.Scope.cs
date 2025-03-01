@@ -39,7 +39,7 @@ public partial class CSharpFacts
 				indexKey: 0,
 			    parentIndexKey: -1,
 			    0,
-			    endingIndexExclusive: null);
+			    endingIndexExclusive: -1);
         }
     }
 }

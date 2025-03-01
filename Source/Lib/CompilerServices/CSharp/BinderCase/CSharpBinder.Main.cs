@@ -616,7 +616,7 @@ public partial class CSharpBinder : IBinder
         	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
 		    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
 		    textSpan.StartingIndexInclusive,
-		    endingIndexExclusive: null);
+		    endingIndexExclusive: -1);
 
         compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
         compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
@@ -661,7 +661,7 @@ public partial class CSharpBinder : IBinder
         	indexKey: 0,
 		    parentIndexKey: -1,
 		    textSpan.StartingIndexInclusive,
-		    endingIndexExclusive: null);
+		    endingIndexExclusive: -1);
 
         compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
         compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
@@ -1086,8 +1086,8 @@ public partial class CSharpBinder : IBinder
         var possibleScopes = scopeList.Where(x =>
         {
             return x.StartingIndexInclusive <= positionIndex &&
-            	   // Global Scope awkwardly has a null ending index exclusive (2023-10-15)
-                   (x.EndingIndexExclusive >= positionIndex || x.EndingIndexExclusive is null);
+            	   // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
+                   (x.EndingIndexExclusive >= positionIndex || x.EndingIndexExclusive == -1);
         });
 
 		if (!possibleScopes.Any())

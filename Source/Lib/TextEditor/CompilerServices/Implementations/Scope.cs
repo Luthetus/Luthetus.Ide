@@ -5,12 +5,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 public struct Scope
 {
+	/// <summary>Use '-1' to represent a null int.</summary>
 	public Scope(
 		ICodeBlockOwner codeBlockOwner,
 		int indexKey,
 	    int parentIndexKey,
 	    int startingIndexInclusive,
-	    int? endingIndexExclusive)
+	    int endingIndexExclusive)
 	{
 		CodeBlockOwner = codeBlockOwner;
 		IndexKey = indexKey;
@@ -48,6 +49,8 @@ public struct Scope
 	/// </summary>
 	public ICodeBlockOwner CodeBlockOwner { get; }
 	/// <summary>
+	/// Use '-1' to represent a null int.
+	/// 
 	/// All scopes in a file are stored in a flat list, grouped by the ResourceUri they were found in.
 	/// Everytime a scope is instantiated, it gets an incrementing counter as its IndexKey
 	/// (which is equal to the index it was inserted at... 'list.Count').
@@ -91,5 +94,5 @@ public struct Scope
     /// as a hack to set the ending index later on in this
     /// type's lifecycle because it isn't immediately known.
     /// </summary>
-    public int? EndingIndexExclusive { get; set; }
+    public int EndingIndexExclusive { get; set; }
 }
