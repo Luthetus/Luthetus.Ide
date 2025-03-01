@@ -8,6 +8,7 @@ public class TokenWalker
 {
     private int _index;
 	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
+	private Stack<(int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)>? _deferredParsingTupleStack;
 
     public TokenWalker(List<SyntaxToken> tokenList)
     {
@@ -61,10 +62,17 @@ public class TokenWalker
 		{
 			if (_index == _deferredParsingTuple.Value.closeTokenIndex)
 			{
+				_deferredParsingTupleStack.Pop();
+			
 				var closeChildScopeToken = TokenList[_index];
 				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
 				ConsumeCounter++;
-				_deferredParsingTuple = null;
+				
+				if (_deferredParsingTupleStack.Count > 0)
+					_deferredParsingTuple = _deferredParsingTupleStack.Peek();
+				else
+					_deferredParsingTuple = null;
+				
 				return closeChildScopeToken;
 			}
 		}
@@ -150,8 +158,11 @@ public class TokenWalker
 		int closeTokenIndex,
 		int tokenIndexToRestore)
 	{
+		_deferredParsingTupleStack ??= new();
+	
 		_index = openTokenIndex;
 		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore);
+		_deferredParsingTupleStack.Push((openTokenIndex, closeTokenIndex, tokenIndexToRestore));
 		ConsumeCounter++;
 	}
 	

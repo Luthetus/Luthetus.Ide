@@ -62,6 +62,18 @@ public static class CSharpParser
         	// Knowing this to be the case is extremely important.
             var token = parserModel.TokenWalker.Current;
             
+            /*// TODO: Delete this code it is only being used temporarily for debugging.
+            if (!parserModel.SeenTokenIndexHashSet.Add(parserModel.TokenWalker.Index))
+            {
+            	if (token.SyntaxKind != SyntaxKind.OpenBraceToken &&
+            		token.SyntaxKind != SyntaxKind.CloseBraceToken &&
+            		token.SyntaxKind != SyntaxKind.StatementDelimiterToken &&
+            		token.SyntaxKind != SyntaxKind.EndOfFileToken)
+            	{
+            		Console.WriteLine($"aaa {token.SyntaxKind} {parserModel.TokenWalker.Index} BAD");
+            	}
+            }*/
+            
 			/*#if DEBUG
 			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.GetText() + "___" + parserModel.TokenWalker.Index);
 			#else
@@ -216,6 +228,8 @@ public static class CSharpParser
 					
 					if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
 					{
+						// Console.WriteLine($"aaa {parserModel.TokenWalker.Index}");
+					
 						tuple = parserModel.ParseChildScopeStack.Pop();
 						tuple.DeferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 						deferredParsingOccurred = true;

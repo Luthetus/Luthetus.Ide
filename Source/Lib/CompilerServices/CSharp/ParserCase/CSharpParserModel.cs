@@ -68,4 +68,7 @@ public struct CSharpParserModel
     
     public CSharpCodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CSharpCodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
+    
+    /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
+    // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();
 }
