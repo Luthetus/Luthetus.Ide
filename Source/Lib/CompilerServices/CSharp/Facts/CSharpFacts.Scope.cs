@@ -37,7 +37,7 @@ public partial class CSharpFacts
 			return new Scope(
 				codeBlockOwner: null,
 				indexKey: 0,
-			    parentIndexKey: null,
+			    parentIndexKey: -1,
 			    0,
 			    endingIndexExclusive: null);
         }

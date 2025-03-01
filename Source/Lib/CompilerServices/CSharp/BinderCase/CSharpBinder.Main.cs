@@ -659,7 +659,7 @@ public partial class CSharpBinder : IBinder
     	var scope = new Scope(
         	codeBlockOwner,
         	indexKey: 0,
-		    parentIndexKey: null,
+		    parentIndexKey: -1,
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: null);
 
@@ -752,9 +752,9 @@ public partial class CSharpBinder : IBinder
 	    	compilationUnit.BinderSession.ScopeList[compilationUnit.BinderSession.CurrentScopeIndexKey] = scope;
 	    	
 	    	// Restore Parent Scope
-			if (scope.ParentIndexKey is not null)
+			if (scope.ParentIndexKey != -1)
 			{
-				compilationUnit.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+				compilationUnit.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey;
 			}
     	}
     	
@@ -981,10 +981,10 @@ public partial class CSharpBinder : IBinder
                 return true;
             }
 
-			if (localScope.ParentIndexKey is null)
+			if (localScope.ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey.Value);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey);
         }
 
         functionDefinitionNode = null;
@@ -1017,10 +1017,10 @@ public partial class CSharpBinder : IBinder
                 return true;
             }
 
-            if (localScope.ParentIndexKey is null)
+            if (localScope.ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey.Value);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey);
         }
 
         typeDefinitionNode = null;
@@ -1053,10 +1053,10 @@ public partial class CSharpBinder : IBinder
                 return true;
             }
 
-            if (localScope.ParentIndexKey is null)
+            if (localScope.ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey.Value);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey);
         }
 
         variableDeclarationStatementNode = null;

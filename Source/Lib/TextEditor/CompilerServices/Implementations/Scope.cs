@@ -8,7 +8,7 @@ public struct Scope
 	public Scope(
 		ICodeBlockOwner codeBlockOwner,
 		int indexKey,
-	    int? parentIndexKey,
+	    int parentIndexKey,
 	    int startingIndexInclusive,
 	    int? endingIndexExclusive)
 	{
@@ -84,7 +84,7 @@ public struct Scope
 	/// </summary>
 	public int IndexKey { get; }
 	/// <inheritdoc cref="IndexKey"/>
-    public int? ParentIndexKey { get; }
+    public int ParentIndexKey { get; }
     public int StartingIndexInclusive { get; }
     /// <summary>
     /// Beware of this property's setter,

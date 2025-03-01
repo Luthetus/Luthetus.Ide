@@ -240,10 +240,10 @@ public sealed class CSharpCompilerService : CompilerService
 	                        null);
 	                }));
 	
-				if (targetScope.ParentIndexKey is null)
+				if (targetScope.ParentIndexKey == -1)
 					targetScope = default;
 				else
-	            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
+	            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey);
 	        }
         
 	        var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;
