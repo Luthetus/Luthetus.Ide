@@ -1,6 +1,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -54,10 +55,10 @@ public interface IBinder
     /// <summary>Returns true if the entry was removed</summary>
     public bool RemoveBinderSession(ResourceUri resourceUri);
     
-    public IScope? GetScope(TextEditorTextSpan textSpan);
-    public IScope? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex);
-    public IScope? GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey);
-    public IScope[]? GetScopeList(ResourceUri resourceUri);
+    public Scope GetScope(TextEditorTextSpan textSpan);
+    public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex);
+    public Scope GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey);
+    public Scope[]? GetScopeList(ResourceUri resourceUri);
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, int scopeIndexKey);
     

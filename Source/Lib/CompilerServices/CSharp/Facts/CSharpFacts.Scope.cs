@@ -8,7 +8,7 @@ public partial class CSharpFacts
 {
     public class ScopeFacts
     {
-        public static IScope GetInitialGlobalScope()
+        public static Scope GetInitialGlobalScope()
         {
             var typeDefinitionMap = new Dictionary<string, TypeDefinitionNode>
 	        {

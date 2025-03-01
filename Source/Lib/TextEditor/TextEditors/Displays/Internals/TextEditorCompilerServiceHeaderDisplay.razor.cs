@@ -132,7 +132,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				var targetScope = modelModifier.CompilerService.Binder.
 					GetScopeByPositionIndex(resourceUri, modelModifier.GetPositionIndex(primaryCursorModifier));
 				
-				if (targetScope is null)
+				if (!targetScope.ConstructorWasInvoked)
 				{
 					Console.WriteLine("aaa if (targetScope is null)");
 					return ValueTask.CompletedTask;

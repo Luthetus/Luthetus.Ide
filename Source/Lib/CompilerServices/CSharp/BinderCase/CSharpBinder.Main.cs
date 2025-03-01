@@ -969,7 +969,7 @@ public partial class CSharpBinder : IBinder
     {
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
-        while (localScope is not null)
+        while (localScope.ConstructorWasInvoked)
         {
             if (TryGetFunctionDefinitionNodeByScope(
 	        		compilationUnit,
@@ -982,7 +982,7 @@ public partial class CSharpBinder : IBinder
             }
 
 			if (localScope.ParentIndexKey is null)
-				localScope = null;
+				localScope = default;
 			else
             	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey.Value);
         }
@@ -1005,7 +1005,7 @@ public partial class CSharpBinder : IBinder
     {
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
-        while (localScope is not null)
+        while (localScope.ConstructorWasInvoked)
         {
             if (TryGetTypeDefinitionNodeByScope(
 	        		compilationUnit,
@@ -1018,7 +1018,7 @@ public partial class CSharpBinder : IBinder
             }
 
             if (localScope.ParentIndexKey is null)
-				localScope = null;
+				localScope = default;
 			else
             	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey.Value);
         }
@@ -1041,7 +1041,7 @@ public partial class CSharpBinder : IBinder
     {
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
-        while (localScope is not null)
+        while (localScope.ConstructorWasInvoked)
         {
             if (TryGetVariableDeclarationNodeByScope(
 	        		compilationUnit,
@@ -1054,7 +1054,7 @@ public partial class CSharpBinder : IBinder
             }
 
             if (localScope.ParentIndexKey is null)
-				localScope = null;
+				localScope = default;
 			else
             	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey.Value);
         }
@@ -1063,20 +1063,20 @@ public partial class CSharpBinder : IBinder
         return false;
     }
 
-    IScope? IBinder.GetScope(TextEditorTextSpan textSpan) =>
+    Scope IBinder.GetScope(TextEditorTextSpan textSpan) =>
     	GetScope(compilationUnit: null, textSpan);
     	
-    public IScope? GetScope(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan)
+    public Scope GetScope(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan)
     {
     	return GetScopeByPositionIndex(compilationUnit, textSpan.ResourceUri, textSpan.StartingIndexInclusive);
     }
     
-    IScope? IBinder.GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex) =>
+    Scope IBinder.GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex) =>
     	GetScopeByPositionIndex(compilationUnit: null, resourceUri, positionIndex);
     
-    public IScope? GetScopeByPositionIndex(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int positionIndex)
+    public Scope GetScopeByPositionIndex(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int positionIndex)
     {
-    	var scopeList = new List<IScope>();
+    	var scopeList = new List<Scope>();
     	
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
@@ -1090,15 +1090,22 @@ public partial class CSharpBinder : IBinder
                    (x.EndingIndexExclusive >= positionIndex || x.EndingIndexExclusive is null);
         });
 
-        return possibleScopes.MinBy(x => positionIndex - x.StartingIndexInclusive);
+		if (!possibleScopes.Any())
+		{
+			return default;
+		}
+		else
+		{
+			return possibleScopes.MinBy(x => positionIndex - x.StartingIndexInclusive);
+		}
     }
     
-    IScope? IBinder.GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey) =>
+    Scope IBinder.GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey) =>
     	GetScopeByScopeIndexKey(compilationUnit: null, resourceUri, scopeIndexKey);
     
-    public IScope? GetScopeByScopeIndexKey(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int scopeIndexKey)
+    public Scope GetScopeByScopeIndexKey(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int scopeIndexKey)
     {
-    	var scopeList = new List<IScope>();
+    	var scopeList = new List<Scope>();
     	
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
@@ -1108,12 +1115,12 @@ public partial class CSharpBinder : IBinder
         return scopeList[scopeIndexKey];
     }
     
-    IScope[]? IBinder.GetScopeList(ResourceUri resourceUri) =>
+    Scope[]? IBinder.GetScopeList(ResourceUri resourceUri) =>
     	GetScopeList(compilationUnit: null, resourceUri);
     
-    public IScope[]? GetScopeList(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri)
+    public Scope[]? GetScopeList(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri)
     {
-    	var scopeList = new List<IScope>();
+    	var scopeList = new List<Scope>();
     
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
@@ -1459,7 +1466,7 @@ public partial class CSharpBinder : IBinder
     {
     	var scope = GetScope(compilationUnit, textSpan);
 
-        if (scope is null)
+        if (!scope.ConstructorWasInvoked)
             return null;
             
         var externalSyntaxKind = SyntaxKind.VariableDeclarationNode;
@@ -1557,7 +1564,7 @@ public partial class CSharpBinder : IBinder
     public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit? compilationUnit, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
         var scope = GetScopeByPositionIndex(compilationUnit, resourceUri, positionIndex);
-        if (scope is null)
+        if (!scope.ConstructorWasInvoked)
         	return null;
         
         ISyntaxNode parentNode;
@@ -1619,7 +1626,8 @@ public partial class CSharpBinder : IBinder
         			if (fallbackTextSpan is not null && compilerServiceResource is not null)
         			{
         				var fallbackScope = GetScopeByPositionIndex(compilationUnit, resourceUri, fallbackTextSpan.Value.StartingIndexInclusive);
-        				if (scope is not null)
+        				// RETROSPECTIVE: Shouldn't it be checking the 'fallbackScope.ConstructorWasInvoked'?
+        				if (scope.ConstructorWasInvoked)
         					return GetFallbackNode(compilationUnit, positionIndex, resourceUri, compilerServiceResource, fallbackScope);
         			}
         		}
@@ -1672,7 +1680,7 @@ public partial class CSharpBinder : IBinder
     /// 	  ...This should likely be changed, because function argument goto definition won't work if done from the argument listing, rather than the code block of the function.
     /// 	  This method will act as a temporary work around.
     /// </summary>
-    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit? compilationUnit, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, IScope scope)
+    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit? compilationUnit, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Scope scope)
     {
         if (compilerServiceResource.CompilationUnit is null)
         	return null;
