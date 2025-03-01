@@ -156,10 +156,10 @@ public partial class CSharpBinder : IBinder
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            /*DiagnosticHelper.ReportAlreadyDefinedFunction(
+            DiagnosticHelper.ReportAlreadyDefinedFunction(
             	compilationUnit.__DiagnosticList,
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
-                functionIdentifierText);*/
+                functionIdentifierText);
         }
     }
 
@@ -239,10 +239,10 @@ public partial class CSharpBinder : IBinder
                 	variableDeclarationNode);
             }
 
-            /*DiagnosticHelper.ReportAlreadyDefinedVariable(
+            DiagnosticHelper.ReportAlreadyDefinedVariable(
             	compilationUnit.__DiagnosticList,
                 variableDeclarationNode.IdentifierToken.TextSpan,
-                text);*/
+                text);
         }
         else
         {
@@ -446,7 +446,7 @@ public partial class CSharpBinder : IBinder
         {
         	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
         }
-        else
+        /*else
         {
         	if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,
@@ -467,7 +467,7 @@ public partial class CSharpBinder : IBinder
 	                typeClauseNode.TypeIdentifierToken.TextSpan,
 	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	        }
-        }
+        }*/
     }
 
     public void BindTypeIdentifier(

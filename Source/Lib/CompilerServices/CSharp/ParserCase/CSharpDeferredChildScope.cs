@@ -18,12 +18,8 @@ public struct CSharpDeferredChildScope
 	public int CloseTokenIndex { get; }
 	public CSharpCodeBlockBuilder CodeBlockBuilder { get; }
 	
-	public int TokenIndexToRestore { get; private set; }
-	
 	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		TokenIndexToRestore = tokenIndexToRestore;
-		
 		compilationUnit.Binder.SetCurrentScopeAndBuilder(
 			CodeBlockBuilder,
 			compilationUnit,
@@ -36,6 +32,6 @@ public struct CSharpDeferredChildScope
 		parserModel.TokenWalker.DeferredParsing(
 			OpenTokenIndex,
 			CloseTokenIndex,
-			TokenIndexToRestore);
+			tokenIndexToRestore);
 	}
 }
