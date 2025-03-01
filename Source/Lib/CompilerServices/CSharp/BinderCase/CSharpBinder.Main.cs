@@ -156,10 +156,10 @@ public partial class CSharpBinder : IBinder
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            /*DiagnosticHelper.ReportAlreadyDefinedFunction(
+            DiagnosticHelper.ReportAlreadyDefinedFunction(
             	compilationUnit.__DiagnosticList,
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
-                functionIdentifierText);*/
+                functionIdentifierText);
         }
     }
 
@@ -239,10 +239,10 @@ public partial class CSharpBinder : IBinder
                 	variableDeclarationNode);
             }
 
-            /*DiagnosticHelper.ReportAlreadyDefinedVariable(
+            DiagnosticHelper.ReportAlreadyDefinedVariable(
             	compilationUnit.__DiagnosticList,
                 variableDeclarationNode.IdentifierToken.TextSpan,
-                text);*/
+                text);
         }
         else
         {
@@ -446,6 +446,28 @@ public partial class CSharpBinder : IBinder
         {
         	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
         }
+        /*else
+        {
+        	if (TryGetTypeDefinitionHierarchically(
+	        		compilationUnit,
+	                compilationUnit.BinderSession.ResourceUri,
+	                compilationUnit.BinderSession.CurrentScopeIndexKey,
+	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
+	                out var typeDefinitionNode) &&
+	            typeDefinitionNode is not null)
+	        {
+	            return;
+	        }
+	        else
+	        {
+	            // TODO: Diagnostics need to take the syntax token...
+	        	// ...so they can lazily invoke TextSpan.GetText().
+	        	DiagnosticHelper.ReportUndefinedTypeOrNamespace(
+	            	compilationUnit.__DiagnosticList,
+	                typeClauseNode.TypeIdentifierToken.TextSpan,
+	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	        }
+        }*/
     }
 
     public void BindTypeIdentifier(
@@ -503,6 +525,61 @@ public partial class CSharpBinder : IBinder
             openSquareBracketToken,
             innerTokens,
             closeSquareBracketToken);
+    }
+    
+    public void BindTypeDefinitionNode(
+        TypeDefinitionNode typeDefinitionNode,
+        CSharpCompilationUnit compilationUnit,
+        bool shouldOverwrite = false)
+    {
+        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
+        var currentNamespaceStatementText = compilationUnit.BinderSession.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
+
+        typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
+        
+        if (TryGetTypeDefinitionNodeByScope(
+        		compilationUnit,
+        		compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+        		typeIdentifierText,
+        		out var existingTypeDefinitionNode))
+        {
+        	if (shouldOverwrite || existingTypeDefinitionNode.IsFabricated)
+        	{
+        		SetTypeDefinitionNodeByScope(
+        			compilationUnit,
+        			compilationUnit.BinderSession.ResourceUri,
+	        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+	        		typeIdentifierText,
+	        		typeDefinitionNode);
+        	}
+        	else
+        	{
+        		DiagnosticHelper.ReportAlreadyDefinedType(
+	            	compilationUnit.__DiagnosticList,
+	                typeDefinitionNode.TypeIdentifierToken.TextSpan,
+	                typeIdentifierText);
+        	}
+        }
+        else
+        {
+        	_ = TryAddTypeDefinitionNodeByScope(
+        		compilationUnit,
+    			compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+        		typeIdentifierText,
+        		typeDefinitionNode);
+        }
+
+        var success = _allTypeDefinitions.TryAdd(namespaceAndTypeIdentifiers, typeDefinitionNode);
+        if (!success)
+        {
+        	var entryFromAllTypeDefinitions = _allTypeDefinitions[namespaceAndTypeIdentifiers];
+        	
+        	if (shouldOverwrite || entryFromAllTypeDefinitions.IsFabricated)
+        		_allTypeDefinitions[namespaceAndTypeIdentifiers] = typeDefinitionNode;
+        }
     }
 
 	/// <summary>
@@ -711,54 +788,6 @@ public partial class CSharpBinder : IBinder
     	#else
     	Console.WriteLine($"-------{nameof(CloseScope)}out: has console.write... that needs commented out");
     	#endif*/
-    }
-
-    public void BindTypeDefinitionNode(
-        TypeDefinitionNode typeDefinitionNode,
-        CSharpCompilationUnit compilationUnit,
-        bool shouldOverwrite = false)
-    {
-        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
-        var currentNamespaceStatementText = compilationUnit.BinderSession.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
-        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
-
-        typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
-        
-        if (TryGetTypeDefinitionNodeByScope(
-        		compilationUnit,
-        		compilationUnit.BinderSession.ResourceUri,
-        		compilationUnit.BinderSession.CurrentScopeIndexKey,
-        		typeIdentifierText,
-        		out var existingTypeDefinitionNode))
-        {
-        	if (shouldOverwrite || existingTypeDefinitionNode.IsFabricated)
-        	{
-        		SetTypeDefinitionNodeByScope(
-        			compilationUnit,
-        			compilationUnit.BinderSession.ResourceUri,
-	        		compilationUnit.BinderSession.CurrentScopeIndexKey,
-	        		typeIdentifierText,
-	        		typeDefinitionNode);
-        	}
-        }
-        else
-        {
-        	_ = TryAddTypeDefinitionNodeByScope(
-        		compilationUnit,
-    			compilationUnit.BinderSession.ResourceUri,
-        		compilationUnit.BinderSession.CurrentScopeIndexKey,
-        		typeIdentifierText,
-        		typeDefinitionNode);
-        }
-
-        var success = _allTypeDefinitions.TryAdd(namespaceAndTypeIdentifiers, typeDefinitionNode);
-        if (!success)
-        {
-        	var entryFromAllTypeDefinitions = _allTypeDefinitions[namespaceAndTypeIdentifiers];
-        	
-        	if (shouldOverwrite || entryFromAllTypeDefinitions.IsFabricated)
-        		_allTypeDefinitions[namespaceAndTypeIdentifiers] = typeDefinitionNode;
-        }
     }
 
     /// <summary>This method will handle the <see cref="SymbolDefinition"/>, but also invoke <see cref="AddSymbolReference"/> because each definition is being treated as a reference itself.</summary>
@@ -1560,7 +1589,7 @@ public partial class CSharpBinder : IBinder
     		{
     			fallbackDefinitionNode = node;
     		}
-        
+        	
         	var nodePositionIndices = GetNodePositionIndices(node);
         	if (nodePositionIndices == (-1, -1))
         		continue;
@@ -1599,7 +1628,7 @@ public partial class CSharpBinder : IBinder
         	return null;
         }
         	
-        return possibleNodeList.MinBy(node =>
+        var closestNode = possibleNodeList.MinBy(node =>
         {
         	// TODO: Wasteful re-invocation of this method, can probably do this in one invocation.
         	var nodePositionIndices = GetNodePositionIndices(node);
@@ -1608,6 +1637,34 @@ public partial class CSharpBinder : IBinder
         	
         	return positionIndex - nodePositionIndices.StartInclusiveIndex;
         });
+        
+        if (closestNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+        	return GetChildNodeOrSelfByPositionIndex(closestNode, positionIndex);
+        
+        return closestNode;
+    }
+    
+    public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, int positionIndex)
+    {
+    	switch (node.SyntaxKind)
+    	{
+    		case SyntaxKind.VariableDeclarationNode:
+    		
+    			var variableDeclarationNode = (VariableDeclarationNode)node;
+    		
+    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
+    			{
+    				if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
+        				variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex)
+        			{
+        				return variableDeclarationNode.TypeClauseNode;
+        			}
+    			}
+    			
+    			goto default;
+    		default:
+    			return node;
+    	}
     }
     
     /// <summary>
@@ -1738,8 +1795,23 @@ public partial class CSharpBinder : IBinder
     		{
     			var variableDeclarationNode = (VariableDeclarationNode)syntaxNode;
     			
+    			int? startingIndexInclusive = null;
+    			int? endingIndexExclusive = null;
+    			
+    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
+    			{
+    				startingIndexInclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+    				endingIndexExclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive;
+    			}
+    			
     			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
-    				return (variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive, variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive);
+    			{
+    				startingIndexInclusive ??= variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+    				endingIndexExclusive = variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive;
+    			}
+    			
+    			if (startingIndexInclusive is not null && endingIndexExclusive is not null)
+    				return (startingIndexInclusive.Value, endingIndexExclusive.Value);
     			
     			goto default;
     		}
@@ -1765,47 +1837,45 @@ public partial class CSharpBinder : IBinder
     
     public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+    	switch (codeBlockOwner.SyntaxKind)
     	{
-    		var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
-        	compilationUnit.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit);
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-    	{
-    		var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
-    		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-	    	{
-	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
-	    	}
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.ForeachStatementNode)
-    	{
-    		var foreachStatementNode = (ForeachStatementNode)codeBlockOwner;
-    		compilationUnit.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, compilationUnit);
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
-    	{
-    		var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
-    		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-			{
-				compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
-			}
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.LambdaExpressionNode)
-    	{
-    		var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
-    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
-	    	{
-	    		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
-	    	}
-    	}
-    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.TryStatementCatchNode)
-    	{
-    		var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
+    		case SyntaxKind.NamespaceStatementNode:
+    			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
+	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
+	        	compilationUnit.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit);
+	        	return;
+	        case SyntaxKind.FunctionDefinitionNode:
+	        	var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
+	    		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+		    	{
+		    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+		    	}
+		    	return;
+		    case SyntaxKind.ForeachStatementNode:
+		    	var foreachStatementNode = (ForeachStatementNode)codeBlockOwner;
+    			compilationUnit.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, compilationUnit);
+    			return;
+    		case SyntaxKind.ConstructorDefinitionNode:
+    			var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
+	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+				{
+					compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+				}
+		    	return;
+			case SyntaxKind.LambdaExpressionNode:
+				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
+	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
+		    	{
+		    		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+		    	}
+		    	return;
+		    case SyntaxKind.TryStatementCatchNode:
+		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
     		
-    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
-	    		compilationUnit.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit);
+	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
+		    		compilationUnit.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit);
+		    		
+		    	return;
     	}
     }
 }

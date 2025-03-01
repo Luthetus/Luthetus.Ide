@@ -355,196 +355,209 @@ public partial class CSharpBinder
 	public IExpressionNode AmbiguousIdentifierMergeToken(
 		AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (token.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
-			ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
+		switch (token.SyntaxKind)
 		{
-			var functionParametersListingNode = new FunctionParametersListingNode(
-				token,
-		        new List<FunctionParameterEntryNode>(),
-		        closeParenthesisToken: default);
-		
-			// TODO: ContextualKeywords as the function identifier?
-			var functionInvocationNode = new FunctionInvocationNode(
-				ambiguousIdentifierExpressionNode.Token,
-		        functionDefinitionNode: null,
-		        ambiguousIdentifierExpressionNode.GenericParametersListingNode,
-		        functionParametersListingNode,
-		        CSharpFacts.Types.Void.ToTypeClause());
-		    
-		    BindFunctionInvocationNode(
-		        functionInvocationNode,
-		        compilationUnit);
-			
-			return ParseFunctionParametersListingNode(
-				functionInvocationNode, functionInvocationNode.FunctionParametersListingNode, compilationUnit, ref parserModel);
-		}
-		else if (token.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-		{
-			// TODO: As of (2024-12-21) is this conditional branch no longer hit?...
-			//       ...The 'AmbiguousIdentifierExpressionNode' merging with 'OpenAngleBracketToken'
-			//       code was moved to 'HandleBinaryOperator(...)'
-			return ParseAmbiguousIdentifierGenericParametersListingNode(
-				ambiguousIdentifierExpressionNode, token, compilationUnit, ref parserModel);
-		}
-		else if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-		{
-			if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null)
+			case SyntaxKind.OpenParenthesisToken:
 			{
-				ambiguousIdentifierExpressionNode.GenericParametersListingNode.SetCloseAngleBracketToken(token);
-				return ambiguousIdentifierExpressionNode;
-			}
-		}
-		else if (token.SyntaxKind == SyntaxKind.EqualsToken)
-		{
-			// Thinking about: Variable Assignment, Optional Parameters, and other unknowns.
-			if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
-			{
-				var variableAssignmentNode = new VariableAssignmentExpressionNode(
-					UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserModel),
-			        token,
-			        EmptyExpressionNode.Empty);
-			 
-			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, variableAssignmentNode));
-				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, variableAssignmentNode));
-				
-				return EmptyExpressionNode.Empty;
-			}
-			else
-			{
-				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
-				return EmptyExpressionNode.Empty;
-			}
-		}
-		else if (token.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
-		{
-			var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-			SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, ambiguousIdentifierExpressionNode, compilationUnit, ref parserModel);
-			
-			SyntaxToken openBraceToken;
-			
-			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
-				openBraceToken = parserModel.TokenWalker.Next;
-			else
-				openBraceToken = new SyntaxToken(SyntaxKind.OpenBraceToken, token.TextSpan);
-			
-			return ParseLambdaExpressionNode(lambdaExpressionNode, openBraceToken, compilationUnit, ref parserModel);
-		}
-		else if (token.SyntaxKind == SyntaxKind.IsTokenKeyword)
-		{
-			ForceDecisionAmbiguousIdentifier(
-				EmptyExpressionNode.Empty,
-				ambiguousIdentifierExpressionNode,
-				compilationUnit,
-				ref parserModel);
-				
-			_ = parserModel.TokenWalker.Consume(); // Consume the IsTokenKeyword
-			
-			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.NotTokenContextualKeyword)
-				_ = parserModel.TokenWalker.Consume(); // Consume the NotTokenKeyword
-				
-			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.NullTokenKeyword)
-			{
-				_ = parserModel.TokenWalker.Consume(); // Consume the NullTokenKeyword
-			}
-			
-			return EmptyExpressionNode.Empty;
-		}
-		else if (token.SyntaxKind == SyntaxKind.WithTokenContextualKeyword)
-		{
-			ForceDecisionAmbiguousIdentifier(
-				EmptyExpressionNode.Empty,
-				ambiguousIdentifierExpressionNode,
-				compilationUnit,
-				ref parserModel);
-				
-			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
-			{
-				var withKeywordContextualToken = parserModel.TokenWalker.Consume();
-			
-				#if DEBUG
-				parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-				#endif
-				
-				var openBraceToken = parserModel.TokenWalker.Consume();
-		    	
-		    	var openBraceCounter = 1;
-				
-				while (true)
+				if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
 				{
-					if (parserModel.TokenWalker.IsEof)
-						break;
-		
-					if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-					{
-						++openBraceCounter;
-					}
-					else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
-					{
-						if (--openBraceCounter <= 0)
-							break;
-					}
-		
-					_ = parserModel.TokenWalker.Consume();
-				}
-		
-				var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+					var functionParametersListingNode = new FunctionParametersListingNode(
+						token,
+				        new List<FunctionParameterEntryNode>(),
+				        closeParenthesisToken: default);
 				
-				#if DEBUG
-				parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-				#endif
+					// TODO: ContextualKeywords as the function identifier?
+					var functionInvocationNode = new FunctionInvocationNode(
+						ambiguousIdentifierExpressionNode.Token,
+				        functionDefinitionNode: null,
+				        ambiguousIdentifierExpressionNode.GenericParametersListingNode,
+				        functionParametersListingNode,
+				        CSharpFacts.Types.Void.ToTypeClause());
+				    
+				    BindFunctionInvocationNode(
+				        functionInvocationNode,
+				        compilationUnit);
+					
+					return ParseFunctionParametersListingNode(
+						functionInvocationNode, functionInvocationNode.FunctionParametersListingNode, compilationUnit, ref parserModel);
+				}
+				
+				goto default;
 			}
-			
-			return new WithExpressionNode(
-				variableIdentifierToken: default,
-				openBraceToken: default,
-				closeBraceToken: default,
-				CSharpFacts.Types.Void.ToTypeClause());
-		}
-		else if (token.SyntaxKind == SyntaxKind.PlusPlusToken)
-		{
-			var decidedExpression = ForceDecisionAmbiguousIdentifier(
-				EmptyExpressionNode.Empty,
-				ambiguousIdentifierExpressionNode,
-				compilationUnit,
-				ref parserModel);
-		}
-		else if (token.SyntaxKind == SyntaxKind.MinusMinusToken)
-		{
-			var decidedExpression = ForceDecisionAmbiguousIdentifier(
-				EmptyExpressionNode.Empty,
-				ambiguousIdentifierExpressionNode,
-				compilationUnit,
-				ref parserModel);
-		}
-		else if (token.SyntaxKind == SyntaxKind.IdentifierToken)
-		{
-			var decidedExpression = ForceDecisionAmbiguousIdentifier(
-				EmptyExpressionNode.Empty,
-				ambiguousIdentifierExpressionNode,
-				compilationUnit,
-				ref parserModel);
-			
-			if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)
+			case SyntaxKind.OpenAngleBracketToken:
 			{
-				/*parserModel.DiagnosticBag.ReportTodoException(
-		    		parserModel.TokenWalker.Current.TextSpan,
-		    		"if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");*/
-				return decidedExpression;
+				// TODO: As of (2024-12-21) is this conditional branch no longer hit?...
+				//       ...The 'AmbiguousIdentifierExpressionNode' merging with 'OpenAngleBracketToken'
+				//       code was moved to 'HandleBinaryOperator(...)'
+				return ParseAmbiguousIdentifierGenericParametersListingNode(
+					ambiguousIdentifierExpressionNode, token, compilationUnit, ref parserModel);
 			}
-		
-			var identifierToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
+			case SyntaxKind.CloseAngleBracketToken:
+			{
+				if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null)
+				{
+					ambiguousIdentifierExpressionNode.GenericParametersListingNode.SetCloseAngleBracketToken(token);
+					return ambiguousIdentifierExpressionNode;
+				}
 			
-			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
-		        (TypeClauseNode)decidedExpression,
-		        identifierToken,
-		        VariableKind.Local,
-		        compilationUnit,
-		        ref parserModel);
-		        
-		    return variableDeclarationNode;
+				goto default;
+			}
+			case SyntaxKind.EqualsToken:
+			{
+				// Thinking about: Variable Assignment, Optional Parameters, and other unknowns.
+				if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+				{
+					var variableAssignmentNode = new VariableAssignmentExpressionNode(
+						UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserModel),
+				        token,
+				        EmptyExpressionNode.Empty);
+				 
+				    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, variableAssignmentNode));
+					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, variableAssignmentNode));
+					
+					return EmptyExpressionNode.Empty;
+				}
+				else
+				{
+					parserModel.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
+					return EmptyExpressionNode.Empty;
+				}
+			}
+			case SyntaxKind.EqualsCloseAngleBracketToken:
+			{
+				var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, ambiguousIdentifierExpressionNode, compilationUnit, ref parserModel);
+				
+				SyntaxToken openBraceToken;
+				
+				if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
+					openBraceToken = parserModel.TokenWalker.Next;
+				else
+					openBraceToken = new SyntaxToken(SyntaxKind.OpenBraceToken, token.TextSpan);
+				
+				return ParseLambdaExpressionNode(lambdaExpressionNode, openBraceToken, compilationUnit, ref parserModel);
+			}
+			case SyntaxKind.IsTokenKeyword:
+			{
+				ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+					
+				_ = parserModel.TokenWalker.Consume(); // Consume the IsTokenKeyword
+				
+				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.NotTokenContextualKeyword)
+					_ = parserModel.TokenWalker.Consume(); // Consume the NotTokenKeyword
+					
+				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.NullTokenKeyword)
+				{
+					_ = parserModel.TokenWalker.Consume(); // Consume the NullTokenKeyword
+				}
+				
+				return EmptyExpressionNode.Empty;
+			}
+			case SyntaxKind.WithTokenContextualKeyword:
+			{
+				ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+					
+				if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
+				{
+					var withKeywordContextualToken = parserModel.TokenWalker.Consume();
+				
+					#if DEBUG
+					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+					#endif
+					
+					var openBraceToken = parserModel.TokenWalker.Consume();
+			    	
+			    	var openBraceCounter = 1;
+					
+					while (true)
+					{
+						if (parserModel.TokenWalker.IsEof)
+							break;
+			
+						if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+						{
+							++openBraceCounter;
+						}
+						else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+						{
+							if (--openBraceCounter <= 0)
+								break;
+						}
+			
+						_ = parserModel.TokenWalker.Consume();
+					}
+			
+					var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+					
+					#if DEBUG
+					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+					#endif
+				}
+				
+				return new WithExpressionNode(
+					variableIdentifierToken: default,
+					openBraceToken: default,
+					closeBraceToken: default,
+					CSharpFacts.Types.Void.ToTypeClause());
+			}
+			case SyntaxKind.PlusPlusToken:
+			{
+				var decidedExpression = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+				
+				goto default;
+			}
+			case SyntaxKind.MinusMinusToken:
+			{
+				var decidedExpression = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+					
+				goto default;
+			}
+			case SyntaxKind.IdentifierToken:
+			{
+				var decidedExpression = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+				
+				if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)
+				{
+					/*parserModel.DiagnosticBag.ReportTodoException(
+			    		parserModel.TokenWalker.Current.TextSpan,
+			    		"if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");*/
+					return decidedExpression;
+				}
+			
+				var identifierToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
+				
+				var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+			        (TypeClauseNode)decidedExpression,
+			        identifierToken,
+			        VariableKind.Local,
+			        compilationUnit,
+			        ref parserModel);
+			        
+			    return variableDeclarationNode;
+			}
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);
 		}
-	
-		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);
 	}
 		
 	public IExpressionNode AmbiguousIdentifierMergeExpression(
@@ -942,128 +955,128 @@ public partial class CSharpBinder
 		}
 	
 		if (expressionSecondary.SyntaxKind == SyntaxKind.EmptyExpressionNode)
-		{
 			return constructorInvocationExpressionNode;
-		}
-		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.GenericParameters &&
-				 constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode is not null)
-		{
-			return constructorInvocationExpressionNode;
-		}
-		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.FunctionParameters &&
-				 constructorInvocationExpressionNode.FunctionParametersListingNode is not null)
-		{
-			return constructorInvocationExpressionNode;
-		}
-		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
-				 constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
-		{
-			var needNewNode = true;
-			ObjectInitializationParameterEntryNode? objectInitializationParameterEntryNode = null;
 			
-			if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
-			{
-				objectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
+		switch (constructorInvocationExpressionNode.ConstructorInvocationStageKind)
+		{
+			case ConstructorInvocationStageKind.GenericParameters:
+				if (constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode is not null)
+					return constructorInvocationExpressionNode;
+				goto default;
+			case ConstructorInvocationStageKind.FunctionParameters:
+				if (constructorInvocationExpressionNode.FunctionParametersListingNode is not null)
+					return constructorInvocationExpressionNode;
+				goto default;
+			case ConstructorInvocationStageKind.ObjectInitializationParameters:
+				if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is null)
+					goto default;
 				
-				if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked ||
-					(objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode))
+				var needNewNode = true;
+				ObjectInitializationParameterEntryNode? objectInitializationParameterEntryNode = null;
+				
+				if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
 				{
-					needNewNode = false;
-				}
-			}
-			
-			if (needNewNode)
-			{
-				objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
-			        propertyIdentifierToken: default,
-			        equalsToken: default,
-			        expressionNode: EmptyExpressionNode.Empty);
-			    
-			    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
-			}
-			
-			var success = true;
-			
-			// I'm tired and feel like I'm about to pass out.
-			// This feels like hacky nonsense.
-			// It allows for ObjectInitialization and CollectionInitialization
-			// to use the same node but why not just use separate nodes?
-			var currentTokenIsComma = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken;
-			var currentTokenIsBrace = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken;
-
-			if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked &&
-				(!currentTokenIsComma && !currentTokenIsBrace))
-			{
-				if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-				{
-					objectInitializationParameterEntryNode.PropertyIdentifierToken = ((VariableReferenceNode)expressionSecondary).VariableIdentifierToken;
-				}
-				else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-				{
-					var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
-					if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
+					objectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
+					
+					if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked ||
+						(objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode))
 					{
-						objectInitializationParameterEntryNode.PropertyIdentifierToken = ambiguousIdentifierExpressionNode.Token;
+						needNewNode = false;
+					}
+				}
+				
+				if (needNewNode)
+				{
+					objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
+				        propertyIdentifierToken: default,
+				        equalsToken: default,
+				        expressionNode: EmptyExpressionNode.Empty);
+				    
+				    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
+				}
+				
+				var success = true;
+				
+				// I'm tired and feel like I'm about to pass out.
+				// This feels like hacky nonsense.
+				// It allows for ObjectInitialization and CollectionInitialization
+				// to use the same node but why not just use separate nodes?
+				var currentTokenIsComma = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken;
+				var currentTokenIsBrace = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken;
+	
+				if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked &&
+					(!currentTokenIsComma && !currentTokenIsBrace))
+				{
+					if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+					{
+						objectInitializationParameterEntryNode.PropertyIdentifierToken = ((VariableReferenceNode)expressionSecondary).VariableIdentifierToken;
+					}
+					else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+					{
+						var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+						if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
+						{
+							objectInitializationParameterEntryNode.PropertyIdentifierToken = ambiguousIdentifierExpressionNode.Token;
+						}
+						else
+						{
+							success = false;
+						}
+					}
+					else if (expressionSecondary.SyntaxKind == SyntaxKind.TypeClauseNode)
+					{
+						var typeClauseNode = (TypeClauseNode)expressionSecondary;
+						objectInitializationParameterEntryNode.PropertyIdentifierToken = typeClauseNode.TypeIdentifierToken;
 					}
 					else
 					{
 						success = false;
 					}
 				}
-				else if (expressionSecondary.SyntaxKind == SyntaxKind.TypeClauseNode)
+				else if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked &&
+						 (!currentTokenIsComma && !currentTokenIsBrace))
 				{
-					var typeClauseNode = (TypeClauseNode)expressionSecondary;
-					objectInitializationParameterEntryNode.PropertyIdentifierToken = typeClauseNode.TypeIdentifierToken;
+					success = false;
+				}
+				else if (objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+				{
+					if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+					{
+						expressionSecondary = ForceDecisionAmbiguousIdentifier(
+							constructorInvocationExpressionNode,
+							(AmbiguousIdentifierExpressionNode)expressionSecondary,
+							compilationUnit,
+							ref parserModel);
+					}
+				
+					objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
+					
+					if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked && (currentTokenIsComma || currentTokenIsBrace))
+					{
+						var nextObjectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
+					        propertyIdentifierToken: default,
+					        equalsToken: default,
+					        expressionNode: EmptyExpressionNode.Empty);
+					    
+					    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(nextObjectInitializationParameterEntryNode);
+					}
 				}
 				else
 				{
 					success = false;
 				}
-			}
-			else if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked &&
-					 (!currentTokenIsComma && !currentTokenIsBrace))
-			{
-				success = false;
-			}
-			else if (objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
-			{
-				if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-				{
-					expressionSecondary = ForceDecisionAmbiguousIdentifier(
-						constructorInvocationExpressionNode,
-						(AmbiguousIdentifierExpressionNode)expressionSecondary,
-						compilationUnit,
-						ref parserModel);
-				}
-			
-				objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
 				
-				if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked && (currentTokenIsComma || currentTokenIsBrace))
+				if (success)
 				{
-					var nextObjectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
-				        propertyIdentifierToken: default,
-				        equalsToken: default,
-				        expressionNode: EmptyExpressionNode.Empty);
-				    
-				    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(nextObjectInitializationParameterEntryNode);
+					return constructorInvocationExpressionNode;
 				}
-			}
-			else
-			{
-				success = false;
-			}
-			
-			if (success)
-			{
-				return constructorInvocationExpressionNode;
-			}
-			else
-			{
+				else
+				{
+					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+				}
+			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
-			}
 		}
-		
-		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 	}
 	
 	public IExpressionNode EmptyMergeToken(
@@ -1273,26 +1286,6 @@ public partial class CSharpBinder
 				new GenericParameterEntryNode(typeClauseNode));
 			
 			return genericParametersListingNode;
-		}
-		else if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
-		{
-			var badExpressionNode = (BadExpressionNode)expressionSecondary;
-		
-			if (badExpressionNode.SyntaxList.Count == 2 &&
-					(badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode ||
-					 UtilityApi.IsTypeIdentifierKeywordSyntaxKind(badExpressionNode.SyntaxList[1].SyntaxKind)))
-			{
-				var typeClauseNode = (TypeClauseNode)badExpressionNode.SyntaxList[1];
-				
-				BindTypeClauseNode(
-			        typeClauseNode,
-			        compilationUnit);
-			    
-				genericParametersListingNode.GenericParameterEntryNodeList.Add(
-					new GenericParameterEntryNode(typeClauseNode));
-				
-				return genericParametersListingNode;
-			}
 		}
 		
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), genericParametersListingNode, expressionSecondary);
@@ -2280,140 +2273,132 @@ public partial class CSharpBinder
 		var rememberOriginalExpressionPrimary = expressionPrimary;
 		var rememberOriginalTokenIndex = parserModel.TokenWalker.Index;
 			
-		try
+		if (!UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
+			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+
+		_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
+		
+		var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(
+			parserModel.TokenWalker.Consume(),
+			compilationUnit,
+			ref parserModel);
+			
+		if (!memberIdentifierToken.ConstructorWasInvoked || memberIdentifierToken.TextSpan.SourceText is null)
+			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+		
+		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
-			if (!UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
-				return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+			if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
+			{
+				expressionPrimary = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+			}
+		}
 	
-			_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
-			
-			var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(
-				parserModel.TokenWalker.Consume(),
-				compilationUnit,
-				ref parserModel);
-				
-			if (!memberIdentifierToken.ConstructorWasInvoked || memberIdentifierToken.TextSpan.SourceText is null)
-				return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-			
-			if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-			{
-				var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
-				if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
-				{
-					expressionPrimary = ForceDecisionAmbiguousIdentifier(
-						EmptyExpressionNode.Empty,
-						ambiguousIdentifierExpressionNode,
-						compilationUnit,
-						ref parserModel);
-				}
-			}
+		TypeClauseNode? typeClauseNode = null;
+	
+		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+			typeClauseNode = ((VariableReferenceNode)expressionPrimary).VariableDeclarationNode?.TypeClauseNode;
+		else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
+			typeClauseNode = (TypeClauseNode)expressionPrimary;
 		
-			TypeClauseNode? typeClauseNode = null;
-		
-			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-				typeClauseNode = ((VariableReferenceNode)expressionPrimary).VariableDeclarationNode?.TypeClauseNode;
-			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-				typeClauseNode = (TypeClauseNode)expressionPrimary;
-			
-			if (typeClauseNode is null)
-				return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-			
-			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
-			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
-				return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-				
-			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-			var memberList = typeDefinitionNode.GetMemberList();
-			ISyntaxNode? foundDefinitionNode = null;
-			
-			foreach (var node in memberList)
-			{
-				if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-				{
-					var variableDeclarationNode = (VariableDeclarationNode)node;
-					if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked || variableDeclarationNode.IdentifierToken.TextSpan.SourceText is null)
-						continue;
-					
-					if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
-					{
-						foundDefinitionNode = variableDeclarationNode;
-						break;
-					}
-				}
-				else if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-				{
-					// TODO: Create a Binder.Main method that takes a node and returns its identifier?
-					var functionDefinitionNode = (FunctionDefinitionNode)node;
-					if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked || functionDefinitionNode.FunctionIdentifierToken.TextSpan.SourceText is null)
-						continue;
-					
-					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
-					{
-						foundDefinitionNode = functionDefinitionNode;
-						break;
-					}
-				}
-			}
-			
-			if (foundDefinitionNode is null)
-				 return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-				 
-			if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-			{
-				var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
-				
-				var variableReferenceNode = new VariableReferenceNode(
-		            memberIdentifierToken,
-		            variableDeclarationNode);
-		        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
-		        
-		        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
-		        	symbolId,
-		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive));
-		        
-		    	return variableReferenceNode;
-			}
-			else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-			{			
-				var functionDefinitionNode = (FunctionDefinitionNode)foundDefinitionNode;
-				
-				// TODO: Method group node?
-				var functionInvocationNode = new FunctionInvocationNode(
-		            memberIdentifierToken,
-		            // TODO: Don't store a reference to definitons.
-		            // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
-			        functionDefinitionNode,
-			        // TODO: Bind the named arguments to their declaration within the definition.
-			        genericParametersListingNode: null,
-			        functionParametersListingNode: null,
-			        functionDefinitionNode.ReturnTypeClauseNode);
-		        
-		        var functionSymbol = new Symbol(
-		        	SyntaxKind.FunctionSymbol,
-		        	compilationUnit.BinderSession.GetNextSymbolId(),
-		        	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
-			        {
-			            DecorationByte = (byte)GenericDecorationKind.Function
-			        });
-		        AddSymbolDefinition(functionSymbol, compilationUnit);
-		        var symbolId = functionSymbol.SymbolId;
-		        
-		        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
-		        	symbolId,
-		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive));
-		        
-		        // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
-		        // TODO: Method group if next token is not '<' or '('
-		    	return functionInvocationNode;
-			}
-		
+		if (typeClauseNode is null)
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-		}
-		catch (NullReferenceException e)
+		
+		var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+		if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+			
+		var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
+		var memberList = typeDefinitionNode.GetMemberList();
+		ISyntaxNode? foundDefinitionNode = null;
+		
+		foreach (var node in memberList)
 		{
-			Console.WriteLine("asd");
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+			if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+			{
+				var variableDeclarationNode = (VariableDeclarationNode)node;
+				if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked || variableDeclarationNode.IdentifierToken.TextSpan.SourceText is null)
+					continue;
+				
+				if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+				{
+					foundDefinitionNode = variableDeclarationNode;
+					break;
+				}
+			}
+			else if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+			{
+				// TODO: Create a Binder.Main method that takes a node and returns its identifier?
+				var functionDefinitionNode = (FunctionDefinitionNode)node;
+				if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked || functionDefinitionNode.FunctionIdentifierToken.TextSpan.SourceText is null)
+					continue;
+				
+				if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+				{
+					foundDefinitionNode = functionDefinitionNode;
+					break;
+				}
+			}
 		}
+		
+		if (foundDefinitionNode is null)
+			 return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+			 
+		if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+		{
+			var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
+			
+			var variableReferenceNode = new VariableReferenceNode(
+	            memberIdentifierToken,
+	            variableDeclarationNode);
+	        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+	        
+	        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
+	        	symbolId,
+	        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive));
+	        
+	    	return variableReferenceNode;
+		}
+		else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+		{			
+			var functionDefinitionNode = (FunctionDefinitionNode)foundDefinitionNode;
+			
+			// TODO: Method group node?
+			var functionInvocationNode = new FunctionInvocationNode(
+	            memberIdentifierToken,
+	            // TODO: Don't store a reference to definitons.
+	            // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
+		        functionDefinitionNode,
+		        // TODO: Bind the named arguments to their declaration within the definition.
+		        genericParametersListingNode: null,
+		        functionParametersListingNode: null,
+		        functionDefinitionNode.ReturnTypeClauseNode);
+	        
+	        var functionSymbol = new Symbol(
+	        	SyntaxKind.FunctionSymbol,
+	        	compilationUnit.BinderSession.GetNextSymbolId(),
+	        	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
+		        {
+		            DecorationByte = (byte)GenericDecorationKind.Function
+		        });
+	        AddSymbolDefinition(functionSymbol, compilationUnit);
+	        var symbolId = functionSymbol.SymbolId;
+	        
+	        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
+	        	symbolId,
+	        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive));
+	        
+	        // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
+	        // TODO: Method group if next token is not '<' or '('
+	    	return functionInvocationNode;
+		}
+	
+		return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
 	}
 	
 	/// <summary>
