@@ -2096,8 +2096,6 @@ public partial class CSharpBinder
         	openBraceToken.TextSpan,
         	compilationUnit,
 	        ref parserModel);
-		
-		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(lambdaExpressionNode, compilationUnit, ref parserModel);
 	}
 	
 	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

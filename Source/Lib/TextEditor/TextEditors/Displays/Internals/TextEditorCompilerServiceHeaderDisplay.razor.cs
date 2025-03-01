@@ -132,7 +132,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				var targetScope = modelModifier.CompilerService.Binder.
 					GetScopeByPositionIndex(resourceUri, modelModifier.GetPositionIndex(primaryCursorModifier));
 				
-				if (targetScope is null)
+				if (!targetScope.ConstructorWasInvoked)
 				{
 					Console.WriteLine("aaa if (targetScope is null)");
 					return ValueTask.CompletedTask;
@@ -160,10 +160,23 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 					    sourceText: string.Empty,
 					    getTextPrecalculatedResult: string.Empty);
 	    		}
-	    		
+
+				int useStartingIndexInclusive;
+				if (targetScope.EndingIndexExclusive == -1)
+					useStartingIndexInclusive = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
+				else
+					useStartingIndexInclusive = targetScope.EndingIndexExclusive -1;
+
+				if (useStartingIndexInclusive < 0)
+					useStartingIndexInclusive = 0;
+
+				var useEndingIndexExclusive = targetScope.EndingIndexExclusive;
+	    		if (useEndingIndexExclusive == -1)
+	    			useEndingIndexExclusive = presentationModel.PendingCalculation.ContentAtRequest.Length;
+	    			
 				var textSpanEnd = new TextEditorTextSpan(
-		            (targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length) - 1,
-				    targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length,
+		            useStartingIndexInclusive,
+				    useEndingIndexExclusive,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
 				    resourceUri,
 				    sourceText: string.Empty,

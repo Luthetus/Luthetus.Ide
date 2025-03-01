@@ -14,7 +14,7 @@ public class Binder : IBinder
 
     public TextEditorDiagnostic[] DiagnosticsList { get; } = Array.Empty<TextEditorDiagnostic>();
     public Symbol[] SymbolsList { get; } = Array.Empty<Symbol>();
-    public IReadOnlyDictionary<ResourceUri, List<IScope>> ScopeList { get; } = new Dictionary<ResourceUri, List<IScope>>();
+    public IReadOnlyDictionary<ResourceUri, List<Scope>> ScopeList { get; } = new Dictionary<ResourceUri, List<Scope>>();
     public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions { get; } = new Dictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode>();
 
     public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
@@ -32,22 +32,22 @@ public class Binder : IBinder
         return null;
     }
 
-	public IScope? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+	public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
-        return null;
+        return default;
     }
 
-    public IScope? GetScope(TextEditorTextSpan textSpan)
+    public Scope GetScope(TextEditorTextSpan textSpan)
     {
-        return null;
+        return default;
     }
     
-    public IScope? GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey)
+    public Scope GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey)
     {
-    	return null;
+    	return default;
     }
     
-    public IScope[]? GetScopeList(ResourceUri resourceUri)
+    public Scope[]? GetScopeList(ResourceUri resourceUri)
     {
     	return null;
     }

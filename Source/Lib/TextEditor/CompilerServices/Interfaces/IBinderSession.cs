@@ -1,5 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -32,7 +33,7 @@ public interface IBinderSession
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     
-    public List<IScope> ScopeList { get; }
+    public List<Scope> ScopeList { get; }
     /// <summary>
     /// Key is the name of the type, prefixed with the ScopeKey and '_' to separate the ScopeKey from the type.
     /// Given: public class MyClass { }

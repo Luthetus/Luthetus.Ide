@@ -8,7 +8,7 @@ public partial class CSharpFacts
 {
     public class ScopeFacts
     {
-        public static IScope GetInitialGlobalScope()
+        public static Scope GetInitialGlobalScope()
         {
             var typeDefinitionMap = new Dictionary<string, TypeDefinitionNode>
 	        {
@@ -37,9 +37,9 @@ public partial class CSharpFacts
 			return new Scope(
 				codeBlockOwner: null,
 				indexKey: 0,
-			    parentIndexKey: null,
+			    parentIndexKey: -1,
 			    0,
-			    endingIndexExclusive: null);
+			    endingIndexExclusive: -1);
         }
     }
 }
