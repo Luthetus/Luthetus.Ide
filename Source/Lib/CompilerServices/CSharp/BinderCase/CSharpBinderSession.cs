@@ -2,6 +2,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.CompilerServices.CSharp.BinderCase;
@@ -34,7 +35,7 @@ public class CSharpBinderSession : IBinderSession
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     
-    public List<IScope> ScopeList { get; } = new();
+    public List<Scope> ScopeList { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();

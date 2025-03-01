@@ -119,7 +119,7 @@ public sealed class CSharpCompilerService : CompilerService
     {
     	var boundScope = CSharpBinder.GetScope(null, textSpan);
 
-        if (boundScope is null)
+        if (!boundScope.ConstructorWasInvoked)
             return base._emptyAutocompleteEntryList;
         
         var autocompleteEntryList = new List<AutocompleteEntry>();
@@ -208,7 +208,7 @@ public sealed class CSharpCompilerService : CompilerService
         }
 		else
 		{
-			while (targetScope is not null)
+			while (targetScope.ConstructorWasInvoked)
 	        {
 	            autocompleteEntryList.AddRange(
 	            	CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
@@ -240,10 +240,10 @@ public sealed class CSharpCompilerService : CompilerService
 	                        null);
 	                }));
 	
-				if (targetScope.ParentIndexKey is null)
-					targetScope = null;
+				if (targetScope.ParentIndexKey == -1)
+					targetScope = default;
 				else
-	            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
+	            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey);
 	        }
         
 	        var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;
