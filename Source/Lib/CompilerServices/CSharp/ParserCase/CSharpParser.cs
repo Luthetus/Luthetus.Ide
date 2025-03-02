@@ -44,7 +44,12 @@ public static class CSharpParser
 		#endif
 		
 		var loopCount = 0;
-        var loopLimit = 3 * parserModel.TokenWalker.TokenList.Count;
+		
+		// + 10 because a valid case where 'parserModel.TokenWalker.TokenList.Count + 1' was found
+		// and adding an extra 9 of padding shouldn't matter to the CPU.
+		// (I think the case referred to was 'public class Abc { }' but this is from memory alone).
+		// 
+        var loopLimit = parserModel.TokenWalker.TokenList.Count + 10;
         
         while (true)
         {
