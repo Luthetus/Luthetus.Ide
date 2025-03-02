@@ -68,8 +68,6 @@ public class CSharpCodeBlockBuilder
 	/// this decision is only being made to create consistency.
 	/// </summary>
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
-	
-	public int? DequeuedIndexForChildList { get; set; }
 
     public CodeBlockNode Build()
     {

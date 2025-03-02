@@ -27,8 +27,6 @@ public struct CSharpDeferredChildScope
 		
 		parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
 		
-		parserModel.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
-		
 		parserModel.TokenWalker.DeferredParsing(
 			OpenTokenIndex,
 			CloseTokenIndex,
