@@ -8,30 +8,6 @@ public partial class InitialSolutionFacts
 // This demo file is just to showcase features and not intended to represent well written code.
 namespace Luthetus.CompilerServices.CSharp;
 
-public class Person : IPerson
-{
-	public Person(string firstName, string lastName)
-	{
-		FirstName = firstName;
-		LastName = lastName;
-	}
-
-	public Key<Person> Id { get; } = Key<Person>.NewKey();
-	public string FirstName { get; set; }
-	public string LastName { get; set; }
-	
-	// Most interpolated expressions work now, try hovering these interpolated expressions.
-	public string DisplayName => $"{FirstName} {LastName}";
-}
-
-public interface IPerson { }
-
-															  // Comments don't break syntax.
-public record PersonRecord(string FirstName, string LastName) /**/ : /**/ IPerson
-{
-	public string DisplayName => $"{FirstName} {LastName}";
-}
-
 public class PersonRepository
 {
 	private readonly List<Person> _people = new();
@@ -60,6 +36,17 @@ public class PersonRepository
 		
 		person.FirstName;
 		//     ^ hover mouse here for member access tooltip.
+		//
+		// Multiple classes in the same file are inconsistently doing this now.
+		// If you move this type below 'Person' it will stop working.
+		// Reason being the order that things are parsed.
+		// 
+		// When running the IDE natively,
+		// any cross file referencing is still working as expected.
+		//
+		// Cross file referencing in the demo is iffy because
+		// I had made the demo's filesystem quickly
+		// just to have something for the demo (since web sandboxing). (2025-03-01)
 		
 		FirstName;
 		// ^ contrast the 'member access tooltip' with what happens if the identifier is alone;
@@ -100,6 +87,30 @@ public class PersonRepository
 	{
 		return _people.Single(x => x.Id == id);
 	}
+}
+
+public class Person : IPerson
+{
+	public Person(string firstName, string lastName)
+	{
+		FirstName = firstName;
+		LastName = lastName;
+	}
+
+	public Key<Person> Id { get; } = Key<Person>.NewKey();
+	public string FirstName { get; set; }
+	public string LastName { get; set; }
+	
+	// Most interpolated expressions work now, try hovering these interpolated expressions.
+	public string DisplayName => $"{FirstName} {LastName}";
+}
+
+public interface IPerson { }
+
+															  // Comments don't break syntax.
+public record PersonRecord(string FirstName, string LastName) /**/ : /**/ IPerson
+{
+	public string DisplayName => $"{FirstName} {LastName}";
 }
 
 public record struct Key<T>(Guid Guid)
