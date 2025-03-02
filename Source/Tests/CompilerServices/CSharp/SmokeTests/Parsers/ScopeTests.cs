@@ -2,6 +2,7 @@ using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.BinderCase;
@@ -145,7 +146,7 @@ public class ScopeTests
 		Assert.True(success);
 		Assert.Equal(4, binderSession.ScopeList.Count);
 		
-		IScope arbitraryScope;
+		Scope arbitraryScope;
 		
 		{ // Global
 			var globalScope = binderSession.ScopeList[0];
@@ -200,7 +201,7 @@ public class ScopeTests
 		Assert.True(success);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
-		IScope arbitraryScope;
+		Scope arbitraryScope;
 		
 		{ // Global
 			var globalScope = binderSession.ScopeList[0];
@@ -257,7 +258,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.EndingIndexExclusive);
 			Assert.Equal(SyntaxKind.GlobalCodeBlockNode, globalScope.CodeBlockOwner.SyntaxKind);
 		    
-		    IScope arbitraryScope;
+		    Scope arbitraryScope;
 		    
 		    { // Function definition node
 			    var functionDefinitionNodeScope = binderSession.ScopeList[1];
