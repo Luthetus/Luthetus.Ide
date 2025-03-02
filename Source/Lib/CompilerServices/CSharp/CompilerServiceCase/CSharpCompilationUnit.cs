@@ -8,6 +8,15 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
+/// <summary>
+/// I think I want to get rid of the 'IBinderSession'.
+/// Some of its properties were moved to the 'CSharpCompilationUnit'
+/// and some to the 'CSharpParserModel'.
+///
+/// This was done based on whether the data should continue to exist
+/// after the parse finished, or if the data should be cleared immediately after the parse finishes
+/// (respectively).
+/// </summary>
 public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
 {
 	public CSharpCompilationUnit(ResourceUri resourceUri)
@@ -16,23 +25,16 @@ public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
 	}
 
 	public ResourceUri ResourceUri { get; set; }
-    
-    
     public ISyntaxNode RootCodeBlockNode { get; set; }
     
-	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
-    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
-    
-    // CSharpBinderSession.cs
-    
-    
+	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();    
     public List<Scope> ScopeList { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
     
-    
+    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
     
     /// <summary>
     /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
