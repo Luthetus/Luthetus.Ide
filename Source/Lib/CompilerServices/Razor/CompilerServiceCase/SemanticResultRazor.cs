@@ -33,6 +33,7 @@ public record SemanticResultRazor
         string classContents)
     {
         CompilationUnit = compilationUnit;
+        Binder = binder;
         CodebehindClassInsertions = codebehindClassInsertions;
         CodebehindRenderFunctionInsertions = codebehindRenderFunctionInsertions;
         AdhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass = adhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass;
