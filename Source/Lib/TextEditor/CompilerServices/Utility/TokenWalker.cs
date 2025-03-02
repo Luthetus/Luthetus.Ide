@@ -7,7 +7,18 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 public class TokenWalker
 {
     private int _index;
-	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
+    
+    /// <summary>
+    /// Use '-1' for each int value to indicate 'null' for the entirety of the _deferredParsingTuple;
+    /// </summary>
+	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore) _deferredParsingTuple = (-1, -1, -1);
+	
+	/// <summary>
+	/// '-1' should not appear for any of the int values in the stack.
+	/// _deferredParsingTuple is the cached Peek() result.
+	///
+	/// If this stack is empty, them the cached Peek() result should be '(-1, -1, -1)'.
+	/// </summary>
 	private Stack<(int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)>? _deferredParsingTupleStack;
 
     public TokenWalker(List<SyntaxToken> tokenList)
@@ -58,20 +69,20 @@ public class TokenWalker
         if (_index >= TokenList.Count)
             return EOF; // Return the end of file token (the last token)
             
-		if (_deferredParsingTuple is not null)
+		if (_deferredParsingTuple.closeTokenIndex != -1)
 		{
-			if (_index == _deferredParsingTuple.Value.closeTokenIndex)
+			if (_index == _deferredParsingTuple.closeTokenIndex)
 			{
 				_deferredParsingTupleStack.Pop();
 			
 				var closeChildScopeToken = TokenList[_index];
-				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
+				_index = _deferredParsingTuple.tokenIndexToRestore;
 				ConsumeCounter++;
 				
 				if (_deferredParsingTupleStack.Count > 0)
 					_deferredParsingTuple = _deferredParsingTupleStack.Peek();
 				else
-					_deferredParsingTuple = null;
+					_deferredParsingTuple = (-1, -1, -1);
 				
 				return closeChildScopeToken;
 			}
@@ -168,7 +179,7 @@ public class TokenWalker
 	
 	public void SetNullDeferredParsingTuple()
 	{
-		_deferredParsingTuple = null;
+		_deferredParsingTuple = (-1, -1, -1);
 	}
 	
 	public void ConsumeCounterReset()
