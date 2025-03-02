@@ -166,6 +166,11 @@ public class TokenWalker
 		ConsumeCounter++;
 	}
 	
+	public void SetNullDeferredParsingTuple()
+	{
+		_deferredParsingTuple = null;
+	}
+	
 	public void ConsumeCounterReset()
 	{
 		ConsumeCounter = 0;

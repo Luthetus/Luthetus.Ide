@@ -149,6 +149,13 @@ public static class CSharpParser
 					// to be passed the index that was consumed in order to
 					// get the CloseBraceToken.
 					var closeBraceTokenIndex = parserModel.TokenWalker.Index;
+					
+					if (parserModel.ParseChildScopeStack.Count > 0 &&
+					    parserModel.ParseChildScopeStack.Peek().CodeBlockOwner == parserModel.CurrentCodeBlockBuilder.CodeBlockOwner)
+					{
+						parserModel.TokenWalker.SetNullDeferredParsingTuple();
+					}
+					
 					var closeBraceToken = parserModel.TokenWalker.Consume();
 					
 					#if DEBUG
