@@ -47,13 +47,13 @@ public struct CSharpStatementBuilder
 		ChildList.RemoveAt(ChildList.Count - 1);
 		return syntax;
 	}
-	
+
 	/// <summary>
 	/// If 'StatementDelimiterToken', 'OpenBraceToken', or 'CloseBraceToken'
 	/// are parsed by the main loop,
 	///
 	/// Then check that the last item in the StatementBuilder.ChildList
-	/// has been added to the parserModel.CurrentCodeBlockBuilder.ChildList.
+	/// has been added to the parserComputation.CurrentCodeBlockBuilder.ChildList.
 	///
 	/// If it was not yet added, then add it.
 	///
@@ -61,7 +61,7 @@ public struct CSharpStatementBuilder
 	///
 	/// Returns the result of 'ParseChildScopeStack.TryPop(out var deferredChildScope)'.
 	/// </summary>
-	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserComputation parserComputation)
 	{
 		if (ChildList.Count != 0)
 		{
@@ -69,15 +69,15 @@ public struct CSharpStatementBuilder
 			
 			ISyntax codeBlockBuilderSyntax;
 			
-			if (parserModel.CurrentCodeBlockBuilder.ChildList.Count == 0)
+			if (parserComputation.CurrentCodeBlockBuilder.ChildList.Count == 0)
 				codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
 			else
-				codeBlockBuilderSyntax = parserModel.CurrentCodeBlockBuilder.ChildList[^1];
+				codeBlockBuilderSyntax = parserComputation.CurrentCodeBlockBuilder.ChildList[^1];
 
 			if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax) &&
-				!Object.ReferenceEquals(statementSyntax, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+				!Object.ReferenceEquals(statementSyntax, parserComputation.CurrentCodeBlockBuilder.CodeBlockOwner))
 			{
-				parserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+				parserComputation.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
 			}
 			
 			ChildList.Clear();
@@ -87,10 +87,10 @@ public struct CSharpStatementBuilder
 		{
 			var tuple = ParseChildScopeStack.Peek();
 			
-			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserComputation.CurrentCodeBlockBuilder.CodeBlockOwner))
 			{
 				tuple = ParseChildScopeStack.Pop();
-				tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, compilationUnit, ref parserModel);
+				tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, compilationUnit, ref parserComputation);
 				return true;
 			}
 		}

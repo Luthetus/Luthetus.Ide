@@ -7,9 +7,9 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 internal static class TokenWalkerExtensionMethods
 {
-    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpCompilationUnit compilationUnit, ref CSharpParserComputation parserComputation)
     {
-        return ParseTypes.MatchTypeClause(compilationUnit, ref parserModel);
+        return ParseTypes.MatchTypeClause(compilationUnit, ref parserComputation);
     }
     
     /*#if DEBUG
@@ -19,15 +19,15 @@ internal static class TokenWalkerExtensionMethods
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
 		CSharpCompilationUnit compilationUnit,
-		ref CSharpParserModel parserModel)
+		ref CSharpParserComputation parserComputation)
     {    
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
-		var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockBuilder;
+		var deferredCodeBlockBuilder = parserComputation.CurrentCodeBlockBuilder;
 		
 		compilationUnit.Binder.SetCurrentScopeAndBuilder(
 			deferredCodeBlockBuilder.Parent,
 			compilationUnit,
-			ref parserModel);
+			ref parserComputation);
 
 		var openTokenIndex = tokenWalker.Index - 1;
 		
@@ -43,7 +43,7 @@ internal static class TokenWalkerExtensionMethods
 		int closeTokenIndex;
 		
 		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		parserComputation.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
 		if (deferredCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
@@ -87,12 +87,12 @@ internal static class TokenWalkerExtensionMethods
 		}
 		
 		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		parserComputation.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 
-		parserModel.ParseChildScopeStack.Push(
+		parserComputation.ParseChildScopeStack.Push(
 			(
-				parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,
+				parserComputation.CurrentCodeBlockBuilder.CodeBlockOwner,
 				new CSharpDeferredChildScope(
 					openTokenIndex,
 					closeTokenIndex,
