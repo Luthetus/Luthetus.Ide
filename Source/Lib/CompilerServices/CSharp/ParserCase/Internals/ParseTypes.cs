@@ -7,20 +7,6 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseTypes
 {
-    public static void HandleStaticClassIdentifier(
-        SyntaxToken consumedIdentifierToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    }
-
-    public static void HandleUndefinedTypeOrNamespaceReference(
-        SyntaxToken consumedIdentifierToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    }
-
     /// <summary>
     /// This method is used for generic type definition such as, 'class List&lt;T&gt; { ... }'
     /// 
@@ -72,30 +58,6 @@ public static class ParseTypes
             mutableGenericArgumentsListing,
             closeAngleBracketToken);
     }
-
-    public static void HandleAttribute(
-        SyntaxToken consumedOpenSquareBracketToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    }
-
-	/// <summary>
-	/// This method should only be used to disambiguate syntax.
-	/// If it is known that there has to be a TypeClauseNode at the current position,
-	/// then use <see cref="MatchTypeClause"/>.
-	///
-	/// Example: 'someMethod(out var e);'
-	///           In this example the 'out' can continue into a variable reference or declaration.
-	///           Therefore an invocation to this method is performed to determine if it is a declaration.
-	/// 
-	/// Furthermore, because there is a need to disambiguate, more checks are performed in this method
-	/// than in <see cref="MatchTypeClause"/>.
-	/// </summary>
-	public static bool IsPossibleTypeClause(SyntaxToken syntaxToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{
-		return false;
-	}
 
     public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
@@ -197,7 +159,7 @@ public static class ParseTypes
     	{
     		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 	    	{
-	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+	    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserModel);
 	    	}
     	}
     }
@@ -254,7 +216,7 @@ public static class ParseTypes
 				        
 				    parserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 				        
-				    compilationUnit.Binder.BindEnumMember(variableDeclarationNode, compilationUnit, ref parserModel);
+				    parserModel.Binder.BindEnumMember(variableDeclarationNode, compilationUnit, ref parserModel);
 					
 					shouldFindIdentifier = !shouldFindIdentifier;
 	    		}

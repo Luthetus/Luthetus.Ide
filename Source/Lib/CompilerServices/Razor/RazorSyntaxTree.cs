@@ -102,18 +102,19 @@ public class RazorSyntaxTree
 
         var classContents = _codebehindClassBuilder.ToString();
 
-        var compilationUnit = new CSharpCompilationUnit(
-        	_codebehindResourceUri,
-			new CSharpBinder());
+		var cSharpBinder = new CSharpBinder();
+		
+        var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri);
 			
 		var lexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
 		
-		compilationUnit.BinderSession = (CSharpBinderSession)compilationUnit.Binder.StartBinderSession(_codebehindResourceUri);
+		cSharpBinder.StartBinderSession(_codebehindResourceUri);
 		
-		CSharpParser.Parse(compilationUnit, ref lexerOutput);
+		CSharpParser.Parse(compilationUnit, cSharpBinder, ref lexerOutput);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,
+            cSharpBinder,
             _codebehindClassInsertions,
             _codebehindRenderFunctionInsertions,
             renderFunctionAdhocTextInsertion,

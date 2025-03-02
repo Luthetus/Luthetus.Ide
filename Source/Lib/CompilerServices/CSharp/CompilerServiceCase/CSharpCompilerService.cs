@@ -66,7 +66,7 @@ public sealed class CSharpCompilerService : CompilerService
 		var presentationModel = modelModifier.PresentationModelList.First(
 			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 		
-		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, CSharpBinder);
+		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri);
 		
 		var lexerOutput = CSharpLexer.Lex(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 
@@ -74,8 +74,8 @@ public sealed class CSharpCompilerService : CompilerService
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
-			cSharpCompilationUnit.BinderSession = (CSharpBinderSession)CSharpBinder.StartBinderSession(resourceUri);
-			CSharpParser.Parse(cSharpCompilationUnit, ref lexerOutput);
+			CSharpBinder.StartBinderSession(resourceUri);
+			CSharpParser.Parse(cSharpCompilationUnit, CSharpBinder, ref lexerOutput);
 		}
 		finally
 		{
