@@ -20,14 +20,12 @@ public struct CSharpDeferredChildScope
 	
 	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		compilationUnit.Binder.SetCurrentScopeAndBuilder(
+		parserModel.Binder.SetCurrentScopeAndBuilder(
 			CodeBlockBuilder,
 			compilationUnit,
 			ref parserModel);
 		
 		parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
-		
-		parserModel.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
 		
 		parserModel.TokenWalker.DeferredParsing(
 			OpenTokenIndex,

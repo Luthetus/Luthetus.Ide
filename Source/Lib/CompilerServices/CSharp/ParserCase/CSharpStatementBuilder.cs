@@ -47,7 +47,7 @@ public struct CSharpStatementBuilder
 		ChildList.RemoveAt(ChildList.Count - 1);
 		return syntax;
 	}
-	
+
 	/// <summary>
 	/// If 'StatementDelimiterToken', 'OpenBraceToken', or 'CloseBraceToken'
 	/// are parsed by the main loop,

@@ -1,4 +1,5 @@
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
@@ -25,12 +26,14 @@ public record SemanticResultRazor
     /// </summary>
     public SemanticResultRazor(
         CSharpCompilationUnit compilationUnit,
+        CSharpBinder binder,
         List<AdhocTextInsertion> codebehindClassInsertions,
         List<AdhocTextInsertion> codebehindRenderFunctionInsertions,
         AdhocTextInsertion adhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass,
         string classContents)
     {
         CompilationUnit = compilationUnit;
+        Binder = binder;
         CodebehindClassInsertions = codebehindClassInsertions;
         CodebehindRenderFunctionInsertions = codebehindRenderFunctionInsertions;
         AdhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass = adhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass;
@@ -38,6 +41,7 @@ public record SemanticResultRazor
     }
 
     public CSharpCompilationUnit CompilationUnit { get; }
+    public CSharpBinder Binder { get; }
     public List<AdhocTextInsertion> CodebehindClassInsertions { get; }
     public List<AdhocTextInsertion> CodebehindRenderFunctionInsertions { get; }
     public AdhocTextInsertion AdhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass { get; }

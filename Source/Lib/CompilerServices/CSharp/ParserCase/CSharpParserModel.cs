@@ -1,8 +1,8 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
@@ -12,11 +12,26 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 /// </summary>
 public struct CSharpParserModel
 {
+	/// <summary>
+	/// Should 0 be the global scope?
+	/// </summary>
+	private int _indexKey = 0;
+	
+	private int _symbolId = 0;
+
     public CSharpParserModel(
+        CSharpBinder binder,
         TokenWalker tokenWalker,
         CSharpCodeBlockBuilder globalCodeBlockBuilder,
-        CSharpCodeBlockBuilder currentCodeBlockBuilder)
+        CSharpCodeBlockBuilder currentCodeBlockBuilder,
+        int globalScopeIndexKey,
+	    NamespaceStatementNode topLevelNamespaceStatementNode)
     {
+    	Binder = binder;
+	    CurrentScopeIndexKey = globalScopeIndexKey;
+	    CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
+	    CurrentUsingStatementNodeList = new();
+    
     	TokenWalker = tokenWalker;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
@@ -69,6 +84,22 @@ public struct CSharpParserModel
     public CSharpCodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CSharpCodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
     
+    public CSharpBinder Binder { get; set; }
+
+    public int CurrentScopeIndexKey { get; set; }
+    public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
+    public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
+    
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();
+    
+    public int GetNextIndexKey()
+    {
+    	return ++_indexKey;
+    }
+    
+    public int GetNextSymbolId()
+    {
+    	return ++_symbolId;
+    }
 }
