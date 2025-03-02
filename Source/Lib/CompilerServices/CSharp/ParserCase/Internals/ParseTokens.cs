@@ -9,14 +9,6 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseTokens
 {
-    public static void ParsePreprocessorDirectiveToken(
-        SyntaxToken consumedPreprocessorDirectiveToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-        var consumedToken = parserModel.TokenWalker.Consume();
-    }
-
     public static void ParseIdentifierToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
@@ -260,12 +252,6 @@ public static class ParseTokens
 		var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
     }
 
-    public static void ParseColonToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {
-    	var colonToken = parserModel.TokenWalker.Consume();
-        // compilationUnit.DiagnosticBag.ReportTodoException(colonToken.TextSpan, "Colon is in unexpected place.");
-    }
-
 	/// <summary>
 	/// OpenBraceToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
@@ -377,28 +363,6 @@ public static class ParseTokens
 		// else if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousParenthesizedExpressionNode)
     }
 
-    public static void ParseCloseParenthesisToken(
-        SyntaxToken consumedCloseParenthesisToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    	var closesParenthesisToken = parserModel.TokenWalker.Consume();
-    }
-
-    public static void ParseOpenAngleBracketToken(
-        SyntaxToken consumedOpenAngleBracketToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    }
-
-    public static void ParseCloseAngleBracketToken(
-        SyntaxToken consumedCloseAngleBracketToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    }
-
     public static void ParseOpenSquareBracketToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var openSquareBracketToken = parserModel.TokenWalker.Consume();
@@ -454,13 +418,6 @@ public static class ParseTokens
 		#endif
     }
 
-    public static void ParseCloseSquareBracketToken(
-        SyntaxToken consumedCloseSquareBracketToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    }
-
     public static void ParseEqualsToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (parserModel.StatementBuilder.ChildList.Count == 1 &&
@@ -472,13 +429,6 @@ public static class ParseTokens
     	
     	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
 	}
-
-    public static void ParseMemberAccessToken(
-        SyntaxToken consumedMemberAccessToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    }
 
 	/// <summary>
 	/// StatementDelimiterToken is passed in to the method because it is a protected token,
