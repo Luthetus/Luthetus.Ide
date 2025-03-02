@@ -24,7 +24,7 @@ public static class ParseVariables
 	        variableKind,
 	        false);
 
-        compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+        parserComputation.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserComputation);
         parserComputation.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
         return variableDeclarationNode;
     }

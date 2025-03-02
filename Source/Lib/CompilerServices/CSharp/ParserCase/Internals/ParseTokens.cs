@@ -14,14 +14,14 @@ public static class ParseTokens
     	if (parserComputation.TokenWalker.Current.TextSpan.Length == 1 &&
     		parserComputation.TokenWalker.Current.TextSpan.GetText() == "_")
     	{
-    		if (!compilationUnit.Binder.TryGetVariableDeclarationHierarchically(
+    		if (!parserComputation.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	compilationUnit.ResourceUri,
-			    	compilationUnit.CurrentScopeIndexKey,
+			    	parserComputation.CurrentScopeIndexKey,
 			        parserComputation.TokenWalker.Current.TextSpan.GetText(),
 			        out _))
 			{
-				compilationUnit.Binder.BindDiscard(parserComputation.TokenWalker.Current, compilationUnit);
+				parserComputation.Binder.BindDiscard(parserComputation.TokenWalker.Current, compilationUnit, ref parserComputation);
 	    		var identifierToken = parserComputation.TokenWalker.Consume();
 	    		
 	    		var variableReferenceNode = new VariableReferenceNode(
@@ -133,7 +133,7 @@ public static class ParseTokens
 		
 		((VariableDeclarationNode)variableDeclarationNode).VariableKind = variableKind;
 		
-		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+		parserComputation.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserComputation);
         parserComputation.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 		parserComputation.StatementBuilder.ChildList.Add(variableDeclarationNode);
 		
@@ -263,7 +263,7 @@ public static class ParseTokens
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserComputation.CurrentCodeBlockBuilder.CodeBlockOwner);
 			
-			compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+			parserComputation.Binder.NewScopeAndBuilderFromOwner(
 		    	arbitraryCodeBlockNode,
 		        arbitraryCodeBlockNode.GetReturnTypeClauseNode(),
 		        openBraceToken.TextSpan,
@@ -320,7 +320,7 @@ public static class ParseTokens
 		if (parserComputation.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)
 			parserComputation.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, compilationUnit.__DiagnosticList, parserComputation.TokenWalker);
         
-        compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserComputation);
+        parserComputation.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserComputation);
     }
 
     public static void ParseOpenParenthesisToken(CSharpCompilationUnit compilationUnit, ref CSharpParserComputation parserComputation)
@@ -445,9 +445,10 @@ public static class ParseTokens
             
             namespaceStatementNode.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, compilationUnit.__DiagnosticList, parserComputation.TokenWalker);
 
-            compilationUnit.Binder.AddNamespaceToCurrentScope(
+            parserComputation.Binder.AddNamespaceToCurrentScope(
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
-                compilationUnit);
+                compilationUnit,
+                ref parserComputation);
         }
         else 
         {
@@ -455,7 +456,7 @@ public static class ParseTokens
         		   parserComputation.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
         	{
         		parserComputation.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, compilationUnit.__DiagnosticList, parserComputation.TokenWalker);
-	        	compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserComputation);
+	        	parserComputation.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserComputation);
         	}
         }
     }

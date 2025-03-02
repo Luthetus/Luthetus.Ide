@@ -112,39 +112,42 @@ public partial class CSharpBinder : IBinder
 
     public void BindDiscard(
         SyntaxToken identifierToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         AddSymbolReference(
         	new Symbol(
         		SyntaxKind.DiscardSymbol,
-	        	compilationUnit.GetNextSymbolId(),
+	        	parserComputation.GetNextSymbolId(),
 	        	identifierToken.TextSpan with
 		        {
 		            DecorationByte = (byte)GenericDecorationKind.None,
 		        }),
-			compilationUnit);
+			compilationUnit,
+			ref parserComputation);
     }
 
     public void BindFunctionDefinitionNode(
         FunctionDefinitionNode functionDefinitionNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
-        	compilationUnit.GetNextSymbolId(),
+        	parserComputation.GetNextSymbolId(),
         	functionDefinitionNode.FunctionIdentifierToken.TextSpan with
 	        {
 	            DecorationByte = (byte)GenericDecorationKind.Function
 	        });
 
-        AddSymbolDefinition(functionSymbol, compilationUnit);
+        AddSymbolDefinition(functionSymbol, compilationUnit, ref parserComputation);
 
         if (!TryAddFunctionDefinitionNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-        		compilationUnit.CurrentScopeIndexKey,
+        		parserComputation.CurrentScopeIndexKey,
         		functionIdentifierText,
                 functionDefinitionNode))
         {
@@ -157,23 +160,26 @@ public partial class CSharpBinder : IBinder
 
     public void SetCurrentNamespaceStatementNode(
         NamespaceStatementNode namespaceStatementNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
-        compilationUnit.CurrentNamespaceStatementNode = namespaceStatementNode;
+        parserComputation.CurrentNamespaceStatementNode = namespaceStatementNode;
     }
 
     public void BindNamespaceStatementNode(
         NamespaceStatementNode namespaceStatementNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
         
         AddSymbolReference(
         	new Symbol(
         		SyntaxKind.NamespaceSymbol,
-        		compilationUnit.GetNextSymbolId(),
+        		parserComputation.GetNextSymbolId(),
         		namespaceStatementNode.IdentifierToken.TextSpan),
-        	compilationUnit);
+        	compilationUnit,
+        	ref parserComputation);
 
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
@@ -200,20 +206,21 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserComputation parserComputation)
     {
-    	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+    	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserComputation);
     }
 
     public void BindVariableDeclarationNode(
         IVariableDeclarationNode variableDeclarationNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
-        CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+        CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserComputation);
         var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
         
         if (TryGetVariableDeclarationNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-        		compilationUnit.CurrentScopeIndexKey,
+        		parserComputation.CurrentScopeIndexKey,
         		text,
         		out var existingVariableDeclarationNode))
         {
@@ -226,7 +233,7 @@ public partial class CSharpBinder : IBinder
                 SetVariableDeclarationNodeByScope(
         			compilationUnit,
                 	compilationUnit.ResourceUri,
-        			compilationUnit.CurrentScopeIndexKey,
+        			parserComputation.CurrentScopeIndexKey,
                 	text,
                 	variableDeclarationNode);
             }
@@ -241,7 +248,7 @@ public partial class CSharpBinder : IBinder
         	_ = TryAddVariableDeclarationNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-    			compilationUnit.CurrentScopeIndexKey,
+    			parserComputation.CurrentScopeIndexKey,
             	text,
             	variableDeclarationNode);
         }
@@ -268,7 +275,8 @@ public partial class CSharpBinder : IBinder
 
     public VariableReferenceNode ConstructAndBindVariableReferenceNode(
         SyntaxToken variableIdentifierToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         var text = variableIdentifierToken.TextSpan.GetText();
         VariableReferenceNode? variableReferenceNode;
@@ -276,7 +284,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetVariableDeclarationHierarchically(
         		compilationUnit,
                 compilationUnit.ResourceUri,
-                compilationUnit.CurrentScopeIndexKey,
+                parserComputation.CurrentScopeIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -305,13 +313,14 @@ public partial class CSharpBinder : IBinder
                 text);*/
         }
 
-        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserComputation);
         return variableReferenceNode;
     }
 
     public void BindVariableAssignmentExpressionNode(
         VariableAssignmentExpressionNode variableAssignmentExpressionNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         var text = variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText();
         VariableKind variableKind = VariableKind.Local;
@@ -319,7 +328,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetVariableDeclarationHierarchically(
         		compilationUnit,
                 compilationUnit.ResourceUri,
-                compilationUnit.CurrentScopeIndexKey,
+                parserComputation.CurrentScopeIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -346,45 +355,47 @@ public partial class CSharpBinder : IBinder
             }
         }
 
-        CreateVariableSymbol(variableAssignmentExpressionNode.VariableIdentifierToken, variableKind, compilationUnit);
+        CreateVariableSymbol(variableAssignmentExpressionNode.VariableIdentifierToken, variableKind, compilationUnit, ref parserComputation);
     }
 
     public void BindConstructorDefinitionIdentifierToken(
         SyntaxToken identifierToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         var constructorSymbol = new Symbol(
         	SyntaxKind.ConstructorSymbol,
-	        compilationUnit.GetNextSymbolId(),
+	        parserComputation.GetNextSymbolId(),
 	        identifierToken.TextSpan with
 	        {
 	            DecorationByte = (byte)GenericDecorationKind.Type
 	        });
 
-        AddSymbolDefinition(constructorSymbol, compilationUnit);
+        AddSymbolDefinition(constructorSymbol, compilationUnit, ref parserComputation);
     }
 
     public void BindFunctionInvocationNode(
         FunctionInvocationNode functionInvocationNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         var functionInvocationIdentifierText = functionInvocationNode
             .FunctionInvocationIdentifierToken.TextSpan.GetText();
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
-        	compilationUnit.GetNextSymbolId(),
+        	parserComputation.GetNextSymbolId(),
         	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
 	        {
 	            DecorationByte = (byte)GenericDecorationKind.Function
 	        });
 
-        AddSymbolReference(functionSymbol, compilationUnit);
+        AddSymbolReference(functionSymbol, compilationUnit, ref parserComputation);
 
         if (TryGetFunctionHierarchically(
         		compilationUnit,
                 compilationUnit.ResourceUri,
-                compilationUnit.CurrentScopeIndexKey,
+                parserComputation.CurrentScopeIndexKey,
                 functionInvocationIdentifierText,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -401,34 +412,36 @@ public partial class CSharpBinder : IBinder
 
     public void BindNamespaceReference(
         SyntaxToken namespaceIdentifierToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         var namespaceSymbol = new Symbol(
         	SyntaxKind.NamespaceSymbol,
-        	compilationUnit.GetNextSymbolId(),
+        	parserComputation.GetNextSymbolId(),
         	namespaceIdentifierToken.TextSpan with
 	        {
 	            DecorationByte = (byte)GenericDecorationKind.None
 	        });
 
-        AddSymbolReference(namespaceSymbol, compilationUnit);
+        AddSymbolReference(namespaceSymbol, compilationUnit, ref parserComputation);
     }
 
     public void BindTypeClauseNode(
         TypeClauseNode typeClauseNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         if (!typeClauseNode.IsKeywordType)
         {
             var typeSymbol = new Symbol(
             	SyntaxKind.TypeSymbol,
-            	compilationUnit.GetNextSymbolId(),
+            	parserComputation.GetNextSymbolId(),
             	typeClauseNode.TypeIdentifierToken.TextSpan with
 	            {
 	                DecorationByte = (byte)GenericDecorationKind.Type
 	            });
 
-            AddSymbolReference(typeSymbol, compilationUnit);
+            AddSymbolReference(typeSymbol, compilationUnit, ref parserComputation);
         }
 
         var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
@@ -464,35 +477,38 @@ public partial class CSharpBinder : IBinder
 
     public void BindTypeIdentifier(
         SyntaxToken identifierToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
         {
             var typeSymbol = new Symbol(
             	SyntaxKind.TypeSymbol,
-            	compilationUnit.GetNextSymbolId(),
+            	parserComputation.GetNextSymbolId(),
             	identifierToken.TextSpan with
 	            {
 	                DecorationByte = (byte)GenericDecorationKind.Type
 	            });
 
-            AddSymbolReference(typeSymbol, compilationUnit);
+            AddSymbolReference(typeSymbol, compilationUnit, ref parserComputation);
         }
     }
 
     public void BindUsingStatementNode(
         UsingStatementNode usingStatementNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         AddSymbolReference(
         	new Symbol(
         		SyntaxKind.NamespaceSymbol,
-        		compilationUnit.GetNextSymbolId(),
+        		parserComputation.GetNextSymbolId(),
         		usingStatementNode.NamespaceIdentifier.TextSpan),
-        	compilationUnit);
+        	compilationUnit,
+        	ref parserComputation);
 
-        compilationUnit.CurrentUsingStatementNodeList.Add(usingStatementNode);
-        AddNamespaceToCurrentScope(usingStatementNode.NamespaceIdentifier.TextSpan.GetText(), compilationUnit);
+        parserComputation.CurrentUsingStatementNodeList.Add(usingStatementNode);
+        AddNamespaceToCurrentScope(usingStatementNode.NamespaceIdentifier.TextSpan.GetText(), compilationUnit, ref parserComputation);
     }
 
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
@@ -500,18 +516,20 @@ public partial class CSharpBinder : IBinder
         SyntaxToken openSquareBracketToken,
         List<SyntaxToken> innerTokens,
         SyntaxToken closeSquareBracketToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         AddSymbolReference(
         	new Symbol(
         		SyntaxKind.TypeSymbol,
-        		compilationUnit.GetNextSymbolId(),
+        		parserComputation.GetNextSymbolId(),
         		openSquareBracketToken.TextSpan with
 		        {
 		            DecorationByte = (byte)GenericDecorationKind.Type,
 		            EndingIndexExclusive = closeSquareBracketToken.TextSpan.EndingIndexExclusive
 		        }),
-			compilationUnit);
+			compilationUnit,
+			ref parserComputation);
 
         return new AttributeNode(
             openSquareBracketToken,
@@ -522,10 +540,11 @@ public partial class CSharpBinder : IBinder
     public void BindTypeDefinitionNode(
         TypeDefinitionNode typeDefinitionNode,
         CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation,
         bool shouldOverwrite = false)
     {
         var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
-        var currentNamespaceStatementText = compilationUnit.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        var currentNamespaceStatementText = parserComputation.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
@@ -533,7 +552,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetTypeDefinitionNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-        		compilationUnit.CurrentScopeIndexKey,
+        		parserComputation.CurrentScopeIndexKey,
         		typeIdentifierText,
         		out var existingTypeDefinitionNode))
         {
@@ -542,7 +561,7 @@ public partial class CSharpBinder : IBinder
         		SetTypeDefinitionNodeByScope(
         			compilationUnit,
         			compilationUnit.ResourceUri,
-	        		compilationUnit.CurrentScopeIndexKey,
+	        		parserComputation.CurrentScopeIndexKey,
 	        		typeIdentifierText,
 	        		typeDefinitionNode);
         	}
@@ -559,7 +578,7 @@ public partial class CSharpBinder : IBinder
         	_ = TryAddTypeDefinitionNodeByScope(
         		compilationUnit,
     			compilationUnit.ResourceUri,
-        		compilationUnit.CurrentScopeIndexKey,
+        		parserComputation.CurrentScopeIndexKey,
         		typeIdentifierText,
         		typeDefinitionNode);
         }
@@ -605,13 +624,13 @@ public partial class CSharpBinder : IBinder
     
     	var scope = new Scope(
         	codeBlockOwner,
-        	indexKey: compilationUnit.GetNextIndexKey(),
-		    parentIndexKey: compilationUnit.CurrentScopeIndexKey,
+        	indexKey: parserComputation.GetNextIndexKey(),
+		    parentIndexKey: parserComputation.CurrentScopeIndexKey,
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: -1);
 
         compilationUnit.ScopeList.Insert(scope.IndexKey, scope);
-        compilationUnit.CurrentScopeIndexKey = scope.IndexKey;
+        parserComputation.CurrentScopeIndexKey = scope.IndexKey;
         
         codeBlockOwner.ScopeIndexKey = scope.IndexKey;
         
@@ -619,7 +638,7 @@ public partial class CSharpBinder : IBinder
         
         parserComputation.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
         
-        compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserComputation);
+        parserComputation.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserComputation);
         
         /*#if DEBUG
     	Console.WriteLine($"-------NewSBout: {parserComputation.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
@@ -656,7 +675,6 @@ public partial class CSharpBinder : IBinder
 		    endingIndexExclusive: -1);
 
         compilationUnit.ScopeList.Insert(scope.IndexKey, scope);
-        compilationUnit.CurrentScopeIndexKey = scope.IndexKey;
         
         codeBlockOwner.ScopeIndexKey = scope.IndexKey;
         
@@ -678,7 +696,7 @@ public partial class CSharpBinder : IBinder
     	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
     		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is null. Invoke {NewScopeAndBuilderFromOwner}?");
     
-		compilationUnit.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
+		parserComputation.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
 		parserComputation.CurrentCodeBlockBuilder = codeBlockBuilder;
 		
 		/*#if DEBUG
@@ -689,11 +707,12 @@ public partial class CSharpBinder : IBinder
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserComputation) =>
-		AddNamespaceToCurrentScope(namespaceString, compilationUnit: null);
+		throw new NotImplementedException();
 
     public void AddNamespaceToCurrentScope(
         string namespaceString,
-        CSharpCompilationUnit? compilationUnit)
+        CSharpCompilationUnit? compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
     	if (compilationUnit is null)
     		return;
@@ -709,7 +728,7 @@ public partial class CSharpBinder : IBinder
             	_ = TryAddTypeDefinitionNodeByScope(
         				compilationUnit,
 	            		compilationUnit.ResourceUri,
-	            		compilationUnit.CurrentScopeIndexKey,
+	            		parserComputation.CurrentScopeIndexKey,
 	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
 	            		typeDefinitionNode);
             }
@@ -728,7 +747,7 @@ public partial class CSharpBinder : IBinder
     	#endif*/
     
     	// Check if it is the global scope, if so return early.
-    	if (compilationUnit.CurrentScopeIndexKey == 0)
+    	if (parserComputation.CurrentScopeIndexKey == 0)
     		return;
     	
     	var inBuilder = parserComputation.CurrentCodeBlockBuilder;
@@ -739,14 +758,14 @@ public partial class CSharpBinder : IBinder
     	
     	// Update Scope
     	{
-	    	var scope = compilationUnit.ScopeList[compilationUnit.CurrentScopeIndexKey];
+	    	var scope = compilationUnit.ScopeList[parserComputation.CurrentScopeIndexKey];
 	    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
-	    	compilationUnit.ScopeList[compilationUnit.CurrentScopeIndexKey] = scope;
+	    	compilationUnit.ScopeList[parserComputation.CurrentScopeIndexKey] = scope;
 	    	
 	    	// Restore Parent Scope
 			if (scope.ParentIndexKey != -1)
 			{
-				compilationUnit.CurrentScopeIndexKey = scope.ParentIndexKey;
+				parserComputation.CurrentScopeIndexKey = scope.ParentIndexKey;
 			}
     	}
     	
@@ -756,9 +775,9 @@ public partial class CSharpBinder : IBinder
 	        inOwner.SetCodeBlockNode(inBuilder.Build(), compilationUnit.__DiagnosticList, parserComputation.TokenWalker);
 			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-				compilationUnit.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit);
+				parserComputation.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit, ref parserComputation);
 			else if (inOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-				compilationUnit.Binder.BindTypeDefinitionNode((TypeDefinitionNode)inOwner, compilationUnit, true);
+				parserComputation.Binder.BindTypeDefinitionNode((TypeDefinitionNode)inOwner, compilationUnit, ref parserComputation, true);
 			
 			// Restore Parent CodeBlockBuilder
 			if (outBuilder is not null)
@@ -785,14 +804,15 @@ public partial class CSharpBinder : IBinder
     /// <summary>This method will handle the <see cref="SymbolDefinition"/>, but also invoke <see cref="AddSymbolReference"/> because each definition is being treated as a reference itself.</summary>
     private void AddSymbolDefinition(
         Symbol symbol,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
         var symbolDefinitionId = SymbolHelper.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
-            compilationUnit.CurrentScopeIndexKey);
+            parserComputation.CurrentScopeIndexKey);
 
         var symbolDefinition = new SymbolDefinition(
-            compilationUnit.CurrentScopeIndexKey,
+            parserComputation.CurrentScopeIndexKey,
             symbol);
 
         if (!_symbolDefinitions.TryAdd(
@@ -811,21 +831,21 @@ public partial class CSharpBinder : IBinder
             // TODO: The else branch of this if statement would mean the Symbol definition was found twice, should a diagnostic be reported here?
         }
 
-        AddSymbolReference(symbol, compilationUnit);
+        AddSymbolReference(symbol, compilationUnit, ref parserComputation);
     }
 
-    private void AddSymbolReference(Symbol symbol, CSharpCompilationUnit compilationUnit)
+    private void AddSymbolReference(Symbol symbol, CSharpCompilationUnit compilationUnit, ref CSharpParserComputation parserComputation)
     {
         var symbolDefinitionId = SymbolHelper.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
-            compilationUnit.CurrentScopeIndexKey);
+            parserComputation.CurrentScopeIndexKey);
 
         if (!_symbolDefinitions.TryGetValue(
                 symbolDefinitionId,
                 out var symbolDefinition))
         {
             symbolDefinition = new SymbolDefinition(
-                compilationUnit.CurrentScopeIndexKey,
+                parserComputation.CurrentScopeIndexKey,
                 symbol)
             {
                 IsFabricated = true
@@ -842,7 +862,7 @@ public partial class CSharpBinder : IBinder
 
         symbolDefinition.SymbolReferences.Add(new SymbolReference(
             symbol,
-            compilationUnit.CurrentScopeIndexKey));
+            parserComputation.CurrentScopeIndexKey));
     }
 
 	/// <summary>
@@ -852,9 +872,10 @@ public partial class CSharpBinder : IBinder
     public int CreateVariableSymbol(
         SyntaxToken identifierToken,
         VariableKind variableKind,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserComputation parserComputation)
     {
-    	var symbolId = compilationUnit.GetNextSymbolId();
+    	var symbolId = parserComputation.GetNextSymbolId();
     	
         switch (variableKind)
         {
@@ -867,7 +888,8 @@ public partial class CSharpBinder : IBinder
 		                {
 		                    DecorationByte = (byte)GenericDecorationKind.Field
 		                }),
-		            compilationUnit);
+		            compilationUnit,
+		            ref parserComputation);
                 break;
             case VariableKind.Property:
                 AddSymbolDefinition(
@@ -878,7 +900,8 @@ public partial class CSharpBinder : IBinder
 		                {
 		                    DecorationByte = (byte)GenericDecorationKind.Property
 		                }),
-	                compilationUnit);
+	                compilationUnit,
+	                ref parserComputation);
                 break;
             case VariableKind.EnumMember:
             	AddSymbolDefinition(
@@ -889,7 +912,8 @@ public partial class CSharpBinder : IBinder
 		                {
 		                    DecorationByte = (byte)GenericDecorationKind.Property
 		                }),
-	                compilationUnit);
+	                compilationUnit,
+	                ref parserComputation);
             	break;
             case VariableKind.Local:
                 goto default;
@@ -904,7 +928,8 @@ public partial class CSharpBinder : IBinder
 		                {
 		                    DecorationByte = (byte)GenericDecorationKind.Variable
 		                }),
-		            compilationUnit);
+		            compilationUnit,
+		            ref parserComputation);
                 break;
         }
         
@@ -1842,38 +1867,38 @@ public partial class CSharpBinder : IBinder
     		case SyntaxKind.NamespaceStatementNode:
     			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
 	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
-	        	compilationUnit.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit);
+	        	parserComputation.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit, ref parserComputation);
 	        	return;
 	        case SyntaxKind.FunctionDefinitionNode:
 	        	var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
 	    		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 		    	{
-		    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+		    		parserComputation.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserComputation);
 		    	}
 		    	return;
 		    case SyntaxKind.ForeachStatementNode:
 		    	var foreachStatementNode = (ForeachStatementNode)codeBlockOwner;
-    			compilationUnit.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, compilationUnit);
+    			parserComputation.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, compilationUnit, ref parserComputation);
     			return;
     		case SyntaxKind.ConstructorDefinitionNode:
     			var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
 	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 				{
-					compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+					parserComputation.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserComputation);
 				}
 		    	return;
 			case SyntaxKind.LambdaExpressionNode:
 				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
 	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
 		    	{
-		    		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+		    		parserComputation.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserComputation);
 		    	}
 		    	return;
 		    case SyntaxKind.TryStatementCatchNode:
 		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
     		
 	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
-		    		compilationUnit.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit);
+		    		parserComputation.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit, ref parserComputation);
 		    		
 		    	return;
     	}

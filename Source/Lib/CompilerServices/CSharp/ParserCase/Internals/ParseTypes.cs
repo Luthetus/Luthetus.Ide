@@ -159,7 +159,7 @@ public static class ParseTypes
     	{
     		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 	    	{
-	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+	    		parserComputation.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserComputation);
 	    	}
     	}
     }
@@ -216,7 +216,7 @@ public static class ParseTypes
 				        
 				    parserComputation.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 				        
-				    compilationUnit.Binder.BindEnumMember(variableDeclarationNode, compilationUnit, ref parserComputation);
+				    parserComputation.Binder.BindEnumMember(variableDeclarationNode, compilationUnit, ref parserComputation);
 					
 					shouldFindIdentifier = !shouldFindIdentifier;
 	    		}

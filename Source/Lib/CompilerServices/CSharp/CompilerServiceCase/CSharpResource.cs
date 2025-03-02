@@ -2,6 +2,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -43,7 +44,7 @@ public sealed class CSharpResource : ICompilerServiceResource
         if (localCompilationUnit is null)
             return Array.Empty<Symbol>();
 
-        return localCompilationUnit.Binder.Symbols
+        return ((CSharpBinder)CompilerService.Binder).Symbols
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
             .ToArray();
     }

@@ -63,14 +63,14 @@ public class ParseDefaultKeywords
 	    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	    {
 	    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-			compilationUnit.Binder.RemoveVariableDeclarationNodeFromActiveBinderSession(compilationUnit.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserComputation);
+			parserComputation.Binder.RemoveVariableDeclarationNodeFromActiveBinderSession(parserComputation.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserComputation);
 	    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
 	    }
     
     	// This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
     	// tryStatementNode.SetTryStatementCatchNode(catchNode);
     	
-    	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+    	parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	catchNode,
 	        catchNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -131,7 +131,7 @@ public class ParseDefaultKeywords
 	        expressionNode: null,
 	        closeParenthesisToken: default);
 		
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	doWhileStatementNode,
 	        doWhileStatementNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -196,7 +196,7 @@ public class ParseDefaultKeywords
     	// This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
 		// tryStatementNode.SetTryStatementFinallyNode(finallyNode);
     	
-    	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+    	parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	finallyNode,
 	        finallyNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -233,7 +233,7 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken: default,
 	        codeBlockNode: null);
 	        
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	forStatementNode,
 	        forStatementNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -289,7 +289,7 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	foreachStatementNode,
 	        foreachStatementNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -343,7 +343,7 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	lockStatementNode,
 	        lockStatementNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -448,7 +448,7 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	switchStatementNode,
 	        switchStatementNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -490,7 +490,7 @@ public class ParseDefaultKeywords
 	        
 	    parserComputation.CurrentCodeBlockBuilder.ChildList.Add(tryStatementNode);
         
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	tryStatementTryNode,
 	        tryStatementTryNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -570,7 +570,7 @@ public class ParseDefaultKeywords
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
-    	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+    	parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	whileStatementNode,
 	        whileStatementNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -675,7 +675,7 @@ public class ParseDefaultKeywords
             expression,
             null);
         
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	ifStatementNode,
 	        ifStatementNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -704,7 +704,7 @@ public class ParseDefaultKeywords
             usingKeywordToken,
             (SyntaxToken)namespaceIdentifier);
 
-        compilationUnit.Binder.BindUsingStatementNode(usingStatementNode, compilationUnit);
+        parserComputation.Binder.BindUsingStatementNode(usingStatementNode, compilationUnit, ref parserComputation);
         parserComputation.StatementBuilder.ChildList.Add(usingStatementNode);
     }
 
@@ -827,12 +827,12 @@ public class ParseDefaultKeywords
             primaryConstructorFunctionArgumentsListingNode: null,
             inheritedTypeClauseNode: null);
 
-        compilationUnit.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
-        compilationUnit.Binder.BindTypeIdentifier(identifierToken, compilationUnit);
+        parserComputation.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit, ref parserComputation);
+        parserComputation.Binder.BindTypeIdentifier(identifierToken, compilationUnit, ref parserComputation);
         
         parserComputation.StatementBuilder.ChildList.Add(typeDefinitionNode);
         
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	typeDefinitionNode,
 	        typeDefinitionNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -859,7 +859,7 @@ public class ParseDefaultKeywords
     	{
     		_ = parserComputation.TokenWalker.Consume(); // Consume the ColonToken
             var inheritedTypeClauseNode = parserComputation.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserComputation);
-            compilationUnit.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit);
+            parserComputation.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit, ref parserComputation);
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 			
 			while (!parserComputation.TokenWalker.IsEof)
@@ -870,9 +870,10 @@ public class ParseDefaultKeywords
 				
 					var consumeCounter = parserComputation.TokenWalker.ConsumeCounter;
 					
-            		compilationUnit.Binder.BindTypeClauseNode(
+            		parserComputation.Binder.BindTypeClauseNode(
             			parserComputation.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserComputation),
-            			compilationUnit);
+            			compilationUnit,
+            			ref parserComputation);
             		
             		if (consumeCounter == parserComputation.TokenWalker.ConsumeCounter)
             			break;
@@ -918,9 +919,9 @@ public class ParseDefaultKeywords
             (SyntaxToken)namespaceIdentifier,
             null);
 
-        compilationUnit.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit);
+        parserComputation.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit, ref parserComputation);
         
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	namespaceStatementNode,
 	        namespaceStatementNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,

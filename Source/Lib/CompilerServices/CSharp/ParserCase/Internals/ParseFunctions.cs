@@ -42,9 +42,9 @@ public class ParseFunctions
             null,
             null);
 
-        compilationUnit.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit);
+        parserComputation.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserComputation);
         
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	functionDefinitionNode,
 	        functionDefinitionNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -96,9 +96,9 @@ public class ParseFunctions
             null,
             null);
 
-        compilationUnit.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit);
+        parserComputation.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserComputation);
         
-        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	constructorDefinitionNode,
 	        constructorDefinitionNode.GetReturnTypeClauseNode(),
 	        parserComputation.TokenWalker.Current.TextSpan,
@@ -172,7 +172,7 @@ public class ParseFunctions
 				//
 				// So, explicitly adding this invocation so that the first named parameter parses correctly.
 				//
-				_ = compilationUnit.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserComputation);
+				_ = parserComputation.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserComputation);
 				
 				// This invocation will parse all of the parameters because the 'parserComputation.ExpressionList'
 				// contains (SyntaxKind.CommaToken, functionParametersListingNode).

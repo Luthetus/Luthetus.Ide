@@ -225,7 +225,7 @@ public static class ParseOthers
 				break;
 			}
 			
-    		expressionPrimary = compilationUnit.Binder.AnyMergeToken(expressionPrimary, ref tokenCurrent, compilationUnit, ref parserComputation);
+    		expressionPrimary = parserComputation.Binder.AnyMergeToken(expressionPrimary, ref tokenCurrent, compilationUnit, ref parserComputation);
     		
     		/*#if DEBUG
     		Console.WriteLine($"\t=> {expressionPrimary.SyntaxKind}");
@@ -240,7 +240,7 @@ public static class ParseOthers
     		
     		if (parserComputation.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'parserComputation.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
 			{
-				compilationUnit.Binder.ClearFromExpressionList(parserComputation.NoLongerRelevantExpressionNode, compilationUnit, ref parserComputation);
+				parserComputation.Binder.ClearFromExpressionList(parserComputation.NoLongerRelevantExpressionNode, compilationUnit, ref parserComputation);
 				parserComputation.NoLongerRelevantExpressionNode = null;
 			}
     		
@@ -308,7 +308,7 @@ public static class ParseOthers
     	
     	if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
     	{
-    		expressionPrimary = compilationUnit.Binder.ForceDecisionAmbiguousIdentifier(
+    		expressionPrimary = parserComputation.Binder.ForceDecisionAmbiguousIdentifier(
 				EmptyExpressionNode.Empty,
 				(AmbiguousIdentifierExpressionNode)expressionPrimary,
 				compilationUnit,
@@ -370,7 +370,7 @@ public static class ParseOthers
 			
 			previousDelimiterExpressionNode = delimiterExpressionTuple.ExpressionNode;
 			
-			expressionPrimary = compilationUnit.Binder.AnyMergeExpression(
+			expressionPrimary = parserComputation.Binder.AnyMergeExpression(
 				delimiterExpressionTuple.ExpressionNode,
 				expressionPrimary, // expressionSecondary
 				compilationUnit,
@@ -379,7 +379,7 @@ public static class ParseOthers
 		
 		if (parserComputation.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'parserComputation.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
 		{
-			compilationUnit.Binder.ClearFromExpressionList(parserComputation.NoLongerRelevantExpressionNode, compilationUnit, ref parserComputation);
+			parserComputation.Binder.ClearFromExpressionList(parserComputation.NoLongerRelevantExpressionNode, compilationUnit, ref parserComputation);
 			parserComputation.NoLongerRelevantExpressionNode = null;
 		}
 		

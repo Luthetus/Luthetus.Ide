@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
@@ -14,7 +15,7 @@ public static class CSharpParser
 {
 	public static int ErrorCount { get; set; }
 
-    public static void Parse(CSharpCompilationUnit compilationUnit, ref CSharpLexerOutput lexerOutput)
+    public static void Parse(CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
     	var globalCodeBlockNode = new GlobalCodeBlockNode();
     	
@@ -26,7 +27,7 @@ public static class CSharpParser
 		    string.Empty,
 		    string.Empty);
     	
-		var globalCodeBlockBuilder = compilationUnit.Binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
+		var globalCodeBlockBuilder = binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
 	    	globalCodeBlockNode,
 	        globalCodeBlockNode.GetReturnTypeClauseNode(),
 	        globalOpenCodeBlockTextSpan,
@@ -35,9 +36,12 @@ public static class CSharpParser
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
 
         var parserComputation = new CSharpParserComputation(
-            new TokenWalker(lexerOutput.SyntaxTokenList),
-            globalCodeBlockBuilder,
-            currentCodeBlockBuilder);
+            binder,
+	        new TokenWalker(lexerOutput.SyntaxTokenList),
+	        globalCodeBlockBuilder,
+	        currentCodeBlockBuilder,
+	        0,
+            binder.TopLevelNamespaceStatementNode);
             
 		#if DEBUG
 		parserComputation.TokenWalker.ProtectedTokenSyntaxKindList = new() { SyntaxKind.StatementDelimiterToken, SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken, };
@@ -257,7 +261,7 @@ public static class CSharpParser
         if (parserComputation.CurrentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
-            compilationUnit.Binder.CloseScope(parserComputation.TokenWalker.Current.TextSpan, compilationUnit, ref parserComputation);
+            parserComputation.Binder.CloseScope(parserComputation.TokenWalker.Current.TextSpan, compilationUnit, ref parserComputation);
         }
 		
         var topLevelStatementsCodeBlock = parserComputation.CurrentCodeBlockBuilder.Build();
@@ -268,6 +272,6 @@ public static class CSharpParser
         	parserComputation.TokenWalker);
                 
 		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
-		compilationUnit.Binder.FinalizeBinderSession(compilationUnit);
+		parserComputation.Binder.FinalizeBinderSession(compilationUnit);
 	}
 }

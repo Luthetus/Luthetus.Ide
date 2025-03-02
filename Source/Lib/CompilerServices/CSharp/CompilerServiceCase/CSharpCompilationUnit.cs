@@ -16,43 +16,29 @@ namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
 {
-	public CSharpCompilationUnit(ResourceUri resourceUri,
-        CSharpBinder binder,
-        int globalScopeIndexKey,
-        NamespaceStatementNode topLevelNamespaceStatementNode)
+	public CSharpCompilationUnit(ResourceUri resourceUri)
 	{
 		ResourceUri = resourceUri;
-        Binder = binder;
-        CurrentScopeIndexKey = globalScopeIndexKey;
-        CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
-        CurrentUsingStatementNodeList = new();
 	}
 
 	public ResourceUri ResourceUri { get; set; }
     
-    public CSharpBinder Binder { get; set; }
+    
     public ISyntaxNode RootCodeBlockNode { get; set; }
     
 	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
     
     // CSharpBinderSession.cs
-    /// <summary>
-	/// Should 0 be the global scope?
-	/// </summary>
-	private int _indexKey = 0;
-	
-	private int _symbolId = 0;
-
-    public int CurrentScopeIndexKey { get; set; }
-    public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
-    public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
+    
     
     public List<Scope> ScopeList { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
+    
+    
     
     /// <summary>
     /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -120,16 +106,4 @@ public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
     /// that reference the 'FullyQualifiedName' within that file.
     /// </summary>
     public Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)> SymbolIdToExternalTextSpanMap { get; } = new();
-    
-    IBinder IBinderSession.Binder => Binder;
-
-    public int GetNextIndexKey()
-    {
-    	return ++_indexKey;
-    }
-    
-    public int GetNextSymbolId()
-    {
-    	return ++_symbolId;
-    }
 }

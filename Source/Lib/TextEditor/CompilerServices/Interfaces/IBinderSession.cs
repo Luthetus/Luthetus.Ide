@@ -28,10 +28,9 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 public interface IBinderSession
 {
     public ResourceUri ResourceUri { get; }
-    public IBinder Binder { get; }
-    public int CurrentScopeIndexKey { get; set; }
-    public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
-    public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
+    
+    
+    
     
     public List<Scope> ScopeList { get; }
     /// <summary>
@@ -54,5 +53,16 @@ public interface IBinderSession
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; }
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; }
     
+    
+    
+    
+    /*
+    // Don't include these here.
+    
+    public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
+    public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     public int GetNextIndexKey();
+    public IBinder Binder { get; }
+    public int CurrentScopeIndexKey { get; set; }
+    */
 }

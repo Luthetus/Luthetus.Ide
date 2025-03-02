@@ -104,20 +104,17 @@ public class RazorSyntaxTree
 
 		var cSharpBinder = new CSharpBinder();
 		
-        var compilationUnit = new CSharpCompilationUnit(
-        	_codebehindResourceUri,
-			cSharpBinder,
-			0,
-            cSharpBinder.TopLevelNamespaceStatementNode);
+        var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri);
 			
 		var lexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
 		
-		compilationUnit.Binder.StartBinderSession(_codebehindResourceUri);
+		cSharpBinder.StartBinderSession(_codebehindResourceUri);
 		
-		CSharpParser.Parse(compilationUnit, ref lexerOutput);
+		CSharpParser.Parse(compilationUnit, cSharpBinder, ref lexerOutput);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,
+            cSharpBinder,
             _codebehindClassInsertions,
             _codebehindRenderFunctionInsertions,
             renderFunctionAdhocTextInsertion,

@@ -20,7 +20,7 @@ public struct CSharpDeferredChildScope
 	
 	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserComputation parserComputation)
 	{
-		compilationUnit.Binder.SetCurrentScopeAndBuilder(
+		parserComputation.Binder.SetCurrentScopeAndBuilder(
 			CodeBlockBuilder,
 			compilationUnit,
 			ref parserComputation);

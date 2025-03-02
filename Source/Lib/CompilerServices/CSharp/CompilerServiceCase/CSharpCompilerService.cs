@@ -66,11 +66,7 @@ public sealed class CSharpCompilerService : CompilerService
 		var presentationModel = modelModifier.PresentationModelList.First(
 			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 		
-		var cSharpCompilationUnit = new CSharpCompilationUnit(
-			resourceUri,
-			CSharpBinder,
-            0,
-            CSharpBinder.TopLevelNamespaceStatementNode);
+		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri);
 		
 		var lexerOutput = CSharpLexer.Lex(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 
@@ -79,7 +75,7 @@ public sealed class CSharpCompilerService : CompilerService
 		try
 		{
 			CSharpBinder.StartBinderSession(resourceUri);
-			CSharpParser.Parse(cSharpCompilationUnit, ref lexerOutput);
+			CSharpParser.Parse(cSharpCompilationUnit, CSharpBinder, ref lexerOutput);
 		}
 		finally
 		{

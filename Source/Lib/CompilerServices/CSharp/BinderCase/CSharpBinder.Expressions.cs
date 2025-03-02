@@ -376,7 +376,8 @@ public partial class CSharpBinder
 				    
 				    BindFunctionInvocationNode(
 				        functionInvocationNode,
-				        compilationUnit);
+				        compilationUnit,
+				        ref parserComputation);
 					
 					return ParseFunctionParametersListingNode(
 						functionInvocationNode, functionInvocationNode.FunctionParametersListingNode, compilationUnit, ref parserComputation);
@@ -598,7 +599,7 @@ public partial class CSharpBinder
 			if (TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	compilationUnit.ResourceUri,
-			    	compilationUnit.CurrentScopeIndexKey,
+			    	parserComputation.CurrentScopeIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 			        out var existingVariableDeclarationNode))
 			{
@@ -606,7 +607,8 @@ public partial class CSharpBinder
 				
 				var variableReferenceNode = ConstructAndBindVariableReferenceNode(
 					identifierToken,
-					compilationUnit);
+					compilationUnit,
+					ref parserComputation);
     			
     			return variableReferenceNode;
 			}
@@ -617,12 +619,12 @@ public partial class CSharpBinder
 			if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,
 	        		compilationUnit.ResourceUri,
-	                compilationUnit.CurrentScopeIndexKey,
+	                parserComputation.CurrentScopeIndexKey,
 	                ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 	                out var typeDefinitionNode))
 	        {
 	            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserComputation);
-				BindTypeClauseNode(typeClauseNode, compilationUnit);
+				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserComputation);
 			    return typeClauseNode;
 	        }
 		}
@@ -631,14 +633,14 @@ public partial class CSharpBinder
 			ambiguousIdentifierExpressionNode.Token.TextSpan.Length == 1 &&
     		ambiguousIdentifierExpressionNode.Token.TextSpan.GetText() == "_")
     	{
-    		if (!compilationUnit.Binder.TryGetVariableDeclarationHierarchically(
+    		if (!parserComputation.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	compilationUnit.ResourceUri,
-			    	compilationUnit.CurrentScopeIndexKey,
+			    	parserComputation.CurrentScopeIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 			        out _))
 			{
-				compilationUnit.Binder.BindDiscard(ambiguousIdentifierExpressionNode.Token, compilationUnit);
+				parserComputation.Binder.BindDiscard(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserComputation);
 	    		return ambiguousIdentifierExpressionNode;
 			}
     	}
@@ -650,7 +652,7 @@ public partial class CSharpBinder
 				UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 			{
 	            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserComputation);
-				BindTypeClauseNode(typeClauseNode, compilationUnit);
+				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserComputation);
 			    return typeClauseNode;
 			}
 			
@@ -661,7 +663,8 @@ public partial class CSharpBinder
 				
 				var variableReferenceNode = ConstructAndBindVariableReferenceNode(
 					identifierToken,
-					compilationUnit);
+					compilationUnit,
+					ref parserComputation);
 				
 				return variableReferenceNode;
 			}
@@ -840,7 +843,8 @@ public partial class CSharpBinder
 						
 						BindTypeClauseNode(
 					        typeClauseNode,
-					        compilationUnit);
+					        compilationUnit,
+					        ref parserComputation);
 						
 						return constructorInvocationExpressionNode.SetTypeClauseNode(typeClauseNode);
 					}
@@ -1271,7 +1275,8 @@ public partial class CSharpBinder
 			
 			BindTypeClauseNode(
 		        typeClauseNode,
-		        compilationUnit);
+		        compilationUnit,
+		        ref parserComputation);
 			
 			genericParametersListingNode.GenericParameterEntryNodeList.Add(
 				new GenericParameterEntryNode(typeClauseNode));
@@ -1409,8 +1414,8 @@ public partial class CSharpBinder
 			    token.TextSpan.ResourceUri,
 			    token.TextSpan.SourceText);
 		
-			((CSharpBinder)compilationUnit.Binder).AddSymbolDefinition(
-				new Symbol(SyntaxKind.LambdaSymbol, compilationUnit.GetNextSymbolId(), textSpan), compilationUnit);
+			((CSharpBinder)parserComputation.Binder).AddSymbolDefinition(
+				new Symbol(SyntaxKind.LambdaSymbol, parserComputation.GetNextSymbolId(), textSpan), compilationUnit, ref parserComputation);
 		
 			if (parserComputation.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
@@ -1629,7 +1634,8 @@ public partial class CSharpBinder
 				
 				BindTypeClauseNode(
 			        typeClauseNode,
-			        compilationUnit);
+			        compilationUnit,
+			        ref parserComputation);
 			        
 				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
 			 }
@@ -1723,7 +1729,8 @@ public partial class CSharpBinder
 				        
 				    BindFunctionInvocationNode(
 				        functionInvocationNode,
-				        compilationUnit);
+				        compilationUnit,
+				        ref parserComputation);
 		
 					return ParseFunctionParametersListingNode(functionInvocationNode, functionInvocationNode.FunctionParametersListingNode, compilationUnit, ref parserComputation);
 				}
@@ -2015,10 +2022,11 @@ public partial class CSharpBinder
 			_ = parserComputation.TokenWalker.Consume();
 			
 			// Consume the identifierToken
-			compilationUnit.Binder.CreateVariableSymbol(
+			parserComputation.Binder.CreateVariableSymbol(
 		        UtilityApi.ConvertToIdentifierToken(parserComputation.TokenWalker.Consume(), compilationUnit, ref parserComputation),
 		        VariableKind.Local,
-		        compilationUnit);
+		        compilationUnit,
+		        ref parserComputation);
 			
 			// Consume the ColonToken
 			_ = parserComputation.TokenWalker.Consume();
@@ -2090,7 +2098,7 @@ public partial class CSharpBinder
 	
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, ref SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserComputation parserComputation)
 	{
-		compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+		parserComputation.Binder.NewScopeAndBuilderFromOwner(
         	lambdaExpressionNode,
         	lambdaExpressionNode.GetReturnTypeClauseNode(),
         	openBraceToken.TextSpan,
@@ -2101,7 +2109,7 @@ public partial class CSharpBinder
 	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserComputation parserComputation)
 	{
 		var closeBraceToken = new SyntaxToken(SyntaxKind.CloseBraceToken, parserComputation.TokenWalker.Current.TextSpan);		
-        compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserComputation);
+        parserComputation.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserComputation);
 	}
 	
 	/// <summary>
@@ -2354,7 +2362,7 @@ public partial class CSharpBinder
 			var variableReferenceNode = new VariableReferenceNode(
 	            memberIdentifierToken,
 	            variableDeclarationNode);
-	        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+	        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserComputation);
 	        
 	        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
 	        	symbolId,
@@ -2379,12 +2387,12 @@ public partial class CSharpBinder
 	        
 	        var functionSymbol = new Symbol(
 	        	SyntaxKind.FunctionSymbol,
-	        	compilationUnit.GetNextSymbolId(),
+	        	parserComputation.GetNextSymbolId(),
 	        	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
 		        {
 		            DecorationByte = (byte)GenericDecorationKind.Function
 		        });
-	        AddSymbolDefinition(functionSymbol, compilationUnit);
+	        AddSymbolDefinition(functionSymbol, compilationUnit, ref parserComputation);
 	        var symbolId = functionSymbol.SymbolId;
 	        
 	        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
@@ -2512,7 +2520,7 @@ public partial class CSharpBinder
 			compilationUnit,
 			ref parserComputation);
 			
-		BindTypeClauseNode(typeClauseNode, compilationUnit);
+		BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserComputation);
 		
 		var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode, closeParenthesisToken);
 		return explicitCastNode;
