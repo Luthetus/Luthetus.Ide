@@ -14,7 +14,7 @@ public static class ParseVariables
         SyntaxToken consumedIdentifierToken,
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit,
-        ref CSharpParserComputation parserComputation)
+        ref CSharpParserModel parserModel)
     {
     	IVariableDeclarationNode variableDeclarationNode;
 
@@ -24,8 +24,8 @@ public static class ParseVariables
 	        variableKind,
 	        false);
 
-        parserComputation.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserComputation);
-        parserComputation.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+        parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
+        parserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
         return variableDeclarationNode;
     }
 }
