@@ -18,7 +18,7 @@ namespace Luthetus.CompilerServices.CSharp.BinderCase;
 
 public partial class CSharpBinder : IBinder
 {
-	private readonly Dictionary<ResourceUri, CSharpBinderSession> _binderSessionMap = new();
+	private readonly Dictionary<ResourceUri, CSharpCompilationUnit> _binderSessionMap = new();
 	//private readonly object _binderSessionMapLock = new();
 	
 	/// <summary>
@@ -48,6 +48,8 @@ public partial class CSharpBinder : IBinder
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
     
+    public NamespaceStatementNode TopLevelNamespaceStatementNode => _topLevelNamespaceStatementNode;
+    
     Symbol[] IBinder.SymbolsList => Symbols;
     
     /// <summary>
@@ -71,10 +73,10 @@ public partial class CSharpBinder : IBinder
     }
     
     IBinderSession IBinder.StartBinderSession(ResourceUri resourceUri) =>
-    	StartBinderSession(resourceUri);
+    	throw new NotImplementedException();
 
 	/// <summary><see cref="FinalizeBinderSession"/></summary>
-    public CSharpBinderSession StartBinderSession(ResourceUri resourceUri)
+    public void StartBinderSession(ResourceUri resourceUri)
     {
     	foreach (var namespaceGroupNodeKvp in _namespaceGroupMap)
         {
@@ -97,23 +99,13 @@ public partial class CSharpBinder : IBinder
         			symbolDefinition.Value.SymbolReferences.RemoveAt(i);
         	}
         }
-    	
-        var cSharpBinderSession = new CSharpBinderSession(
-            resourceUri,
-            this,
-            0,
-            _topLevelNamespaceStatementNode);
-            
-        // cSharpBinderSession.ScopeList.Add(_globalScope);
-        
-        return cSharpBinderSession;
     }
 
 	void IBinder.FinalizeBinderSession(IBinderSession binderSession) =>
-		FinalizeBinderSession((CSharpBinderSession)binderSession);
+		throw new NotImplementedException();
 
 	/// <summary><see cref="StartBinderSession"/></summary>
-	public void FinalizeBinderSession(CSharpBinderSession binderSession)
+	public void FinalizeBinderSession(CSharpCompilationUnit binderSession)
 	{
 		UpsertBinderSession(binderSession);
 	}
@@ -125,7 +117,7 @@ public partial class CSharpBinder : IBinder
         AddSymbolReference(
         	new Symbol(
         		SyntaxKind.DiscardSymbol,
-	        	compilationUnit.BinderSession.GetNextSymbolId(),
+	        	compilationUnit.GetNextSymbolId(),
 	        	identifierToken.TextSpan with
 		        {
 		            DecorationByte = (byte)GenericDecorationKind.None,
@@ -141,7 +133,7 @@ public partial class CSharpBinder : IBinder
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
-        	compilationUnit.BinderSession.GetNextSymbolId(),
+        	compilationUnit.GetNextSymbolId(),
         	functionDefinitionNode.FunctionIdentifierToken.TextSpan with
 	        {
 	            DecorationByte = (byte)GenericDecorationKind.Function
@@ -151,8 +143,8 @@ public partial class CSharpBinder : IBinder
 
         if (!TryAddFunctionDefinitionNodeByScope(
         		compilationUnit,
-        		compilationUnit.BinderSession.ResourceUri,
-        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.ResourceUri,
+        		compilationUnit.CurrentScopeIndexKey,
         		functionIdentifierText,
                 functionDefinitionNode))
         {
@@ -167,7 +159,7 @@ public partial class CSharpBinder : IBinder
         NamespaceStatementNode namespaceStatementNode,
         CSharpCompilationUnit compilationUnit)
     {
-        compilationUnit.BinderSession.CurrentNamespaceStatementNode = namespaceStatementNode;
+        compilationUnit.CurrentNamespaceStatementNode = namespaceStatementNode;
     }
 
     public void BindNamespaceStatementNode(
@@ -179,7 +171,7 @@ public partial class CSharpBinder : IBinder
         AddSymbolReference(
         	new Symbol(
         		SyntaxKind.NamespaceSymbol,
-        		compilationUnit.BinderSession.GetNextSymbolId(),
+        		compilationUnit.GetNextSymbolId(),
         		namespaceStatementNode.IdentifierToken.TextSpan),
         	compilationUnit);
 
@@ -220,8 +212,8 @@ public partial class CSharpBinder : IBinder
         
         if (TryGetVariableDeclarationNodeByScope(
         		compilationUnit,
-        		compilationUnit.BinderSession.ResourceUri,
-        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.ResourceUri,
+        		compilationUnit.CurrentScopeIndexKey,
         		text,
         		out var existingVariableDeclarationNode))
         {
@@ -233,8 +225,8 @@ public partial class CSharpBinder : IBinder
                 // (if there is an error where something is defined twice for example)
                 SetVariableDeclarationNodeByScope(
         			compilationUnit,
-                	compilationUnit.BinderSession.ResourceUri,
-        			compilationUnit.BinderSession.CurrentScopeIndexKey,
+                	compilationUnit.ResourceUri,
+        			compilationUnit.CurrentScopeIndexKey,
                 	text,
                 	variableDeclarationNode);
             }
@@ -248,8 +240,8 @@ public partial class CSharpBinder : IBinder
         {
         	_ = TryAddVariableDeclarationNodeByScope(
         		compilationUnit,
-        		compilationUnit.BinderSession.ResourceUri,
-    			compilationUnit.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.ResourceUri,
+    			compilationUnit.CurrentScopeIndexKey,
             	text,
             	variableDeclarationNode);
         }
@@ -262,13 +254,13 @@ public partial class CSharpBinder : IBinder
     	
     	if (TryGetVariableDeclarationNodeByScope(
         		compilationUnit,
-        		compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.ResourceUri,
         		scopeIndexKey,
         		text,
         		out var existingVariableDeclarationNode))
         {
             var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, text);
-	    	return compilationUnit.BinderSession.ScopeVariableDeclarationMap.Remove(scopeKeyAndIdentifierText);
+	    	return compilationUnit.ScopeVariableDeclarationMap.Remove(scopeKeyAndIdentifierText);
         }
         
         return false;
@@ -283,8 +275,8 @@ public partial class CSharpBinder : IBinder
 
         if (TryGetVariableDeclarationHierarchically(
         		compilationUnit,
-                compilationUnit.BinderSession.ResourceUri,
-                compilationUnit.BinderSession.CurrentScopeIndexKey,
+                compilationUnit.ResourceUri,
+                compilationUnit.CurrentScopeIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -326,8 +318,8 @@ public partial class CSharpBinder : IBinder
 
         if (TryGetVariableDeclarationHierarchically(
         		compilationUnit,
-                compilationUnit.BinderSession.ResourceUri,
-                compilationUnit.BinderSession.CurrentScopeIndexKey,
+                compilationUnit.ResourceUri,
+                compilationUnit.CurrentScopeIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -363,7 +355,7 @@ public partial class CSharpBinder : IBinder
     {
         var constructorSymbol = new Symbol(
         	SyntaxKind.ConstructorSymbol,
-	        compilationUnit.BinderSession.GetNextSymbolId(),
+	        compilationUnit.GetNextSymbolId(),
 	        identifierToken.TextSpan with
 	        {
 	            DecorationByte = (byte)GenericDecorationKind.Type
@@ -381,7 +373,7 @@ public partial class CSharpBinder : IBinder
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
-        	compilationUnit.BinderSession.GetNextSymbolId(),
+        	compilationUnit.GetNextSymbolId(),
         	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
 	        {
 	            DecorationByte = (byte)GenericDecorationKind.Function
@@ -391,8 +383,8 @@ public partial class CSharpBinder : IBinder
 
         if (TryGetFunctionHierarchically(
         		compilationUnit,
-                compilationUnit.BinderSession.ResourceUri,
-                compilationUnit.BinderSession.CurrentScopeIndexKey,
+                compilationUnit.ResourceUri,
+                compilationUnit.CurrentScopeIndexKey,
                 functionInvocationIdentifierText,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -413,7 +405,7 @@ public partial class CSharpBinder : IBinder
     {
         var namespaceSymbol = new Symbol(
         	SyntaxKind.NamespaceSymbol,
-        	compilationUnit.BinderSession.GetNextSymbolId(),
+        	compilationUnit.GetNextSymbolId(),
         	namespaceIdentifierToken.TextSpan with
 	        {
 	            DecorationByte = (byte)GenericDecorationKind.None
@@ -430,7 +422,7 @@ public partial class CSharpBinder : IBinder
         {
             var typeSymbol = new Symbol(
             	SyntaxKind.TypeSymbol,
-            	compilationUnit.BinderSession.GetNextSymbolId(),
+            	compilationUnit.GetNextSymbolId(),
             	typeClauseNode.TypeIdentifierToken.TextSpan with
 	            {
 	                DecorationByte = (byte)GenericDecorationKind.Type
@@ -478,7 +470,7 @@ public partial class CSharpBinder : IBinder
         {
             var typeSymbol = new Symbol(
             	SyntaxKind.TypeSymbol,
-            	compilationUnit.BinderSession.GetNextSymbolId(),
+            	compilationUnit.GetNextSymbolId(),
             	identifierToken.TextSpan with
 	            {
 	                DecorationByte = (byte)GenericDecorationKind.Type
@@ -495,11 +487,11 @@ public partial class CSharpBinder : IBinder
         AddSymbolReference(
         	new Symbol(
         		SyntaxKind.NamespaceSymbol,
-        		compilationUnit.BinderSession.GetNextSymbolId(),
+        		compilationUnit.GetNextSymbolId(),
         		usingStatementNode.NamespaceIdentifier.TextSpan),
         	compilationUnit);
 
-        compilationUnit.BinderSession.CurrentUsingStatementNodeList.Add(usingStatementNode);
+        compilationUnit.CurrentUsingStatementNodeList.Add(usingStatementNode);
         AddNamespaceToCurrentScope(usingStatementNode.NamespaceIdentifier.TextSpan.GetText(), compilationUnit);
     }
 
@@ -513,7 +505,7 @@ public partial class CSharpBinder : IBinder
         AddSymbolReference(
         	new Symbol(
         		SyntaxKind.TypeSymbol,
-        		compilationUnit.BinderSession.GetNextSymbolId(),
+        		compilationUnit.GetNextSymbolId(),
         		openSquareBracketToken.TextSpan with
 		        {
 		            DecorationByte = (byte)GenericDecorationKind.Type,
@@ -533,15 +525,15 @@ public partial class CSharpBinder : IBinder
         bool shouldOverwrite = false)
     {
         var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
-        var currentNamespaceStatementText = compilationUnit.BinderSession.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        var currentNamespaceStatementText = compilationUnit.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
         
         if (TryGetTypeDefinitionNodeByScope(
         		compilationUnit,
-        		compilationUnit.BinderSession.ResourceUri,
-        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.ResourceUri,
+        		compilationUnit.CurrentScopeIndexKey,
         		typeIdentifierText,
         		out var existingTypeDefinitionNode))
         {
@@ -549,8 +541,8 @@ public partial class CSharpBinder : IBinder
         	{
         		SetTypeDefinitionNodeByScope(
         			compilationUnit,
-        			compilationUnit.BinderSession.ResourceUri,
-	        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+        			compilationUnit.ResourceUri,
+	        		compilationUnit.CurrentScopeIndexKey,
 	        		typeIdentifierText,
 	        		typeDefinitionNode);
         	}
@@ -566,8 +558,8 @@ public partial class CSharpBinder : IBinder
         {
         	_ = TryAddTypeDefinitionNodeByScope(
         		compilationUnit,
-    			compilationUnit.BinderSession.ResourceUri,
-        		compilationUnit.BinderSession.CurrentScopeIndexKey,
+    			compilationUnit.ResourceUri,
+        		compilationUnit.CurrentScopeIndexKey,
         		typeIdentifierText,
         		typeDefinitionNode);
         }
@@ -613,13 +605,13 @@ public partial class CSharpBinder : IBinder
     
     	var scope = new Scope(
         	codeBlockOwner,
-        	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
-		    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
+        	indexKey: compilationUnit.GetNextIndexKey(),
+		    parentIndexKey: compilationUnit.CurrentScopeIndexKey,
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: -1);
 
-        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
-        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+        compilationUnit.ScopeList.Insert(scope.IndexKey, scope);
+        compilationUnit.CurrentScopeIndexKey = scope.IndexKey;
         
         codeBlockOwner.ScopeIndexKey = scope.IndexKey;
         
@@ -663,8 +655,8 @@ public partial class CSharpBinder : IBinder
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: -1);
 
-        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
-        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+        compilationUnit.ScopeList.Insert(scope.IndexKey, scope);
+        compilationUnit.CurrentScopeIndexKey = scope.IndexKey;
         
         codeBlockOwner.ScopeIndexKey = scope.IndexKey;
         
@@ -686,7 +678,7 @@ public partial class CSharpBinder : IBinder
     	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
     		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is null. Invoke {NewScopeAndBuilderFromOwner}?");
     
-		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
+		compilationUnit.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
 		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
 		
 		/*#if DEBUG
@@ -716,8 +708,8 @@ public partial class CSharpBinder : IBinder
             {
             	_ = TryAddTypeDefinitionNodeByScope(
         				compilationUnit,
-	            		compilationUnit.BinderSession.ResourceUri,
-	            		compilationUnit.BinderSession.CurrentScopeIndexKey,
+	            		compilationUnit.ResourceUri,
+	            		compilationUnit.CurrentScopeIndexKey,
 	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
 	            		typeDefinitionNode);
             }
@@ -736,7 +728,7 @@ public partial class CSharpBinder : IBinder
     	#endif*/
     
     	// Check if it is the global scope, if so return early.
-    	if (compilationUnit.BinderSession.CurrentScopeIndexKey == 0)
+    	if (compilationUnit.CurrentScopeIndexKey == 0)
     		return;
     	
     	var inBuilder = parserModel.CurrentCodeBlockBuilder;
@@ -747,14 +739,14 @@ public partial class CSharpBinder : IBinder
     	
     	// Update Scope
     	{
-	    	var scope = compilationUnit.BinderSession.ScopeList[compilationUnit.BinderSession.CurrentScopeIndexKey];
+	    	var scope = compilationUnit.ScopeList[compilationUnit.CurrentScopeIndexKey];
 	    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
-	    	compilationUnit.BinderSession.ScopeList[compilationUnit.BinderSession.CurrentScopeIndexKey] = scope;
+	    	compilationUnit.ScopeList[compilationUnit.CurrentScopeIndexKey] = scope;
 	    	
 	    	// Restore Parent Scope
 			if (scope.ParentIndexKey != -1)
 			{
-				compilationUnit.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey;
+				compilationUnit.CurrentScopeIndexKey = scope.ParentIndexKey;
 			}
     	}
     	
@@ -797,10 +789,10 @@ public partial class CSharpBinder : IBinder
     {
         var symbolDefinitionId = SymbolHelper.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
-            compilationUnit.BinderSession.CurrentScopeIndexKey);
+            compilationUnit.CurrentScopeIndexKey);
 
         var symbolDefinition = new SymbolDefinition(
-            compilationUnit.BinderSession.CurrentScopeIndexKey,
+            compilationUnit.CurrentScopeIndexKey,
             symbol);
 
         if (!_symbolDefinitions.TryAdd(
@@ -826,14 +818,14 @@ public partial class CSharpBinder : IBinder
     {
         var symbolDefinitionId = SymbolHelper.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
-            compilationUnit.BinderSession.CurrentScopeIndexKey);
+            compilationUnit.CurrentScopeIndexKey);
 
         if (!_symbolDefinitions.TryGetValue(
                 symbolDefinitionId,
                 out var symbolDefinition))
         {
             symbolDefinition = new SymbolDefinition(
-                compilationUnit.BinderSession.CurrentScopeIndexKey,
+                compilationUnit.CurrentScopeIndexKey,
                 symbol)
             {
                 IsFabricated = true
@@ -850,7 +842,7 @@ public partial class CSharpBinder : IBinder
 
         symbolDefinition.SymbolReferences.Add(new SymbolReference(
             symbol,
-            compilationUnit.BinderSession.CurrentScopeIndexKey));
+            compilationUnit.CurrentScopeIndexKey));
     }
 
 	/// <summary>
@@ -862,7 +854,7 @@ public partial class CSharpBinder : IBinder
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit)
     {
-    	var symbolId = compilationUnit.BinderSession.GetNextSymbolId();
+    	var symbolId = compilationUnit.GetNextSymbolId();
     	
         switch (variableKind)
         {
@@ -1142,9 +1134,9 @@ public partial class CSharpBinder : IBinder
     public bool TryGetBinderSession(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, out IBinderSession binderSession)
     {
     	if (compilationUnit is not null &&
-    		resourceUri == compilationUnit.BinderSession.ResourceUri)
+    		resourceUri == compilationUnit.ResourceUri)
     	{
-    		binderSession = compilationUnit.BinderSession;
+    		binderSession = compilationUnit;
     		return true;
     	}
     	
@@ -1154,9 +1146,9 @@ public partial class CSharpBinder : IBinder
     }
     
     void IBinder.UpsertBinderSession(IBinderSession binderSession) =>
-    	UpsertBinderSession((CSharpBinderSession)binderSession);
+    	throw new NotImplementedException();
     
-    public void UpsertBinderSession(CSharpBinderSession binderSession)
+    public void UpsertBinderSession(CSharpCompilationUnit binderSession)
     {
     	try
     	{
@@ -1538,7 +1530,7 @@ public partial class CSharpBinder : IBinder
         {
 	        if (TryGetBinderSession(compilationUnit, textSpan.ResourceUri, out var targetBinderSession))
 	        {
-	        	if (((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
+	        	if (((CSharpCompilationUnit)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
 	        	{
 	        		return GetDefinitionNode(
 	        			compilationUnit,

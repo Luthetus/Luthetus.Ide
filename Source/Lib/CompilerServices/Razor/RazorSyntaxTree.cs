@@ -102,13 +102,17 @@ public class RazorSyntaxTree
 
         var classContents = _codebehindClassBuilder.ToString();
 
+		var cSharpBinder = new CSharpBinder();
+		
         var compilationUnit = new CSharpCompilationUnit(
         	_codebehindResourceUri,
-			new CSharpBinder());
+			cSharpBinder,
+			0,
+            cSharpBinder.TopLevelNamespaceStatementNode);
 			
 		var lexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
 		
-		compilationUnit.BinderSession = (CSharpBinderSession)compilationUnit.Binder.StartBinderSession(_codebehindResourceUri);
+		compilationUnit.Binder.StartBinderSession(_codebehindResourceUri);
 		
 		CSharpParser.Parse(compilationUnit, ref lexerOutput);
         

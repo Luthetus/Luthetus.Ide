@@ -16,8 +16,8 @@ public static class ParseTokens
     	{
     		if (!compilationUnit.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
-			    	compilationUnit.BinderSession.ResourceUri,
-			    	compilationUnit.BinderSession.CurrentScopeIndexKey,
+			    	compilationUnit.ResourceUri,
+			    	compilationUnit.CurrentScopeIndexKey,
 			        parserModel.TokenWalker.Current.TextSpan.GetText(),
 			        out _))
 			{

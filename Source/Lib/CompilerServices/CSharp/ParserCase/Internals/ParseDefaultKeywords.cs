@@ -63,7 +63,7 @@ public class ParseDefaultKeywords
 	    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	    {
 	    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-			compilationUnit.Binder.RemoveVariableDeclarationNodeFromActiveBinderSession(compilationUnit.BinderSession.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserModel);
+			compilationUnit.Binder.RemoveVariableDeclarationNodeFromActiveBinderSession(compilationUnit.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserModel);
 	    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
 	    }
     

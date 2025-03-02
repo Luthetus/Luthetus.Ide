@@ -597,8 +597,8 @@ public partial class CSharpBinder
 		{
 			if (TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
-			    	compilationUnit.BinderSession.ResourceUri,
-			    	compilationUnit.BinderSession.CurrentScopeIndexKey,
+			    	compilationUnit.ResourceUri,
+			    	compilationUnit.CurrentScopeIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 			        out var existingVariableDeclarationNode))
 			{
@@ -616,8 +616,8 @@ public partial class CSharpBinder
 		{
 			if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,
-	        		compilationUnit.BinderSession.ResourceUri,
-	                compilationUnit.BinderSession.CurrentScopeIndexKey,
+	        		compilationUnit.ResourceUri,
+	                compilationUnit.CurrentScopeIndexKey,
 	                ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 	                out var typeDefinitionNode))
 	        {
@@ -633,8 +633,8 @@ public partial class CSharpBinder
     	{
     		if (!compilationUnit.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
-			    	compilationUnit.BinderSession.ResourceUri,
-			    	compilationUnit.BinderSession.CurrentScopeIndexKey,
+			    	compilationUnit.ResourceUri,
+			    	compilationUnit.CurrentScopeIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 			        out _))
 			{
@@ -1410,7 +1410,7 @@ public partial class CSharpBinder
 			    token.TextSpan.SourceText);
 		
 			((CSharpBinder)compilationUnit.Binder).AddSymbolDefinition(
-				new Symbol(SyntaxKind.LambdaSymbol, compilationUnit.BinderSession.GetNextSymbolId(), textSpan), compilationUnit);
+				new Symbol(SyntaxKind.LambdaSymbol, compilationUnit.GetNextSymbolId(), textSpan), compilationUnit);
 		
 			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
@@ -2356,7 +2356,7 @@ public partial class CSharpBinder
 	            variableDeclarationNode);
 	        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
 	        
-	        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
+	        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
 	        	symbolId,
 	        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive));
 	        
@@ -2379,7 +2379,7 @@ public partial class CSharpBinder
 	        
 	        var functionSymbol = new Symbol(
 	        	SyntaxKind.FunctionSymbol,
-	        	compilationUnit.BinderSession.GetNextSymbolId(),
+	        	compilationUnit.GetNextSymbolId(),
 	        	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
 		        {
 		            DecorationByte = (byte)GenericDecorationKind.Function
@@ -2387,7 +2387,7 @@ public partial class CSharpBinder
 	        AddSymbolDefinition(functionSymbol, compilationUnit);
 	        var symbolId = functionSymbol.SymbolId;
 	        
-	        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
+	        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
 	        	symbolId,
 	        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive));
 	        

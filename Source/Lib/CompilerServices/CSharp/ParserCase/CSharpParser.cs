@@ -268,6 +268,6 @@ public static class CSharpParser
         	parserModel.TokenWalker);
                 
 		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
-		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
+		compilationUnit.Binder.FinalizeBinderSession(compilationUnit);
 	}
 }
