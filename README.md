@@ -17,8 +17,8 @@ Customize the UI:
 
 And there are more features that are not shown in these gifs.
 
-Only 312 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.25) (The gif is sped up by cutting the frames in half):
-![Example GIF](./Images/Ide/Gifs/parse_0.9.7.25.gif)
+Only 239 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.34) (1,644 C# files in total.):
+![Example GIF](./Images/Ide/Gifs/0.9.7.34.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
@@ -123,7 +123,4 @@ There is a README.md for each of the libraries to aid in installation:
 - [Luthetus.Common](./Docs/Common/README.md)
 - [Luthetus.TextEditor](./Docs/TextEditor/README.md)
 - [Luthetus.CompilerServices](./Docs/CompilerServices/README.md)
-
-## Youtube Videos
-There are videos about the IDE here: [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w).
 
