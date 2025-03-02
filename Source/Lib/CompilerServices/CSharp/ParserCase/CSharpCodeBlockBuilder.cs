@@ -71,6 +71,6 @@ public class CSharpCodeBlockBuilder
 
     public CodeBlockNode Build()
     {
-        return new CodeBlockNode(ChildList.ToArray());
+        return new CodeBlockNode(ChildList);
     }
 }
