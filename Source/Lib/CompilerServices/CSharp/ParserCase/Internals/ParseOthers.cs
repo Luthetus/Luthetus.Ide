@@ -225,7 +225,7 @@ public static class ParseOthers
 				break;
 			}
 			
-    		expressionPrimary = compilationUnit.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, compilationUnit, ref parserModel);
+    		expressionPrimary = compilationUnit.Binder.AnyMergeToken(expressionPrimary, ref tokenCurrent, compilationUnit, ref parserModel);
     		
     		/*#if DEBUG
     		Console.WriteLine($"\t=> {expressionPrimary.SyntaxKind}");
