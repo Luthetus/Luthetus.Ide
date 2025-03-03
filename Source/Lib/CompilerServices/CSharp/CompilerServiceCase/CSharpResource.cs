@@ -44,7 +44,7 @@ public sealed class CSharpResource : ICompilerServiceResource
         if (localCompilationUnit is null)
             return Array.Empty<Symbol>();
 
-        return ((CSharpBinder)CompilerService.Binder).Symbols
+        return localCompilationUnit.SymbolList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
             .ToArray();
     }

@@ -825,7 +825,8 @@ public class ParseDefaultKeywords
             valueType: null,
             genericArgumentsListingNode,
             primaryConstructorFunctionArgumentsListingNode: null,
-            inheritedTypeClauseNode: null);
+            inheritedTypeClauseNode: null,
+            namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText());
 
         parserModel.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit, ref parserModel);
         parserModel.Binder.BindTypeIdentifier(identifierToken, compilationUnit, ref parserModel);

@@ -18,7 +18,8 @@ public partial class CSharpFacts
             typeof(void),
             null,
             null,
-            null)
+            null,
+            string.Empty)
             {
             	IsKeywordType = true
             };
@@ -31,7 +32,8 @@ public partial class CSharpFacts
             typeof(int),
             null,
             null,
-            null)
+            null,
+            string.Empty)
             {
             	IsKeywordType = true
             };
@@ -44,7 +46,8 @@ public partial class CSharpFacts
             typeof(char),
             null,
             null,
-            null)
+            null,
+            string.Empty)
             {
             	IsKeywordType = true
             };
@@ -57,7 +60,8 @@ public partial class CSharpFacts
             typeof(string),
             null,
             null,
-            null)
+            null,
+            string.Empty)
             {
             	IsKeywordType = true
             };
@@ -70,7 +74,8 @@ public partial class CSharpFacts
             typeof(bool),
             null,
             null,
-            null)
+            null,
+            string.Empty)
             {
             	IsKeywordType = true
             };
@@ -83,12 +88,13 @@ public partial class CSharpFacts
             typeof(void),
             null,
             null,
-            null)
+            null,
+            string.Empty)
             {
             	IsKeywordType = true
             };
 
-        public static readonly List<TypeDefinitionNode> TypeDefinitionNodes = new[]
+        public static readonly IReadOnlyList<TypeDefinitionNode> TypeDefinitionNodes = new[]
         {
             Void,
             Int,
