@@ -926,33 +926,25 @@ public class TextEditorCommandDefaultFunctions
 				
 				var typeClauseNode = (TypeClauseNode)syntaxNode;
 				
-				var typeDefinitionList = allTypeDefinitions.Where(x =>
-						x.Key.TypeIdentifier == typeClauseNode.TypeIdentifierToken.TextSpan.GetText())
-					.Take(5)
-					.ToList();
-				
-				if (typeDefinitionList.Count == 0)
+				if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.GetText(), out var typeDefinitionNode))
+				{
+					var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
+						
+					menuOptionList.Add(new MenuOptionRecord(
+						$"Copy: {usingStatementText}",
+						MenuOptionKind.Other,
+						onClickFunc: async () =>
+						{
+							var clipboardService = commandArgs.ServiceProvider.GetRequiredService<IClipboardService>();
+							await clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
+						}));
+				}
+				else
 				{
 					menuOptionList.Add(new MenuOptionRecord(
 						"type not found",
 						MenuOptionKind.Other,
 						onClickFunc: async () => {}));
-				}
-				else
-				{
-					foreach (var typeDefinition in typeDefinitionList)
-					{
-						var usingStatementText = $"using {typeDefinition.Key.NamespaceIdentifier};";
-						
-						menuOptionList.Add(new MenuOptionRecord(
-							$"Copy: {usingStatementText}",
-							MenuOptionKind.Other,
-							onClickFunc: async () =>
-							{
-								var clipboardService = commandArgs.ServiceProvider.GetRequiredService<IClipboardService>();
-								await clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
-							}));
-					}
 				}
 			}
 			else

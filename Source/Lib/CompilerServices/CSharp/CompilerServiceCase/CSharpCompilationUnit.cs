@@ -27,7 +27,8 @@ public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
 	public ResourceUri ResourceUri { get; set; }
     public ISyntaxNode RootCodeBlockNode { get; set; }
     
-	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();    
+	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
+	public List<Symbol> __SymbolList { get; set; } = new();
     public List<Scope> ScopeList { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
@@ -35,6 +36,7 @@ public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
+    public IReadOnlyList<Symbol> SymbolList => __SymbolList;
     
     /// <summary>
     /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

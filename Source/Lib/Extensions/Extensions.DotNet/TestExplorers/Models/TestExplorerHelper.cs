@@ -52,7 +52,7 @@ public static class TestExplorerHelper
 			// ImmutableDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode>
 			var allTypeDefinitions = cSharpBinder.AllTypeDefinitions;
 
-			var typeDefinitionNodeList = allTypeDefinitions.Where(kvp => kvp.Key.TypeIdentifier == className)
+			var typeDefinitionNodeList = allTypeDefinitions.Where(kvp => kvp.Key == className)
 				.ToList();
 
 			if (typeDefinitionNodeList.Count == 0)

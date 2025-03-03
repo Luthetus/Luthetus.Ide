@@ -22,7 +22,8 @@ public static class TypeFacts
         typeof(void),
         null,
         null,
-        null);
+        null,
+        string.Empty);
     
     /// <summary>
     /// When parsing an expression, there may be a <see cref="FunctionInvocationNode"/>
@@ -55,5 +56,6 @@ public static class TypeFacts
         typeof(void),
         null,
         null,
-        null);
+        null,
+        string.Empty);
 }

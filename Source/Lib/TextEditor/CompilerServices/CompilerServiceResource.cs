@@ -34,14 +34,7 @@ public class CompilerServiceResource : ICompilerServiceResource
 
     public virtual IReadOnlyList<Symbol> GetSymbols()
     {
-        var localCompilationUnit = CompilationUnit;
-
-        if (localCompilationUnit is null)
-            return Array.Empty<Symbol>();
-
-        return localCompilationUnit.Binder.SymbolsList
-            .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-            .ToArray();
+        return Array.Empty<Symbol>();
     }
 
     public virtual IReadOnlyList<TextEditorDiagnostic> GetDiagnostics()
