@@ -1414,8 +1414,7 @@ public partial class CSharpBinder
 			    token.TextSpan.ResourceUri,
 			    token.TextSpan.SourceText);
 		
-			((CSharpBinder)parserModel.Binder).AddSymbolDefinition(
-				new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan), compilationUnit, ref parserModel);
+			compilationUnit.__SymbolList.Add(new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan));
 		
 			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
@@ -2392,7 +2391,7 @@ public partial class CSharpBinder
 		        {
 		            DecorationByte = (byte)GenericDecorationKind.Function
 		        });
-	        AddSymbolDefinition(functionSymbol, compilationUnit, ref parserModel);
+	        compilationUnit.__SymbolList.Add(functionSymbol);
 	        var symbolId = functionSymbol.SymbolId;
 	        
 	        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(

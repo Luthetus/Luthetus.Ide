@@ -29,7 +29,7 @@ public class RazorResource : CompilerServiceResource
         if (localRazorSyntaxTree?.SemanticResultRazor is null)
             return Array.Empty<Symbol>();
 
-        var symbols = localRazorSyntaxTree.SemanticResultRazor.Binder.Symbols;
+        var symbols = Array.Empty<Symbol>(); // localRazorSyntaxTree.SemanticResultRazor.Binder.Symbols;
 
         var originalText = _textEditorService.ModelApi.GetAllText(ResourceUri);
 

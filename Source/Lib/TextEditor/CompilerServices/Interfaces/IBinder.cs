@@ -12,8 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 /// </summary>
 public interface IBinder
 {
-    public Symbol[] SymbolsList { get; }
-    public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions { get; }
+    public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
 	
 	/// <summary>
 	/// Returns the text span at which the definition exists in the source code.

@@ -250,13 +250,13 @@ public sealed class CSharpCompilerService : CompilerService
 	
 	        autocompleteEntryList.AddRange(
 	            allTypeDefinitions
-	            .Where(x => x.Key.TypeIdentifier.Contains(word, StringComparison.InvariantCulture))
+	            .Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
 	            .Distinct()
 	            .Take(5)
 	            .Select(x =>
 	            {
 	                return new AutocompleteEntry(
-	                    x.Key.TypeIdentifier,
+	                    x.Key,
 	                    AutocompleteEntryKind.Type,
 	                    () =>
 	                    {

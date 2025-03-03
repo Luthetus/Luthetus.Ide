@@ -18,7 +18,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         Type? valueType,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
-        TypeClauseNode? inheritedTypeClauseNode)
+        TypeClauseNode? inheritedTypeClauseNode,
+        string namespaceName)
     {
         AccessModifierKind = accessModifierKind;
         HasPartialModifier = hasPartialModifier;
@@ -28,6 +29,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         GenericArgumentsListingNode = genericArgumentsListingNode;
         PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
         InheritedTypeClauseNode = inheritedTypeClauseNode;
+        NamespaceName = namespaceName;
     }
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -60,6 +62,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
     public TypeClauseNode? InheritedTypeClauseNode { get; private set; }
+    public string NamespaceName { get; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
     public bool IsFabricated { get; init; }
