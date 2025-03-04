@@ -18,7 +18,7 @@ public sealed class CSharpResource : ICompilerServiceResource
     public ICompilerService CompilerService { get; }
 	public CSharpCompilationUnit? CompilationUnit { get; set; }
 	public IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = Array.Empty<SyntaxToken>();
-	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; internal set; }
+	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; internal set; } = Array.Empty<TextEditorTextSpan>();
 	
 	ICompilationUnit? ICompilerServiceResource.CompilationUnit => CompilationUnit;
     
@@ -27,14 +27,9 @@ public sealed class CSharpResource : ICompilerServiceResource
         return SyntaxTokenList;
     }
     
-    public IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
+    public IReadOnlyList<TextEditorTextSpan> GetMiscTextSpans()
     {
-		var tokenTextSpanList = new List<TextEditorTextSpan>();
-
-        tokenTextSpanList.AddRange(SyntaxTokenList.Select(st => st.TextSpan));
-		tokenTextSpanList.AddRange(MiscTextSpanList);
-
-		return tokenTextSpanList;
+		return MiscTextSpanList;
     }
 
     public IReadOnlyList<Symbol> GetSymbols()
@@ -44,9 +39,7 @@ public sealed class CSharpResource : ICompilerServiceResource
         if (localCompilationUnit is null)
             return Array.Empty<Symbol>();
 
-        return localCompilationUnit.SymbolList
-            .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-            .ToArray();
+        return localCompilationUnit.SymbolList;
     }
 
     public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics()
@@ -56,8 +49,6 @@ public sealed class CSharpResource : ICompilerServiceResource
         if (localCompilationUnit?.DiagnosticList is null)
             return Array.Empty<TextEditorDiagnostic>();
 
-        return localCompilationUnit.DiagnosticList
-            .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-            .ToArray();
+        return localCompilationUnit.DiagnosticList;
     }
 }

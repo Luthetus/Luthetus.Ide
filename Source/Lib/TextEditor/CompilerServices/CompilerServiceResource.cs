@@ -27,9 +27,9 @@ public class CompilerServiceResource : ICompilerServiceResource
         return SyntaxTokenList;
     }
     
-    public virtual IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
+    public virtual IReadOnlyList<TextEditorTextSpan> GetMiscTextSpans()
     {
-        return SyntaxTokenList.Select(st => st.TextSpan).ToArray();
+        return Array.Empty<TextEditorTextSpan>();
     }
 
     public virtual IReadOnlyList<Symbol> GetSymbols()

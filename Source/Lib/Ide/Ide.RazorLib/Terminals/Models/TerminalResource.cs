@@ -26,13 +26,14 @@ public class TerminalResource : CompilerServiceResource
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
     public List<Symbol> ManualSymbolList { get; } = new List<Symbol>();
 
-    public override IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
+	public override IReadOnlyList<SyntaxToken> GetTokens()
     {
-        var tokenTextSpanList = new List<TextEditorTextSpan>();
-        tokenTextSpanList.AddRange(ManualDecorationTextSpanList);
-        tokenTextSpanList.AddRange(SyntaxTokenList.Select(st => st.TextSpan));
-
-        return tokenTextSpanList;
+        return SyntaxTokenList;
+    }
+    
+    public override IReadOnlyList<TextEditorTextSpan> GetMiscTextSpans()
+    {
+        return ManualDecorationTextSpanList;
     }
 
     public override IReadOnlyList<Symbol> GetSymbols()
