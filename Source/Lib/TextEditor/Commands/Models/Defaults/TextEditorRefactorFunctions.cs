@@ -48,7 +48,7 @@ public class TextEditorRefactorFunctions
 	/// </summary>
 	public static void GenerateConstructor(
 		TypeDefinitionNode unsafeTypeDefinitionNode,
-		IEnumerable<IVariableDeclarationNode> variableDeclarationNodeList,
+		IEnumerable<VariableDeclarationNode> variableDeclarationNodeList,
 		IServiceProvider serviceProvider,
 		ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,

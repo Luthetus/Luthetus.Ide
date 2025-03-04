@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
+public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
 {
     public PreprocessorLibraryReferenceStatementNode(
         SyntaxToken includeDirectiveSyntaxToken,
