@@ -6,7 +6,7 @@ public sealed class VariableReferenceNode : IExpressionNode
 {
     public VariableReferenceNode(
         SyntaxToken variableIdentifierToken,
-        IVariableDeclarationNode variableDeclarationNode)
+        VariableDeclarationNode variableDeclarationNode)
     {
         VariableIdentifierToken = variableIdentifierToken;
         VariableDeclarationNode = variableDeclarationNode;
@@ -19,7 +19,7 @@ public sealed class VariableReferenceNode : IExpressionNode
     /// <summary>
     /// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
     /// </summary>
-    public IVariableDeclarationNode VariableDeclarationNode { get; }
+    public VariableDeclarationNode VariableDeclarationNode { get; }
     public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode.TypeClauseNode;
 
     public bool IsFabricated { get; init; }

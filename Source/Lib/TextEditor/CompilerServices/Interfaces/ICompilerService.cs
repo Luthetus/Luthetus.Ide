@@ -83,7 +83,7 @@ public interface ICompilerService
     /// Provides syntax highlighting from the lexing result.
     /// This method is invoked, and applied, before <see cref="GetSymbolsFor"/>
     /// </summary>
-    public IReadOnlyList<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri);
+    public IReadOnlyList<SyntaxToken> GetTokensFor(ResourceUri resourceUri);
 
     /// <summary>
     /// Provides syntax highlighting that cannot be determined by lexing alone.

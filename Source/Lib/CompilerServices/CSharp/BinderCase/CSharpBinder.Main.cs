@@ -4,7 +4,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
@@ -153,7 +152,7 @@ public partial class CSharpBinder : IBinder
     }
 
     public void BindVariableDeclarationNode(
-        IVariableDeclarationNode variableDeclarationNode,
+        VariableDeclarationNode variableDeclarationNode,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -908,7 +907,7 @@ public partial class CSharpBinder : IBinder
     	ResourceUri resourceUri,
     	int initialScopeIndexKey,
         string identifierText,
-        out IVariableDeclarationNode? variableDeclarationStatementNode)
+        out VariableDeclarationNode? variableDeclarationStatementNode)
     {
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
@@ -1177,16 +1176,16 @@ public partial class CSharpBinder : IBinder
     	binderSession.ScopeFunctionDefinitionMap[scopeKeyAndIdentifierText] = functionDefinitionNode;
     }
     
-    IVariableDeclarationNode[] IBinder.GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey) =>
+    VariableDeclarationNode[] IBinder.GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey) =>
     	GetVariableDeclarationNodesByScope(compilationUnit: null, resourceUri, scopeIndexKey);
 
-    public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(
+    public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
     	CSharpCompilationUnit? compilationUnit,
     	ResourceUri resourceUri,
     	int scopeIndexKey)
     {
     	if (!TryGetBinderSession(compilationUnit, resourceUri, out var binderSession))
-    		return Array.Empty<IVariableDeclarationNode>();
+    		return Array.Empty<VariableDeclarationNode>();
     	
     	return binderSession.ScopeVariableDeclarationMap
     		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey)
@@ -1194,7 +1193,7 @@ public partial class CSharpBinder : IBinder
     		.ToArray();
     }
     
-    bool IBinder.TryGetVariableDeclarationNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string variableIdentifierText, out IVariableDeclarationNode variableDeclarationNode) =>
+    bool IBinder.TryGetVariableDeclarationNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string variableIdentifierText, out VariableDeclarationNode variableDeclarationNode) =>
     	TryGetVariableDeclarationNodeByScope(compilationUnit: null, resourceUri, scopeIndexKey, variableIdentifierText, out variableDeclarationNode);
     
     public bool TryGetVariableDeclarationNodeByScope(
@@ -1202,7 +1201,7 @@ public partial class CSharpBinder : IBinder
     	ResourceUri resourceUri,
     	int scopeIndexKey,
     	string variableIdentifierText,
-    	out IVariableDeclarationNode variableDeclarationNode)
+    	out VariableDeclarationNode variableDeclarationNode)
     {
     	if (!TryGetBinderSession(compilationUnit, resourceUri, out var binderSession))
     	{
@@ -1219,7 +1218,7 @@ public partial class CSharpBinder : IBinder
     	ResourceUri resourceUri,
     	int scopeIndexKey,
     	string variableIdentifierText,
-        IVariableDeclarationNode variableDeclarationNode)
+        VariableDeclarationNode variableDeclarationNode)
     {
     	if (!TryGetBinderSession(compilationUnit, resourceUri, out var binderSession))
     		return false;
@@ -1233,7 +1232,7 @@ public partial class CSharpBinder : IBinder
     	ResourceUri resourceUri,
     	int scopeIndexKey,
     	string variableIdentifierText,
-        IVariableDeclarationNode variableDeclarationNode)
+        VariableDeclarationNode variableDeclarationNode)
     {
     	if (!TryGetBinderSession(compilationUnit, resourceUri, out var binderSession))
     		return;

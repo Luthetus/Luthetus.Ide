@@ -1,4 +1,5 @@
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
@@ -17,19 +18,19 @@ public sealed class TerminalCompilerService : CompilerService
         };
     }
 
-    public override IReadOnlyList<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri)
+    public override IReadOnlyList<SyntaxToken> GetTokensFor(ResourceUri resourceUri)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
         if (model is null)
-            return Array.Empty<TextEditorTextSpan>();
+            return Array.Empty<SyntaxToken>();
 
         lock (_resourceMapLock)
         {
             if (!_resourceMap.ContainsKey(resourceUri))
-                return Array.Empty<TextEditorTextSpan>();
+                return Array.Empty<SyntaxToken>();
 
-            return _resourceMap[resourceUri].GetTokenTextSpans();
+            return _resourceMap[resourceUri].GetTokens();
         }
     }
 }

@@ -1374,7 +1374,7 @@ public class RazorSyntaxTree
 
         var lexerOutput = CSharpLexer.Lex(ResourceUri.Empty, cSharpText);
 
-        foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan))
+        foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))
         {
             var startingIndexInclusive = lexedTokenTextSpan.StartingIndexInclusive +
                                          offsetPositionIndex -

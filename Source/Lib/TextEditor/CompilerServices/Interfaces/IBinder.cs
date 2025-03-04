@@ -75,13 +75,13 @@ public interface IBinder
     	string functionIdentifierText,
     	out FunctionDefinitionNode functionDefinitionNode);
     
-    public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey);
+    public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey);
     
     public bool TryGetVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
     	int scopeIndexKey,
     	string variableIdentifierText,
-    	out IVariableDeclarationNode variableDeclarationNode);
+    	out VariableDeclarationNode variableDeclarationNode);
     
     public TypeClauseNode? GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, int scopeIndexKey);
     

@@ -251,10 +251,9 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						terminalResource.ManualSymbolList.Clear();
 						terminalResource.ManualSymbolList.AddRange(outputFormatted.SymbolList);
 
-						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
 							editContext,
-							modelModifier,
-							terminalResource.GetTokenTextSpans());
+							modelModifier);
 							
 							editContext.TextEditorService.ModelApi.ApplyDecorationRange(
 							editContext,

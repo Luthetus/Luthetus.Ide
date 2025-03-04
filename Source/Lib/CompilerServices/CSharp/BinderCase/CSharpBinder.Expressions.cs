@@ -1755,7 +1755,7 @@ public partial class CSharpBinder
 						break;
 					}
 					
-					IVariableDeclarationNode variableDeclarationNode;
+					VariableDeclarationNode variableDeclarationNode;
 					
 					if (isRootExpression)
 					{

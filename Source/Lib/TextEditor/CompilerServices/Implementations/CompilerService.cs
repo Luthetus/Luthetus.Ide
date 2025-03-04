@@ -86,14 +86,14 @@ public class CompilerService : ICompilerService
         }
     }
 
-    public virtual IReadOnlyList<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri)
+    public virtual IReadOnlyList<SyntaxToken> GetTokensFor(ResourceUri resourceUri)
     {
         lock (_resourceMapLock)
         {
             if (!_resourceMap.ContainsKey(resourceUri))
-                return Array.Empty<TextEditorTextSpan>();
+                return Array.Empty<SyntaxToken>();
 
-            return _resourceMap[resourceUri].GetTokenTextSpans();
+            return _resourceMap[resourceUri].GetTokens();
         }
     }
 

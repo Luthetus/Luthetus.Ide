@@ -152,16 +152,16 @@ public class Binder : IBinder
     	return;
     }
     
-    public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey)
+    public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey)
     {
-		return Array.Empty<IVariableDeclarationNode>();
+		return Array.Empty<VariableDeclarationNode>();
     }
     
     public bool TryGetVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
     	int scopeIndexKey,
     	string variableIdentifierText,
-    	out IVariableDeclarationNode variableDeclarationNode)
+    	out VariableDeclarationNode variableDeclarationNode)
     {
     	variableDeclarationNode = null;
     	return false;
@@ -171,7 +171,7 @@ public class Binder : IBinder
     	ResourceUri resourceUri,
     	int scopeIndexKey,
     	string variableIdentifierText,
-        IVariableDeclarationNode variableDeclarationNode)
+        VariableDeclarationNode variableDeclarationNode)
     {
     	return false;
     }
@@ -180,7 +180,7 @@ public class Binder : IBinder
     	ResourceUri resourceUri,
     	int scopeIndexKey,
     	string variableIdentifierText,
-        IVariableDeclarationNode variableDeclarationNode)
+        VariableDeclarationNode variableDeclarationNode)
     {
     	return;
     }
@@ -213,7 +213,7 @@ public class Binder : IBinder
     	return;
     }
     
-    public void BindVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, IParserModel model)
+    public void BindVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode, IParserModel model)
     {
     	return;
     }

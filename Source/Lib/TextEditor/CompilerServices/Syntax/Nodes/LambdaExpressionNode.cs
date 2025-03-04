@@ -41,7 +41,7 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
     /// </summary>
     public bool CodeBlockNodeIsExpression { get; set; } = true;
     public bool HasReadParameters { get; set; }
-    public List<IVariableDeclarationNode> VariableDeclarationNodeList { get; } = new();
+    public List<VariableDeclarationNode> VariableDeclarationNodeList { get; } = new();
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
@@ -95,7 +95,7 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 	}
 	#endregion
     
-    public void AddVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode)
+    public void AddVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode)
     {
     	VariableDeclarationNodeList.Add(variableDeclarationNode);
     	_childListIsDirty = true;

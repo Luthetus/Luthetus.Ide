@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed class VariableDeclarationNode : IVariableDeclarationNode
+public sealed class VariableDeclarationNode : IExpressionNode
 {
     public VariableDeclarationNode(
         TypeClauseNode typeClauseNode,
@@ -50,7 +50,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
     
-    public IVariableDeclarationNode SetTypeClauseNode(TypeClauseNode typeClauseNode)
+    public VariableDeclarationNode SetTypeClauseNode(TypeClauseNode typeClauseNode)
     {
     	TypeClauseNode = typeClauseNode;
     	return this;

@@ -141,10 +141,9 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 						terminalResource.ManualDecorationTextSpanList.Clear();
 						terminalResource.ManualDecorationTextSpanList.AddRange(newDecorationTextSpanList);
 
-						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
 							editContext,
-							modelModifier,
-							terminalResource.GetTokenTextSpans());
+							modelModifier);
 					}
 
 					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
