@@ -207,10 +207,9 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
                     TextEditorModelResourceUri,
                     modelModifier.GetAllText()));
 
-                editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+                editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
                     editContext,
-                    modelModifier,
-                    terminalResource.GetTokenTextSpans());
+                    modelModifier);
 
                 return ValueTask.CompletedTask;
             });

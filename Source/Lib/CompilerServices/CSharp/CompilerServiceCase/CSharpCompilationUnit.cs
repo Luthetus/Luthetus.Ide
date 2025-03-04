@@ -32,7 +32,7 @@ public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
     public List<Scope> ScopeList { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
-    public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
+    public Dictionary<ScopeKeyAndIdentifierText, VariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;

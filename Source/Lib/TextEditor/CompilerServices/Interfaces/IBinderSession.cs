@@ -29,9 +29,6 @@ public interface IBinderSession
 {
     public ResourceUri ResourceUri { get; }
     
-    
-    
-    
     public List<Scope> ScopeList { get; }
     /// <summary>
     /// Key is the name of the type, prefixed with the ScopeKey and '_' to separate the ScopeKey from the type.
@@ -50,19 +47,6 @@ public interface IBinderSession
     /// Given: var myVariable = 2;
     /// Then: Key == new ScopeKeyAndIdentifierText(ScopeKey, "myVariable")
     /// </summary>
-    public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; }
+    public Dictionary<ScopeKeyAndIdentifierText, VariableDeclarationNode> ScopeVariableDeclarationMap { get; }
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; }
-    
-    
-    
-    
-    /*
-    // Don't include these here.
-    
-    public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
-    public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
-    public int GetNextIndexKey();
-    public IBinder Binder { get; }
-    public int CurrentScopeIndexKey { get; set; }
-    */
 }

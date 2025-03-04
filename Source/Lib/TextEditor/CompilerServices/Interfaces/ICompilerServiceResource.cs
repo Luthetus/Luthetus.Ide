@@ -10,7 +10,7 @@ public interface ICompilerServiceResource
     public ICompilationUnit? CompilationUnit { get; }
 
 	public IReadOnlyList<SyntaxToken> GetTokens();
-    public IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans();
+	public IReadOnlyList<TextEditorTextSpan> GetMiscTextSpans();
     public IReadOnlyList<Symbol> GetSymbols();
     public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics();
 }

@@ -9,14 +9,14 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 public static class ParseVariables
 {
     /// <summary>Function invocation which uses the 'out' keyword.</summary>
-    public static IVariableDeclarationNode? HandleVariableDeclarationExpression(
+    public static VariableDeclarationNode? HandleVariableDeclarationExpression(
         TypeClauseNode consumedTypeClauseNode,
         SyntaxToken consumedIdentifierToken,
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	IVariableDeclarationNode variableDeclarationNode;
+    	VariableDeclarationNode variableDeclarationNode;
 
 		variableDeclarationNode = new VariableDeclarationNode(
 	        consumedTypeClauseNode,

@@ -14,7 +14,7 @@ public class TextEditorRefactorFacts
 	/// </summary>
 	public static void GenerateConstructor(
 		TypeDefinitionNode unsafeTypeDefinitionNode,
-		IEnumerable<IVariableDeclarationNode> variableDeclarationNodeList,
+		IEnumerable<VariableDeclarationNode> variableDeclarationNodeList,
 		IServiceProvider serviceProvider,
 		ITextEditorService textEditorService,
         ResourceUri resourceUri,

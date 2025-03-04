@@ -117,7 +117,7 @@ public static class ParseTokens
 	        ref parserModel);
     }
     
-    public static void MoveToHandleVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void MoveToHandleVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var variableKind = VariableKind.Local;
     			
@@ -200,7 +200,7 @@ public static class ParseTokens
 		return;
     }
     
-    public static void ParsePropertyDefinition(CSharpCompilationUnit compilationUnit, IVariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
+    public static void ParsePropertyDefinition(CSharpCompilationUnit compilationUnit, VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
     {
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;

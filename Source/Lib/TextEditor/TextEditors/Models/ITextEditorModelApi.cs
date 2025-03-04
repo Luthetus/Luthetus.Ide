@@ -210,13 +210,23 @@ public interface ITextEditorModelApi
 
     /// <summary>
     /// If applying syntax highlighting it may be preferred to use <see cref="ApplySyntaxHighlightingAsync" />.
-    /// It is effectively just invoking the lexer and then <see cref="ApplyDecorationRange" />
     /// </summary>
     public void ApplyDecorationRange(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         IEnumerable<TextEditorTextSpan> textSpans);
 
+	/// <summary>
+	/// This method is more performant than <see cref="ApplyDecorationRange"/>
+	/// if the tokens, misc-text-spans, and symbols, are all stored in separate lists.
+	///
+	/// Because rather than combine them as an IEnumerable,
+	/// this will iterate each list directly.
+	///
+	/// TODO: What is the exact overhead of using the IEnumerable approach...
+	/// ...The reality is that those 3 sources were being combined into a new List
+	/// previously. But I wonder if IEnumerable would have any meaningful overhead?
+	/// </summary>
     public void ApplySyntaxHighlighting(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier);
