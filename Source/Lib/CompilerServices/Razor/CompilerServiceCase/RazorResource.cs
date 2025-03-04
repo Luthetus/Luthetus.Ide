@@ -21,7 +21,7 @@ public class RazorResource : CompilerServiceResource
 
     public RazorSyntaxTree? RazorSyntaxTree { get; internal set; }
     public List<Symbol> HtmlSymbols { get; } = new();
-
+    
     public override IReadOnlyList<Symbol> GetSymbols()
     {
         var localRazorSyntaxTree = RazorSyntaxTree;
@@ -29,7 +29,7 @@ public class RazorResource : CompilerServiceResource
         if (localRazorSyntaxTree?.SemanticResultRazor is null)
             return Array.Empty<Symbol>();
 
-        var symbols = Array.Empty<Symbol>(); // localRazorSyntaxTree.SemanticResultRazor.Binder.Symbols;
+        var symbols = localRazorSyntaxTree.SemanticResultRazor.CompilationUnit.SymbolList;
 
         var originalText = _textEditorService.ModelApi.GetAllText(ResourceUri);
 
