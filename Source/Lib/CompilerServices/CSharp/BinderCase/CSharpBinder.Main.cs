@@ -1226,9 +1226,9 @@ public partial class CSharpBinder
     }
     
     public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
-    	GetDefinitionTextSpan(cSharpCompilationUnit: null, textSpan, compilerServiceResource);
+    	GetDefinitionTextSpan(cSharpCompilationUnit: null, textSpan, (CSharpResource)compilerServiceResource);
     	
-    public TextEditorTextSpan? GetDefinitionTextSpan(CSharpCompilationUnit? cSharpCompilationUnit, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    public TextEditorTextSpan? GetDefinitionTextSpan(CSharpCompilationUnit? cSharpCompilationUnit, TextEditorTextSpan textSpan, CSharpResource compilerServiceResource)
     {
     	IReadOnlyList<Symbol> symbolList = compilerServiceResource.CompilationUnit?.SymbolList ?? Array.Empty<Symbol>();
     	var symbol = GetSymbol(cSharpCompilationUnit, textSpan, symbolList);
@@ -1491,7 +1491,7 @@ public partial class CSharpBinder
     /// 	  ...This should likely be changed, because function argument goto definition won't work if done from the argument listing, rather than the code block of the function.
     /// 	  This method will act as a temporary work around.
     /// </summary>
-    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit? cSharpCompilationUnit, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, Scope scope)
+    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit? cSharpCompilationUnit, int positionIndex, ResourceUri resourceUri, CSharpResource compilerServiceResource, Scope scope)
     {
         if (compilerServiceResource.CompilationUnit is null)
         	return null;

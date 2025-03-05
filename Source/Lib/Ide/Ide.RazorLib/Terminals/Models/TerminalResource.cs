@@ -22,7 +22,7 @@ public class TerminalResource : CompilerServiceResource
     {
     }
 
-    public override IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = new List<SyntaxToken>();
+    /*public override IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = new List<SyntaxToken>();
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
     public List<Symbol> ManualSymbolList { get; } = new List<Symbol>();
 
@@ -39,5 +39,5 @@ public class TerminalResource : CompilerServiceResource
     public override IReadOnlyList<Symbol> GetSymbols()
     {
         return ManualSymbolList;
-    }
+    }*/
 }

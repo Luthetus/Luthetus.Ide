@@ -81,7 +81,7 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 	    	
 	    	var compilerService = textEditorModel.CompilerService;
 	    	
-	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+	    	var compilerServiceResource = compilerService.GetResource(textEditorModel.ResourceUri);
 	    	if (compilerServiceResource is null)
 	    		return null;
 	
@@ -121,7 +121,7 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 	    
 	    	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
 	    	var compilerService = textEditorModel.CompilerService;
-	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+	    	var compilerServiceResource = compilerService.GetResource(textEditorModel.ResourceUri);
 	
 	    	return compilerService.GetDefinitionNode(symbolLocal.TextSpan, compilerServiceResource, symbolLocal);
     	}

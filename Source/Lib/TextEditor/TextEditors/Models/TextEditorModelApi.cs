@@ -264,84 +264,12 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier)
     {
-        // This method currently uses linq to select the text spans of the tokens and the symbols
-        // then combine them into a new List.
-        //
-        // This sounds like a very poor performance idea.
-        // I'm going to try inlining 'ApplyDecorationRange(...)' twice,
-        // and manually member access the text spans.
-        // This also is a bad idea but due to code duplication.
-        //
-        // So the final answer preferably would solve the code duplication.
-        // Would using linq to the select the text spans as an IEnumerable instead
-        // of a new List instance and passing the IEnumerable
-        // be a noticeable improvement from the first solution?
-        
-        var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
+        var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
 
-		var localRichCharacterList = modelModifier.RichCharacterList;
-	    var positionsPainted = new HashSet<int>();
-
-		// Tokens
-        {
-        	var tokenList = compilerServiceResource.CompilationUnit.TokenList;
-	
-	        foreach (var token in tokenList)
-	        {
-	            for (var i = token.TextSpan.StartingIndexInclusive; i < token.TextSpan.EndingIndexExclusive; i++)
-	            {
-	                if (i < 0 || i >= localRichCharacterList.Length)
-	                    continue;
-	
-	                modelModifier.__SetDecorationByte(i, token.TextSpan.DecorationByte);
-	                positionsPainted.Add(i);
-	            }
-	        }
-	    }
-	    
-	    // MiscTextSpan
-        {
-        	var miscTextSpanList = compilerServiceResource.CompilationUnit.MiscTextSpanList;
-	
-	        foreach (var miscTextSpan in miscTextSpanList)
-	        {
-	            for (var i = miscTextSpan.StartingIndexInclusive; i < miscTextSpan.EndingIndexExclusive; i++)
-	            {
-	                if (i < 0 || i >= localRichCharacterList.Length)
-	                    continue;
-	
-	                modelModifier.__SetDecorationByte(i, miscTextSpan.DecorationByte);
-	                positionsPainted.Add(i);
-	            }
-	        }
-	    }
-	    
-	    // Symbols
-	    {
-	    	var symbolList = compilerServiceResource.CompilationUnit.SymbolList;
-	
-	        foreach (var symbol in symbolList)
-	        {
-	            for (var i = symbol.TextSpan.StartingIndexInclusive; i < symbol.TextSpan.EndingIndexExclusive; i++)
-	            {
-	                if (i < 0 || i >= localRichCharacterList.Length)
-	                    continue;
-	
-	                modelModifier.__SetDecorationByte(i, symbol.TextSpan.DecorationByte);
-	                positionsPainted.Add(i);
-	            }
-	        }
-	    }
-	    
-	    // TODO: Iterating over every rich character to clear non-painted seems like a poor performance solution.
-	    for (var i = 0; i < localRichCharacterList.Length - 1; i++)
-        {
-            if (!positionsPainted.Contains(i))
-            {
-                // DecorationByte of 0 is to be 'None'
-                modelModifier.__SetDecorationByte(i, 0);
-            }
-        }
+        ApplyDecorationRange(
+	        editContext,
+	        modelModifier,
+	        compilerServiceResource.CompilationUnit.GetTextTextSpans());
         
         // TODO: Why does painting reload virtualization result???
         modelModifier.ShouldReloadVirtualizationResult = true;

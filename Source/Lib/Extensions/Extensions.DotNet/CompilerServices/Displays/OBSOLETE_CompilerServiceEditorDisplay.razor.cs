@@ -59,7 +59,7 @@ public partial class OBSOLETE_CompilerServiceEditorDisplay : ComponentBase, IDis
 
 	private void RecalculateViewModel()
 	{
-		try
+		/*try
 		{
 			var localCSharpCompilerService = _cSharpCompilerService;
 			var localCompilerServiceEditorState = DotNetBackgroundTaskApi.CompilerServiceEditorService.GetCompilerServiceEditorState();
@@ -112,7 +112,7 @@ public partial class OBSOLETE_CompilerServiceEditorDisplay : ComponentBase, IDis
 		catch (LuthetusTextEditorException)
 		{
 			// Eat this exception
-		}
+		}*/
 	}
 
 	private async void TextEditorStateWrap_StateChanged()

@@ -1,6 +1,7 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
@@ -18,7 +19,7 @@ public sealed class TerminalCompilerService : CompilerService
         };
     }
 
-    public override IReadOnlyList<SyntaxToken> GetTokensFor(ResourceUri resourceUri)
+    /*public override IReadOnlyList<SyntaxToken> GetTokensFor(ResourceUri resourceUri)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
@@ -32,5 +33,29 @@ public sealed class TerminalCompilerService : CompilerService
 
             return _resourceMap[resourceUri].GetTokens();
         }
+    }*/
+    
+    public override ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    {
+    	/*var lexer = new DotNetSolutionLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    	var parser = new DotNetSolutionParser(lexer);
+    	var compilationUnit = parser.Parse();
+    
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				resource.CompilationUnit = compilationUnit;
+			}
+		}
+		
+		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			editContext,
+			modelModifier);
+
+		OnResourceParsed();*/
+		
+		return ValueTask.CompletedTask;
     }
 }

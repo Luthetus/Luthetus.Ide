@@ -129,7 +129,7 @@ public sealed class CSharpCompilerService : CompilerService
 	    	
 	    	var compilerService = textEditorModel.CompilerService;
 	    	
-	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+	    	var compilerServiceResource = compilerService.GetResource(textEditorModel.ResourceUri);
 	    	if (compilerServiceResource is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
 	

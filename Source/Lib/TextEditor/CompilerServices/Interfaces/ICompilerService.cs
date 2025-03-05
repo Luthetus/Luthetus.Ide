@@ -1,5 +1,7 @@
+using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -68,21 +70,30 @@ public interface ICompilerService
     public Type? SymbolRendererType { get; }
     public Type? DiagnosticRendererType { get; }
 
-    /// <summary>Expected to be concurrency safe with <see cref="DisposeResource"/></summary>
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified);
+    public void DisposeResource(ResourceUri resourceUri);
 
-    /// <summary>Expected to be an <see cref="Microsoft.Extensions.Hosting.IHostedService"/> (or anything which performs background task work)</summary>
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList);
 
-    public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri);
+    public ICompilerServiceResource? GetResource(ResourceUri resourceUri);
 
+    public ValueTask<MenuRecord> GetAutocompleteMenu(
+    	ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs);
+    
+    public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs);
+
+	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
+    
     /// <summary>
-    /// (2024-01-28)
-    /// Goal: track the cursor's position within the compilation unit as it moves.
-    /// </summary>
-    public void CursorWasModified(ResourceUri resourceUri, TextEditorCursor cursor);
-
-	/// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.
     ///
     /// Then, checks the <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/>'s children
@@ -112,15 +123,4 @@ public interface ICompilerService
     /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
-
-    /// <summary>
-    /// When a user types a period ('.') or hits the keybind: { 'Ctrl' + 'Space' }
-    /// this method is invoked to populate the autocomplete menu.
-    /// </summary>
-    public List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan);
-
-	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
-
-    /// <summary>Expected to be concurrency safe with <see cref="RegisterResource"/></summary>
-    public void DisposeResource(ResourceUri resourceUri);
 }

@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -70,7 +72,7 @@ public abstract class CompilerService : ICompilerService
         ResourceRegistered?.Invoke();
     }
 
-    public virtual ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
+    public virtual ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
@@ -124,13 +126,29 @@ public abstract class CompilerService : ICompilerService
             });
     }
 
-    public virtual void CursorWasModified(ResourceUri resourceUri, TextEditorCursor cursor)
-    {
-    }
-
     public virtual List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
         return _emptyAutocompleteEntryList;
+    }
+    
+    public ValueTask<MenuRecord> GetAutocompleteMenu(
+    	ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
+    {
+    	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+    }
+    
+    public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
+    {
+    	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
     }
     
     public abstract ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);

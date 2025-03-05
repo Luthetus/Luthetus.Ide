@@ -104,12 +104,10 @@ public class DotNetSolutionParser
             }
         }
 
-        return new CompilationUnit(
-        	Lexer.ResourceUri,
-            null,
-            Lexer,
-            this,
-            null);
+        return new CompilationUnit
+        {
+        	TokenList = Lexer.SyntaxTokenList
+        };
     }
 
     public void ParseAssociatedNameToken(SyntaxToken associatedNameToken)

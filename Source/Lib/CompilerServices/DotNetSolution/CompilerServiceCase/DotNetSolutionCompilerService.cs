@@ -20,19 +20,15 @@ public sealed class DotNetSolutionCompilerService : CompilerService
     public override ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
     	var lexer = new DotNetSolutionLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
-    	
-    	GetParserFunc = (resource, lexer) => new DotNetSolutionParser((DotNetSolutionLexer)lexer),
+    	var parser = new DotNetSolutionParser(lexer);
+    	var compilationUnit = parser.Parse();
     
     	lock (_resourceMapLock)
 		{
 			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
 			{
 				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
-				
-				resource.CompilationUnit = new CompilationUnit
-				{
-					TokenList = lexer.SyntaxTokenList
-				};
+				resource.CompilationUnit = compilationUnit;
 			}
 		}
 		

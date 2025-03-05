@@ -242,7 +242,7 @@ public class RazorSyntaxTree
                 if (inheritanceIdentifierText != "ComponentBase")
                     continue;
 
-                var compilerServiceResource = _razorCompilerService.GetCompilerServiceResourceFor(textSpan.ResourceUri);
+                var compilerServiceResource = _razorCompilerService.GetResource(textSpan.ResourceUri);
 
                 if (compilerServiceResource is null)
                     continue;

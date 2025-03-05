@@ -880,133 +880,21 @@ public class TextEditorCommandDefaultFunctions
     {
         var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
         var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
-		       
+
 		var cursorDimensions = await jsRuntimeCommonApi
 			.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
-        var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
-        
-		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
-		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
-	
 		var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		var compilerService = modelModifier.CompilerService;
-	
-		var compilerServiceResource = viewModelModifier is null
-			? null
-			: compilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
 
-		int? primaryCursorPositionIndex = modelModifier is null || viewModelModifier is null
-			? null
-			: modelModifier.GetPositionIndex(primaryCursorModifier);
+		var menu = await compilerService.GetQuickActionsSlashRefactorMenu(
+			editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        commandArgs);
 
-		var syntaxNode = primaryCursorPositionIndex is null || compilerService is null || compilerServiceResource?.CompilationUnit is null
-			? null
-			: compilerService.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, compilerServiceResource);
-			
-		var menuOptionList = new List<MenuOptionRecord>();
-			
-		menuOptionList.Add(new MenuOptionRecord(
-			"QuickActionsSlashRefactorMenu",
-			MenuOptionKind.Other));
-			
-		if (syntaxNode is null)
-		{
-			menuOptionList.Add(new MenuOptionRecord(
-				"syntaxNode was null",
-				MenuOptionKind.Other,
-				onClickFunc: async () => {}));
-		}
-		else
-		{
-			if (syntaxNode.SyntaxKind == SyntaxKind.TypeClauseNode)
-			{
-				var allTypeDefinitions = compilerService.AllTypeDefinitions;
-				
-				var typeClauseNode = (TypeClauseNode)syntaxNode;
-				
-				if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.GetText(), out var typeDefinitionNode))
-				{
-					var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
-						
-					menuOptionList.Add(new MenuOptionRecord(
-						$"Copy: {usingStatementText}",
-						MenuOptionKind.Other,
-						onClickFunc: async () =>
-						{
-							var clipboardService = commandArgs.ServiceProvider.GetRequiredService<IClipboardService>();
-							await clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
-						}));
-				}
-				else
-				{
-					menuOptionList.Add(new MenuOptionRecord(
-						"type not found",
-						MenuOptionKind.Other,
-						onClickFunc: async () => {}));
-				}
-			}
-			else
-			{
-				menuOptionList.Add(new MenuOptionRecord(
-					syntaxNode.SyntaxKind.ToString(),
-					MenuOptionKind.Other,
-					onClickFunc: async () => {}));
-			}
-			/*
-			
-			// The ISyntaxNode.Parent property is being removed. (2024-11-11)
-	    	// ==============================================================
-	    	// TODO: Rewrite this block of code but find the parent node by "querying" the Binder.
-				
-			if (syntaxNode.SyntaxKind == SyntaxKind.PropertyDefinitionNode)
-			{
-				if (syntaxNode.Parent is null)
-				{
-					menuOptionList.Add(new MenuOptionRecord(
-						"syntaxNode.Parent is null",
-						MenuOptionKind.Other,
-						OnClickFunc: async () => {}));
-				}
-				else
-				{
-					if (syntaxNode.Parent is TypeDefinitionNode typeDefinitionNode)
-					{
-						menuOptionList.Add(new MenuOptionRecord(
-							$"Add to {typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}() constructor",
-							MenuOptionKind.Other,
-							OnClickFunc: () => 
-							{
-								TextEditorRefactorFacts.GenerateConstructor(
-									typeDefinitionNode,
-									Array.Empty<IVariableDeclarationNode>(),
-									commandArgs.ServiceProvider,
-									editContext.TextEditorService,
-							        modelModifier.ResourceUri,
-							        viewModelModifier.ViewModel.ViewModelKey);
-							    return Task.CompletedTask;
-							}));
-					}
-					else
-					{
-						menuOptionList.Add(new MenuOptionRecord(
-							$"Parent is not {nameof(SyntaxKind)}.{nameof(SyntaxKind.TypeDefinitionNode)} it is: {nameof(SyntaxKind)}.{syntaxNode.Parent.SyntaxKind}",
-							MenuOptionKind.Other,
-							OnClickFunc: async () => {}));
-					}
-				}
-			}
-			*/
-		}
-		
-		MenuRecord menu;
-		
-		if (menuOptionList.Count == 0)
-			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-		else
-			menu = new MenuRecord(menuOptionList);
-		
 		var dropdownRecord = new DropdownRecord(
 			Key<DropdownRecord>.NewKey(),
 			cursorDimensions.LeftInPixels,
@@ -1056,7 +944,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        if (modelModifier.CompilerService is null)
+        /*if (modelModifier.CompilerService is null)
             return;
             
         var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
@@ -1067,7 +955,7 @@ public class TextEditorCommandDefaultFunctions
         if (wordTextSpan is null)
             return;
 
-		var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
+		var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
 		if (compilerServiceResource?.CompilationUnit is null)
 			return;
 
@@ -1143,6 +1031,7 @@ public class TextEditorCommandDefaultFunctions
                 true,
                 commandArgs.ServiceProvider));
         }
+        */
     }
 
     public static void ShowFindAllDialog(
@@ -1382,11 +1271,11 @@ public class TextEditorCommandDefaultFunctions
 
         var foundMatch = false;
 
-		var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
+		var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
         
         var compilationUnitLocal = compilerServiceResource.CompilationUnit;
         
-        var symbols = compilationUnitLocal.SymbolList;
+        /* var symbols = compilationUnitLocal.SymbolList;
         var diagnostics = compilationUnitLocal.DiagnosticList;
 
         if (diagnostics.Count != 0)
@@ -1459,6 +1348,7 @@ public class TextEditorCommandDefaultFunctions
         }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
+        */
     }
     
     /// <summary>

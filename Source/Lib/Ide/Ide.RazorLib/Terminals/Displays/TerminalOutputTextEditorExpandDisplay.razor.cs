@@ -239,17 +239,17 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						}
 					}
 					
-					var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(
+					var compilerServiceResource = modelModifier.CompilerService.GetResource(
 						terminalOutputFormatterExpand.TextEditorModelResourceUri);
 
 					if (compilerServiceResource is TerminalResource terminalResource)
 					{					
-						terminalResource.ManualDecorationTextSpanList.Clear();
+						/*terminalResource.ManualDecorationTextSpanList.Clear();
 						terminalResource.ManualDecorationTextSpanList.AddRange(
-							outputFormatted.SymbolList.Select(x => x.TextSpan));
+							outputFormatted.SymbolList.Select(x => x.TextSpan));*/
 								
-						terminalResource.ManualSymbolList.Clear();
-						terminalResource.ManualSymbolList.AddRange(outputFormatted.SymbolList);
+						/*terminalResource.ManualSymbolList.Clear();
+						terminalResource.ManualSymbolList.AddRange(outputFormatted.SymbolList);*/
 
 						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
 							editContext,

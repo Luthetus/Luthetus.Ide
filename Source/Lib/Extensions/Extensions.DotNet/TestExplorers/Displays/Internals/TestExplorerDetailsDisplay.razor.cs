@@ -121,7 +121,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 				nameof(TestExplorerDetailsDisplay),
 				editContext =>
 				{
-					var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
+					/*var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 					var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
 					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
@@ -146,7 +146,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 							modelModifier);
 					}
 
-					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;*/
 					return ValueTask.CompletedTask;
 				});
 		}

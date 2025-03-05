@@ -23,6 +23,18 @@ public sealed class CSharpCompilationUnit : ICompilationUnit
 	{
 		ResourceUri = resourceUri;
 	}
+	
+	public IEnumerable<TextEditorTextSpan> GetTextTextSpans()
+	{
+		return TokenList.Select(x => x.TextSpan)
+			.Concat(MiscTextSpanList)
+			.Concat(SymbolList.Select(x => x.TextSpan));
+	}
+	
+    public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
+    {
+    	return DiagnosticList.Select(x => x.TextSpan);
+    }
 
 	public ResourceUri ResourceUri { get; set; }
     public ISyntaxNode RootCodeBlockNode { get; set; }

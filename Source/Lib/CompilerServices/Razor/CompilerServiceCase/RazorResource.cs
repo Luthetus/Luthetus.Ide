@@ -22,7 +22,7 @@ public class RazorResource : CompilerServiceResource
     public RazorSyntaxTree? RazorSyntaxTree { get; internal set; }
     public List<Symbol> HtmlSymbols { get; } = new();
     
-    public override IReadOnlyList<Symbol> GetSymbols()
+    public IReadOnlyList<Symbol> GetSymbols()
     {
         var localRazorSyntaxTree = RazorSyntaxTree;
 

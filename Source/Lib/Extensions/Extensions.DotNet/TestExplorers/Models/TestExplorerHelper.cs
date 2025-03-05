@@ -29,7 +29,7 @@ public static class TestExplorerHelper
 	{
 		return (editContext) =>
 		{
-			var wordTextSpan = TextEditorTextSpan.FabricateTextSpan(className);
+			/*var wordTextSpan = TextEditorTextSpan.FabricateTextSpan(className);
 
             var possibleCSharpCompilerService = compilerServiceRegistry
                 .GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
@@ -241,7 +241,7 @@ public static class TestExplorerHelper
 					commonComponentRenderers,
 					notificationService,
 					TimeSpan.FromSeconds(5));
-			}
+			}*/
 			
 			return ValueTask.CompletedTask;
 		};
