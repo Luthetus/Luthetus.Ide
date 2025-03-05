@@ -568,6 +568,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
+    	if (word is null)
+			return null;
+			
     	var boundScope = __CSharpBinder.GetScope(null, textSpan);
 
         if (!boundScope.ConstructorWasInvoked)
