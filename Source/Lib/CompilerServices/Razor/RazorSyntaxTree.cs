@@ -224,7 +224,7 @@ public class RazorSyntaxTree
         InjectedLanguageDefinition injectedLanguageDefinition,
         TextEditorTextSpan textSpan)
     {
-        var allTypeDefinitions = _cSharpCompilerService.CSharpBinder.AllTypeDefinitions;
+        var allTypeDefinitions = _cSharpCompilerService.__CSharpBinder.AllTypeDefinitions;
 
         var text = textSpan.GetText();
         

@@ -76,6 +76,8 @@ public interface ICompilerService
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList);
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri);
+    
+    public MenuRecord GetContextMenu();
 
     public ValueTask<MenuRecord> GetAutocompleteMenu(
     	ITextEditorEditContext editContext,

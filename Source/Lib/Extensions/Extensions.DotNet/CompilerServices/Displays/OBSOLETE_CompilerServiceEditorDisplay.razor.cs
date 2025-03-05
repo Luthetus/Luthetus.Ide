@@ -41,6 +41,7 @@ public partial class OBSOLETE_CompilerServiceEditorDisplay : ComponentBase, IDis
 
 	protected override void OnInitialized()
 	{
+		/*
         // TODO: This must be removed as it puts a requirement to have the CSharpCompilerService...
         //       ...instead generalize this component to iterate over the CompilerServiceRegistry.CompilerServiceList
         _cSharpCompilerService = (CSharpCompilerService)CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
@@ -53,7 +54,8 @@ public partial class OBSOLETE_CompilerServiceEditorDisplay : ComponentBase, IDis
 		DotNetBackgroundTaskApi.CompilerServiceEditorService.CompilerServiceEditorStateChanged += OnCompilerServiceEditorStateChanged;
 		TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupStateWrap_StateChanged;
 		TextEditorService.TextEditorStateChanged += TextEditorStateWrap_StateChanged;
-
+		*/
+		
 		base.OnInitialized();
 	}
 
@@ -146,6 +148,7 @@ public partial class OBSOLETE_CompilerServiceEditorDisplay : ComponentBase, IDis
 
 	public void Dispose()
 	{
+		/*
 		_cSharpCompilerService.ResourceRegistered -= CSharpCompilerService_StateChanged;
 		_cSharpCompilerService.ResourceParsed -= CSharpCompilerService_StateChanged;
 		_cSharpCompilerService.ResourceDisposed -= CSharpCompilerService_StateChanged;
@@ -154,6 +157,7 @@ public partial class OBSOLETE_CompilerServiceEditorDisplay : ComponentBase, IDis
 		DotNetBackgroundTaskApi.CompilerServiceEditorService.CompilerServiceEditorStateChanged -= OnCompilerServiceEditorStateChanged;
 		TextEditorService.GroupApi.TextEditorGroupStateChanged -= TextEditorGroupStateWrap_StateChanged;
 		TextEditorService.TextEditorStateChanged -= TextEditorStateWrap_StateChanged;
+		*/
 	}
 
 	private class CompilerServiceEditorViewModel

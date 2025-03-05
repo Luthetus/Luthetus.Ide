@@ -131,7 +131,13 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private MenuRecord GetMenuRecord()
     {
-        List<MenuOptionRecord> menuOptionRecordsList = new();
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+    		
+    	return renderBatch.Model.CompilerService.GetContextMenu();
+    
+        /*List<MenuOptionRecord> menuOptionRecordsList = new();
 
         var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
         menuOptionRecordsList.Add(cut);
@@ -151,7 +157,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         if (!menuOptionRecordsList.Any())
             menuOptionRecordsList.Add(new MenuOptionRecord("No Context Menu Options for this item", MenuOptionKind.Other));
 
-        return new MenuRecord(menuOptionRecordsList);
+        return new MenuRecord(menuOptionRecordsList);*/
     }
 
     private Task SelectMenuOption(Func<Task> menuOptionAction)
