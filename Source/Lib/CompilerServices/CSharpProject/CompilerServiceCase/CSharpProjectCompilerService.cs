@@ -68,6 +68,18 @@ public sealed class CSharpProjectCompilerService : ICompilerService
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
+    	/*lock (_resourceMapLock)
+        {
+            if (_resourceMap.ContainsKey(resourceUri))
+                return;
+
+            _resourceMap.Add(resourceUri, new CSharpResource(resourceUri, this));
+        }
+
+		if (shouldTriggerResourceWasModified)
+	        ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
+	        
+        ResourceRegistered?.Invoke();*/
     }
     
     public void DisposeResource(ResourceUri resourceUri)
