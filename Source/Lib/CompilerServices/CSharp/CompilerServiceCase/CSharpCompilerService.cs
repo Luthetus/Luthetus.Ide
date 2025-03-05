@@ -25,8 +25,6 @@ public sealed class CSharpCompilerService : CompilerService
     public CSharpCompilerService(ITextEditorService textEditorService)
         : base(textEditorService)
     {
-    	Binder = CSharpBinder;
-    
         _compilerServiceOptions = new()
         {
             RegisterResourceFunc = resourceUri => new CSharpResource(resourceUri, this),
@@ -69,6 +67,8 @@ public sealed class CSharpCompilerService : CompilerService
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri);
 		
 		var lexerOutput = CSharpLexer.Lex(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
+		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
+		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 
 		// Even if the parser throws an exception, be sure to
 		// make use of the Lexer to do whatever syntax highlighting is possible.
@@ -84,16 +84,11 @@ public sealed class CSharpCompilerService : CompilerService
 				if (_resourceMap.ContainsKey(resourceUri))
 				{
 					var resource = (CSharpResource)_resourceMap[resourceUri];
-					
-			  	  resource.SyntaxTokenList = lexerOutput.SyntaxTokenList;
-			        resource.MiscTextSpanList = lexerOutput.MiscTextSpanList;
-
-					if (cSharpCompilationUnit is not null)
-						resource.CompilationUnit = cSharpCompilationUnit;
+					resource.CompilationUnit = cSharpCompilationUnit;
 				}
 			}
 			
-			var diagnosticTextSpans = GetDiagnosticsFor(modelModifier.ResourceUri)
+			var diagnosticTextSpans = cSharpCompilationUnit.DiagnosticList
 				.Select(x => x.TextSpan)
 				.ToList();
 
@@ -142,7 +137,7 @@ public sealed class CSharpCompilerService : CompilerService
 	    		(CSharpCompilationUnit)compilerServiceResource.CompilationUnit,
 	    		textSpan.StartingIndexInclusive - 1,
 	    		textSpan.ResourceUri,
-	    		compilerServiceResource);
+	    		(CSharpResource)compilerServiceResource);
 	    		
 	    	if (targetNode is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();

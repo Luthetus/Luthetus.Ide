@@ -34,7 +34,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	private int _lineIndexPrevious = -1;
 	private int _columnIndexPrevious = -1;
 	
-	private ICompilationUnit? _compilationUnitPrevious = null;
 	private ICodeBlockOwner? _codeBlockOwner;
 	private bool _shouldRender = false;
 	
@@ -129,8 +128,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 		
 		        var resourceUri = modelModifier.ResourceUri;
 		
-				var targetScope = modelModifier.CompilerService.Binder.
-					GetScopeByPositionIndex(resourceUri, modelModifier.GetPositionIndex(primaryCursorModifier));
+				var targetScope = modelModifier.CompilerService.GetScopeByPositionIndex(
+					resourceUri,
+					modelModifier.GetPositionIndex(primaryCursorModifier));
 				
 				if (!targetScope.ConstructorWasInvoked)
 				{

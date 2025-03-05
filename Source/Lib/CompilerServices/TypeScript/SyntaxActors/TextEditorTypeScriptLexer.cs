@@ -11,7 +11,7 @@ using Luthetus.CompilerServices.TypeScript.Facts;
 
 namespace Luthetus.CompilerServices.TypeScript.SyntaxActors;
 
-public class TextEditorTypeScriptLexer : Lexer
+public class TextEditorTypeScriptLexer
 {
     public static readonly GenericPreprocessorDefinition TypeScriptPreprocessorDefinition = new(
         "#",
@@ -36,18 +36,23 @@ public class TextEditorTypeScriptLexer : Lexer
 
     private readonly GenericSyntaxTree _typeScriptSyntaxTree;
     
+    public List<SyntaxToken> SyntaxTokenList { get; } = new();
+    
+    public static readonly LexerKeywords LexerKeywords = new LexerKeywords(TypeScriptKeywords.ALL, Array.Empty<string>(), Array.Empty<string>());
+    
     public TextEditorTypeScriptLexer(ResourceUri resourceUri, string sourceText)
-        : base(
-            resourceUri,
-            sourceText,
-            new LexerKeywords(TypeScriptKeywords.ALL, Array.Empty<string>(), Array.Empty<string>()))
     {
+    	ResourceUri = resourceUri;
+    	SourceText = sourceText;
         _typeScriptSyntaxTree = new GenericSyntaxTree(TypeScriptLanguageDefinition);
     }
 
+	public ResourceUri ResourceUri { get; set; }
+	public string SourceText { get; set; }
+
     public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
-    public override void Lex()
+    public void Lex()
     {
         var typeScriptSyntaxUnit = _typeScriptSyntaxTree.ParseText(
             ResourceUri,
@@ -56,19 +61,19 @@ public class TextEditorTypeScriptLexer : Lexer
         var syntaxWalker = new GenericSyntaxWalker();
         syntaxWalker.Visit(typeScriptSyntaxUnit.GenericDocumentSyntax);
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.StringSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.CommentSingleLineSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.CommentMultiLineSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.KeywordSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.FunctionSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
     }
 }

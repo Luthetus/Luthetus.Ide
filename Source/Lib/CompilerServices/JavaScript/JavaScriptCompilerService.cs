@@ -1,5 +1,7 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.CompilerServices.JavaScript.SyntaxActors;
 
 namespace Luthetus.CompilerServices.JavaScript;
@@ -12,7 +14,32 @@ public sealed class JavaScriptCompilerService : CompilerService
         _compilerServiceOptions = new()
         {
             RegisterResourceFunc = resourceUri => new JavaScriptResource(resourceUri, this),
-            GetLexerFunc = (resource, sourceText) => new TextEditorJavaScriptLexer(resource.ResourceUri, sourceText),
         };
+    }
+    
+    public override ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    {
+    	var lexer = new TextEditorJavaScriptLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				
+				resource.CompilationUnit = new CompilationUnit
+				{
+					TokenList = lexer.SyntaxTokenList
+				};
+			}
+		}
+		
+		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			editContext,
+			modelModifier);
+
+		OnResourceParsed();
+		
+		return ValueTask.CompletedTask;
     }
 }

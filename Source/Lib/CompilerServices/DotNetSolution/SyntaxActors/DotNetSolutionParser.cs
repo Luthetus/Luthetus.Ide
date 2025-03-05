@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.CompilerServices.DotNetSolution.Facts;
 using Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 using Luthetus.CompilerServices.DotNetSolution.Models;
@@ -12,7 +13,7 @@ using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
 namespace Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 
-public class DotNetSolutionParser : IParser
+public class DotNetSolutionParser
 {
     private readonly TokenWalker _tokenWalker;
     private readonly List<TextEditorDiagnostic> _diagnosticList = new();
@@ -38,10 +39,6 @@ public class DotNetSolutionParser : IParser
     public AssociatedEntryGroup? NoParentHavingAssociatedEntryGroup => _noParentHavingAssociatedEntryGroup;
     public List<IDotNetProject> DotNetProjectList => _dotNetProjectList;
     public List<NestedProjectEntry> NestedProjectEntryList => _nestedProjectEntryList;
-
-    IBinder IParser.Binder => throw new NotImplementedException();
-
-    ILexer IParser.Lexer => throw new NotImplementedException();
 
     public CompilationUnit Parse()
     {
@@ -301,12 +298,5 @@ public class DotNetSolutionParser : IParser
 
             associatedEntryGroupBuilder.Build();
         }
-    }
-
-    ICompilationUnit IParser.Parse(IBinder previousBinder, ResourceUri resourceUri)
-    {
-        Parse();
-
-        return new CompilationUnit(Lexer.ResourceUri, null, Lexer, this, previousBinder);
     }
 }

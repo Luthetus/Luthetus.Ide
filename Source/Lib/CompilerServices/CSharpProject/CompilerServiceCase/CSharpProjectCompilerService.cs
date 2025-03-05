@@ -1,5 +1,7 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 
 namespace Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
@@ -12,7 +14,32 @@ public sealed class CSharpProjectCompilerService : CompilerService
         _compilerServiceOptions = new()
         {
             RegisterResourceFunc = resourceUri => new CSharpProjectResource(resourceUri, this),
-            GetLexerFunc = (resource, sourceText) => new TextEditorXmlLexer(resource.ResourceUri, sourceText),
         };
+    }
+    
+    public override ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    {
+    	var lexer = new TextEditorXmlLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				
+				resource.CompilationUnit = new CompilationUnit
+				{
+					TokenList = lexer.SyntaxTokenList
+				};
+			}
+		}
+		
+		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			editContext,
+			modelModifier);
+
+		OnResourceParsed();
+		
+		return ValueTask.CompletedTask;
     }
 }

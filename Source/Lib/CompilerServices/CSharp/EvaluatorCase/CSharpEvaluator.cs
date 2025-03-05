@@ -1,21 +1,23 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.EvaluatorCase;
 
 public class CSharpEvaluator
 {
-    private readonly CompilationUnit _compilationUnit;
+    private readonly CSharpCompilationUnit _compilationUnit;
     private readonly string _sourceText;
 
     public CSharpEvaluator(
-        CompilationUnit compilationUnit,
+        CSharpCompilationUnit cSharpCompilationUnit,
         string sourceText)
     {
-        _compilationUnit = compilationUnit;
+        _compilationUnit = cSharpCompilationUnit;
         _sourceText = sourceText;
     }
 

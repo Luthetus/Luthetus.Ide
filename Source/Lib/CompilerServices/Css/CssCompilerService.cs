@@ -1,5 +1,7 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.CompilerServices.Css.SyntaxActors;
 
 namespace Luthetus.CompilerServices.Css;
@@ -12,7 +14,32 @@ public sealed class CssCompilerService : CompilerService
         _compilerServiceOptions = new()
         {
             RegisterResourceFunc = resourceUri => new CssResource(resourceUri, this),
-            GetLexerFunc = (resource, sourceText) => new TextEditorCssLexer(resource.ResourceUri, sourceText),
         };
+    }
+    
+    public override ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    {
+    	var lexer = new TextEditorCssLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				
+				resource.CompilationUnit = new CompilationUnit
+				{
+					TokenList = lexer.SyntaxTokenList
+				};
+			}
+		}
+		
+		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			editContext,
+			modelModifier);
+
+		OnResourceParsed();
+		
+		return ValueTask.CompletedTask;
     }
 }

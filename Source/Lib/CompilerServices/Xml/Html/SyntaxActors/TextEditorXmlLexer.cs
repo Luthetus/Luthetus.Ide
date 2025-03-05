@@ -6,18 +6,22 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 
-public class TextEditorXmlLexer : Lexer
+public class TextEditorXmlLexer
 {
-    public TextEditorXmlLexer(
-            ResourceUri resourceUri, string sourceText)
-        : base(
-            resourceUri,
-            sourceText,
-            LexerKeywords.Empty)
+	public static readonly LexerKeywords LexerKeywords = LexerKeywords.Empty;
+	
+    public TextEditorXmlLexer(ResourceUri resourceUri, string sourceText)
     {
+    	ResourceUri = resourceUri;
+    	SourceText = sourceText;
     }
 
-    public override void Lex()
+	public ResourceUri ResourceUri { get; }
+	public string SourceText { get; }
+
+	public List<SyntaxToken> SyntaxTokenList { get; } = new();
+
+    public void Lex()
     {
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             ResourceUri,
@@ -29,23 +33,23 @@ public class TextEditorXmlLexer : Lexer
         htmlSyntaxWalker.Visit(syntaxNodeRoot);
 
         // Tag Names
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             htmlSyntaxWalker.TagNameNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         // InjectedLanguageFragmentSyntaxes
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             htmlSyntaxWalker.InjectedLanguageFragmentNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         // Attribute Names
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             htmlSyntaxWalker.AttributeNameNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         // Attribute Values
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             htmlSyntaxWalker.AttributeValueNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
         // Comments
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             htmlSyntaxWalker.CommentNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
             
 		var endOfFileTextSpan = new TextEditorTextSpan(
@@ -56,6 +60,6 @@ public class TextEditorXmlLexer : Lexer
 		    SourceText,
 		    getTextPrecalculatedResult: string.Empty);
 		
-        _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));
+        SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));
     }
 }

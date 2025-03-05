@@ -15,7 +15,7 @@ using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.BinderCase;
 
-public partial class CSharpBinder : IBinder
+public partial class CSharpBinder
 {
 	private readonly Dictionary<ResourceUri, CSharpCompilationUnit> _compilationUnitMap = new();
 	//private readonly object _compilationUnitMapLock = new();
@@ -924,16 +924,10 @@ public partial class CSharpBinder : IBinder
         return false;
     }
 
-    Scope IBinder.GetScope(TextEditorTextSpan textSpan) =>
-    	GetScope(compilationUnit: null, textSpan);
-    	
     public Scope GetScope(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan)
     {
     	return GetScopeByPositionIndex(compilationUnit, textSpan.ResourceUri, textSpan.StartingIndexInclusive);
     }
-    
-    Scope IBinder.GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex) =>
-    	GetScopeByPositionIndex(compilationUnit: null, resourceUri, positionIndex);
     
     public Scope GetScopeByPositionIndex(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int positionIndex)
     {
@@ -961,9 +955,6 @@ public partial class CSharpBinder : IBinder
 		}
     }
     
-    Scope IBinder.GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey) =>
-    	GetScopeByScopeIndexKey(compilationUnit: null, resourceUri, scopeIndexKey);
-    
     public Scope GetScopeByScopeIndexKey(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int scopeIndexKey)
     {
     	var scopeList = new List<Scope>();
@@ -975,9 +966,6 @@ public partial class CSharpBinder : IBinder
         
         return scopeList[scopeIndexKey];
     }
-    
-    Scope[]? IBinder.GetScopeList(ResourceUri resourceUri) =>
-    	GetScopeList(compilationUnit: null, resourceUri);
     
     public Scope[]? GetScopeList(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri)
     {
@@ -1031,9 +1019,6 @@ public partial class CSharpBinder : IBinder
     	return _compilationUnitMap.Remove(resourceUri);
     }
     
-    TypeDefinitionNode[] IBinder.GetTypeDefinitionNodesByScope(ResourceUri resourceUri, int scopeIndexKey) =>
-    	GetTypeDefinitionNodesByScope(cSharpCompilationUnit: null, resourceUri, scopeIndexKey);
-    
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
     	ResourceUri resourceUri,
@@ -1047,9 +1032,6 @@ public partial class CSharpBinder : IBinder
     		.Select(kvp => kvp.Value)
     		.ToArray();
     }
-    
-    bool IBinder.TryGetTypeDefinitionNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string typeIdentifierText, out TypeDefinitionNode typeDefinitionNode) =>
-    	TryGetTypeDefinitionNodeByScope(cSharpCompilationUnit: null, resourceUri, scopeIndexKey, typeIdentifierText, out typeDefinitionNode);
     
     public bool TryGetTypeDefinitionNodeByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
@@ -1096,9 +1078,6 @@ public partial class CSharpBinder : IBinder
     	compilationUnit.ScopeTypeDefinitionMap[scopeKeyAndIdentifierText] = typeDefinitionNode;
     }
     
-    FunctionDefinitionNode[] IBinder.GetFunctionDefinitionNodesByScope(ResourceUri resourceUri, int scopeIndexKey) =>
-    	GetFunctionDefinitionNodesByScope(cSharpCompilationUnit: null, resourceUri, scopeIndexKey);
-    
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
     	ResourceUri resourceUri,
@@ -1112,9 +1091,6 @@ public partial class CSharpBinder : IBinder
     		.Select(kvp => kvp.Value)
     		.ToArray();
     }
-    
-    bool IBinder.TryGetFunctionDefinitionNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string functionIdentifierText, out FunctionDefinitionNode functionDefinitionNode) =>
-    	TryGetFunctionDefinitionNodeByScope(cSharpCompilationUnit: null, resourceUri, scopeIndexKey, functionIdentifierText, out functionDefinitionNode);
     
     public bool TryGetFunctionDefinitionNodeByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
@@ -1161,9 +1137,6 @@ public partial class CSharpBinder : IBinder
     	compilationUnit.ScopeFunctionDefinitionMap[scopeKeyAndIdentifierText] = functionDefinitionNode;
     }
     
-    VariableDeclarationNode[] IBinder.GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey) =>
-    	GetVariableDeclarationNodesByScope(cSharpCompilationUnit: null, resourceUri, scopeIndexKey);
-
     public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
     	ResourceUri resourceUri,
@@ -1177,9 +1150,6 @@ public partial class CSharpBinder : IBinder
     		.Select(kvp => kvp.Value)
     		.ToArray();
     }
-    
-    bool IBinder.TryGetVariableDeclarationNodeByScope(ResourceUri resourceUri, int scopeIndexKey, string variableIdentifierText, out VariableDeclarationNode variableDeclarationNode) =>
-    	TryGetVariableDeclarationNodeByScope(cSharpCompilationUnit: null, resourceUri, scopeIndexKey, variableIdentifierText, out variableDeclarationNode);
     
     public bool TryGetVariableDeclarationNodeByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
@@ -1226,9 +1196,6 @@ public partial class CSharpBinder : IBinder
     	binderSession.ScopeVariableDeclarationMap[scopeKeyAndIdentifierText] = variableDeclarationNode;
     }
 
-	TypeClauseNode? IBinder.GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, int scopeIndexKey) =>
-		GetReturnTypeClauseNodeByScope(cSharpCompilationUnit: null, resourceUri, scopeIndexKey);
-
     public TypeClauseNode? GetReturnTypeClauseNodeByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
     	ResourceUri resourceUri,
@@ -1263,7 +1230,8 @@ public partial class CSharpBinder : IBinder
     	
     public TextEditorTextSpan? GetDefinitionTextSpan(CSharpCompilationUnit? cSharpCompilationUnit, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
-    	var symbol = GetSymbol(cSharpCompilationUnit, textSpan, compilerServiceResource.GetSymbols());
+    	IReadOnlyList<Symbol> symbolList = compilerServiceResource.CompilationUnit?.SymbolList ?? Array.Empty<Symbol>();
+    	var symbol = GetSymbol(cSharpCompilationUnit, textSpan, symbolList);
     	if (symbol is null)
     		return null;
     		
@@ -1300,15 +1268,6 @@ public partial class CSharpBinder : IBinder
         }
 		
 		return foundSymbol;
-    }
-    
-    ISyntaxNode? IBinder.GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
-    {
-    	symbol ??= GetSymbol(cSharpCompilationUnit: null, textSpan, compilerServiceResource.GetSymbols());
-    	if (symbol is null)
-    		return null;
-    		
-    	return GetDefinitionNode(cSharpCompilationUnit: null, textSpan, symbol.Value.SyntaxKind, symbol: symbol);
     }
     
     /// <summary>
@@ -1413,10 +1372,7 @@ public partial class CSharpBinder : IBinder
         return null;
     }
 
-    ISyntaxNode? IBinder.GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource) =>
-    	GetSyntaxNode(cSharpCompilationUnit: null, positionIndex, resourceUri, compilerServiceResource);
-    
-    public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit? cSharpCompilationUnit, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
+    public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit? cSharpCompilationUnit, int positionIndex, ResourceUri resourceUri, CSharpResource? compilerServiceResource)
     {
         var scope = GetScopeByPositionIndex(cSharpCompilationUnit, resourceUri, positionIndex);
         if (!scope.ConstructorWasInvoked)
@@ -1541,10 +1497,10 @@ public partial class CSharpBinder : IBinder
         	return null;
         
         // Try to find a symbol at that cursor position.
-		var symbols = compilerServiceResource.GetSymbols();
+		IReadOnlyList<Symbol> symbolList = compilerServiceResource.CompilationUnit?.SymbolList ?? Array.Empty<Symbol>();
 		var foundSymbol = (Symbol?)null;
 		
-        foreach (var symbol in symbols)
+        foreach (var symbol in symbolList)
         {
             if (positionIndex >= symbol.TextSpan.StartingIndexInclusive &&
                 positionIndex < symbol.TextSpan.EndingIndexExclusive)

@@ -901,9 +901,9 @@ public class TextEditorCommandDefaultFunctions
 			? null
 			: modelModifier.GetPositionIndex(primaryCursorModifier);
 
-		var syntaxNode = primaryCursorPositionIndex is null || compilerService.Binder is null || compilerServiceResource?.CompilationUnit is null
+		var syntaxNode = primaryCursorPositionIndex is null || compilerService is null || compilerServiceResource?.CompilationUnit is null
 			? null
-			: compilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, compilerServiceResource);
+			: compilerService.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, compilerServiceResource);
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 			
@@ -922,7 +922,7 @@ public class TextEditorCommandDefaultFunctions
 		{
 			if (syntaxNode.SyntaxKind == SyntaxKind.TypeClauseNode)
 			{
-				var allTypeDefinitions = compilerService.Binder.AllTypeDefinitions;
+				var allTypeDefinitions = compilerService.AllTypeDefinitions;
 				
 				var typeClauseNode = (TypeClauseNode)syntaxNode;
 				
@@ -1056,7 +1056,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        if (modelModifier.CompilerService.Binder is null)
+        if (modelModifier.CompilerService is null)
             return;
             
         var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
@@ -1071,7 +1071,7 @@ public class TextEditorCommandDefaultFunctions
 		if (compilerServiceResource?.CompilationUnit is null)
 			return;
 
-        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinitionTextSpan(wordTextSpan.Value, compilerServiceResource);
+        var definitionTextSpan = modelModifier.CompilerService.GetDefinitionTextSpan(wordTextSpan.Value, compilerServiceResource);
         if (definitionTextSpan is null)
             return;
 
@@ -1382,8 +1382,12 @@ public class TextEditorCommandDefaultFunctions
 
         var foundMatch = false;
 
-        var symbols = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);
-        var diagnostics = modelModifier.CompilerService.GetDiagnosticsFor(modelModifier.ResourceUri);
+		var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
+        
+        var compilationUnitLocal = compilerServiceResource.CompilationUnit;
+        
+        var symbols = compilationUnitLocal.SymbolList;
+        var diagnostics = compilationUnitLocal.DiagnosticList;
 
         if (diagnostics.Count != 0)
         {

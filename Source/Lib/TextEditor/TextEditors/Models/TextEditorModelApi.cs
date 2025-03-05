@@ -284,7 +284,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
 		// Tokens
         {
-        	var tokenList = compilerServiceResource.GetTokens();
+        	var tokenList = compilerServiceResource.CompilationUnit.TokenList;
 	
 	        foreach (var token in tokenList)
 	        {
@@ -301,7 +301,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 	    
 	    // MiscTextSpan
         {
-        	var miscTextSpanList = compilerServiceResource.GetMiscTextSpans();
+        	var miscTextSpanList = compilerServiceResource.CompilationUnit.MiscTextSpanList;
 	
 	        foreach (var miscTextSpan in miscTextSpanList)
 	        {
@@ -318,7 +318,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 	    
 	    // Symbols
 	    {
-	    	var symbolList = compilerServiceResource.GetSymbols();
+	    	var symbolList = compilerServiceResource.CompilationUnit.SymbolList;
 	
 	        foreach (var symbol in symbolList)
 	        {

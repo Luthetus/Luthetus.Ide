@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 /// 	- The ICompilerServiceResource must be of type (or inherit) CompilerServiceResource.
 /// 	- The ICompilationUnit must be of type (or inherit) CompilationUnit.
 /// </summary>
-public class CompilerService : ICompilerService
+public abstract class CompilerService : ICompilerService
 {
 	protected readonly List<AutocompleteEntry> _emptyAutocompleteEntryList = new();
     protected readonly Dictionary<ResourceUri, ICompilerServiceResource> _resourceMap = new();
@@ -29,6 +29,8 @@ public class CompilerService : ICompilerService
     {
         _textEditorService = textEditorService;
     }
+    
+    public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
 
     /// <summary>
     /// Derived types can invoke <see cref="OnResourceRegistered"/> to fire this event
@@ -43,8 +45,6 @@ public class CompilerService : ICompilerService
     /// </summary>
     public event Action? ResourceDisposed;
 
-    public virtual IBinder Binder { get; protected set; } = new Binder();
-    
     public virtual Type? SymbolRendererType { get; protected set; }
     public virtual Type? DiagnosticRendererType { get; protected set; }
 
@@ -86,37 +86,27 @@ public class CompilerService : ICompilerService
         }
     }
 
-    public virtual IReadOnlyList<SyntaxToken> GetTokensFor(ResourceUri resourceUri)
+    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
-        lock (_resourceMapLock)
-        {
-            if (!_resourceMap.ContainsKey(resourceUri))
-                return Array.Empty<SyntaxToken>();
-
-            return _resourceMap[resourceUri].GetTokens();
-        }
+    	return null;
     }
-
-    public virtual IReadOnlyList<Symbol> GetSymbolsFor(ResourceUri resourceUri)
+    
+    /// <summary>
+	/// Returns the text span at which the definition exists in the source code.
+	/// </summary>
+    public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
-        lock (_resourceMapLock)
-        {
-            if (!_resourceMap.ContainsKey(resourceUri))
-                return Array.Empty<Symbol>();
-
-            return _resourceMap[resourceUri].GetSymbols();
-        }
+    	return null;
     }
-
-    public virtual IReadOnlyList<TextEditorDiagnostic> GetDiagnosticsFor(ResourceUri resourceUri)
+    
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
     {
-        lock (_resourceMapLock)
-        {
-            if (!_resourceMap.ContainsKey(resourceUri))
-                return Array.Empty<TextEditorDiagnostic>();
-
-            return _resourceMap[resourceUri].GetDiagnostics();
-        }
+    	return null;
+    }
+    
+    public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+    {
+    	return default;
     }
 
     public virtual void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
@@ -143,8 +133,8 @@ public class CompilerService : ICompilerService
         return _emptyAutocompleteEntryList;
     }
     
-    public virtual ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
-	{
+    public abstract ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
+	/*{
 		_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
 			editContext,
 	        modelModifier,
@@ -236,7 +226,7 @@ public class CompilerService : ICompilerService
         }
 
         return ValueTask.CompletedTask;
-	}
+	}*/
 
     public virtual void DisposeResource(ResourceUri resourceUri)
     {
