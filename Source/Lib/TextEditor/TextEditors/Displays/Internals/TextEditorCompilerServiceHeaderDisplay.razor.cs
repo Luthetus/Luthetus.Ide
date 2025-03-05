@@ -34,7 +34,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	private int _lineIndexPrevious = -1;
 	private int _columnIndexPrevious = -1;
 	
-	private IBinderSession? _binderSessionPrevious = null;
+	private ICompilationUnit? _compilationUnitPrevious = null;
 	private ICodeBlockOwner? _codeBlockOwner;
 	private bool _shouldRender = false;
 	

@@ -74,7 +74,7 @@ public sealed class CSharpCompilerService : CompilerService
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
-			CSharpBinder.StartBinderSession(resourceUri);
+			CSharpBinder.StartCompilationUnit(resourceUri);
 			CSharpParser.Parse(cSharpCompilationUnit, CSharpBinder, ref lexerOutput);
 		}
 		finally
@@ -211,7 +211,7 @@ public sealed class CSharpCompilerService : CompilerService
 			while (targetScope.ConstructorWasInvoked)
 	        {
 	            autocompleteEntryList.AddRange(
-	            	CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
+	            	CSharpBinder.GetVariableDeclarationNodesByScope(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
 	            	.Select(x => x.IdentifierToken.TextSpan.GetText())
 	                .ToArray()
 	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -226,7 +226,7 @@ public sealed class CSharpCompilerService : CompilerService
 	                }));
 	
 	            autocompleteEntryList.AddRange(
-	                CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
+	                CSharpBinder.GetFunctionDefinitionNodesByScope(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
 	            	.Select(x => x.FunctionIdentifierToken.TextSpan.GetText())
 	                .ToArray()
 	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))

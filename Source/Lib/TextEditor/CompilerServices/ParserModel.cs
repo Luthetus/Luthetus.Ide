@@ -10,13 +10,11 @@ public class ParserModel : IParserModel
 {
     public ParserModel(
         IBinder binder,
-        IBinderSession binderSession,
         TokenWalker tokenWalker,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder)
     {
         Binder = binder;
-        BinderSession = binderSession;
         TokenWalker = tokenWalker;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
@@ -25,7 +23,6 @@ public class ParserModel : IParserModel
     }
 
     public IBinder Binder { get; }
-    public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public StatementBuilder StatementBuilder { get; set; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();

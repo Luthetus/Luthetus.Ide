@@ -11,12 +11,11 @@ public class Parser : IParser
     {
         Lexer = lexer;
         Binder = new Binder();
-        BinderSession = Binder.StartBinderSession(lexer.ResourceUri);
+        Binder.StartCompilationUnit(lexer.ResourceUri);
     }
 
     public TextEditorDiagnostic[] DiagnosticsList { get; private set; } = Array.Empty<TextEditorDiagnostic>();
     public IBinder Binder { get; private set; }
-    public IBinderSession BinderSession { get; private set; }
     public ILexer Lexer { get; }
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
@@ -26,7 +25,7 @@ public class Parser : IParser
     {
         Binder = previousBinder;
         Binder.ClearStateByResourceUri(resourceUri);
-        BinderSession = Binder.StartBinderSession(resourceUri);
+        Binder.StartCompilationUnit(resourceUri);
         return Parse();
     }
 
@@ -37,7 +36,6 @@ public class Parser : IParser
 
         var model = new ParserModel(
             Binder,
-            BinderSession,
             new TokenWalker(Lexer.SyntaxTokenList),
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
@@ -45,6 +43,7 @@ public class Parser : IParser
         var topLevelStatementsCodeBlock = model.CurrentCodeBlockBuilder.Build();
 
         return new CompilationUnit(
+        	Lexer.ResourceUri,
             topLevelStatementsCodeBlock,
             Lexer,
             this,

@@ -108,7 +108,7 @@ public class RazorSyntaxTree
 			
 		var lexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
 		
-		cSharpBinder.StartBinderSession(_codebehindResourceUri);
+		cSharpBinder.StartCompilationUnit(_codebehindResourceUri);
 		
 		CSharpParser.Parse(compilationUnit, cSharpBinder, ref lexerOutput);
         

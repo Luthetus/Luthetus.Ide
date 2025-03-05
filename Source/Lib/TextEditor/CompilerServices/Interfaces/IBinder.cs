@@ -43,16 +43,8 @@ public interface IBinder
     /// </summary>
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
     
-    /// <summary><see cref="FinalizeBinderSession"/></summary>
-    public IBinderSession StartBinderSession(ResourceUri resourceUri);
-    
-	/// <summary><see cref="StartBinderSession"/></summary>
-	public void FinalizeBinderSession(IBinderSession binderSession);
-    
-    public bool TryGetBinderSession(ResourceUri resourceUri, out IBinderSession binderSession);
-    public void UpsertBinderSession(IBinderSession binderSession);
     /// <summary>Returns true if the entry was removed</summary>
-    public bool RemoveBinderSession(ResourceUri resourceUri);
+    public bool RemoveCompilationUnit(ResourceUri resourceUri);
     
     public Scope GetScope(TextEditorTextSpan textSpan);
     public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex);

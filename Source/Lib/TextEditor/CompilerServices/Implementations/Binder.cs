@@ -9,8 +9,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class Binder : IBinder
 {
-	private readonly Dictionary<ResourceUri, IBinderSession> _binderSessionMap = new();
-	private readonly object _binderSessionMapLock = new();
+	private readonly Dictionary<ResourceUri, ICompilationUnit> _compilationUnitMap = new();
+	private readonly object _compilationUnitMapLock = new();
 
     public TextEditorDiagnostic[] DiagnosticsList { get; } = Array.Empty<TextEditorDiagnostic>();
     public Symbol[] SymbolsList { get; } = Array.Empty<Symbol>();
@@ -52,38 +52,38 @@ public class Binder : IBinder
     	return null;
     }
     
-    public bool TryGetBinderSession(ResourceUri resourceUri, out IBinderSession binderSession)
+    public bool TryGetCompilationUnit(ResourceUri resourceUri, out ICompilationUnit compilationUnit)
     {
-    	return _binderSessionMap.TryGetValue(resourceUri, out binderSession);
+    	return _compilationUnitMap.TryGetValue(resourceUri, out compilationUnit);
     }
     
-    public void UpsertBinderSession(IBinderSession binderSession)
+    public void UpsertCompilationUnit(ICompilationUnit compilationUnit)
     {
-    	lock (_binderSessionMapLock)
+    	lock (_compilationUnitMapLock)
     	{
-    		if (_binderSessionMap.ContainsKey(binderSession.ResourceUri))
-	    		_binderSessionMap[binderSession.ResourceUri] = binderSession;
+    		if (_compilationUnitMap.ContainsKey(compilationUnit.ResourceUri))
+	    		_compilationUnitMap[compilationUnit.ResourceUri] = compilationUnit;
 	    	else
-	    		_binderSessionMap.Add(binderSession.ResourceUri, binderSession);
+	    		_compilationUnitMap.Add(compilationUnit.ResourceUri, compilationUnit);
     	}
     }
     
-    public bool RemoveBinderSession(ResourceUri resourceUri)
+    public bool RemoveCompilationUnit(ResourceUri resourceUri)
     {
-    	lock (_binderSessionMapLock)
+    	lock (_compilationUnitMapLock)
     	{
-    		return _binderSessionMap.Remove(resourceUri);
+    		return _compilationUnitMap.Remove(resourceUri);
     	}
     }
 
-    public IBinderSession StartBinderSession(ResourceUri resourceUri)
+    public void StartCompilationUnit(ResourceUri resourceUri)
     {
-        return new BinderSession(resourceUri, 0, null, this);
+        // return;
     }
     
-	public void FinalizeBinderSession(IBinderSession binderSession)
+	public void FinalizeCompilationUnit(ICompilationUnit compilationUnit)
 	{
-		UpsertBinderSession(binderSession);
+		UpsertCompilationUnit(compilationUnit);
 	}
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, int scopeIndexKey)

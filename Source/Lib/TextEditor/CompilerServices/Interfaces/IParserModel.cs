@@ -25,7 +25,6 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 public interface IParserModel
 {
     public IBinder Binder { get; }
-    public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     
     /// <summary>

@@ -12,11 +12,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class CompilationUnit : ICompilationUnit, ISyntaxNode
 {
     public CompilationUnit(
+    	ResourceUri resourceUri,
         ISyntaxNode? rootCodeBlockNode,
         ILexer? lexer,
         IParser? parser,
         IBinder? binder)
     {
+    	ResourceUri = resourceUri;
         RootCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(Array.Empty<ISyntax>());
         Lexer = lexer ?? new Lexer(ResourceUri.Empty, null, null);
         Parser = parser ?? new Parser(Lexer);
@@ -26,6 +28,7 @@ public sealed class CompilationUnit : ICompilationUnit, ISyntaxNode
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
+	public ResourceUri ResourceUri { get; }
     public ISyntaxNode RootCodeBlockNode { get; }
     public ILexer Lexer { get; }
     public IParser Parser { get; }

@@ -17,7 +17,7 @@ namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 /// after the parse finished, or if the data should be cleared immediately after the parse finishes
 /// (respectively).
 /// </summary>
-public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
+public sealed class CSharpCompilationUnit : ICompilationUnit
 {
 	public CSharpCompilationUnit(ResourceUri resourceUri)
 	{

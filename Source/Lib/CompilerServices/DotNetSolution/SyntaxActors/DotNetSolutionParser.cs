@@ -41,8 +41,6 @@ public class DotNetSolutionParser : IParser
 
     IBinder IParser.Binder => throw new NotImplementedException();
 
-    IBinderSession IParser.BinderSession => throw new NotImplementedException();
-
     ILexer IParser.Lexer => throw new NotImplementedException();
 
     public CompilationUnit Parse()
@@ -110,6 +108,7 @@ public class DotNetSolutionParser : IParser
         }
 
         return new CompilationUnit(
+        	Lexer.ResourceUri,
             null,
             Lexer,
             this,
@@ -308,6 +307,6 @@ public class DotNetSolutionParser : IParser
     {
         Parse();
 
-        return new CompilationUnit(null, Lexer, this, previousBinder);
+        return new CompilationUnit(Lexer.ResourceUri, null, Lexer, this, previousBinder);
     }
 }
