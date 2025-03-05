@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -269,6 +272,99 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
+    }
+    
+    public void GoToDefinition(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
+    {
+        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+        var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+        
+        var wordTextSpan = modelModifier.GetWordTextSpan(positionIndex);
+        if (wordTextSpan is null)
+            return;
+
+		var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
+		if (compilerServiceResource?.CompilationUnit is null)
+			return;
+
+        var definitionTextSpan = GetDefinitionTextSpan(wordTextSpan.Value, compilerServiceResource);
+        if (definitionTextSpan is null)
+            return;
+
+        var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.Value.ResourceUri);
+        if (definitionModel is null)
+        {
+            if (commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc is not null)
+            {
+                commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
+                    new RegisterModelArgs(definitionTextSpan.Value.ResourceUri, commandArgs.ServiceProvider));
+
+                var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.Value.ResourceUri);
+
+                if (definitionModel is null) // TODO: Should this be null checking instead: 'definitionModelModifier'?
+                    return;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        var definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.Value.ResourceUri);
+
+        if (!definitionViewModels.Any())
+        {
+            if (commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc is not null)
+            {
+                commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+                    Key<TextEditorViewModel>.NewKey(),
+                    definitionTextSpan.Value.ResourceUri,
+                    new Category("main"),
+                    true,
+                    commandArgs.ServiceProvider));
+
+                definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.Value.ResourceUri);
+
+                if (!definitionViewModels.Any())
+                    return;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
+        
+        var definitionViewModelModifier = editContext.GetViewModelModifier(definitionViewModelKey);
+        var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier?.ViewModel);
+        var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
+
+        if (definitionViewModelModifier is null || !definitionCursorModifierBag.ConstructorWasInvoked || definitionPrimaryCursorModifier is null)
+            return;
+
+        var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.Value.StartingIndexInclusive);
+        var columnIndex = definitionTextSpan.Value.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
+
+        definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
+        definitionPrimaryCursorModifier.LineIndex = rowData.Index;
+        definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
+        definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
+
+        if (commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
+        {
+            commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+                definitionViewModelKey,
+                Key<TextEditorGroup>.Empty,
+                true,
+                commandArgs.ServiceProvider));
+        }
     }
     
     public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)

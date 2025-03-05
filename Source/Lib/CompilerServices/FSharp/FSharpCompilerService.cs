@@ -118,6 +118,16 @@ public sealed class FSharpCompilerService : ICompilerService
     {
     	return ValueTask.CompletedTask;
     }
+    
+    public void GoToDefinition(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
+    {
+    	return;
+    }
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
