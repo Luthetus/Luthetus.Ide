@@ -96,15 +96,10 @@ public sealed class RazorCompilerService : ICompilerService
 		return contextMenu.GetDefaultMenuRecord();
 	}
 
-    public ValueTask<MenuRecord> GetAutocompleteMenu(
-    	ITextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
-    {
-    	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
-    }
+	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
+	{
+		return autocompleteMenu.GetDefaultMenuRecord();
+	}
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         ITextEditorEditContext editContext,

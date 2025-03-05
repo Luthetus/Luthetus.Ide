@@ -73,14 +73,9 @@ public class CompilerServiceDoNothing : ICompilerService
 		return contextMenu.GetDefaultMenuRecord();
 	}
 
-	public ValueTask<MenuRecord> GetAutocompleteMenu(
-		ITextEditorEditContext editContext,
-		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
-		CursorModifierBagTextEditor cursorModifierBag,
-		TextEditorCommandArgs commandArgs)
+	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
 	{
-		return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+		return autocompleteMenu.GetDefaultMenuRecord();
 	}
 
 	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(

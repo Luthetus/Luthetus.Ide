@@ -126,6 +126,69 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
         try
         {
+            return renderBatch.Model.CompilerService.GetAutocompleteMenu(renderBatch, this);
+        }
+		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
+        catch (Exception e) when (e is LuthetusTextEditorException || e is InvalidOperationException)
+        {
+            return NoResultsMenuRecord;
+        }
+    }
+    
+    public MenuRecord GetDefaultMenuRecord()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return NoResultsMenuRecord;
+    
+        try
+        {
+            var cursorList = new List<TextEditorCursor> { renderBatch.ViewModel.PrimaryCursor };
+
+            var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
+
+            if (primaryCursor.ColumnIndex > 0)
+            {
+                var word = renderBatch.Model.ReadPreviousWordOrDefault(
+                    primaryCursor.LineIndex,
+                    primaryCursor.ColumnIndex);
+
+                List<MenuOptionRecord> menuOptionRecordsList = new();
+
+                if (word is not null)
+                {
+                    var autocompleteWordsList = AutocompleteService.GetAutocompleteOptions(word);
+
+                    var autocompleteEntryList = autocompleteWordsList
+                        .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))
+                        .ToList();
+
+                    menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
+                        entry.DisplayName,
+                        MenuOptionKind.Other,
+                        () => SelectMenuOption(() =>
+                        {
+                        	if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
+                            	InsertAutocompleteMenuOption(word, entry, renderBatch.ViewModel);
+                            	
+                            return entry.SideEffectFunc?.Invoke();
+                        }),
+                        widgetParameterMap: new Dictionary<string, object?>
+                        {
+                            {
+                                nameof(AutocompleteEntry),
+                                entry
+                            }
+                        }))
+                    .ToList();
+                }
+
+                if (!menuOptionRecordsList.Any())
+                    menuOptionRecordsList.Add(new MenuOptionRecord("No results", MenuOptionKind.Other));
+
+                return new MenuRecord(menuOptionRecordsList);
+            }
+
             return NoResultsMenuRecord;
         }
 		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."

@@ -78,12 +78,7 @@ public interface ICompilerService
 
 	public MenuRecord GetContextMenu(TextEditorRenderBatch renderBatch, ContextMenu contextMenu);
 
-	public ValueTask<MenuRecord> GetAutocompleteMenu(
-		ITextEditorEditContext editContext,
-		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
-		CursorModifierBagTextEditor cursorModifierBag,
-		TextEditorCommandArgs commandArgs);
+	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu);
 
 	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
 		ITextEditorEditContext editContext,
