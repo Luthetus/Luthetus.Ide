@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -160,7 +162,80 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-    	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+		var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		var compilerService = modelModifier.CompilerService;
+	
+		var compilerServiceResource = viewModelModifier is null
+			? null
+			: compilerService.GetResource(modelModifier.ResourceUri);
+
+		int? primaryCursorPositionIndex = modelModifier is null || viewModelModifier is null
+			? null
+			: modelModifier.GetPositionIndex(primaryCursorModifier);
+
+		var syntaxNode = primaryCursorPositionIndex is null || __CSharpBinder is null || compilerServiceResource?.CompilationUnit is null
+			? null
+			: __CSharpBinder.GetSyntaxNode(null, primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, (CSharpResource)compilerServiceResource);
+			
+		var menuOptionList = new List<MenuOptionRecord>();
+			
+		menuOptionList.Add(new MenuOptionRecord(
+			"QuickActionsSlashRefactorMenu",
+			MenuOptionKind.Other));
+			
+		if (syntaxNode is null)
+		{
+			menuOptionList.Add(new MenuOptionRecord(
+				"syntaxNode was null",
+				MenuOptionKind.Other,
+				onClickFunc: async () => {}));
+		}
+		else
+		{
+			if (syntaxNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+			{
+				var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;
+				
+				var typeClauseNode = (TypeClauseNode)syntaxNode;
+				
+				if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.GetText(), out var typeDefinitionNode))
+				{
+					var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
+						
+					menuOptionList.Add(new MenuOptionRecord(
+						$"Copy: {usingStatementText}",
+						MenuOptionKind.Other,
+						onClickFunc: async () =>
+						{
+							var clipboardService = commandArgs.ServiceProvider.GetRequiredService<IClipboardService>();
+							await clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
+						}));
+				}
+				else
+				{
+					menuOptionList.Add(new MenuOptionRecord(
+						"type not found",
+						MenuOptionKind.Other,
+						onClickFunc: async () => {}));
+				}
+			}
+			else
+			{
+				menuOptionList.Add(new MenuOptionRecord(
+					syntaxNode.SyntaxKind.ToString(),
+					MenuOptionKind.Other,
+					onClickFunc: async () => {}));
+			}
+		}
+		
+		MenuRecord menu;
+		
+		if (menuOptionList.Count == 0)
+			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+		else
+			menu = new MenuRecord(menuOptionList);
+    
+    	return ValueTask.FromResult(menu);
     }
 	
 	public async ValueTask OnInspect(
