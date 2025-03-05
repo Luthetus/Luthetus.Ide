@@ -176,41 +176,36 @@ public sealed class RazorCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	/*var lexer = new CLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = _resourceMap[modelModifier.ResourceUri];
+				resource.HtmlSymbols.Clear();
+			}
+		}
+    
+    	var lexer = new RazorLexer(
+    		modelModifier.ResourceUri,
+    		modelModifier.GetAllText(),
+            this,
+            _cSharpCompilerService,
+            _environmentProvider);
+            
     	lexer.Lex();
-    	
-    	GetLexerFunc = (resource, sourceText) => 
-        {
-            ((RazorResource)resource).HtmlSymbols.Clear();
-
-            return new RazorLexer(
-                resource.ResourceUri,
-                sourceText,
-                this,
-                _cSharpCompilerService,
-                _environmentProvider);
-        },
-        GetParserFunc = null,
-        GetBinderFunc = null,
-        OnAfterLexAction = (resource, lexer) =>
-        {
-            var razorResource = (RazorResource)resource;
-            var razorLexer = (RazorLexer)lexer;
-
-            razorResource.SyntaxTokenList = razorLexer.SyntaxTokenList;
-            razorResource.RazorSyntaxTree = razorLexer.RazorSyntaxTree;
-        },
-        OnAfterParseAction = null,
     
     	lock (_resourceMapLock)
 		{
 			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
 			{
-				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				var resource = _resourceMap[modelModifier.ResourceUri];
 				
-				resource.CompilationUnit = new ExtendedCompilationUnit
+	            resource.RazorSyntaxTree = lexer.RazorSyntaxTree;
+				
+				resource.CompilationUnit = new RazorCompilationUnit
 				{
-					TokenList = lexer.SyntaxTokenList
+					TokenList = lexer.SyntaxTokenList,
+					RazorResource = resource,
 				};
 			}
 		}
@@ -219,7 +214,7 @@ public sealed class RazorCompilerService : ICompilerService
 			editContext,
 			modelModifier);
 
-		ResourceParsed?.Invoke();*/
+		ResourceParsed?.Invoke();
 		
 		return ValueTask.CompletedTask;
     }

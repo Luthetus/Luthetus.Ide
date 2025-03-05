@@ -6,18 +6,23 @@ using Luthetus.CompilerServices.Xml.Html.Decoration;
 
 namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
-public class RazorResource : CompilerServiceResource
+public class RazorResource : ICompilerServiceResource
 {
     private readonly ITextEditorService _textEditorService;
 
     public RazorResource(
-            ResourceUri resourceUri,
-            RazorCompilerService razorCompilerService,
-            ITextEditorService textEditorService)
-        : base(resourceUri, razorCompilerService)
+        ResourceUri resourceUri,
+        RazorCompilerService razorCompilerService,
+        ITextEditorService textEditorService)
     {
+    	ResourceUri = resourceUri;
+    	CompilerService = razorCompilerService;
         _textEditorService = textEditorService;
     }
+    
+    public ResourceUri ResourceUri { get; }
+	public ICompilerService CompilerService { get; }
+	public ICompilationUnit CompilationUnit { get; set; }
 
     public RazorSyntaxTree? RazorSyntaxTree { get; internal set; }
     public List<Symbol> HtmlSymbols { get; } = new();
