@@ -349,7 +349,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
-    	return null;
+    	return __CSharpBinder.GetSyntaxNode(cSharpCompilationUnit: null, positionIndex, resourceUri, (CSharpResource)compilerServiceResource);
     }
     
     /// <summary>
@@ -360,7 +360,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
     {
-    	return null;
+    	if (symbol is null)
+    		return null;
+    		
+    	return __CSharpBinder.GetDefinitionNode(cSharpCompilationUnit: null, textSpan, symbol.Value.SyntaxKind, symbol);
     }
 
 	/// <summary>
@@ -368,11 +371,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	/// </summary>
     public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
-    	return null;
+    	return __CSharpBinder.GetDefinitionTextSpan(textSpan, (CSharpResource)compilerServiceResource);
     }
 
 	public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
-    	return default;
+    	return __CSharpBinder.GetScopeByPositionIndex(null, resourceUri, positionIndex);
     }
 }
