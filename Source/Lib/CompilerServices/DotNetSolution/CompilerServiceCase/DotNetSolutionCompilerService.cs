@@ -168,10 +168,11 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	/*var lexer = new CLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    	var lexer = new DotNetSolutionLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
     	lexer.Lex();
-    	GetLexerFunc = (resource, sourceText) => new DotNetSolutionLexer(resource.ResourceUri, sourceText),
-        GetParserFunc = (resource, lexer) => new DotNetSolutionParser((DotNetSolutionLexer)lexer),
+    	
+        var parser = new DotNetSolutionParser(lexer);
+        var compilationUnit = parser.Parse();
     
     	lock (_resourceMapLock)
 		{
@@ -190,7 +191,7 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 			editContext,
 			modelModifier);
 
-		ResourceParsed?.Invoke();*/
+		ResourceParsed?.Invoke();
 		
 		return ValueTask.CompletedTask;
     }
