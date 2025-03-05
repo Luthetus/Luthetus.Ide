@@ -1,4 +1,4 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.CompilerServices.FSharp.Facts;
 

@@ -6,7 +6,6 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
@@ -14,6 +13,7 @@ using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 

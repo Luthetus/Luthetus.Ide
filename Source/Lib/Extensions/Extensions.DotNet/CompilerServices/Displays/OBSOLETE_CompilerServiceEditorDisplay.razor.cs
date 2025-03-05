@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
@@ -12,6 +11,7 @@ using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.DotNet.CompilerServices.Displays;
 

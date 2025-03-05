@@ -2,7 +2,7 @@ using System.Text;
 using CliWrap.EventStream;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 

@@ -22,7 +22,6 @@ using Luthetus.Common.RazorLib.FileSystems.Displays;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
@@ -42,6 +41,7 @@ using Luthetus.Ide.RazorLib.Shareds.Displays;
 using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 

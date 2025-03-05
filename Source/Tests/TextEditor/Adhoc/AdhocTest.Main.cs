@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -16,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Extensions.Config.Decorations;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 

@@ -7,8 +7,8 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 

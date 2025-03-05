@@ -16,7 +16,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ListExtensions;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -40,6 +39,7 @@ using Luthetus.Extensions.DotNet.TestExplorers.Displays;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
