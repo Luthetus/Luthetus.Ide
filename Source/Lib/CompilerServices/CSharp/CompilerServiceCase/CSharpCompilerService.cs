@@ -75,19 +75,57 @@ public sealed class CSharpCompilerService : ICompilerService
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
+    	lock (_resourceMapLock)
+        {
+            if (_resourceMap.ContainsKey(resourceUri))
+                return;
+
+            _resourceMap.Add(resourceUri, new CSharpResource(resourceUri, this));
+        }
+
+		if (shouldTriggerResourceWasModified)
+	        ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
+	        
+        ResourceRegistered?.Invoke();
     }
     
     public void DisposeResource(ResourceUri resourceUri)
     {
+    	lock (_resourceMapLock)
+        {
+            _resourceMap.Remove(resourceUri);
+        }
+
+        ResourceDisposed?.Invoke();
     }
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
+    	_textEditorService.TextEditorWorker.PostUnique(nameof(CSharpCompilerService), editContext =>
+        {
+			var modelModifier = editContext.GetModelModifier(resourceUri);
+
+			if (modelModifier is null)
+				return ValueTask.CompletedTask;
+
+			return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
+        });
     }
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	return null;
+    	var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        if (model is null)
+            return null;
+
+        lock (_resourceMapLock)
+        {
+            if (!_resourceMap.ContainsKey(resourceUri))
+                return null;
+
+            return _resourceMap[resourceUri];
+        }
     }
     
     public MenuRecord GetContextMenu()
@@ -171,7 +209,7 @@ public sealed class CSharpCompilerService : ICompilerService
 					modelModifier);
 			}
 
-			// OnResourceParsed();
+			ResourceParsed?.Invoke();
         }
 		
         return ValueTask.CompletedTask;
