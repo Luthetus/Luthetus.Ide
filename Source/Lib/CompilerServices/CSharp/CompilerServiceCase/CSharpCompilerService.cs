@@ -21,7 +21,7 @@ using Luthetus.CompilerServices.CSharp.RuntimeAssemblies;
 
 namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
-public sealed class CSharpCompilerService : ICompilerService
+public sealed class CSharpCompilerService : IExtendedCompilerService
 {
 	// <summary>Public because the RazorCompilerService uses it.</summary>
     public readonly CSharpBinder __CSharpBinder = new();
@@ -351,6 +351,17 @@ public sealed class CSharpCompilerService : ICompilerService
     {
     	return null;
     }
+    
+    /// <summary>
+    /// Returns the <see cref="ISyntaxNode"/> that represents the definition in the <see cref="CompilationUnit"/>.
+    ///
+    /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
+    /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
+    /// </summary>
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
+    {
+    	return null;
+    }
 
 	/// <summary>
 	/// Returns the text span at which the definition exists in the source code.
@@ -363,16 +374,5 @@ public sealed class CSharpCompilerService : ICompilerService
 	public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
     	return default;
-    }
-	
-	/// <summary>
-    /// Returns the <see cref="ISyntaxNode"/> that represents the definition in the <see cref="CompilationUnit"/>.
-    ///
-    /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
-    /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
-    /// </summary>
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
-    {
-    	return null;
     }
 }
