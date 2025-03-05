@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 public enum ConstructorInvocationStageKind
 {

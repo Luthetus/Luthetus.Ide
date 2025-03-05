@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.CompilerServices;
+namespace Luthetus.Extensions.CompilerServices;
 
 public record struct ScopeKeyAndIdentifierText(
 	int ScopeIndexKey,

@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Examples:<br/>
@@ -12,31 +12,31 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class ConstraintNode : ISyntaxNode
 {
-    public ConstraintNode(IReadOnlyList<SyntaxToken> innerTokens)
-    {
-        InnerTokens = innerTokens;
-    }
+	public ConstraintNode(IReadOnlyList<SyntaxToken> innerTokens)
+	{
+		InnerTokens = innerTokens;
+	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    /// <summary>
-    /// TODO: For now, just grab all tokens and put them in an array...
-    /// ...In the future parse the tokens. (2023-10-19)
-    /// </summary>
-    public IReadOnlyList<SyntaxToken> InnerTokens { get; }
+	/// <summary>
+	/// TODO: For now, just grab all tokens and put them in an array...
+	/// ...In the future parse the tokens. (2023-10-19)
+	/// </summary>
+	public IReadOnlyList<SyntaxToken> InnerTokens { get; }
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;
-    
-    public IReadOnlyList<ISyntax> GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	_childList = InnerTokens.Select(x => (ISyntax)x).ToArray();
-        
-    	_childListIsDirty = false;
-    	return _childList;
-    }
+	public bool IsFabricated { get; init; }
+	public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;
+
+	public IReadOnlyList<ISyntax> GetChildList()
+	{
+		if (!_childListIsDirty)
+			return _childList;
+
+		_childList = InnerTokens.Select(x => (ISyntax)x).ToArray();
+
+		_childListIsDirty = false;
+		return _childList;
+	}
 }

@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Example usage: One finds a <see cref="IdentifierToken"/>, but must
@@ -9,30 +9,30 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class AmbiguousIdentifierNode : ISyntaxNode
 {
-    public AmbiguousIdentifierNode(SyntaxToken identifierToken)
-    {
-        IdentifierToken = identifierToken;
-    }
+	public AmbiguousIdentifierNode(SyntaxToken identifierToken)
+	{
+		IdentifierToken = identifierToken;
+	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public SyntaxToken IdentifierToken { get; }
+	public SyntaxToken IdentifierToken { get; }
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
-    
-    public IReadOnlyList<ISyntax> GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	_childList = new ISyntax[]
-        {
-            IdentifierToken,
-        };
-        
-    	_childListIsDirty = false;
-    	return _childList;
-    }
+	public bool IsFabricated { get; init; }
+	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
+
+	public IReadOnlyList<ISyntax> GetChildList()
+	{
+		if (!_childListIsDirty)
+			return _childList;
+
+		_childList = new ISyntax[]
+		{
+			IdentifierToken,
+		};
+
+		_childListIsDirty = false;
+		return _childList;
+	}
 }

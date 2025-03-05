@@ -1,6 +1,7 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Used when invoking a function.
@@ -22,47 +23,47 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class FunctionParametersListingNode : IExpressionNode
 {
-    public FunctionParametersListingNode(
-        SyntaxToken openParenthesisToken,
-        List<FunctionParameterEntryNode> functionParameterEntryNodeList,
-        SyntaxToken closeParenthesisToken)
-    {
-        OpenParenthesisToken = openParenthesisToken;
-        FunctionParameterEntryNodeList = functionParameterEntryNodeList;
-        CloseParenthesisToken = closeParenthesisToken;
-    }
+	public FunctionParametersListingNode(
+		SyntaxToken openParenthesisToken,
+		List<FunctionParameterEntryNode> functionParameterEntryNodeList,
+		SyntaxToken closeParenthesisToken)
+	{
+		OpenParenthesisToken = openParenthesisToken;
+		FunctionParameterEntryNodeList = functionParameterEntryNodeList;
+		CloseParenthesisToken = closeParenthesisToken;
+	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public SyntaxToken OpenParenthesisToken { get; }
-    public List<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
-    public SyntaxToken CloseParenthesisToken { get; private set; }
-    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	public SyntaxToken OpenParenthesisToken { get; }
+	public List<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
+	public SyntaxToken CloseParenthesisToken { get; private set; }
+	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.FunctionParametersListingNode;
-    
-    public FunctionParametersListingNode SetCloseParenthesisToken(SyntaxToken closeParenthesisToken)
-    {
-    	CloseParenthesisToken = closeParenthesisToken;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
-    public IReadOnlyList<ISyntax> GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	// OpenParenthesisToken, FunctionParameterEntryNodeList.Length, CloseParenthesisToken,
-    	var childCount = 
-    		1 +                                     // OpenParenthesisToken,
-    		FunctionParameterEntryNodeList.Count + // FunctionParameterEntryNodeList.Count,
-    		1;                                      // CloseParenthesisToken,
-            
-        var childList = new ISyntax[childCount];
+	public bool IsFabricated { get; init; }
+	public SyntaxKind SyntaxKind => SyntaxKind.FunctionParametersListingNode;
+
+	public FunctionParametersListingNode SetCloseParenthesisToken(SyntaxToken closeParenthesisToken)
+	{
+		CloseParenthesisToken = closeParenthesisToken;
+
+		_childListIsDirty = true;
+		return this;
+	}
+
+	public IReadOnlyList<ISyntax> GetChildList()
+	{
+		if (!_childListIsDirty)
+			return _childList;
+
+		// OpenParenthesisToken, FunctionParameterEntryNodeList.Length, CloseParenthesisToken,
+		var childCount =
+			1 +                                     // OpenParenthesisToken,
+			FunctionParameterEntryNodeList.Count + // FunctionParameterEntryNodeList.Count,
+			1;                                      // CloseParenthesisToken,
+
+		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenParenthesisToken;
@@ -71,10 +72,10 @@ public sealed class FunctionParametersListingNode : IExpressionNode
 			childList[i++] = item;
 		}
 		childList[i++] = CloseParenthesisToken;
-            
-        _childList = childList;
-        
-    	_childListIsDirty = false;
-    	return _childList;
-    }
+
+		_childList = childList;
+
+		_childListIsDirty = false;
+		return _childList;
+	}
 }

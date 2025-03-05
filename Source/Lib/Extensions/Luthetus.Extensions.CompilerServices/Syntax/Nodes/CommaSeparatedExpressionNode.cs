@@ -1,6 +1,7 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// <see cref="CommaSeparatedExpressionNode"/>, <see cref="TupleExpressionNode"/>,
@@ -14,35 +15,35 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 [Obsolete($"Use '{nameof(AmbiguousParenthesizedExpressionNode)}'")]
 public sealed class CommaSeparatedExpressionNode : IExpressionNode
 {
-    public CommaSeparatedExpressionNode()
-    {
-    }
+	public CommaSeparatedExpressionNode()
+	{
+	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public TypeClauseNode ResultTypeClauseNode { get; } = TypeFacts.Pseudo.ToTypeClause();
-    
-    public List<IExpressionNode> InnerExpressionList { get; } = new();
-    public SyntaxToken CloseParenthesisToken { get; set; }
+	public TypeClauseNode ResultTypeClauseNode { get; } = TypeFacts.Pseudo.ToTypeClause();
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.CommaSeparatedExpressionNode;
-    
-    public void AddInnerExpressionNode(IExpressionNode expressionNode)
-    {
-    	InnerExpressionList.Add(expressionNode);
-    	_childListIsDirty = true;
-    }
-    
-    public IReadOnlyList<ISyntax> GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	_childList = InnerExpressionList.ToArray();
-        
-    	_childListIsDirty = false;
-    	return _childList;
-    }
+	public List<IExpressionNode> InnerExpressionList { get; } = new();
+	public SyntaxToken CloseParenthesisToken { get; set; }
+
+	public bool IsFabricated { get; init; }
+	public SyntaxKind SyntaxKind => SyntaxKind.CommaSeparatedExpressionNode;
+
+	public void AddInnerExpressionNode(IExpressionNode expressionNode)
+	{
+		InnerExpressionList.Add(expressionNode);
+		_childListIsDirty = true;
+	}
+
+	public IReadOnlyList<ISyntax> GetChildList()
+	{
+		if (!_childListIsDirty)
+			return _childList;
+
+		_childList = InnerExpressionList.ToArray();
+
+		_childListIsDirty = false;
+		return _childList;
+	}
 }

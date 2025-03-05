@@ -1,7 +1,7 @@
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+namespace Luthetus.Extensions.CompilerServices;
 
 public struct Scope
 {
@@ -9,9 +9,9 @@ public struct Scope
 	public Scope(
 		ICodeBlockOwner codeBlockOwner,
 		int indexKey,
-	    int parentIndexKey,
-	    int startingIndexInclusive,
-	    int endingIndexExclusive)
+		int parentIndexKey,
+		int startingIndexInclusive,
+		int endingIndexExclusive)
 	{
 		CodeBlockOwner = codeBlockOwner;
 		IndexKey = indexKey;
@@ -19,7 +19,7 @@ public struct Scope
 		StartingIndexInclusive = startingIndexInclusive;
 		EndingIndexExclusive = endingIndexExclusive;
 	}
-	
+
 	public bool ConstructorWasInvoked => CodeBlockOwner is not null;
 	/// <summary>
 	/// This is believed to be far better than a <see cref="ISyntaxNode"/>
@@ -87,12 +87,12 @@ public struct Scope
 	/// </summary>
 	public int IndexKey { get; }
 	/// <inheritdoc cref="IndexKey"/>
-    public int ParentIndexKey { get; }
-    public int StartingIndexInclusive { get; }
-    /// <summary>
-    /// Beware of this property's setter,
-    /// as a hack to set the ending index later on in this
-    /// type's lifecycle because it isn't immediately known.
-    /// </summary>
-    public int EndingIndexExclusive { get; set; }
+	public int ParentIndexKey { get; }
+	public int StartingIndexInclusive { get; }
+	/// <summary>
+	/// Beware of this property's setter,
+	/// as a hack to set the ending index later on in this
+	/// type's lifecycle because it isn't immediately known.
+	/// </summary>
+	public int EndingIndexExclusive { get; set; }
 }

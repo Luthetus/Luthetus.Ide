@@ -1,33 +1,34 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.Extensions.CompilerServices.Utility;
+using Luthetus.Extensions.CompilerServices;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class LockStatementNode : ICodeBlockOwner
 {
-    public LockStatementNode(
-        SyntaxToken keywordToken,
-        SyntaxToken openParenthesisToken,
-        IExpressionNode expressionNode,
-        SyntaxToken closeParenthesisToken,
-        CodeBlockNode? codeBlockNode)
-    {
-        KeywordToken = keywordToken;
-        OpenParenthesisToken = openParenthesisToken;
-        ExpressionNode = expressionNode;
-        CloseParenthesisToken = closeParenthesisToken;
-        CodeBlockNode = codeBlockNode;
-    }
+	public LockStatementNode(
+		SyntaxToken keywordToken,
+		SyntaxToken openParenthesisToken,
+		IExpressionNode expressionNode,
+		SyntaxToken closeParenthesisToken,
+		CodeBlockNode? codeBlockNode)
+	{
+		KeywordToken = keywordToken;
+		OpenParenthesisToken = openParenthesisToken;
+		ExpressionNode = expressionNode;
+		CloseParenthesisToken = closeParenthesisToken;
+		CodeBlockNode = codeBlockNode;
+	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public SyntaxToken KeywordToken { get; }
-    public SyntaxToken OpenParenthesisToken { get; }
-    public IExpressionNode ExpressionNode { get; }
-    public SyntaxToken CloseParenthesisToken { get; }
+	public SyntaxToken KeywordToken { get; }
+	public SyntaxToken OpenParenthesisToken { get; }
+	public IExpressionNode ExpressionNode { get; }
+	public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -36,59 +37,59 @@ public sealed class LockStatementNode : ICodeBlockOwner
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
 	public int? ScopeIndexKey { get; set; }
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.LockStatementNode;
-    
-    #region ICodeBlockOwner_Methods
-    public TypeClauseNode? GetReturnTypeClauseNode()
-    {
-    	return null;
-    }
-    
+	public bool IsFabricated { get; init; }
+	public SyntaxKind SyntaxKind => SyntaxKind.LockStatementNode;
+
+	#region ICodeBlockOwner_Methods
+	public TypeClauseNode? GetReturnTypeClauseNode()
+	{
+		return null;
+	}
+
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		if (OpenCodeBlockTextSpan is not null)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-	
+
 		OpenCodeBlockTextSpan = openCodeBlockTextSpan;
-    	
-    	_childListIsDirty = true;
-    	return this;
+
+		_childListIsDirty = true;
+		return this;
 	}
-	
+
 	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		if (CloseCodeBlockTextSpan is not null)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-	
+
 		CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
-    	
-    	_childListIsDirty = true;
-    	return this;
+
+		_childListIsDirty = true;
+		return this;
 	}
-	
+
 	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		if (CodeBlockNode is not null)
 			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
-	
+
 		CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
+
+		_childListIsDirty = true;
+		return this;
 	}
 	#endregion
-    
-    public IReadOnlyList<ISyntax> GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	var childCount = 4; // KeywordToken, OpenParenthesisToken, ExpressionNode, CloseParenthesisToken,
-        if (CodeBlockNode is not null)
-            childCount++;
-            
-        var childList = new ISyntax[childCount];
+
+	public IReadOnlyList<ISyntax> GetChildList()
+	{
+		if (!_childListIsDirty)
+			return _childList;
+
+		var childCount = 4; // KeywordToken, OpenParenthesisToken, ExpressionNode, CloseParenthesisToken,
+		if (CodeBlockNode is not null)
+			childCount++;
+
+		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = KeywordToken;
@@ -96,11 +97,11 @@ public sealed class LockStatementNode : ICodeBlockOwner
 		childList[i++] = ExpressionNode;
 		childList[i++] = CloseParenthesisToken;
 		if (CodeBlockNode is not null)
-            childList[i++] = CodeBlockNode;
-            
-        _childList = childList;
-        
-    	_childListIsDirty = false;
-    	return _childList;
-    }
+			childList[i++] = CodeBlockNode;
+
+		_childList = childList;
+
+		_childListIsDirty = false;
+		return _childList;
+	}
 }

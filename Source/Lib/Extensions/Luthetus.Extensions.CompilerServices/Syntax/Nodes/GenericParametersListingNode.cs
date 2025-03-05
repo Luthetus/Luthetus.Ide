@@ -1,6 +1,7 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Used when invoking a syntax which contains a generic type.
@@ -12,47 +13,47 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class GenericParametersListingNode : IExpressionNode
 {
-    public GenericParametersListingNode(
-        SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntryNode> genericParameterEntryNodeList,
-        SyntaxToken closeAngleBracketToken)
-    {
-        OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryNodeList = genericParameterEntryNodeList;
-        CloseAngleBracketToken = closeAngleBracketToken;
-    }
+	public GenericParametersListingNode(
+		SyntaxToken openAngleBracketToken,
+		List<GenericParameterEntryNode> genericParameterEntryNodeList,
+		SyntaxToken closeAngleBracketToken)
+	{
+		OpenAngleBracketToken = openAngleBracketToken;
+		GenericParameterEntryNodeList = genericParameterEntryNodeList;
+		CloseAngleBracketToken = closeAngleBracketToken;
+	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public SyntaxToken OpenAngleBracketToken { get; }
-    public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
-    public SyntaxToken CloseAngleBracketToken { get; private set; }
-    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	public SyntaxToken OpenAngleBracketToken { get; }
+	public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
+	public SyntaxToken CloseAngleBracketToken { get; private set; }
+	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.GenericParametersListingNode;
-    
-    public GenericParametersListingNode SetCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
-    {
-    	CloseAngleBracketToken = closeAngleBracketToken;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
-    public IReadOnlyList<ISyntax> GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	// OpenAngleBracketToken, GenericParameterEntryNodeList.Length, CloseAngleBracketToken,
-    	var childCount = 
-    		1 +                                    // OpenAngleBracketToken,
-    		GenericParameterEntryNodeList.Count + // GenericParameterEntryNodeList.Count,
-    		1;                                     // CloseAngleBracketToken,
-    	
-        var childList = new ISyntax[childCount];
+	public bool IsFabricated { get; init; }
+	public SyntaxKind SyntaxKind => SyntaxKind.GenericParametersListingNode;
+
+	public GenericParametersListingNode SetCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
+	{
+		CloseAngleBracketToken = closeAngleBracketToken;
+
+		_childListIsDirty = true;
+		return this;
+	}
+
+	public IReadOnlyList<ISyntax> GetChildList()
+	{
+		if (!_childListIsDirty)
+			return _childList;
+
+		// OpenAngleBracketToken, GenericParameterEntryNodeList.Length, CloseAngleBracketToken,
+		var childCount =
+			1 +                                    // OpenAngleBracketToken,
+			GenericParameterEntryNodeList.Count + // GenericParameterEntryNodeList.Count,
+			1;                                     // CloseAngleBracketToken,
+
+		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenAngleBracketToken;
@@ -61,10 +62,10 @@ public sealed class GenericParametersListingNode : IExpressionNode
 			childList[i++] = item;
 		}
 		childList[i++] = CloseAngleBracketToken;
-            
-        _childList = childList;
-        
-    	_childListIsDirty = false;
-    	return _childList;
-    }
+
+		_childList = childList;
+
+		_childListIsDirty = false;
+		return _childList;
+	}
 }

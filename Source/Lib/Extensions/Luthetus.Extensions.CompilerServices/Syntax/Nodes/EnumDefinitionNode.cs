@@ -1,6 +1,6 @@
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 public class EnumDefinitionNode
 {
-	
+
 }

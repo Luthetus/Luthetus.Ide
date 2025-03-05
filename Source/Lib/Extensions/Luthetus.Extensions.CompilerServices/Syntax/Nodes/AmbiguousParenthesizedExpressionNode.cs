@@ -1,18 +1,19 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
-namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 {
-    public AmbiguousParenthesizedExpressionNode(
-    	SyntaxToken openParenthesisToken,
-    	bool isParserContextKindForceStatementExpression)
-    {
-        OpenParenthesisToken = openParenthesisToken;
-        IsParserContextKindForceStatementExpression = isParserContextKindForceStatementExpression;
-    }
-    
-    private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	public AmbiguousParenthesizedExpressionNode(
+		SyntaxToken openParenthesisToken,
+		bool isParserContextKindForceStatementExpression)
+	{
+		OpenParenthesisToken = openParenthesisToken;
+		IsParserContextKindForceStatementExpression = isParserContextKindForceStatementExpression;
+	}
+
+	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	/// <summary>
@@ -54,106 +55,106 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 	/// </summary>
 	public bool IsFirstLoop { get; set; } = true;
 
-    public SyntaxToken OpenParenthesisToken { get; }
-    public bool IsParserContextKindForceStatementExpression { get; }
-    public TypeClauseNode ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
-    
-    /// <summary>
-    /// This class is a "builder" class of sorts.
-    /// The node does not actually make sense in the finalized compilation unit.
-    /// This class is used to collect syntax that can apply to various
-    /// nodes that have 'parenthesized' syntax.
-    ///
-    /// LambdaExpressionNode:
-    ///     (x, y) => 2;
-    ///     (int x, bool y) => 2;
-    /// 
-    /// TupleExpressionNode:
-    ///     (int, bool) myVariable;
-    ///     (int counter, bool isAvailable) myVariable;
-    ///
-    /// -----------------------------------------------
-    ///
-    /// If we ignore the syntax that follows the CloseParenthesisToken
-    /// we can isolate the common cases between the two nodes,
-    /// and generally hold their information in this type until disambiguation.
-    ///
-    ///     (x, y)
-    ///     (int, bool)
-    ///     (int x, bool y)
-    ///     (int counter, bool isAvailable)
-    ///
-    /// -----------------------------------
-    ///
-    /// I re-ordered the cases by their similarity.
-    /// It is important to note that:
-    ///     '(x, y)' and '(int, bool)'
-    ///     are not equivalent cases.
-    ///
-    /// '(x, y)' was from the LambdaExpressionNode,
-    /// '(int, bool)' was from the TupleExpressionNode.
-    ///
-    /// '(x, y)' takes both 'x' and 'y' to be the names for a VariableDeclarationNode.
-    /// '(int, bool)' takes both 'int' and 'bool' to be TypeClauseNode(s).
-    ///
-    /// Thus, the solution is to hold comma deliminated "nameable tokens" /
-    /// "convertible to IdentifierToken tokens" as just the ISyntaxToken itself until disambiguation.
-    ///
-    /// i.e.: List<ISyntaxToken> _nameableTokenList;
-    ///
-    /// How would one differentiate between an explicit cast node, and an AmbiguousParenthesizedExpressionNode.
-    /// ````var x = 2;
-    /// ````return (double)x;
-    ///
-    /// The differentiation is because there is only a single nameable token, and there
-    /// are no CommaToken(s).
-    ///
-    /// -------------------------------------------------------------------------------
-    ///
-    /// Now the remaining cases are:
-    ///     (int x, bool y)
-    ///     (int counter, bool isAvailable)
-    ///
-    /// This is comma separated list of VariableDeclarationNode(s).
-    ///
-    /// i.e.: List<IVariableDeclarationNode> _variableDeclarationNodeList;
-    ///
-    /// Both '_nameableTokenList' and '_variableDeclarationNodeList'
-    /// should be nullable, in order to only allocate
-    /// one or the other, based on what appears before the first CommaToken.
-    ///
-    /// --------------------------------------------------------------------
-    ///
-    /// What about a ParenthesizedExpressionNode node,
-    /// where the inner expression is a VariableReferenceNode.
-    ///
-    /// One would have to parse this as an 'AmbiguousParenthesizedExpression'
-    /// until it is ruled out that it cannot be a LambdaExpressionNode.
-    /// </summary>
-    
-    public List<ISyntaxNode> NodeList { get; set; } = new();
-    public bool? ShouldMatchVariableDeclarationNodes = null;
+	public SyntaxToken OpenParenthesisToken { get; }
+	public bool IsParserContextKindForceStatementExpression { get; }
+	public TypeClauseNode ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
-    
-    public IReadOnlyList<ISyntax> GetChildList()
-    {
-    	if (!_childListIsDirty)
-    		return _childList;
-    	
-    	var childCount = 2; // OpenParenthesisToken, ResultTypeClauseNode,
-            
-        var childList = new ISyntax[childCount];
+	/// <summary>
+	/// This class is a "builder" class of sorts.
+	/// The node does not actually make sense in the finalized compilation unit.
+	/// This class is used to collect syntax that can apply to various
+	/// nodes that have 'parenthesized' syntax.
+	///
+	/// LambdaExpressionNode:
+	///     (x, y) => 2;
+	///     (int x, bool y) => 2;
+	/// 
+	/// TupleExpressionNode:
+	///     (int, bool) myVariable;
+	///     (int counter, bool isAvailable) myVariable;
+	///
+	/// -----------------------------------------------
+	///
+	/// If we ignore the syntax that follows the CloseParenthesisToken
+	/// we can isolate the common cases between the two nodes,
+	/// and generally hold their information in this type until disambiguation.
+	///
+	///     (x, y)
+	///     (int, bool)
+	///     (int x, bool y)
+	///     (int counter, bool isAvailable)
+	///
+	/// -----------------------------------
+	///
+	/// I re-ordered the cases by their similarity.
+	/// It is important to note that:
+	///     '(x, y)' and '(int, bool)'
+	///     are not equivalent cases.
+	///
+	/// '(x, y)' was from the LambdaExpressionNode,
+	/// '(int, bool)' was from the TupleExpressionNode.
+	///
+	/// '(x, y)' takes both 'x' and 'y' to be the names for a VariableDeclarationNode.
+	/// '(int, bool)' takes both 'int' and 'bool' to be TypeClauseNode(s).
+	///
+	/// Thus, the solution is to hold comma deliminated "nameable tokens" /
+	/// "convertible to IdentifierToken tokens" as just the ISyntaxToken itself until disambiguation.
+	///
+	/// i.e.: List<ISyntaxToken> _nameableTokenList;
+	///
+	/// How would one differentiate between an explicit cast node, and an AmbiguousParenthesizedExpressionNode.
+	/// ````var x = 2;
+	/// ````return (double)x;
+	///
+	/// The differentiation is because there is only a single nameable token, and there
+	/// are no CommaToken(s).
+	///
+	/// -------------------------------------------------------------------------------
+	///
+	/// Now the remaining cases are:
+	///     (int x, bool y)
+	///     (int counter, bool isAvailable)
+	///
+	/// This is comma separated list of VariableDeclarationNode(s).
+	///
+	/// i.e.: List<IVariableDeclarationNode> _variableDeclarationNodeList;
+	///
+	/// Both '_nameableTokenList' and '_variableDeclarationNodeList'
+	/// should be nullable, in order to only allocate
+	/// one or the other, based on what appears before the first CommaToken.
+	///
+	/// --------------------------------------------------------------------
+	///
+	/// What about a ParenthesizedExpressionNode node,
+	/// where the inner expression is a VariableReferenceNode.
+	///
+	/// One would have to parse this as an 'AmbiguousParenthesizedExpression'
+	/// until it is ruled out that it cannot be a LambdaExpressionNode.
+	/// </summary>
+
+	public List<ISyntaxNode> NodeList { get; set; } = new();
+	public bool? ShouldMatchVariableDeclarationNodes = null;
+
+	public bool IsFabricated { get; init; }
+	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
+
+	public IReadOnlyList<ISyntax> GetChildList()
+	{
+		if (!_childListIsDirty)
+			return _childList;
+
+		var childCount = 2; // OpenParenthesisToken, ResultTypeClauseNode,
+
+		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenParenthesisToken;
 		childList[i++] = ResultTypeClauseNode;
-            
-        _childList = childList;
-        
-    	_childListIsDirty = false;
-    	return _childList;
-    }
+
+		_childList = childList;
+
+		_childListIsDirty = false;
+		return _childList;
+	}
 }
 
