@@ -135,7 +135,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         }
     }
     
-    public MenuRecord GetDefaultMenuRecord()
+    public MenuRecord GetDefaultMenuRecord(List<AutocompleteEntry>? otherAutocompleteEntryList = null)
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
@@ -162,6 +162,12 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                     var autocompleteEntryList = autocompleteWordsList
                         .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))
                         .ToList();
+                     
+                    if (otherAutocompleteEntryList is not null && otherAutocompleteEntryList.Count != 0)   
+                    {
+                        otherAutocompleteEntryList.AddRange(autocompleteEntryList);
+						autocompleteEntryList = otherAutocompleteEntryList;
+                    }
 
                     menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
                         entry.DisplayName,
@@ -198,7 +204,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         }
     }
 
-    private async Task SelectMenuOption(Func<Task> menuOptionAction)
+    public async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
@@ -254,7 +260,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         await renderBatch.ViewModel.FocusAsync();
     }
 
-    private async Task InsertAutocompleteMenuOption(
+    public async Task InsertAutocompleteMenuOption(
         string word,
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
