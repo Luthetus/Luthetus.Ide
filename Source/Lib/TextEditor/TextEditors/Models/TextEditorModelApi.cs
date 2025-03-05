@@ -265,11 +265,13 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorModelModifier modelModifier)
     {
         var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
+        if (compilerServiceResource is null)
+        	return;
 
         ApplyDecorationRange(
 	        editContext,
 	        modelModifier,
-	        compilerServiceResource.CompilationUnit.GetTextTextSpans());
+	        compilerServiceResource.CompilationUnit?.GetTextTextSpans() ?? Array.Empty<TextEditorTextSpan>());
         
         // TODO: Why does painting reload virtualization result???
         modelModifier.ShouldReloadVirtualizationResult = true;

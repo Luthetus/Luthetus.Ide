@@ -1,10 +1,16 @@
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
@@ -151,6 +157,118 @@ public sealed class CSharpCompilerService : ICompilerService
         TextEditorCommandArgs commandArgs)
     {
     	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+    }
+	
+	public async ValueTask OnInspect(
+		ITextEditorEditContext editContext,
+		TextEditorModelModifier modelModifier,
+		TextEditorViewModelModifier viewModelModifier,
+		MouseEventArgs mouseEventArgs,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri)
+    {
+    	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
+        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+				resourceUri,
+				viewModelModifier.ViewModel.ViewModelKey,
+				mouseEventArgs,
+				componentData,
+				editContext)
+			.ConfigureAwait(false);
+
+		var textEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions;
+		var scrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
+	
+		var relativeCoordinatesOnClick = new RelativeCoordinates(
+		    mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft,
+		    mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop,
+		    scrollbarDimensions.ScrollLeft,
+		    scrollbarDimensions.ScrollTop);
+
+        var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
+            rowAndColumnIndex.rowIndex,
+            rowAndColumnIndex.columnIndex,
+            true));
+
+        var foundMatch = false;
+        
+        var resource = GetResource(modelModifier.ResourceUri);
+        var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
+        
+        var symbols = compilationUnitLocal.SymbolList;
+        var diagnostics = compilationUnitLocal.DiagnosticList;
+
+        if (diagnostics.Count != 0)
+        {
+            foreach (var diagnostic in diagnostics)
+            {
+                if (cursorPositionIndex >= diagnostic.TextSpan.StartingIndexInclusive &&
+                    cursorPositionIndex < diagnostic.TextSpan.EndingIndexExclusive)
+                {
+                    // Prefer showing a diagnostic over a symbol when both exist at the mouse location.
+                    foundMatch = true;
+
+                    var parameterMap = new Dictionary<string, object?>
+                    {
+                        {
+                            nameof(ITextEditorDiagnosticRenderer.Diagnostic),
+                            diagnostic
+                        }
+                    };
+
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						TooltipViewModel = new(
+		                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
+		                    parameterMap,
+		                    relativeCoordinatesOnClick,
+		                    null,
+		                    componentData.ContinueRenderingTooltipAsync)
+					};
+                }
+            }
+        }
+
+        if (!foundMatch && symbols.Count != 0)
+        {
+            foreach (var symbol in symbols)
+            {
+                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+                {
+                    foundMatch = true;
+
+                    var parameters = new Dictionary<string, object?>
+                    {
+                        {
+                            "Symbol",
+                            symbol
+                        }
+                    };
+
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						TooltipViewModel = new(
+	                        typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
+	                        parameters,
+	                        relativeCoordinatesOnClick,
+	                        null,
+	                        componentData.ContinueRenderingTooltipAsync)
+					};
+                }
+            }
+        }
+
+        if (!foundMatch)
+        {
+			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+			{
+            	TooltipViewModel = null
+			};
+        }
+
+        // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
     
     public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)

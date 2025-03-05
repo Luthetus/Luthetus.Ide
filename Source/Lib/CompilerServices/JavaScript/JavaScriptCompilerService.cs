@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
@@ -102,6 +105,18 @@ public sealed class JavaScriptCompilerService : ICompilerService
         TextEditorCommandArgs commandArgs)
     {
     	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+    }
+	
+	public ValueTask OnInspect(
+		ITextEditorEditContext editContext,
+		TextEditorModelModifier modelModifier,
+		TextEditorViewModelModifier viewModelModifier,
+		MouseEventArgs mouseEventArgs,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri)
+    {
+    	return ValueTask.CompletedTask;
     }
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)

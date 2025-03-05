@@ -1236,7 +1236,7 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-	public static async ValueTask HandleMouseStoppedMovingEventAsync(
+	public static ValueTask HandleMouseStoppedMovingEventAsync(
 		ITextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
@@ -1245,109 +1245,14 @@ public class TextEditorCommandDefaultFunctions
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
-    	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
-				resourceUri,
-				viewModelModifier.ViewModel.ViewModelKey,
-				mouseEventArgs,
-				componentData,
-				editContext)
-			.ConfigureAwait(false);
-
-		var textEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions;
-		var scrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
-	
-		var relativeCoordinatesOnClick = new RelativeCoordinates(
-		    mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft,
-		    mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop,
-		    scrollbarDimensions.ScrollLeft,
-		    scrollbarDimensions.ScrollTop);
-
-        var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
-            true));
-
-        var foundMatch = false;
-
-		var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
-        
-        var compilationUnitLocal = compilerServiceResource.CompilationUnit;
-        
-        /* var symbols = compilationUnitLocal.SymbolList;
-        var diagnostics = compilationUnitLocal.DiagnosticList;
-
-        if (diagnostics.Count != 0)
-        {
-            foreach (var diagnostic in diagnostics)
-            {
-                if (cursorPositionIndex >= diagnostic.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < diagnostic.TextSpan.EndingIndexExclusive)
-                {
-                    // Prefer showing a diagnostic over a symbol when both exist at the mouse location.
-                    foundMatch = true;
-
-                    var parameterMap = new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(ITextEditorDiagnosticRenderer.Diagnostic),
-                            diagnostic
-                        }
-                    };
-
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-					{
-						TooltipViewModel = new(
-		                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
-		                    parameterMap,
-		                    relativeCoordinatesOnClick,
-		                    null,
-		                    componentData.ContinueRenderingTooltipAsync)
-					};
-                }
-            }
-        }
-
-        if (!foundMatch && symbols.Count != 0)
-        {
-            foreach (var symbol in symbols)
-            {
-                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
-                {
-                    foundMatch = true;
-
-                    var parameters = new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(ITextEditorSymbolRenderer.Symbol),
-                            symbol
-                        }
-                    };
-
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-					{
-						TooltipViewModel = new(
-	                        modelModifier.CompilerService.SymbolRendererType ?? textEditorComponentRenderers.SymbolRendererType,
-	                        parameters,
-	                        relativeCoordinatesOnClick,
-	                        null,
-	                        componentData.ContinueRenderingTooltipAsync)
-					};
-                }
-            }
-        }
-
-        if (!foundMatch)
-        {
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-            	TooltipViewModel = null
-			};
-        }
-
-        // TODO: Measure the tooltip, and reposition if it would go offscreen.
-        */
+    	return modelModifier.CompilerService.OnInspect(
+			editContext,
+			modelModifier,
+			viewModelModifier,
+			mouseEventArgs,
+			componentData,
+			textEditorComponentRenderers,
+	        resourceUri);
     }
     
     /// <summary>

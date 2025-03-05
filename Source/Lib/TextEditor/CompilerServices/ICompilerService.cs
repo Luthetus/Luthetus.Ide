@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
@@ -87,6 +90,15 @@ public interface ICompilerService
 		TextEditorViewModelModifier viewModelModifier,
 		CursorModifierBagTextEditor cursorModifierBag,
 		TextEditorCommandArgs commandArgs);
+		
+	public ValueTask OnInspect(
+		ITextEditorEditContext editContext,
+		TextEditorModelModifier modelModifier,
+		TextEditorViewModelModifier viewModelModifier,
+		MouseEventArgs mouseEventArgs,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri);
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
 }
