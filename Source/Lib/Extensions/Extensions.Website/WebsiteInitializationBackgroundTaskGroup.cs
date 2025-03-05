@@ -142,7 +142,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         // This line is also in LuthetusExtensionsDotNetInitializer,
         // but its duplicated here because the website
         // won't open the first file correctly without this.
-        _textEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.TextEditorCompilerServiceHeaderDisplay));
+        _textEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
 
         _dotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
 

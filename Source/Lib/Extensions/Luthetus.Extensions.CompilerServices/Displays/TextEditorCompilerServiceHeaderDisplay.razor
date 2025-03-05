@@ -1,0 +1,99 @@
+@using Luthetus.Extensions.CompilerServices.Syntax
+@using Luthetus.Extensions.CompilerServices.Syntax.Nodes
+
+<div class="luth_te_text-editor-header luth_te_compiler-service-header">
+	 
+	@{
+		var showDefaultToolbarLocal = _showDefaultToolbar;
+		
+		var appOptionsState = AppOptionsService.GetAppOptionsState();
+		
+		var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+	}
+	
+	<div style="justify-content: space-between; display: flex;">
+		<div title="ICodeBlockOwner">
+			@{ var codeBlockOwnerLocal = _codeBlockOwner; }
+			
+			@if (codeBlockOwnerLocal is null)
+			{
+				<text>
+					@IconBlankFragment.Render(iconDriver)
+					global
+				</text>
+			}
+			else
+			{
+				<ErrorBoundary>
+					@switch (codeBlockOwnerLocal.SyntaxKind)
+					{
+						case SyntaxKind.FunctionDefinitionNode:
+							var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwnerLocal;
+							<text>
+								@IconSymbolMethodFragment.Render(iconDriver)
+								@(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText())(...)
+							</text>
+							break;
+						case SyntaxKind.ConstructorDefinitionNode:
+							var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwnerLocal;
+							<text>
+								@IconBlankFragment.Render(iconDriver)
+								@(constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText())(...)
+							</text>
+							break;
+						case SyntaxKind.TypeDefinitionNode:
+							var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwnerLocal;
+							<text>
+								@IconSymbolClassFragment.Render(iconDriver)
+								@typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()
+							</text>
+							break;
+						case SyntaxKind.NamespaceStatementNode:
+							var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwnerLocal;
+							<text>
+								@IconBlankFragment.Render(iconDriver)
+								@namespaceStatementNode.IdentifierToken.TextSpan.GetText()
+							</text>
+							break;
+						default:
+							<text>
+								@IconBlankFragment.Render(iconDriver)
+								@codeBlockOwnerLocal.SyntaxKind
+							</text>
+							break;
+					}
+				</ErrorBoundary>
+			}
+		</div>
+	</div>
+	
+	<div style="justify-content: space-between; display: flex;">
+	
+		@{
+	    	
+	    }
+		
+		@if (showDefaultToolbarLocal)
+		{
+			<div class="luth_te_compiler-service-header-dropdown">
+				<TextEditorDefaultHeaderDisplay TextEditorViewModelDisplay="TextEditorViewModelDisplay"/>
+			</div>
+		}
+	
+		<button class="luth_button"
+				title="Toggle Default Toolbar"
+				@onclick="ToggleDefaultToolbar">
+			
+			@if (showDefaultToolbarLocal)
+			{
+				@IconChevronDownFragment.Render(iconDriver)
+			}
+			else
+			{
+				@IconChevronRightFragment.Render(iconDriver)
+			}
+		</button>
+	</div>
+</div>
