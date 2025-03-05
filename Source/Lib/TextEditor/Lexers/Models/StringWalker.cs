@@ -1,17 +1,18 @@
 using System.Text;
 using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Extensions.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
-namespace Luthetus.Extensions.CompilerServices.Utility;
+namespace Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 /// <summary>Provides common API that can be used when implementing an <see cref="ITextEditorLexer" /> for the <see cref="TextEditorModel" />.<br /><br />The marker for an out of bounds read is <see cref="ParserFacts.END_OF_FILE" />.</summary>
-public struct StringWalkerStruct
+public class StringWalker
 {
+	private static List<char> _emptyAdditionalCharactersToBreakOnList = new();
+
 	/// <summary>Pass in the <see cref="ResourceUri"/> of a file, and its text. One can pass in <see cref="string.Empty"/> for the <see cref="ResourceUri"/> if they are only working with the text itself.</summary>
-	public StringWalkerStruct(ResourceUri resourceUri, string sourceText)
+	public StringWalker(ResourceUri resourceUri, string sourceText)
 	{
 		ResourceUri = resourceUri;
 		SourceText = sourceText;
@@ -203,7 +204,7 @@ public struct StringWalkerStruct
 	/// Ex: '1.73', positive only.<br/>
 	/// { 0, ..., 1, ..., 2, ...}
 	/// </Summary>
-	public SyntaxToken ReadUnsignedNumericLiteral()
+	public TextEditorTextSpan ReadUnsignedNumericLiteral()
 	{
 		var startingPosition = PositionIndex;
 		var seenPeriod = false;
@@ -221,8 +222,7 @@ public struct StringWalkerStruct
 			_ = ReadCharacter();
 		}
 
-		var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, ref this, 0);
-		return new SyntaxToken(SyntaxKind.NumericLiteralToken, numericLiteralTextSpan);
+		return new TextEditorTextSpan(startingPosition, this, 0);
 	}
 
 	public string ReadUntil(char deliminator)
@@ -262,9 +262,9 @@ public struct StringWalkerStruct
 	/// This method will return immediately upon encountering whitespace.
 	/// Returns a text span with its <see cref="TextEditorTextSpan.StartingIndexInclusive"/> equal to '-1' if no word was found.
 	/// </summary>
-	public (TextEditorTextSpan textSpan, string value) ReadWordTuple(char[]? additionalCharactersToBreakOnList = null)
+	public (TextEditorTextSpan textSpan, string value) ReadWordTuple(IReadOnlyList<char>? additionalCharactersToBreakOnList = null)
 	{
-		additionalCharactersToBreakOnList ??= Array.Empty<char>();
+		additionalCharactersToBreakOnList ??= _emptyAdditionalCharactersToBreakOnList;
 
 		// The wordBuilder is appended to everytime a character is consumed.
 		var wordBuilder = new StringBuilder();

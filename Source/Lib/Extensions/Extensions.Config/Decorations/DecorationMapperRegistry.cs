@@ -1,6 +1,7 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Extensions.CompilerServices.GenericLexer.Decoration;
 using Luthetus.CompilerServices.Css.Decoration;
 using Luthetus.CompilerServices.Json.Decoration;
 using Luthetus.CompilerServices.Xml.Html.Decoration;

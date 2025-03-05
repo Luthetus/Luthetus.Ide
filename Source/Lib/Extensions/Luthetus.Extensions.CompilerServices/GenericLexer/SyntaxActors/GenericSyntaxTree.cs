@@ -5,7 +5,7 @@ using Luthetus.Extensions.CompilerServices.GenericLexer;
 using Luthetus.Extensions.CompilerServices.GenericLexer.Decoration;
 using Luthetus.Extensions.CompilerServices.GenericLexer.SyntaxObjects;
 using Luthetus.Extensions.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Extensions.CompilerServices.GenericLexer.SyntaxActors;

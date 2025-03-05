@@ -1,9 +1,8 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.GenericLexer.Decoration;
 using Luthetus.CompilerServices.DotNetSolution.Facts;
 using Luthetus.CompilerServices.Xml.Html.Decoration;
 
@@ -70,8 +69,8 @@ public class DotNetSolutionLexer
 
         _ = _stringWalker.ReadWhitespace();
 
-        var numericLiteralToken = _stringWalker.ReadUnsignedNumericLiteral();
-        var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralToken.TextSpan with
+        var numericLiteralTextSpan = _stringWalker.ReadUnsignedNumericLiteral();
+        var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralTextSpan with
         {
             DecorationByte = (byte)HtmlDecorationKind.AttributeValue
         });
@@ -90,8 +89,8 @@ public class DotNetSolutionLexer
 
         _ = _stringWalker.ReadWhitespace();
 
-        var numericLiteralToken = _stringWalker.ReadUnsignedNumericLiteral();
-        var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralToken.TextSpan with
+        var numericLiteralTextSpan = _stringWalker.ReadUnsignedNumericLiteral();
+        var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralTextSpan with
         {
             DecorationByte = (byte)HtmlDecorationKind.AttributeValue
         });

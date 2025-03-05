@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.Xml.Html.Decoration;
 
 namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;

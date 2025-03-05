@@ -1,10 +1,8 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Utility;
 using Luthetus.CompilerServices.DotNetSolution.Facts;
 using Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 using Luthetus.CompilerServices.DotNetSolution.Models;
@@ -103,10 +101,11 @@ public class DotNetSolutionParser
             }
         }
 
-        return new CompilationUnit
+        /*return new CompilationUnit
         {
         	TokenList = Lexer.SyntaxTokenList
-        };
+        };*/
+        return null;
     }
 
     public void ParseAssociatedNameToken(SyntaxToken associatedNameToken)

@@ -6,8 +6,8 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -15,7 +15,6 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 using Luthetus.Extensions.Git.CommandLines.Models;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.Git.Models;
 

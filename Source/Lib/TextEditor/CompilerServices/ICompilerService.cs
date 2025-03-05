@@ -4,8 +4,6 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
@@ -32,8 +30,6 @@ public interface ICompilerService
 	public event Action? ResourceDisposed;
 
 	public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
-
-	public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
 
 	/// <summary>
 	/// This overrides the default Blazor component: <see cref="TextEditors.Displays.Internals.SymbolDisplay"/>.
@@ -93,35 +89,4 @@ public interface ICompilerService
 		TextEditorCommandArgs commandArgs);
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
-
-	/// <summary>
-	/// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.
-	///
-	/// Then, checks the <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/>'s children
-	/// to determine which node exists at the positionIndex.
-	///
-	/// If the <see cref="IScope"/> cannot be found, then as a fallback the provided compilationUnit's
-	/// <see cref="CompilationUnit.RootCodeBlockNode"/> will be treated
-	/// the same as if it were the <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/>.
-	///
-	/// If the provided compilerServiceResource?.CompilationUnit is null, then the fallback step will not occur.
-	/// The fallback step is expected to occur due to the global scope being implemented with a null
-	/// <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/> at the time of this comment.
-	/// </summary>
-	public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
-
-	/// <summary>
-	/// Returns the text span at which the definition exists in the source code.
-	/// </summary>
-	public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
-
-	public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex);
-
-	/// <summary>
-	/// Returns the <see cref="ISyntaxNode"/> that represents the definition in the <see cref="CompilationUnit"/>.
-	///
-	/// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
-	/// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
-	/// </summary>
-	public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
 }

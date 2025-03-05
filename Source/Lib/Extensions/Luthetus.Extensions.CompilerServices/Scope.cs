@@ -1,5 +1,5 @@
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.CompilerServices;
 

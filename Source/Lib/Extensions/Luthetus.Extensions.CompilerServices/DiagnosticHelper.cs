@@ -1,5 +1,5 @@
 using System.Collections;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Extensions.CompilerServices;

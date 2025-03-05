@@ -1,11 +1,11 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.GenericLexer;
+using Luthetus.Extensions.CompilerServices.GenericLexer.SyntaxActors;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.FSharp.Facts;
 
 namespace Luthetus.CompilerServices.FSharp.SyntaxActors;

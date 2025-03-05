@@ -1,8 +1,9 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.DotNetSolution.Facts;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 

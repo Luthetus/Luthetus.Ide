@@ -1,4 +1,5 @@
 using Luthetus.Extensions.CompilerServices.GenericLexer.SyntaxObjects;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.CompilerServices.GenericLexer;
 

@@ -1,4 +1,5 @@
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.Extensions.CompilerServices.Utility;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
