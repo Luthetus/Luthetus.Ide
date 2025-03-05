@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
@@ -75,7 +76,7 @@ public interface ICompilerService
 
 	public ICompilerServiceResource? GetResource(ResourceUri resourceUri);
 
-	public MenuRecord GetContextMenu();
+	public MenuRecord GetContextMenu(TextEditorRenderBatch renderBatch, ContextMenu contextMenu);
 
 	public ValueTask<MenuRecord> GetAutocompleteMenu(
 		ITextEditorEditContext editContext,

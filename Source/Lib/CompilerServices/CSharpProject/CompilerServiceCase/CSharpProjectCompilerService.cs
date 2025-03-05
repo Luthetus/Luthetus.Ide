@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
@@ -82,10 +83,10 @@ public sealed class CSharpProjectCompilerService : ICompilerService
     	return null;
     }
     
-    public MenuRecord GetContextMenu()
-    {
-    	return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-    }
+    public MenuRecord GetContextMenu(TextEditorRenderBatch renderBatch, ContextMenu contextMenu)
+	{
+		return contextMenu.GetDefaultMenuRecord();
+	}
 
     public ValueTask<MenuRecord> GetAutocompleteMenu(
     	ITextEditorEditContext editContext,
