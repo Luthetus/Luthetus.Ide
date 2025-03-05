@@ -168,7 +168,31 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	return ValueTask.CompletedTask;
+    	/*var lexer = new CLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    	lexer.Lex();
+    	GetLexerFunc = (resource, sourceText) => new DotNetSolutionLexer(resource.ResourceUri, sourceText),
+        GetParserFunc = (resource, lexer) => new DotNetSolutionParser((DotNetSolutionLexer)lexer),
+    
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				
+				resource.CompilationUnit = new ExtendedCompilationUnit
+				{
+					TokenList = lexer.SyntaxTokenList
+				};
+			}
+		}
+		
+		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			editContext,
+			modelModifier);
+
+		ResourceParsed?.Invoke();*/
+		
+		return ValueTask.CompletedTask;
     }
     
     /// <summary>

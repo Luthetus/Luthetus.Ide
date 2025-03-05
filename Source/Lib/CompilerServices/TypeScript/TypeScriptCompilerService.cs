@@ -168,7 +168,29 @@ public sealed class TypeScriptCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	return ValueTask.CompletedTask;
+    	var lexer = new TextEditorTypeScriptLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    	lexer.Lex();
+    
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				
+				resource.CompilationUnit = new ExtendedCompilationUnit
+				{
+					TokenList = lexer.SyntaxTokenList
+				};
+			}
+		}
+		
+		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			editContext,
+			modelModifier);
+
+		ResourceParsed?.Invoke();
+		
+		return ValueTask.CompletedTask;
     }
     
     /// <summary>

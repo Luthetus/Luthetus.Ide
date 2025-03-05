@@ -176,7 +176,52 @@ public sealed class RazorCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	return ValueTask.CompletedTask;
+    	/*var lexer = new CLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    	lexer.Lex();
+    	
+    	GetLexerFunc = (resource, sourceText) => 
+        {
+            ((RazorResource)resource).HtmlSymbols.Clear();
+
+            return new RazorLexer(
+                resource.ResourceUri,
+                sourceText,
+                this,
+                _cSharpCompilerService,
+                _environmentProvider);
+        },
+        GetParserFunc = null,
+        GetBinderFunc = null,
+        OnAfterLexAction = (resource, lexer) =>
+        {
+            var razorResource = (RazorResource)resource;
+            var razorLexer = (RazorLexer)lexer;
+
+            razorResource.SyntaxTokenList = razorLexer.SyntaxTokenList;
+            razorResource.RazorSyntaxTree = razorLexer.RazorSyntaxTree;
+        },
+        OnAfterParseAction = null,
+    
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				
+				resource.CompilationUnit = new ExtendedCompilationUnit
+				{
+					TokenList = lexer.SyntaxTokenList
+				};
+			}
+		}
+		
+		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			editContext,
+			modelModifier);
+
+		ResourceParsed?.Invoke();*/
+		
+		return ValueTask.CompletedTask;
     }
     
     /// <summary>
