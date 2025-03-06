@@ -12,5 +12,5 @@ public interface IDynamicViewModel
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
 	public string? SetFocusOnCloseElementId { get; set; }
 	
-	public static readonly string DefaultSetFocusOnCloseElementId = ContextFacts.GlobalContext.ContextElementId;
+	public static readonly string DefaultSetFocusOnCloseElementId = ContextFacts.RootHtmlElementId;
 }

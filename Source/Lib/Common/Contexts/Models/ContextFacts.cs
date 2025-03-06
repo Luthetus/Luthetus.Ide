@@ -5,7 +5,7 @@ namespace Luthetus.Common.RazorLib.Contexts.Models;
 
 public static class ContextFacts
 {
-    public static readonly ContextRecord GlobalContext = new(
+	public static readonly ContextRecord GlobalContext = new(
         Key<ContextRecord>.NewKey(),
         "Global",
         "global",
@@ -168,4 +168,9 @@ public static class ContextFacts
         WidgetContext,
         DropdownContext,
     };
+    
+    /// <summary>
+    /// Used when repositioning a dropdown so that it appears on screen.
+    /// </summary>
+    public static string RootHtmlElementId { get; set; } = GlobalContext.ContextElementId;
 }
