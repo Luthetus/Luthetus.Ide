@@ -1,17 +1,16 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.GenericLexer;
+using Luthetus.Extensions.CompilerServices.GenericLexer.SyntaxActors;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.JavaScript.Facts;
 
 namespace Luthetus.CompilerServices.JavaScript.SyntaxActors;
 
-public class TextEditorJavaScriptLexer : Lexer
+public class TextEditorJavaScriptLexer
 {
     public static readonly GenericPreprocessorDefinition JavaScriptPreprocessorDefinition = new(
         "#",
@@ -37,17 +36,22 @@ public class TextEditorJavaScriptLexer : Lexer
     private readonly GenericSyntaxTree _javaScriptSyntaxTree;
 
     public TextEditorJavaScriptLexer(ResourceUri resourceUri, string sourceText)
-        : base(
-            resourceUri,
-            sourceText,
-            new LexerKeywords(JavaScriptKeywords.ALL, Array.Empty<string>(), Array.Empty<string>()))
     {
+    	ResourceUri = resourceUri;
+        SourceText = sourceText;
         _javaScriptSyntaxTree = new GenericSyntaxTree(JavaScriptLanguageDefinition);
     }
+    
+    private static readonly LexerKeywords LexerKeywords = new LexerKeywords(JavaScriptKeywords.ALL, Array.Empty<string>(), Array.Empty<string>());
+    
+    public List<SyntaxToken> SyntaxTokenList { get; } = new();
+    
+    public ResourceUri ResourceUri { get; set; }
+    public string SourceText { get; set; }
 
     public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
-    public override void Lex()
+    public void Lex()
     {
         var javaScriptSyntaxUnit = _javaScriptSyntaxTree.ParseText(
             ResourceUri,
@@ -56,19 +60,19 @@ public class TextEditorJavaScriptLexer : Lexer
         var syntaxWalker = new GenericSyntaxWalker();
         syntaxWalker.Visit(javaScriptSyntaxUnit.GenericDocumentSyntax);
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.StringSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.CommentSingleLineSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.CommentMultiLineSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.KeywordSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.FunctionSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
     }
 }

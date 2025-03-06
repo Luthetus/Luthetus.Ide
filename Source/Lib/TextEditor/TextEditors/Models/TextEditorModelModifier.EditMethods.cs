@@ -1,5 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;

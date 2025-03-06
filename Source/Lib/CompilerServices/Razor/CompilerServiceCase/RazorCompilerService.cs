@@ -1,49 +1,264 @@
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
-public sealed class RazorCompilerService : CompilerService
+public sealed class RazorCompilerService : ICompilerService
 {
+	private readonly ITextEditorService _textEditorService;
     private readonly CSharpCompilerService _cSharpCompilerService;
     private readonly IEnvironmentProvider _environmentProvider;
+    
+    private readonly Dictionary<ResourceUri, RazorResource> _resourceMap = new();
+    private readonly object _resourceMapLock = new();
 
     public RazorCompilerService(
-            ITextEditorService textEditorService,
-            CSharpCompilerService cSharpCompilerService,
-            IEnvironmentProvider environmentProvider)
-        : base(textEditorService)
+        ITextEditorService textEditorService,
+        CSharpCompilerService cSharpCompilerService,
+        IEnvironmentProvider environmentProvider)
     {
+    	_textEditorService = textEditorService;
         _cSharpCompilerService = cSharpCompilerService;
         _environmentProvider = environmentProvider;
+    }
+    
+    public event Action? ResourceRegistered;
+    public event Action? ResourceParsed;
+    public event Action? ResourceDisposed;
 
-        _compilerServiceOptions = new()
+    public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
+    
+    public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
+    
+    /// <summary>
+    /// This overrides the default Blazor component: <see cref="Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.SymbolDisplay"/>.
+    /// It is shown when hovering with the cursor over a <see cref="Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols.ISymbol"/>
+    /// (as well other actions will show it).
+    ///
+    /// If only a small change is necessary, It is recommended to replicate <see cref="Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.SymbolDisplay"/>
+    /// but with a component of your own name.
+    ///
+    /// There is a switch statement that renders content based on the symbol's SyntaxKind.
+    ///
+    /// So, if the small change is for a particular SyntaxKind, copy over the entire switch statement,
+    /// and change that case in particular.
+    ///
+    /// There are optimizations in the SymbolDisplay's codebehind to stop it from re-rendering
+    /// unnecessarily. So check the codebehind and copy over the code from there too if desired (this is recommended).
+    ///
+    /// The "all in" approach to overriding the default 'SymbolRenderer' was decided on over
+    /// a more fine tuned override of each individual case in the UI's switch statement.
+    ///
+    /// This was because it is firstly believed that the properties necessary to customize
+    /// the SymbolRenderer would massively increase.
+    /// 
+    /// And secondly because it is believed that the Nodes shouldn't even be shared
+    /// amongst the TextEditor and the ICompilerService.
+    ///
+    /// That is to say, it feels quite odd that a Node and SyntaxKind enum member needs
+    /// to be defined by the text editor, rather than the ICompilerService doing it.
+    ///
+    /// The solution to this isn't yet known but it is always in the back of the mind
+    /// while working on the text editor.
+    /// </summary>
+    public Type? SymbolRendererType { get; }
+    public Type? DiagnosticRendererType { get; }
+
+    public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
+    {
+    	lock (_resourceMapLock)
         {
-            RegisterResourceFunc = resourceUri => new RazorResource(resourceUri, this, _textEditorService),
-            GetLexerFunc = (resource, sourceText) => 
-            {
-                ((RazorResource)resource).HtmlSymbols.Clear();
+            if (_resourceMap.ContainsKey(resourceUri))
+                return;
 
-                return new RazorLexer(
-                    resource.ResourceUri,
-                    sourceText,
-                    this,
-                    _cSharpCompilerService,
-                    _environmentProvider);
-            },
-            GetParserFunc = null,
-            GetBinderFunc = null,
-            OnAfterLexAction = (resource, lexer) =>
-            {
-                var razorResource = (RazorResource)resource;
-                var razorLexer = (RazorLexer)lexer;
+            _resourceMap.Add(resourceUri, new RazorResource(resourceUri, this, _textEditorService));
+        }
 
-                razorResource.SyntaxTokenList = razorLexer.SyntaxTokenList;
-                razorResource.RazorSyntaxTree = razorLexer.RazorSyntaxTree;
-            },
-            OnAfterParseAction = null,
-        };
+		if (shouldTriggerResourceWasModified)
+	        ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
+	        
+        ResourceRegistered?.Invoke();
+    }
+    
+    public void DisposeResource(ResourceUri resourceUri)
+    {
+    	lock (_resourceMapLock)
+        {
+            _resourceMap.Remove(resourceUri);
+        }
+
+        ResourceDisposed?.Invoke();
+    }
+
+    public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
+    {
+    	_textEditorService.TextEditorWorker.PostUnique(nameof(ICompilerService), editContext =>
+        {
+			var modelModifier = editContext.GetModelModifier(resourceUri);
+
+			if (modelModifier is null)
+				return ValueTask.CompletedTask;
+
+			return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
+        });
+    }
+
+    public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
+    {
+    	var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+        if (model is null)
+            return null;
+
+        lock (_resourceMapLock)
+        {
+            if (!_resourceMap.ContainsKey(resourceUri))
+                return null;
+
+            return _resourceMap[resourceUri];
+        }
+    }
+    
+    public MenuRecord GetContextMenu(TextEditorRenderBatch renderBatch, ContextMenu contextMenu)
+	{
+		return contextMenu.GetDefaultMenuRecord();
+	}
+
+	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
+	{
+		return autocompleteMenu.GetDefaultMenuRecord();
+	}
+    
+    public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
+    {
+    	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+    }
+    
+    public ValueTask OnInspect(
+		ITextEditorEditContext editContext,
+		TextEditorModelModifier modelModifier,
+		TextEditorViewModelModifier viewModelModifier,
+		MouseEventArgs mouseEventArgs,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri)
+    {
+    	return ValueTask.CompletedTask;
+    }
+    
+    public void GoToDefinition(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
+    {
+    	return;
+    }
+
+	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    {
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = _resourceMap[modelModifier.ResourceUri];
+				resource.HtmlSymbols.Clear();
+			}
+		}
+    
+    	var lexer = new RazorLexer(
+    		modelModifier.ResourceUri,
+    		modelModifier.GetAllText(),
+            this,
+            _cSharpCompilerService,
+            _environmentProvider);
+            
+    	lexer.Lex();
+    
+    	lock (_resourceMapLock)
+		{
+			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			{
+				var resource = _resourceMap[modelModifier.ResourceUri];
+				
+	            resource.RazorSyntaxTree = lexer.RazorSyntaxTree;
+				
+				resource.CompilationUnit = new RazorCompilationUnit
+				{
+					TokenList = lexer.SyntaxTokenList,
+					RazorResource = resource,
+				};
+			}
+		}
+		
+		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			editContext,
+			modelModifier);
+
+		ResourceParsed?.Invoke();
+		
+		return ValueTask.CompletedTask;
+    }
+    
+    /// <summary>
+    /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.
+    ///
+    /// Then, checks the <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/>'s children
+    /// to determine which node exists at the positionIndex.
+    ///
+    /// If the <see cref="IScope"/> cannot be found, then as a fallback the provided compilationUnit's
+    /// <see cref="CompilationUnit.RootCodeBlockNode"/> will be treated
+    /// the same as if it were the <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/>.
+    ///
+    /// If the provided compilerServiceResource?.CompilationUnit is null, then the fallback step will not occur.
+    /// The fallback step is expected to occur due to the global scope being implemented with a null
+    /// <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/> at the time of this comment.
+    /// </summary>
+    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
+    {
+    	return null;
+    }
+
+	/// <summary>
+	/// Returns the text span at which the definition exists in the source code.
+	/// </summary>
+    public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    {
+    	return null;
+    }
+
+	public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+    {
+    	return default;
+    }
+	
+	/// <summary>
+    /// Returns the <see cref="ISyntaxNode"/> that represents the definition in the <see cref="CompilationUnit"/>.
+    ///
+    /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
+    /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
+    /// </summary>
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
+    {
+    	return null;
     }
 }

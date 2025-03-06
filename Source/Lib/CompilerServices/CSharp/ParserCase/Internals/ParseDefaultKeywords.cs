@@ -1,6 +1,7 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
@@ -63,7 +64,7 @@ public class ParseDefaultKeywords
 	    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	    {
 	    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-			parserModel.Binder.RemoveVariableDeclarationNodeFromActiveBinderSession(parserModel.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserModel);
+			parserModel.Binder.RemoveVariableDeclarationNodeFromActiveCompilationUnit(parserModel.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserModel);
 	    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
 	    }
     

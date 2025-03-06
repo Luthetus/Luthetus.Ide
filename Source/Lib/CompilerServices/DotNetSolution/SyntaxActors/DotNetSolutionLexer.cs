@@ -1,25 +1,34 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.DotNetSolution.Facts;
 using Luthetus.CompilerServices.Xml.Html.Decoration;
 
 namespace Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 
-public class DotNetSolutionLexer : Lexer
+public class DotNetSolutionLexer
 {
-    public DotNetSolutionLexer(
-            ResourceUri resourceUri, string sourceText)
-        : base(
-            resourceUri,
-            sourceText,
-            LexerKeywords.Empty)
-    {
-    }
+	public static LexerKeywords LexerKeywords = LexerKeywords.Empty;
+	
+	private StringWalker _stringWalker;
+	
+	private readonly List<SyntaxToken> _syntaxTokenList = new();
+	public List<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
 
-    public override void Lex()
+    public DotNetSolutionLexer(ResourceUri resourceUri, string sourceText)
+    {
+    	ResourceUri = resourceUri;
+    	SourceText = sourceText;
+    	
+    	_stringWalker = new(ResourceUri, SourceText);
+    }
+    
+    public ResourceUri ResourceUri { get; set; }
+    public string SourceText { get; set; }
+
+    public void Lex()
     {
         while (!_stringWalker.IsEof)
         {
@@ -60,8 +69,8 @@ public class DotNetSolutionLexer : Lexer
 
         _ = _stringWalker.ReadWhitespace();
 
-        var numericLiteralToken = _stringWalker.ReadUnsignedNumericLiteral();
-        var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralToken.TextSpan with
+        var numericLiteralTextSpan = _stringWalker.ReadUnsignedNumericLiteral();
+        var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralTextSpan with
         {
             DecorationByte = (byte)HtmlDecorationKind.AttributeValue
         });
@@ -80,8 +89,8 @@ public class DotNetSolutionLexer : Lexer
 
         _ = _stringWalker.ReadWhitespace();
 
-        var numericLiteralToken = _stringWalker.ReadUnsignedNumericLiteral();
-        var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralToken.TextSpan with
+        var numericLiteralTextSpan = _stringWalker.ReadUnsignedNumericLiteral();
+        var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralTextSpan with
         {
             DecorationByte = (byte)HtmlDecorationKind.AttributeValue
         });

@@ -15,8 +15,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -880,133 +879,21 @@ public class TextEditorCommandDefaultFunctions
     {
         var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
         var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
-		       
+
 		var cursorDimensions = await jsRuntimeCommonApi
 			.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
-        var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
-        
-		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
-		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
-	
 		var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		var compilerService = modelModifier.CompilerService;
-	
-		var compilerServiceResource = viewModelModifier is null
-			? null
-			: compilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
 
-		int? primaryCursorPositionIndex = modelModifier is null || viewModelModifier is null
-			? null
-			: modelModifier.GetPositionIndex(primaryCursorModifier);
+		var menu = await compilerService.GetQuickActionsSlashRefactorMenu(
+			editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        commandArgs);
 
-		var syntaxNode = primaryCursorPositionIndex is null || compilerService.Binder is null || compilerServiceResource?.CompilationUnit is null
-			? null
-			: compilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, compilerServiceResource);
-			
-		var menuOptionList = new List<MenuOptionRecord>();
-			
-		menuOptionList.Add(new MenuOptionRecord(
-			"QuickActionsSlashRefactorMenu",
-			MenuOptionKind.Other));
-			
-		if (syntaxNode is null)
-		{
-			menuOptionList.Add(new MenuOptionRecord(
-				"syntaxNode was null",
-				MenuOptionKind.Other,
-				onClickFunc: async () => {}));
-		}
-		else
-		{
-			if (syntaxNode.SyntaxKind == SyntaxKind.TypeClauseNode)
-			{
-				var allTypeDefinitions = compilerService.Binder.AllTypeDefinitions;
-				
-				var typeClauseNode = (TypeClauseNode)syntaxNode;
-				
-				if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.GetText(), out var typeDefinitionNode))
-				{
-					var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
-						
-					menuOptionList.Add(new MenuOptionRecord(
-						$"Copy: {usingStatementText}",
-						MenuOptionKind.Other,
-						onClickFunc: async () =>
-						{
-							var clipboardService = commandArgs.ServiceProvider.GetRequiredService<IClipboardService>();
-							await clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
-						}));
-				}
-				else
-				{
-					menuOptionList.Add(new MenuOptionRecord(
-						"type not found",
-						MenuOptionKind.Other,
-						onClickFunc: async () => {}));
-				}
-			}
-			else
-			{
-				menuOptionList.Add(new MenuOptionRecord(
-					syntaxNode.SyntaxKind.ToString(),
-					MenuOptionKind.Other,
-					onClickFunc: async () => {}));
-			}
-			/*
-			
-			// The ISyntaxNode.Parent property is being removed. (2024-11-11)
-	    	// ==============================================================
-	    	// TODO: Rewrite this block of code but find the parent node by "querying" the Binder.
-				
-			if (syntaxNode.SyntaxKind == SyntaxKind.PropertyDefinitionNode)
-			{
-				if (syntaxNode.Parent is null)
-				{
-					menuOptionList.Add(new MenuOptionRecord(
-						"syntaxNode.Parent is null",
-						MenuOptionKind.Other,
-						OnClickFunc: async () => {}));
-				}
-				else
-				{
-					if (syntaxNode.Parent is TypeDefinitionNode typeDefinitionNode)
-					{
-						menuOptionList.Add(new MenuOptionRecord(
-							$"Add to {typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}() constructor",
-							MenuOptionKind.Other,
-							OnClickFunc: () => 
-							{
-								TextEditorRefactorFacts.GenerateConstructor(
-									typeDefinitionNode,
-									Array.Empty<IVariableDeclarationNode>(),
-									commandArgs.ServiceProvider,
-									editContext.TextEditorService,
-							        modelModifier.ResourceUri,
-							        viewModelModifier.ViewModel.ViewModelKey);
-							    return Task.CompletedTask;
-							}));
-					}
-					else
-					{
-						menuOptionList.Add(new MenuOptionRecord(
-							$"Parent is not {nameof(SyntaxKind)}.{nameof(SyntaxKind.TypeDefinitionNode)} it is: {nameof(SyntaxKind)}.{syntaxNode.Parent.SyntaxKind}",
-							MenuOptionKind.Other,
-							OnClickFunc: async () => {}));
-					}
-				}
-			}
-			*/
-		}
-		
-		MenuRecord menu;
-		
-		if (menuOptionList.Count == 0)
-			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-		else
-			menu = new MenuRecord(menuOptionList);
-		
 		var dropdownRecord = new DropdownRecord(
 			Key<DropdownRecord>.NewKey(),
 			cursorDimensions.LeftInPixels,
@@ -1056,93 +943,12 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        if (modelModifier.CompilerService.Binder is null)
-            return;
-            
-        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-        var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-        
-        var wordTextSpan = modelModifier.GetWordTextSpan(positionIndex);
-        if (wordTextSpan is null)
-            return;
-
-		var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
-		if (compilerServiceResource?.CompilationUnit is null)
-			return;
-
-        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinitionTextSpan(wordTextSpan.Value, compilerServiceResource);
-        if (definitionTextSpan is null)
-            return;
-
-        var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.Value.ResourceUri);
-        if (definitionModel is null)
-        {
-            if (commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc is not null)
-            {
-                commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
-                    new RegisterModelArgs(definitionTextSpan.Value.ResourceUri, commandArgs.ServiceProvider));
-
-                var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.Value.ResourceUri);
-
-                if (definitionModel is null) // TODO: Should this be null checking instead: 'definitionModelModifier'?
-                    return;
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        var definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.Value.ResourceUri);
-
-        if (!definitionViewModels.Any())
-        {
-            if (commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc is not null)
-            {
-                commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                    Key<TextEditorViewModel>.NewKey(),
-                    definitionTextSpan.Value.ResourceUri,
-                    new Category("main"),
-                    true,
-                    commandArgs.ServiceProvider));
-
-                definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.Value.ResourceUri);
-
-                if (!definitionViewModels.Any())
-                    return;
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
-        
-        var definitionViewModelModifier = editContext.GetViewModelModifier(definitionViewModelKey);
-        var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier?.ViewModel);
-        var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
-
-        if (definitionViewModelModifier is null || !definitionCursorModifierBag.ConstructorWasInvoked || definitionPrimaryCursorModifier is null)
-            return;
-
-        var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.Value.StartingIndexInclusive);
-        var columnIndex = definitionTextSpan.Value.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
-
-        definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
-        definitionPrimaryCursorModifier.LineIndex = rowData.Index;
-        definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
-        definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
-
-        if (commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
-        {
-            commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-                definitionViewModelKey,
-                Key<TextEditorGroup>.Empty,
-                true,
-                commandArgs.ServiceProvider));
-        }
+    	modelModifier.CompilerService.GoToDefinition(
+			editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        commandArgs);
     }
 
     public static void ShowFindAllDialog(
@@ -1348,7 +1154,7 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-	public static async ValueTask HandleMouseStoppedMovingEventAsync(
+	public static ValueTask HandleMouseStoppedMovingEventAsync(
 		ITextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
@@ -1357,104 +1163,14 @@ public class TextEditorCommandDefaultFunctions
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
-    	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
-				resourceUri,
-				viewModelModifier.ViewModel.ViewModelKey,
-				mouseEventArgs,
-				componentData,
-				editContext)
-			.ConfigureAwait(false);
-
-		var textEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions;
-		var scrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
-	
-		var relativeCoordinatesOnClick = new RelativeCoordinates(
-		    mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft,
-		    mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop,
-		    scrollbarDimensions.ScrollLeft,
-		    scrollbarDimensions.ScrollTop);
-
-        var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
-            true));
-
-        var foundMatch = false;
-
-        var symbols = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);
-        var diagnostics = modelModifier.CompilerService.GetDiagnosticsFor(modelModifier.ResourceUri);
-
-        if (diagnostics.Count != 0)
-        {
-            foreach (var diagnostic in diagnostics)
-            {
-                if (cursorPositionIndex >= diagnostic.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < diagnostic.TextSpan.EndingIndexExclusive)
-                {
-                    // Prefer showing a diagnostic over a symbol when both exist at the mouse location.
-                    foundMatch = true;
-
-                    var parameterMap = new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(ITextEditorDiagnosticRenderer.Diagnostic),
-                            diagnostic
-                        }
-                    };
-
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-					{
-						TooltipViewModel = new(
-		                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
-		                    parameterMap,
-		                    relativeCoordinatesOnClick,
-		                    null,
-		                    componentData.ContinueRenderingTooltipAsync)
-					};
-                }
-            }
-        }
-
-        if (!foundMatch && symbols.Count != 0)
-        {
-            foreach (var symbol in symbols)
-            {
-                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
-                {
-                    foundMatch = true;
-
-                    var parameters = new Dictionary<string, object?>
-                    {
-                        {
-                            nameof(ITextEditorSymbolRenderer.Symbol),
-                            symbol
-                        }
-                    };
-
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-					{
-						TooltipViewModel = new(
-	                        modelModifier.CompilerService.SymbolRendererType ?? textEditorComponentRenderers.SymbolRendererType,
-	                        parameters,
-	                        relativeCoordinatesOnClick,
-	                        null,
-	                        componentData.ContinueRenderingTooltipAsync)
-					};
-                }
-            }
-        }
-
-        if (!foundMatch)
-        {
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-            	TooltipViewModel = null
-			};
-        }
-
-        // TODO: Measure the tooltip, and reposition if it would go offscreen.
+    	return modelModifier.CompilerService.OnInspect(
+			editContext,
+			modelModifier,
+			viewModelModifier,
+			mouseEventArgs,
+			componentData,
+			textEditorComponentRenderers,
+	        resourceUri);
     }
     
     /// <summary>

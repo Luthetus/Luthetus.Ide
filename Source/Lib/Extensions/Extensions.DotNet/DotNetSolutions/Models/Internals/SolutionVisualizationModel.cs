@@ -1,8 +1,8 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
 

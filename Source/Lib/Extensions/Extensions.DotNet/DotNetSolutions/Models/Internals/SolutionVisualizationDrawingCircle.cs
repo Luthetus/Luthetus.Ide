@@ -6,12 +6,12 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
 

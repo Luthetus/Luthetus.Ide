@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;

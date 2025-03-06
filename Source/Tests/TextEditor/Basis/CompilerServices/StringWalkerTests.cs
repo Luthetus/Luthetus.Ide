@@ -2,8 +2,8 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 

@@ -1,8 +1,9 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.Extensions.CompilerServices.Utility;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 using Luthetus.CompilerServices.CSharp.BinderCase;
@@ -271,6 +272,6 @@ public static class CSharpParser
         	parserModel.TokenWalker);
                 
 		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
-		parserModel.Binder.FinalizeBinderSession(compilationUnit);
+		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
 	}
 }

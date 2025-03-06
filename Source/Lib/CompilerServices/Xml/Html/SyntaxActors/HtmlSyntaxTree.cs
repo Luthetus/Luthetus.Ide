@@ -1,9 +1,7 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 using Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
 using Luthetus.CompilerServices.Xml.Html.ExtensionMethods;

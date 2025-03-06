@@ -5,10 +5,10 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
@@ -239,23 +239,23 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						}
 					}
 					
-					var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(
+					var compilerServiceResource = modelModifier.CompilerService.GetResource(
 						terminalOutputFormatterExpand.TextEditorModelResourceUri);
 
 					if (compilerServiceResource is TerminalResource terminalResource)
 					{					
-						terminalResource.ManualDecorationTextSpanList.Clear();
-						terminalResource.ManualDecorationTextSpanList.AddRange(
+						terminalResource.CompilationUnit.ManualDecorationTextSpanList.Clear();
+						terminalResource.CompilationUnit.ManualDecorationTextSpanList.AddRange(
 							outputFormatted.SymbolList.Select(x => x.TextSpan));
 								
-						terminalResource.ManualSymbolList.Clear();
-						terminalResource.ManualSymbolList.AddRange(outputFormatted.SymbolList);
+						terminalResource.CompilationUnit.ManualSymbolList.Clear();
+						terminalResource.CompilationUnit.ManualSymbolList.AddRange(outputFormatted.SymbolList);
 
 						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
 							editContext,
 							modelModifier);
 							
-							editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
 							editContext,
 							modelModifier,
 							outputFormatted.TextSpanList);

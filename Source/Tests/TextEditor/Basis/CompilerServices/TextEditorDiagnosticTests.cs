@@ -1,7 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Enums;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 

@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 

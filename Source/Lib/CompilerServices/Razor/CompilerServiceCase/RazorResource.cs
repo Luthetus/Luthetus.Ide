@@ -1,28 +1,33 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.Xml.Html.Decoration;
 
 namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
-public class RazorResource : CompilerServiceResource
+public class RazorResource : ICompilerServiceResource
 {
     private readonly ITextEditorService _textEditorService;
 
     public RazorResource(
-            ResourceUri resourceUri,
-            RazorCompilerService razorCompilerService,
-            ITextEditorService textEditorService)
-        : base(resourceUri, razorCompilerService)
+        ResourceUri resourceUri,
+        RazorCompilerService razorCompilerService,
+        ITextEditorService textEditorService)
     {
+    	ResourceUri = resourceUri;
+    	CompilerService = razorCompilerService;
         _textEditorService = textEditorService;
     }
+    
+    public ResourceUri ResourceUri { get; }
+	public ICompilerService CompilerService { get; }
+	public ICompilationUnit CompilationUnit { get; set; }
 
     public RazorSyntaxTree? RazorSyntaxTree { get; internal set; }
     public List<Symbol> HtmlSymbols { get; } = new();
     
-    public override IReadOnlyList<Symbol> GetSymbols()
+    public IReadOnlyList<Symbol> GetSymbols()
     {
         var localRazorSyntaxTree = RazorSyntaxTree;
 

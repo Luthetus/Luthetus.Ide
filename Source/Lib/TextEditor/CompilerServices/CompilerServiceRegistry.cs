@@ -1,6 +1,3 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class CompilerServiceRegistryDefault : ICompilerServiceRegistry
@@ -9,10 +6,10 @@ public class CompilerServiceRegistryDefault : ICompilerServiceRegistry
 
     public CompilerServiceRegistryDefault()
     {
-        DefaultCompilerService = new CompilerService(null);
+        CompilerServiceDoNothing = new CompilerServiceDoNothing();
     }
 
-    public CompilerService DefaultCompilerService { get; }
+    public CompilerServiceDoNothing CompilerServiceDoNothing { get; }
     
     public IReadOnlyDictionary<string, ICompilerService> Map => _map;
     public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToList();
@@ -22,6 +19,6 @@ public class CompilerServiceRegistryDefault : ICompilerServiceRegistry
         if (_map.TryGetValue(extensionNoPeriod, out var compilerService))
             return compilerService;
 
-        return DefaultCompilerService;
+        return CompilerServiceDoNothing;
     }
 }

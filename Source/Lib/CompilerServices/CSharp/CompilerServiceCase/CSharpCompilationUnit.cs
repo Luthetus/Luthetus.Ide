@@ -1,10 +1,8 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -17,18 +15,32 @@ namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 /// after the parse finished, or if the data should be cleared immediately after the parse finishes
 /// (respectively).
 /// </summary>
-public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
+public sealed class CSharpCompilationUnit : ICompilationUnit
 {
 	public CSharpCompilationUnit(ResourceUri resourceUri)
 	{
 		ResourceUri = resourceUri;
 	}
+	
+	public IEnumerable<TextEditorTextSpan> GetTextTextSpans()
+	{
+		return TokenList.Select(x => x.TextSpan)
+			.Concat(MiscTextSpanList)
+			.Concat(SymbolList.Select(x => x.TextSpan));
+	}
+	
+    public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
+    {
+    	return DiagnosticList.Select(x => x.TextSpan);
+    }
 
 	public ResourceUri ResourceUri { get; set; }
     public ISyntaxNode RootCodeBlockNode { get; set; }
     
 	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
 	public List<Symbol> __SymbolList { get; set; } = new();
+	
+	
     public List<Scope> ScopeList { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
@@ -37,6 +49,8 @@ public sealed class CSharpCompilationUnit : ICompilationUnit, IBinderSession
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
     public IReadOnlyList<Symbol> SymbolList => __SymbolList;
+    public IReadOnlyList<SyntaxToken> TokenList { get; set; } = Array.Empty<SyntaxToken>();
+    public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; set; } = Array.Empty<TextEditorTextSpan>();
     
     /// <summary>
     /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

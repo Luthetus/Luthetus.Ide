@@ -4,17 +4,16 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -197,10 +196,10 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
                     cursorModifierBag);
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
+                if (terminalCompilerService.GetResource(modelModifier.ResourceUri) is not TerminalResource terminalResource)
                     return ValueTask.CompletedTask;
 
-                terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
+                terminalResource.CompilationUnit.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
                     0,
                     modelModifier.GetPositionIndex(primaryCursorModifier),
                     (byte)TerminalDecorationKind.Comment,

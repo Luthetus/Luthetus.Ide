@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Website.RazorLib;
 

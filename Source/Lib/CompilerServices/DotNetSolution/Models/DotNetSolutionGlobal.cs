@@ -1,4 +1,5 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.DotNetSolution.Models;
 

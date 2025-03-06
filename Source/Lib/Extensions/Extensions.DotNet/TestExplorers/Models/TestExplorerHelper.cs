@@ -3,12 +3,12 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
@@ -29,7 +29,7 @@ public static class TestExplorerHelper
 	{
 		return (editContext) =>
 		{
-			var wordTextSpan = TextEditorTextSpan.FabricateTextSpan(className);
+			/*var wordTextSpan = TextEditorTextSpan.FabricateTextSpan(className);
 
             var possibleCSharpCompilerService = compilerServiceRegistry
                 .GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
@@ -241,7 +241,7 @@ public static class TestExplorerHelper
 					commonComponentRenderers,
 					notificationService,
 					TimeSpan.FromSeconds(5));
-			}
+			}*/
 			
 			return ValueTask.CompletedTask;
 		};

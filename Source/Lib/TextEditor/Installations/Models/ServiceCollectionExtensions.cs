@@ -41,6 +41,5 @@ public static class ServiceCollectionExtensions
     }
 
     private static readonly LuthetusTextEditorComponentRenderers _textEditorComponentRenderers = new(
-        typeof(TextEditors.Displays.Internals.SymbolDisplay),
         typeof(TextEditors.Displays.Internals.DiagnosticDisplay));
 }

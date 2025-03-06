@@ -1,4 +1,7 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
 
 namespace Luthetus.CompilerServices.Xml.Html.ExtensionMethods;

@@ -1,10 +1,9 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class TerminalResource : CompilerServiceResource
+public class TerminalResource : ICompilerServiceResource
 {
     /// <summary>
     /// The <see cref="ArgumentsTextSpan"/> and <see cref="TargetFilePathTextSpan"/> are currently
@@ -16,28 +15,16 @@ public class TerminalResource : CompilerServiceResource
     public readonly object UnsafeStateLock = new();
 
     public TerminalResource(
-	    	ResourceUri resourceUri,
-	    	TerminalCompilerService terminalCompilerService)
-        : base(resourceUri, terminalCompilerService)
+    	ResourceUri resourceUri,
+    	TerminalCompilerService terminalCompilerService)
     {
+    	ResourceUri = resourceUri;
+    	CompilerService = terminalCompilerService;
     }
 
-    public override IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = new List<SyntaxToken>();
-    public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
-    public List<Symbol> ManualSymbolList { get; } = new List<Symbol>();
-
-	public override IReadOnlyList<SyntaxToken> GetTokens()
-    {
-        return SyntaxTokenList;
-    }
-    
-    public override IReadOnlyList<TextEditorTextSpan> GetMiscTextSpans()
-    {
-        return ManualDecorationTextSpanList;
-    }
-
-    public override IReadOnlyList<Symbol> GetSymbols()
-    {
-        return ManualSymbolList;
-    }
+	public ResourceUri ResourceUri { get; }
+	public ICompilerService CompilerService { get; }
+	public TerminalCompilationUnit CompilationUnit { get; } = new();
+	
+	ICompilationUnit ICompilerServiceResource.CompilationUnit { get => CompilationUnit; set => _ = value; }
 }

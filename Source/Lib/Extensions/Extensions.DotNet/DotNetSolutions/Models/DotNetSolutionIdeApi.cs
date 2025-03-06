@@ -10,7 +10,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -30,6 +29,7 @@ using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.AppDatas.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
