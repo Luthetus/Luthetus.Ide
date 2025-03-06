@@ -1,10 +1,10 @@
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.Extensions.CompilerServices.GenericLexer.Decoration;
 
 namespace Luthetus.CompilerServices.CSharp.Facts;
 

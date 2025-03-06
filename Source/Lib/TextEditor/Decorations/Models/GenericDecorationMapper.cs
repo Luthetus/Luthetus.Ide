@@ -1,6 +1,6 @@
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
-namespace Luthetus.Extensions.CompilerServices.GenericLexer.Decoration;
+namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 public class GenericDecorationMapper : IDecorationMapper
 {

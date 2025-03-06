@@ -1,8 +1,8 @@
 using System.Text;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.GenericLexer;
-using Luthetus.Extensions.CompilerServices.GenericLexer.Decoration;
 using Luthetus.Extensions.CompilerServices.GenericLexer.SyntaxObjects;
 using Luthetus.Extensions.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices;

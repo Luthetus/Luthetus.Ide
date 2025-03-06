@@ -1,4 +1,4 @@
-﻿using Luthetus.Extensions.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.Extensions.CompilerServices.GenericLexer;
 

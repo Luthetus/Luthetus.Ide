@@ -1,8 +1,8 @@
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.Extensions.CompilerServices.Syntax;
-using Luthetus.Extensions.CompilerServices.GenericLexer.Decoration;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Luthetus.Extensions.CompilerServices;
