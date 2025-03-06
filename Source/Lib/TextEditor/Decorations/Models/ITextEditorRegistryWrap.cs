@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 

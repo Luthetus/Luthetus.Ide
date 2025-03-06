@@ -1,6 +1,8 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.Facts;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 

@@ -1,8 +1,8 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Razor.Facts;
@@ -11,11 +11,19 @@ using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 
 namespace Luthetus.CompilerServices.Razor;
 
-public class RazorLexer : Lexer
+public class RazorLexer
 {
     private readonly RazorCompilerService _razorCompilerService;
     private readonly CSharpCompilerService _cSharpCompilerService;
     private readonly IEnvironmentProvider _environmentProvider;
+
+	private static readonly LexerKeywords LexerKeywords = LexerKeywords.Empty;
+	
+	private readonly StringWalker _stringWalker;
+	
+	private readonly List<SyntaxToken> _syntaxTokenList = new();
+	
+	public List<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
 
     public RazorLexer(
         ResourceUri resourceUri,
@@ -23,21 +31,25 @@ public class RazorLexer : Lexer
         RazorCompilerService razorCompilerService,
         CSharpCompilerService cSharpCompilerService,
         IEnvironmentProvider environmentProvider)
-        : base(
-            resourceUri,
-            sourceText,
-            LexerKeywords.Empty)
     {
         _environmentProvider = environmentProvider;
         _razorCompilerService = razorCompilerService;
         _cSharpCompilerService = cSharpCompilerService;
+        
+        ResourceUri = resourceUri;
+        SourceText = sourceText;
 
         RazorSyntaxTree = new RazorSyntaxTree(ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
+        
+        _stringWalker = new(resourceUri, sourceText);
     }
+    
+    public ResourceUri ResourceUri { get; }
+    public string SourceText { get; }
 
     public RazorSyntaxTree RazorSyntaxTree { get; private set; }
 
-    public override void Lex()
+    public void Lex()
     {
         RazorSyntaxTree = new RazorSyntaxTree(ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
 

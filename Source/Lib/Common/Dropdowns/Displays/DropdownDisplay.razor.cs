@@ -73,19 +73,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			await RemeasureAndRerender();
 		}
 		else if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide && _hasPendingEvent)
-		{
-			/*
-			'LuthetusPurposeKind.Ide' hack for Text Editor NuGet Package (2024-08-28)
-			========================================================================
-			The dropdown currently relies on the html element id: 'ContextFacts.GlobalContext.ContextElementId'.
-			
-			This element id is used by the IDE, but its unlikely to appear in someone's app who is using the
-			text editor NuGet package.
-			
-			TODO: Add a configuration option that allows the currently hardcoded, 'ContextFacts.GlobalContext.ContextElementId',
-			      to instead be specified as other values.
-			*/
-		
+		{		
 			if (_isOffScreenHorizontally || _isOffScreenVertically)
 			{
 				lock (_hasPendingEventLock)
@@ -150,7 +138,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 		}
 
 		_htmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(_htmlElementId);
-		_globalHtmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(ContextFacts.GlobalContext.ContextElementId);
+		_globalHtmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
 		await InvokeAsync(StateHasChanged);
 	}
 

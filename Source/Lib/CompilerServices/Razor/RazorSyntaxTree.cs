@@ -1,11 +1,9 @@
 using System.Text;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
@@ -108,7 +106,7 @@ public class RazorSyntaxTree
 			
 		var lexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
 		
-		cSharpBinder.StartBinderSession(_codebehindResourceUri);
+		cSharpBinder.StartCompilationUnit(_codebehindResourceUri);
 		
 		CSharpParser.Parse(compilationUnit, cSharpBinder, ref lexerOutput);
         
@@ -224,7 +222,7 @@ public class RazorSyntaxTree
         InjectedLanguageDefinition injectedLanguageDefinition,
         TextEditorTextSpan textSpan)
     {
-        var allTypeDefinitions = _cSharpCompilerService.CSharpBinder.AllTypeDefinitions;
+        var allTypeDefinitions = _cSharpCompilerService.__CSharpBinder.AllTypeDefinitions;
 
         var text = textSpan.GetText();
         
@@ -242,7 +240,7 @@ public class RazorSyntaxTree
                 if (inheritanceIdentifierText != "ComponentBase")
                     continue;
 
-                var compilerServiceResource = _razorCompilerService.GetCompilerServiceResourceFor(textSpan.ResourceUri);
+                var compilerServiceResource = _razorCompilerService.GetResource(textSpan.ResourceUri);
 
                 if (compilerServiceResource is null)
                     continue;

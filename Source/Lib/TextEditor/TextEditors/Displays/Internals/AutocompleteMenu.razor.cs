@@ -126,6 +126,23 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
         try
         {
+            return renderBatch.Model.CompilerService.GetAutocompleteMenu(renderBatch, this);
+        }
+		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
+        catch (Exception e) when (e is LuthetusTextEditorException || e is InvalidOperationException)
+        {
+            return NoResultsMenuRecord;
+        }
+    }
+    
+    public MenuRecord GetDefaultMenuRecord(List<AutocompleteEntry>? otherAutocompleteEntryList = null)
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return NoResultsMenuRecord;
+    
+        try
+        {
             var cursorList = new List<TextEditorCursor> { renderBatch.ViewModel.PrimaryCursor };
 
             var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
@@ -145,28 +162,11 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                     var autocompleteEntryList = autocompleteWordsList
                         .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))
                         .ToList();
-
-                    // (2023-08-09) Looking into using an ICompilerService for autocompletion.
+                     
+                    if (otherAutocompleteEntryList is not null && otherAutocompleteEntryList.Count != 0)   
                     {
-                        var positionIndex = renderBatch.Model.GetPositionIndex(primaryCursor);
-
-						// The cursor is 1 character ahead.
-                        var textSpan = new TextEditorTextSpan(
-                            positionIndex - 1,
-                            positionIndex,
-                            0,
-                            renderBatch.Model.ResourceUri,
-                            renderBatch.Model.GetAllText());
-
-                        var compilerServiceAutocompleteEntryList = renderBatch.Model.CompilerService.GetAutocompleteEntries(
-                            word,
-                            textSpan);
-
-                        if (compilerServiceAutocompleteEntryList.Any())
-                        {
-                            compilerServiceAutocompleteEntryList.AddRange(autocompleteEntryList);
-							autocompleteEntryList = compilerServiceAutocompleteEntryList;
-                        }
+                        otherAutocompleteEntryList.AddRange(autocompleteEntryList);
+						autocompleteEntryList = otherAutocompleteEntryList;
                     }
 
                     menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
@@ -204,7 +204,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         }
     }
 
-    private async Task SelectMenuOption(Func<Task> menuOptionAction)
+    public async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
@@ -260,7 +260,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         await renderBatch.ViewModel.FocusAsync();
     }
 
-    private async Task InsertAutocompleteMenuOption(
+    public async Task InsertAutocompleteMenuOption(
         string word,
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)

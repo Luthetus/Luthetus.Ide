@@ -1,7 +1,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Ide.Tests.Basis.Terminals.Models;
 

@@ -1,10 +1,9 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Models;

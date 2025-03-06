@@ -7,14 +7,13 @@ using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Ide.Wasm.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -143,7 +142,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         // This line is also in LuthetusExtensionsDotNetInitializer,
         // but its duplicated here because the website
         // won't open the first file correctly without this.
-        _textEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.TextEditorCompilerServiceHeaderDisplay));
+        _textEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
 
         _dotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
 

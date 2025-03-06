@@ -131,7 +131,16 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private MenuRecord GetMenuRecord()
     {
-        List<MenuOptionRecord> menuOptionRecordsList = new();
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+    		
+    	return renderBatch.Model.CompilerService.GetContextMenu(renderBatch, this);
+    }
+    
+    public MenuRecord GetDefaultMenuRecord()
+    {
+    	List<MenuOptionRecord> menuOptionRecordsList = new();
 
         var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
         menuOptionRecordsList.Add(cut);
@@ -154,7 +163,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         return new MenuRecord(menuOptionRecordsList);
     }
 
-    private Task SelectMenuOption(Func<Task> menuOptionAction)
+    public Task SelectMenuOption(Func<Task> menuOptionAction)
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
@@ -194,7 +203,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         return Task.CompletedTask;
     }
 
-    private Task CutMenuOption()
+    public Task CutMenuOption()
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
@@ -213,7 +222,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         return Task.CompletedTask;
     }
 
-    private Task CopyMenuOption()
+    public Task CopyMenuOption()
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
@@ -232,7 +241,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         return Task.CompletedTask;
     }
 
-    private Task PasteMenuOption()
+    public Task PasteMenuOption()
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
@@ -251,7 +260,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         return Task.CompletedTask;
     }
 
-    private Task GoToDefinitionOption()
+    public Task GoToDefinitionOption()
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
@@ -278,7 +287,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         return Task.CompletedTask;
     }
     
-    private Task QuickActionsSlashRefactors()
+    public Task QuickActionsSlashRefactors()
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)

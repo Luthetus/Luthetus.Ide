@@ -1,31 +1,35 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.GenericLexer;
+using Luthetus.Extensions.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.CompilerServices.Python.Facts;
 
 namespace Luthetus.CompilerServices.Python;
 
-public class PythonLexer : Lexer
+public class PythonLexer
 {
+	private static readonly LexerKeywords _lexerKeywords = new LexerKeywords(PythonLanguageFacts.Keywords.ALL_LIST, PythonLanguageFacts.Keywords.CONTROL_KEYWORDS, Array.Empty<string>());
+
     public PythonLexer(ResourceUri resourceUri, string sourceText)
-        : base(
-            resourceUri,
-            sourceText,
-            new LexerKeywords(PythonLanguageFacts.Keywords.ALL_LIST, PythonLanguageFacts.Keywords.CONTROL_KEYWORDS, Array.Empty<string>()))
     {
+    	ResourceUri = resourceUri;
+    	SourceText = sourceText;
         _pythonSyntaxTree = new GenericSyntaxTree(PythonLanguageDefinition);
     }
+    
+    public ResourceUri ResourceUri { get; set; }
+    public string SourceText { get; set; }
+    
+    public List<SyntaxToken> SyntaxTokenList { get; } = new();
 
     public static readonly GenericPreprocessorDefinition PythonPreprocessorDefinition = new(
         "\0",
 		Array.Empty<DeliminationExtendedSyntaxDefinition>());
-
+		
     public static readonly GenericLanguageDefinition PythonLanguageDefinition = new GenericLanguageDefinition(
         "\"",
         "\"",
@@ -47,7 +51,7 @@ public class PythonLexer : Lexer
 
     public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
-    public override void Lex()
+    public void Lex()
     {
         var pythonSyntaxUnit = _pythonSyntaxTree.ParseText(
             ResourceUri,
@@ -56,19 +60,19 @@ public class PythonLexer : Lexer
         var pythonSyntaxWalker = new GenericSyntaxWalker();
         pythonSyntaxWalker.Visit(pythonSyntaxUnit.GenericDocumentSyntax);
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             pythonSyntaxWalker.StringSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             pythonSyntaxWalker.CommentSingleLineSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             pythonSyntaxWalker.CommentMultiLineSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             pythonSyntaxWalker.KeywordSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             pythonSyntaxWalker.FunctionSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
     }
 }

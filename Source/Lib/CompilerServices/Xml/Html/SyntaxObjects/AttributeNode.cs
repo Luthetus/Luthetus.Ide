@@ -1,5 +1,6 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
 namespace Luthetus.CompilerServices.Xml.Html.SyntaxObjects;

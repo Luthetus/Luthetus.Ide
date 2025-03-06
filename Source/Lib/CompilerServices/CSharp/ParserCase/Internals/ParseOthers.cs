@@ -1,7 +1,9 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;

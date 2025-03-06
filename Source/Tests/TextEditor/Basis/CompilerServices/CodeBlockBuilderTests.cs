@@ -4,7 +4,6 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;

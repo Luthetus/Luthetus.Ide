@@ -1,4 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.CSharp;
 

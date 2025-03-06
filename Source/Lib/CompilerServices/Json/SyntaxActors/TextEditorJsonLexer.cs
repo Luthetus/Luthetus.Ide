@@ -2,24 +2,28 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.Json.SyntaxActors;
 
-public class TextEditorJsonLexer : Lexer
+public class TextEditorJsonLexer
 {
+	public static LexerKeywords LexerKeyWords = LexerKeywords.Empty;
+
     public TextEditorJsonLexer(ResourceUri resourceUri, string sourceText)
-        : base(
-            resourceUri,
-            sourceText,
-            LexerKeywords.Empty)
     {
+    	ResourceUri = resourceUri;
+    	SourceText = sourceText;
     }
 
     public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
-    public override void Lex()
+	public ResourceUri ResourceUri { get; }
+	public string SourceText { get; }
+	public List<SyntaxToken> SyntaxTokenList { get; } = new();
+
+    public void Lex()
     {
         var jsonSyntaxUnit = JsonSyntaxTree.ParseText(
             ResourceUri,
@@ -30,22 +34,22 @@ public class TextEditorJsonLexer : Lexer
         var syntaxWalker = new JsonSyntaxWalker();
         syntaxWalker.Visit(syntaxNodeRoot);
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.PropertyKeySyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.BooleanSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.IntegerSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.NullSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.NumberSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             syntaxWalker.StringSyntaxes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
     }
 }

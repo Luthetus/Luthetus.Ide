@@ -1,26 +1,31 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.GenericLexer;
+using Luthetus.Extensions.CompilerServices.GenericLexer.SyntaxActors;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.C.Facts;
 
 namespace Luthetus.CompilerServices.C;
 
-public class CLexer : Lexer
+public class CLexer
 {
+	private static readonly LexerKeywords _lexerKeywords = new LexerKeywords(CLanguageFacts.Keywords.ALL_LIST, CLanguageFacts.Keywords.CONTROL_KEYWORDS, Array.Empty<string>());
+
+	public List<SyntaxToken> SyntaxTokenList { get; } = new();
+
     public CLexer(ResourceUri resourceUri, string sourceText)
-        : base(
-            resourceUri,
-            sourceText,
-            new LexerKeywords(CLanguageFacts.Keywords.ALL_LIST, CLanguageFacts.Keywords.CONTROL_KEYWORDS, Array.Empty<string>()))
     {
+    	ResourceUri = resourceUri;
+    	SourceText = sourceText;
+    
         _cSyntaxTree = new GenericSyntaxTree(CLanguageDefinition);
     }
+    
+    public ResourceUri ResourceUri { get; }
+    public string SourceText { get; }
 
     public static readonly GenericPreprocessorDefinition CPreprocessorDefinition = new(
         "#",
@@ -47,7 +52,7 @@ public class CLexer : Lexer
 
     public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
-    public override void Lex()
+    public void Lex()
     {
         var cSyntaxUnit = _cSyntaxTree.ParseText(
             ResourceUri,
@@ -56,19 +61,19 @@ public class CLexer : Lexer
         var cSyntaxWalker = new GenericSyntaxWalker();
         cSyntaxWalker.Visit(cSyntaxUnit.GenericDocumentSyntax);
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             cSyntaxWalker.StringSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             cSyntaxWalker.CommentSingleLineSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             cSyntaxWalker.CommentMultiLineSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             cSyntaxWalker.KeywordSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
 
-        _syntaxTokenList.AddRange(
+        SyntaxTokenList.AddRange(
             cSyntaxWalker.FunctionSyntaxList.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextSpan)));
     }
 }

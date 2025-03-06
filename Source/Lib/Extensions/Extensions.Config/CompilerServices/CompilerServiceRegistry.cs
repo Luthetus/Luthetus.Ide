@@ -1,7 +1,5 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Python;
 using Luthetus.CompilerServices.C;
@@ -16,6 +14,7 @@ using Luthetus.CompilerServices.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.TypeScript;
 using Luthetus.CompilerServices.Xml;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.Config.CompilerServices;
 
@@ -44,7 +43,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
         CCompilerService = new CCompilerService(textEditorService);
         PythonCompilerService = new PythonCompilerService(textEditorService);
         TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalService);
-        DefaultCompilerService = new CompilerService(textEditorService);
+        DefaultCompilerService = new CompilerServiceDoNothing();
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
         _map.Add(ExtensionNoPeriodFacts.XML, XmlCompilerService);
@@ -80,7 +79,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
     public CCompilerService CCompilerService { get; }
     public PythonCompilerService PythonCompilerService { get; }
     public TerminalCompilerService TerminalCompilerService { get; }
-    public CompilerService DefaultCompilerService { get; }
+    public CompilerServiceDoNothing DefaultCompilerService { get; }
 
     public ICompilerService GetCompilerService(string extensionNoPeriod)
     {

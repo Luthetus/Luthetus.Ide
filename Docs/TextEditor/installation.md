@@ -1,4 +1,4 @@
-# Luthetus.TextEditor (v3.8.0)
+# Luthetus.TextEditor (v4.2.0)
 
 ## Installation
 
@@ -13,7 +13,6 @@ was made by following steps described here. So, the completed result can be foun
 - Register the `Services`
 - Reference the `CSS`
 - Reference the `JavaScript`
-- In `App.razor` render the `<Fluxor.Blazor.Web.StoreInitializer/>`
 - In `MainLayout.razor` render the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />` and the `<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />` Blazor components
 
 ### Steps
@@ -28,10 +27,14 @@ The nuget.org link to the NuGet Package is here: https://www.nuget.org/packages/
 Go to the file that you register your services and add the following lines of C# code.
 
 ```csharp
-// using Fluxor;
-// using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+// using Microsoft.Extensions.DependencyInjection;
 // using Luthetus.Common.RazorLib.Installations.Models;
+// using Luthetus.Common.RazorLib.Contexts.Models;
+// using Luthetus.Tutorials.RazorLib.CompilerServices;
+// using Luthetus.Tutorials.RazorLib.Decorations;
 // using Luthetus.TextEditor.RazorLib.Installations.Models;
+// using Luthetus.TextEditor.RazorLib.CompilerServices;
+// using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 // Use either Wasm or ServerSide depending on how your app is being hosted.
 // var luthetusHostingKind = LuthetusHostingKind.ServerSide;
@@ -44,9 +47,12 @@ var hostingInformation = new LuthetusHostingInformation(
 
 services.AddLuthetusTextEditor(hostingInformation);
 
-services.AddFluxor(options => options.ScanAssemblies(
-    typeof(LuthetusCommonConfig).Assembly,
-    typeof(LuthetusTextEditorConfig).Assembly));
+// This is supposed to be used to reposition a dropdown if it goes off screen. I am very delirious at the moment, I'm kind of confused maybe this works?
+ContextFacts.RootHtmlElementId = ContextFacts.TextEditorContext.ContextElementId;
+
+return services
+    .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
+    .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>();
 ```
 
 - Reference the `CSS`
@@ -70,8 +76,6 @@ Go to the file that you reference JavaScript files from and add the following Ja
 - In `App.razor` add the following towards the top of the file:
 
 ```html
-<Fluxor.Blazor.Web.StoreInitializer />
-
 <!--
     The Luthetus components here, can be moved wherever.
     Preferably, these are in one's LayoutComponentBase.
@@ -81,15 +85,11 @@ Go to the file that you reference JavaScript files from and add the following Ja
 <Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />
 ```
 
-> *NOTE:* Luthetus repositories use the state management library named `Fluxor` ([github link](https://github.com/mrpmorris/Fluxor)).
-
 - My Entire App.razor file as of this step:
 
 ```html
 <!-- App.razor -->
-
-<Fluxor.Blazor.Web.StoreInitializer />
-
+ 
 <!--
     The Luthetus components here, can be more wherever.
     Preferably, these are in one's LayoutComponentBase.

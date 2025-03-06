@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 

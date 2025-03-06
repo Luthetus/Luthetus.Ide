@@ -1,7 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
@@ -18,9 +17,9 @@ public sealed class CSharpResource : ICompilerServiceResource
     public ICompilerService CompilerService { get; }
 	public CSharpCompilationUnit? CompilationUnit { get; set; }
 	public IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = Array.Empty<SyntaxToken>();
-	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; internal set; } = Array.Empty<TextEditorTextSpan>();
+	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; set; } = Array.Empty<TextEditorTextSpan>();
 	
-	ICompilationUnit? ICompilerServiceResource.CompilationUnit => CompilationUnit;
+	ICompilationUnit? ICompilerServiceResource.CompilationUnit { get => CompilationUnit; set => _ = value; }
     
     public IReadOnlyList<SyntaxToken> GetTokens()
     {
