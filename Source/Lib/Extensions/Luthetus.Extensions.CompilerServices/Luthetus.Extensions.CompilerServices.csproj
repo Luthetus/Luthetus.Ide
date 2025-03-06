@@ -4,12 +4,19 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Product>Luthetus CompilerService</Product>
+    <Description>An optional, opinionated implementation for various ICompilerService features.</Description>
+    <PackageId>Luthetus.ExtendCompilerServices</PackageId>
+    <Version>4.3.0</Version>
+    <Authors>Hunter Freeman</Authors>
+    <Company />
+    <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>
   </PropertyGroup>
   
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\..\TextEditor\Luthetus.TextEditor.RazorLib.csproj" />
   </ItemGroup>

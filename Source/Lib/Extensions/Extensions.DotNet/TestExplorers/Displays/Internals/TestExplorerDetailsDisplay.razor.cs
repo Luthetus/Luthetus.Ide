@@ -121,7 +121,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 				nameof(TestExplorerDetailsDisplay),
 				editContext =>
 				{
-					/*var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
+					var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 					var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
 					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
@@ -133,20 +133,20 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 					primaryCursorModifier.LineIndex = 0;
 					primaryCursorModifier.SetColumnIndexAndPreferred(0);
 
-					var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(
+					var compilerServiceResource = modelModifier.CompilerService.GetResource(
 						ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 
 					if (compilerServiceResource is TerminalResource terminalResource)
 					{
-						terminalResource.ManualDecorationTextSpanList.Clear();
-						terminalResource.ManualDecorationTextSpanList.AddRange(newDecorationTextSpanList);
+						terminalResource.CompilationUnit.ManualDecorationTextSpanList.Clear();
+						terminalResource.CompilationUnit.ManualDecorationTextSpanList.AddRange(newDecorationTextSpanList);
 
 						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
 							editContext,
 							modelModifier);
 					}
 
-					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;*/
+					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 					return ValueTask.CompletedTask;
 				});
 		}
