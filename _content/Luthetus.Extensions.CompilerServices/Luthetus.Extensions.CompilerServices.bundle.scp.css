@@ -1,0 +1,18 @@
+/* _content/Luthetus.Extensions.CompilerServices/Displays/SymbolDisplay.razor.rz.scp.css */
+.luth_te_syntax-onclick:hover[b-eryovwnsis]::deep {
+	text-decoration: underline;
+	cursor: pointer;
+}
+/* _content/Luthetus.Extensions.CompilerServices/Displays/TextEditorCompilerServiceHeaderDisplay.razor.rz.scp.css */
+.luth_te_compiler-service-header[b-cs14g5tnpb] {
+    padding-left: var(--luth_te_text-editor-header-padding-left);
+    overflow-y: hidden !important;
+    overflow: auto;
+    white-space: nowrap;
+    display: flex;
+    justify-content: space-between;
+}
+
+.luth_te_compiler-service-header-select[b-cs14g5tnpb] {
+	width: 33.3%;
+}

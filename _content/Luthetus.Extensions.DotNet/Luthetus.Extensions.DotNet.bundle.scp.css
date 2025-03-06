@@ -11,20 +11,6 @@
 .luth_ide_compiler-explorer-tree-view-body[b-2gxpyos4a5] {
     height: calc(100% - 2rem);
 }
-/* _content/Luthetus.Extensions.DotNet/CompilerServices/Displays/Internals/SyntaxDisplay.razor.rz.scp.css */
-.luth_ide_syntax-body[b-to1gqa8gy0] {
-    margin: 7px;
-    padding: 7px;
-    border-left: 1px solid var(--luth_primary-border-color);
-}
-/* _content/Luthetus.Extensions.DotNet/CompilerServices/Displays/OBSOLETE_CompilerServiceEditorDisplay.razor.rz.scp.css */
-[b-bqjw7xz4sh] .luth_ide_syntax-node-property {
-    display: flex;
-}
-
-[b-bqjw7xz4sh] .luth_ide_syntax-node-property-name {
-    margin-right: 20px;
-}
 /* _content/Luthetus.Extensions.DotNet/CSharpProjects/Displays/CSharpProjectFormDisplay.razor.rz.scp.css */
 .luth_ide_graphical-project-template-inputs[b-a23d1y6che] {
     display: flex;
