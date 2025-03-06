@@ -199,12 +199,12 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
                 if (terminalCompilerService.GetResource(modelModifier.ResourceUri) is not TerminalResource terminalResource)
                     return ValueTask.CompletedTask;
 
-                /*terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
+                terminalResource.CompilationUnit.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
                     0,
                     modelModifier.GetPositionIndex(primaryCursorModifier),
                     (byte)TerminalDecorationKind.Comment,
                     TextEditorModelResourceUri,
-                    modelModifier.GetAllText()));*/
+                    modelModifier.GetAllText()));
 
                 editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
                     editContext,
