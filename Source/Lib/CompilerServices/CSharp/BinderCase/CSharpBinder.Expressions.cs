@@ -970,8 +970,6 @@ public partial class CSharpBinder
 		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
 		    parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.EqualsToken)
 		{
-			Console.WriteLine("aaa ParseObjectInitialization");
-		
 			var memberAccessToken = new SyntaxToken(
 				SyntaxKind.MemberAccessToken,
 				new TextEditorTextSpan(
@@ -2129,7 +2127,6 @@ public partial class CSharpBinder
 			//     | ````}
 			// constructor invocation + boundNode -> constructor invocation typeof(Bbb)
 		}
-		
 		*/
 	
 		var rememberOriginalExpressionPrimary = expressionPrimary;
