@@ -56,13 +56,19 @@ public class PersonRepository
 	
 	public Person CreatePerson_ObjectInitialization(string firstName, string lastName)
 	{
-		Person person = new Person()
+		var person = new Person()
 		{
 			FirstName = firstName,
 			LastName = lastName,
 		};
 		
 		person = new()
+		{
+			FirstName = firstName,
+			LastName = lastName,
+		};
+		
+		Person aaaPerson = new()
 		{
 			FirstName = firstName,
 			LastName = lastName,
