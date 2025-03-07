@@ -21,7 +21,89 @@ public static class UtilityApi
 
     public static bool IsKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
-        return syntaxKind.ToString().EndsWith("Keyword");
+        switch (text)
+		{
+			case SyntaxKind.AbstractTokenKeyword:
+			case SyntaxKind.AsTokenKeyword:
+			case SyntaxKind.BaseTokenKeyword:
+			case SyntaxKind.BoolTokenKeyword:
+			case SyntaxKind.BreakTokenKeyword:
+			case SyntaxKind.ByteTokenKeyword:
+			case SyntaxKind.CaseTokenKeyword:
+			case SyntaxKind.CatchTokenKeyword:
+			case SyntaxKind.CharTokenKeyword:
+			case SyntaxKind.CheckedTokenKeyword:
+			case SyntaxKind.ClassTokenKeyword:
+			case SyntaxKind.ConstTokenKeyword:
+			case SyntaxKind.ContinueTokenKeyword:
+			case SyntaxKind.DecimalTokenKeyword:
+			case SyntaxKind.DefaultTokenKeyword:
+			case SyntaxKind.DelegateTokenKeyword:
+			case SyntaxKind.DoTokenKeyword:
+			case SyntaxKind.DoubleTokenKeyword:
+			case SyntaxKind.ElseTokenKeyword:
+			case SyntaxKind.EnumTokenKeyword:
+			case SyntaxKind.EventTokenKeyword:
+			case SyntaxKind.ExplicitTokenKeyword:
+			case SyntaxKind.ExternTokenKeyword:
+			case SyntaxKind.FalseTokenKeyword:
+			case SyntaxKind.FinallyTokenKeyword:
+			case SyntaxKind.FixedTokenKeyword:
+			case SyntaxKind.FloatTokenKeyword:
+			case SyntaxKind.ForTokenKeyword:
+			case SyntaxKind.ForeachTokenKeyword:
+			case SyntaxKind.GotoTokenKeyword:
+			case SyntaxKind.IfTokenKeyword:
+			case SyntaxKind.ImplicitTokenKeyword:
+			case SyntaxKind.InTokenKeyword:
+			case SyntaxKind.IntTokenKeyword:
+			case SyntaxKind.InterfaceTokenKeyword:
+			case SyntaxKind.InternalTokenKeyword:
+			case SyntaxKind.IsTokenKeyword:
+			case SyntaxKind.LockTokenKeyword:
+			case SyntaxKind.LongTokenKeyword:
+			case SyntaxKind.NamespaceTokenKeyword:
+			case SyntaxKind.NewTokenKeyword:
+			case SyntaxKind.NullTokenKeyword:
+			case SyntaxKind.ObjectTokenKeyword:
+			case SyntaxKind.OperatorTokenKeyword:
+			case SyntaxKind.OutTokenKeyword:
+			case SyntaxKind.OverrideTokenKeyword:
+			case SyntaxKind.ParamsTokenKeyword:
+			case SyntaxKind.PrivateTokenKeyword:
+			case SyntaxKind.ProtectedTokenKeyword:
+			case SyntaxKind.PublicTokenKeyword:
+			case SyntaxKind.ReadonlyTokenKeyword:
+			case SyntaxKind.RefTokenKeyword:
+			case SyntaxKind.ReturnTokenKeyword:
+			case SyntaxKind.SbyteTokenKeyword:
+			case SyntaxKind.SealedTokenKeyword:
+			case SyntaxKind.ShortTokenKeyword:
+			case SyntaxKind.SizeofTokenKeyword:
+			case SyntaxKind.StackallocTokenKeyword:
+			case SyntaxKind.StaticTokenKeyword:
+			case SyntaxKind.StringTokenKeyword:
+			case SyntaxKind.StructTokenKeyword:
+			case SyntaxKind.SwitchTokenKeyword:
+			case SyntaxKind.ThisTokenKeyword:
+			case SyntaxKind.ThrowTokenKeyword:
+			case SyntaxKind.TrueTokenKeyword:
+			case SyntaxKind.TryTokenKeyword:
+			case SyntaxKind.TypeofTokenKeyword:
+			case SyntaxKind.UintTokenKeyword:
+			case SyntaxKind.UlongTokenKeyword:
+			case SyntaxKind.UncheckedTokenKeyword:
+			case SyntaxKind.UnsafeTokenKeyword:
+			case SyntaxKind.UshortTokenKeyword:
+			case SyntaxKind.UsingTokenKeyword:
+			case SyntaxKind.VirtualTokenKeyword:
+			case SyntaxKind.VoidTokenKeyword:
+			case SyntaxKind.VolatileTokenKeyword:
+			case SyntaxKind.WhileTokenKeyword:
+				return true;
+			default:
+				return false;
+		}
     }
 
     /// <summary>
