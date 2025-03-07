@@ -970,15 +970,22 @@ public partial class CSharpBinder
 		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
 		    parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.EqualsToken)
 		{
-			var tokenNameable = parserModel.TokenWalker.Consume();
-			var identifierToken = UtilityApi.ConvertToIdentifierToken(tokenNameable, compilationUnit, ref parserModel);
-			
-			var variableReferenceNode = ConstructAndBindVariableReferenceNode(
-				identifierToken,
-				compilationUnit,
-				ref parserModel);
-			
-			return variableReferenceNode;
+			Console.WriteLine("aaa ParseObjectInitialization");
+		
+			var memberAccessToken = new SyntaxToken(
+				SyntaxKind.MemberAccessToken,
+				new TextEditorTextSpan(
+					0,
+				    0,
+				    0,
+				    token.TextSpan.ResourceUri,
+				    string.Empty,
+				    string.Empty))
+				{
+					IsFabricated = true
+				};
+		
+			return ParseMemberAccessToken(constructorInvocationExpressionNode.ResultTypeClauseNode, ref memberAccessToken, compilationUnit, ref parserModel);
 		}
 	
 		return EmptyExpressionNode.Empty;
@@ -2075,7 +2082,8 @@ public partial class CSharpBinder
 		return lambdaExpressionNode;
 	}
 
-	public IExpressionNode ParseMemberAccessToken(IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public IExpressionNode ParseMemberAccessToken(
+		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		/*
 		(2025-01-26)
@@ -2127,10 +2135,11 @@ public partial class CSharpBinder
 		var rememberOriginalExpressionPrimary = expressionPrimary;
 		var rememberOriginalTokenIndex = parserModel.TokenWalker.Index;
 			
-		if (!UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
+		if (!token.IsFabricated && !UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
 
-		_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
+		if (!token.IsFabricated)
+			_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
 		
 		var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(
 			parserModel.TokenWalker.Consume(),
@@ -2138,6 +2147,9 @@ public partial class CSharpBinder
 			ref parserModel);
 			
 		if (!memberIdentifierToken.ConstructorWasInvoked || memberIdentifierToken.TextSpan.SourceText is null)
+			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
+		
+		if (expressionPrimary is null)
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
 		
 		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
@@ -2284,7 +2296,7 @@ public partial class CSharpBinder
 			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
 		}
 		
-		if (parserModel.TokenWalker.Index == 2 + rememberOriginalTokenIndex)
+		if (!token.IsFabricated && parserModel.TokenWalker.Index == 2 + rememberOriginalTokenIndex)
 		{
 			// If the new code consumed, undo that.
 			_ = parserModel.TokenWalker.Backtrack();
