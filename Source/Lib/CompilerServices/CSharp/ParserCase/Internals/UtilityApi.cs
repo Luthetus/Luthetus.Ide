@@ -11,17 +11,60 @@ public static class UtilityApi
 {
     public static bool IsContextualKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
-        return IsContextualKeywordSyntaxKind(syntaxKind.ToString());
-    }
-    
-    public static bool IsContextualKeywordSyntaxKind(string syntaxKindString)
-    {
-        return syntaxKindString.EndsWith("ContextualKeyword");
+        switch (syntaxKind)
+		{
+			case SyntaxKind.AddTokenContextualKeyword:
+			case SyntaxKind.AndTokenContextualKeyword:
+			case SyntaxKind.AliasTokenContextualKeyword:
+			case SyntaxKind.AscendingTokenContextualKeyword:
+			case SyntaxKind.ArgsTokenContextualKeyword:
+			case SyntaxKind.AsyncTokenContextualKeyword:
+			case SyntaxKind.AwaitTokenContextualKeyword:
+			case SyntaxKind.ByTokenContextualKeyword:
+			case SyntaxKind.DescendingTokenContextualKeyword:
+			case SyntaxKind.DynamicTokenContextualKeyword:
+			case SyntaxKind.EqualsTokenContextualKeyword:
+			case SyntaxKind.FileTokenContextualKeyword:
+			case SyntaxKind.FromTokenContextualKeyword:
+			case SyntaxKind.GetTokenContextualKeyword:
+			case SyntaxKind.GlobalTokenContextualKeyword:
+			case SyntaxKind.GroupTokenContextualKeyword:
+			case SyntaxKind.InitTokenContextualKeyword:
+			case SyntaxKind.IntoTokenContextualKeyword:
+			case SyntaxKind.JoinTokenContextualKeyword:
+			case SyntaxKind.LetTokenContextualKeyword:
+			case SyntaxKind.ManagedTokenContextualKeyword:
+			case SyntaxKind.NameofTokenContextualKeyword:
+			case SyntaxKind.NintTokenContextualKeyword:
+			case SyntaxKind.NotTokenContextualKeyword:
+			case SyntaxKind.NotnullTokenContextualKeyword:
+			case SyntaxKind.NuintTokenContextualKeyword:
+			case SyntaxKind.OnTokenContextualKeyword:
+			case SyntaxKind.OrTokenContextualKeyword:
+			case SyntaxKind.OrderbyTokenContextualKeyword:
+			case SyntaxKind.PartialTokenContextualKeyword:
+			case SyntaxKind.RecordTokenContextualKeyword:
+			case SyntaxKind.RemoveTokenContextualKeyword:
+			case SyntaxKind.RequiredTokenContextualKeyword:
+			case SyntaxKind.ScopedTokenContextualKeyword:
+			case SyntaxKind.SelectTokenContextualKeyword:
+			case SyntaxKind.SetTokenContextualKeyword:
+			case SyntaxKind.UnmanagedTokenContextualKeyword:
+			case SyntaxKind.ValueTokenContextualKeyword:
+			case SyntaxKind.VarTokenContextualKeyword:
+			case SyntaxKind.WhenTokenContextualKeyword:
+			case SyntaxKind.WhereTokenContextualKeyword:
+			case SyntaxKind.WithTokenContextualKeyword:
+			case SyntaxKind.YieldTokenContextualKeyword:
+				return true;
+			default:
+				return false;
+		}
     }
 
     public static bool IsKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
-        switch (text)
+        switch (syntaxKind)
 		{
 			case SyntaxKind.AbstractTokenKeyword:
 			case SyntaxKind.AsTokenKeyword:
