@@ -963,9 +963,12 @@ public partial class CSharpBinder
 	/// </summary>
 	public IExpressionNode ParseObjectInitialization(
 		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{
+	{	
 		// Consume either 'OpenBraceToken', or 'CommaToken'
 		_ = parserModel.TokenWalker.Consume();
+		
+		if (constructorInvocationExpressionNode.ResultTypeClauseNode is null)
+			constructorInvocationExpressionNode.SetTypeClauseNode(parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode);
 		
 		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
 		    parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.EqualsToken)
