@@ -892,8 +892,6 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.SetCloseAngleBracketToken(token);
 				return constructorInvocationExpressionNode;
 			case SyntaxKind.OpenBraceToken:
-				// SkipObjectInitialization(compilationUnit, ref parserModel);
-				
 				var objectInitializationParametersListingNode = new ObjectInitializationParametersListingNode(
 					token,
 			        new List<ObjectInitializationParameterEntryNode>(),
@@ -903,9 +901,8 @@ public partial class CSharpBinder
 				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.ObjectInitializationParameters;
 				parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, constructorInvocationExpressionNode));
-				parserModel.ExpressionList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
-				return EmptyExpressionNode.Empty;
+				return ParseObjectInitialization(constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.CloseBraceToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				
@@ -918,29 +915,9 @@ public partial class CSharpBinder
 				{
 					goto default;
 				}
-			case SyntaxKind.EqualsToken:
-				parserModel.ExpressionList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
-				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
-				
-				if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
-					constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
-				{
-					if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
-					{
-						var lastParameter = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
-						
-						if (!lastParameter.EqualsToken.ConstructorWasInvoked)
-						{
-							lastParameter.EqualsToken = token;
-							return EmptyExpressionNode.Empty;
-						}
-					}
-				}
-				
-				goto default;
 			case SyntaxKind.CommaToken:
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
-				return EmptyExpressionNode.Empty;
+				return ParseObjectInitialization(constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, token);
 		}
@@ -975,113 +952,36 @@ public partial class CSharpBinder
 			case ConstructorInvocationStageKind.ObjectInitializationParameters:
 				if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is null)
 					goto default;
-				
-				var needNewNode = true;
-				ObjectInitializationParameterEntryNode? objectInitializationParameterEntryNode = null;
-				
-				if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
-				{
-					objectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
-					
-					if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked ||
-						(objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode))
-					{
-						needNewNode = false;
-					}
-				}
-				
-				if (needNewNode)
-				{
-					objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
-				        propertyIdentifierToken: default,
-				        equalsToken: default,
-				        expressionNode: EmptyExpressionNode.Empty);
-				    
-				    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
-				}
-				
-				var success = true;
-				
-				// I'm tired and feel like I'm about to pass out.
-				// This feels like hacky nonsense.
-				// It allows for ObjectInitialization and CollectionInitialization
-				// to use the same node but why not just use separate nodes?
-				var currentTokenIsComma = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken;
-				var currentTokenIsBrace = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken;
-	
-				if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked &&
-					(!currentTokenIsComma && !currentTokenIsBrace))
-				{
-					if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-					{
-						objectInitializationParameterEntryNode.PropertyIdentifierToken = ((VariableReferenceNode)expressionSecondary).VariableIdentifierToken;
-					}
-					else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-					{
-						var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
-						if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
-						{
-							objectInitializationParameterEntryNode.PropertyIdentifierToken = ambiguousIdentifierExpressionNode.Token;
-						}
-						else
-						{
-							success = false;
-						}
-					}
-					else if (expressionSecondary.SyntaxKind == SyntaxKind.TypeClauseNode)
-					{
-						var typeClauseNode = (TypeClauseNode)expressionSecondary;
-						objectInitializationParameterEntryNode.PropertyIdentifierToken = typeClauseNode.TypeIdentifierToken;
-					}
-					else
-					{
-						success = false;
-					}
-				}
-				else if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked &&
-						 (!currentTokenIsComma && !currentTokenIsBrace))
-				{
-					success = false;
-				}
-				else if (objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
-				{
-					if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-					{
-						expressionSecondary = ForceDecisionAmbiguousIdentifier(
-							constructorInvocationExpressionNode,
-							(AmbiguousIdentifierExpressionNode)expressionSecondary,
-							compilationUnit,
-							ref parserModel);
-					}
-				
-					objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
-					
-					if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked && (currentTokenIsComma || currentTokenIsBrace))
-					{
-						var nextObjectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
-					        propertyIdentifierToken: default,
-					        equalsToken: default,
-					        expressionNode: EmptyExpressionNode.Empty);
-					    
-					    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(nextObjectInitializationParameterEntryNode);
-					}
-				}
-				else
-				{
-					success = false;
-				}
-				
-				if (success)
-				{
-					return constructorInvocationExpressionNode;
-				}
-				else
-				{
-					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
-				}
+				return constructorInvocationExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 		}
+	}
+	
+	/// <summary>
+	/// CurrentToken is to either be 'OpenBraceToken', or 'CommaToken' when invoking this method.
+	/// </summary>
+	public IExpressionNode ParseObjectInitialization(
+		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		// Consume either 'OpenBraceToken', or 'CommaToken'
+		_ = parserModel.TokenWalker.Consume();
+		
+		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
+		    parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.EqualsToken)
+		{
+			var tokenNameable = parserModel.TokenWalker.Consume();
+			var identifierToken = UtilityApi.ConvertToIdentifierToken(tokenNameable, compilationUnit, ref parserModel);
+			
+			var variableReferenceNode = ConstructAndBindVariableReferenceNode(
+				identifierToken,
+				compilationUnit,
+				ref parserModel);
+			
+			return variableReferenceNode;
+		}
+	
+		return EmptyExpressionNode.Empty;
 	}
 	
 	public IExpressionNode EmptyMergeToken(
@@ -2174,58 +2074,6 @@ public partial class CSharpBinder
 			
 		return lambdaExpressionNode;
 	}
-
-	/// <summary>
-	/// Turn off object initialization for a moment and see if any of the infinite loop exceptions get fixed.
-	///
-	/// Count of infinite loop heuristic exceptions.
-	/// =============
-	/// No Skip:   14
-	/// With Skip: 11
-	///
-	/// Conclusion
-	/// ==========
-	/// It is believed that the object initializations that contained lambda expressions with statement body
-	/// were no longer parsed and therefore did not cause an exception anymore.
-	///
-	/// The 'out' is suspicious.
-	/// </summary>
-	/*public void SkipObjectInitialization(CSharpCompilationUnit compilationUnit, ref CSharpParserComputation parserModel)
-	{
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-		#endif
-		
-		var openTokenIndex = parserModel.TokenWalker.Index;
-		var openBraceToken = parserModel.TokenWalker.Consume();
-    	
-    	var openBraceCounter = 1;
-		
-		while (true)
-		{
-			if (parserModel.TokenWalker.IsEof)
-				break;
-
-			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-			{
-				++openBraceCounter;
-			}
-			else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
-			{
-				if (--openBraceCounter <= 0)
-					break;
-			}
-
-			_ = parserModel.TokenWalker.Consume();
-		}
-		
-		var closeTokenIndex = parserModel.TokenWalker.Index;
-		var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
-		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
-	}*/
 
 	public IExpressionNode ParseMemberAccessToken(IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
