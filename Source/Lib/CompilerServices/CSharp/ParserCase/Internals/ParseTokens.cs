@@ -150,6 +150,8 @@ public static class ParseTokens
 			
 			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
 			{
+				parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = variableDeclarationNode.TypeClauseNode;
+			
 				parserModel.TokenWalker.Backtrack();
 				var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 				
