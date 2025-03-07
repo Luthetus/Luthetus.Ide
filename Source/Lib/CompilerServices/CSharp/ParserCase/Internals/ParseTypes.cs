@@ -164,6 +164,7 @@ public static class ParseTypes
 	    		parserModel.Binder.CreateVariableSymbol(argument.VariableDeclarationNode.IdentifierToken, argument.VariableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
 	    		argument.VariableDeclarationNode.VariableKind = VariableKind.Property;
 	    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);
+	    		parserModel.CurrentCodeBlockBuilder.ChildList.Add(argument.VariableDeclarationNode);
 	    	}
     	}
     }
