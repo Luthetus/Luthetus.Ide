@@ -161,7 +161,9 @@ public static class ParseTypes
     	{
     		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 	    	{
-	    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserModel);
+	    		parserModel.Binder.CreateVariableSymbol(argument.VariableDeclarationNode.IdentifierToken, argument.VariableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+	    		argument.VariableDeclarationNode.VariableKind = VariableKind.Property;
+	    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);
 	    	}
     	}
     }

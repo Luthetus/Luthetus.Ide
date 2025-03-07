@@ -147,9 +147,12 @@ public partial class CSharpBinder
     public void BindVariableDeclarationNode(
         VariableDeclarationNode variableDeclarationNode,
         CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
+        ref CSharpParserModel parserModel,
+        bool shouldCreateVariableSymbol = true)
     {
-        CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+    	if (shouldCreateVariableSymbol)
+        	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+        	
         var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
         
         if (TryGetVariableDeclarationNodeByScope(
