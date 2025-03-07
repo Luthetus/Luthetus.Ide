@@ -5,6 +5,7 @@ using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
@@ -91,6 +92,7 @@ public struct CSharpParserModel
     public int CurrentScopeIndexKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
+    public TypeClauseNode MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeClause();
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();

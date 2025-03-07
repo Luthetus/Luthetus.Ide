@@ -150,6 +150,8 @@ public static class ParseTokens
 			
 			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
 			{
+				parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = variableDeclarationNode.TypeClauseNode;
+			
 				parserModel.TokenWalker.Backtrack();
 				var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 				
@@ -422,11 +424,31 @@ public static class ParseTokens
 
     public static void ParseEqualsToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (parserModel.StatementBuilder.ChildList.Count == 1 &&
-    		(parserModel.StatementBuilder.ChildList[0].SyntaxKind == SyntaxKind.VariableReferenceNode ||
-    		 	parserModel.StatementBuilder.ChildList[0].SyntaxKind == SyntaxKind.TypeClauseNode))
+    	if (parserModel.StatementBuilder.ChildList.Count == 1)
     	{
-    		_ = parserModel.TokenWalker.Backtrack();
+    		var previousNode = parserModel.StatementBuilder.ChildList[0];
+    		var shouldBacktrack = false;
+    		
+    		if (previousNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+    		{
+    			shouldBacktrack = true;
+    			// TODO: VariableReferenceNode contains a property which is 'VariableDeclarationNode' this seems odd for the reference to have the declaration...
+    			//       ...as a member.
+    			// TODO: Yeah this is throwing null reference exceptions because of that 'VariableDeclarationNode'.
+    			parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = ((VariableReferenceNode)previousNode).ResultTypeClauseNode;
+    		}
+    		else if (previousNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+    		{
+    			shouldBacktrack = true;
+    			parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = (TypeClauseNode)previousNode;
+    		}
+    		else
+    		{
+    			parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = CSharpFacts.Types.Void.ToTypeClause();
+    		}
+    		
+    		if (shouldBacktrack)
+    			_ = parserModel.TokenWalker.Backtrack();
     	}
     	
     	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
