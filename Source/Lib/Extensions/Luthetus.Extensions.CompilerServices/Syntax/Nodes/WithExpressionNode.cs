@@ -4,24 +4,16 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class WithExpressionNode : IExpressionNode
 {
-	public WithExpressionNode(
-		SyntaxToken variableIdentifierToken,
-		SyntaxToken openBraceToken,
-		SyntaxToken closeBraceToken,
-		TypeClauseNode resultTypeClauseNode)
+	public WithExpressionNode(VariableReferenceNode variableReferenceNode)
 	{
-		IdentifierToken = variableIdentifierToken;
-		OpenBraceToken = openBraceToken;
-		CloseBraceToken = closeBraceToken;
-		ResultTypeClauseNode = resultTypeClauseNode;
+		VariableReferenceNode = variableReferenceNode;
+		ResultTypeClauseNode = variableReferenceNode.ResultTypeClauseNode;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-	public SyntaxToken IdentifierToken { get; }
-	public SyntaxToken OpenBraceToken { get; }
-	public SyntaxToken CloseBraceToken { get; }
+	public VariableReferenceNode VariableReferenceNode { get; }
 	public TypeClauseNode ResultTypeClauseNode { get; }
 
 	public bool IsFabricated { get; init; }
@@ -34,9 +26,7 @@ public sealed class WithExpressionNode : IExpressionNode
 
 		_childList = new ISyntax[]
 		{
-			IdentifierToken,
-			OpenBraceToken,
-			CloseBraceToken,
+			VariableReferenceNode,
 			ResultTypeClauseNode,
 		};
 
