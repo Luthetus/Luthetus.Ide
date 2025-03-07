@@ -274,21 +274,21 @@ public partial class CSharpBinder
             // ...and set IsInitialized to true by overwriting the VariableDeclarationMap.
             variableDeclarationNode.IsInitialized = true;
         }
-        else
+        /*else
         {
-            if (UtilityApi.IsContextualKeywordSyntaxKind(text))
+            if (UtilityApi.IsContextualKeywordSyntaxKind())
             {
                 /*compilationUnit.__DiagnosticList.TheNameDoesNotExistInTheCurrentContext(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                    text);*/
+                    text);*//*
             }
             else
             {
                 /*compilationUnit.__DiagnosticList.ReportUndefinedVariable(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                    text);*/
+                    text);*//*
             }
-        }
+        }*/
 
         CreateVariableSymbol(variableAssignmentExpressionNode.VariableIdentifierToken, variableKind, compilationUnit, ref parserModel);
     }
