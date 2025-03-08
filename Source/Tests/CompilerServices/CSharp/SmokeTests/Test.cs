@@ -14,6 +14,7 @@ public class Test
 	{
 		SourceText = sourceText;
 		ResourceUri = new ResourceUri("./unitTesting.txt");
+		CompilationUnit = new(ResourceUri);
 		var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
         CSharpParser.Parse(CompilationUnit, Binder, ref lexerOutput);
 	}

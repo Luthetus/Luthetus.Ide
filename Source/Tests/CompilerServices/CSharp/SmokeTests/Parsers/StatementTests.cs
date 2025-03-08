@@ -1251,6 +1251,24 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
     }
     
     [Fact]
+    public void ElvisOperator()
+    {
+    	var test = new Test(@"return viewModelModifier?.ViewModel;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void NullForgivingOperator()
+    {
+    	var test = new Test(@"return viewModelModifier!.ViewModel;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
     public void Asdfg()
     {
 		var aaa =

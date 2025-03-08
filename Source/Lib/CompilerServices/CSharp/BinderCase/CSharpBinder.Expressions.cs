@@ -497,6 +497,14 @@ public partial class CSharpBinder
 					
 				goto default;
 			}
+			case SyntaxKind.BangToken:
+			case SyntaxKind.QuestionMarkToken:
+			{
+				if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+					return ambiguousIdentifierExpressionNode;
+				
+				goto default;
+			}
 			case SyntaxKind.IdentifierToken:
 			{
 				var decidedExpression = ForceDecisionAmbiguousIdentifier(
