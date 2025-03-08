@@ -1,38 +1,21 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
+
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
 public partial class ExpressionTests
 {
-	public class Test
-	{
-		public Test(string sourceText)
-		{
-			SourceText = sourceText;
-			ResourceUri = new ResourceUri("./unitTesting.txt");
-			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
-			var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
-			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
-	        CSharpParser.Parse(CompilationUnit, ref lexerOutput);
-		}
-		
-		public string SourceText { get; set; }
-		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexerOutput LexerOutput { get; set; }
-		public IBinder Binder => CompilationUnit.Binder;
-		public CSharpCompilationUnit CompilationUnit { get; set; }
-	}
-
     [Fact]
     public void Numeric_Add_BinaryExpressionNode()
     {
@@ -400,7 +383,7 @@ public partial class ExpressionTests
     	var test = new Test("(MyClass)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock);
+		test.WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
     
@@ -1331,7 +1314,7 @@ public partial class ExpressionTests
     	var test = new Test("(x => \"Abc\")");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndented(topCodeBlock);
+		test.WriteChildrenIndented(topCodeBlock);
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList()[1];
 		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
@@ -1642,7 +1625,7 @@ public partial class ExpressionTests
 		
 		var whileStatementNode = (WhileStatementNode)topCodeBlock.GetChildList().Single();
 		
-		((IBinder)test.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
+		test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.Equal(2, binderSession.ScopeList.Count);
     
     	throw new NotImplementedException("See ExpressionAsStatementTests");
@@ -1667,7 +1650,7 @@ void Aaa()
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		((IBinder)test.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
+		test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
 		foreach (var child in topCodeBlock.GetChildList())
@@ -1887,7 +1870,7 @@ public void SetProgress(double? decimalPercentProgress, string? message = null, 
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndented(topCodeBlock);
+		test.WriteChildrenIndented(topCodeBlock);
 		
 		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 		var functionArgumentEntryNodeList = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList;
@@ -1952,18 +1935,18 @@ public class ProgressBarModel
     	var test = new Test(@"var x = (decimalPercentProgress, null, cancellationToken);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndented(topCodeBlock);
+		test.WriteChildrenIndented(topCodeBlock);
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 		
 		var commaSeparatedExpressionNode = (CommaSeparatedExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
 		
-		WriteChildrenIndented(commaSeparatedExpressionNode);
+		test.WriteChildrenIndented(commaSeparatedExpressionNode);
 		
 		var badExpressionNode = (BadExpressionNode)commaSeparatedExpressionNode.GetChildList()[0];
 		
-		WriteChildrenIndented(badExpressionNode);
+		test.WriteChildrenIndented(badExpressionNode);
 		
 		/*var variableReferenceNode = (VariableReferenceNode)commaSeparatedExpressionNode.InnerExpressionList[0];
 		var nullKeywordToken = (KeywordToken)commaSeparatedExpressionNode.InnerExpressionList[1];
@@ -1994,10 +1977,10 @@ int decimalPercentProgress;
 Func(decimalPercentProgress);
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList()[0];
-		// WriteChildrenIndented(functionInvocationNode, nameof(functionInvocationNode));
+		// test.WriteChildrenIndented(functionInvocationNode, nameof(functionInvocationNode));
 		
 		Assert.Equal(SyntaxKind.IdentifierToken, functionInvocationNode.GetChildList()[0].SyntaxKind);
 		
@@ -2021,7 +2004,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"Person");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		Console.WriteLine($"topCodeBlock: {topCodeBlock.GetChildList().Count}");
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
@@ -2034,7 +2017,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"int");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     
@@ -2046,7 +2029,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"var");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     
@@ -2058,7 +2041,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"List<int>");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     
@@ -2070,7 +2053,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"int?");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     
@@ -2082,7 +2065,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"Person?");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     
@@ -2094,7 +2077,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"List<int>?");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     
@@ -2106,7 +2089,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"someVariable = 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		//WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		//test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
     
@@ -2118,48 +2101,10 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"_ = await SomeMethodAsync();");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		//WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		//test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
     
     	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
-    {
-    	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
-		foreach (var child in node.GetChildList())
-		{
-			Console.WriteLine("\t" + child.SyntaxKind);
-		}
-		Console.WriteLine();
-    }
-    
-    private void WriteChildrenIndentedRecursive(ISyntaxNode node, string name = "node", int indentation = 0)
-    {
-    	var indentationStringBuilder = new StringBuilder();
-    	for (int i = 0; i < indentation; i++)
-    		indentationStringBuilder.Append('\t');
-    	
-    	Console.WriteLine($"{indentationStringBuilder.ToString()}{node.SyntaxKind}");
-    	
-    	// For the child tokens
-    	indentationStringBuilder.Append('\t');
-    	var childIndentation = indentationStringBuilder.ToString();
-    	
-		foreach (var child in node.GetChildList())
-		{
-			if (child is ISyntaxNode syntaxNode)
-			{
-				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
-			}
-			else if (child is SyntaxToken syntaxToken)
-			{
-				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
-			}
-		}
-		
-		if (indentation == 0)
-			Console.WriteLine();
     }
 }
