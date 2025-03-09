@@ -1303,6 +1303,18 @@ return new List<Person>
     }
     
     [Fact]
+    public void ImplicitSubNamespaces()
+    {
+    	var test = new Test(
+@"
+namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
     public void Asdfg()
     {
 		var aaa =
