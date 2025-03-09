@@ -1269,6 +1269,40 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
     }
     
     [Fact]
+    public void Weird()
+    {
+    	var test = new Test(
+@"
+TextEditorService.TextEditorWorker.PostUnique(
+	nameof(InsertAutocompleteMenuOption),
+	editContext =>
+	{
+		var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+	    var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+	});
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void CollectionInitialization()
+    {
+    	var test = new Test(
+@"
+return new List<Person>
+{
+	person,
+	person,
+};
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
     public void Asdfg()
     {
 		var aaa =

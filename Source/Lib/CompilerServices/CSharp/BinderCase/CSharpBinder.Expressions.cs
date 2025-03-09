@@ -166,6 +166,15 @@ public partial class CSharpBinder
 			return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 		}
 		
+		// TODO: This isn't great. The ConstructorInvocationExpressionNode after reading 'new'...
+		// if then has to read the TypeClauseNode, it actually does this inside of the 'ConstructorInvocationExpressionNode'.
+		// It is sort of duplicated logic, and this case for the 'TypeClauseNode' needs repeating too.
+		if (expressionPrimary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode &&
+			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
+		{
+			return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+		}
+		
 		/*if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode &&
 			token.SyntaxKind == SyntaxKind.EqualsToken)
 		{
@@ -810,11 +819,13 @@ public partial class CSharpBinder
 	{
 		switch (token.SyntaxKind)
 		{
+			// TODO: This is wrong, it doesn't account for contextual keywords.
 			case SyntaxKind.IdentifierToken:
 				if (constructorInvocationExpressionNode.ResultTypeClauseNode is null)
 				{
 					if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
 					{
+						_ = parserModel.TokenWalker.Consume(); // Consume the IdentifierToken
 						var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(token, compilationUnit, ref parserModel);
 						
 						BindTypeClauseNode(
@@ -822,7 +833,13 @@ public partial class CSharpBinder
 					        compilationUnit,
 					        ref parserModel);
 						
-						return constructorInvocationExpressionNode.SetTypeClauseNode(typeClauseNode);
+						constructorInvocationExpressionNode.SetTypeClauseNode(typeClauseNode);
+						
+						if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
+							return constructorInvocationExpressionNode;
+						
+						var openAngleBracketToken = parserModel.TokenWalker.Consume();
+						return ConstructorInvocationMergeToken(constructorInvocationExpressionNode, ref openAngleBracketToken, compilationUnit, ref parserModel);
 					}
 				}
 				
@@ -901,8 +918,7 @@ public partial class CSharpBinder
 	public IExpressionNode ConstructorInvocationMergeExpression(
 		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (constructorInvocationExpressionNode.ConstructorInvocationStageKind != ConstructorInvocationStageKind.ObjectInitializationParameters &&
-			expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			expressionSecondary = ForceDecisionAmbiguousIdentifier(
 				constructorInvocationExpressionNode,
