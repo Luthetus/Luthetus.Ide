@@ -432,8 +432,9 @@ public partial class CSharpBinder
         }
     }
 
-    public void BindUsingStatementNode(
-        UsingStatementNode usingStatementNode,
+    public void BindUsingStatementTuple(
+        SyntaxToken usingKeywordToken,
+        SyntaxToken namespaceIdentifierToken,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -441,11 +442,11 @@ public partial class CSharpBinder
         	new Symbol(
         		SyntaxKind.NamespaceSymbol,
         		parserModel.GetNextSymbolId(),
-        		usingStatementNode.NamespaceIdentifier.TextSpan));
+        		namespaceIdentifierToken.TextSpan));
+        		
+        parserModel.UsingStatementListingNode.AddUsingStatementTuple((usingKeywordToken, namespaceIdentifierToken));
 
-		// Nothing even uses the 'CurrentUsingStatementNodeList'??? (2025-03-2025)
-        // parserModel.CurrentUsingStatementNodeList.Add(usingStatementNode);
-        AddNamespaceToCurrentScope(usingStatementNode.NamespaceIdentifier.TextSpan.GetText(), compilationUnit, ref parserModel);
+        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(), compilationUnit, ref parserModel);
     }
 
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>

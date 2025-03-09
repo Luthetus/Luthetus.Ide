@@ -16,7 +16,7 @@ public static class ParseOthers
 	///
 	/// 'isNamespaceStatement' refers to 'namespace Luthetus.CompilerServices;'
 	/// </summary>
-	public static ISyntax HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool isNamespaceStatement)
+	public static SyntaxToken HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool isNamespaceStatement)
     {
         TextEditorTextSpan textSpan = default;
         int count = 0;
@@ -68,7 +68,7 @@ public static class ParseOthers
         }
 
         if (count == 0)
-            return new EmptyNode();
+            return default;
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }
