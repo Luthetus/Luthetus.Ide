@@ -29,8 +29,8 @@ public class StatementTests
     	var test = new Test(@"using Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;");
 		
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		var usingStatementNode = (UsingStatementNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.UsingStatementNode, usingStatementNode.SyntaxKind);
+		var usingStatementListingNode = (UsingStatementListingNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.UsingStatementListingNode, usingStatementListingNode.SyntaxKind);
     }
     
     [Fact]
