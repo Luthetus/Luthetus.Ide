@@ -33,7 +33,6 @@ public struct CSharpParserModel
     	Binder = binder;
 	    CurrentScopeIndexKey = globalScopeIndexKey;
 	    CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
-	    // CurrentUsingStatementNodeList = new();
     
     	TokenWalker = tokenWalker;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
@@ -91,8 +90,9 @@ public struct CSharpParserModel
 
     public int CurrentScopeIndexKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
-    // public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     public TypeClauseNode MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeClause();
+    
+    public UsingStatementListingNode? UsingStatementListingNode { get; set; }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();

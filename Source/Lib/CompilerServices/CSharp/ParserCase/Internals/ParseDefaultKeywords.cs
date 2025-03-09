@@ -689,24 +689,23 @@ public class ParseDefaultKeywords
 
     public static void HandleUsingTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	if (parserModel.UsingStatementListingNode is null)
+    	{
+    		parserModel.UsingStatementListingNode ??= new();
+    		parserModel.StatementBuilder.ChildList.Add(parserModel.UsingStatementListingNode);
+    	}
+    	
     	var usingKeywordToken = parserModel.TokenWalker.Consume();
     	
-    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel, isNamespaceStatement: false);
+    	var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel, isNamespaceStatement: false);
 
-        if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
+        if (!namespaceIdentifierToken.ConstructorWasInvoked)
         {
             // compilationUnit.DiagnosticBag.ReportTodoException(usingKeywordToken.TextSpan, "Expected a namespace identifier.");
             return;
         }
         
-        var namespaceIdentifier = handleNamespaceIdentifierResult;
-
-        var usingStatementNode = new UsingStatementNode(
-            usingKeywordToken,
-            (SyntaxToken)namespaceIdentifier);
-
-        parserModel.Binder.BindUsingStatementNode(usingStatementNode, compilationUnit, ref parserModel);
-        parserModel.StatementBuilder.ChildList.Add(usingStatementNode);
+        parserModel.Binder.BindUsingStatementTuple(usingKeywordToken, namespaceIdentifierToken, compilationUnit, ref parserModel);
     }
 
     public static void HandleInterfaceTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -906,15 +905,13 @@ public class ParseDefaultKeywords
     {
     	var namespaceKeywordToken = parserModel.TokenWalker.Consume();
     	
-    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel, isNamespaceStatement: true);
+    	var namespaceIdentifier = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel, isNamespaceStatement: true);
 
-        if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
+        if (!namespaceIdentifier.ConstructorWasInvoked)
         {
             // compilationUnit.DiagnosticBag.ReportTodoException(namespaceKeywordToken.TextSpan, "Expected a namespace identifier.");
             return;
         }
-        
-        var namespaceIdentifier = handleNamespaceIdentifierResult;
 
         var namespaceStatementNode = new NamespaceStatementNode(
             namespaceKeywordToken,
