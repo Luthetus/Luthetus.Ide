@@ -1,32 +1,16 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.Extensions.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Lexers;
 
 public class LexerTests
 {
-	public class Test
-	{
-		public Test(string sourceText)
-		{
-			SourceText = sourceText;
-			ResourceUri = new ResourceUri("./unitTesting.txt");
-			var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
-	        CSharpParser.Parse(CompilationUnit, ref lexerOutput);
-		}
-		
-		public string SourceText { get; set; }
-		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexerOutput LexerOutput { get; set; }
-		public IBinder Binder => CompilationUnit.Binder;
-		public CSharpCompilationUnit CompilationUnit { get; set; }
-	}
-	
 	/// <summary>
 	/// Goal: Track the OpenBraceToken and CloseBraceToken pairs that occur in the text. (2024-12-03)
 	///
@@ -675,43 +659,5 @@ TODO
 
         // Tokens: 'public' 'class' 'MyClass' '{' '}' 'EndOfFileToken'
         Assert.Equal(6, lexerOutput.SyntaxTokenList.Count);
-    }
-    
-    private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
-    {
-    	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
-		foreach (var child in node.GetChildList())
-		{
-			Console.WriteLine("\t" + child.SyntaxKind);
-		}
-		Console.WriteLine();
-    }
-    
-    private void WriteChildrenIndentedRecursive(ISyntaxNode node, string name = "node", int indentation = 0)
-    {
-    	var indentationStringBuilder = new StringBuilder();
-    	for (int i = 0; i < indentation; i++)
-    		indentationStringBuilder.Append('\t');
-    	
-    	Console.WriteLine($"{indentationStringBuilder.ToString()}{node.SyntaxKind}");
-    	
-    	// For the child tokens
-    	indentationStringBuilder.Append('\t');
-    	var childIndentation = indentationStringBuilder.ToString();
-    	
-		foreach (var child in node.GetChildList())
-		{
-			if (child is ISyntaxNode syntaxNode)
-			{
-				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
-			}
-			else if (child is SyntaxToken syntaxToken)
-			{
-				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
-			}
-		}
-		
-		if (indentation == 0)
-			Console.WriteLine();
     }
 }

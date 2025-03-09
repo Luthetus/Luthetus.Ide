@@ -87,8 +87,11 @@ public static class ParseTokens
 	        
 	        	var isQuestionMarkMemberAccessToken = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.QuestionMarkToken &&
 	        		parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken;
+	        	
+	        	var isBangMemberAccessToken = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.BangToken &&
+	        		parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken;
 	        
-	        	if ((parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken || isQuestionMarkMemberAccessToken) &&
+	        	if ((parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken || isQuestionMarkMemberAccessToken || isBangMemberAccessToken) &&
 	        		originalTokenIndex == parserModel.TokenWalker.Index - 1)
 				{
 					_ = parserModel.TokenWalker.Backtrack();

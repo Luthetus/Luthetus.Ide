@@ -1,8 +1,8 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.BinderCase;
@@ -31,35 +31,16 @@ namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 /// <summary>
 public class ScopeTests
 {
-	public class Test
-	{
-		public Test(string sourceText)
-		{
-			SourceText = sourceText;
-			ResourceUri = new ResourceUri("./unitTesting.txt");
-			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
-			var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
-			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
-	        CSharpParser.Parse(CompilationUnit, ref lexerOutput);
-		}
-		
-		public string SourceText { get; set; }
-		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexerOutput LexerOutput { get; set; }
-		public IBinder Binder => CompilationUnit.Binder;
-		public CSharpCompilationUnit CompilationUnit { get; set; }
-	}
-	
 	[Fact]
     public void GlobalScope()
     {
     	var test = new Test(@"");
     	
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(1, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -77,7 +58,7 @@ public class ScopeTests
     {
     	var test = new Test(@"{}");
     	
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -105,7 +86,7 @@ public class ScopeTests
     {
     	var test = new Test(@"{} {}");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
@@ -142,7 +123,7 @@ public class ScopeTests
     {
     	var test = new Test(@"{ {} {} }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(4, binderSession.ScopeList.Count);
 		
@@ -197,7 +178,7 @@ public class ScopeTests
 }
 ".ReplaceLineEndings("\n"));
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
@@ -246,7 +227,7 @@ public class ScopeTests
 
 }".ReplaceLineEndings("\n"));
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(4, binderSession.ScopeList.Count);
 		
@@ -294,7 +275,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public class Person { }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -322,7 +303,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public class Person(string FirstName, string LastName);");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -359,7 +340,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public class Person(string FirstName, string LastName) { }");
     	
-    	var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+    	var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -397,7 +378,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public class Person { public Person() { } }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
@@ -456,7 +437,7 @@ public class ScopeTests
 	public string FirstName { get; set; } = ""abc"";
 }".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
@@ -493,7 +474,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public class Person { public string FirstName { get; set; } }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -531,7 +512,7 @@ public class ScopeTests
 	public string FirstName { get; set; }
 }".ReplaceLineEndings("\n"));
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -580,7 +561,7 @@ public class ScopeTests
 	public string FirstName { get; set; }
 }".ReplaceLineEndings("\n"));
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -636,7 +617,7 @@ public class ScopeTests
 	}
 }".ReplaceLineEndings("\n"));
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -664,7 +645,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public class Person { public void MyMethod() { } }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
@@ -701,7 +682,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public class Person { { } }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
@@ -738,7 +719,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public class Person : OtherType { }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -776,7 +757,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public void MyMethod() { }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -804,7 +785,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public int Cba(int aaa) => aaa; ");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -842,7 +823,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public Person() { }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
@@ -870,7 +851,7 @@ public class ScopeTests
     {
     	var test = new Test(@"public void MyMethod() { { } }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
@@ -912,11 +893,11 @@ public class ScopeTests
     
     	var test = new Test(@"public string FirstName { get; set; } {}");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -961,11 +942,11 @@ public class ScopeTests
 
 {}".ReplaceLineEndings("\n"));
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1006,11 +987,11 @@ x = x with
 
 {}".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1049,11 +1030,11 @@ x = x with
 
 {}".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1092,11 +1073,11 @@ x = x with
 
 {}".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1135,11 +1116,11 @@ x = x with
 
 {}".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1177,11 +1158,11 @@ ccc;
 	ccc;
 }".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1253,11 +1234,11 @@ ccc;
 	_queue.RemoveLast();
 }".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1325,11 +1306,11 @@ ccc;
 	_queue.RemoveLast();
 }".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1364,11 +1345,11 @@ ccc;
 	var x = _queue.RemoveLast();
 }".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1418,11 +1399,11 @@ public class Aaa
 }
 ".ReplaceLineEndings("\n"));
 
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		var success = test.Binder.TryGetCompilationUnit(null, test.ResourceUri, out var binderSession);
 		Assert.True(success);
 		Assert.Equal(2, binderSession.ScopeList.Count);
 		
-		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		var scope = test.Binder.GetScopeByPositionIndex(null, test.ResourceUri, 0);
 		Assert.NotNull(scope);
 		
 		{ // Global
@@ -1453,43 +1434,5 @@ for (int i = 0; i < 5; i++)
 	for (int q; q < 5; q++)
 		Console.WriteLine(""Abc123"");
 ".ReplaceLineEndings("\n"));
-    }
-	
-	private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
-    {
-    	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
-		foreach (var child in node.GetChildList())
-		{
-			Console.WriteLine("\t" + child.SyntaxKind);
-		}
-		Console.WriteLine();
-    }
-    
-    private void WriteChildrenIndentedRecursive(ISyntaxNode node, string name = "node", int indentation = 0)
-    {
-    	var indentationStringBuilder = new StringBuilder();
-    	for (int i = 0; i < indentation; i++)
-    		indentationStringBuilder.Append('\t');
-    	
-    	Console.WriteLine($"{indentationStringBuilder.ToString()}{node.SyntaxKind}");
-    	
-    	// For the child tokens
-    	indentationStringBuilder.Append('\t');
-    	var childIndentation = indentationStringBuilder.ToString();
-    	
-		foreach (var child in node.GetChildList())
-		{
-			if (child is ISyntaxNode syntaxNode)
-			{
-				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
-			}
-			else if (child is SyntaxToken syntaxToken)
-			{
-				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
-			}
-		}
-		
-		if (indentation == 0)
-			Console.WriteLine();
     }
 }

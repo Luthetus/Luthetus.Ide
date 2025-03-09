@@ -1,5 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
@@ -12,17 +13,42 @@ public static class ParseOthers
 {
 	/// <summary>
 	/// TODO: Delete this method, to parse a namespace identifier one should be able to just invoke 'ParseExpression(...)'
+	///
+	/// 'isNamespaceStatement' refers to 'namespace Luthetus.CompilerServices;'
 	/// </summary>
-	public static ISyntax HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public static ISyntax HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool isNamespaceStatement)
     {
-        var combineNamespaceIdentifierIntoOne = new List<SyntaxToken>();
+        TextEditorTextSpan textSpan = default;
+        int count = 0;
 
         while (!parserModel.TokenWalker.IsEof)
         {
-            if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
+            if (count % 2 == 0)
             {
                 var matchedToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
-                combineNamespaceIdentifierIntoOne.Add(matchedToken);
+                count++;
+                
+                if (textSpan == default)
+                {
+                	textSpan = matchedToken.TextSpan;
+                	textSpan.ClearTextCache();
+                	
+                	// !StatementDelimiterToken because presumably the final namespace is already being handled.
+                	if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+                		parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
+                }
+                else
+                {
+                	textSpan = textSpan with
+			        {
+			            EndingIndexExclusive = matchedToken.TextSpan.EndingIndexExclusive
+			        };
+			        textSpan.ClearTextCache();
+			        
+			        // !StatementDelimiterToken because presumably the final namespace is already being handled.
+			        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+			        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
+                }
 
                 if (matchedToken.IsFabricated)
                     break;
@@ -30,25 +56,21 @@ public static class ParseOthers
             else
             {
                 if (SyntaxKind.MemberAccessToken == parserModel.TokenWalker.Current.SyntaxKind)
-                    combineNamespaceIdentifierIntoOne.Add(parserModel.TokenWalker.Consume());
+                {
+                	_ = parserModel.TokenWalker.Consume();
+                    count++;
+                }
                 else
+                {
                     break;
+                }
             }
         }
 
-        if (combineNamespaceIdentifierIntoOne.Count == 0)
-        {
+        if (count == 0)
             return new EmptyNode();
-        }
 
-        var identifierTextSpan = combineNamespaceIdentifierIntoOne.First().TextSpan with
-        {
-            EndingIndexExclusive = combineNamespaceIdentifierIntoOne.Last().TextSpan.EndingIndexExclusive
-        };
-        
-        identifierTextSpan.ClearTextCache();
-
-        return new SyntaxToken(SyntaxKind.IdentifierToken, identifierTextSpan);
+        return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }
 
     public static void StartStatement_Expression(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
