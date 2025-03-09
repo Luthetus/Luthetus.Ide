@@ -13,7 +13,7 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 	private List<(SyntaxToken KeywordToken, SyntaxToken NamespaceIdentifier)> _usingStatementTupleList { get; set; } = new();
 
 	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;
+	public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementListingNode;
 	
 	public void AddUsingStatementTuple((SyntaxToken KeywordToken, SyntaxToken NamespaceIdentifier) usingStatementTuple)
 	{
