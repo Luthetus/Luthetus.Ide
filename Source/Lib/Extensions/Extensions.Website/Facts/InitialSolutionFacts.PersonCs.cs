@@ -21,6 +21,7 @@ public class PersonRepository
 	public List<Person> GetPeople()
 	{
 		// Return a shallow copy.
+		return new List<Person>(_people);
 		return new(_people);
 	}
 	
@@ -50,6 +51,18 @@ public class PersonRepository
 		
 		FirstName;
 		// ^ contrast the 'member access tooltip' with what happens if the identifier is alone;
+		
+		person?.FirstName;
+		person!.FirstName;
+		
+		return person?.FirstName;
+		return person!.FirstName;
+		
+		return new List<Person>
+		{
+			person,
+			person,
+		};
 		
 		return person;
 	}

@@ -1,9 +1,9 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.BinderCase;
@@ -13,26 +13,6 @@ namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
 public class StatementTests
 {
-	public class Test
-	{
-		public Test(string sourceText)
-		{
-			SourceText = sourceText;
-			ResourceUri = new ResourceUri("./unitTesting.txt");
-			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
-			var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
-			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
-	        CSharpParser.Parse(CompilationUnit, ref lexerOutput);
-		}
-		
-		public string SourceText { get; set; }
-		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexerOutput LexerOutput { get; set; }
-		
-		public IBinder Binder => CompilationUnit.Binder;
-		public CSharpCompilationUnit CompilationUnit { get; set; }
-	}
-
 	[Fact]
     public void NamespaceStatementNode_Test()
     {
@@ -59,7 +39,7 @@ public class StatementTests
     	var test = new Test(@"public class Aaa { }");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock);
+		test.WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionNode.SyntaxKind);
@@ -72,7 +52,7 @@ public class StatementTests
 		
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock);
+		test.WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionNode.SyntaxKind);
@@ -142,7 +122,7 @@ public class StatementTests
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock);
+		test.WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 		
@@ -284,7 +264,7 @@ finally
     	var test = new Test(@"int aaa;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -296,7 +276,7 @@ finally
     	var test = new Test(@"Person aaa;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -308,7 +288,7 @@ finally
     	var test = new Test(@"var aaa;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -457,7 +437,7 @@ finally
     	var test = new Test(@"var aaa = 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
@@ -471,7 +451,7 @@ finally
     	var test = new Test(@"var aaa = 2;");
 		
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock);
+		test.WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
@@ -511,7 +491,7 @@ finally
     	var test = new Test(@"(");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -523,7 +503,7 @@ finally
     	var test = new Test(@"(int");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -535,7 +515,7 @@ finally
     	var test = new Test(@"(int)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
@@ -547,7 +527,7 @@ finally
     	var test = new Test(@"(WeatherForecastService);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
@@ -560,7 +540,7 @@ finally
     	var test = new Test(@"(List<(int, bool)>);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
@@ -572,7 +552,7 @@ finally
     	var test = new Test(@"(List<bool>)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
@@ -585,7 +565,7 @@ finally
     	var test = new Test(@"(List < bool > int)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -597,7 +577,7 @@ finally
     	var test = new Test(@"(int, bool)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
@@ -609,7 +589,7 @@ finally
     	var test = new Test(@"(Apple, Banana)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
@@ -621,7 +601,7 @@ finally
     	var test = new Test(@"(int Count, bool ShouldReturn)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -633,7 +613,7 @@ finally
     	var test = new Test(@"(7, true)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -645,7 +625,7 @@ finally
     	var test = new Test(@"var x = 7; var y = true; (x, y)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -657,7 +637,7 @@ finally
     	var test = new Test(@"return (x, y) => 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -669,7 +649,7 @@ finally
     	var test = new Test(@"(int x, bool y) => 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -681,7 +661,7 @@ finally
     	var test = new Test(@"var x = 2; var y = true; (x, y) => 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -693,7 +673,7 @@ finally
     	var test = new Test(@"var x = 2; var y = true; (int x, bool y) => 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
@@ -705,7 +685,7 @@ finally
     	var test = new Test(@"(2");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ParenthesizedExpressionNode, parenthesizedExpressionNode.SyntaxKind);
@@ -717,7 +697,7 @@ finally
     	var test = new Test(@"List<(int, bool)> myListOne;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -729,7 +709,7 @@ finally
     	var test = new Test(@"List<(Apple, Banana)> myListOne;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -741,7 +721,7 @@ finally
     	var test = new Test(@"List<(int Aaa, bool Bbb)> myListTwo;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -753,7 +733,7 @@ finally
     	var test = new Test(@"List<(Apple Aaa, Banana Bbb)> myListTwo;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -765,7 +745,7 @@ finally
     	var test = new Test(@"(aaa, 2);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		throw new NotImplementedException();
     }
     
@@ -775,7 +755,7 @@ finally
     	var test = new Test(@"(2, aaa);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		throw new NotImplementedException();
     }
     
@@ -799,7 +779,7 @@ finally
 }");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		throw new NotImplementedException();
     }
     
@@ -812,7 +792,7 @@ finally
     	var test = new Test(@"(x => 2);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaExpressionNode.SyntaxKind);
@@ -904,7 +884,7 @@ finally
     	var test = new Test(@"return 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
@@ -916,7 +896,7 @@ finally
     	var test = new Test(@"var aaa = 2; var bbb = ""cat"" return (aaa, bbb);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
@@ -928,7 +908,7 @@ finally
     	var test = new Test(@"(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) expressionShortCircuitTuple;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -943,7 +923,7 @@ finally
     	var test = new Test(@"(SyntaxKind, IExpressionNode) expressionShortCircuitTuple;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -955,7 +935,7 @@ finally
     	var test = new Test(@"List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
@@ -981,7 +961,7 @@ finally
 
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		WriteChildrenIndentedRecursive(topCodeBlock);
+		test.WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
@@ -1203,11 +1183,11 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
 }
 ");
 
-		foreach (var scope in test.CompilationUnit.BinderSession.ScopeList)
+		foreach (var scope in test.CompilationUnit.ScopeList)
 		{
 			Console.WriteLine($"scope.CodeBlockOwner.SyntaxKind: {scope.CodeBlockOwner.SyntaxKind}");
 		}
-		Console.WriteLine($"ScopeList.Count: {test.CompilationUnit.BinderSession.ScopeList.Count}");
+		Console.WriteLine($"ScopeList.Count: {test.CompilationUnit.ScopeList.Count}");
     }
     
     [Fact]
@@ -1225,13 +1205,13 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
 }
 ".ReplaceLineEndings("\n"));
 
-		foreach (var scope in test.CompilationUnit.BinderSession.ScopeList)
+		foreach (var scope in test.CompilationUnit.ScopeList)
 		{
 			Console.WriteLine($"scope.CodeBlockOwner.SyntaxKind: {scope.CodeBlockOwner.SyntaxKind}");
 		}
-		Console.WriteLine($"ScopeList.Count: {test.CompilationUnit.BinderSession.ScopeList.Count}");
+		Console.WriteLine($"ScopeList.Count: {test.CompilationUnit.ScopeList.Count}");
 		
-		var ifStatementScope = test.CompilationUnit.BinderSession.ScopeList.Single(x =>
+		var ifStatementScope = test.CompilationUnit.ScopeList.Single(x =>
 			x.CodeBlockOwner.SyntaxKind == SyntaxKind.IfStatementNode);
 			
 		Console.WriteLine($"CodeBlockOwner: {ifStatementScope.CodeBlockOwner}");
@@ -1257,7 +1237,7 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
     {
     	var test = new Test(@"for (int i = 0; i < 5; i++)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
     	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
@@ -1266,7 +1246,72 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
     {
     	var test = new Test(@"Console.WriteLine(nameof(x));");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void ElvisOperator()
+    {
+    	var test = new Test(@"return viewModelModifier?.ViewModel;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void NullForgivingOperator()
+    {
+    	var test = new Test(@"return viewModelModifier!.ViewModel;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void Weird()
+    {
+    	var test = new Test(
+@"
+TextEditorService.TextEditorWorker.PostUnique(
+	nameof(InsertAutocompleteMenuOption),
+	editContext =>
+	{
+		var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+	    var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+	});
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void CollectionInitialization()
+    {
+    	var test = new Test(
+@"
+return new List<Person>
+{
+	person,
+	person,
+};
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void ImplicitSubNamespaces()
+    {
+    	var test = new Test(
+@"
+using Something.That.Shouldnt.DoThing;
+namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
     	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
@@ -1296,7 +1341,7 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
     	var test = new Test(aaa);
 
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
     	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
@@ -2133,45 +2178,7 @@ public class GitIdeApi
 
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
     	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
-    {
-    	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
-		foreach (var child in node.GetChildList())
-		{
-			Console.WriteLine("\t" + child.SyntaxKind);
-		}
-		Console.WriteLine();
-    }
-    
-    private void WriteChildrenIndentedRecursive(ISyntaxNode node, string name = "node", int indentation = 0)
-    {
-    	var indentationStringBuilder = new StringBuilder();
-    	for (int i = 0; i < indentation; i++)
-    		indentationStringBuilder.Append('\t');
-    	
-    	Console.WriteLine($"{indentationStringBuilder.ToString()}{node.SyntaxKind}");
-    	
-    	// For the child tokens
-    	indentationStringBuilder.Append('\t');
-    	var childIndentation = indentationStringBuilder.ToString();
-    	
-		foreach (var child in node.GetChildList())
-		{
-			if (child is ISyntaxNode syntaxNode)
-			{
-				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
-			}
-			else if (child is SyntaxToken syntaxToken)
-			{
-				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
-			}
-		}
-		
-		if (indentation == 0)
-			Console.WriteLine();
     }
 }

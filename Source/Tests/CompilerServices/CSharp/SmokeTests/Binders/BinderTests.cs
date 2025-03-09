@@ -1,10 +1,11 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.Extensions.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Binders;
 
@@ -17,13 +18,13 @@ public class BinderTests
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
 			var lexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
-	        CSharpParser.Parse(CompilationUnit, ref lexerOutput);
+	        CSharpParser.Parse(CompilationUnit, Binder, ref lexerOutput);
 		}
 		
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
 		public CSharpLexerOutput LexerOutput { get; set; }
-		public IBinder Binder => CompilationUnit.Binder;
+		public CSharpBinder Binder { get; set; } = new();
 		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}
 	
@@ -35,7 +36,7 @@ public class BinderTests
 		
 		WriteChildrenIndentedRecursive(topCodeBlock);
 		
-		var binder = test.CompilationUnit.Binder;
+		var binder = test.Binder;
 		
 		var cSharpResource = new CSharpResource(test.ResourceUri, null);
 		cSharpResource.CompilationUnit = test.CompilationUnit;
@@ -54,7 +55,7 @@ public class BinderTests
 		
 		WriteChildrenIndentedRecursive(topCodeBlock);
 		
-		var binder = test.CompilationUnit.Binder;
+		var binder = test.Binder;
 		
 		var cSharpResource = new CSharpResource(test.ResourceUri, null);
 		cSharpResource.CompilationUnit = test.CompilationUnit;
@@ -82,7 +83,7 @@ public class BackgroundTask : IBackgroundTask
 		
 		WriteChildrenIndentedRecursive(topCodeBlock);
 		
-		var binder = test.CompilationUnit.Binder;
+		var binder = test.Binder;
 		
 		var cSharpResource = new CSharpResource(test.ResourceUri, null);
 		cSharpResource.CompilationUnit = test.CompilationUnit;
