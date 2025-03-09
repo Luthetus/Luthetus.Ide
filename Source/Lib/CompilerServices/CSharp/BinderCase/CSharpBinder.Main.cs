@@ -443,7 +443,8 @@ public partial class CSharpBinder
         		parserModel.GetNextSymbolId(),
         		usingStatementNode.NamespaceIdentifier.TextSpan));
 
-        parserModel.CurrentUsingStatementNodeList.Add(usingStatementNode);
+		// Nothing even uses the 'CurrentUsingStatementNodeList'??? (2025-03-2025)
+        // parserModel.CurrentUsingStatementNodeList.Add(usingStatementNode);
         AddNamespaceToCurrentScope(usingStatementNode.NamespaceIdentifier.TextSpan.GetText(), compilationUnit, ref parserModel);
     }
 
@@ -652,6 +653,7 @@ public partial class CSharpBinder
             namespaceGroupNode.ConstructorWasInvoked)
         {
         	// Bad (2025-02-07)
+        	// Wow this gets invoked for every using statement, yeah I agree with myself from the past, this is bad. (2025-03-08)
             var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
 
             foreach (var typeDefinitionNode in typeDefinitionNodes)

@@ -1307,6 +1307,7 @@ return new List<Person>
     {
     	var test = new Test(
 @"
+using Something.That.Shouldnt.DoThing;
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;

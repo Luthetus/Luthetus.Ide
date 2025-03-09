@@ -691,7 +691,7 @@ public class ParseDefaultKeywords
     {
     	var usingKeywordToken = parserModel.TokenWalker.Consume();
     	
-    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel);
+    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel, isNamespaceStatement: false);
 
         if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
         {
@@ -906,7 +906,7 @@ public class ParseDefaultKeywords
     {
     	var namespaceKeywordToken = parserModel.TokenWalker.Consume();
     	
-    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel);
+    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel, isNamespaceStatement: true);
 
         if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
         {

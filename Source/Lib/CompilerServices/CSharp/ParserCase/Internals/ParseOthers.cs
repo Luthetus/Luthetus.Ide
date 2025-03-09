@@ -13,8 +13,10 @@ public static class ParseOthers
 {
 	/// <summary>
 	/// TODO: Delete this method, to parse a namespace identifier one should be able to just invoke 'ParseExpression(...)'
+	///
+	/// 'isNamespaceStatement' refers to 'namespace Luthetus.CompilerServices;'
 	/// </summary>
-	public static ISyntax HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public static ISyntax HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool isNamespaceStatement)
     {
         TextEditorTextSpan textSpan = default;
         int count = 0;
@@ -30,6 +32,10 @@ public static class ParseOthers
                 {
                 	textSpan = matchedToken.TextSpan;
                 	textSpan.ClearTextCache();
+                	
+                	// !StatementDelimiterToken because presumably the final namespace is already being handled.
+                	if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+                		parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
                 }
                 else
                 {
@@ -38,6 +44,10 @@ public static class ParseOthers
 			            EndingIndexExclusive = matchedToken.TextSpan.EndingIndexExclusive
 			        };
 			        textSpan.ClearTextCache();
+			        
+			        // !StatementDelimiterToken because presumably the final namespace is already being handled.
+			        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+			        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
                 }
 
                 if (matchedToken.IsFabricated)
