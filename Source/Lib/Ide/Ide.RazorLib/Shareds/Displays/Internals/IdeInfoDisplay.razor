@@ -172,10 +172,16 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.38 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.38 </em> (2025-03-09)</div>
                 <ul>
                 	<li>
-                		Draft PR
+                		Everything gets a symbol (not just the things that are defined).
+                    </li>
+                    <li>
+                		Fix: Aaa.Bbb = ...; Bbb erroneously is TypeClauseNode
+                    </li>
+                    <li>
+                		Fix: predefined type clause node position index causing tooltip on them
                     </li>
                     <li>
                 		Massive using / namespace statements optimization. Reduced object allocations / boxing.
