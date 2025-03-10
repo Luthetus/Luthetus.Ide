@@ -1378,7 +1378,7 @@ public partial class CSharpBinder
     }
 
     public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit? cSharpCompilationUnit, int positionIndex, ResourceUri resourceUri, CSharpResource? compilerServiceResource)
-    {
+    {    
         var scope = GetScopeByPositionIndex(cSharpCompilationUnit, resourceUri, positionIndex);
         if (!scope.ConstructorWasInvoked)
         	return null;
@@ -1406,14 +1406,14 @@ public partial class CSharpBinder
         {
         	if (child is not ISyntaxNode node)
     			continue;
-    			
+    		
     		if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
     			node.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
     		{
     			fallbackDefinitionNode = node;
     		}
         	
-        	var nodePositionIndices = GetNodePositionIndices(node);
+        	var nodePositionIndices = GetNodePositionIndices(node, resourceUri);
         	if (nodePositionIndices == (-1, -1))
         		continue;
         		
@@ -1448,14 +1448,14 @@ public partial class CSharpBinder
         			}
         		}
         	}
-        	
+
         	return null;
         }
         	
         var closestNode = possibleNodeList.MinBy(node =>
         {
         	// TODO: Wasteful re-invocation of this method, can probably do this in one invocation.
-        	var nodePositionIndices = GetNodePositionIndices(node);
+        	var nodePositionIndices = GetNodePositionIndices(node, resourceUri);
         	if (nodePositionIndices == (-1, -1))
         		return int.MaxValue;
         	
@@ -1584,7 +1584,7 @@ public partial class CSharpBinder
     /// - Keep them as generalized as possible.
     /// - Any specific details should be provided by the IBinder.
     /// </summary>
-    public (int StartInclusiveIndex, int EndExclusiveIndex) GetNodePositionIndices(ISyntaxNode syntaxNode)
+    public (int StartInclusiveIndex, int EndExclusiveIndex) GetNodePositionIndices(ISyntaxNode syntaxNode, ResourceUri resourceUri)
     {
     	switch (syntaxNode.SyntaxKind)
     	{
@@ -1622,13 +1622,15 @@ public partial class CSharpBinder
     			int? startingIndexInclusive = null;
     			int? endingIndexExclusive = null;
     			
-    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
+    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked &&
+    			    variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
     			{
     				startingIndexInclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
     				endingIndexExclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive;
     			}
     			
-    			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
+    			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked &&
+    			    variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri == resourceUri)
     			{
     				startingIndexInclusive ??= variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
     				endingIndexExclusive = variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive;

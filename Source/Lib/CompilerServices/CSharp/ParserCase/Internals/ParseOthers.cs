@@ -147,6 +147,8 @@ public static class ParseOthers
     		
     		/*#if DEBUG
     		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
+    		#else
+			Console.WriteLine($"{nameof(TryParseExpression)} has debug 'Console.Write...' that needs commented out.");
     		#endif*/
     		
     		if (parserModel.TryParseExpressionSyntaxKindList.Count == 0)
