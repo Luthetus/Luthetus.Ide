@@ -155,8 +155,17 @@ public static class ParseTokens
 			{
 				parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = variableDeclarationNode.TypeClauseNode;
 			
-				parserModel.TokenWalker.Backtrack();
-				var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+				IExpressionNode expression;
+			
+				try
+				{
+					parserModel.ForceParseExpressionInitialPrimaryExpression = variableDeclarationNode;
+					expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+				}
+				finally
+				{
+					parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
+				}
 				
 				if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText() ==
 				        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText())
@@ -427,10 +436,12 @@ public static class ParseTokens
 
     public static void ParseEqualsToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	var shouldBacktrack = false;
+    	IExpressionNode backtrackNode = EmptyExpressionNode.Empty;
+    	
     	if (parserModel.StatementBuilder.ChildList.Count == 1)
     	{
     		var previousNode = parserModel.StatementBuilder.ChildList[0];
-    		var shouldBacktrack = false;
     		
     		if (previousNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
     		{
@@ -439,22 +450,35 @@ public static class ParseTokens
     			//       ...as a member.
     			// TODO: Yeah this is throwing null reference exceptions because of that 'VariableDeclarationNode'.
     			parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = ((VariableReferenceNode)previousNode).ResultTypeClauseNode;
+    			backtrackNode = (VariableReferenceNode)previousNode;
     		}
     		else if (previousNode.SyntaxKind == SyntaxKind.TypeClauseNode)
     		{
     			shouldBacktrack = true;
     			parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = (TypeClauseNode)previousNode;
+    			backtrackNode = (TypeClauseNode)previousNode;
     		}
     		else
     		{
     			parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = CSharpFacts.Types.Void.ToTypeClause();
     		}
-    		
-    		if (shouldBacktrack)
-    			_ = parserModel.TokenWalker.Backtrack();
     	}
     	
-    	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
+    	IExpressionNode expressionNode;
+    	
+    	try
+		{
+			if (shouldBacktrack)
+    			parserModel.ForceParseExpressionInitialPrimaryExpression = backtrackNode;
+			
+			expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+		}
+		finally
+		{
+			parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
+		}
+		
+    	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
 	}
 
 	/// <summary>
