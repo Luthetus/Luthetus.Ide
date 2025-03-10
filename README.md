@@ -17,7 +17,7 @@ Customize the UI:
 
 And there are more features that are not shown in these gifs.
 
-Only 221 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.34) (1,619 C# files in total parsed in 5.6 seconds.):
+Only 221 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.39) (1,619 C# files in total parsed in 5.6 seconds.):
 ![Example GIF](./Images/Ide/Gifs/0.9.7.39.gif)
 
 ## Demo:
