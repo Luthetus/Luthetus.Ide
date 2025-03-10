@@ -29,8 +29,8 @@ public class StatementTests
     	var test = new Test(@"using Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;");
 		
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		var usingStatementNode = (UsingStatementNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.UsingStatementNode, usingStatementNode.SyntaxKind);
+		var usingStatementListingNode = (UsingStatementListingNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.UsingStatementListingNode, usingStatementListingNode.SyntaxKind);
     }
     
     [Fact]
@@ -1309,6 +1309,64 @@ return new List<Person>
 @"
 using Something.That.Shouldnt.DoThing;
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void Bug_Variable_Parse_As_Type()
+    {
+    	var test = new Test(
+@"
+namespace Luthetus.CompilerServices.CSharp.ParserCase;
+
+public class CSharpParser
+{
+    public void Parse()
+    {
+    	var parserModel = new CSharpParserModel();
+		parserModel.TokenWalker.ProtectedTokenSyntaxKindList;
+	}
+}
+
+public struct CSharpParserModel
+{
+    public TokenWalker TokenWalker { get; }
+}
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void ExplicitNamespaceQualification()
+    {
+    	var test = new Test(
+@"
+namespace ConsoleApp;
+
+public class NamespaceIssue
+{
+	public SomeExplicitNamespace.SomeType Apple()
+	{
+		AnotherExplicitNamespace.AnotherType banana = new();
+	}
+}
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
+    public void MemberAccess()
+    {
+    	var test = new Test(
+@"
+return SomeExplicitNamespace.SomeStaticType.SomeStaticProperty;
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));

@@ -23,7 +23,14 @@ public partial class CSharpBinder
 		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		/*#if DEBUG
-		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}");
+		
+		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+		{
+			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
+			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.GetText()}____");
+		}
+		
+		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		#else
 		Console.WriteLine($"{nameof(AnyMergeToken)} has debug 'Console.Write...' that needs commented out.");
 		#endif*/
@@ -138,6 +145,9 @@ public partial class CSharpBinder
 	public IExpressionNode HandleBinaryOperator(
 		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		// TODO: MemberAccessToken should be treated the same as any other operator.
+		//       This feels very "special case" the way it is written.
+		//       This seems similar to the most precedence being assigned to it.
 		if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
 			return ParseMemberAccessToken(expressionPrimary, ref token, compilationUnit, ref parserModel);
 	
@@ -2131,7 +2141,7 @@ public partial class CSharpBinder
 	}
 
 	public IExpressionNode ParseMemberAccessToken(
-		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+		IExpressionNode expressionPrimary, ref SyntaxToken tokenIn, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		/*
 		(2025-01-26)
@@ -2178,120 +2188,184 @@ public partial class CSharpBinder
 			// constructor invocation + boundNode -> constructor invocation typeof(Bbb)
 		}
 		*/
-	
-		var rememberOriginalExpressionPrimary = expressionPrimary;
-		var rememberOriginalTokenIndex = parserModel.TokenWalker.Index;
-			
-		if (!token.IsFabricated && !UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
-
-		if (!token.IsFabricated)
-			_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
 		
-		var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(
-			parserModel.TokenWalker.Consume(),
-			compilationUnit,
-			ref parserModel);
-			
-		if (!memberIdentifierToken.ConstructorWasInvoked || memberIdentifierToken.TextSpan.SourceText is null)
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
+		var token = tokenIn;
+		var loopIteration = 0;
 		
-		if (expressionPrimary is null)
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
-		
-		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		while (!parserModel.TokenWalker.IsEof)
 		{
-			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
-			if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
+			if (loopIteration++ >= 1)
 			{
-				expressionPrimary = ForceDecisionAmbiguousIdentifier(
-					EmptyExpressionNode.Empty,
-					ambiguousIdentifierExpressionNode,
-					compilationUnit,
-					ref parserModel);
-			}
-		}
-	
-		TypeClauseNode? typeClauseNode = null;
-	
-		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-			typeClauseNode = ((VariableReferenceNode)expressionPrimary).VariableDeclarationNode?.TypeClauseNode;
-		else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-			typeClauseNode = (TypeClauseNode)expressionPrimary;
-		
-		if (typeClauseNode is null)
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
-		
-		var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
-		if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
-			
-		var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-		var memberList = typeDefinitionNode.GetMemberList();
-		ISyntaxNode? foundDefinitionNode = null;
-		
-		foreach (var node in memberList)
-		{
-			if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-			{
-				var variableDeclarationNode = (VariableDeclarationNode)node;
-				if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked || variableDeclarationNode.IdentifierToken.TextSpan.SourceText is null)
-					continue;
+				// The object initialization / record 'with' keyword
+				// provide a fabricated initial token.
+				//
+				// So the 0th iteration needs to use this function's SyntaxToken parameter.
+				token = parserModel.TokenWalker.Current;
 				
-				if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
-				{
-					foundDefinitionNode = variableDeclarationNode;
+				if (token.SyntaxKind != SyntaxKind.MemberAccessToken)
 					break;
+			}
+		
+			if (!token.IsFabricated && !UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
+				break; // TODO: Consume and return the MemberAccessToken here?
+	
+			if (!token.IsFabricated)
+				_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
+			
+			// Consume the 'NameableToken'
+			var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(
+				parserModel.TokenWalker.Consume(),
+				compilationUnit,
+				ref parserModel);
+				
+			if (!memberIdentifierToken.ConstructorWasInvoked || expressionPrimary is null)
+				break;
+			
+			if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+			{
+				var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+				if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
+				{
+					expressionPrimary = ForceDecisionAmbiguousIdentifier(
+						EmptyExpressionNode.Empty,
+						ambiguousIdentifierExpressionNode,
+						compilationUnit,
+						ref parserModel);
 				}
 			}
-			else if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-			{
-				// TODO: Create a Binder.Main method that takes a node and returns its identifier?
-				var functionDefinitionNode = (FunctionDefinitionNode)node;
-				if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked || functionDefinitionNode.FunctionIdentifierToken.TextSpan.SourceText is null)
-					continue;
+		
+			TypeClauseNode? typeClauseNode = null;
+		
+			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				typeClauseNode = ((VariableReferenceNode)expressionPrimary).VariableDeclarationNode?.TypeClauseNode;
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+				typeClauseNode = ((FunctionInvocationNode)expressionPrimary).ResultTypeClauseNode;
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
+				typeClauseNode = (TypeClauseNode)expressionPrimary;
 				
-				if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+			if (typeClauseNode is null)
+			{
+				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				continue;
+			}
+			
+			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+			{
+				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				continue;
+			}
+				
+			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
+			var memberList = typeDefinitionNode.GetMemberList();
+			ISyntaxNode? foundDefinitionNode = null;
+			
+			foreach (var node in memberList)
+			{
+				if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 				{
-					foundDefinitionNode = functionDefinitionNode;
-					break;
+					var variableDeclarationNode = (VariableDeclarationNode)node;
+					if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
+						continue;
+					
+					if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+					{
+						foundDefinitionNode = variableDeclarationNode;
+						break;
+					}
 				}
+				else if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+				{
+					// TODO: Create a Binder.Main method that takes a node and returns its identifier?
+					var functionDefinitionNode = (FunctionDefinitionNode)node;
+					if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
+						continue;
+					
+					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+					{
+						foundDefinitionNode = functionDefinitionNode;
+						break;
+					}
+				}
+			}
+			
+			if (foundDefinitionNode is null)
+			{
+				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				continue;
+			}
+				 
+			if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+			{
+				var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
+				
+				var variableReferenceNode = new VariableReferenceNode(
+		            memberIdentifierToken,
+		            variableDeclarationNode);
+		        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+		        
+		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+		        	symbolId,
+		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive));
+		        
+		    	expressionPrimary = variableReferenceNode;
+			}
+			else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+			{
+				var functionDefinitionNode = (FunctionDefinitionNode)foundDefinitionNode;
+				
+				// TODO: Method group node?
+				var functionInvocationNode = new FunctionInvocationNode(
+		            memberIdentifierToken,
+		            // TODO: Don't store a reference to definitons.
+		            // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
+			        functionDefinitionNode,
+			        // TODO: Bind the named arguments to their declaration within the definition.
+			        genericParametersListingNode: null,
+			        functionParametersListingNode: null,
+			        functionDefinitionNode.ReturnTypeClauseNode);
+		        
+		        var functionSymbol = new Symbol(
+		        	SyntaxKind.FunctionSymbol,
+		        	parserModel.GetNextSymbolId(),
+		        	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
+			        {
+			            DecorationByte = (byte)GenericDecorationKind.Function
+			        });
+		        compilationUnit.__SymbolList.Add(functionSymbol);
+		        var symbolId = functionSymbol.SymbolId;
+		        
+		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+		        	symbolId,
+		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive));
+		        
+		        // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
+		        // TODO: Method group if next token is not '<' or '('
+		    	expressionPrimary = functionInvocationNode;
 			}
 		}
 		
-		if (foundDefinitionNode is null)
-			 return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
-			 
-		if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+		// TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
+		// TODO: Transition from 'ConstructorInvocationNode' to GenericParameters / FunctionParameters
+		// TODO: Method group if next token is not '<' or '('
+		// TODO: return new Aaa.Bbb(); // is a very good test case.
+		
+		
+		
+		return expressionPrimary;
+	}
+	
+	private IExpressionNode Aaa(SyntaxToken memberIdentifierToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+			parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		{
-			var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
-			
-			var variableReferenceNode = new VariableReferenceNode(
-	            memberIdentifierToken,
-	            variableDeclarationNode);
-	        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
-	        
-	        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
-	        	symbolId,
-	        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive));
-	        
-	    	return variableReferenceNode;
-		}
-		else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-		{			
-			var functionDefinitionNode = (FunctionDefinitionNode)foundDefinitionNode;
-			
-			// TODO: Method group node?
 			var functionInvocationNode = new FunctionInvocationNode(
 	            memberIdentifierToken,
-	            // TODO: Don't store a reference to definitons.
-	            // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
-		        functionDefinitionNode,
-		        // TODO: Bind the named arguments to their declaration within the definition.
+		        functionDefinitionNode: null,
 		        genericParametersListingNode: null,
 		        functionParametersListingNode: null,
-		        functionDefinitionNode.ReturnTypeClauseNode);
-	        
+		        TypeFacts.Empty.ToTypeClause());
 	        var functionSymbol = new Symbol(
 	        	SyntaxKind.FunctionSymbol,
 	        	parserModel.GetNextSymbolId(),
@@ -2300,57 +2374,16 @@ public partial class CSharpBinder
 		            DecorationByte = (byte)GenericDecorationKind.Function
 		        });
 	        compilationUnit.__SymbolList.Add(functionSymbol);
-	        var symbolId = functionSymbol.SymbolId;
-	        
-	        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
-	        	symbolId,
-	        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive));
-	        
-	        // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
-	        // TODO: Method group if next token is not '<' or '('
-	    	return functionInvocationNode;
+			return functionInvocationNode;
 		}
-	
-		return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, ref token, compilationUnit, ref parserModel);
-	}
-	
-	/// <summary>
-	/// New code is being written in <see cref="ParseMemberAccessToken"/>
-	/// that will bind member access expressions like:
-	/// 'person.FirstName'
-	/// where 'person' is an instance of the type 'Person',
-	/// and 'Person' is a type that has a property 'FirstName'.
-	///
-	/// In the example the 'person.FirstName' if the cursor hovers 'FirstName'
-	/// a tooltip should indicate that it is a property and that it can be goto definitioned.
-	///
-	/// goto definition here would take the user to the property definition within the type definition.
-	///
-	/// -----------------------------------------------------------------------------------------------
-	///
-	/// While this code is being written, this method will contain the previous code, and any
-	/// "bad cases" will "fallback" to the old code (i.e.: this method) instead of
-	/// running the new code.
-	///
-	/// Then the easy cases can be wired to the new code, and the new code can build up
-	/// to handle cases, rather than have to immediately deal with every edge case.
-	/// </summary>
-	public IExpressionNode ParseMemberAccessToken_Fallback(int rememberOriginalTokenIndex, IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{
-		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken &&
-			parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
+		else
 		{
-			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+			var variableReferenceNode = new VariableReferenceNode(
+	            memberIdentifierToken,
+	            variableDeclarationNode: null);
+	        _ = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property, compilationUnit, ref parserModel);
+			return variableReferenceNode;
 		}
-		
-		if (!token.IsFabricated && parserModel.TokenWalker.Index == 2 + rememberOriginalTokenIndex)
-		{
-			// If the new code consumed, undo that.
-			_ = parserModel.TokenWalker.Backtrack();
-			_ = parserModel.TokenWalker.Backtrack();
-		}
-		
-		return EmptyExpressionNode.Empty;
 	}
 	
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_ParenthesizedExpressionNode(
