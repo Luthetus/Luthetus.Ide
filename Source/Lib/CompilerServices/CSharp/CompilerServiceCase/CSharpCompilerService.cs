@@ -144,12 +144,81 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	{
 		return contextMenu.GetDefaultMenuRecord();
 	}
-
+	
+	/// <summary>
+    /// TODO: This method fired 10+ times when I hit 'Ctrl + Space'?
+    /// </summary>
 	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
 	{
+		// Goal: Add member access to autocomplete menu.
+		// =============================================
+		// Presume the following class is defined:
+		// |
+		// ````public class Person
+		// ````{
+		// ````    public string FirstName { get; set; }
+		// ````}
+		//
+		// And that the following variable is declared:
+		// |
+		// ````var person = new Person { FirstName = "John" };
+		// 
+		// If I go on to then type the following statement:
+		// |
+		// ````person.
+		//
+		// Then immediately after typing '.', the autocomplete menu
+		// should contain an entry for 'FirstName' due to it
+		// being a property on the 'Person' TypeDefinitionNode.
+		//
+		// Given this case, if I as a human were to manually populate the
+		// autocomplete menu with the 'TypeDefinitionNode' members,
+		// how would I do it?
+		//
+		// The cursor's position will be immediately after the '.'.
+		// This is important to note because if I use
+		// 'GetSyntaxNode(...)' I'm not sure what would
+		// be returned.
+		//
+		// Perhaps it is useful for me to define
+		// what I think it ought to return:
+		//     A BinaryExpressionNode of which the
+		//     left operand is the 'person-VariableReferenceNode'
+		//     and the right operand is EmptyExpressionNode.Empty,
+		//     due to there not being any text there.
+		//
+		// If it were to return 'BinaryExpressionNode',
+		// then what would the next steps be?
+		// |
+		// - Check the left operand, its SyntaxKind should be any of:
+		//     - 'VariableReferenceNode'
+		//     - 'FunctionInvocationNode'.
+		//     - 'ConstructorInvocationNode'.
+		// - if not true:
+		//     - return TheCurrentAutocompleteMenuLogic();
+		// |
+		// - # implicit else
+		// - All cases from this point will be equivalent.
+		// - var typeClauseNode = operand.ResultTypeClauseNode;
+		// - var memberList = typeClauseNode.GetMemberList();
+		// - foreach (var member in memberList)
+		// - {
+		// -     autocompleteMenu.Add(CreateAutocompleteEntry(member));
+		// - }
+		// - return autocompleteMenu;
+		//
+		// The solution is predicated upon 'GetSyntaxNode(...)' returning
+		// a BinaryExpressionNode.
+		//
+		// Therefore you ought to prove that it returns exactly that,
+		// given your described scenario.
+	
 		var primaryCursor = renderBatch.ViewModel.PrimaryCursor;
-        
         var positionIndex = renderBatch.Model.GetPositionIndex(primaryCursor);
+        var node = GetSyntaxNode(positionIndex, renderBatch.Model.ResourceUri, GetResource(renderBatch.Model.ResourceUri));
+        
+        if (node is not null)
+        	Console.WriteLine("aaa GetAutocompleteMenu");
         
         var word = renderBatch.Model.ReadPreviousWordOrDefault(
 	        primaryCursor.LineIndex,

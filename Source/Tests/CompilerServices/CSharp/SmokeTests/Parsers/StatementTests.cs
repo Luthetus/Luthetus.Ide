@@ -1374,6 +1374,44 @@ return SomeExplicitNamespace.SomeStaticType.SomeStaticProperty;
     }
     
     [Fact]
+    public void MemberAccessCreatesBinaryExpressionNode()
+    {
+    	var test = new Test(
+@"
+public class Person
+{
+    public string FirstName { get; set; }
+}
+
+var person = new Person { FirstName = ""John"" };
+ 
+person.
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var topCodeBlockChildList = topCodeBlock.GetChildList();
+		test.WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, topCodeBlockChildList[0].SyntaxKind);
+		
+		// Since the variable assignment is a 'BinaryExpressionNode',
+		// just the same as the member access expression that is under test.
+		// Then, I want to add an extra step beyond comparing SyntaxKind
+		// in order to disambiguate the two nodes.
+		{
+			var binaryExpressionNode = (BinaryExpressionNode)topCodeBlockChildList[1];
+			Assert.Equal(SyntaxKind.EqualsToken, binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+		}
+		
+		// Node under test
+		{
+			var binaryExpressionNode = (BinaryExpressionNode)topCodeBlockChildList[2];
+			Assert.Equal(SyntaxKind.MemberAccessToken, binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+		}
+		
+		Assert.Equal(SyntaxKind.TypeDefinitionNode, topCodeBlockChildList[0].SyntaxKind);
+    }
+    
+    [Fact]
     public void Asdfg()
     {
 		var aaa =
