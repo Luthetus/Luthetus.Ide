@@ -257,16 +257,20 @@ public partial class ExpressionTests
 		var functionInvocationIdentifierToken = functionInvocationNode.FunctionInvocationIdentifierToken;
 		Assert.Equal("MyMethod", functionInvocationIdentifierToken.TextSpan.GetText());
 		
+		var genericParametersListingNode = functionInvocationNode.GenericParametersListingNode;
+		Assert.Null(genericParametersListingNode);
+		
 		var functionParametersListingNode = functionInvocationNode.FunctionParametersListingNode;
-		
-		var openParenthesisToken = functionParametersListingNode.OpenParenthesisToken;
-		Assert.True(openParenthesisToken.ConstructorWasInvoked);
-		
-		var functionParameterEntryNodeList = functionInvocationNode.FunctionParameterEntryNodeList;
-		Assert.Empty(functionParameterEntryNodeList);
-		
-		var closeParenthesisToken = functionParametersListingNode.CloseParenthesisToken;
-		Assert.True(closeParenthesisToken.ConstructorWasInvoked);
+		{
+			var openParenthesisToken = functionParametersListingNode.OpenParenthesisToken;
+			Assert.True(openParenthesisToken.ConstructorWasInvoked);
+			
+			var functionParameterEntryNodeList = functionInvocationNode.FunctionParameterEntryNodeList;
+			Assert.Empty(functionParameterEntryNodeList);
+			
+			var closeParenthesisToken = functionParametersListingNode.CloseParenthesisToken;
+			Assert.True(closeParenthesisToken.ConstructorWasInvoked);
+		}
     }
     
     [Fact]
@@ -280,104 +284,127 @@ public partial class ExpressionTests
 		var functionInvocationIdentifierToken = functionInvocationNode.FunctionInvocationIdentifierToken;
 		Assert.Equal("MyMethod", functionInvocationIdentifierToken.TextSpan.GetText());
 		
+		var genericParametersListingNode = functionInvocationNode.GenericParametersListingNode;
+		Assert.Null(genericParametersListingNode);
+		
 		var functionParametersListingNode = functionInvocationNode.FunctionParametersListingNode;
-		
-		var openParenthesisToken = functionParametersListingNode.OpenParenthesisToken;
-		Assert.True(openParenthesisToken.ConstructorWasInvoked);
-		
-		var functionParameterEntryNodeList = functionInvocationNode.FunctionParameterEntryNodeList;
-		
-		var zeroIndexParameter = (LiteralExpressionNode)functionParameterEntryNodeList[0];
-		Assert.Equal("7", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
-		
-		var oneIndexParameter = (LiteralExpressionNode)functionParameterEntryNodeList[1];
-		Assert.Equal("Asdfg", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
-		
-		var closeParenthesisToken = functionParametersListingNode.CloseParenthesisToken;
-		Assert.True(closeParenthesisToken.ConstructorWasInvoked);
+		{
+			var openParenthesisToken = functionParametersListingNode.OpenParenthesisToken;
+			Assert.True(openParenthesisToken.ConstructorWasInvoked);
+			
+			var functionParameterEntryNodeList = functionInvocationNode.FunctionParameterEntryNodeList;
+			
+			Assert.Equal(2, functionParameterEntryNodeList.Count);
+			
+			var zeroIndexParameter = (LiteralExpressionNode)functionParameterEntryNodeList[0];
+			Assert.Equal("7", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			
+			var oneIndexParameter = (LiteralExpressionNode)functionParameterEntryNodeList[1];
+			Assert.Equal("Asdfg", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			
+			var closeParenthesisToken = functionParametersListingNode.CloseParenthesisToken;
+			Assert.True(closeParenthesisToken.ConstructorWasInvoked);
+		}
     }
     
     [Fact]
     public void FunctionInvocationNode_Generic()
     {
     	var test = new Test("return MyMethod<int, MyClass>();");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
 		
-		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
-
-		// GenericParametersListingNode
+		var functionInvocationNode = (FunctionInvocationNode)returnStatementNode.ExpressionNode;
+		
+		var functionInvocationIdentifierToken = functionInvocationNode.FunctionInvocationIdentifierToken;
+		Assert.Equal("MyMethod", functionInvocationIdentifierToken.TextSpan.GetText());
+		
+		var genericParametersListingNode = functionInvocationNode.GenericParametersListingNode;
 		{
-			Assert.NotNull(functionInvocationNode.GenericParametersListingNode);
-			Assert.True(functionInvocationNode.GenericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
+			Assert.NotNull(genericParametersListingNode);
+			Assert.True(genericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
 			
-			var intGenericParameterEntryNode = functionInvocationNode.GenericParametersListingNode.GenericParameterEntryNodeList[0];
+			Assert.Equal(2, genericParametersListingNode.GenericParameterEntryNodeList.Count);
+			
+			var intGenericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList[0];
 			Assert.Equal("int", intGenericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 			
-			var stringGenericParameterEntryNode = functionInvocationNode.GenericParametersListingNode.GenericParameterEntryNodeList[1];
+			var stringGenericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList[1];
 			Assert.Equal("MyClass", stringGenericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 			
-			Assert.True(functionInvocationNode.GenericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
+			Assert.True(genericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
 		}
 		
-		Assert.True(functionInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-		Assert.True(functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
+		var functionParametersListingNode = functionInvocationNode.FunctionParametersListingNode;
+		{
+			var openParenthesisToken = functionParametersListingNode.OpenParenthesisToken;
+			Assert.True(openParenthesisToken.ConstructorWasInvoked);
+			
+			var functionParameterEntryNodeList = functionInvocationNode.FunctionParameterEntryNodeList;
+			Assert.Empty(functionParameterEntryNodeList);
+			
+			var closeParenthesisToken = functionParametersListingNode.CloseParenthesisToken;
+			Assert.True(closeParenthesisToken.ConstructorWasInvoked);
+		}
     }
     
     [Fact]
     public void FunctionInvocationNode_Generic_Parameters()
     {
     	var test = new Test("return MyMethod<int, MyClass>(7, \"Asdfg\");");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
 		
-		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
+		var functionInvocationNode = (FunctionInvocationNode)returnStatementNode.ExpressionNode;
 		
-		// GenericParametersListingNode
+		var functionInvocationIdentifierToken = functionInvocationNode.FunctionInvocationIdentifierToken;
+		Assert.Equal("MyMethod", functionInvocationIdentifierToken.TextSpan.GetText());
+		
+		var genericParametersListingNode = functionInvocationNode.GenericParametersListingNode;
 		{
-			Assert.NotNull(functionInvocationNode.GenericParametersListingNode);
-			Assert.True(functionInvocationNode.GenericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
+			Assert.NotNull(genericParametersListingNode);
+			Assert.True(genericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
 			
-			var intGenericParameterEntryNode = functionInvocationNode.GenericParametersListingNode.GenericParameterEntryNodeList[0];
+			Assert.Equal(2, genericParametersListingNode.GenericParameterEntryNodeList.Count);
+			
+			var intGenericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList[0];
 			Assert.Equal("int", intGenericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 			
-			var stringGenericParameterEntryNode = functionInvocationNode.GenericParametersListingNode.GenericParameterEntryNodeList[1];
+			var stringGenericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList[1];
 			Assert.Equal("MyClass", stringGenericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 			
-			Assert.True(functionInvocationNode.GenericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
+			Assert.True(genericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
 		}
 		
-		// FunctionParametersListingNode
+		var functionParametersListingNode = functionInvocationNode.FunctionParametersListingNode;
 		{
-			Assert.True(functionInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			var openParenthesisToken = functionParametersListingNode.OpenParenthesisToken;
+			Assert.True(openParenthesisToken.ConstructorWasInvoked);
 			
-			var numericFunctionParameterEntryNode = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[0];
-			Assert.Equal(SyntaxKind.NumericLiteralToken, ((LiteralExpressionNode)numericFunctionParameterEntryNode.ExpressionNode).LiteralSyntaxToken.SyntaxKind);
+			var functionParameterEntryNodeList = functionInvocationNode.FunctionParameterEntryNodeList;
 			
-			var stringFunctionParameterEntryNode = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[1];
-			Assert.Equal(SyntaxKind.StringLiteralToken, ((LiteralExpressionNode)stringFunctionParameterEntryNode.ExpressionNode).LiteralSyntaxToken.SyntaxKind);
+			Assert.Equal(2, functionParameterEntryNodeList.Count);
 			
-			Assert.True(functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+			var zeroIndexParameter = (LiteralExpressionNode)functionParameterEntryNodeList[0];
+			Assert.Equal("7", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			
+			var oneIndexParameter = (LiteralExpressionNode)functionParameterEntryNodeList[1];
+			Assert.Equal("Asdfg", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			
+			var closeParenthesisToken = functionParametersListingNode.CloseParenthesisToken;
+			Assert.True(closeParenthesisToken.ConstructorWasInvoked);
 		}
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
-    /// <summary>
-    /// TODO: Why is the new keyword being added as the index 0 node of topCodeBlock?...
-    ///       ...Only the 'ConstructorInvocationExpressionNode' should be in the 'GetChildList()' of 'topCodeBlock'.
-    /// </summary>
     [Fact]
     public void ConstructorInvocationNode_Basic()
     {
     	var test = new Test("return new Person();");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
 		
-		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)returnStatementNode.ExpressionNode;
 		
 		Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
-	    //constructorInvocationExpressionNode.ResultTypeClauseNode;
+	    Assert.Equal("Person", constructorInvocationExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	    
 	    Assert.Null(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode);
 	    
@@ -387,62 +414,67 @@ public partial class ExpressionTests
 		Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 	    
 	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
-    /// <summary>
-    /// TODO: Why is the new keyword being added as the index 0 node of topCodeBlock?...
-    ///       ...Only the 'ConstructorInvocationExpressionNode' should be in the 'GetChildList()' of 'topCodeBlock'.
-    /// </summary>
     [Fact]
     public void ConstructorInvocationNode_Parameters()
     {
     	var test = new Test("return new Person(18, \"John\");");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
 		
-		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)returnStatementNode.ExpressionNode;
     	
     	Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
-	    //constructorInvocationExpressionNode.ResultTypeClauseNode;
+	    Assert.Equal("Person", constructorInvocationExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	    
 	    Assert.Null(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode);
 	    
-	    Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
-		
-		// FunctionParametersListingNode
-		{
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-			Assert.Equal(2, constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Count);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+	    var functionParametersListingNode = constructorInvocationExpressionNode.FunctionParametersListingNode;
+	    {
+	    	Assert.NotNull(functionParametersListingNode);
+			Assert.True(functionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			
+			Assert.Equal(2, functionParametersListingNode.FunctionParameterEntryNodeList.Count);
+			
+			var zeroIndexParameter = (LiteralExpressionNode)functionParametersListingNode.FunctionParameterEntryNodeList[0];
+			Assert.Equal("18", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			
+			var oneIndexParameter = (LiteralExpressionNode)functionParametersListingNode.FunctionParameterEntryNodeList[1];
+			Assert.Equal("John", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			
+			Assert.True(functionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 		}
 	    
 	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
-    /// <summary>
-    /// TODO: Why is the new keyword being added as the index 0 node of topCodeBlock?...
-    ///       ...Only the 'ConstructorInvocationExpressionNode' should be in the 'GetChildList()' of 'topCodeBlock'.
-    /// </summary>
     [Fact]
     public void ConstructorInvocationNode_Generic()
     {
     	var test = new Test("return new Dictionary<int, Person>();");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
 		
-		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)returnStatementNode.ExpressionNode;
+    	
+    	Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
-        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
-		
-	    // ResultTypeClauseNode.GenericParametersListingNode
+	    Assert.Equal("Dictionary", constructorInvocationExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    var genericParametersListingNode = constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode;
 	    {
-	    	Assert.NotNull(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode);
-	    	Assert.True(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
-	    	Assert.Equal(2, constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count);
-	    	Assert.True(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
+	    	Assert.NotNull(genericParametersListingNode);
+	    	Assert.True(genericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
+	    	
+	    	Assert.Equal(2, genericParametersListingNode.GenericParameterEntryNodeList.Count);
+	    	
+	    	var zeroIndexParameter = (TypeClauseNode)genericParametersListingNode.GenericParameterEntryNodeList[0];
+	    	Assert.Equal("int", zeroIndexParameter.TypeIdentifierToken.TextSpan.GetText());
+	    	
+	    	var oneIndexParameter = genericParametersListingNode.GenericParameterEntryNodeList[1];
+	    	Assert.Equal("Person", oneIndexParameter.TypeIdentifierToken.TextSpan.GetText());
+	    	
+	    	Assert.True(genericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
 	    }
 	    
 	    Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
@@ -451,97 +483,52 @@ public partial class ExpressionTests
 		Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 	    
 	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
-    
-    [Fact]
-    public void ConstructorInvocationNode_Generic_Parameters_MISSING_NumericLiteralToken_A()
-    {
-    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
-        var test = new Test("return new Dictionary<int, Person>(0, \"Test\");");
-        
-        foreach (var token in test.LexerOutput.SyntaxTokenList)
-    	{
-    		Console.WriteLine(token.SyntaxKind);
-    	}
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void ConstructorInvocationNode_Generic_Parameters_MISSING_NumericLiteralToken_B()
-    {
-    	/*
-    	It turns out that "0" does not Lex to a NumericLiteralToken.
-    	This is one of the most ridiculous bugs I've ever seen,
-    	because how am I only now seeing this? How long was this an issue for???
-    	
-    	It doesn't Lex to anything, it just returns EndOfFileToken, or if more than "0" is in the text,
-    	it skips over where the 0-token would be.
-    	
-    	Oh my gosh, I've checked the 'CSharpLexer.cs' and in the switch statement that
-    	is within a while loop that goes over every character in the string,
-    	I hardcoded cases 1...9 inclusive both ends but never '0'.
-    	
-    	Someone needs to take away my keyboard because I am dangerously stupid.
-    	
-    	TODO: Anything similar to this in the future should return a 'BadToken' or some sort.
-    	*/
-    
-    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
-        var test = new Test("0");
-        
-        foreach (var token in test.LexerOutput.SyntaxTokenList)
-    	{
-    		Console.WriteLine(token.SyntaxKind);
-    	}
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    /// <summary>
-    /// TODO: Why is the new keyword being added as the index 0 node of topCodeBlock?...
-    ///       ...Only the 'ConstructorInvocationExpressionNode' should be in the 'GetChildList()' of 'topCodeBlock'.
-    /// </summary>
+
     [Fact]
     public void ConstructorInvocationNode_Generic_Parameters()
     {
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
         var test = new Test("return new Dictionary<int, Person>(0, \"Test\");");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
 		
-		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)returnStatementNode.ExpressionNode;
         
         Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
-	    // ResultTypeClauseNode.GenericParametersListingNode
+	    var genericParametersListingNode = constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode;
 	    {
-	    	Assert.NotNull(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode);
-	    	Assert.True(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
+	    	Assert.NotNull(genericParametersListingNode);
+	    	Assert.True(genericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
 	    	
-	    	Assert.Equal(2, constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count);
+	    	Assert.Equal(2, genericParametersListingNode.GenericParameterEntryNodeList.Count);
 	    	
-	    	var intGenericParameterEntryNode = constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList[0];
-	    	Assert.Equal("int", intGenericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    	var zeroIndexParameter = (TypeClauseNode)genericParametersListingNode.GenericParameterEntryNodeList[0];
+	    	Assert.Equal("int", zeroIndexParameter.TypeIdentifierToken.TextSpan.GetText());
 	    	
-	    	var personGenericParameterEntryNode = constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList[1];
-	    	Assert.Equal("Person", personGenericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    	var oneIndexParameter = genericParametersListingNode.GenericParameterEntryNodeList[1];
+	    	Assert.Equal("Person", oneIndexParameter.TypeIdentifierToken.TextSpan.GetText());
 	    	
-	    	Assert.True(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
+	    	Assert.True(genericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
 	    }
 
-		// FunctionParametersListingNode
-		{
-			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-			Assert.Equal(2, constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Count);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		var functionParametersListingNode = constructorInvocationExpressionNode.FunctionParametersListingNode;
+	    {
+	    	Assert.NotNull(functionParametersListingNode);
+			Assert.True(functionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			
+			Assert.Equal(2, functionParametersListingNode.FunctionParameterEntryNodeList.Count);
+			
+			var zeroIndexParameter = (LiteralExpressionNode)functionParametersListingNode.FunctionParameterEntryNodeList[0];
+			Assert.Equal("0", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			
+			var oneIndexParameter = (LiteralExpressionNode)functionParametersListingNode.FunctionParameterEntryNodeList[1];
+			Assert.Equal("Test", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			
+			Assert.True(functionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 		}
 	    
 	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     [Fact]
