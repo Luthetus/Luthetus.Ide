@@ -14,329 +14,152 @@ using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
+/// <summary>
+/// Every test case starts with 'return' in order to start the expression loop within the parser.
+///
+/// Many expressions are compositions of other expressions.
+/// As a result, these tests will assert the structure of the syntax tree,
+/// and that various identifiers / unique numbers appear at the correct node position.
+///
+/// Any assertion of TypeClauseNode should be done as its own separate test.
+/// </summary>
 public partial class ExpressionTests
 {
+	
+	[Fact]
+	public void Literal_Bool_ResultTypeClauseNode()
+	{
+		var test = new Test(@"return false;");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
+		var literalExpressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
+		Assert.Equal("bool", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	}
+	
+	[Fact]
+	public void Literal_Char_ResultTypeClauseNode()
+	{
+		var test = new Test(@"return 'a';");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
+		var literalExpressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
+		Assert.Equal("char", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	}
+	
+	[Fact]
+	public void Literal_Number_ResultTypeClauseNode()
+	{
+		var test = new Test(@"return 1;");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
+		var literalExpressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
+		Assert.Equal("int", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	}
+	
+	[Fact]
+	public void Literal_String_ResultTypeClauseNode()
+	{
+		var test = new Test(@"return ""a"";");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
+		var literalExpressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
+		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	}
+	
+	[Fact]
+	public void Literal_StringInterpolated_ResultTypeClauseNode()
+	{
+		var test = new Test(@"return $""a {myVariable} c"";");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
+		var literalExpressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
+		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	}
+	
+	[Fact]
+	public void Literal_StringVerbatim_ResultTypeClauseNode()
+	{
+		var test = new Test(@"return @""abc"";");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
+		var literalExpressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
+		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	}
+
     [Fact]
-    public void Numeric_Add_BinaryExpressionNode()
+    public void BinaryExpressionNode_Lonely()
     {
-		var test = new Test(@"1 + 1");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var test = new Test(@"return 1 + 2;");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
 		
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "int";
+		var binaryExpressionNode = (BinaryExpressionNode)returnStatementNode.ExpressionNode;
 		
-		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		var leftExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+		Assert.Equal("1", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		
-	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+	    Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
 	    
-	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    throw new NotImplementedException("See ExpressionAsStatementTests");
+	    var rightExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+	    Assert.Equal("2", rightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
     }
     
     [Fact]
-    public void Numeric_Add_BinaryExpressionNode_More()
+    public void BinaryExpressionNode_Left_Precedence_GreaterThanOrEqualTo_Right()
     {
-    	var test = new Test(@"1 + 1 + 1");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+    	var test = new Test(@"return 1 + 2 + 3;");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
 			
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "int";
+		var externalBinaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		
 		// Left Expression
 		{
-			var leftBinaryExpressionNode = (BinaryExpressionNode)binaryExpressionNode.LeftExpressionNode;
-			Assert.Equal(textTypeClause, leftBinaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			var innerBinaryExpressionNode = (BinaryExpressionNode)externalBinaryExpressionNode.LeftExpressionNode;
 			
-			// Temporarily swap variables for sanity #change
-			var rememberBinaryExpressionNode = binaryExpressionNode;
-			binaryExpressionNode = leftBinaryExpressionNode;
-			// Inner Binary Expression
-			{
-				var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-				Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-				
-				var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-			    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-			    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-			    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-				Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-			    
-			    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-			    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-			    
-			    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		    }
-		    
-		    // Temporarily swap variables for sanity #restore
-		    binaryExpressionNode = rememberBinaryExpressionNode;
+			var leftExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.LeftExpressionNode;
+	    	Assert.Equal("1", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+			
+			var binaryOperatorNode = innerBinaryExpressionNode.BinaryOperatorNode;
+			Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+			
+			var rightExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.RightExpressionNode;
+	    	Assert.Equal("2", rightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		}
 		
-		// Operator
+		var binaryOperatorNode = externalBinaryExpressionNode.BinaryOperatorNode;
+		Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+	    
+		var rightExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+		Assert.Equal("3", rightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+    }
+    
+    [Fact]
+    public void BinaryExpressionNode_Left_Precedence_LessThan_Right()
+    {
+    	var test = new Test(@"return 1 + 2 * 3;");
+		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
+			
+		var externalBinaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+		
+		var leftExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+		Assert.Equal("1", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		
+		var binaryOperatorNode = externalBinaryExpressionNode.BinaryOperatorNode;
+		Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+		
+		// Right Expression
 		{
-		    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-		    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-		    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-			Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			var innerBinaryExpressionNode = (BinaryExpressionNode)externalBinaryExpressionNode.LeftExpressionNode;
+			
+			var leftExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.LeftExpressionNode;
+	    	Assert.Equal("2", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+			
+			var binaryOperatorNode = innerBinaryExpressionNode.BinaryOperatorNode;
+			Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+			
+			var rightExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.RightExpressionNode;
+	    	Assert.Equal("3", rightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		}
-	    
-	    // Right Expression
-	    {
-		    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-		    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    }
-	    
-	    // Result
-	    {
-	    	Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    }
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void Numeric_Subtract_BinaryExpressionNode()
-    {
-    	var test = new Test(@"1 - 1");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "int";
-		
-		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		
-	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void Numeric_Star_BinaryExpressionNode()
-    {
-    	var test = new Test(@"1 * 1");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "int";
-		
-		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		
-	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void Numeric_Division_BinaryExpressionNode()
-    {
-    	var test = new Test(@"1 / 1");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "int";
-		
-		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		
-	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void Numeric_EqualsEquals_BinaryExpressionNode()
-    {
-    	var test = new Test(@"1 == 1");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "int";
-		
-		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		
-	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void String_BinaryExpressionNode()
-    {
-    	var test = new Test("\"Asd\" + \"Fgh\"");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "string";
-		
-		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		
-	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void String_Interpolated()
-    {
-    	var test = new Test("$\"asd\"");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void String_Verbatim()
-    {
-    	var test = new Test("@\"asd\"");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void String_InterpolatedVerbatim()
-    {
-    	var test = new Test("$@\"asd\"");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void String_VerbatimInterpolated()
-    {
-    	var test = new Test("@$\"asd\"");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void Char_BinaryExpressionNode()
-    {
-    	var test = new Test("'a' + '\n'");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "char";
-		
-		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		
-	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
-    }
-    
-    [Fact]
-    public void Bool_BinaryExpressionNode()
-    {
-    	var test = new Test("false == true");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-		var textTypeClause = "bool";
-		
-		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		
-	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
-	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	    
-	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     [Fact]
     public void ParenthesizedExpressionNode_Test()
     {
-    	var test = new Test("(7)");
+    	var test = new Test("return (7);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
@@ -355,7 +178,7 @@ public partial class ExpressionTests
     [Fact]
     public void ShortCircuit()
     {
-    	var test = new Test("(1 + )");
+    	var test = new Test("return (1 + );");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
@@ -380,7 +203,7 @@ public partial class ExpressionTests
     [Fact]
     public void ExplicitCastNode_IdentifierToken()
     {
-    	var test = new Test("(MyClass)");
+    	var test = new Test("return (MyClass);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		test.WriteChildrenIndentedRecursive(topCodeBlock);
@@ -393,7 +216,7 @@ public partial class ExpressionTests
     [Fact]
     public void ExplicitCastNode_KeywordToken()
     {
-    	var test = new Test("(int)");
+    	var test = new Test("return (int);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
@@ -404,7 +227,7 @@ public partial class ExpressionTests
     [Fact]
     public void FunctionInvocationNode_Basic()
     {
-    	var test = new Test("MyMethod()");
+    	var test = new Test("return MyMethod();");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
@@ -420,7 +243,7 @@ public partial class ExpressionTests
     [Fact]
     public void FunctionInvocationNode_Parameters()
     {
-    	var test = new Test("MyMethod(7, \"Asdfg\")");
+    	var test = new Test("return MyMethod(7, \"Asdfg\");");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
@@ -444,7 +267,7 @@ public partial class ExpressionTests
     [Fact]
     public void FunctionInvocationNode_Generic()
     {
-    	var test = new Test("MyMethod<int, MyClass>()");
+    	var test = new Test("return MyMethod<int, MyClass>();");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
@@ -472,7 +295,7 @@ public partial class ExpressionTests
     [Fact]
     public void FunctionInvocationNode_Generic_Parameters()
     {
-    	var test = new Test("MyMethod<int, MyClass>(7, \"Asdfg\")");
+    	var test = new Test("return MyMethod<int, MyClass>(7, \"Asdfg\");");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
@@ -514,7 +337,7 @@ public partial class ExpressionTests
     [Fact]
     public void ConstructorInvocationNode_Basic()
     {
-    	var test = new Test("new Person()");
+    	var test = new Test("return new Person();");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
@@ -542,7 +365,7 @@ public partial class ExpressionTests
     [Fact]
     public void ConstructorInvocationNode_Parameters()
     {
-    	var test = new Test("new Person(18, \"John\")");
+    	var test = new Test("return new Person(18, \"John\");");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
@@ -574,7 +397,7 @@ public partial class ExpressionTests
     [Fact]
     public void ConstructorInvocationNode_Generic()
     {
-    	var test = new Test("new Dictionary<int, Person>()");
+    	var test = new Test("return new Dictionary<int, Person>();");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
@@ -603,7 +426,7 @@ public partial class ExpressionTests
     public void ConstructorInvocationNode_Generic_Parameters_MISSING_NumericLiteralToken_A()
     {
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
-        var test = new Test("new Dictionary<int, Person>(0, \"Test\")");
+        var test = new Test("return new Dictionary<int, Person>(0, \"Test\");");
         
         foreach (var token in test.LexerOutput.SyntaxTokenList)
     	{
@@ -652,7 +475,7 @@ public partial class ExpressionTests
     public void ConstructorInvocationNode_Generic_Parameters()
     {
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
-        var test = new Test("new Dictionary<int, Person>(0, \"Test\")");
+        var test = new Test("return new Dictionary<int, Person>(0, \"Test\");");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
@@ -691,7 +514,7 @@ public partial class ExpressionTests
     [Fact]
     public void ConstructorInvocationNode_NoTypeClauseNode()
     {
-    	var test = new Test("new()");
+    	var test = new Test("return new();");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -716,7 +539,7 @@ public partial class ExpressionTests
     [Fact]
     public void ObjectInitializationNode_Parameters_NoTrailingComma()
     {
-    	var test = new Test("new MyClass { FirstName = firstName, LastName = lastName }");
+    	var test = new Test("return new MyClass { FirstName = firstName, LastName = lastName };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -766,7 +589,7 @@ public partial class ExpressionTests
     [Fact]
     public void ObjectInitializationNode__Parameters_WithTrailingComma()
     {
-    	var test = new Test("new MyClassAaa { FirstName = firstName, LastName = lastName, }");
+    	var test = new Test("return new MyClassAaa { FirstName = firstName, LastName = lastName, };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -814,7 +637,7 @@ public partial class ExpressionTests
     [Fact]
     public void ObjectInitializationNode_NoParameters_NoTrailingComma()
     {
-    	var test = new Test("new MyClassAaa { }");
+    	var test = new Test("return new MyClassAaa { };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -844,7 +667,7 @@ public partial class ExpressionTests
     [Fact]
     public void ObjectInitializationNode_NoParameters_WithTrailingComma()
     {
-    	var test = new Test("new MyClassAaa { , }");
+    	var test = new Test("return new MyClassAaa { , };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -874,7 +697,7 @@ public partial class ExpressionTests
     [Fact]
     public void ObjectInitializationNode_WithParenthesis()
     {
-    	var test = new Test("new MyClassAaa() { }");
+    	var test = new Test("return new MyClassAaa() { };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -907,7 +730,7 @@ public partial class ExpressionTests
     [Fact]
     public void CollectionInitializationNode_Parameters_NoTrailingComma()
     {
-    	var test = new Test("new List<int> { 1, 2 }");
+    	var test = new Test("return new List<int> { 1, 2 };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -953,7 +776,7 @@ public partial class ExpressionTests
     [Fact]
     public void CollectionInitializationNode_Parameters_WithTrailingComma()
     {
-    	var test = new Test("new List<Person> { new Person(1, \"John\"), new(2, \"Jane\"), }");
+    	var test = new Test("return new List<Person> { new Person(1, \"John\"), new(2, \"Jane\"), };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -1061,7 +884,7 @@ public partial class ExpressionTests
     [Fact]
     public void CollectionInitializationNode_NoParameters_NoTrailingComma()
     {
-    	var test = new Test("new List<int> { }");
+    	var test = new Test("return new List<int> { };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -1091,7 +914,7 @@ public partial class ExpressionTests
 	[Fact]
     public void CollectionInitializationNode_NoParameters_WithTrailingComma()
     {
-    	var test = new Test("new List<Person> { , }");
+    	var test = new Test("return new List<Person> { , };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -1121,7 +944,7 @@ public partial class ExpressionTests
     [Fact]
     public void CollectionInitializationNode_WithParenthesis()
     {
-    	var test = new Test("new List<Person>() { }");
+    	var test = new Test("return new List<Person>() { };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
@@ -1155,7 +978,7 @@ public partial class ExpressionTests
     [Fact]
     public void LambdaFunction_Expression_NoParameter()
     {
-    	var test = new Test("(() => \"Abc\");");
+    	var test = new Test("return () => \"Abc\";");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
@@ -1311,7 +1134,7 @@ public partial class ExpressionTests
     		| async ... => ...;
     	*/
     	
-    	var test = new Test("(x => \"Abc\")");
+    	var test = new Test("return x => \"Abc\";");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		test.WriteChildrenIndented(topCodeBlock);
@@ -1334,7 +1157,7 @@ public partial class ExpressionTests
     [Fact]
     public void LambdaFunction_Expression_ManyParameter_Async()
     {
-    	var test = new Test("(async (x, index) => \"Abc\")");
+    	var test = new Test("return async (x, index) => \"Abc\";");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
@@ -1364,7 +1187,7 @@ public partial class ExpressionTests
     [Fact]
     public void LambdaFunction_CodeBlock_NoParameter_Async()
     {
-    	var test = new Test("(async () => { WriteLine(\"Abc\"); return \"Cba\"; });");
+    	var test = new Test("return async () => { WriteLine(\"Abc\"); return \"Cba\"; };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
@@ -1375,7 +1198,7 @@ public partial class ExpressionTests
     [Fact]
     public void LambdaFunction_CodeBlock_SingleParameter_Async()
     {
-    	var test = new Test("(async x => { return \"Abc\"; });");
+    	var test = new Test("return async x => { return \"Abc\"; };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
@@ -1386,7 +1209,7 @@ public partial class ExpressionTests
     [Fact]
     public void LambdaFunction_CodeBlock_ManyParameter()
     {
-    	var test = new Test("((x, index) => { return \"Abc\"; });");
+    	var test = new Test("return (x, index) => { return \"Abc\"; };");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
