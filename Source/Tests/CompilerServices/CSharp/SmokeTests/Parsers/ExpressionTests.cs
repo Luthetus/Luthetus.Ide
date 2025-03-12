@@ -69,7 +69,8 @@ public partial class ExpressionTests
 	{
 		var test = new Test(@"return $""a {myVariable} c"";");
 		var returnStatementNode = (ReturnStatementNode)test.CompilationUnit.RootCodeBlockNode.GetChildList().Single();
-		var literalExpressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
+		var literalExpressionNode = (InterpolatedStringNode)returnStatementNode.ExpressionNode;
+		Console.WriteLine("aaa " + literalExpressionNode.SyntaxKind);
 		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	}
 	
@@ -137,7 +138,7 @@ public partial class ExpressionTests
 			
 		var externalBinaryExpressionNode = (BinaryExpressionNode)returnStatementNode.ExpressionNode;
 		
-		var leftExpressionNode = (LiteralExpressionNode)externalBinaryExpressionNode.RightExpressionNode;
+		var leftExpressionNode = (LiteralExpressionNode)externalBinaryExpressionNode.LeftExpressionNode;
 		Assert.Equal("1", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		
 		var binaryOperatorNode = externalBinaryExpressionNode.BinaryOperatorNode;
@@ -145,13 +146,13 @@ public partial class ExpressionTests
 		
 		// Right Expression
 		{
-			var innerBinaryExpressionNode = (BinaryExpressionNode)externalBinaryExpressionNode.LeftExpressionNode;
+			var innerBinaryExpressionNode = (BinaryExpressionNode)externalBinaryExpressionNode.RightExpressionNode;
 			
 			var innerLeftExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.LeftExpressionNode;
 	    	Assert.Equal("2", innerLeftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 			
 			var innerBinaryOperatorNode = innerBinaryExpressionNode.BinaryOperatorNode;
-			Assert.Equal(SyntaxKind.PlusToken, innerBinaryOperatorNode.OperatorToken.SyntaxKind);
+			Assert.Equal(SyntaxKind.StarToken, innerBinaryOperatorNode.OperatorToken.SyntaxKind);
 			
 			var innerRightExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.RightExpressionNode;
 	    	Assert.Equal("3", innerRightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
@@ -192,7 +193,7 @@ public partial class ExpressionTests
 			var binaryExpressionNode = (BinaryExpressionNode)parenthesizedExpressionNode.InnerExpression;
 		
 			var leftExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-			Assert.Equal("7", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+			Assert.Equal("1", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 			
 			var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
 			Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
@@ -299,7 +300,7 @@ public partial class ExpressionTests
 			Assert.Equal("7", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
 			
 			var oneIndexParameter = (LiteralExpressionNode)functionParameterEntryNodeList[1].ExpressionNode;
-			Assert.Equal("Asdfg", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			Assert.Equal("\"Asdfg\"", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
 			
 			var closeParenthesisToken = functionParametersListingNode.CloseParenthesisToken;
 			Assert.True(closeParenthesisToken.ConstructorWasInvoked);
@@ -386,7 +387,7 @@ public partial class ExpressionTests
 			Assert.Equal("7", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
 			
 			var oneIndexParameter = (LiteralExpressionNode)functionParameterEntryNodeList[1].ExpressionNode;
-			Assert.Equal("Asdfg", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			Assert.Equal("\"Asdfg\"", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
 			
 			var closeParenthesisToken = functionParametersListingNode.CloseParenthesisToken;
 			Assert.True(closeParenthesisToken.ConstructorWasInvoked);
@@ -440,7 +441,7 @@ public partial class ExpressionTests
 			Assert.Equal("18", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
 			
 			var oneIndexParameter = (LiteralExpressionNode)functionParametersListingNode.FunctionParameterEntryNodeList[1].ExpressionNode;
-			Assert.Equal("John", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			Assert.Equal("\"John\"", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
 			
 			Assert.True(functionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 		}
@@ -522,7 +523,7 @@ public partial class ExpressionTests
 			Assert.Equal("0", zeroIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
 			
 			var oneIndexParameter = (LiteralExpressionNode)functionParametersListingNode.FunctionParameterEntryNodeList[1].ExpressionNode;
-			Assert.Equal("Test", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
+			Assert.Equal("\"Test\"", oneIndexParameter.LiteralSyntaxToken.TextSpan.GetText());
 			
 			Assert.True(functionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 		}
