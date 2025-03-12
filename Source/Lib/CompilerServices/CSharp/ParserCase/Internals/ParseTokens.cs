@@ -90,12 +90,12 @@ public static class ParseTokens
 	        	
 	        	var isBangMemberAccessToken = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.BangToken &&
 	        		parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken;
-	        
+
 	        	if ((parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken || isQuestionMarkMemberAccessToken || isBangMemberAccessToken) &&
 	        		originalTokenIndex == parserModel.TokenWalker.Index - 1)
 				{
 					_ = parserModel.TokenWalker.Backtrack();
-					expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+					expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);					
 					parserModel.StatementBuilder.ChildList.Add(expressionNode);
 					return;
 				}

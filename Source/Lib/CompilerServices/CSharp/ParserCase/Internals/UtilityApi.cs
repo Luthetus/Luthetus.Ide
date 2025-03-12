@@ -268,6 +268,8 @@ public static class UtilityApi
                 return 2;
             case SyntaxKind.ParenthesizedExpressionNode:
                 return 3;
+            case SyntaxKind.MemberAccessToken:
+                return 4;
             default:
                 return 0;
         }

@@ -1408,7 +1408,7 @@ person.
 			Assert.Equal(SyntaxKind.MemberAccessToken, binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
 		}
 		
-		Assert.Equal(SyntaxKind.TypeDefinitionNode, topCodeBlockChildList[0].SyntaxKind);
+		Assert.Equal(SyntaxKind.TypeDefinitionNode, topCodeBlockChildList[3].SyntaxKind);
     }
     
     [Fact]

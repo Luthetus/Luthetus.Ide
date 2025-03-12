@@ -145,12 +145,6 @@ public partial class CSharpBinder
 	public IExpressionNode HandleBinaryOperator(
 		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		// TODO: MemberAccessToken should be treated the same as any other operator.
-		//       This feels very "special case" the way it is written.
-		//       This seems similar to the most precedence being assigned to it.
-		if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
-			return ParseMemberAccessToken(expressionPrimary, ref token, compilationUnit, ref parserModel);
-	
 		// In order to disambiguate '<' between when the 'expressionPrimary' is an 'AmbiguousIdentifierExpressionNode'
 		//     - Less than operator
 		//     - GenericParametersListingNode
@@ -808,7 +802,28 @@ public partial class CSharpBinder
 	{
 		if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 		{
-			if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+			if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.MemberAccessToken)
+			{
+				var memberAccessToken = new SyntaxToken(
+					SyntaxKind.MemberAccessToken,
+					new TextEditorTextSpan(
+						0,
+					    0,
+					    0,
+					    binaryExpressionNode.BinaryOperatorNode.OperatorToken.TextSpan.ResourceUri,
+					    string.Empty,
+					    string.Empty))
+					{
+						IsFabricated = true
+					};
+			
+				expressionSecondary = ParseMemberAccessToken(
+					binaryExpressionNode.LeftExpressionNode.ResultTypeClauseNode,
+					ref memberAccessToken,
+					compilationUnit,
+					ref parserModel);
+			}
+			else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 			{
 				expressionSecondary = ForceDecisionAmbiguousIdentifier(
 					EmptyExpressionNode.Empty,
@@ -2143,56 +2158,10 @@ public partial class CSharpBinder
 	public IExpressionNode ParseMemberAccessToken(
 		IExpressionNode expressionPrimary, ref SyntaxToken tokenIn, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*
-		(2025-01-26)
-		============
-		
-		````public class Aaa
-		````{
-		````    public Aaa(int number)
-		````    {
-		````    }
-		````
-		````    public class Bbb
-		````    {
-		````    }
-		````}
-		
-		// Type definition contains type definition, invoke inner type definition's constructor.
-		{
-			new Aaa.Bbb();
-			
-			// Current scenario:
-			// -----------------
-			// empty expression + new -> constructor invocation
-			// constructor invocation + Aaa -> constructor invocation typeof(Aaa)
-			
-			// Next scenario
-			// -------------
-			// empty expression + new -> constructor invocation
-			// constructor invocation + Aaa
-			//     | HandleAmbiguousIdentifier(Aaa)
-			//     | 
-			//     | ````HandleAmbiguousIdentifier(AmbiguousIdentifierExpressionNode node)
-			//     | ````{
-			//     | ````    // TODO: Static reference to a type where there exists a variable with the same identifier.
-			//     | ````    // TODO: Explicit namespace qualification.
-			//     | ````    // 
-			//     | ````    var boundNode = Binder.Bind(ambiguousIdentifierExpressionNode: node);
-			//     | ````    
-			//     | ````    while (TokenNext.SyntaxKind == SyntaxKind.MemberAccerAccessToken)
-			//     | ````        boundNode = boundNode.GetMember(TokenWalker.Peek(2));
-			//     | ````    
-			//     | ````    return boundNode;
-			//     | ````}
-			// constructor invocation + boundNode -> constructor invocation typeof(Bbb)
-		}
-		*/
-		
 		var token = tokenIn;
 		var loopIteration = 0;
 		
-		while (!parserModel.TokenWalker.IsEof)
+		// while (!parserModel.TokenWalker.IsEof)
 		{
 			if (loopIteration++ >= 1)
 			{
@@ -2203,11 +2172,11 @@ public partial class CSharpBinder
 				token = parserModel.TokenWalker.Current;
 				
 				if (token.SyntaxKind != SyntaxKind.MemberAccessToken)
-					break;
+					return expressionPrimary;
 			}
 		
 			if (!token.IsFabricated && !UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
-				break; // TODO: Consume and return the MemberAccessToken here?
+				return expressionPrimary; // TODO: Consume and return the MemberAccessToken here?
 	
 			if (!token.IsFabricated)
 				_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
@@ -2219,7 +2188,7 @@ public partial class CSharpBinder
 				ref parserModel);
 				
 			if (!memberIdentifierToken.ConstructorWasInvoked || expressionPrimary is null)
-				break;
+				return expressionPrimary;
 			
 			if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 			{
@@ -2246,14 +2215,14 @@ public partial class CSharpBinder
 			if (typeClauseNode is null)
 			{
 				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
-				continue;
+				return expressionPrimary;
 			}
 			
 			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
 				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
-				continue;
+				return expressionPrimary;
 			}
 				
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
@@ -2266,12 +2235,12 @@ public partial class CSharpBinder
 				{
 					var variableDeclarationNode = (VariableDeclarationNode)node;
 					if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
-						continue;
+						return expressionPrimary;
 					
 					if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
 					{
 						foundDefinitionNode = variableDeclarationNode;
-						break;
+						return expressionPrimary;
 					}
 				}
 				else if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -2279,12 +2248,12 @@ public partial class CSharpBinder
 					// TODO: Create a Binder.Main method that takes a node and returns its identifier?
 					var functionDefinitionNode = (FunctionDefinitionNode)node;
 					if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
-						continue;
+						return expressionPrimary;
 					
 					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
 					{
 						foundDefinitionNode = functionDefinitionNode;
-						break;
+						return expressionPrimary;
 					}
 				}
 			}
@@ -2292,7 +2261,7 @@ public partial class CSharpBinder
 			if (foundDefinitionNode is null)
 			{
 				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
-				continue;
+				return expressionPrimary;
 			}
 				 
 			if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)

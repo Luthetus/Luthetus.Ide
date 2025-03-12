@@ -215,7 +215,9 @@ public static class CSharpParser
 			{
 				bool deferredParsingOccurred = false;
 				
-				if (parserModel.ParseChildScopeStack.Count > 0)
+				deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+				
+				if (!deferredParsingOccurred && parserModel.ParseChildScopeStack.Count > 0)
 				{
 					var tuple = parserModel.ParseChildScopeStack.Peek();
 					
@@ -228,12 +230,7 @@ public static class CSharpParser
 				}
 				
 				if (!deferredParsingOccurred)
-				{
-					// This second 'deferredParsingOccurred' is for any lambda expressions with one or many statements in its body.
-					deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
-					if (!deferredParsingOccurred)
-						break;
-				}
+					break;
 			}
 			
 			if (parserModel.TokenWalker.ConsumeCounter == 0)
