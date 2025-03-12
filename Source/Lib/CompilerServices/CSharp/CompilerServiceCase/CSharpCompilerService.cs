@@ -218,7 +218,72 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var node = GetSyntaxNode(positionIndex, renderBatch.Model.ResourceUri, GetResource(renderBatch.Model.ResourceUri));
         
         if (node is not null)
-        	Console.WriteLine("aaa GetAutocompleteMenu");
+        {
+        	Console.WriteLine($"aaa GetAutocompleteMenu {node.SyntaxKind}");
+        	
+        	if (node.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+        	{
+        		var binaryExpressionNode = (BinaryExpressionNode)node;
+        		Console.WriteLine($"ResultTypeClauseNode: {binaryExpressionNode.LeftExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText()}");
+        		
+        		var compilerServiceResource = (CSharpResource)GetResource(renderBatch.Model.ResourceUri);
+        		
+        		var scope = __CSharpBinder.GetScopeByPositionIndex(compilerServiceResource.CompilationUnit, renderBatch.Model.ResourceUri, positionIndex);
+        		
+        		bool success = __CSharpBinder.TryGetTypeDefinitionHierarchically(
+			    	compilerServiceResource.CompilationUnit,
+			        renderBatch.Model.ResourceUri,
+			    	scope.IndexKey,
+			        binaryExpressionNode.LeftExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
+			        out var typeDefinitionNode);
+			        
+			    if (!success)
+			    {
+			    	Console.WriteLine("!success");
+			    }
+			    else
+			    {
+			    	var memberList = typeDefinitionNode.GetMemberList();
+			    	var autocompleteEntryList = new List<AutocompleteEntry>();
+			    	
+			    	foreach (var member in memberList)
+			    	{
+			    		switch (member.SyntaxKind)
+			    		{
+			    			case SyntaxKind.VariableDeclarationNode:
+			    				var variableDeclarationNode = (VariableDeclarationNode)member;
+			    				Console.WriteLine(variableDeclarationNode.IdentifierToken.TextSpan.GetText());
+			    				
+								autocompleteEntryList.Add(new AutocompleteEntry(
+				                    variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+				                    AutocompleteEntryKind.Variable,
+				                    null));
+			    				
+			    				break;
+			    		}
+			    	}
+			    	
+			    	var menuOptionRecordList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
+                        entry.DisplayName,
+                        MenuOptionKind.Other,
+                        onClickFunc: null,
+                        widgetParameterMap: new Dictionary<string, object?>
+                        {
+                            {
+                                nameof(AutocompleteEntry),
+                                entry
+                            }
+                        }))
+                    .ToList();
+			    	
+			    	return new MenuRecord(menuOptionRecordList);
+			    }
+        	}
+        }
+        else
+        {
+        	Console.WriteLine("aaa GetAutocompleteMenu IsNull");
+        }
         
         var word = renderBatch.Model.ReadPreviousWordOrDefault(
 	        primaryCursor.LineIndex,

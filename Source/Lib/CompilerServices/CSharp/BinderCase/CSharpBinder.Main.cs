@@ -1650,6 +1650,44 @@ public partial class CSharpBinder
     			
     			goto default;
     		}
+    		case SyntaxKind.BinaryExpressionNode:
+    		{
+    			var binaryExpressionNode = (BinaryExpressionNode)syntaxNode;
+    			
+    			int? startingIndexInclusive = null;
+    			int? endingIndexExclusive = null;
+    			
+    			if (binaryExpressionNode.LeftExpressionNode is not null)
+    			{
+    				(startingIndexInclusive, endingIndexExclusive) = GetNodePositionIndices(binaryExpressionNode.LeftExpressionNode, resourceUri);
+    			}
+    			
+    			if (binaryExpressionNode.BinaryOperatorNode is not null)
+    			{
+    				if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.ConstructorWasInvoked &&
+    			    	binaryExpressionNode.BinaryOperatorNode.OperatorToken.TextSpan.ResourceUri == resourceUri)
+    			    {
+    			    	endingIndexExclusive = binaryExpressionNode.BinaryOperatorNode.OperatorToken.TextSpan.EndingIndexExclusive;
+    			    }
+    			}
+    			
+    			if (binaryExpressionNode.RightExpressionNode is not null)
+    			{
+    				// Console.WriteLine("binaryExpressionNode.RightExpressionNode is not null");
+    			
+    				var rightExpressionPositionIndices = GetNodePositionIndices(binaryExpressionNode.RightExpressionNode, resourceUri);
+    				
+    				if (rightExpressionPositionIndices.EndExclusiveIndex != -1)
+    					endingIndexExclusive = rightExpressionPositionIndices.EndExclusiveIndex;
+    			}
+    			
+    			// Console.WriteLine($"BEN {startingIndexInclusive.Value} {endingIndexExclusive.Value}");
+    			
+    			if (startingIndexInclusive is not null && endingIndexExclusive is not null)
+    				return (startingIndexInclusive.Value, endingIndexExclusive.Value);
+    			
+    			goto default;
+    		}
     		default:
     		{
     			/*#if DEBUG
