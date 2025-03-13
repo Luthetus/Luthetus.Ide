@@ -1662,14 +1662,11 @@ public partial class CSharpBinder
     				(startingIndexInclusive, endingIndexExclusive) = GetNodePositionIndices(binaryExpressionNode.LeftExpressionNode, resourceUri);
     			}
     			
-    			if (binaryExpressionNode.BinaryOperatorNode is not null)
-    			{
-    				if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.ConstructorWasInvoked &&
-    			    	binaryExpressionNode.BinaryOperatorNode.OperatorToken.TextSpan.ResourceUri == resourceUri)
-    			    {
-    			    	endingIndexExclusive = binaryExpressionNode.BinaryOperatorNode.OperatorToken.TextSpan.EndingIndexExclusive;
-    			    }
-    			}
+				if (binaryExpressionNode.OperatorToken.ConstructorWasInvoked &&
+			    	binaryExpressionNode.OperatorToken.TextSpan.ResourceUri == resourceUri)
+			    {
+			    	endingIndexExclusive = binaryExpressionNode.OperatorToken.TextSpan.EndingIndexExclusive;
+			    }
     			
     			if (binaryExpressionNode.RightExpressionNode is not null)
     			{

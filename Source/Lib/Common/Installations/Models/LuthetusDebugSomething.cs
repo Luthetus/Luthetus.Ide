@@ -23,6 +23,8 @@ public static class LuthetusDebugSomething
 	public static double OnKeyDownLateBatchingCountSent { get; set; }
 	public static double OnKeyDownLateBatchingCountHandled { get; set; }
 	
+	public static double BinaryOperatorNodeCount { get; set; }
+	
 	public static string CreateText()
 	{
 		var builder = new StringBuilder();
@@ -42,6 +44,8 @@ public static class LuthetusDebugSomething
 						   $"count: {TextEditorUi_CountInvocations}");
 						   
 		builder.AppendLine($"OnKeyDownLateBatchingCount: sent: {OnKeyDownLateBatchingCountSent}, handled: {OnKeyDownLateBatchingCountHandled}");
+		
+		builder.AppendLine($"BinaryOperatorNodeCount: {BinaryOperatorNodeCount}");
 		
 		builder.AppendLine();
 		

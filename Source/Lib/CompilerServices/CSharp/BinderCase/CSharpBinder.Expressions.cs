@@ -182,7 +182,7 @@ public partial class CSharpBinder
 		{			
 			var binaryExpressionAntecedent = (BinaryExpressionNode)expressionAntecedent;
 			
-			var precedenceAntecedent = UtilityApi.GetOperatorPrecedence(binaryExpressionAntecedent.BinaryOperatorNode.OperatorToken.SyntaxKind);
+			var precedenceAntecedent = UtilityApi.GetOperatorPrecedence(binaryExpressionAntecedent.OperatorToken.SyntaxKind);
 			var precedencePrecedent = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
 			
 			if (binaryExpressionAntecedent.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
@@ -195,8 +195,7 @@ public partial class CSharpBinder
 					binaryExpressionAntecedent.SetRightExpressionNode(expressionPrimary);
 					
 					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
-					var binaryOperatorNodePrecedent = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-					var binaryExpressionPrecedent = new BinaryExpressionNode(binaryExpressionAntecedent, binaryOperatorNodePrecedent);
+					var binaryExpressionPrecedent = new BinaryExpressionNode(binaryExpressionAntecedent, typeClauseNode, token, typeClauseNode, typeClauseNode);
 					
 					// It is important that the primitive recursion does not
 		            // set 'binaryExpressionAntecedent' as the primaryExpression in the future
@@ -211,8 +210,7 @@ public partial class CSharpBinder
 					// Precedent takes 'primaryExpression' as its left node.
 	            	// Antecedent takes precedent as its right node.
 					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
-					var binaryOperatorNodePrecedent = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-					var binaryExpressionNodePrecedent = new BinaryExpressionNode(expressionPrimary, binaryOperatorNodePrecedent);
+					var binaryExpressionNodePrecedent = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
 					
 					binaryExpressionAntecedent.SetRightExpressionNode(binaryExpressionNodePrecedent);
 					
@@ -241,8 +239,7 @@ public partial class CSharpBinder
 		else
 		{
 			var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
-			var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
 			
 			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
 			return EmptyExpressionNode.Empty;
@@ -774,8 +771,7 @@ public partial class CSharpBinder
 				if (binaryExpressionNode.RightExpressionNode.SyntaxKind != SyntaxKind.EmptyExpressionNode)
 	    		{
 	    			var typeClauseNode = binaryExpressionNode.ResultTypeClauseNode;
-    				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-    				return new BinaryExpressionNode(binaryExpressionNode, binaryOperatorNode, new EmptyExpressionNode(typeClauseNode));
+    				return new BinaryExpressionNode(binaryExpressionNode, typeClauseNode, token, typeClauseNode, typeClauseNode, new EmptyExpressionNode(typeClauseNode));
 	    		}
 	    		else
 	    		{
@@ -797,7 +793,7 @@ public partial class CSharpBinder
 
 		if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 		{
-			if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.MemberAccessToken)
+			if (binaryExpressionNode.OperatorToken.SyntaxKind == SyntaxKind.MemberAccessToken)
 			{
 				var memberAccessToken = new SyntaxToken(
 					SyntaxKind.MemberAccessToken,
@@ -805,7 +801,7 @@ public partial class CSharpBinder
 						0,
 					    0,
 					    0,
-					    binaryExpressionNode.BinaryOperatorNode.OperatorToken.TextSpan.ResourceUri,
+					    binaryExpressionNode.OperatorToken.TextSpan.ResourceUri,
 					    string.Empty,
 					    string.Empty))
 					{

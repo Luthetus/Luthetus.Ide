@@ -174,7 +174,7 @@ public static class ParseTokens
 					{
 						var binaryExpressionNode = (BinaryExpressionNode)expression;
 						
-						if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
+						if (binaryExpressionNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
 							variableDeclarationNode.SetTypeClauseNode(binaryExpressionNode.RightExpressionNode.ResultTypeClauseNode);
 					}
 				}
