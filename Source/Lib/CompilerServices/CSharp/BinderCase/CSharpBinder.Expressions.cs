@@ -23,13 +23,11 @@ public partial class CSharpBinder
 		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		/*#if DEBUG
-		
 		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 		{
 			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
 			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.GetText()}____");
 		}
-		
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		#else
 		Console.WriteLine($"{nameof(AnyMergeToken)} has debug 'Console.Write...' that needs commented out.");
@@ -188,7 +186,7 @@ public partial class CSharpBinder
 			var precedencePrecedent = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
 			
 			if (binaryExpressionAntecedent.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
-			{				
+			{
 				if (precedenceAntecedent >= precedencePrecedent)
 				{
 					// Antecedent takes 'primaryExpression' as its right node.
@@ -791,6 +789,12 @@ public partial class CSharpBinder
 	public IExpressionNode BinaryMergeExpression(
 		BinaryExpressionNode binaryExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		// It seems that the right expression node is already set
+		// for two consecutive binary expression nodes due to the
+		// 'HandleBinaryOperator(...)' method.
+		if (binaryExpressionNode.RightExpressionNode == expressionSecondary)
+			return binaryExpressionNode;
+
 		if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 		{
 			if (binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind == SyntaxKind.MemberAccessToken)
