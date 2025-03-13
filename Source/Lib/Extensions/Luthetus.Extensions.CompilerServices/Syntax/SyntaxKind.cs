@@ -206,7 +206,6 @@ public enum SyntaxKind
 	TypeDefinitionNode,
 	TypeClauseNode,
 	ExplicitCastNode,
-	ConstraintNode,
 	VariableDeclarationNode,
 	VariableReferenceNode,
 	VariableAssignmentExpressionNode,
@@ -226,7 +225,6 @@ public enum SyntaxKind
 	FunctionInvocationNode,
 	LambdaExpressionNode,
 	TupleExpressionNode,
-	CommaSeparatedExpressionNode,
 	GenericArgumentsListingNode,
 	GenericArgumentEntryNode,
 	GenericParametersListingNode,
@@ -234,8 +232,6 @@ public enum SyntaxKind
 	GlobalCodeBlockNode,
 	ArbitraryCodeBlockNode,
 	InheritanceStatementNode,
-	AmbiguousIdentifierNode,
-	EmptyNode,
 	IfStatementNode,
 	ForeachStatementNode,
 	DoWhileStatementNode,
@@ -254,7 +250,6 @@ public enum SyntaxKind
 	UnaryOperatorNode,
 	UnaryExpressionNode,
 	BinaryExpressionNode,
-	AttributeNode,
 
 	// Symbols
 	TypeSymbol,

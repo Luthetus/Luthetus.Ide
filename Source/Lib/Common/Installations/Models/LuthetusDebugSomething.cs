@@ -23,7 +23,7 @@ public static class LuthetusDebugSomething
 	public static double OnKeyDownLateBatchingCountSent { get; set; }
 	public static double OnKeyDownLateBatchingCountHandled { get; set; }
 	
-	/*public static double AmbiguousIdentifierExpressionNode { get; set; }
+	public static double AmbiguousIdentifierExpressionNode { get; set; }
 	public static double AmbiguousIdentifierNode { get; set; }
 	public static double AmbiguousParenthesizedExpressionNode { get; set; }
 	public static double ArbitraryCodeBlockNode { get; set; }
@@ -83,7 +83,7 @@ public static class LuthetusDebugSomething
 	public static double VariableDeclarationNode { get; set; }
 	public static double VariableReferenceNode { get; set; }
 	public static double WhileStatementNode { get; set; }
-	public static double WithExpressionNode { get; set; }*/
+	public static double WithExpressionNode { get; set; }
 	
 	public static string CreateText()
 	{
@@ -105,7 +105,7 @@ public static class LuthetusDebugSomething
 						   
 		builder.AppendLine($"OnKeyDownLateBatchingCount: sent: {OnKeyDownLateBatchingCountSent}, handled: {OnKeyDownLateBatchingCountHandled}");
 		
-		/*builder.AppendLine($"AmbiguousIdentifierExpressionNode: {AmbiguousIdentifierExpressionNode:N0}");
+		builder.AppendLine($"AmbiguousIdentifierExpressionNode: {AmbiguousIdentifierExpressionNode:N0}");
 		builder.AppendLine($"AmbiguousIdentifierNode: {AmbiguousIdentifierNode:N0}");
 		builder.AppendLine($"AmbiguousParenthesizedExpressionNode: {AmbiguousParenthesizedExpressionNode:N0}");
 		builder.AppendLine($"ArbitraryCodeBlockNode: {ArbitraryCodeBlockNode:N0}");
@@ -165,7 +165,7 @@ public static class LuthetusDebugSomething
 		builder.AppendLine($"VariableDeclarationNode: {VariableDeclarationNode:N0}");
 		builder.AppendLine($"VariableReferenceNode: {VariableReferenceNode:N0}");
 		builder.AppendLine($"WhileStatementNode: {WhileStatementNode:N0}");
-		builder.AppendLine($"WithExpressionNode: {WithExpressionNode:N0}");*/
+		builder.AppendLine($"WithExpressionNode: {WithExpressionNode:N0}");
 		
 		builder.AppendLine();
 		

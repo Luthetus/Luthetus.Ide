@@ -13,7 +13,7 @@ public sealed class IfStatementNode : ICodeBlockOwner
 		IExpressionNode expressionNode,
 		CodeBlockNode? codeBlockNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.IfStatementNode++;
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.IfStatementNode++;
 	
 		KeywordToken = keywordToken;
 		ExpressionNode = expressionNode;

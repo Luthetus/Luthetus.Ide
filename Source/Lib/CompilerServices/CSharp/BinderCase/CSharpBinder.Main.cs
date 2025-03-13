@@ -448,30 +448,6 @@ public partial class CSharpBinder
 
         AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(), compilationUnit, ref parserModel);
     }
-
-    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
-    public AttributeNode BindAttributeNode(
-        SyntaxToken openSquareBracketToken,
-        List<SyntaxToken> innerTokens,
-        SyntaxToken closeSquareBracketToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-        compilationUnit.__SymbolList.Add(
-        	new Symbol(
-        		SyntaxKind.TypeSymbol,
-        		parserModel.GetNextSymbolId(),
-        		openSquareBracketToken.TextSpan with
-		        {
-		            DecorationByte = (byte)GenericDecorationKind.Type,
-		            EndingIndexExclusive = closeSquareBracketToken.TextSpan.EndingIndexExclusive
-		        }));
-
-        return new AttributeNode(
-            openSquareBracketToken,
-            innerTokens,
-            closeSquareBracketToken);
-    }
     
     public void BindTypeDefinitionNode(
         TypeDefinitionNode typeDefinitionNode,

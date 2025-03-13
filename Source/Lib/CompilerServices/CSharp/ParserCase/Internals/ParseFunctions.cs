@@ -41,7 +41,6 @@ public class ParseFunctions
             consumedIdentifierToken,
             consumedGenericArgumentsListingNode,
             functionArgumentsListingNode,
-            null,
             null);
 
         parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserModel);
@@ -95,7 +94,6 @@ public class ParseFunctions
             consumedIdentifierToken,
             null,
             functionArgumentsListingNode,
-            null,
             null);
 
         parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserModel);
