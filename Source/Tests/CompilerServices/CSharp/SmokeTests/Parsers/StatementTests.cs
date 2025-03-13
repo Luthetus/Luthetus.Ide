@@ -1316,6 +1316,27 @@ namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
     }
     
     [Fact]
+    public void MemerAccessScopeBug()
+    {
+    	var test = new Test(
+@"
+public void Bbb()
+{
+	var aaa = 2;
+}
+
+public void Ccc(Eee fff)
+{
+	if ()
+		fff.Ggg;
+}
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		test.WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
+    [Fact]
     public void Bug_Variable_Parse_As_Type()
     {
     	var test = new Test(
