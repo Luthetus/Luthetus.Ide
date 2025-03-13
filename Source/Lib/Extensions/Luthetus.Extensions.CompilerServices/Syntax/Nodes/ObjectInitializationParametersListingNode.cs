@@ -7,6 +7,8 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
 		List<ObjectInitializationParameterEntryNode> objectInitializationParameterEntryNodeList,
 		SyntaxToken closeBraceToken)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ObjectInitializationParametersListingNode++;
+	
 		OpenBraceToken = openBraceToken;
 		ObjectInitializationParameterEntryNodeList = objectInitializationParameterEntryNodeList;
 		CloseBraceToken = closeBraceToken;

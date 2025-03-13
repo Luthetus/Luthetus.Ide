@@ -14,6 +14,8 @@ public sealed class ConstraintNode : ISyntaxNode
 {
 	public ConstraintNode(IReadOnlyList<SyntaxToken> innerTokens)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstraintNode++;
+	
 		InnerTokens = innerTokens;
 	}
 

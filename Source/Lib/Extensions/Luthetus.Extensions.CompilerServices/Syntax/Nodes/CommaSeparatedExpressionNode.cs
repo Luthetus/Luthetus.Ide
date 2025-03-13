@@ -17,6 +17,7 @@ public sealed class CommaSeparatedExpressionNode : IExpressionNode
 {
 	public CommaSeparatedExpressionNode()
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.CommaSeparatedExpressionNode++;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();

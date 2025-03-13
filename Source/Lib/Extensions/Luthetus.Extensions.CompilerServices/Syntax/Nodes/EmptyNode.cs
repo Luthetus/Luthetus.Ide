@@ -7,6 +7,7 @@ public sealed class EmptyNode : ISyntaxNode
 {
 	public EmptyNode()
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.EmptyNode++;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();

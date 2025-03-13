@@ -13,6 +13,8 @@ public sealed class FunctionArgumentsListingNode : IExpressionNode
 		List<FunctionArgumentEntryNode> functionArgumentEntryNodeList,
 		SyntaxToken closeParenthesisToken)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionArgumentsListingNode++;
+	
 		OpenParenthesisToken = openParenthesisToken;
 		FunctionArgumentEntryNodeList = functionArgumentEntryNodeList;
 		CloseParenthesisToken = closeParenthesisToken;

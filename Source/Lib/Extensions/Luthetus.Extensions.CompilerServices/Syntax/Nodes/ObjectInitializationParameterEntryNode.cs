@@ -17,6 +17,8 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 		SyntaxToken equalsToken,
 		IExpressionNode expressionNode)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ObjectInitializationParameterEntryNode++;
+	
 		PropertyIdentifierToken = propertyIdentifierToken;
 		EqualsToken = equalsToken;
 		ExpressionNode = expressionNode;

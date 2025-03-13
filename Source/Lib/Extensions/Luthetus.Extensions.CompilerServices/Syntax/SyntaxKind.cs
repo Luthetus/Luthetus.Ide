@@ -253,7 +253,6 @@ public enum SyntaxKind
 	BadExpressionNode,
 	UnaryOperatorNode,
 	UnaryExpressionNode,
-	BinaryOperatorNode,
 	BinaryExpressionNode,
 	AttributeNode,
 

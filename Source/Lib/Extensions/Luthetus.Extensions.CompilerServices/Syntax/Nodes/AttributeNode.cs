@@ -7,6 +7,8 @@ public sealed class AttributeNode : ISyntaxNode
 		List<SyntaxToken> innerTokens,
 		SyntaxToken closeSquareBracketToken)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.AttributeNode++;
+	
 		OpenSquareBracketToken = openSquareBracketToken;
 		InnerTokens = innerTokens;
 		CloseSquareBracketToken = closeSquareBracketToken;
