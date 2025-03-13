@@ -26,9 +26,18 @@ public partial class CSharpBinder
 		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 		{
 			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
-			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.GetText()}____");
+			Console.Write($"{expressionPrimary.SyntaxKind}_{variableReferenceNode.VariableIdentifierToken.TextSpan.GetText()}");
 		}
-		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
+		else if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+			Console.Write($"{expressionPrimary.SyntaxKind}_{ambiguousIdentifierExpressionNode.Token.TextSpan.GetText()}");
+		}
+		else
+		{
+			Console.Write($"{expressionPrimary.SyntaxKind}");
+		}
+		Console.WriteLine($" + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		#else
 		Console.WriteLine($"{nameof(AnyMergeToken)} has debug 'Console.Write...' that needs commented out.");
 		#endif
@@ -142,7 +151,7 @@ public partial class CSharpBinder
 	
 	public IExpressionNode HandleBinaryOperator(
 		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{
+	{	
 		// In order to disambiguate '<' between when the 'expressionPrimary' is an 'AmbiguousIdentifierExpressionNode'
 		//     - Less than operator
 		//     - GenericParametersListingNode
@@ -155,11 +164,16 @@ public partial class CSharpBinder
 		// Otherwise presume that the '<' is the 'less than operator'.
 		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
-			expressionPrimary = ForceDecisionAmbiguousIdentifier(
-				EmptyExpressionNode.Empty,
-				(AmbiguousIdentifierExpressionNode)expressionPrimary,
-				compilationUnit,
-				ref parserModel);
+			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+			
+			if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
+			{
+				expressionPrimary = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+			}
 		}
 		
 		if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode &&
@@ -179,7 +193,7 @@ public partial class CSharpBinder
 		
 		var expressionAntecedent = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
 		if (expressionAntecedent.SyntaxKind == SyntaxKind.BinaryExpressionNode)
-		{			
+		{
 			var binaryExpressionAntecedent = (BinaryExpressionNode)expressionAntecedent;
 			
 			var precedenceAntecedent = UtilityApi.GetOperatorPrecedence(binaryExpressionAntecedent.OperatorToken.SyntaxKind);
@@ -203,6 +217,10 @@ public partial class CSharpBinder
 					ClearFromExpressionList(binaryExpressionAntecedent, compilationUnit, ref parserModel);
 					
 					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionPrecedent));
+					
+					if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+						return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+					
 					return EmptyExpressionNode.Empty;
 				}
 				else
@@ -215,6 +233,10 @@ public partial class CSharpBinder
 					binaryExpressionAntecedent.SetRightExpressionNode(binaryExpressionNodePrecedent);
 					
 					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNodePrecedent));
+					
+					if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+						return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+						
 					return EmptyExpressionNode.Empty;
 				}
 			}
@@ -242,6 +264,10 @@ public partial class CSharpBinder
 			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
 			
 			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+			
+			if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+				return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+			
 			return EmptyExpressionNode.Empty;
 		}
 	}

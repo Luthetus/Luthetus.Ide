@@ -1316,7 +1316,7 @@ namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
     }
     
     [Fact]
-    public void MemerAccessScopeBug()
+    public void MemberAccessScopeBug()
     {
     	var test = new Test(
 @"
@@ -1406,7 +1406,7 @@ public class Person
 
 var person = new Person { FirstName = ""John"" };
  
-person.
+person.FirstName.ToString();
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		var topCodeBlockChildList = topCodeBlock.GetChildList();

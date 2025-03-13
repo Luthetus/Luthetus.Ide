@@ -41,6 +41,7 @@ public static class ParseTokens
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableReferenceNode);
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationExpressionNode);
+    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.BinaryExpressionNode);
     	
     	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.TypeDefinitionNode)
     	{
@@ -107,7 +108,7 @@ public static class ParseTokens
 				parserModel.StatementBuilder.ChildList.Add(expressionNode);
 				return;
 			default:
-				// compilationUnit.DiagnosticBag.ReportTodoException(parserModel.TokenWalker.Current.TextSpan, $"nameof(ParseIdentifierToken) default case");
+				parserModel.StatementBuilder.ChildList.Add(expressionNode);
 				return;
 		}
     }
