@@ -94,8 +94,7 @@ public partial class ExpressionTests
 		var leftExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
 		Assert.Equal("1", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		
-		var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-	    Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+	    Assert.Equal(SyntaxKind.PlusToken, binaryExpressionNode.OperatorToken.SyntaxKind);
 	    
 	    var rightExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
 	    Assert.Equal("2", rightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
@@ -116,15 +115,13 @@ public partial class ExpressionTests
 			var innerLeftExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.LeftExpressionNode;
 	    	Assert.Equal("1", innerLeftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 			
-			var innerBinaryOperatorNode = innerBinaryExpressionNode.BinaryOperatorNode;
-			Assert.Equal(SyntaxKind.PlusToken, innerBinaryOperatorNode.OperatorToken.SyntaxKind);
+			Assert.Equal(SyntaxKind.PlusToken, innerBinaryExpressionNode.OperatorToken.SyntaxKind);
 			
 			var innerRightExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.RightExpressionNode;
 	    	Assert.Equal("2", innerRightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		}
 		
-		var binaryOperatorNode = externalBinaryExpressionNode.BinaryOperatorNode;
-		Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+		Assert.Equal(SyntaxKind.PlusToken, externalBinaryExpressionNode.OperatorToken.SyntaxKind);
 	    
 		var rightExpressionNode = (LiteralExpressionNode)externalBinaryExpressionNode.RightExpressionNode;
 		Assert.Equal("3", rightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
@@ -141,8 +138,7 @@ public partial class ExpressionTests
 		var leftExpressionNode = (LiteralExpressionNode)externalBinaryExpressionNode.LeftExpressionNode;
 		Assert.Equal("1", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		
-		var binaryOperatorNode = externalBinaryExpressionNode.BinaryOperatorNode;
-		Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+		Assert.Equal(SyntaxKind.PlusToken, externalBinaryExpressionNode.OperatorToken.SyntaxKind);
 		
 		// Right Expression
 		{
@@ -151,8 +147,7 @@ public partial class ExpressionTests
 			var innerLeftExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.LeftExpressionNode;
 	    	Assert.Equal("2", innerLeftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 			
-			var innerBinaryOperatorNode = innerBinaryExpressionNode.BinaryOperatorNode;
-			Assert.Equal(SyntaxKind.StarToken, innerBinaryOperatorNode.OperatorToken.SyntaxKind);
+			Assert.Equal(SyntaxKind.StarToken, innerBinaryExpressionNode.OperatorToken.SyntaxKind);
 			
 			var innerRightExpressionNode = (LiteralExpressionNode)innerBinaryExpressionNode.RightExpressionNode;
 	    	Assert.Equal("3", innerRightExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
@@ -195,8 +190,7 @@ public partial class ExpressionTests
 			var leftExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
 			Assert.Equal("1", leftExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 			
-			var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
-			Assert.Equal(SyntaxKind.PlusToken, binaryOperatorNode.OperatorToken.SyntaxKind);
+			Assert.Equal(SyntaxKind.PlusToken, binaryExpressionNode.OperatorToken.SyntaxKind);
 			
 			var rightExpressionNode = (EmptyExpressionNode)binaryExpressionNode.RightExpressionNode;
 			Assert.Equal(SyntaxKind.EmptyExpressionNode, rightExpressionNode.SyntaxKind);
@@ -1775,29 +1769,7 @@ public class ProgressBarModel
     [Fact]
     public void ValueTuple()
     {
-    	var test = new Test(@"var x = (decimalPercentProgress, null, cancellationToken);");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		test.WriteChildrenIndented(topCodeBlock);
-		
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
-		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
-		
-		var commaSeparatedExpressionNode = (CommaSeparatedExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
-		
-		test.WriteChildrenIndented(commaSeparatedExpressionNode);
-		
-		var badExpressionNode = (BadExpressionNode)commaSeparatedExpressionNode.GetChildList()[0];
-		
-		test.WriteChildrenIndented(badExpressionNode);
-		
-		/*var variableReferenceNode = (VariableReferenceNode)commaSeparatedExpressionNode.InnerExpressionList[0];
-		var nullKeywordToken = (KeywordToken)commaSeparatedExpressionNode.InnerExpressionList[1];
-		var variableReferenceNode = (VariableReferenceNode)commaSeparatedExpressionNode.InnerExpressionList[2];*/
-		
 		throw new NotImplementedException();
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     /// <summary>

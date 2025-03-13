@@ -1420,13 +1420,13 @@ person.
 		// in order to disambiguate the two nodes.
 		{
 			var binaryExpressionNode = (BinaryExpressionNode)topCodeBlockChildList[1];
-			Assert.Equal(SyntaxKind.EqualsToken, binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+			Assert.Equal(SyntaxKind.EqualsToken, binaryExpressionNode.OperatorToken.SyntaxKind);
 		}
 		
 		// Node under test
 		{
 			var binaryExpressionNode = (BinaryExpressionNode)topCodeBlockChildList[2];
-			Assert.Equal(SyntaxKind.MemberAccessToken, binaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+			Assert.Equal(SyntaxKind.MemberAccessToken, binaryExpressionNode.OperatorToken.SyntaxKind);
 		}
 		
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, topCodeBlockChildList[3].SyntaxKind);
