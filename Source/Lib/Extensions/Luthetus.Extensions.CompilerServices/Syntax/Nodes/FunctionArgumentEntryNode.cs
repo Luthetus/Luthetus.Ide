@@ -14,6 +14,8 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
 		bool hasInKeyword,
 		bool hasRefKeyword)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionArgumentEntryNode++;
+	
 		VariableDeclarationNode = variableDeclarationNode;
 		OptionalCompileTimeConstantToken = optionalCompileTimeConstantToken;
 		IsOptional = isOptional;

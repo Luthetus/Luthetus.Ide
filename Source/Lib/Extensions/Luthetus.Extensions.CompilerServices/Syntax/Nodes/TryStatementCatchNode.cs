@@ -15,6 +15,8 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 		SyntaxToken closeParenthesisToken,
 		CodeBlockNode? codeBlockNode)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementCatchNode++;
+	
 		Parent = parent;
 		KeywordToken = keywordToken;
 		CodeBlockNode = codeBlockNode;

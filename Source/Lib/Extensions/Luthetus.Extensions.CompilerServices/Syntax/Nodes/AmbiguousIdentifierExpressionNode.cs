@@ -9,6 +9,8 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 		GenericParametersListingNode? genericParametersListingNode,
 		TypeClauseNode resultTypeClauseNode)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.AmbiguousIdentifierExpressionNode++;
+	
 		Token = token;
 		GenericParametersListingNode = genericParametersListingNode;
 		ResultTypeClauseNode = resultTypeClauseNode;

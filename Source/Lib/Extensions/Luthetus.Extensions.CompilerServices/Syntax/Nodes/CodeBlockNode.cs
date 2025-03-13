@@ -9,6 +9,8 @@ public sealed class CodeBlockNode : ISyntaxNode
 {
 	public CodeBlockNode(IReadOnlyList<ISyntax> childList)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.CodeBlockNode++;
+	
 		_childList = childList;
 	}
 

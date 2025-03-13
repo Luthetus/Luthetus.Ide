@@ -28,6 +28,8 @@ public sealed class EmptyExpressionNode : IExpressionNode
 
 	public EmptyExpressionNode(TypeClauseNode typeClauseNode)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.EmptyExpressionNode++;
+	
 		ResultTypeClauseNode = typeClauseNode;
 	}
 

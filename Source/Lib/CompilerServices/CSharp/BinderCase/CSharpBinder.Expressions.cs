@@ -196,7 +196,7 @@ public partial class CSharpBinder
 		if (parentExpressionNode.SyntaxKind == SyntaxKind.BinaryExpressionNode)
 		{			
 			var parentBinaryExpressionNode = (BinaryExpressionNode)parentExpressionNode;
-			var precedenceParent = UtilityApi.GetOperatorPrecedence(parentBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+			var precedenceParent = UtilityApi.GetOperatorPrecedence(parentBinaryExpressionNode.OperatorToken.SyntaxKind);
 			
 			var precedenceChild = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
 			
@@ -209,8 +209,7 @@ public partial class CSharpBinder
 					parentBinaryExpressionNode.SetRightExpressionNode(expressionPrimary);
 					
 					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
-					var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-					var binaryExpressionNode = new BinaryExpressionNode(parentBinaryExpressionNode, binaryOperatorNode);
+					var binaryExpressionNode = new BinaryExpressionNode(parentBinaryExpressionNode, typeClauseNode, token, typeClauseNode, typeClauseNode);
 					
 					ClearFromExpressionList(parentBinaryExpressionNode, compilationUnit, ref parserModel);
 					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
@@ -222,8 +221,7 @@ public partial class CSharpBinder
 					// Parent's right expression becomes the child.
 					
 					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
-					var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-					var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+					var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
 					
 					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
 					
@@ -247,8 +245,7 @@ public partial class CSharpBinder
 				// for the sake of parser recovery.
 				
 				var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
-				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-				var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+				var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
 				
 				ClearFromExpressionList(parentBinaryExpressionNode, compilationUnit, ref parserModel);
 				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
@@ -259,12 +256,134 @@ public partial class CSharpBinder
 		// Scope to avoid variable name collision.
 		{
 			var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
-			var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
 			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
 			return EmptyExpressionNode.Empty;
 		}
 	}
+	
+	/*public IExpressionNode HandleBinaryOperator(
+		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{	
+		// In order to disambiguate '<' between when the 'expressionPrimary' is an 'AmbiguousIdentifierExpressionNode'
+		//     - Less than operator
+		//     - GenericParametersListingNode
+		// 
+		// Invoke 'ForceDecisionAmbiguousIdentifier(...)' to determine what the true SyntaxKind is.
+		//
+		// If its true SyntaxKind is a TypeClauseNode, then parse the '<'
+		// to be the start of a 'GenericParametersListingNode'.
+		//
+		// Otherwise presume that the '<' is the 'less than operator'.
+		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+			
+			if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
+			{
+				expressionPrimary = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+			}
+		}
+		
+		if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode &&
+			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
+		{
+			return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+		}
+		
+		// TODO: This isn't great. The ConstructorInvocationExpressionNode after reading 'new'...
+		// if then has to read the TypeClauseNode, it actually does this inside of the 'ConstructorInvocationExpressionNode'.
+		// It is sort of duplicated logic, and this case for the 'TypeClauseNode' needs repeating too.
+		if (expressionPrimary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode &&
+			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
+		{
+			return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+		}
+		
+		var expressionAntecedent = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
+		if (expressionAntecedent.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+		{
+			var binaryExpressionAntecedent = (BinaryExpressionNode)expressionAntecedent;
+			
+			var precedenceAntecedent = UtilityApi.GetOperatorPrecedence(binaryExpressionAntecedent.OperatorToken.SyntaxKind);
+			var precedencePrecedent = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
+			
+			if (binaryExpressionAntecedent.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+			{
+				if (precedenceAntecedent >= precedencePrecedent)
+				{
+					// Antecedent takes 'primaryExpression' as its right node.
+		            // Precedent takes antecedent as its left node.
+		            // Precedent becomes "subtree-root".
+					binaryExpressionAntecedent.SetRightExpressionNode(expressionPrimary);
+					
+					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+					var binaryExpressionPrecedent = new BinaryExpressionNode(binaryExpressionAntecedent, typeClauseNode, token, typeClauseNode, typeClauseNode);
+					
+					// It is important that the primitive recursion does not
+		            // set 'binaryExpressionAntecedent' as the primaryExpression in the future
+		            // because it is now the left node of 'binaryExpressionPrecedent'.
+					ClearFromExpressionList(binaryExpressionAntecedent, compilationUnit, ref parserModel);
+					
+					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionPrecedent));
+					
+					if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+						return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+					
+					return EmptyExpressionNode.Empty;
+				}
+				else
+				{
+					// Precedent takes 'primaryExpression' as its left node.
+	            	// Antecedent takes precedent as its right node.
+					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+					var binaryExpressionNodePrecedent = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
+					
+					binaryExpressionAntecedent.SetRightExpressionNode(binaryExpressionNodePrecedent);
+					
+					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNodePrecedent));
+					
+					if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+						return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+						
+					return EmptyExpressionNode.Empty;
+				}
+			}
+			else
+			{
+				// Weird situation?
+				// This sounds like it just wouldn't compile.
+				//
+				// Something like:
+				//     1 + 2 3 + 4
+				//
+				// NOTE: There is no operator between the '2' and the '3'.
+				//       It is just two binary expressions side by side.
+				//
+				// I think you'd want to pretend that the parent binary expression didn't exist
+				// for the sake of parser recovery.
+				ClearFromExpressionList(expressionPrimary, compilationUnit, ref parserModel);
+				ClearFromExpressionList(binaryExpressionAntecedent, compilationUnit, ref parserModel);
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { binaryExpressionAntecedent, expressionPrimary, token });
+			}
+		}
+		else
+		{
+			var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
+			
+			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+			
+			if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+				return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+			
+			return EmptyExpressionNode.Empty;
+		}
+	}*/
 
 	public IExpressionNode AmbiguousParenthesizedMergeToken(
 		AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -791,8 +910,7 @@ public partial class CSharpBinder
 				if (binaryExpressionNode.RightExpressionNode.SyntaxKind != SyntaxKind.EmptyExpressionNode)
 	    		{
 	    			var typeClauseNode = binaryExpressionNode.ResultTypeClauseNode;
-    				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-    				return new BinaryExpressionNode(binaryExpressionNode, binaryOperatorNode, new EmptyExpressionNode(typeClauseNode));
+    				return new BinaryExpressionNode(binaryExpressionNode, typeClauseNode, token, typeClauseNode, typeClauseNode, new EmptyExpressionNode(typeClauseNode));
 	    		}
 	    		else
 	    		{
