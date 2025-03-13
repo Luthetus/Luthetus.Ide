@@ -735,10 +735,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken)
     {
-    	#if DEBUG
-    	var startTime = Stopwatch.GetTimestamp();
-    	#endif
-    	
         try
 		{
 			var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
@@ -1055,10 +1051,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					MarginScrollHeight = marginScrollHeight
 				},
 			};
-			
-			#if DEBUG
-			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
-			#endif
 			
 			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
 		}

@@ -65,10 +65,6 @@ public struct OnKeyDownLateBatching
 
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
-        
-        #if DEBUG
-        LuthetusDebugSomething.OnKeyDownLateBatchingCountSent++;
-        #endif
     }
 
     public KeymapArgs KeymapArgs { get; set; }
@@ -87,10 +83,6 @@ public struct OnKeyDownLateBatching
 	/// </summary>
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	#if DEBUG
-    	LuthetusDebugSomething.OnKeyDownLateBatchingCountHandled++;
-    	#endif
-    
     	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
 
         var modelModifier = editContext.GetModelModifier(ResourceUri);

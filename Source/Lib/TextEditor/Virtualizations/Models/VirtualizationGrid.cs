@@ -118,10 +118,6 @@ public record VirtualizationGrid
     /// </summary>
     public void CreateCache(ITextEditorService textEditorService, ITextEditorModel model, TextEditorViewModel viewModel)
     {
-    	#if DEBUG
-    	var startTime = Stopwatch.GetTimestamp();
-    	#endif
-    
     	if (viewModel.VirtualizationResult.EntryList.Length == 0)
 			return;
 		
@@ -245,10 +241,6 @@ public record VirtualizationGrid
 		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
 		}
-		
-		#if DEBUG
-		LuthetusDebugSomething.SetTextEditorVirtualizationGrid(Stopwatch.GetElapsedTime(startTime));
-		#endif
     }
     
     /// <summary>
