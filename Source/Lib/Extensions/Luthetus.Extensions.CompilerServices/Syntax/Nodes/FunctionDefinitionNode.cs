@@ -20,6 +20,8 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 		CodeBlockNode? codeBlockNode,
 		ConstraintNode? constraintNode)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionDefinitionNode++;
+	
 		AccessModifierKind = accessModifierKind;
 		ReturnTypeClauseNode = returnTypeClauseNode;
 		FunctionIdentifierToken = functionIdentifierToken;

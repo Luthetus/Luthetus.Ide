@@ -6,6 +6,8 @@ public sealed class WithExpressionNode : IExpressionNode
 {
 	public WithExpressionNode(VariableReferenceNode variableReferenceNode)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.WithExpressionNode++;
+	
 		VariableReferenceNode = variableReferenceNode;
 		ResultTypeClauseNode = variableReferenceNode.ResultTypeClauseNode;
 	}

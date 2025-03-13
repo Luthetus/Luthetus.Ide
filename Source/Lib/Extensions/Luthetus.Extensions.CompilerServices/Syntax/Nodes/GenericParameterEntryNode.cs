@@ -15,6 +15,8 @@ public sealed class GenericParameterEntryNode : IExpressionNode
 {
 	public GenericParameterEntryNode(TypeClauseNode typeClauseNode)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GenericParameterEntryNode++;
+	
 		TypeClauseNode = typeClauseNode;
 	}
 

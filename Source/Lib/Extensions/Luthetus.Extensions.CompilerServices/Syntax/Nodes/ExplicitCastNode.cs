@@ -9,6 +9,8 @@ public sealed class ExplicitCastNode : IExpressionNode
 		TypeClauseNode resultTypeClauseNode,
 		SyntaxToken closeParenthesisToken)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ExplicitCastNode++;
+	
 		OpenParenthesisToken = openParenthesisToken;
 		ResultTypeClauseNode = resultTypeClauseNode;
 		CloseParenthesisToken = closeParenthesisToken;

@@ -86,7 +86,7 @@ public class CSharpEvaluator
             var rightValue = EvaluateExpression(
                 boundBinaryExpressionNode.RightExpressionNode);
 
-            switch (boundBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind)
+            switch (boundBinaryExpressionNode.OperatorToken.SyntaxKind)
             {
                 case SyntaxKind.PlusToken:
                     {
@@ -131,7 +131,7 @@ public class CSharpEvaluator
                 boundBinaryExpressionNode.RightExpressionNode);
 
 
-            switch (boundBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind)
+            switch (boundBinaryExpressionNode.OperatorToken.SyntaxKind)
             {
                 case SyntaxKind.PlusToken:
                     {

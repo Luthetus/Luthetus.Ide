@@ -18,6 +18,8 @@ public sealed class GenericParametersListingNode : IExpressionNode
 		List<GenericParameterEntryNode> genericParameterEntryNodeList,
 		SyntaxToken closeAngleBracketToken)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GenericParametersListingNode++;
+	
 		OpenAngleBracketToken = openAngleBracketToken;
 		GenericParameterEntryNodeList = genericParameterEntryNodeList;
 		CloseAngleBracketToken = closeAngleBracketToken;

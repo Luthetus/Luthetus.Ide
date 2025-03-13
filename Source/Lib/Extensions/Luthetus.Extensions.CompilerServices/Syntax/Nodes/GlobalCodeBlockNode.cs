@@ -24,6 +24,11 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 {
+	public GlobalCodeBlockNode()
+	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GlobalCodeBlockNode++;
+	}
+
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 

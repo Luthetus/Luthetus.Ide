@@ -11,6 +11,8 @@ public sealed class AmbiguousIdentifierNode : ISyntaxNode
 {
 	public AmbiguousIdentifierNode(SyntaxToken identifierToken)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.AmbiguousIdentifierNode++;
+	
 		IdentifierToken = identifierToken;
 	}
 

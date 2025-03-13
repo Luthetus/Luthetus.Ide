@@ -28,6 +28,8 @@ public sealed class FunctionParametersListingNode : IExpressionNode
 		List<FunctionParameterEntryNode> functionParameterEntryNodeList,
 		SyntaxToken closeParenthesisToken)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionParametersListingNode++;
+	
 		OpenParenthesisToken = openParenthesisToken;
 		FunctionParameterEntryNodeList = functionParameterEntryNodeList;
 		CloseParenthesisToken = closeParenthesisToken;

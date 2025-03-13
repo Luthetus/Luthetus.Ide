@@ -11,6 +11,8 @@ public sealed class FunctionInvocationNode : IExpressionNode
 		FunctionParametersListingNode functionParametersListingNode,
 		TypeClauseNode resultTypeClauseNode)
 	{
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionInvocationNode++;
+	
 		FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
 		FunctionDefinitionNode = functionDefinitionNode;
 		GenericParametersListingNode = genericParametersListingNode;
