@@ -4,15 +4,19 @@ using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using  Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public struct CSharpStatementBuilder
 {
-	public CSharpStatementBuilder()
+	public CSharpStatementBuilder(CSharpBinder binder)
 	{
-		ChildList = new();
-		ParseChildScopeStack = new();
+		ChildList = binder.CSharpStatementBuilder_ChildList;
+		ChildList.Clear();
+		
+		ParseChildScopeStack = binder.CSharpStatementBuilder_ParseChildScopeStack;
+		ParseChildScopeStack.Clear();
 	}
 
 	public List<ISyntax> ChildList { get; }

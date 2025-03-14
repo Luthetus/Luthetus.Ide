@@ -38,21 +38,31 @@ public struct CSharpParserModel
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
         
-        ExpressionList = new();
-        ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
-        
         ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
+        
+        StatementBuilder = new(Binder);
+        
+        ParseChildScopeStack = Binder.CSharpParserModel_ParseChildScopeStack;
+        ParseChildScopeStack.Clear();
+        
+        ExpressionList = Binder.CSharpParserModel_ExpressionList;
+        ExpressionList.Clear();
+        ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
+        ExpressionList.Add((SyntaxKind.EndOfFileToken, null));
+        
+        TryParseExpressionSyntaxKindList = Binder.CSharpParserModel_TryParseExpressionSyntaxKindList;
+        TryParseExpressionSyntaxKindList.Clear();
     }
 
     public TokenWalker TokenWalker { get; }
-    public CSharpStatementBuilder StatementBuilder { get; set; } = new();
+    public CSharpStatementBuilder StatementBuilder { get; set; }
     
     /// <summary>
 	/// TODO: Measure the cost of 'Peek(...)', 'TryPeek(...)' since now...
 	/// ...this is a value tuple and the dequeue alone does not mean success,
 	/// you have to peek first to see if the object references are equal.
 	/// </summary>
-    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; } = new();
+    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
     
     /// <summary>
     /// The C# IParserModel implementation will only "short circuit" if the 'SyntaxKind DelimiterSyntaxKind'
@@ -66,7 +76,7 @@ public struct CSharpParserModel
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
-    public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; } = new();
+    public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; }
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     
     /// <summary>
