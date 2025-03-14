@@ -340,6 +340,18 @@ public partial class CSharpBinder
 				if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression)
 					parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
 				
+				if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				{
+					var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+					expressionSecondary = new AmbiguousIdentifierExpressionNode(
+						ambiguousIdentifierExpressionNode.Token,
+						ambiguousIdentifierExpressionNode.GenericParametersListingNode,
+						ambiguousIdentifierExpressionNode.ResultTypeClauseNode)
+					{
+						FollowsMemberAccessToken = ambiguousIdentifierExpressionNode.FollowsMemberAccessToken
+					};
+				}
+				
 				ambiguousParenthesizedExpressionNode.NodeList.Add(expressionSecondary);
 				return ambiguousParenthesizedExpressionNode;
 			case SyntaxKind.AmbiguousParenthesizedExpressionNode:
