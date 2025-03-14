@@ -784,10 +784,11 @@ public partial class CSharpBinder
 		    case SyntaxKind.DivisionToken:
 		    case SyntaxKind.EqualsEqualsToken:
 				// TODO: More generally, the result will be a number, so all that matters is what operators a number can interact with instead of duplicating this code.
+				// RETROSPECTIVE: This code reads like nonsense to me. Shouldn't you check '==' not '!='? This 'if' is backwards?
 				if (binaryExpressionNode.RightExpressionNode.SyntaxKind != SyntaxKind.EmptyExpressionNode)
 	    		{
 	    			var typeClauseNode = binaryExpressionNode.ResultTypeClauseNode;
-    				return new BinaryExpressionNode(binaryExpressionNode, typeClauseNode, token, typeClauseNode, typeClauseNode, new EmptyExpressionNode(typeClauseNode));
+    				return new BinaryExpressionNode(binaryExpressionNode, typeClauseNode, token, typeClauseNode, typeClauseNode, EmptyExpressionNode.Empty);
 	    		}
 	    		else
 	    		{
