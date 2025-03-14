@@ -200,7 +200,8 @@ public static class ParseTokens
 		{
 			// ConstructorDefinitionNode
 			
-			var identifierToken = UtilityApi.ConvertToIdentifierToken(typeClauseNode.TypeIdentifierToken, compilationUnit, ref parserModel);
+			var typeClauseToken = typeClauseNode.TypeIdentifierToken;
+			var identifierToken = UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, compilationUnit, ref parserModel);
 			
 			ParseFunctions.HandleConstructorDefinition(
 				typeDefinitionNode,

@@ -172,13 +172,26 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.7.40 </em> (2025-03-14)</div>
+                <ul>
+                	<li>
+						181,707 less object allocations when doing
+						a solution wide parse on Luthetus.Ide.sln (1,614 C# files in total).
+                    </li>
+                    <li>
+                    	Non-ISyntaxNode related object allocation optimizations were also done
+                    	but were not counted.
+                    </li>
+                </ul>
+            </div>
+            <div>
                 <div>v <em class="luth_em">0.9.7.39 </em> (2025-03-13)</div>
                 <ul>
                 	<li>
 						Inline the type 'BinaryOperatorNode.cs'
 						on the type 'BinaryExpressionNode.cs'
 						this removes '38,470' object allocations
-						when doing a solution wide parse on Luthet.Ide.sln
+						when doing a solution wide parse on Luthetus.Ide.sln
 						(1,621 C# files in total).
                     </li>
                 </ul>

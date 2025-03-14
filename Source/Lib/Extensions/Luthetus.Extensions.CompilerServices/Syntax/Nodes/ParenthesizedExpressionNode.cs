@@ -17,7 +17,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 	}
 
 	public ParenthesizedExpressionNode(SyntaxToken openParenthesisToken, TypeClauseNode typeClauseNode)
-		: this(openParenthesisToken, new EmptyExpressionNode(typeClauseNode), default)
+		: this(openParenthesisToken, EmptyExpressionNode.Empty, default)
 	{
 	}
 
