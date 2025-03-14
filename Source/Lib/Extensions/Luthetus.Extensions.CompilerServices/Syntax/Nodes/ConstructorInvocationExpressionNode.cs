@@ -15,7 +15,7 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 		FunctionParametersListingNode? functionParametersListingNode,
 		ObjectInitializationParametersListingNode? objectInitializationParametersListingNode)
 	{
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorInvocationExpressionNode++;
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorInvocationExpressionNode++;
 	
 		NewKeywordToken = newKeywordToken;
 		ResultTypeClauseNode = typeClauseNode;

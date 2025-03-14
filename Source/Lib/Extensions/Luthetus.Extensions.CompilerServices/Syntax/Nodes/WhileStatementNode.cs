@@ -15,7 +15,7 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 		SyntaxToken closeParenthesisToken,
 		CodeBlockNode? codeBlockNode)
 	{
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.WhileStatementNode++;
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.WhileStatementNode++;
 	
 		KeywordToken = keywordToken;
 		OpenParenthesisToken = openParenthesisToken;

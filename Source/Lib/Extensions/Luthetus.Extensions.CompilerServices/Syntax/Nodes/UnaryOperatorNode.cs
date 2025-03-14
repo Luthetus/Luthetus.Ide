@@ -7,7 +7,7 @@ public sealed class UnaryOperatorNode : ISyntaxNode
 		SyntaxToken operatorToken,
 		TypeClauseNode resultTypeClauseNode)
 	{
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UnaryOperatorNode++;
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UnaryOperatorNode++;
 	
 		OperandTypeClauseNode = operandTypeClauseNode;
 		OperatorToken = operatorToken;

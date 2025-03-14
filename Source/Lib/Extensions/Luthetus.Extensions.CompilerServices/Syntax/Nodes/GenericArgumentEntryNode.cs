@@ -7,7 +7,7 @@ public sealed class GenericArgumentEntryNode : ISyntaxNode
 {
 	public GenericArgumentEntryNode(TypeClauseNode typeClauseNode)
 	{
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GenericArgumentEntryNode++;
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GenericArgumentEntryNode++;
 	
 		TypeClauseNode = typeClauseNode;
 	}

@@ -12,7 +12,7 @@ public sealed class BinaryExpressionNode : IExpressionNode
 		TypeClauseNode resultTypeClauseNode,
 		IExpressionNode rightExpressionNode)
 	{
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BinaryExpressionNode++;
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BinaryExpressionNode++;
 	
 		LeftExpressionNode = leftExpressionNode;
 		LeftOperandTypeClauseNode = leftOperandTypeClauseNode;

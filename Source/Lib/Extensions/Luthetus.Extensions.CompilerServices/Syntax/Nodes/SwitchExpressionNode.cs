@@ -13,7 +13,7 @@ public sealed class SwitchExpressionNode : ICodeBlockOwner
 		IExpressionNode expressionNode,
 		CodeBlockNode? codeBlockNode)
 	{
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.SwitchExpressionNode++;
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.SwitchExpressionNode++;
 	
 		KeywordToken = keywordToken;
 		ExpressionNode = expressionNode;

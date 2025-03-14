@@ -27,7 +27,7 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 {
 	public LambdaExpressionNode(TypeClauseNode resultTypeClauseNode)
 	{
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LambdaExpressionNode++;
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LambdaExpressionNode++;
 	
 		ResultTypeClauseNode = resultTypeClauseNode;
 	}
