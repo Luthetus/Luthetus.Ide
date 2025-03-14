@@ -1672,6 +1672,8 @@ public partial class CSharpBinder
 		    	}
 		    	return;
 		    case SyntaxKind.TryStatementCatchNode:
+		    	// (2025-03-13) Bug: this is showing as a tooltip for things above it...
+		    	// ...because it takes the TypeClauseNode position indices from 'codeBlockOwner'
 		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
     		
 	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)

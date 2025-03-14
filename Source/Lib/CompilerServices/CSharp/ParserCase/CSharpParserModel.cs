@@ -94,6 +94,11 @@ public struct CSharpParserModel
     
     public UsingStatementListingNode? UsingStatementListingNode { get; set; }
     
+    public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
+		default,
+        genericParametersListingNode: null,
+        CSharpFacts.Types.Void.ToTypeClause());
+    
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();
     

@@ -17,12 +17,14 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
+	
+	/// <summary>Be wary that this is public. Something is being tested.</summary>
+	public bool _childListIsDirty = true;
 
-	public SyntaxToken Token { get; }
-	public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
-	public bool FollowsMemberAccessToken { get; init; }
+	public SyntaxToken Token { get; set; }
+	public GenericParametersListingNode? GenericParametersListingNode { get; set; }
+	public TypeClauseNode ResultTypeClauseNode { get; set; }
+	public bool FollowsMemberAccessToken { get; set; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierExpressionNode;
