@@ -566,6 +566,8 @@ public partial class CSharpBinder
 		bool forceVariableReferenceNode = false,
 		bool allowFabricatedUndefinedNode = true)
 	{
+		ambiguousIdentifierExpressionNode._wasDecided = true;
+	
 		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
 			parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -1047,11 +1049,11 @@ public partial class CSharpBinder
 	{
 		if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
 		{
-			parserModel.AmbiguousIdentifierExpressionNode.Token = token;
-			parserModel.AmbiguousIdentifierExpressionNode.GenericParametersListingNode = null;
-			parserModel.AmbiguousIdentifierExpressionNode.ResultTypeClauseNode = CSharpFacts.Types.Void.ToTypeClause();
-			parserModel.AmbiguousIdentifierExpressionNode.FollowsMemberAccessToken = emptyExpressionNode.FollowsMemberAccessToken;
-			parserModel.AmbiguousIdentifierExpressionNode._childListIsDirty = true;
+			parserModel.AmbiguousIdentifierExpressionNode.SetSharedInstance(
+				token,
+				genericParametersListingNode: null,
+				CSharpFacts.Types.Void.ToTypeClause(),
+				emptyExpressionNode.FollowsMemberAccessToken);
 			var ambiguousExpressionNode = parserModel.AmbiguousIdentifierExpressionNode;
 		    
 		    if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken && !ambiguousExpressionNode.FollowsMemberAccessToken ||

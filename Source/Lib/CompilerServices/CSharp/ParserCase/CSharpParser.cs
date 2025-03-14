@@ -14,6 +14,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 public static class CSharpParser
 {
 	public static int ErrorCount { get; set; }
+	public static int TotalAmbiguousIdentifierExpressionNodeFailCount { get; set; }
 
     public static void Parse(CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
@@ -272,6 +273,13 @@ public static class CSharpParser
         	parserModel.TokenWalker);
                 
 		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
+		
+		if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
+		{
+			++TotalAmbiguousIdentifierExpressionNodeFailCount;
+			Console.WriteLine($"AmbiguousIdentifierExpressionNode !_wasDecided FailCount:{parserModel.AmbiguousIdentifierExpressionNode.FailCount} SuccessCount:{parserModel.AmbiguousIdentifierExpressionNode.SuccessCount} ResourceUri:{compilationUnit.ResourceUri.Value}; TotalAmbiguousIdentifierExpressionNodeFailCount:{TotalAmbiguousIdentifierExpressionNodeFailCount}");
+		}
+		
 		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
 	}
 }

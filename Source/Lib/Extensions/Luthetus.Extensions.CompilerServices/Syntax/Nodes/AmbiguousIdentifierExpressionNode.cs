@@ -15,6 +15,10 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 		GenericParametersListingNode = genericParametersListingNode;
 		ResultTypeClauseNode = resultTypeClauseNode;
 	}
+	
+	public int SuccessCount { get; set; }
+	public int FailCount { get; set; }
+	public bool _wasDecided = true;
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	
@@ -28,6 +32,31 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierExpressionNode;
+	
+	public void SetSharedInstance(
+		SyntaxToken token,
+		GenericParametersListingNode? genericParametersListingNode,
+		TypeClauseNode resultTypeClauseNode,
+		bool followsMemberAccessToken)
+	{
+		if (!_wasDecided)
+		{
+			++FailCount;
+			// Console.WriteLine($"AmbiguousIdentifierExpressionNode !_wasDecided FailCount:{FailCount} SuccessCount:{SuccessCount}");
+		}
+		else
+		{
+			++SuccessCount;
+		}
+			
+		_wasDecided = false;
+		_childListIsDirty = true;
+		
+		Token = token;
+		GenericParametersListingNode = genericParametersListingNode;
+		ResultTypeClauseNode = resultTypeClauseNode;
+		FollowsMemberAccessToken = followsMemberAccessToken;
+	}
 
 	public AmbiguousIdentifierExpressionNode SetGenericParametersListingNode(GenericParametersListingNode? genericParametersListingNode)
 	{
