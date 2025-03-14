@@ -15,7 +15,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		IExpressionNode? expressionNode,
 		SyntaxToken closeParenthesisToken)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.DoWhileStatementNode++;
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.DoWhileStatementNode++;
 	
 		DoKeywordToken = doKeywordToken;
 		WhileKeywordToken = whileKeywordToken;

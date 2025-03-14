@@ -6,7 +6,7 @@ public sealed class TupleExpressionNode : IExpressionNode
 {
 	public TupleExpressionNode()
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TupleExpressionNode++;
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TupleExpressionNode++;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();

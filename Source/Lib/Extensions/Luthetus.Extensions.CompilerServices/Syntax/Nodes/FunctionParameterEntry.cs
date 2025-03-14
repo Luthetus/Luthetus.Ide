@@ -14,8 +14,6 @@ public struct FunctionParameterEntry
 		bool hasInKeyword,
 		bool hasRefKeyword)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionParameterEntryNode++;
-	
 		ExpressionNode = expressionNode;
 		HasOutKeyword = hasOutKeyword;
 		HasInKeyword = hasInKeyword;

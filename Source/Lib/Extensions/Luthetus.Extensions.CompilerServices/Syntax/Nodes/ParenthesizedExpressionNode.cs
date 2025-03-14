@@ -9,7 +9,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 		IExpressionNode innerExpression,
 		SyntaxToken closeParenthesisToken)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ParenthesizedExpressionNode++;
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ParenthesizedExpressionNode++;
 	
 		OpenParenthesisToken = openParenthesisToken;
 		InnerExpression = innerExpression;
@@ -17,7 +17,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 	}
 
 	public ParenthesizedExpressionNode(SyntaxToken openParenthesisToken, TypeClauseNode typeClauseNode)
-		: this(openParenthesisToken, new EmptyExpressionNode(typeClauseNode), default)
+		: this(openParenthesisToken, EmptyExpressionNode.Empty, default)
 	{
 	}
 

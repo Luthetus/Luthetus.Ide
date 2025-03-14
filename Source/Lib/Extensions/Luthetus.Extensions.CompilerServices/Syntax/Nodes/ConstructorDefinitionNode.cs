@@ -16,7 +16,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		FunctionArgumentsListingNode functionArgumentsListingNode,
 		CodeBlockNode? codeBlockNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorDefinitionNode++;
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorDefinitionNode++;
 	
 		ReturnTypeClauseNode = returnTypeClauseNode;
 		FunctionIdentifier = functionIdentifier;

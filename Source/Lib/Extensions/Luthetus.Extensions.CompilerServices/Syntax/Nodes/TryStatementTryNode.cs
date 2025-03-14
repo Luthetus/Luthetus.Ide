@@ -13,7 +13,7 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
 		SyntaxToken keywordToken,
 		CodeBlockNode? codeBlockNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementTryNode++;
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementTryNode++;
 	
 		Parent = parent;
 		KeywordToken = keywordToken;
