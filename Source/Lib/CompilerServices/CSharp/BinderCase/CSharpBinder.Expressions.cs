@@ -1102,35 +1102,7 @@ public partial class CSharpBinder
 					
 				return new LiteralExpressionNode(token, tokenTypeClauseNode);;
 			case SyntaxKind.OpenParenthesisToken:
-			
-				// This conditional branch is meant for '(2)' where the parenthesized expression node is
-				// wrapping a numeric literal node / etc...
-				//
-				// First check if for NOT equaling '()' due to empty parameters for a lambda expression.
-				if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.CloseParenthesisToken &&
-					!UtilityApi.IsConvertibleToTypeClauseNode(parserModel.TokenWalker.Next.SyntaxKind))
-				{
-					var parenthesizedExpressionNode = new ParenthesizedExpressionNode(
-						token,
-						CSharpFacts.Types.Void.ToTypeClause());
-					
-					parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
-					parserModel.ExpressionList.Add((SyntaxKind.CommaToken, parenthesizedExpressionNode));
-					
-					return EmptyExpressionNode.Empty;
-				}
-			
-				var ambiguousParenthesizedExpressionNode = new AmbiguousParenthesizedExpressionNode(
-					token,
-					isParserContextKindForceStatementExpression: parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression ||
-					// '(List<(int, bool)>)' required the following hack because the CSharpParserContextKind.ForceStatementExpression enum
-					// is reset after the first TypeClauseNode in a statement is made, and there was no clear way to set it back again in this situation.;
-					// TODO: Don't do this '(List<(int, bool)>)', instead figure out how to have CSharpParserContextKind.ForceStatementExpression live longer in a statement that has many TypeClauseNode(s).
-					parserModel.ExpressionList.Any(x => x.ExpressionNode is not null && x.ExpressionNode.SyntaxKind == SyntaxKind.GenericParametersListingNode));
-					
-				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, ambiguousParenthesizedExpressionNode));
-				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousParenthesizedExpressionNode));
-				return EmptyExpressionNode.Empty;
+				return ShareEmptyExpressionNodeIntoOpenParenthesisTokenCase(ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.NewTokenKeyword:
 				return new ConstructorInvocationExpressionNode(
 					token,
@@ -1177,6 +1149,39 @@ public partial class CSharpBinder
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
 		}
+	}
+	
+	public IExpressionNode ShareEmptyExpressionNodeIntoOpenParenthesisTokenCase(
+		ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		// This conditional branch is meant for '(2)' where the parenthesized expression node is
+		// wrapping a numeric literal node / etc...
+		//
+		// First check if for NOT equaling '()' due to empty parameters for a lambda expression.
+		if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.CloseParenthesisToken &&
+			!UtilityApi.IsConvertibleToTypeClauseNode(parserModel.TokenWalker.Next.SyntaxKind))
+		{
+			var parenthesizedExpressionNode = new ParenthesizedExpressionNode(
+				token,
+				CSharpFacts.Types.Void.ToTypeClause());
+			
+			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
+			parserModel.ExpressionList.Add((SyntaxKind.CommaToken, parenthesizedExpressionNode));
+			
+			return EmptyExpressionNode.Empty;
+		}
+	
+		var ambiguousParenthesizedExpressionNode = new AmbiguousParenthesizedExpressionNode(
+			token,
+			isParserContextKindForceStatementExpression: parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression ||
+			// '(List<(int, bool)>)' required the following hack because the CSharpParserContextKind.ForceStatementExpression enum
+			// is reset after the first TypeClauseNode in a statement is made, and there was no clear way to set it back again in this situation.;
+			// TODO: Don't do this '(List<(int, bool)>)', instead figure out how to have CSharpParserContextKind.ForceStatementExpression live longer in a statement that has many TypeClauseNode(s).
+			parserModel.ExpressionList.Any(x => x.ExpressionNode is not null && x.ExpressionNode.SyntaxKind == SyntaxKind.GenericParametersListingNode));
+			
+		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, ambiguousParenthesizedExpressionNode));
+		parserModel.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousParenthesizedExpressionNode));
+		return EmptyExpressionNode.Empty;
 	}
 	
 	public IExpressionNode ExplicitCastMergeToken(
@@ -1230,6 +1235,8 @@ public partial class CSharpBinder
 				// is expected to have ran 'parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, functionInvocationNode));'
 				// to receive the genericParametersListingNode.
 				return genericParametersListingNode;
+			case SyntaxKind.OpenParenthesisToken:
+				return ShareEmptyExpressionNodeIntoOpenParenthesisTokenCase(ref token, compilationUnit, ref parserModel);
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), genericParametersListingNode, token);
 		}
