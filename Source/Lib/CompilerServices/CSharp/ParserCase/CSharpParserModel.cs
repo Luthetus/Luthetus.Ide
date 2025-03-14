@@ -52,6 +52,13 @@ public struct CSharpParserModel
         
         TryParseExpressionSyntaxKindList = Binder.CSharpParserModel_TryParseExpressionSyntaxKindList;
         TryParseExpressionSyntaxKindList.Clear();
+        
+        AmbiguousIdentifierExpressionNode = Binder.CSharpParserModel_AmbiguousIdentifierExpressionNode;
+        AmbiguousIdentifierExpressionNode.SetSharedInstance(
+        	default,
+	        genericParametersListingNode: null,
+	        CSharpFacts.Types.Void.ToTypeClause(),
+	        followsMemberAccessToken: false);
     }
 
     public TokenWalker TokenWalker { get; }
@@ -104,10 +111,7 @@ public struct CSharpParserModel
     
     public UsingStatementListingNode? UsingStatementListingNode { get; set; }
     
-    public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
-		default,
-        genericParametersListingNode: null,
-        CSharpFacts.Types.Void.ToTypeClause());
+    public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();
