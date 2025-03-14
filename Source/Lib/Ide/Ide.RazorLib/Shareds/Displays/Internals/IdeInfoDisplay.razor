@@ -172,11 +172,15 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.40 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.40 </em> (2025-03-14)</div>
                 <ul>
                 	<li>
-						100,114 less object allocations from 'AmbiguousIdentifierExpressionNode'
-						when doing a solution wide parse on Luthetus.Ide.sln (1,614 C# files in total).
+						181,707 less object allocations when doing
+						a solution wide parse on Luthetus.Ide.sln (1,614 C# files in total).
+                    </li>
+                    <li>
+                    	Non-ISyntaxNode related object allocation optimizations were also done
+                    	but were not counted.
                     </li>
                 </ul>
             </div>
