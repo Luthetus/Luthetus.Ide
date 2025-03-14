@@ -820,7 +820,7 @@ public class ParseDefaultKeywords
         var typeDefinitionNode = new TypeDefinitionNode(
             accessModifierKind,
             hasPartialModifier,
-            storageModifierKind.Value,
+            storageModifierKind,
             identifierToken,
             valueType: null,
             genericArgumentsListingNode,

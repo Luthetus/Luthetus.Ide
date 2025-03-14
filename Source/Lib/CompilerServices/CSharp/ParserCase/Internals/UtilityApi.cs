@@ -277,7 +277,7 @@ public static class UtilityApi
     /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="StorageModifierKind"/>,
     /// then null is returned.
     /// </summary>
-    public static StorageModifierKind? GetStorageModifierKindFromToken(SyntaxToken consumedToken)
+    public static StorageModifierKind GetStorageModifierKindFromToken(SyntaxToken consumedToken)
     {
         switch (consumedToken.TextSpan.GetText())
         {
