@@ -9,7 +9,7 @@ public sealed class TryStatementNode : ISyntaxNode
 		TryStatementCatchNode? catchNode,
 		TryStatementFinallyNode? finallyNode)
 	{
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementNode++;
+		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementNode++;
 	
 		TryNode = tryNode;
 		CatchNode = catchNode;
