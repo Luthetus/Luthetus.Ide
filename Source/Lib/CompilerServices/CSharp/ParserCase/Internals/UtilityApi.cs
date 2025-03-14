@@ -292,15 +292,11 @@ public static class UtilityApi
             case "record":
                 return StorageModifierKind.Record;
             default:
-                return null;
+                return StorageModifierKind.None;
         }
     }
     
-    /// <summary>
-    /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="AccessModifierKind"/>,
-    /// then null is returned.
-    /// </summary>
-    public static AccessModifierKind? GetAccessModifierKindFromToken(SyntaxToken consumedToken)
+    public static AccessModifierKind GetAccessModifierKindFromToken(SyntaxToken consumedToken)
     {
         switch (consumedToken.TextSpan.GetText())
         {
@@ -313,7 +309,7 @@ public static class UtilityApi
             case "private":
                 return AccessModifierKind.Private;
             default:
-                return null;
+                return AccessModifierKind.None;
         }
     }
     
