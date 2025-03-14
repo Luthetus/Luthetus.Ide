@@ -159,7 +159,7 @@ public static class ParseTypes
     	
     	if (typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode is not null)
     	{
-    		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+    		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryList)
 	    	{
 	    		parserModel.Binder.CreateVariableSymbol(argument.VariableDeclarationNode.IdentifierToken, argument.VariableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
 	    		argument.VariableDeclarationNode.VariableKind = VariableKind.Property;

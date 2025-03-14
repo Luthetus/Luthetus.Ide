@@ -274,11 +274,11 @@ public static class CSharpParser
                 
 		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
 		
-		if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
+		/*if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
 		{
 			++TotalAmbiguousIdentifierExpressionNodeFailCount;
 			Console.WriteLine($"AmbiguousIdentifierExpressionNode !_wasDecided FailCount:{parserModel.AmbiguousIdentifierExpressionNode.FailCount} SuccessCount:{parserModel.AmbiguousIdentifierExpressionNode.SuccessCount} ResourceUri:{compilationUnit.ResourceUri.Value}; TotalAmbiguousIdentifierExpressionNodeFailCount:{TotalAmbiguousIdentifierExpressionNodeFailCount}");
-		}
+		}*/
 		
 		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
 	}

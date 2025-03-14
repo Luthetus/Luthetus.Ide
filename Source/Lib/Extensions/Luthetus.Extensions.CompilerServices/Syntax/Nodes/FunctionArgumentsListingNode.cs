@@ -10,13 +10,13 @@ public sealed class FunctionArgumentsListingNode : IExpressionNode
 {
 	public FunctionArgumentsListingNode(
 		SyntaxToken openParenthesisToken,
-		List<FunctionArgumentEntryNode> functionArgumentEntryNodeList,
+		List<FunctionArgumentEntry> functionArgumentEntryList,
 		SyntaxToken closeParenthesisToken)
 	{
 		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionArgumentsListingNode++;
 	
 		OpenParenthesisToken = openParenthesisToken;
-		FunctionArgumentEntryNodeList = functionArgumentEntryNodeList;
+		FunctionArgumentEntryList = functionArgumentEntryList;
 		CloseParenthesisToken = closeParenthesisToken;
 	}
 
@@ -24,7 +24,7 @@ public sealed class FunctionArgumentsListingNode : IExpressionNode
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken OpenParenthesisToken { get; }
-	public List<FunctionArgumentEntryNode> FunctionArgumentEntryNodeList { get; }
+	public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; }
 	public SyntaxToken CloseParenthesisToken { get; }
 	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
@@ -36,19 +36,19 @@ public sealed class FunctionArgumentsListingNode : IExpressionNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		// OpenParenthesisToken, FunctionArgumentEntryNodeList.Count, CloseParenthesisToken,
+		// OpenParenthesisToken, FunctionArgumentEntryList.Count, CloseParenthesisToken,
 		var childCount =
-			1 +                                    // OpenParenthesisToken,
-			FunctionArgumentEntryNodeList.Count + // FunctionArgumentEntryNodeList.Count,
-			1;                                     // CloseParenthesisToken,
+			1 +                               // OpenParenthesisToken,
+			FunctionArgumentEntryList.Count + // FunctionArgumentEntryList.Count,
+			1;                                // CloseParenthesisToken,
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenParenthesisToken;
-		foreach (var item in FunctionArgumentEntryNodeList)
+		foreach (var item in FunctionArgumentEntryList)
 		{
-			childList[i++] = item;
+			childList[i++] = item.VariableDeclarationNode;
 		}
 		childList[i++] = CloseParenthesisToken;
 

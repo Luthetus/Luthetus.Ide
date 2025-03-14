@@ -376,7 +376,7 @@ public partial class CSharpBinder
 				{
 					var functionParametersListingNode = new FunctionParametersListingNode(
 						token,
-				        new List<FunctionParameterEntryNode>(),
+				        new List<FunctionParameterEntry>(),
 				        closeParenthesisToken: default);
 				
 					// TODO: ContextualKeywords as the function identifier?
@@ -852,7 +852,7 @@ public partial class CSharpBinder
 			case SyntaxKind.OpenParenthesisToken:
 				var functionParametersListingNode = new FunctionParametersListingNode(
 					token,
-			        new List<FunctionParameterEntryNode>(),
+			        new List<FunctionParameterEntry>(),
 			        closeParenthesisToken: default);
 			        
 			    constructorInvocationExpressionNode.SetFunctionParametersListingNode(functionParametersListingNode);
@@ -1317,13 +1317,12 @@ public partial class CSharpBinder
 				ref parserModel);
 		}
 			
-		var functionParameterEntryNode = new FunctionParameterEntryNode(
-	        expressionSecondary,
-	        hasOutKeyword: false,
-	        hasInKeyword: false,
-	        hasRefKeyword: false);
-	        
-		functionParametersListingNode.FunctionParameterEntryNodeList.Add(functionParameterEntryNode);
+		functionParametersListingNode.FunctionParameterEntryList.Add(
+			new FunctionParameterEntry(
+		        expressionSecondary,
+		        hasOutKeyword: false,
+		        hasInKeyword: false,
+		        hasRefKeyword: false));
 		
 		return functionParametersListingNode;
 	}
@@ -1356,16 +1355,15 @@ public partial class CSharpBinder
 				ref parserModel);
 		}
 			
-	    var functionArgumentEntryNode = new FunctionArgumentEntryNode(
-	        variableDeclarationNode: null,
-	        optionalCompileTimeConstantToken: null,
-	        isOptional: false,
-	        hasParamsKeyword: false,
-	        hasOutKeyword: false,
-	        hasInKeyword: false,
-	        hasRefKeyword: false);
-	        
-		functionArgumentsListingNode.FunctionArgumentEntryNodeList.Add(functionArgumentEntryNode);
+		functionArgumentsListingNode.FunctionArgumentEntryList.Add(
+			new FunctionArgumentEntry(
+		        variableDeclarationNode: null,
+		        optionalCompileTimeConstantToken: null,
+		        isOptional: false,
+		        hasParamsKeyword: false,
+		        hasOutKeyword: false,
+		        hasInKeyword: false,
+		        hasRefKeyword: false));
 		
 		return functionArgumentsListingNode;
 	}
@@ -1700,7 +1698,7 @@ public partial class CSharpBinder
 				{
 					var functionParametersListingNode = new FunctionParametersListingNode(
 						token,
-				        new List<FunctionParameterEntryNode>(),
+				        new List<FunctionParameterEntry>(),
 				        closeParenthesisToken: default);
 				
 					var typeClauseToken = typeClauseNode.TypeIdentifierToken;
@@ -1868,7 +1866,7 @@ public partial class CSharpBinder
 					
 					var functionParametersListingNode = new FunctionParametersListingNode(
 						token,
-				        new List<FunctionParameterEntryNode>(),
+				        new List<FunctionParameterEntry>(),
 				        closeParenthesisToken: default);
 				
 					functionInvocationNode.SetFunctionParametersListingNode(functionParametersListingNode);

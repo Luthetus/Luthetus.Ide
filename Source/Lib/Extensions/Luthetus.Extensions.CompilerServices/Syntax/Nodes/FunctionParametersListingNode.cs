@@ -25,13 +25,13 @@ public sealed class FunctionParametersListingNode : IExpressionNode
 {
 	public FunctionParametersListingNode(
 		SyntaxToken openParenthesisToken,
-		List<FunctionParameterEntryNode> functionParameterEntryNodeList,
+		List<FunctionParameterEntry> functionParameterEntryList,
 		SyntaxToken closeParenthesisToken)
 	{
 		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionParametersListingNode++;
 	
 		OpenParenthesisToken = openParenthesisToken;
-		FunctionParameterEntryNodeList = functionParameterEntryNodeList;
+		FunctionParameterEntryList = functionParameterEntryList;
 		CloseParenthesisToken = closeParenthesisToken;
 	}
 
@@ -39,7 +39,7 @@ public sealed class FunctionParametersListingNode : IExpressionNode
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken OpenParenthesisToken { get; }
-	public List<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
+	public List<FunctionParameterEntry> FunctionParameterEntryList { get; }
 	public SyntaxToken CloseParenthesisToken { get; private set; }
 	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
@@ -59,19 +59,19 @@ public sealed class FunctionParametersListingNode : IExpressionNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		// OpenParenthesisToken, FunctionParameterEntryNodeList.Length, CloseParenthesisToken,
+		// OpenParenthesisToken, FunctionParameterEntryList.Length, CloseParenthesisToken,
 		var childCount =
-			1 +                                     // OpenParenthesisToken,
-			FunctionParameterEntryNodeList.Count + // FunctionParameterEntryNodeList.Count,
-			1;                                      // CloseParenthesisToken,
+			1 +                                // OpenParenthesisToken,
+			FunctionParameterEntryList.Count + // FunctionParameterEntryNodeList.Count,
+			1;                                 // CloseParenthesisToken,
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenParenthesisToken;
-		foreach (var item in FunctionParameterEntryNodeList)
+		foreach (var item in FunctionParameterEntryList)
 		{
-			childList[i++] = item;
+			childList[i++] = item.ExpressionNode;
 		}
 		childList[i++] = CloseParenthesisToken;
 

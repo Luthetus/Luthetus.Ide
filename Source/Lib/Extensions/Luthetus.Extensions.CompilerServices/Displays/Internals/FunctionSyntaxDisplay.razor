@@ -189,19 +189,19 @@
 	else
 	{
 		<text>(</text>
-		@for (int badIndex = 0; badIndex < functionArgumentsListingNode.FunctionArgumentEntryNodeList.Count; badIndex++)
+		@for (int badIndex = 0; badIndex < functionArgumentsListingNode.FunctionArgumentEntryList.Count; badIndex++)
 		{
 			var index = badIndex;
-			var argumentEntryNode = functionArgumentsListingNode.FunctionArgumentEntryNodeList[index];
+			var argumentEntry = functionArgumentsListingNode.FunctionArgumentEntryList[index];
 			
 			var syntaxViewModel = new SyntaxViewModel(
 				targetSymbol: null,
-				targetNode: argumentEntryNode.VariableDeclarationNode,
-				definitionNode: argumentEntryNode.VariableDeclarationNode,
+				targetNode: argumentEntry.VariableDeclarationNode,
+				definitionNode: argumentEntry.VariableDeclarationNode,
 				depth: syntaxViewModelLocal.Depth + 1);
 			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 			
-			if (badIndex < functionArgumentsListingNode.FunctionArgumentEntryNodeList.Count - 1)
+			if (badIndex < functionArgumentsListingNode.FunctionArgumentEntryList.Count - 1)
 			{
 				<text>, </text>
 			}
