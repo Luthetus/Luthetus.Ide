@@ -247,7 +247,8 @@ public class ParseFunctions
 		    		
 		    		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
 		    		{
-		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
+		    			var token = parserModel.TokenWalker.Consume();
+		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
 		    			successNameableToken = true;
 		    			
 		    			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)

@@ -24,22 +24,15 @@ public static class LuthetusDebugSomething
 	public static double OnKeyDownLateBatchingCountHandled { get; set; }
 	
 	public static double AmbiguousIdentifierExpressionNode { get; set; }
-	public static double AmbiguousIdentifierNode { get; set; }
 	public static double AmbiguousParenthesizedExpressionNode { get; set; }
 	public static double ArbitraryCodeBlockNode { get; set; }
-	public static double AttributeNode { get; set; }
 	public static double BadExpressionNode { get; set; }
 	public static double BinaryExpressionNode { get; set; }
-	public static double BinaryOperatorNode { get; set; }
 	public static double CodeBlockNode { get; set; }
-	public static double CommaSeparatedExpressionNode { get; set; }
-	public static double ConstraintNode { get; set; }
 	public static double ConstructorDefinitionNode { get; set; }
 	public static double ConstructorInvocationExpressionNode { get; set; }
 	public static double DoWhileStatementNode { get; set; }
 	public static double EmptyExpressionNode { get; set; }
-	public static double EmptyNode { get; set; }
-	public static double EnumDefinitionNode { get; set; }
 	public static double ExplicitCastNode { get; set; }
 	public static double ForeachStatementNode { get; set; }
 	public static double ForStatementNode { get; set; }
@@ -106,22 +99,14 @@ public static class LuthetusDebugSomething
 		builder.AppendLine($"OnKeyDownLateBatchingCount: sent: {OnKeyDownLateBatchingCountSent}, handled: {OnKeyDownLateBatchingCountHandled}");
 		
 		builder.AppendLine($"AmbiguousIdentifierExpressionNode: {AmbiguousIdentifierExpressionNode:N0}");
-		builder.AppendLine($"AmbiguousIdentifierNode: {AmbiguousIdentifierNode:N0}");
 		builder.AppendLine($"AmbiguousParenthesizedExpressionNode: {AmbiguousParenthesizedExpressionNode:N0}");
-		builder.AppendLine($"ArbitraryCodeBlockNode: {ArbitraryCodeBlockNode:N0}");
-		builder.AppendLine($"AttributeNode: {AttributeNode:N0}");
 		builder.AppendLine($"BadExpressionNode: {BadExpressionNode:N0}");
 		builder.AppendLine($"BinaryExpressionNode: {BinaryExpressionNode:N0}");
-		builder.AppendLine($"BinaryOperatorNode: {BinaryOperatorNode:N0}");
 		builder.AppendLine($"CodeBlockNode: {CodeBlockNode:N0}");
-		builder.AppendLine($"CommaSeparatedExpressionNode: {CommaSeparatedExpressionNode:N0}");
-		builder.AppendLine($"ConstraintNode: {ConstraintNode:N0}");
 		builder.AppendLine($"ConstructorDefinitionNode: {ConstructorDefinitionNode:N0}");
 		builder.AppendLine($"ConstructorInvocationExpressionNode: {ConstructorInvocationExpressionNode:N0}");
 		builder.AppendLine($"DoWhileStatementNode: {DoWhileStatementNode:N0}");
 		builder.AppendLine($"EmptyExpressionNode: {EmptyExpressionNode:N0}");
-		builder.AppendLine($"EmptyNode: {EmptyNode:N0}");
-		builder.AppendLine($"EnumDefinitionNode: {EnumDefinitionNode:N0}");
 		builder.AppendLine($"ExplicitCastNode: {ExplicitCastNode:N0}");
 		builder.AppendLine($"ForeachStatementNode: {ForeachStatementNode:N0}");
 		builder.AppendLine($"ForStatementNode: {ForStatementNode:N0}");
@@ -166,6 +151,63 @@ public static class LuthetusDebugSomething
 		builder.AppendLine($"VariableReferenceNode: {VariableReferenceNode:N0}");
 		builder.AppendLine($"WhileStatementNode: {WhileStatementNode:N0}");
 		builder.AppendLine($"WithExpressionNode: {WithExpressionNode:N0}");
+		
+		var totalNodeCount = AmbiguousIdentifierExpressionNode +
+			AmbiguousParenthesizedExpressionNode +
+			ArbitraryCodeBlockNode +
+			BadExpressionNode +
+			BinaryExpressionNode +
+			CodeBlockNode +
+			ConstructorDefinitionNode +
+			ConstructorInvocationExpressionNode +
+			DoWhileStatementNode +
+			EmptyExpressionNode +
+			ExplicitCastNode +
+			ForeachStatementNode +
+			ForStatementNode +
+			FunctionArgumentEntryNode +
+			FunctionArgumentsListingNode +
+			FunctionDefinitionNode +
+			FunctionInvocationNode +
+			FunctionParameterEntryNode +
+			FunctionParametersListingNode +
+			GenericArgumentEntryNode +
+			GenericArgumentsListingNode +
+			GenericParameterEntryNode +
+			GenericParametersListingNode +
+			GlobalCodeBlockNode +
+			IfStatementNode +
+			InheritanceStatementNode +
+			InterpolatedStringNode +
+			LambdaExpressionNode +
+			LiteralExpressionNode +
+			LockStatementNode +
+			NamespaceStatementNode +
+			ObjectInitializationNode +
+			ObjectInitializationParameterEntryNode +
+			ObjectInitializationParametersListingNode +
+			ParenthesizedExpressionNode +
+			PreprocessorLibraryReferenceStatementNode +
+			ReturnStatementNode +
+			SwitchExpressionNode +
+			SwitchStatementNode +
+			TryStatementCatchNode +
+			TryStatementFinallyNode +
+			TryStatementNode +
+			TryStatementTryNode +
+			TupleExpressionNode +
+			TypeClauseNode +
+			TypeDefinitionNode +
+			UnaryExpressionNode +
+			UnaryOperatorNode +
+			UsingStatementListingNode +
+			VariableAssignmentExpressionNode +
+			VariableDeclarationNode +
+			VariableReferenceNode +
+			WhileStatementNode +
+			WithExpressionNode;
+			
+		builder.AppendLine($"totalNodeCount: {totalNodeCount:N0}");
 		
 		builder.AppendLine();
 		

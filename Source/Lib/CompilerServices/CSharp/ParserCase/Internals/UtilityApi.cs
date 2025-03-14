@@ -338,36 +338,52 @@ public static class UtilityApi
     	return false;
     }
     
-    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static TypeClauseNode ConvertTokenToTypeClauseNode(ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (syntax.SyntaxKind == SyntaxKind.TypeClauseNode)
-    	{
-    		return (TypeClauseNode)syntax;
-    	}
-    	else if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		return new TypeClauseNode(
-	    		(SyntaxToken)syntax,
+	    		(SyntaxToken)token,
 		        valueType: null,
 		        genericParametersListingNode: null,
 		        isKeywordType: false);
     	}
-	    else if (IsTypeIdentifierKeywordSyntaxKind(syntax.SyntaxKind))
+	    else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(SyntaxToken)syntax,
+	    		(SyntaxToken)token,
 		        valueType: null,
 		        genericParametersListingNode: null,
 		        isKeywordType: true);
 	    }
-	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
+	    else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(SyntaxToken)syntax,
+	    		(SyntaxToken)token,
 		        valueType: null,
 		        genericParametersListingNode: null,
 		        isKeywordType: true);
 	    }
+	    else
+	    {
+	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+	    	//
+	    	/*compilationUnit.DiagnosticBag.ReportTodoException(
+	    		parserModel.TokenWalker.Current.TextSpan,
+	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");*/
+	    	
+	    	// TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
+	    	return null;
+	    }
+    }
+    
+    public static TypeClauseNode ConvertNodeToTypeClauseNode(ISyntaxNode node, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+    	if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
+    	{
+    		return (TypeClauseNode)node;
+    	}
 	    else
 	    {
 	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
@@ -388,15 +404,22 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static SyntaxToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    /// <summary>
+    /// I added 'ref' to the 'SyntaxToken token' but a lot of the code
+    /// actually was passing a member of a variable.
+    ///
+    /// So I had to copy the struct anyhow in order to make a variable that could be used as the 'ref'.
+    /// I'm just bleh right now idk.
+    /// </summary>
+    public static SyntaxToken ConvertToIdentifierToken(ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
-    		return (SyntaxToken)syntax;
+    		return (SyntaxToken)token;
     	}
-	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
+	    else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
 	    {
-	    	var keywordContextualToken = (SyntaxToken)syntax;
+	    	var keywordContextualToken = (SyntaxToken)token;
 	    	return new SyntaxToken(SyntaxKind.IdentifierToken, keywordContextualToken.TextSpan);
 	    }
 	    else

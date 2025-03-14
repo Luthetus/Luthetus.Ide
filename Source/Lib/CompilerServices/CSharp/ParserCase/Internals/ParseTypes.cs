@@ -211,7 +211,7 @@ public static class ParseTypes
     		{
     			if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))
 				{
-					var identifierToken = UtilityApi.ConvertToIdentifierToken(token, compilationUnit, ref parserModel);
+					var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
 					
 					var variableDeclarationNode = new VariableDeclarationNode(
 				        typeDefinitionNode.ToTypeClause(),
