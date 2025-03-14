@@ -17,8 +17,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 		SyntaxToken functionIdentifierToken,
 		GenericParametersListingNode? genericArgumentsListingNode,
 		FunctionArgumentsListingNode functionArgumentsListingNode,
-		CodeBlockNode? codeBlockNode,
-		ConstraintNode? constraintNode)
+		CodeBlockNode? codeBlockNode)
 	{
 		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionDefinitionNode++;
 	
@@ -28,7 +27,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 		GenericArgumentsListingNode = genericArgumentsListingNode;
 		FunctionArgumentsListingNode = functionArgumentsListingNode;
 		CodeBlockNode = codeBlockNode;
-		ConstraintNode = constraintNode;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -39,7 +37,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 	public SyntaxToken FunctionIdentifierToken { get; }
 	public GenericParametersListingNode? GenericArgumentsListingNode { get; }
 	public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-	public ConstraintNode? ConstraintNode { get; private set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -50,14 +47,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
-
-	public ICodeBlockOwner SetConstraintNode(ConstraintNode constraintNode)
-	{
-		ConstraintNode = constraintNode;
-
-		_childListIsDirty = true;
-		return this;
-	}
 
 	public ICodeBlockOwner SetExpressionBody(CodeBlockNode codeBlockNode)
 	{
@@ -117,8 +106,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 			childCount++;
 		if (CodeBlockNode is not null)
 			childCount++;
-		if (ConstraintNode is not null)
-			childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
@@ -130,8 +117,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 		childList[i++] = FunctionArgumentsListingNode;
 		if (CodeBlockNode is not null)
 			childList[i++] = CodeBlockNode;
-		if (ConstraintNode is not null)
-			childList[i++] = ConstraintNode;
 
 		_childList = childList;
 

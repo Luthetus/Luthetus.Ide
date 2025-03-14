@@ -14,8 +14,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		SyntaxToken functionIdentifier,
 		GenericArgumentsListingNode? genericArgumentsListingNode,
 		FunctionArgumentsListingNode functionArgumentsListingNode,
-		CodeBlockNode? codeBlockNode,
-		ConstraintNode? constraintNode)
+		CodeBlockNode? codeBlockNode)
 	{
 		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorDefinitionNode++;
 	
@@ -24,7 +23,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		GenericArgumentsListingNode = genericArgumentsListingNode;
 		FunctionArgumentsListingNode = functionArgumentsListingNode;
 		CodeBlockNode = codeBlockNode;
-		ConstraintNode = constraintNode;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -34,7 +32,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 	public SyntaxToken FunctionIdentifier { get; }
 	public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
 	public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-	public ConstraintNode? ConstraintNode { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -112,8 +109,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 			childCount++;
 		if (CodeBlockNode is not null)
 			childCount++;
-		if (ConstraintNode is not null)
-			childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
@@ -125,8 +120,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		childList[i++] = FunctionArgumentsListingNode;
 		if (CodeBlockNode is not null)
 			childList[i++] = CodeBlockNode;
-		if (ConstraintNode is not null)
-			childList[i++] = ConstraintNode;
 
 		_childList = childList;
 

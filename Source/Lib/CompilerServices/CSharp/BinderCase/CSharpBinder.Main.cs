@@ -28,6 +28,18 @@ public partial class CSharpBinder
     
     public NamespaceStatementNode TopLevelNamespaceStatementNode => _topLevelNamespaceStatementNode;
     
+    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();
+    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> CSharpParserModel_ExpressionList { get; set; } = new();
+    public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
+    
+    public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
+		default,
+        genericParametersListingNode: null,
+        CSharpFacts.Types.Void.ToTypeClause());
+    
+    public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
+    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseChildScopeStack { get; } = new();
+    
 	/// <summary><see cref="FinalizeCompilationUnit"/></summary>
     public void StartCompilationUnit(ResourceUri resourceUri)
     {
@@ -447,30 +459,6 @@ public partial class CSharpBinder
         parserModel.UsingStatementListingNode.AddUsingStatementTuple((usingKeywordToken, namespaceIdentifierToken));
 
         AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(), compilationUnit, ref parserModel);
-    }
-
-    /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
-    public AttributeNode BindAttributeNode(
-        SyntaxToken openSquareBracketToken,
-        List<SyntaxToken> innerTokens,
-        SyntaxToken closeSquareBracketToken,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-        compilationUnit.__SymbolList.Add(
-        	new Symbol(
-        		SyntaxKind.TypeSymbol,
-        		parserModel.GetNextSymbolId(),
-        		openSquareBracketToken.TextSpan with
-		        {
-		            DecorationByte = (byte)GenericDecorationKind.Type,
-		            EndingIndexExclusive = closeSquareBracketToken.TextSpan.EndingIndexExclusive
-		        }));
-
-        return new AttributeNode(
-            openSquareBracketToken,
-            innerTokens,
-            closeSquareBracketToken);
     }
     
     public void BindTypeDefinitionNode(
@@ -1672,7 +1660,7 @@ public partial class CSharpBinder
 	        	return;
 	        case SyntaxKind.FunctionDefinitionNode:
 	        	var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
-	    		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryList)
 		    	{
 		    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
 		    	}
@@ -1683,7 +1671,7 @@ public partial class CSharpBinder
     			return;
     		case SyntaxKind.ConstructorDefinitionNode:
     			var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
-	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryList)
 				{
 					parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
 				}
@@ -1696,6 +1684,8 @@ public partial class CSharpBinder
 		    	}
 		    	return;
 		    case SyntaxKind.TryStatementCatchNode:
+		    	// (2025-03-13) Bug: this is showing as a tooltip for things above it...
+		    	// ...because it takes the TypeClauseNode position indices from 'codeBlockOwner'
 		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
     		
 	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)

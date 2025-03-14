@@ -458,6 +458,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
     }
     
+    /// <summary>
+    /// This implementation is NOT thread safe.
+    /// </summary>
     public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
 	{
 		var resourceUri = modelModifier.ResourceUri;

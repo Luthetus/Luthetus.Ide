@@ -34,7 +34,7 @@ public sealed class BinaryExpressionNode : IExpressionNode
 			operatorToken,
 			rightOperandTypeClauseNode,
 			resultTypeClauseNode,
-			new EmptyExpressionNode(rightOperandTypeClauseNode))
+			EmptyExpressionNode.Empty)
 	{
 	}
 

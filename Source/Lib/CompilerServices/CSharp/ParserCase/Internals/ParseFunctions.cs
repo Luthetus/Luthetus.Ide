@@ -41,7 +41,6 @@ public class ParseFunctions
             consumedIdentifierToken,
             consumedGenericArgumentsListingNode,
             functionArgumentsListingNode,
-            null,
             null);
 
         parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserModel);
@@ -95,7 +94,6 @@ public class ParseFunctions
             consumedIdentifierToken,
             null,
             functionArgumentsListingNode,
-            null,
             null);
 
         parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserModel);
@@ -149,7 +147,7 @@ public class ParseFunctions
             {
             	var functionParametersListingNode = new FunctionParametersListingNode(
 					openParenthesisToken,
-			        new List<FunctionParameterEntryNode>(),
+			        new List<FunctionParameterEntry>(),
 			        closeParenthesisToken: default);
 			
 				var functionInvocationNode = new FunctionInvocationNode(
@@ -199,7 +197,7 @@ public class ParseFunctions
     public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var openParenthesisToken = parserModel.TokenWalker.Consume();
-    	var functionArgumentEntryNodeList = new List<FunctionArgumentEntryNode>();
+    	var functionArgumentEntryList = new List<FunctionArgumentEntry>();
     	var openParenthesisCount = 1;
     	var corruptState = false;
     	
@@ -249,7 +247,8 @@ public class ParseFunctions
 		    		
 		    		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
 		    		{
-		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
+		    			var token = parserModel.TokenWalker.Consume();
+		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
 		    			successNameableToken = true;
 		    			
 		    			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
@@ -267,16 +266,15 @@ public class ParseFunctions
 					        VariableKind.Local,
 					        false);
 		    			
-		    			var functionArgumentEntryNode = new FunctionArgumentEntryNode(
-					        variableDeclarationNode,
-					        optionalCompileTimeConstantToken: null,
-					        isOptional: false,
-					        hasParamsKeyword: false,
-					        hasOutKeyword: false,
-					        hasInKeyword: false,
-					        hasRefKeyword: false);
-		    			
-		    			functionArgumentEntryNodeList.Add(functionArgumentEntryNode);
+		    			functionArgumentEntryList.Add(
+		    				new FunctionArgumentEntry(
+						        variableDeclarationNode,
+						        optionalCompileTimeConstantToken: null,
+						        isOptional: false,
+						        hasParamsKeyword: false,
+						        hasOutKeyword: false,
+						        hasInKeyword: false,
+						        hasRefKeyword: false));
 		    			
 		    			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
 		    				_ = parserModel.TokenWalker.Consume();
@@ -304,7 +302,7 @@ public class ParseFunctions
         
         return new FunctionArgumentsListingNode(
         	openParenthesisToken,
-	        functionArgumentEntryNodeList,
+	        functionArgumentEntryList,
 	        closeParenthesisToken);
     }
 }

@@ -56,11 +56,6 @@ public sealed class TypeClauseNode : IExpressionNode
 	public bool HasQuestionMark { get; set; }
 	public int ArrayRank { get; set; }
 
-	/// <summary>
-	/// TODO: Change this attribute node property.
-	/// </summary>
-	public AttributeNode AttributeNode { get; set; }
-
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
 

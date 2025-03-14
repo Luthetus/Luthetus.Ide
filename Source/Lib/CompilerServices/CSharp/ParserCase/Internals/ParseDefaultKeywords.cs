@@ -749,10 +749,10 @@ public class ParseDefaultKeywords
         {
             var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
 
-            if (firstOutput is not null)
+            if (firstOutput != AccessModifierKind.None)
             {
                 _ = parserModel.StatementBuilder.Pop();
-                accessModifierKind = firstOutput.Value;
+                accessModifierKind = firstOutput;
 
 				// Given: protected internal class MyClass { }
 				// Then: protected internal
@@ -760,21 +760,21 @@ public class ParseDefaultKeywords
                 {
                     var secondOutput = UtilityApi.GetAccessModifierKindFromToken(secondSyntaxToken);
 
-                    if (secondOutput is not null)
+                    if (secondOutput != AccessModifierKind.None)
                     {
                         _ = parserModel.StatementBuilder.Pop();
 
-                        if ((firstOutput.Value.ToString().ToLower() == "protected" &&
-                                secondOutput.Value.ToString().ToLower() == "internal") ||
-                            (firstOutput.Value.ToString().ToLower() == "internal" &&
-                                secondOutput.Value.ToString().ToLower() == "protected"))
+                        if ((firstOutput.ToString().ToLower() == "protected" &&
+                                secondOutput.ToString().ToLower() == "internal") ||
+                            (firstOutput.ToString().ToLower() == "internal" &&
+                                secondOutput.ToString().ToLower() == "protected"))
                         {
                             accessModifierKind = AccessModifierKind.ProtectedInternal;
                         }
-                        else if ((firstOutput.Value.ToString().ToLower() == "private" &&
-                                    secondOutput.Value.ToString().ToLower() == "protected") ||
-                                (firstOutput.Value.ToString().ToLower() == "protected" &&
-                                    secondOutput.Value.ToString().ToLower() == "private"))
+                        else if ((firstOutput.ToString().ToLower() == "private" &&
+                                    secondOutput.ToString().ToLower() == "protected") ||
+                                (firstOutput.ToString().ToLower() == "protected" &&
+                                    secondOutput.ToString().ToLower() == "private"))
                         {
                             accessModifierKind = AccessModifierKind.PrivateProtected;
                         }
@@ -786,7 +786,7 @@ public class ParseDefaultKeywords
     
     	// TODO: Fix nullability spaghetti code
         var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(storageModifierToken);
-        if (storageModifierKind is null)
+        if (storageModifierKind == StorageModifierKind.None)
             return;
         if (storageModifierKind == StorageModifierKind.Record &&
         	parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
@@ -820,7 +820,7 @@ public class ParseDefaultKeywords
         var typeDefinitionNode = new TypeDefinitionNode(
             accessModifierKind,
             hasPartialModifier,
-            storageModifierKind.Value,
+            storageModifierKind,
             identifierToken,
             valueType: null,
             genericArgumentsListingNode,
