@@ -16,7 +16,9 @@ public sealed class BadExpressionNode : IExpressionNode
 {
 	public BadExpressionNode(TypeClauseNode resultTypeClauseNode, List<ISyntax> syntaxList)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BadExpressionNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BadExpressionNode++;
+		#endif
 	
 		ResultTypeClauseNode = resultTypeClauseNode;
 		SyntaxList = syntaxList;

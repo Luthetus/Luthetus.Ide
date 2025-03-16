@@ -26,7 +26,9 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 {
 	public GlobalCodeBlockNode()
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GlobalCodeBlockNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GlobalCodeBlockNode++;
+		#endif
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();

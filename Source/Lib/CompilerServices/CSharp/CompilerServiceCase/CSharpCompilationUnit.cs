@@ -40,7 +40,6 @@ public sealed class CSharpCompilationUnit : ICompilationUnit
 	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
 	public List<Symbol> __SymbolList { get; set; } = new();
 	
-	
     public List<Scope> ScopeList { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();

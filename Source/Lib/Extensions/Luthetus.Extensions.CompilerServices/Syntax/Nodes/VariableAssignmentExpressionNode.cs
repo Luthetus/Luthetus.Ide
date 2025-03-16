@@ -10,7 +10,9 @@ public sealed class VariableAssignmentExpressionNode : IExpressionNode
 		SyntaxToken equalsToken,
 		IExpressionNode expressionNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableAssignmentExpressionNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableAssignmentExpressionNode++;
+		#endif
 	
 		VariableIdentifierToken = variableIdentifierToken;
 		EqualsToken = equalsToken;

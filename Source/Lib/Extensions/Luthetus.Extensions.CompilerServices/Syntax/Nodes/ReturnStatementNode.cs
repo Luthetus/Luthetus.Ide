@@ -6,7 +6,9 @@ public sealed class ReturnStatementNode : IExpressionNode
 {
 	public ReturnStatementNode(SyntaxToken keywordToken, IExpressionNode expressionNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ReturnStatementNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ReturnStatementNode++;
+		#endif
 	
 		KeywordToken = keywordToken;
 		ExpressionNode = expressionNode;

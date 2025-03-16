@@ -13,7 +13,9 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 		SyntaxToken keywordToken,
 		CodeBlockNode? codeBlockNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementFinallyNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementFinallyNode++;
+		#endif
 	
 		Parent = parent;
 		KeywordToken = keywordToken;

@@ -11,7 +11,9 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		VariableKind variableKind,
 		bool isInitialized)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableDeclarationNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableDeclarationNode++;
+		#endif
 	
 		TypeClauseNode = typeClauseNode;
 		IdentifierToken = identifierToken;
