@@ -143,7 +143,7 @@ public class ParseFunctions
             // Parse secondary syntax ': base(myVariable, 7)'
             if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
-            	var openParenthesisToken = parserModel.TokenWalker.Consume();
+            	var openParenthesisToken = parserModel.TokenWalker.Current;
             
 				var functionInvocationNode = new FunctionInvocationNode(
 					consumedIdentifierToken,
@@ -172,7 +172,7 @@ public class ParseFunctions
 				//
 				// So, explicitly adding this invocation so that the first named parameter parses correctly.
 				//
-				_ = parserModel.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel);
+				_ = parserModel.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel, guaranteeConsume: true);
 				
 				// This invocation will parse all of the parameters because the 'parserModel.ExpressionList'
 				// contains (SyntaxKind.CommaToken, functionParametersListingNode).

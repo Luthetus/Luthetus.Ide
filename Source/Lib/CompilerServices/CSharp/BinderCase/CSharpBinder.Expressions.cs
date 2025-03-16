@@ -2632,12 +2632,27 @@ public partial class CSharpBinder
 		return ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel);
 	}
 	
-	public IExpressionNode ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	/// <summary>
+	/// Careful if changing this method:
+	/// ================================
+	/// Constructor secondary syntax with 'base' or 'this':
+	/// ````public MyClass() : base() { }
+	///
+	/// 'ParseFunctions.HandleConstructorDefinition(...)' 
+	/// will invoke this method from outside of the expression loop.
+	///
+	/// You may want to change both locations.
+	///
+	/// 'guaranteeOpenParenthesisConsume' is used for the constructor definitions
+	/// because it doesn't have the expression loop to guarantee the consumption (with proper timing).
+	/// </summary>
+	public IExpressionNode ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(
+		CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool guaranteeConsume = false)
 	{
 		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Peek(1).SyntaxKind) &&
 			parserModel.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.ColonToken)
 		{
-			// Consume the open parenthesis
+			// Consume the 'open parenthesis' / 'comma'
 			_ = parserModel.TokenWalker.Consume();
 			
 			// Consume the identifierToken
@@ -2650,6 +2665,15 @@ public partial class CSharpBinder
 			
 			// Consume the ColonToken
 			_ = parserModel.TokenWalker.Consume();
+		}
+		else
+		{
+			if (guaranteeConsume)
+			{
+				// Consume the 'open parenthesis'
+				// (this is a hack for constructor definition secondary syntax)
+				_ = parserModel.TokenWalker.Consume();
+			}
 		}
 	
 		return EmptyExpressionNode.Empty;
