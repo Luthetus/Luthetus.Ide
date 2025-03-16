@@ -10,7 +10,9 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 {
 	public ArbitraryCodeBlockNode(ICodeBlockOwner parentCodeBlockOwner)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ArbitraryCodeBlockNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ArbitraryCodeBlockNode++;
+		#endif
 	
 		ParentCodeBlockOwner = parentCodeBlockOwner;
 	}

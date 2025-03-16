@@ -9,7 +9,9 @@ public sealed class VariableReferenceNode : IExpressionNode
 		SyntaxToken variableIdentifierToken,
 		VariableDeclarationNode variableDeclarationNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableReferenceNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableReferenceNode++;
+		#endif
 	
 		VariableIdentifierToken = variableIdentifierToken;
 		VariableDeclarationNode = variableDeclarationNode;

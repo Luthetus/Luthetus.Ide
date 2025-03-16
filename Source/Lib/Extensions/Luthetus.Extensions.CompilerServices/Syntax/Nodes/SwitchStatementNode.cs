@@ -17,7 +17,9 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 		SyntaxToken closeParenthesisToken,
 		CodeBlockNode? codeBlockNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.SwitchStatementNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.SwitchStatementNode++;
+		#endif
 	
 		KeywordToken = keywordToken;
 		OpenParenthesisToken = openParenthesisToken;

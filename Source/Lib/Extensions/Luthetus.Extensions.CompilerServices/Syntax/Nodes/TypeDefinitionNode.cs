@@ -22,7 +22,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		TypeClauseNode? inheritedTypeClauseNode,
 		string namespaceName)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeDefinitionNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeDefinitionNode++;
+		#endif
 	
 		AccessModifierKind = accessModifierKind;
 		HasPartialModifier = hasPartialModifier;

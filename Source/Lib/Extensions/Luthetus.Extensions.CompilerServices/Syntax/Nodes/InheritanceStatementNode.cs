@@ -4,8 +4,10 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 {
 	public InheritanceStatementNode(TypeClauseNode parentTypeClauseNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.InheritanceStatementNode++;
-		
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.InheritanceStatementNode++;
+		#endif
+	
 		ParentTypeClauseNode = parentTypeClauseNode;
 	}
 

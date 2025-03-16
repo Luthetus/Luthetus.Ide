@@ -8,7 +8,9 @@ public sealed class UnaryExpressionNode : IExpressionNode
 		IExpressionNode expression,
 		UnaryOperatorNode unaryOperatorNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UnaryExpressionNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UnaryExpressionNode++;
+		#endif
 	
 		Expression = expression;
 		UnaryOperatorNode = unaryOperatorNode;

@@ -9,7 +9,9 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 		IExpressionNode innerExpression,
 		SyntaxToken closeParenthesisToken)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ParenthesizedExpressionNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ParenthesizedExpressionNode++;
+		#endif
 	
 		OpenParenthesisToken = openParenthesisToken;
 		InnerExpression = innerExpression;

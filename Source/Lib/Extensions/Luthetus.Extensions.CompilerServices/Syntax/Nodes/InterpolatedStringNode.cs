@@ -22,7 +22,9 @@ public sealed class InterpolatedStringNode : IExpressionNode
 		IExpressionNode? toBeExpressionPrimary,
 		TypeClauseNode resultTypeClauseNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.InterpolatedStringNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.InterpolatedStringNode++;
+		#endif
 	
 		StringInterpolatedStartToken = stringInterpolatedStartToken;
 		StringInterpolatedEndToken = stringInterpolatedEndToken;

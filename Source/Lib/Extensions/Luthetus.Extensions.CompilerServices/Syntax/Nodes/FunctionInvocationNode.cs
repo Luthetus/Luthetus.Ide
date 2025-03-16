@@ -2,21 +2,23 @@ using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class FunctionInvocationNode : IExpressionNode
+public sealed class FunctionInvocationNode : IInvocationNode
 {
 	public FunctionInvocationNode(
 		SyntaxToken functionInvocationIdentifierToken,
 		FunctionDefinitionNode? functionDefinitionNode,
 		GenericParametersListingNode? genericParametersListingNode,
-		FunctionParametersListingNode functionParametersListingNode,
+		FunctionParameterListing functionParameterListing,
 		TypeClauseNode resultTypeClauseNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionInvocationNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionInvocationNode++;
+		#endif
 	
 		FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
 		FunctionDefinitionNode = functionDefinitionNode;
 		GenericParametersListingNode = genericParametersListingNode;
-		FunctionParametersListingNode = functionParametersListingNode;
+		FunctionParameterListing = functionParameterListing;
 		ResultTypeClauseNode = resultTypeClauseNode;
 	}
 
@@ -26,11 +28,13 @@ public sealed class FunctionInvocationNode : IExpressionNode
 	public SyntaxToken FunctionInvocationIdentifierToken { get; }
 	public FunctionDefinitionNode? FunctionDefinitionNode { get; }
 	public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
-	public FunctionParametersListingNode FunctionParametersListingNode { get; private set; }
+	public FunctionParameterListing FunctionParameterListing { get; private set; }
 	public TypeClauseNode ResultTypeClauseNode { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
+	
+	public bool IsParsingFunctionParameters { get; set; }
 
 	public FunctionInvocationNode SetGenericParametersListingNode(GenericParametersListingNode genericParametersListingNode)
 	{
@@ -38,10 +42,16 @@ public sealed class FunctionInvocationNode : IExpressionNode
 		return this;
 	}
 
-	public FunctionInvocationNode SetFunctionParametersListingNode(FunctionParametersListingNode functionParametersListingNode)
+	public void SetFunctionParameterListing(FunctionParameterListing functionParameterListing)
 	{
-		FunctionParametersListingNode = functionParametersListingNode;
-		return this;
+		FunctionParameterListing = functionParameterListing;
+		_childListIsDirty = true;
+	}
+	
+	public void SetFunctionParameterListingCloseParenthesisToken(SyntaxToken closeParenthesisToken)
+	{
+		FunctionParameterListing.SetCloseParenthesisToken(closeParenthesisToken);
+		_childListIsDirty = true;
 	}
 
 	public IReadOnlyList<ISyntax> GetChildList()
@@ -50,8 +60,15 @@ public sealed class FunctionInvocationNode : IExpressionNode
 			return _childList;
 
 		var childCount = 3; // FunctionInvocationIdentifierToken, ...FunctionParametersListingNode, ResultTypeClauseNode,
-		if (FunctionDefinitionNode is not null)
-			childCount++;
+		
+		if (FunctionParameterListing.ConstructorWasInvoked)
+		{
+			childCount +=
+				1 +                                                              // FunctionParametersListingNode.OpenParenthesisToken +
+				FunctionParameterListing.FunctionParameterEntryList.Count + // FunctionParametersListingNode.FunctionParameterEntryList.Count
+				1;                                                               // FunctionParametersListingNode.CloseParenthesisToken
+		}
+		
 		if (GenericParametersListingNode is not null)
 			childCount++;
 
@@ -63,7 +80,19 @@ public sealed class FunctionInvocationNode : IExpressionNode
 			childList[i++] = FunctionDefinitionNode;
 		if (GenericParametersListingNode is not null)
 			childList[i++] = GenericParametersListingNode;
-		childList[i++] = FunctionParametersListingNode;
+		
+		if (FunctionParameterListing.ConstructorWasInvoked)
+		{
+			childList[i++] = FunctionParameterListing.OpenParenthesisToken;
+			
+			foreach (var item in FunctionParameterListing.FunctionParameterEntryList)
+			{
+				childList[i++] = item.ExpressionNode;
+			}
+			
+			childList[i++] = FunctionParameterListing.CloseParenthesisToken;
+		}
+		
 		childList[i++] = ResultTypeClauseNode;
 
 		_childList = childList;

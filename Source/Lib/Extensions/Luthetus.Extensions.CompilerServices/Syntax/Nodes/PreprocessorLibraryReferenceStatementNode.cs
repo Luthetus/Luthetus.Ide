@@ -8,7 +8,9 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
 		SyntaxToken includeDirectiveSyntaxToken,
 		SyntaxToken libraryReferenceSyntaxToken)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.PreprocessorLibraryReferenceStatementNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.PreprocessorLibraryReferenceStatementNode++;
+		#endif
 	
 		IncludeDirectiveSyntaxToken = includeDirectiveSyntaxToken;
 		LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;

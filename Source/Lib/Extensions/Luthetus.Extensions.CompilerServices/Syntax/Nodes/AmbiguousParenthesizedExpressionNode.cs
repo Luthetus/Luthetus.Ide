@@ -9,7 +9,9 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 		SyntaxToken openParenthesisToken,
 		bool isParserContextKindForceStatementExpression)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.AmbiguousParenthesizedExpressionNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.AmbiguousParenthesizedExpressionNode++;
+		#endif
 	
 		OpenParenthesisToken = openParenthesisToken;
 		IsParserContextKindForceStatementExpression = isParserContextKindForceStatementExpression;

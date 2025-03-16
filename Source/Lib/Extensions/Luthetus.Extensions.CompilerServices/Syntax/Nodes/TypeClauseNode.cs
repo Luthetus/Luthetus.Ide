@@ -14,7 +14,9 @@ public sealed class TypeClauseNode : IExpressionNode
 		GenericParametersListingNode? genericParametersListingNode,
 		bool isKeywordType)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeClauseNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeClauseNode++;
+		#endif
 	
 		IsKeywordType = isKeywordType;
 		TypeIdentifierToken = typeIdentifier;

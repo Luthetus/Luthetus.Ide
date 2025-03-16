@@ -16,7 +16,9 @@ public sealed class LockStatementNode : ICodeBlockOwner
 		SyntaxToken closeParenthesisToken,
 		CodeBlockNode? codeBlockNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LockStatementNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LockStatementNode++;
+		#endif
 	
 		KeywordToken = keywordToken;
 		OpenParenthesisToken = openParenthesisToken;
