@@ -6,7 +6,9 @@ public sealed class LiteralExpressionNode : IExpressionNode
 {
 	public LiteralExpressionNode(SyntaxToken literalSyntaxToken, TypeClauseNode typeClauseNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LiteralExpressionNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LiteralExpressionNode++;
+		#endif
 	
 		LiteralSyntaxToken = literalSyntaxToken;
 		ResultTypeClauseNode = typeClauseNode;

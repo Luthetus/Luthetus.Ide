@@ -4,7 +4,9 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 {
 	public UsingStatementListingNode()
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UsingStatementListingNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UsingStatementListingNode++;
+		#endif
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();

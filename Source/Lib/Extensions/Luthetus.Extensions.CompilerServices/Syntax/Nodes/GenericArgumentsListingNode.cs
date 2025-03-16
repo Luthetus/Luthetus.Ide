@@ -12,7 +12,9 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
 		List<GenericArgumentEntryNode> genericArgumentEntryNodeList,
 		SyntaxToken closeAngleBracketToken)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GenericArgumentsListingNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GenericArgumentsListingNode++;
+		#endif
 	
 		OpenAngleBracketToken = openAngleBracketToken;
 		GenericArgumentEntryNodeList = genericArgumentEntryNodeList;

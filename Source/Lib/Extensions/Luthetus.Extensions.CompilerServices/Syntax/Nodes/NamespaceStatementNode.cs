@@ -13,7 +13,9 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 		SyntaxToken identifierToken,
 		CodeBlockNode codeBlockNode)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.NamespaceStatementNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.NamespaceStatementNode++;
+		#endif
 	
 		KeywordToken = keywordToken;
 		IdentifierToken = identifierToken;

@@ -6,7 +6,9 @@ public sealed class ObjectInitializationNode : ISyntaxNode
 {
 	public ObjectInitializationNode(SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
 	{
-		// Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ObjectInitializationNode++;
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ObjectInitializationNode++;
+		#endif
 	
 		OpenBraceToken = openBraceToken;
 		CloseBraceToken = closeBraceToken;

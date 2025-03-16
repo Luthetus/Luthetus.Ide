@@ -140,26 +140,26 @@ public class ParseFunctions
                 _ = parserModel.TokenWalker.Consume();
             }
             
-            var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
-            
             // Parse secondary syntax ': base(myVariable, 7)'
-            if (!openParenthesisToken.IsFabricated)
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
             {
-            	var functionParametersListingNode = new FunctionParametersListingNode(
-					openParenthesisToken,
-			        new List<FunctionParameterEntry>(),
-			        closeParenthesisToken: default);
-			
+            	var openParenthesisToken = parserModel.TokenWalker.Current;
+            
 				var functionInvocationNode = new FunctionInvocationNode(
 					consumedIdentifierToken,
 			        functionDefinitionNode: null,
 			        genericParametersListingNode: null,
-			        functionParametersListingNode,
+			        new FunctionParameterListing(
+						openParenthesisToken,
+				        new List<FunctionParameterEntry>(),
+				        closeParenthesisToken: default),
 			        CSharpFacts.Types.Void.ToTypeClause());
 			        
+			    functionInvocationNode.IsParsingFunctionParameters = true;
+			        
 			    parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionParametersListingNode));
-				parserModel.ExpressionList.Add((SyntaxKind.ColonToken, functionParametersListingNode));
+				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode));
+				parserModel.ExpressionList.Add((SyntaxKind.ColonToken, functionInvocationNode));
 				
 				// TODO: The 'ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(...)' code needs to be invoked...
 				// ...from within the expression loop.
@@ -172,7 +172,7 @@ public class ParseFunctions
 				//
 				// So, explicitly adding this invocation so that the first named parameter parses correctly.
 				//
-				_ = parserModel.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel);
+				_ = parserModel.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel, guaranteeConsume: true);
 				
 				// This invocation will parse all of the parameters because the 'parserModel.ExpressionList'
 				// contains (SyntaxKind.CommaToken, functionParametersListingNode).

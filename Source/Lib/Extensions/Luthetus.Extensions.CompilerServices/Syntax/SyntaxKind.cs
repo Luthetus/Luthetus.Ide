@@ -219,7 +219,6 @@ public enum SyntaxKind
 	ObjectInitializationParameterEntryNode,
 	FunctionDefinitionNode,
 	FunctionArgumentsListingNode,
-	FunctionParametersListingNode,
 	FunctionInvocationNode,
 	LambdaExpressionNode,
 	TupleExpressionNode,

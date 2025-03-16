@@ -8,6 +8,7 @@ namespace Luthetus.Common.RazorLib.Installations.Models;
 /// </summary>
 public static class LuthetusDebugSomething
 {
+	#if DEBUG
 	public static TimeSpan TextEditorViewModelApi_TotalTimeSpan { get; set; }
 	public static TimeSpan TextEditorViewModelApi_LongestTimeSpan { get; set; }
 	public static double TextEditorViewModelApi_CountInvocations { get; set; }
@@ -23,60 +24,59 @@ public static class LuthetusDebugSomething
 	public static double OnKeyDownLateBatchingCountSent { get; set; }
 	public static double OnKeyDownLateBatchingCountHandled { get; set; }
 	
-	/*public static double AmbiguousIdentifierExpressionNode { get; set; }
-	public static double AmbiguousParenthesizedExpressionNode { get; set; }
-	public static double ArbitraryCodeBlockNode { get; set; }
-	public static double BadExpressionNode { get; set; }
-	public static double BinaryExpressionNode { get; set; }
-	public static double CodeBlockNode { get; set; }
-	public static double ConstructorDefinitionNode { get; set; }
-	public static double ConstructorInvocationExpressionNode { get; set; }
-	public static double DoWhileStatementNode { get; set; }
-	public static double EmptyExpressionNode { get; set; }
-	public static double ExplicitCastNode { get; set; }
-	public static double ForeachStatementNode { get; set; }
-	public static double ForStatementNode { get; set; }
-	public static double FunctionArgumentEntryNode { get; set; }
-	public static double FunctionArgumentsListingNode { get; set; }
-	public static double FunctionDefinitionNode { get; set; }
-	public static double FunctionInvocationNode { get; set; }
-	public static double FunctionParameterEntryNode { get; set; }
-	public static double FunctionParametersListingNode { get; set; }
-	public static double GenericArgumentEntryNode { get; set; }
-	public static double GenericArgumentsListingNode { get; set; }
-	public static double GenericParameterEntryNode { get; set; }
-	public static double GenericParametersListingNode { get; set; }
-	public static double GlobalCodeBlockNode { get; set; }
-	public static double IfStatementNode { get; set; }
-	public static double InheritanceStatementNode { get; set; }
-	public static double InterpolatedStringNode { get; set; }
-	public static double LambdaExpressionNode { get; set; }
-	public static double LiteralExpressionNode { get; set; }
-	public static double LockStatementNode { get; set; }
-	public static double NamespaceStatementNode { get; set; }
-	public static double ObjectInitializationNode { get; set; }
-	public static double ObjectInitializationParameterEntryNode { get; set; }
-	public static double ObjectInitializationParametersListingNode { get; set; }
-	public static double ParenthesizedExpressionNode { get; set; }
-	public static double PreprocessorLibraryReferenceStatementNode { get; set; }
-	public static double ReturnStatementNode { get; set; }
-	public static double SwitchExpressionNode { get; set; }
-	public static double SwitchStatementNode { get; set; }
-	public static double TryStatementCatchNode { get; set; }
-	public static double TryStatementFinallyNode { get; set; }
-	public static double TryStatementNode { get; set; }
-	public static double TryStatementTryNode { get; set; }
-	public static double TupleExpressionNode { get; set; }
-	public static double TypeClauseNode { get; set; }
-	public static double TypeDefinitionNode { get; set; }
-	public static double UnaryExpressionNode { get; set; }
-	public static double UnaryOperatorNode { get; set; }
-	public static double UsingStatementListingNode { get; set; }
-	public static double VariableAssignmentExpressionNode { get; set; }
-	public static double VariableDeclarationNode { get; set; }
-	public static double VariableReferenceNode { get; set; }
-	public static double WhileStatementNode { get; set; }
-	public static double WithExpressionNode { get; set; }*/
+	public static int AmbiguousIdentifierExpressionNode { get; set; }
+	public static int AmbiguousParenthesizedExpressionNode { get; set; }
+	public static int ArbitraryCodeBlockNode { get; set; }
+	public static int BadExpressionNode { get; set; }
+	public static int BinaryExpressionNode { get; set; }
+	public static int CodeBlockNode { get; set; }
+	public static int ConstructorDefinitionNode { get; set; }
+	public static int ConstructorInvocationExpressionNode { get; set; }
+	public static int DoWhileStatementNode { get; set; }
+	public static int EmptyExpressionNode { get; set; }
+	public static int ExplicitCastNode { get; set; }
+	public static int ForeachStatementNode { get; set; }
+	public static int ForStatementNode { get; set; }
+	public static int FunctionArgumentEntryNode { get; set; }
+	public static int FunctionArgumentsListingNode { get; set; }
+	public static int FunctionDefinitionNode { get; set; }
+	public static int FunctionInvocationNode { get; set; }
+	public static int GenericArgumentEntryNode { get; set; }
+	public static int GenericArgumentsListingNode { get; set; }
+	public static int GenericParameterEntryNode { get; set; }
+	public static int GenericParametersListingNode { get; set; }
+	public static int GlobalCodeBlockNode { get; set; }
+	public static int IfStatementNode { get; set; }
+	public static int InheritanceStatementNode { get; set; }
+	public static int InterpolatedStringNode { get; set; }
+	public static int LambdaExpressionNode { get; set; }
+	public static int LiteralExpressionNode { get; set; }
+	public static int LockStatementNode { get; set; }
+	public static int NamespaceStatementNode { get; set; }
+	public static int ObjectInitializationNode { get; set; }
+	public static int ObjectInitializationParameterEntryNode { get; set; }
+	public static int ObjectInitializationParametersListingNode { get; set; }
+	public static int ParenthesizedExpressionNode { get; set; }
+	public static int PreprocessorLibraryReferenceStatementNode { get; set; }
+	public static int ReturnStatementNode { get; set; }
+	public static int SwitchExpressionNode { get; set; }
+	public static int SwitchStatementNode { get; set; }
+	public static int TryStatementCatchNode { get; set; }
+	public static int TryStatementFinallyNode { get; set; }
+	public static int TryStatementNode { get; set; }
+	public static int TryStatementTryNode { get; set; }
+	public static int TupleExpressionNode { get; set; }
+	public static int TypeClauseNode { get; set; }
+	public static int TypeDefinitionNode { get; set; }
+	public static int UnaryExpressionNode { get; set; }
+	public static int UnaryOperatorNode { get; set; }
+	public static int UsingStatementListingNode { get; set; }
+	public static int VariableAssignmentExpressionNode { get; set; }
+	public static int VariableDeclarationNode { get; set; }
+	public static int VariableReferenceNode { get; set; }
+	public static int WhileStatementNode { get; set; }
+	public static int WithExpressionNode { get; set; }
+	#endif
 	
 	public static string CreateText()
 	{
@@ -84,6 +84,7 @@ public static class LuthetusDebugSomething
 		
 		builder.AppendLine();
 		
+		#if DEBUG
 		builder.AppendLine($"TextEditorViewModelApi: total: {TextEditorViewModelApi_TotalTimeSpan.TotalMilliseconds}, longest: {TextEditorViewModelApi_LongestTimeSpan.TotalMilliseconds}, " +
 						   $"average: {TextEditorViewModelApi_TotalTimeSpan.TotalMilliseconds / TextEditorViewModelApi_CountInvocations}, " +
 						   $"count: {TextEditorViewModelApi_CountInvocations}");
@@ -98,59 +99,68 @@ public static class LuthetusDebugSomething
 						   
 		builder.AppendLine($"OnKeyDownLateBatchingCount: sent: {OnKeyDownLateBatchingCountSent}, handled: {OnKeyDownLateBatchingCountHandled}");
 		
-		/*builder.AppendLine($"AmbiguousIdentifierExpressionNode: {AmbiguousIdentifierExpressionNode:N0}");
-		builder.AppendLine($"AmbiguousParenthesizedExpressionNode: {AmbiguousParenthesizedExpressionNode:N0}");
-		builder.AppendLine($"BadExpressionNode: {BadExpressionNode:N0}");
-		builder.AppendLine($"BinaryExpressionNode: {BinaryExpressionNode:N0}");
-		builder.AppendLine($"CodeBlockNode: {CodeBlockNode:N0}");
-		builder.AppendLine($"ConstructorDefinitionNode: {ConstructorDefinitionNode:N0}");
-		builder.AppendLine($"ConstructorInvocationExpressionNode: {ConstructorInvocationExpressionNode:N0}");
-		builder.AppendLine($"DoWhileStatementNode: {DoWhileStatementNode:N0}");
-		builder.AppendLine($"EmptyExpressionNode: {EmptyExpressionNode:N0}");
-		builder.AppendLine($"ExplicitCastNode: {ExplicitCastNode:N0}");
-		builder.AppendLine($"ForeachStatementNode: {ForeachStatementNode:N0}");
-		builder.AppendLine($"ForStatementNode: {ForStatementNode:N0}");
-		builder.AppendLine($"FunctionArgumentEntryNode: {FunctionArgumentEntryNode:N0}");
-		builder.AppendLine($"FunctionArgumentsListingNode: {FunctionArgumentsListingNode:N0}");
-		builder.AppendLine($"FunctionDefinitionNode: {FunctionDefinitionNode:N0}");
-		builder.AppendLine($"FunctionInvocationNode: {FunctionInvocationNode:N0}");
-		builder.AppendLine($"FunctionParameterEntryNode: {FunctionParameterEntryNode:N0}");
-		builder.AppendLine($"FunctionParametersListingNode: {FunctionParametersListingNode:N0}");
-		builder.AppendLine($"GenericArgumentEntryNode: {GenericArgumentEntryNode:N0}");
-		builder.AppendLine($"GenericArgumentsListingNode: {GenericArgumentsListingNode:N0}");
-		builder.AppendLine($"GenericParameterEntryNode: {GenericParameterEntryNode:N0}");
-		builder.AppendLine($"GenericParametersListingNode: {GenericParametersListingNode:N0}");
-		builder.AppendLine($"GlobalCodeBlockNode: {GlobalCodeBlockNode:N0}");
-		builder.AppendLine($"IfStatementNode: {IfStatementNode:N0}");
-		builder.AppendLine($"InheritanceStatementNode: {InheritanceStatementNode:N0}");
-		builder.AppendLine($"InterpolatedStringNode: {InterpolatedStringNode:N0}");
-		builder.AppendLine($"LambdaExpressionNode: {LambdaExpressionNode:N0}");
-		builder.AppendLine($"LiteralExpressionNode: {LiteralExpressionNode:N0}");
-		builder.AppendLine($"LockStatementNode: {LockStatementNode:N0}");
-		builder.AppendLine($"NamespaceStatementNode: {NamespaceStatementNode:N0}");
-		builder.AppendLine($"ObjectInitializationNode: {ObjectInitializationNode:N0}");
-		builder.AppendLine($"ObjectInitializationParameterEntryNode: {ObjectInitializationParameterEntryNode:N0}");
-		builder.AppendLine($"ObjectInitializationParametersListingNode: {ObjectInitializationParametersListingNode:N0}");
-		builder.AppendLine($"ParenthesizedExpressionNode: {ParenthesizedExpressionNode:N0}");
-		builder.AppendLine($"PreprocessorLibraryReferenceStatementNode: {PreprocessorLibraryReferenceStatementNode:N0}");
-		builder.AppendLine($"ReturnStatementNode: {ReturnStatementNode:N0}");
-		builder.AppendLine($"SwitchExpressionNode: {SwitchExpressionNode:N0}");
-		builder.AppendLine($"SwitchStatementNode: {SwitchStatementNode:N0}");
-		builder.AppendLine($"TryStatementCatchNode: {TryStatementCatchNode:N0}");
-		builder.AppendLine($"TryStatementFinallyNode: {TryStatementFinallyNode:N0}");
-		builder.AppendLine($"TryStatementNode: {TryStatementNode:N0}");
-		builder.AppendLine($"TryStatementTryNode: {TryStatementTryNode:N0}");
-		builder.AppendLine($"TupleExpressionNode: {TupleExpressionNode:N0}");
-		builder.AppendLine($"TypeClauseNode: {TypeClauseNode:N0}");
-		builder.AppendLine($"TypeDefinitionNode: {TypeDefinitionNode:N0}");
-		builder.AppendLine($"UnaryExpressionNode: {UnaryExpressionNode:N0}");
-		builder.AppendLine($"UnaryOperatorNode: {UnaryOperatorNode:N0}");
-		builder.AppendLine($"UsingStatementListingNode: {UsingStatementListingNode:N0}");
-		builder.AppendLine($"VariableAssignmentExpressionNode: {VariableAssignmentExpressionNode:N0}");
-		builder.AppendLine($"VariableDeclarationNode: {VariableDeclarationNode:N0}");
-		builder.AppendLine($"VariableReferenceNode: {VariableReferenceNode:N0}");
-		builder.AppendLine($"WhileStatementNode: {WhileStatementNode:N0}");
-		builder.AppendLine($"WithExpressionNode: {WithExpressionNode:N0}");
+		var nodeCountList = new List<(string NodeName, int NodeCount)>
+		{
+			("AmbiguousIdentifierExpressionNode", AmbiguousIdentifierExpressionNode),
+			("AmbiguousParenthesizedExpressionNode", AmbiguousParenthesizedExpressionNode),
+			("ArbitraryCodeBlockNode", ArbitraryCodeBlockNode),
+			("BadExpressionNode", BadExpressionNode),
+			("BinaryExpressionNode", BinaryExpressionNode),
+			("CodeBlockNode", CodeBlockNode),
+			("ConstructorDefinitionNode", ConstructorDefinitionNode),
+			("ConstructorInvocationExpressionNode", ConstructorInvocationExpressionNode),
+			("DoWhileStatementNode", DoWhileStatementNode),
+			("EmptyExpressionNode", EmptyExpressionNode),
+			("ExplicitCastNode", ExplicitCastNode),
+			("ForeachStatementNode", ForeachStatementNode),
+			("ForStatementNode", ForStatementNode),
+			("FunctionArgumentEntryNode", FunctionArgumentEntryNode),
+			("FunctionArgumentsListingNode", FunctionArgumentsListingNode),
+			("FunctionDefinitionNode", FunctionDefinitionNode),
+			("FunctionInvocationNode", FunctionInvocationNode),
+			("GenericArgumentEntryNode", GenericArgumentEntryNode),
+			("GenericArgumentsListingNode", GenericArgumentsListingNode),
+			("GenericParameterEntryNode", GenericParameterEntryNode),
+			("GenericParametersListingNode", GenericParametersListingNode),
+			("GlobalCodeBlockNode", GlobalCodeBlockNode),
+			("IfStatementNode", IfStatementNode),
+			("InheritanceStatementNode", InheritanceStatementNode),
+			("InterpolatedStringNode", InterpolatedStringNode),
+			("LambdaExpressionNode", LambdaExpressionNode),
+			("LiteralExpressionNode", LiteralExpressionNode),
+			("LockStatementNode", LockStatementNode),
+			("NamespaceStatementNode", NamespaceStatementNode),
+			("ObjectInitializationNode", ObjectInitializationNode),
+			("ObjectInitializationParameterEntryNode", ObjectInitializationParameterEntryNode),
+			("ObjectInitializationParametersListingNode", ObjectInitializationParametersListingNode),
+			("ParenthesizedExpressionNode", ParenthesizedExpressionNode),
+			("PreprocessorLibraryReferenceStatementNode", PreprocessorLibraryReferenceStatementNode),
+			("ReturnStatementNode", ReturnStatementNode),
+			("SwitchExpressionNode", SwitchExpressionNode),
+			("SwitchStatementNode", SwitchStatementNode),
+			("TryStatementCatchNode", TryStatementCatchNode),
+			("TryStatementFinallyNode", TryStatementFinallyNode),
+			("TryStatementNode", TryStatementNode),
+			("TryStatementTryNode", TryStatementTryNode),
+			("TupleExpressionNode", TupleExpressionNode),
+			("TypeClauseNode", TypeClauseNode),
+			("TypeDefinitionNode", TypeDefinitionNode),
+			("UnaryExpressionNode", UnaryExpressionNode),
+			("UnaryOperatorNode", UnaryOperatorNode),
+			("UsingStatementListingNode", UsingStatementListingNode),
+			("VariableAssignmentExpressionNode", VariableAssignmentExpressionNode),
+			("VariableDeclarationNode", VariableDeclarationNode),
+			("VariableReferenceNode", VariableReferenceNode),
+			("WhileStatementNode", WhileStatementNode),
+			("WithExpressionNode", WithExpressionNode),
+		};
+		
+		nodeCountList = nodeCountList.OrderByDescending(x => x.NodeCount).ToList();
+		
+		foreach (var node in nodeCountList)
+		{
+			builder.AppendLine($"{node.NodeName}: {node.NodeCount:N0}");
+		}
 		
 		var totalNodeCount = AmbiguousIdentifierExpressionNode +
 			AmbiguousParenthesizedExpressionNode +
@@ -169,8 +179,6 @@ public static class LuthetusDebugSomething
 			FunctionArgumentsListingNode +
 			FunctionDefinitionNode +
 			FunctionInvocationNode +
-			FunctionParameterEntryNode +
-			FunctionParametersListingNode +
 			GenericArgumentEntryNode +
 			GenericArgumentsListingNode +
 			GenericParameterEntryNode +
@@ -207,13 +215,18 @@ public static class LuthetusDebugSomething
 			WhileStatementNode +
 			WithExpressionNode;
 			
-		builder.AppendLine($"totalNodeCount: {totalNodeCount:N0}");*/
+		builder.AppendLine("----------------");
+		builder.AppendLine($"totalNodeCount: {totalNodeCount:N0}");
+		#else
+		builder.AppendLine($"Run with 'DEBUG' mode to see output from '{nameof(LuthetusDebugSomething)}'.");
+		#endif
 		
 		builder.AppendLine();
 		
 		return builder.ToString();
 	}
 	
+	#if DEBUG
 	public static void SetTextEditorViewModelApi(TimeSpan timeElapsed)
 	{
 		TextEditorViewModelApi_CountInvocations++;
@@ -243,4 +256,5 @@ public static class LuthetusDebugSomething
 		if (timeElapsed > TextEditorVirtualizationGrid_LongestTimeSpan)
 			TextEditorVirtualizationGrid_LongestTimeSpan = timeElapsed;
 	}
+	#endif
 }
