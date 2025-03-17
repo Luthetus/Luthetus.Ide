@@ -9,7 +9,7 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeDefinitionNode"/> is used anywhere a type is defined.
 /// </summary>
-public sealed class TypeDefinitionNode : ICodeBlockOwner
+public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode
 {
 	public TypeDefinitionNode(
 		AccessModifierKind accessModifierKind,
@@ -18,7 +18,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		SyntaxToken typeIdentifier,
 		Type? valueType,
 		GenericArgumentsListingNode? genericArgumentsListingNode,
-		FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
+		FunctionArgumentListing primaryConstructorFunctionArgumentListing,
 		TypeClauseNode? inheritedTypeClauseNode,
 		string namespaceName)
 	{
@@ -32,7 +32,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		TypeIdentifierToken = typeIdentifier;
 		ValueType = valueType;
 		GenericArgumentsListingNode = genericArgumentsListingNode;
-		PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
+		FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
 		InheritedTypeClauseNode = inheritedTypeClauseNode;
 		NamespaceName = namespaceName;
 	}
@@ -60,7 +60,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	/// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
 	/// </summary>
 	public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
-	public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; private set; }
+	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
+	public FunctionArgumentListing PrimaryConstructorFunctionArgumentListing => FunctionArgumentListing;
 	/// <summary>
 	/// Given:<br/>
 	/// public class Person : IPerson { ... }<br/><br/>
@@ -72,6 +73,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
+	
+	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
 	public string EncompassingNamespaceIdentifierString { get; set; }
 
@@ -83,6 +86,14 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	public int? ScopeIndexKey { get; set; }
 
 	public bool IsKeywordType { get; init; }
+	
+	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
+	{
+		FunctionArgumentListing = functionArgumentListing;
+		
+		_childListIsDirty = true;
+		_memberListIsDirty = true;
+	}
 
 	public FunctionDefinitionNode[] GetFunctionDefinitionNodes()
 	{
@@ -159,15 +170,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		return this;
 	}
 	#endregion
-
-	public ICodeBlockOwner SetPrimaryConstructorFunctionArgumentsListingNode(FunctionArgumentsListingNode functionArgumentsListingNode)
-	{
-		PrimaryConstructorFunctionArgumentsListingNode = functionArgumentsListingNode;
-
-		_childListIsDirty = true;
-		_memberListIsDirty = true;
-		return this;
-	}
 
 	public ICodeBlockOwner SetInheritedTypeClauseNode(TypeClauseNode typeClauseNode)
 	{

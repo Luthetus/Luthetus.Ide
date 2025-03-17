@@ -154,12 +154,11 @@ public static class ParseTypes
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	var functionArgumentsListingNode = ParseFunctions.HandleFunctionArguments(compilationUnit, ref parserModel);
-    	typeDefinitionNode.SetPrimaryConstructorFunctionArgumentsListingNode(functionArgumentsListingNode);
+    	ParseFunctions.HandleFunctionArguments(typeDefinitionNode, compilationUnit, ref parserModel);
     	
-    	if (typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode is not null)
+    	if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.ConstructorWasInvoked)
     	{
-    		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryList)
+    		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList)
 	    	{
 	    		parserModel.Binder.CreateVariableSymbol(argument.VariableDeclarationNode.IdentifierToken, argument.VariableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
 	    		argument.VariableDeclarationNode.VariableKind = VariableKind.Property;

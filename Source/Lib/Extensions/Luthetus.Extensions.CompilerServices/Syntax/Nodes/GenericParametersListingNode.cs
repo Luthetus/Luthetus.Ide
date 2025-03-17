@@ -15,7 +15,7 @@ public sealed class GenericParametersListingNode : IExpressionNode
 {
 	public GenericParametersListingNode(
 		SyntaxToken openAngleBracketToken,
-		List<GenericParameterEntryNode> genericParameterEntryNodeList,
+		List<GenericParameterEntry> genericParameterEntryList,
 		SyntaxToken closeAngleBracketToken)
 	{
 		#if DEBUG
@@ -23,7 +23,7 @@ public sealed class GenericParametersListingNode : IExpressionNode
 		#endif
 	
 		OpenAngleBracketToken = openAngleBracketToken;
-		GenericParameterEntryNodeList = genericParameterEntryNodeList;
+		GenericParameterEntryList = genericParameterEntryList;
 		CloseAngleBracketToken = closeAngleBracketToken;
 	}
 
@@ -31,7 +31,7 @@ public sealed class GenericParametersListingNode : IExpressionNode
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken OpenAngleBracketToken { get; }
-	public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
+	public List<GenericParameterEntry> GenericParameterEntryList { get; }
 	public SyntaxToken CloseAngleBracketToken { get; private set; }
 	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
@@ -51,19 +51,19 @@ public sealed class GenericParametersListingNode : IExpressionNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		// OpenAngleBracketToken, GenericParameterEntryNodeList.Length, CloseAngleBracketToken,
+		// OpenAngleBracketToken, GenericParameterEntryList.Length, CloseAngleBracketToken,
 		var childCount =
-			1 +                                    // OpenAngleBracketToken,
-			GenericParameterEntryNodeList.Count + // GenericParameterEntryNodeList.Count,
-			1;                                     // CloseAngleBracketToken,
+			1 +                                   // OpenAngleBracketToken,
+			GenericParameterEntryList.Count + // GenericParameterEntryList.Count,
+			1;                                    // CloseAngleBracketToken,
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenAngleBracketToken;
-		foreach (var item in GenericParameterEntryNodeList)
+		foreach (var item in GenericParameterEntryList)
 		{
-			childList[i++] = item;
+			childList[i++] = item.TypeClauseNode;
 		}
 		childList[i++] = CloseAngleBracketToken;
 

@@ -824,7 +824,7 @@ public class ParseDefaultKeywords
             identifierToken,
             valueType: null,
             genericArgumentsListingNode,
-            primaryConstructorFunctionArgumentsListingNode: null,
+            primaryConstructorFunctionArgumentListing: default,
             inheritedTypeClauseNode: null,
             namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText());
 

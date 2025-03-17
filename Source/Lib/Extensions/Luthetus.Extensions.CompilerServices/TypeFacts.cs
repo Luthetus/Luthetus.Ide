@@ -22,7 +22,7 @@ public static class TypeFacts
 		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
 		typeof(void),
 		null,
-		null,
+		primaryConstructorFunctionArgumentListing: default,
 		null,
 		string.Empty);
 
@@ -56,7 +56,7 @@ public static class TypeFacts
 		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
 		typeof(void),
 		null,
-		null,
+		primaryConstructorFunctionArgumentListing: default,
 		null,
 		string.Empty);
 }

@@ -2,6 +2,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.Facts;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
@@ -33,15 +34,15 @@ public class ParseFunctions
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
-        var functionArgumentsListingNode = HandleFunctionArguments(compilationUnit, ref parserModel);
-
-        var functionDefinitionNode = new FunctionDefinitionNode(
+		var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,
             consumedTypeClauseNode,
             consumedIdentifierToken,
             consumedGenericArgumentsListingNode,
-            functionArgumentsListingNode,
+            functionArgumentListing: default,
             null);
+
+        HandleFunctionArguments(functionDefinitionNode, compilationUnit, ref parserModel);
 
         parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserModel);
         
@@ -81,9 +82,7 @@ public class ParseFunctions
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	var functionArgumentsListingNode = HandleFunctionArguments(compilationUnit, ref parserModel);
-
-        var typeClauseNode = new TypeClauseNode(
+    	var typeClauseNode = new TypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
             valueType: null,
             genericParametersListingNode: null,
@@ -93,8 +92,10 @@ public class ParseFunctions
             typeClauseNode,
             consumedIdentifierToken,
             null,
-            functionArgumentsListingNode,
+            functionArgumentListing: default,
             null);
+    
+    	HandleFunctionArguments(constructorDefinitionNode, compilationUnit, ref parserModel);
 
         parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserModel);
         
@@ -194,7 +195,10 @@ public class ParseFunctions
     }
 
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
-    public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleFunctionArguments(
+    	IFunctionDefinitionNode functionDefinitionNode,
+    	CSharpCompilationUnit compilationUnit,
+    	ref CSharpParserModel parserModel)
     {
     	var openParenthesisToken = parserModel.TokenWalker.Consume();
     	var functionArgumentEntryList = new List<FunctionArgumentEntry>();
@@ -300,9 +304,10 @@ public class ParseFunctions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
         	closeParenthesisToken = parserModel.TokenWalker.Consume();
         
-        return new FunctionArgumentsListingNode(
-        	openParenthesisToken,
-	        functionArgumentEntryList,
-	        closeParenthesisToken);
+        functionDefinitionNode.SetFunctionArgumentListing(
+        	new FunctionArgumentListing(
+	        	openParenthesisToken,
+		        functionArgumentEntryList,
+		        closeParenthesisToken));
     }
 }

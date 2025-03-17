@@ -37,13 +37,10 @@ public static class LuthetusDebugSomething
 	public static int ExplicitCastNode { get; set; }
 	public static int ForeachStatementNode { get; set; }
 	public static int ForStatementNode { get; set; }
-	public static int FunctionArgumentEntryNode { get; set; }
-	public static int FunctionArgumentsListingNode { get; set; }
 	public static int FunctionDefinitionNode { get; set; }
 	public static int FunctionInvocationNode { get; set; }
 	public static int GenericArgumentEntryNode { get; set; }
 	public static int GenericArgumentsListingNode { get; set; }
-	public static int GenericParameterEntryNode { get; set; }
 	public static int GenericParametersListingNode { get; set; }
 	public static int GlobalCodeBlockNode { get; set; }
 	public static int IfStatementNode { get; set; }
@@ -114,13 +111,10 @@ public static class LuthetusDebugSomething
 			("ExplicitCastNode", ExplicitCastNode),
 			("ForeachStatementNode", ForeachStatementNode),
 			("ForStatementNode", ForStatementNode),
-			("FunctionArgumentEntryNode", FunctionArgumentEntryNode),
-			("FunctionArgumentsListingNode", FunctionArgumentsListingNode),
 			("FunctionDefinitionNode", FunctionDefinitionNode),
 			("FunctionInvocationNode", FunctionInvocationNode),
 			("GenericArgumentEntryNode", GenericArgumentEntryNode),
 			("GenericArgumentsListingNode", GenericArgumentsListingNode),
-			("GenericParameterEntryNode", GenericParameterEntryNode),
 			("GenericParametersListingNode", GenericParametersListingNode),
 			("GlobalCodeBlockNode", GlobalCodeBlockNode),
 			("IfStatementNode", IfStatementNode),
@@ -175,13 +169,10 @@ public static class LuthetusDebugSomething
 			ExplicitCastNode +
 			ForeachStatementNode +
 			ForStatementNode +
-			FunctionArgumentEntryNode +
-			FunctionArgumentsListingNode +
 			FunctionDefinitionNode +
 			FunctionInvocationNode +
 			GenericArgumentEntryNode +
 			GenericArgumentsListingNode +
-			GenericParameterEntryNode +
 			GenericParametersListingNode +
 			GlobalCodeBlockNode +
 			IfStatementNode +

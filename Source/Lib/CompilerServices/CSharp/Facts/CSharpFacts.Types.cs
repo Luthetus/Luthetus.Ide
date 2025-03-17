@@ -19,7 +19,7 @@ public partial class CSharpFacts
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "void")),
             typeof(void),
             null,
-            null,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -33,7 +33,7 @@ public partial class CSharpFacts
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "int")),
             typeof(int),
             null,
-            null,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -47,7 +47,7 @@ public partial class CSharpFacts
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "char".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "char")),
             typeof(char),
             null,
-            null,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -61,7 +61,7 @@ public partial class CSharpFacts
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "string")),
             typeof(string),
             null,
-            null,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -75,7 +75,7 @@ public partial class CSharpFacts
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "bool")),
             typeof(bool),
             null,
-            null,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -89,7 +89,7 @@ public partial class CSharpFacts
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "var")),
             typeof(void),
             null,
-            null,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {

@@ -8,10 +8,10 @@
 {
 	<text>&lt;</text>
 		
-	@for (int badIndex = 0; badIndex < genericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
+	@for (int badIndex = 0; badIndex < genericParametersListingNode.GenericParameterEntryList.Count; badIndex++)
 	{
 		var index = badIndex;
-		var genericParameter = genericParametersListingNode.GenericParameterEntryNodeList[index];
+		var genericParameter = genericParametersListingNode.GenericParameterEntryList[index];
 		
     	var syntaxViewModel = new SyntaxViewModel(
     		targetSymbol: null,
@@ -20,7 +20,7 @@
 			depth: syntaxViewModelLocal.Depth + 1);
         <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		
-		if (index < genericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
+		if (index < genericParametersListingNode.GenericParameterEntryList.Count - 1)
 		{
 			<text>,</text>
 		}

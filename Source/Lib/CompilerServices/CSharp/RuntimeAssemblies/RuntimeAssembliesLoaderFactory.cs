@@ -272,11 +272,11 @@ public static class RuntimeAssembliesLoaderFactory
                 var openAngleBracketToken = new SyntaxToken(SyntaxKind.OpenAngleBracketToken, openAngleBracketTextSpan);
 
                 // Generic Parameter Entries
-                var genericParameterEntryNodeList = new List<GenericParameterEntryNode>();
+                var genericParameterEntryNodeList = new List<GenericParameterEntry>();
 
                 foreach (var genericParameter in genericParameters)
                 {
-                    var genericParameterEntryNode = new GenericParameterEntryNode(
+                    var genericParameterEntryNode = new GenericParameterEntry(
                         GetTypeClauseNode(
                             genericParameter.Name,
                             genericParameter.GenericTypeArguments));

@@ -7,13 +7,13 @@ using Luthetus.Extensions.CompilerServices;
 
 namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class ConstructorDefinitionNode : ICodeBlockOwner
+public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode
 {
 	public ConstructorDefinitionNode(
 		TypeClauseNode returnTypeClauseNode,
 		SyntaxToken functionIdentifier,
 		GenericArgumentsListingNode? genericArgumentsListingNode,
-		FunctionArgumentsListingNode functionArgumentsListingNode,
+		FunctionArgumentListing functionArgumentListing,
 		CodeBlockNode? codeBlockNode)
 	{
 		#if DEBUG
@@ -23,7 +23,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		ReturnTypeClauseNode = returnTypeClauseNode;
 		FunctionIdentifier = functionIdentifier;
 		GenericArgumentsListingNode = genericArgumentsListingNode;
-		FunctionArgumentsListingNode = functionArgumentsListingNode;
+		FunctionArgumentListing = functionArgumentListing;
 		CodeBlockNode = codeBlockNode;
 	}
 
@@ -33,7 +33,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 	public TypeClauseNode ReturnTypeClauseNode { get; }
 	public SyntaxToken FunctionIdentifier { get; }
 	public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
-	public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
+	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -42,23 +42,17 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
 	public int? ScopeIndexKey { get; set; }
 
-	/// <summary>
-	/// public MyConstructor(string firstName)
-	/// 	: base(firstName)
-	/// {
-	/// }
-	///
-	/// This stores the indices of tokens that deliminate the parameters to the 'base()' invocation.
-	/// The reason for this is the invocation needs to have 'string firstName' in scope.
-	/// But, 'string firstName' doesn't come into scope until the '{' token.
-	/// 
-	/// So, remember where the parameters to the 'base()' invocation were,
-	/// then later when 'string firstName' is in scope, parse the parameters.
-	/// </summary>
-	public (int OpenParenthesisIndex, int CloseParenthesisIndex)? OtherConstructorInvocation { get; set; }
-
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
+	
+	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	
+	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
+	{
+		FunctionArgumentListing = functionArgumentListing;
+		
+		_childListIsDirty = true;
+	}
 
 	#region ICodeBlockOwner_Methods
 	public TypeClauseNode? GetReturnTypeClauseNode()
@@ -105,8 +99,11 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		if (!_childListIsDirty)
 			return _childList;
 
-		// ReturnTypeClauseNode, FunctionIdentifier, ...FunctionArgumentsListingNode,
-		var childCount = 3;
+		
+		var childCount = 2 +                                          // ReturnTypeClauseNode, FunctionIdentifier
+			1 +                                                       // FunctionArgumentListing.OpenParenthesisToken
+			FunctionArgumentListing.FunctionArgumentEntryList.Count + // FunctionArgumentListing.FunctionArgumentEntryList.Count
+			1;                                                        // FunctionArgumentListing.CloseParenthesisToken
 		if (GenericArgumentsListingNode is not null)
 			childCount++;
 		if (CodeBlockNode is not null)
@@ -119,7 +116,14 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		childList[i++] = FunctionIdentifier;
 		if (GenericArgumentsListingNode is not null)
 			childList[i++] = GenericArgumentsListingNode;
-		childList[i++] = FunctionArgumentsListingNode;
+		
+		childList[i++] = FunctionArgumentListing.OpenParenthesisToken;
+		foreach (var entry in FunctionArgumentListing.FunctionArgumentEntryList)
+		{
+			childList[i++] = entry.VariableDeclarationNode;
+		}
+		childList[i++] = FunctionArgumentListing.CloseParenthesisToken;
+		
 		if (CodeBlockNode is not null)
 			childList[i++] = CodeBlockNode;
 
