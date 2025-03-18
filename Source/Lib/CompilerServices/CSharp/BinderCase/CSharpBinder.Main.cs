@@ -1709,7 +1709,28 @@ public partial class CSharpBinder
 		    		
 		    	return;
 		    case SyntaxKind.TypeDefinitionNode:
-		    	Console.WriteLine("aaa SyntaxKind.TypeDefinitionNode");
+		    	var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+		    	
+		    	if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
+		    	{
+		    		foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
+		    		{
+		    			parserModel.Binder.BindTypeDefinitionNode(
+					        new TypeDefinitionNode(
+								AccessModifierKind.Public,
+								hasPartialModifier: false,
+								StorageModifierKind.Class,
+								entry.TypeClauseNode.TypeIdentifierToken,
+								entry.TypeClauseNode.ValueType,
+								entry.TypeClauseNode.GenericParameterListing,
+								primaryConstructorFunctionArgumentListing: default,
+								null,
+								string.Empty),
+					        cSharpCompilationUnit,
+					        ref parserModel);
+		    		}
+		    	}
+		    	
 		    	return;
     	}
     }
