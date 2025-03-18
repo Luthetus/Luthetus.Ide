@@ -38,15 +38,15 @@ public static class CSharpParser
 
         var parserModel = new CSharpParserModel(
             binder,
-	        new TokenWalker(lexerOutput.SyntaxTokenList),
+	        lexerOutput.SyntaxTokenList,
 	        globalCodeBlockBuilder,
 	        currentCodeBlockBuilder,
 	        0,
             binder.TopLevelNamespaceStatementNode);
             
-		#if DEBUG
+		/*#if DEBUG
 		parserModel.TokenWalker.ProtectedTokenSyntaxKindList = new() { SyntaxKind.StatementDelimiterToken, SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken, };
-		#endif
+		#endif*/
 		
 		var loopCount = 0;
 		

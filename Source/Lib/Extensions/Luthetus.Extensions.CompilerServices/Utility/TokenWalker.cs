@@ -21,7 +21,7 @@ public class TokenWalker
 	/// </summary>
 	private Stack<(int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)>? _deferredParsingTupleStack;
 
-	public TokenWalker(List<SyntaxToken> tokenList)
+	public TokenWalker(IReadOnlyList<SyntaxToken> tokenList, bool useDeferredParsing = false)
 	{
 		if (tokenList.Count > 0 &&
 			tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
@@ -30,6 +30,9 @@ public class TokenWalker
 		}
 
 		TokenList = tokenList;
+		
+		if (useDeferredParsing)
+			_deferredParsingTupleStack = new();
 	}
 
 	public int ConsumeCounter { get; private set; }
@@ -39,7 +42,7 @@ public class TokenWalker
 	public List<SyntaxKind> ProtectedTokenSyntaxKindList { get; set; }
 #endif
 
-	public List<SyntaxToken> TokenList { get; }
+	public IReadOnlyList<SyntaxToken> TokenList { get; private set; }
 	public SyntaxToken Current => Peek(0);
 	public SyntaxToken Next => Peek(1);
 	public SyntaxToken Previous => Peek(-1);
@@ -169,8 +172,6 @@ public class TokenWalker
 		int closeTokenIndex,
 		int tokenIndexToRestore)
 	{
-		_deferredParsingTupleStack ??= new();
-
 		_index = openTokenIndex;
 		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore);
 		_deferredParsingTupleStack.Push((openTokenIndex, closeTokenIndex, tokenIndexToRestore));
@@ -185,6 +186,25 @@ public class TokenWalker
 	public void ConsumeCounterReset()
 	{
 		ConsumeCounter = 0;
+	}
+	
+	public void Reinitialize(List<SyntaxToken> tokenList)
+	{
+		// TODO: Don't duplicate the constructor here...
+		{
+			if (tokenList.Count > 0 &&
+				tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
+			{
+				throw new LuthetusTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
+			}
+	
+			TokenList = tokenList;
+		}
+		
+		_index = 0;
+		ConsumeCounter = 0;
+		_deferredParsingTuple = (-1, -1, -1);
+		_deferredParsingTupleStack.Clear();
 	}
 
 	private SyntaxToken GetBadToken() => new SyntaxToken(SyntaxKind.BadToken, new(0, 0, 0, ResourceUri.Empty, string.Empty));

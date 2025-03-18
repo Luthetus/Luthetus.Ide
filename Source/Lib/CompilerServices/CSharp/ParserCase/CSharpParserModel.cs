@@ -24,7 +24,7 @@ public struct CSharpParserModel
 
     public CSharpParserModel(
         CSharpBinder binder,
-        TokenWalker tokenWalker,
+        List<SyntaxToken> tokenList,
         CSharpCodeBlockBuilder globalCodeBlockBuilder,
         CSharpCodeBlockBuilder currentCodeBlockBuilder,
         int globalScopeIndexKey,
@@ -34,7 +34,9 @@ public struct CSharpParserModel
 	    CurrentScopeIndexKey = globalScopeIndexKey;
 	    CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
     
-    	TokenWalker = tokenWalker;
+    	TokenWalker = Binder.CSharpParserModel_TokenWalker;
+    	TokenWalker.Reinitialize(tokenList);
+    	
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
         
