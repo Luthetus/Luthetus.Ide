@@ -878,8 +878,11 @@ public partial class CSharpBinder
 						if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
 							return constructorInvocationExpressionNode;
 						
+						constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
 						var openAngleBracketToken = parserModel.TokenWalker.Consume();
-						return ConstructorInvocationMergeToken(constructorInvocationExpressionNode, ref openAngleBracketToken, compilationUnit, ref parserModel);
+						
+						return ParseGenericParameterNode_Start(
+							constructorInvocationExpressionNode.ResultTypeClauseNode, ref openAngleBracketToken, compilationUnit, ref parserModel, nodeToRestoreAtCloseAngleBracketToken: constructorInvocationExpressionNode);
 					}
 				}
 				
@@ -903,20 +906,6 @@ public partial class CSharpBinder
 				{
 					goto default;
 				}
-			case SyntaxKind.OpenAngleBracketToken:
-				if (!constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParameterListing.ConstructorWasInvoked)
-				{
-					constructorInvocationExpressionNode.ResultTypeClauseNode.SetGenericParameterListing(
-						new GenericParameterListing(
-							token,
-					        new List<GenericParameterEntry>(),
-					        closeAngleBracketToken: default));
-				}
-				
-				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
-			    parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, constructorInvocationExpressionNode));
-				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode.ResultTypeClauseNode));
-				return constructorInvocationExpressionNode.ResultTypeClauseNode;
 			case SyntaxKind.CloseAngleBracketToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				constructorInvocationExpressionNode.ResultTypeClauseNode.SetGenericParameterListingCloseAngleBracketToken(token);
@@ -2683,8 +2672,10 @@ public partial class CSharpBinder
 	}
 	
 	public IExpressionNode ParseGenericParameterNode_Start(
-		IGenericParameterNode genericParameterNode, ref SyntaxToken openAngleBracketToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+		IGenericParameterNode genericParameterNode, ref SyntaxToken openAngleBracketToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, IExpressionNode nodeToRestoreAtCloseAngleBracketToken = null)
 	{
+		nodeToRestoreAtCloseAngleBracketToken ??= genericParameterNode;
+	
 		if (!genericParameterNode.GenericParameterListing.ConstructorWasInvoked)
 		{
 			genericParameterNode.SetGenericParameterListing(
@@ -2696,7 +2687,7 @@ public partial class CSharpBinder
 			genericParameterNode.IsParsingGenericParameters = true;
 		}
 		
-	    parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, genericParameterNode));
+	    parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, nodeToRestoreAtCloseAngleBracketToken));
 		parserModel.ExpressionList.Add((SyntaxKind.CommaToken, genericParameterNode));
 		return genericParameterNode;
 	}

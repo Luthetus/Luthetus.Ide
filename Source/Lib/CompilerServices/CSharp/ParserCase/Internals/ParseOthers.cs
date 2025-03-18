@@ -196,6 +196,8 @@ public static class ParseOthers
     {
     	/*#if DEBUG
     	Console.WriteLine("\nParseExpression(...)");
+		#else
+		Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
     	#endif*/
     
     	var expressionPrimary = parserModel.ForceParseExpressionInitialPrimaryExpression;
@@ -255,6 +257,8 @@ public static class ParseOthers
     		
     		/*#if DEBUG
     		Console.WriteLine($"\t=> {expressionPrimary.SyntaxKind}");
+			#else
+			Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
     		#endif*/
     		
     		if (parserModel.TokenWalker.Index == indexToken)
@@ -343,6 +347,8 @@ public static class ParseOthers
     	
     	/*#if DEBUG
     	Console.WriteLine();
+		#else
+		Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
     	#endif*/
     	
     	return expressionPrimary;
