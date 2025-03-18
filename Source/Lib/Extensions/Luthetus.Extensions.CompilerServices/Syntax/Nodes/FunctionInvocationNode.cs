@@ -29,7 +29,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	public FunctionDefinitionNode? FunctionDefinitionNode { get; }
 	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionParameterListing FunctionParameterListing { get; private set; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeClauseNode ResultTypeClauseNode { get; private set; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
@@ -58,6 +58,17 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	public void SetFunctionParameterListingCloseParenthesisToken(SyntaxToken closeParenthesisToken)
 	{
 		FunctionParameterListing.SetCloseParenthesisToken(closeParenthesisToken);
+		_childListIsDirty = true;
+	}
+	
+	/// <summary>
+	/// TODO: 'BindFunctionInvocationNode' takes the instance of the 'FunctionInvocationNode',
+	/// but in order to know the result type clause node we need to invoke
+	/// 'BindFunctionInvocationNode', this is odd?
+	/// </summary>
+	public void SetResultTypeClauseNode(TypeClauseNode typeClauseNode)
+	{
+		ResultTypeClauseNode = typeClauseNode;;
 		_childListIsDirty = true;
 	}
 

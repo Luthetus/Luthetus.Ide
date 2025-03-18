@@ -353,7 +353,7 @@ public partial class CSharpBinder
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
         {
-            return;
+            functionInvocationNode.SetResultTypeClauseNode(functionDefinitionNode.ReturnTypeClauseNode);
         }
         else
         {
