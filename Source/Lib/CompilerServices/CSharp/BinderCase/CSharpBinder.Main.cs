@@ -1708,6 +1708,9 @@ public partial class CSharpBinder
 		    		parserModel.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
 		    		
 		    	return;
+		    case SyntaxKind.TypeDefinitionNode:
+		    	Console.WriteLine("aaa SyntaxKind.TypeDefinitionNode");
+		    	return;
     	}
     }
 }

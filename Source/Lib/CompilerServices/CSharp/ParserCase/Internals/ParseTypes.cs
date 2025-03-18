@@ -14,19 +14,19 @@ public static class ParseTypes
     /// 
     /// Retrospective: What is this code??? It isn't correct and it should probably just invoke the expression logic that will parse generics.
     /// </summary>
-    public static GenericArgumentsListingNode HandleGenericArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static GenericParameterListing HandleGenericArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var openAngleBracketToken = parserModel.TokenWalker.Consume();
     
     	if (SyntaxKind.CloseAngleBracketToken == parserModel.TokenWalker.Current.SyntaxKind)
         {
-            return new GenericArgumentsListingNode(
+            return new GenericParameterListing(
                 openAngleBracketToken,
-                GenericArgumentsListingNode.__empty,
+                new(),
                 parserModel.TokenWalker.Consume());
         }
 
-        var mutableGenericArgumentsListing = new List<GenericArgumentEntryNode>();
+        var genericParameterList = new List<GenericParameterEntry>();
 
         while (true)
         {
@@ -36,8 +36,8 @@ public static class ParseTypes
             if (typeClauseNode.IsFabricated)
                 break;
 
-            var genericArgumentEntryNode = new GenericArgumentEntryNode(typeClauseNode);
-            mutableGenericArgumentsListing.Add(genericArgumentEntryNode);
+            var genericArgumentEntryNode = new GenericParameterEntry(typeClauseNode);
+            genericParameterList.Add(genericArgumentEntryNode);
 
             if (SyntaxKind.CommaToken == parserModel.TokenWalker.Current.SyntaxKind)
             {
@@ -55,9 +55,9 @@ public static class ParseTypes
 
         var closeAngleBracketToken = parserModel.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
 
-        return new GenericArgumentsListingNode(
+        return new GenericParameterListing(
             openAngleBracketToken,
-            mutableGenericArgumentsListing,
+            genericParameterList,
             closeAngleBracketToken);
     }
 

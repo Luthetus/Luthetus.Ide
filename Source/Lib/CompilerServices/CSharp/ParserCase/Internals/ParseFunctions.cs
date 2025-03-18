@@ -92,7 +92,7 @@ public class ParseFunctions
         var constructorDefinitionNode = new ConstructorDefinitionNode(
             typeClauseNode,
             consumedIdentifierToken,
-            null,
+            default,
             functionArgumentListing: default,
             null);
     

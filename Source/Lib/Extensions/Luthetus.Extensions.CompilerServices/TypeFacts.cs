@@ -21,7 +21,7 @@ public static class TypeFacts
 		StorageModifierKind.Class,
 		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
 		typeof(void),
-		null,
+		default,
 		primaryConstructorFunctionArgumentListing: default,
 		null,
 		string.Empty);
@@ -55,7 +55,7 @@ public static class TypeFacts
 		StorageModifierKind.Class,
 		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
 		typeof(void),
-		null,
+		default,
 		primaryConstructorFunctionArgumentListing: default,
 		null,
 		string.Empty);

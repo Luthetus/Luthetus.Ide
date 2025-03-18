@@ -813,9 +813,9 @@ public class ParseDefaultKeywords
 
 		// Given: public class MyClass<T> { }
 		// Then: <T>
-        GenericArgumentsListingNode? genericArgumentsListingNode = null;
+        GenericParameterListing genericParameterListing = default;
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-            genericArgumentsListingNode = ParseTypes.HandleGenericArguments(compilationUnit, ref parserModel);
+            genericParameterListing = ParseTypes.HandleGenericArguments(compilationUnit, ref parserModel);
 
         var typeDefinitionNode = new TypeDefinitionNode(
             accessModifierKind,
@@ -823,7 +823,7 @@ public class ParseDefaultKeywords
             storageModifierKind,
             identifierToken,
             valueType: null,
-            genericArgumentsListingNode,
+            genericParameterListing,
             primaryConstructorFunctionArgumentListing: default,
             inheritedTypeClauseNode: null,
             namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText());

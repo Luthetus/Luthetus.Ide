@@ -220,8 +220,6 @@ public enum SyntaxKind
 	FunctionInvocationNode,
 	LambdaExpressionNode,
 	TupleExpressionNode,
-	GenericArgumentsListingNode,
-	GenericArgumentEntryNode,
 	GenericParametersListingNode,
 	GenericParameterEntryNode,
 	GlobalCodeBlockNode,

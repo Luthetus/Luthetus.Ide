@@ -12,7 +12,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	public ConstructorDefinitionNode(
 		TypeClauseNode returnTypeClauseNode,
 		SyntaxToken functionIdentifier,
-		GenericArgumentsListingNode? genericArgumentsListingNode,
+		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing functionArgumentListing,
 		CodeBlockNode? codeBlockNode)
 	{
@@ -22,7 +22,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	
 		ReturnTypeClauseNode = returnTypeClauseNode;
 		FunctionIdentifier = functionIdentifier;
-		GenericArgumentsListingNode = genericArgumentsListingNode;
+		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = functionArgumentListing;
 		CodeBlockNode = codeBlockNode;
 	}
@@ -32,7 +32,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 
 	public TypeClauseNode ReturnTypeClauseNode { get; }
 	public SyntaxToken FunctionIdentifier { get; }
-	public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
+	public GenericParameterListing GenericParameterListing { get; }
 	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
 
 	// ICodeBlockOwner properties.
@@ -104,8 +104,13 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 			1 +                                                       // FunctionArgumentListing.OpenParenthesisToken
 			FunctionArgumentListing.FunctionArgumentEntryList.Count + // FunctionArgumentListing.FunctionArgumentEntryList.Count
 			1;                                                        // FunctionArgumentListing.CloseParenthesisToken
-		if (GenericArgumentsListingNode is not null)
-			childCount++;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childCount +=
+				1 +                                                       // GenericParameterListing.OpenAngleBracketToken
+				GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
+				1;                                                        // GenericParameterListing.CloseAngleBracketToken
+		}
 		if (CodeBlockNode is not null)
 			childCount++;
 
@@ -114,8 +119,15 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 
 		childList[i++] = ReturnTypeClauseNode;
 		childList[i++] = FunctionIdentifier;
-		if (GenericArgumentsListingNode is not null)
-			childList[i++] = GenericArgumentsListingNode;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childList[i++] = GenericParameterListing.OpenAngleBracketToken;
+			foreach (var entry in GenericParameterListing.GenericParameterEntryList)
+			{
+				childList[i++] = entry.TypeClauseNode;
+			}
+			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
+		}
 		
 		childList[i++] = FunctionArgumentListing.OpenParenthesisToken;
 		foreach (var entry in FunctionArgumentListing.FunctionArgumentEntryList)
