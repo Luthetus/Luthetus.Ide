@@ -9,7 +9,7 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeDefinitionNode"/> is used anywhere a type is defined.
 /// </summary>
-public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode
+public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode, IGenericParameterNode
 {
 	public TypeDefinitionNode(
 		AccessModifierKind accessModifierKind,
@@ -59,7 +59,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
 	/// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
 	/// </summary>
-	public GenericParameterListing GenericParameterListing { get; }
+	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
 	public FunctionArgumentListing PrimaryConstructorFunctionArgumentListing => FunctionArgumentListing;
 	/// <summary>
@@ -86,6 +86,24 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public int? ScopeIndexKey { get; set; }
 
 	public bool IsKeywordType { get; init; }
+	
+	/// <summary>
+	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...
+	/// ...generic parameters. They currently use 'ParseTypes.HandleGenericArguments(...);'
+	/// </summary>
+	public bool IsParsingGenericParameters { get; set; }
+
+	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
+	{
+		GenericParameterListing = genericParameterListing;
+		_childListIsDirty = true;
+	}
+	
+	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
+	{
+		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
+		_childListIsDirty = true;
+	}
 	
 	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
 	{

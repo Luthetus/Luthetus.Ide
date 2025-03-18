@@ -10,11 +10,10 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 public static class ParseTypes
 {
     /// <summary>
-    /// This method is used for generic type definition such as, 'class List&lt;T&gt; { ... }'
-    /// 
-    /// Retrospective: What is this code??? It isn't correct and it should probably just invoke the expression logic that will parse generics.
-    /// </summary>
-    public static GenericParameterListing HandleGenericArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...
+	/// ...generic parameters. They currently use 'ParseTypes.HandleGenericParameters(...);'
+	/// </summary>
+    public static GenericParameterListing HandleGenericParameters(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var openAngleBracketToken = parserModel.TokenWalker.Consume();
     

@@ -815,7 +815,7 @@ public class ParseDefaultKeywords
 		// Then: <T>
         GenericParameterListing genericParameterListing = default;
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-            genericParameterListing = ParseTypes.HandleGenericArguments(compilationUnit, ref parserModel);
+            genericParameterListing = ParseTypes.HandleGenericParameters(compilationUnit, ref parserModel);
 
         var typeDefinitionNode = new TypeDefinitionNode(
             accessModifierKind,
