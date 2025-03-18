@@ -1454,12 +1454,12 @@ public partial class CSharpBinder
         });
         
         if (closestNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-        	return GetChildNodeOrSelfByPositionIndex(closestNode, positionIndex);
+        	return GetChildNodeOrSelfByPositionIndex(closestNode, resourceUri, positionIndex);
         
         return closestNode;
     }
     
-    public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, int positionIndex)
+    public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, ResourceUri resourceUri, int positionIndex)
     {
     	switch (node.SyntaxKind)
     	{
@@ -1470,9 +1470,22 @@ public partial class CSharpBinder
     			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
     			{
     				if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
-        				variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex)
+        				variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
+    			    	variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
         			{
         				return variableDeclarationNode.TypeClauseNode;
+        			}
+        			else if (variableDeclarationNode.TypeClauseNode.GenericParameterListing.ConstructorWasInvoked)
+        			{
+        				foreach (var entry in variableDeclarationNode.TypeClauseNode.GenericParameterListing.GenericParameterEntryList)
+        				{
+        					if (entry.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
+		        				entry.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
+		    			    	entry.TypeClauseNode.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+		        			{
+		        				return entry.TypeClauseNode;
+		        			}
+        				}
         			}
     			}
     			
