@@ -12,8 +12,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	public ConstructorInvocationExpressionNode(
 		SyntaxToken newKeywordToken,
 		TypeClauseNode typeClauseNode,
-		FunctionParameterListing functionParameterListing,
-		ObjectInitializationParametersListingNode? objectInitializationParametersListingNode)
+		FunctionParameterListing functionParameterListing)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorInvocationExpressionNode++;
@@ -22,7 +21,6 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 		NewKeywordToken = newKeywordToken;
 		ResultTypeClauseNode = typeClauseNode;
 		FunctionParameterListing = functionParameterListing;
-		ObjectInitializationParametersListingNode = objectInitializationParametersListingNode;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -31,7 +29,6 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	public SyntaxToken NewKeywordToken { get; }
 	public TypeClauseNode ResultTypeClauseNode { get; private set; }
 	public FunctionParameterListing FunctionParameterListing { get; private set; }
-	public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; private set; }
 
 	public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
 
@@ -43,14 +40,6 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	public ConstructorInvocationExpressionNode SetTypeClauseNode(TypeClauseNode? resultTypeClauseNode)
 	{
 		ResultTypeClauseNode = resultTypeClauseNode;
-
-		_childListIsDirty = true;
-		return this;
-	}
-
-	public ConstructorInvocationExpressionNode SetObjectInitializationParametersListingNode(ObjectInitializationParametersListingNode? objectInitializationParametersListingNode)
-	{
-		ObjectInitializationParametersListingNode = objectInitializationParametersListingNode;
 
 		_childListIsDirty = true;
 		return this;
@@ -82,9 +71,6 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 				FunctionParameterListing.FunctionParameterEntryList.Count + // FunctionParametersListingNode.FunctionParameterEntryList.Count
 				1;                                                               // FunctionParametersListingNode.CloseParenthesisToken
 		}
-		
-		if (ObjectInitializationParametersListingNode is not null)
-			childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
@@ -103,9 +89,6 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 			
 			childList[i++] = FunctionParameterListing.CloseParenthesisToken;
 		}
-			
-		if (ObjectInitializationParametersListingNode is not null)
-			childList[i++] = ObjectInitializationParametersListingNode;
 
 		_childList = childList;
 

@@ -921,30 +921,19 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				constructorInvocationExpressionNode.ResultTypeClauseNode.SetGenericParameterListingCloseAngleBracketToken(token);
 				return constructorInvocationExpressionNode;
-			case SyntaxKind.OpenBraceToken:
-				var objectInitializationParametersListingNode = new ObjectInitializationParametersListingNode(
-					token,
-			        new List<ObjectInitializationParameterEntryNode>(),
-			        closeBraceToken: default);
-			        
-			    constructorInvocationExpressionNode.SetObjectInitializationParametersListingNode(objectInitializationParametersListingNode);
-				
+			case SyntaxKind.OpenBraceToken:				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.ObjectInitializationParameters;
 				parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, constructorInvocationExpressionNode));
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return ParseObjectInitialization(constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.CloseBraceToken:
-				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
-				
-				if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
+				if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters)
 				{
-					constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.SetCloseBraceToken(token);
+					constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 					return constructorInvocationExpressionNode;
 				}
-				else
-				{
-					goto default;
-				}
+				
+				goto default;
 			case SyntaxKind.CommaToken:
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return ParseObjectInitialization(constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
@@ -985,9 +974,7 @@ public partial class CSharpBinder
 					return constructorInvocationExpressionNode;
 				goto default;
 			case ConstructorInvocationStageKind.ObjectInitializationParameters:
-				if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
-					return constructorInvocationExpressionNode;
-				goto default;
+				return constructorInvocationExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 		}
@@ -1148,8 +1135,7 @@ public partial class CSharpBinder
 				return new ConstructorInvocationExpressionNode(
 					token,
 			        typeClauseNode: null,
-			        functionParameterListing: default,
-			        objectInitializationParametersListingNode: null);
+			        functionParameterListing: default);
 			case SyntaxKind.AwaitTokenContextualKeyword:
 				return emptyExpressionNode;
 			case SyntaxKind.AsyncTokenContextualKeyword:
