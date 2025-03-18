@@ -12,7 +12,7 @@
 	string? returnTypeClauseNodeText;
 	
 	string? methodName;
-	GenericParametersListingNode? genericParametersListingNode;
+	GenericParameterListing? genericParameterListing;
 	FunctionArgumentListing? functionArgumentListing;
 	bool isConstructorInvocation = false;
 	
@@ -22,7 +22,7 @@
 		returnTypeClauseNode = null;
 		returnTypeClauseNodeText = null;
 		methodName = null;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		functionArgumentListing = null;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null &&
@@ -37,7 +37,7 @@
 			returnTypeClauseNode = functionDefinitionNode.ReturnTypeClauseNode;
 			returnTypeClauseNodeText = null;
 			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
-			genericParametersListingNode = functionDefinitionNode.GenericArgumentsListingNode;
+			genericParameterListing = functionDefinitionNode.GenericParameterListing;
 			functionArgumentListing = functionDefinitionNode.FunctionArgumentListing;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
@@ -46,7 +46,7 @@
 			returnTypeClauseNode = constructorDefinitionNode.ReturnTypeClauseNode;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParametersListingNode = null;
+			genericParameterListing = null;
 			functionArgumentListing = constructorDefinitionNode.FunctionArgumentListing;
 		}
 		else
@@ -54,7 +54,7 @@
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
-			genericParametersListingNode = null;
+			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 	}
@@ -70,7 +70,7 @@
 			returnTypeClauseNode = functionInvocationNode.ResultTypeClauseNode;
 			returnTypeClauseNodeText = null;
 			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText();
-			genericParametersListingNode = functionInvocationNode.GenericParametersListingNode;
+			genericParameterListing = functionInvocationNode.GenericParameterListing;
 			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
@@ -79,7 +79,7 @@
 			returnTypeClauseNode = constructorInvocationNode.ResultTypeClauseNode;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParametersListingNode = null;
+			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 		else
@@ -87,7 +87,7 @@
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
-			genericParametersListingNode = null;
+			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 	}
@@ -102,7 +102,7 @@
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
-			genericParametersListingNode = null;
+			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
@@ -110,7 +110,7 @@
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 			methodName = null;
-			genericParametersListingNode = null;
+			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 		else
@@ -118,7 +118,7 @@
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParametersListingNode = null;
+			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 	}
@@ -128,7 +128,7 @@
 		returnTypeClauseNode = null;
 		returnTypeClauseNodeText = null;
 		methodName = null;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		functionArgumentListing = null;
 	}
 }
@@ -172,12 +172,12 @@
 		</span>
 	}
 	
-	@if (genericParametersListingNode is not null)
+	@if (genericParameterListing is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
 			targetSymbol: null,
-			targetNode: genericParametersListingNode,
-			definitionNode: null,
+			targetNode: syntaxViewModelLocal.TargetNode,
+			definitionNode: syntaxViewModelLocal.DefinitionNode,
 			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}

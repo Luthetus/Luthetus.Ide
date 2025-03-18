@@ -74,7 +74,7 @@ public static class ParseTypes
     		return new TypeClauseNode(
 	            syntaxToken,
 	            valueType: null,
-	            genericParametersListingNode: null,
+	            genericParameterListing: default,
 	            isKeywordType: false);
     	}
     	

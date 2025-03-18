@@ -2,11 +2,11 @@ using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
+public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 {
 	public AmbiguousIdentifierExpressionNode(
 		SyntaxToken token,
-		GenericParametersListingNode? genericParametersListingNode,
+		GenericParameterListing genericParameterListing,
 		TypeClauseNode resultTypeClauseNode)
 	{
 		#if DEBUG
@@ -14,7 +14,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 		#endif
 	
 		Token = token;
-		GenericParametersListingNode = genericParametersListingNode;
+		GenericParameterListing = genericParameterListing;
 		ResultTypeClauseNode = resultTypeClauseNode;
 	}
 	
@@ -28,7 +28,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 	public bool _childListIsDirty = true;
 
 	public SyntaxToken Token { get; set; }
-	public GenericParametersListingNode? GenericParametersListingNode { get; set; }
+	public GenericParameterListing GenericParameterListing { get; set; }
 	public TypeClauseNode ResultTypeClauseNode { get; set; }
 	public bool FollowsMemberAccessToken { get; set; }
 
@@ -37,7 +37,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 	
 	public void SetSharedInstance(
 		SyntaxToken token,
-		GenericParametersListingNode? genericParametersListingNode,
+		GenericParameterListing genericParameterListing,
 		TypeClauseNode resultTypeClauseNode,
 		bool followsMemberAccessToken)
 	{
@@ -55,17 +55,23 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 		_childListIsDirty = true;
 		
 		Token = token;
-		GenericParametersListingNode = genericParametersListingNode;
+		GenericParameterListing = genericParameterListing;
 		ResultTypeClauseNode = resultTypeClauseNode;
 		FollowsMemberAccessToken = followsMemberAccessToken;
 	}
+	
+	public bool IsParsingGenericParameters { get; set; }
 
-	public AmbiguousIdentifierExpressionNode SetGenericParametersListingNode(GenericParametersListingNode? genericParametersListingNode)
+	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
 	{
-		GenericParametersListingNode = genericParametersListingNode;
-
+		GenericParameterListing = genericParameterListing;
 		_childListIsDirty = true;
-		return this;
+	}
+	
+	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
+	{
+		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
+		_childListIsDirty = true;
 	}
 
 	public IReadOnlyList<ISyntax> GetChildList()

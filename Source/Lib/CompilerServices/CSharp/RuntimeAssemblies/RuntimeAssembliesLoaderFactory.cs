@@ -263,7 +263,7 @@ public static class RuntimeAssembliesLoaderFactory
             var typeTextSpan = TextEditorTextSpan.FabricateTextSpan(name);
             var typeIdentifierToken = new SyntaxToken(SyntaxKind.IdentifierToken, typeTextSpan);
 
-            GenericParametersListingNode? genericParametersListingNode = null;
+            GenericParameterListing? genericParameterListing = null;
 
             if (genericParameters.Any())
             {
@@ -289,7 +289,7 @@ public static class RuntimeAssembliesLoaderFactory
                 var closeAngleBracketToken = new SyntaxToken(SyntaxKind.CloseAngleBracketToken, closeAngleBracketTextSpan);
 
                 // Generic Parameters Listing
-                genericParametersListingNode = new GenericParametersListingNode(
+                genericParameterListing = new GenericParameterListing(
                     openAngleBracketToken,
                     genericParameterEntryNodeList,
                     closeAngleBracketToken);
@@ -298,7 +298,7 @@ public static class RuntimeAssembliesLoaderFactory
             return new TypeClauseNode(
                 typeIdentifierToken,
                 null,
-                genericParametersListingNode,
+                genericParameterListing.Value,
                 isKeywordType: false);
         }
     }

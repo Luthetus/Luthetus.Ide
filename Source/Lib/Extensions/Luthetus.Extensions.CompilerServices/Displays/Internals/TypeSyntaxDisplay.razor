@@ -11,7 +11,7 @@
 	string? text;
 	string? syntaxHighlightingClassCssString;
 	GenericArgumentsListingNode? genericArgumentsListingNode;
-	GenericParametersListingNode? genericParametersListingNode;
+	GenericParameterListing? genericParameterListing;
 	bool? hasQuestionMark;
 	int arrayRank;
 	
@@ -22,7 +22,7 @@
 		text = null;
 		syntaxHighlightingClassCssString = null;
 		genericArgumentsListingNode = null;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -40,7 +40,7 @@
 		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
 		syntaxHighlightingClassCssString = "luth_te_type";
 		genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -58,7 +58,7 @@
 			syntaxHighlightingClassCssString = "luth_te_type";
 		
 		genericArgumentsListingNode = null;
-		genericParametersListingNode = typeClauseNode.GenericParametersListingNode;
+		genericParameterListing = typeClauseNode.GenericParameterListing;
 		hasQuestionMark = typeClauseNode.HasQuestionMark;
 		arrayRank = typeClauseNode.ArrayRank;
 	}
@@ -69,7 +69,7 @@
 		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 		syntaxHighlightingClassCssString = "luth_te_type";
 		genericArgumentsListingNode = null;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -80,7 +80,7 @@
 		text = null;
 		syntaxHighlightingClassCssString = null;
 		genericArgumentsListingNode = null;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -116,12 +116,12 @@
 			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}
-	else if (genericParametersListingNode is not null)
+	else if (genericParameterListing is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
 			targetSymbol: null,
-			targetNode: genericParametersListingNode,
-			definitionNode: null,
+			targetNode: syntaxViewModelLocal.TargetNode,
+			definitionNode: syntaxViewModelLocal.DefinitionNode,
 			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}

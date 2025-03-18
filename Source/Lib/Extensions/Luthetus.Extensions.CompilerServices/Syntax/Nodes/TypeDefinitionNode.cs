@@ -127,7 +127,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		return _toTypeClauseNodeResult ??= new TypeClauseNode(
 			TypeIdentifierToken,
 			ValueType,
-			genericParametersListingNode: null,
+			genericParameterListing: default,
 			isKeywordType: IsKeywordType);
 	}
 

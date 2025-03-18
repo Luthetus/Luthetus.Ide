@@ -34,7 +34,7 @@ public partial class CSharpBinder
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
 		default,
-        genericParametersListingNode: null,
+        genericParameterListing: default,
         CSharpFacts.Types.Void.ToTypeClause());
     
     public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();

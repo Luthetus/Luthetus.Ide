@@ -14,10 +14,11 @@ public class ParseFunctions
     public static void HandleFunctionDefinition(
         SyntaxToken consumedIdentifierToken,
         TypeClauseNode consumedTypeClauseNode,
-        GenericParametersListingNode? consumedGenericArgumentsListingNode,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
+    	GenericParameterListing genericParameterListing = default;
+    
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
     		parserModel.ParserContextKind = CSharpParserContextKind.ForceParseGenericParameters;
@@ -25,10 +26,10 @@ public class ParseFunctions
     			SyntaxKind.GenericParametersListingNode,
     			compilationUnit,
     			ref parserModel,
-    			out var genericParametersListingNode);
+    			out var expressionNode);
     			
     		if (successGenericParametersListingNode)
-    			consumedGenericArgumentsListingNode = (GenericParametersListingNode)genericParametersListingNode;
+    			genericParameterListing = ((IGenericParameterNode)expressionNode).GenericParameterListing;
     	}
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
@@ -38,7 +39,7 @@ public class ParseFunctions
             AccessModifierKind.Public,
             consumedTypeClauseNode,
             consumedIdentifierToken,
-            consumedGenericArgumentsListingNode,
+            genericParameterListing,
             functionArgumentListing: default,
             null);
 
@@ -85,7 +86,7 @@ public class ParseFunctions
     	var typeClauseNode = new TypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
             valueType: null,
-            genericParametersListingNode: null,
+            genericParameterListing: default,
             isKeywordType: false);
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
@@ -149,7 +150,7 @@ public class ParseFunctions
 				var functionInvocationNode = new FunctionInvocationNode(
 					consumedIdentifierToken,
 			        functionDefinitionNode: null,
-			        genericParametersListingNode: null,
+			        genericParameterListing: default,
 			        new FunctionParameterListing(
 						openParenthesisToken,
 				        new List<FunctionParameterEntry>(),

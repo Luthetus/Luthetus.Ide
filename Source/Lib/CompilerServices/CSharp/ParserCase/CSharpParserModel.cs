@@ -56,7 +56,7 @@ public struct CSharpParserModel
         AmbiguousIdentifierExpressionNode = Binder.CSharpParserModel_AmbiguousIdentifierExpressionNode;
         AmbiguousIdentifierExpressionNode.SetSharedInstance(
         	default,
-	        genericParametersListingNode: null,
+	        genericParameterListing: default,
 	        CSharpFacts.Types.Void.ToTypeClause(),
 	        followsMemberAccessToken: false);
     }
