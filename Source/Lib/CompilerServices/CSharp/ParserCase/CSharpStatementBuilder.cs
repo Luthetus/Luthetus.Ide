@@ -4,7 +4,7 @@ using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
-using  Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
