@@ -1,17 +1,19 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Luthetus.Extensions.CompilerServices.Syntax
 @using Luthetus.Extensions.CompilerServices.Syntax.Nodes
+@using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces
 
 @{ var syntaxViewModelLocal = SyntaxViewModel; }
 
-@if (syntaxViewModelLocal.TargetNode is GenericParametersListingNode genericParametersListingNode)
+@if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
+     genericParameterNode.GenericParameterListing.GenericParameterEntryList is not null)
 {
 	<text>&lt;</text>
 		
-	@for (int badIndex = 0; badIndex < genericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
+	@for (int badIndex = 0; badIndex < genericParameterNode.GenericParameterListing.GenericParameterEntryList.Count; badIndex++)
 	{
 		var index = badIndex;
-		var genericParameter = genericParametersListingNode.GenericParameterEntryNodeList[index];
+		var genericParameter = genericParameterNode.GenericParameterListing.GenericParameterEntryList[index];
 		
     	var syntaxViewModel = new SyntaxViewModel(
     		targetSymbol: null,
@@ -20,31 +22,7 @@
 			depth: syntaxViewModelLocal.Depth + 1);
         <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		
-		if (index < genericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
-		{
-			<text>,</text>
-		}
-	}
-	
-	<text>&gt;</text>
-}
-else if (syntaxViewModelLocal.TargetNode is GenericArgumentsListingNode genericArgumentsListingNode)
-{
-	<text>&lt;</text>
-		
-	@for (int badIndex = 0; badIndex < genericArgumentsListingNode.GenericArgumentEntryNodeList.Count; badIndex++)
-	{
-		var index = badIndex;
-		var genericArgument = genericArgumentsListingNode.GenericArgumentEntryNodeList[index];
-		
-    	var syntaxViewModel = new SyntaxViewModel(
-    		targetSymbol: null,
-    		targetNode: genericArgument.TypeClauseNode,
-    		definitionNode: null,
-			depth: syntaxViewModelLocal.Depth + 1);
-        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
-		
-		if (index < genericArgumentsListingNode.GenericArgumentEntryNodeList.Count - 1)
+		if (index < genericParameterNode.GenericParameterListing.GenericParameterEntryList.Count - 1)
 		{
 			<text>,</text>
 		}

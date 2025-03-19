@@ -12,8 +12,8 @@
 	string? returnTypeClauseNodeText;
 	
 	string? methodName;
-	GenericParametersListingNode? genericParametersListingNode;
-	FunctionArgumentsListingNode? functionArgumentsListingNode;
+	GenericParameterListing? genericParameterListing;
+	FunctionArgumentListing? functionArgumentListing;
 	bool isConstructorInvocation = false;
 	
 	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
@@ -22,8 +22,8 @@
 		returnTypeClauseNode = null;
 		returnTypeClauseNodeText = null;
 		methodName = null;
-		genericParametersListingNode = null;
-		functionArgumentsListingNode = null;
+		genericParameterListing = null;
+		functionArgumentListing = null;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null &&
 			 (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
@@ -37,8 +37,8 @@
 			returnTypeClauseNode = functionDefinitionNode.ReturnTypeClauseNode;
 			returnTypeClauseNodeText = null;
 			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
-			genericParametersListingNode = functionDefinitionNode.GenericArgumentsListingNode;
-			functionArgumentsListingNode = functionDefinitionNode.FunctionArgumentsListingNode;
+			genericParameterListing = functionDefinitionNode.GenericParameterListing;
+			functionArgumentListing = functionDefinitionNode.FunctionArgumentListing;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
@@ -46,16 +46,16 @@
 			returnTypeClauseNode = constructorDefinitionNode.ReturnTypeClauseNode;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParametersListingNode = null;
-			functionArgumentsListingNode = constructorDefinitionNode.FunctionArgumentsListingNode;
+			genericParameterListing = null;
+			functionArgumentListing = constructorDefinitionNode.FunctionArgumentListing;
 		}
 		else
 		{
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
-			genericParametersListingNode = null;
-			functionArgumentsListingNode = null;
+			genericParameterListing = null;
+			functionArgumentListing = null;
 		}
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null &&
@@ -70,8 +70,8 @@
 			returnTypeClauseNode = functionInvocationNode.ResultTypeClauseNode;
 			returnTypeClauseNodeText = null;
 			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText();
-			genericParametersListingNode = functionInvocationNode.GenericParametersListingNode;
-			functionArgumentsListingNode = null;
+			genericParameterListing = functionInvocationNode.GenericParameterListing;
+			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
 		{
@@ -79,16 +79,16 @@
 			returnTypeClauseNode = constructorInvocationNode.ResultTypeClauseNode;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParametersListingNode = null;
-			functionArgumentsListingNode = null;
+			genericParameterListing = null;
+			functionArgumentListing = null;
 		}
 		else
 		{
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
-			genericParametersListingNode = null;
-			functionArgumentsListingNode = null;
+			genericParameterListing = null;
+			functionArgumentListing = null;
 		}
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
@@ -102,24 +102,24 @@
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
-			genericParametersListingNode = null;
-			functionArgumentsListingNode = null;
+			genericParameterListing = null;
+			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 			methodName = null;
-			genericParametersListingNode = null;
-			functionArgumentsListingNode = null;
+			genericParameterListing = null;
+			functionArgumentListing = null;
 		}
 		else
 		{
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParametersListingNode = null;
-			functionArgumentsListingNode = null;
+			genericParameterListing = null;
+			functionArgumentListing = null;
 		}
 	}
 	else
@@ -128,8 +128,8 @@
 		returnTypeClauseNode = null;
 		returnTypeClauseNodeText = null;
 		methodName = null;
-		genericParametersListingNode = null;
-		functionArgumentsListingNode = null;
+		genericParameterListing = null;
+		functionArgumentListing = null;
 	}
 }
 
@@ -172,27 +172,27 @@
 		</span>
 	}
 	
-	@if (genericParametersListingNode is not null)
+	@if (genericParameterListing is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
 			targetSymbol: null,
-			targetNode: genericParametersListingNode,
-			definitionNode: null,
+			targetNode: syntaxViewModelLocal.TargetNode,
+			definitionNode: syntaxViewModelLocal.DefinitionNode,
 			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}
 	
-	@if (functionArgumentsListingNode is null)
+	@if (functionArgumentListing is null)
 	{
 		<text>()</text>
 	}
 	else
 	{
 		<text>(</text>
-		@for (int badIndex = 0; badIndex < functionArgumentsListingNode.FunctionArgumentEntryList.Count; badIndex++)
+		@for (int badIndex = 0; badIndex < functionArgumentListing.Value.FunctionArgumentEntryList.Count; badIndex++)
 		{
 			var index = badIndex;
-			var argumentEntry = functionArgumentsListingNode.FunctionArgumentEntryList[index];
+			var argumentEntry = functionArgumentListing.Value.FunctionArgumentEntryList[index];
 			
 			var syntaxViewModel = new SyntaxViewModel(
 				targetSymbol: null,
@@ -201,7 +201,7 @@
 				depth: syntaxViewModelLocal.Depth + 1);
 			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 			
-			if (badIndex < functionArgumentsListingNode.FunctionArgumentEntryList.Count - 1)
+			if (badIndex < functionArgumentListing.Value.FunctionArgumentEntryList.Count - 1)
 			{
 				<text>, </text>
 			}

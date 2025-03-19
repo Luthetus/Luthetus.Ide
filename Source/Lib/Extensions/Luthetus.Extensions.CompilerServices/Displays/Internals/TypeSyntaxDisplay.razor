@@ -10,8 +10,7 @@
 	string? prefixTextCssClass;
 	string? text;
 	string? syntaxHighlightingClassCssString;
-	GenericArgumentsListingNode? genericArgumentsListingNode;
-	GenericParametersListingNode? genericParametersListingNode;
+	GenericParameterListing? genericParameterListing;
 	bool? hasQuestionMark;
 	int arrayRank;
 	
@@ -21,8 +20,7 @@
 		prefixTextCssClass = null;
 		text = null;
 		syntaxHighlightingClassCssString = null;
-		genericArgumentsListingNode = null;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -39,8 +37,7 @@
 		prefixTextCssClass = "luth_te_keyword";
 		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
 		syntaxHighlightingClassCssString = "luth_te_type";
-		genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
-		genericParametersListingNode = null;
+		genericParameterListing = typeDefinitionNode.GenericParameterListing;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -57,8 +54,7 @@
 		else
 			syntaxHighlightingClassCssString = "luth_te_type";
 		
-		genericArgumentsListingNode = null;
-		genericParametersListingNode = typeClauseNode.GenericParametersListingNode;
+		genericParameterListing = typeClauseNode.GenericParameterListing;
 		hasQuestionMark = typeClauseNode.HasQuestionMark;
 		arrayRank = typeClauseNode.ArrayRank;
 	}
@@ -68,8 +64,7 @@
 		prefixTextCssClass = null;
 		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 		syntaxHighlightingClassCssString = "luth_te_type";
-		genericArgumentsListingNode = null;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -79,8 +74,7 @@
 		prefixTextCssClass = null;
 		text = null;
 		syntaxHighlightingClassCssString = null;
-		genericArgumentsListingNode = null;
-		genericParametersListingNode = null;
+		genericParameterListing = null;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -107,21 +101,12 @@
 		</span>
 	}
 	
-	@if (genericArgumentsListingNode is not null)
+	@if (genericParameterListing is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
 			targetSymbol: null,
-			targetNode: genericArgumentsListingNode,
-			definitionNode: null,
-			depth: syntaxViewModelLocal.Depth + 1);
-		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
-	}
-	else if (genericParametersListingNode is not null)
-	{
-		var syntaxViewModel = new SyntaxViewModel(
-			targetSymbol: null,
-			targetNode: genericParametersListingNode,
-			definitionNode: null,
+			targetNode: syntaxViewModelLocal.TargetNode,
+			definitionNode: syntaxViewModelLocal.DefinitionNode,
 			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}

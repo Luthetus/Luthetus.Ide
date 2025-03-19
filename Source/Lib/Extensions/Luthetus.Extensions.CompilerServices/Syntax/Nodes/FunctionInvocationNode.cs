@@ -2,12 +2,12 @@ using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class FunctionInvocationNode : IInvocationNode
+public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterNode
 {
 	public FunctionInvocationNode(
 		SyntaxToken functionInvocationIdentifierToken,
 		FunctionDefinitionNode? functionDefinitionNode,
-		GenericParametersListingNode? genericParametersListingNode,
+		GenericParameterListing genericParameterListing,
 		FunctionParameterListing functionParameterListing,
 		TypeClauseNode resultTypeClauseNode)
 	{
@@ -17,7 +17,7 @@ public sealed class FunctionInvocationNode : IInvocationNode
 	
 		FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
 		FunctionDefinitionNode = functionDefinitionNode;
-		GenericParametersListingNode = genericParametersListingNode;
+		GenericParameterListing = genericParameterListing;
 		FunctionParameterListing = functionParameterListing;
 		ResultTypeClauseNode = resultTypeClauseNode;
 	}
@@ -27,19 +27,26 @@ public sealed class FunctionInvocationNode : IInvocationNode
 
 	public SyntaxToken FunctionInvocationIdentifierToken { get; }
 	public FunctionDefinitionNode? FunctionDefinitionNode { get; }
-	public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
+	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionParameterListing FunctionParameterListing { get; private set; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeClauseNode ResultTypeClauseNode { get; private set; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
 	
 	public bool IsParsingFunctionParameters { get; set; }
+	public bool IsParsingGenericParameters { get; set; }
 
-	public FunctionInvocationNode SetGenericParametersListingNode(GenericParametersListingNode genericParametersListingNode)
+	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
 	{
-		GenericParametersListingNode = genericParametersListingNode;
-		return this;
+		GenericParameterListing = genericParameterListing;
+		_childListIsDirty = true;
+	}
+	
+	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
+	{
+		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
+		_childListIsDirty = true;
 	}
 
 	public void SetFunctionParameterListing(FunctionParameterListing functionParameterListing)
@@ -51,6 +58,17 @@ public sealed class FunctionInvocationNode : IInvocationNode
 	public void SetFunctionParameterListingCloseParenthesisToken(SyntaxToken closeParenthesisToken)
 	{
 		FunctionParameterListing.SetCloseParenthesisToken(closeParenthesisToken);
+		_childListIsDirty = true;
+	}
+	
+	/// <summary>
+	/// TODO: 'BindFunctionInvocationNode' takes the instance of the 'FunctionInvocationNode',
+	/// but in order to know the result type clause node we need to invoke
+	/// 'BindFunctionInvocationNode', this is odd?
+	/// </summary>
+	public void SetResultTypeClauseNode(TypeClauseNode typeClauseNode)
+	{
+		ResultTypeClauseNode = typeClauseNode;;
 		_childListIsDirty = true;
 	}
 
@@ -69,8 +87,13 @@ public sealed class FunctionInvocationNode : IInvocationNode
 				1;                                                               // FunctionParametersListingNode.CloseParenthesisToken
 		}
 		
-		if (GenericParametersListingNode is not null)
-			childCount++;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childCount +=
+				1 +                                                       // GenericParameterListing.OpenAngleBracketToken
+				GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
+				1;                                                        // GenericParameterListing.CloseAngleBracketToken
+		}
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
@@ -78,8 +101,15 @@ public sealed class FunctionInvocationNode : IInvocationNode
 		childList[i++] = FunctionInvocationIdentifierToken;
 		if (FunctionDefinitionNode is not null)
 			childList[i++] = FunctionDefinitionNode;
-		if (GenericParametersListingNode is not null)
-			childList[i++] = GenericParametersListingNode;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childList[i++] = GenericParameterListing.OpenAngleBracketToken;
+			foreach (var entry in GenericParameterListing.GenericParameterEntryList)
+			{
+				childList[i++] = entry.TypeClauseNode;
+			}
+			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
+		}
 		
 		if (FunctionParameterListing.ConstructorWasInvoked)
 		{
