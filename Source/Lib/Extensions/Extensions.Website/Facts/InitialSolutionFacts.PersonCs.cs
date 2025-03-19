@@ -231,6 +231,10 @@ public partial class Counter : ComponentBase
 	}
 }
 
+// FunctionInvocation((ExplicitCast)variableReference, nameableToken);
+var aaa = 2;
+Aaa((AmbiguousIdentifierExpressionNode)aaa, s);
+
 // Value Tuple TypeClauseNode
 (int, bool) myVariableOne;              // (not named)
 (Apple, Banana) myVariableTwo;          // (not named)
