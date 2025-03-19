@@ -117,7 +117,6 @@ public static class ParseTokens
     	ParseFunctions.HandleFunctionDefinition(
 			variableDeclarationNode.IdentifierToken,
 	        variableDeclarationNode.TypeClauseNode,
-	        consumedGenericArgumentsListingNode: null,
 	        compilationUnit,
 	        ref parserModel);
     }

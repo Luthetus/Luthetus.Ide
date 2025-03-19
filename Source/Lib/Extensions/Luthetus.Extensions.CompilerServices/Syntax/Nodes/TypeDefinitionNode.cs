@@ -9,7 +9,7 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeDefinitionNode"/> is used anywhere a type is defined.
 /// </summary>
-public sealed class TypeDefinitionNode : ICodeBlockOwner
+public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode, IGenericParameterNode
 {
 	public TypeDefinitionNode(
 		AccessModifierKind accessModifierKind,
@@ -17,8 +17,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		StorageModifierKind storageModifierKind,
 		SyntaxToken typeIdentifier,
 		Type? valueType,
-		GenericArgumentsListingNode? genericArgumentsListingNode,
-		FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
+		GenericParameterListing genericParameterListing,
+		FunctionArgumentListing primaryConstructorFunctionArgumentListing,
 		TypeClauseNode? inheritedTypeClauseNode,
 		string namespaceName)
 	{
@@ -31,8 +31,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		StorageModifierKind = storageModifierKind;
 		TypeIdentifierToken = typeIdentifier;
 		ValueType = valueType;
-		GenericArgumentsListingNode = genericArgumentsListingNode;
-		PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
+		GenericParameterListing = genericParameterListing;
+		FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
 		InheritedTypeClauseNode = inheritedTypeClauseNode;
 		NamespaceName = namespaceName;
 	}
@@ -59,8 +59,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	/// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
 	/// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
 	/// </summary>
-	public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
-	public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; private set; }
+	public GenericParameterListing GenericParameterListing { get; set; }
+	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
+	public FunctionArgumentListing PrimaryConstructorFunctionArgumentListing => FunctionArgumentListing;
 	/// <summary>
 	/// Given:<br/>
 	/// public class Person : IPerson { ... }<br/><br/>
@@ -72,6 +73,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
+	
+	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
 	public string EncompassingNamespaceIdentifierString { get; set; }
 
@@ -83,6 +86,32 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	public int? ScopeIndexKey { get; set; }
 
 	public bool IsKeywordType { get; init; }
+	
+	/// <summary>
+	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...
+	/// ...generic parameters. They currently use 'ParseTypes.HandleGenericArguments(...);'
+	/// </summary>
+	public bool IsParsingGenericParameters { get; set; }
+
+	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
+	{
+		GenericParameterListing = genericParameterListing;
+		_childListIsDirty = true;
+	}
+	
+	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
+	{
+		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
+		_childListIsDirty = true;
+	}
+	
+	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
+	{
+		FunctionArgumentListing = functionArgumentListing;
+		
+		_childListIsDirty = true;
+		_memberListIsDirty = true;
+	}
 
 	public FunctionDefinitionNode[] GetFunctionDefinitionNodes()
 	{
@@ -116,7 +145,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		return _toTypeClauseNodeResult ??= new TypeClauseNode(
 			TypeIdentifierToken,
 			ValueType,
-			genericParametersListingNode: null,
+			genericParameterListing: default,
 			isKeywordType: IsKeywordType);
 	}
 
@@ -160,15 +189,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	}
 	#endregion
 
-	public ICodeBlockOwner SetPrimaryConstructorFunctionArgumentsListingNode(FunctionArgumentsListingNode functionArgumentsListingNode)
-	{
-		PrimaryConstructorFunctionArgumentsListingNode = functionArgumentsListingNode;
-
-		_childListIsDirty = true;
-		_memberListIsDirty = true;
-		return this;
-	}
-
 	public ICodeBlockOwner SetInheritedTypeClauseNode(TypeClauseNode typeClauseNode)
 	{
 		InheritedTypeClauseNode = typeClauseNode;
@@ -184,8 +204,13 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 			return _childList;
 
 		var childCount = 1; // TypeIdentifierToken
-		if (GenericArgumentsListingNode is not null)
-			childCount++;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childCount +=
+				1 +                                                       // GenericParameterListing.OpenAngleBracketToken
+				GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
+				1;                                                        // GenericParameterListing.CloseAngleBracketToken
+		}
 		if (InheritedTypeClauseNode is not null)
 			childCount++;
 		if (CodeBlockNode is not null)
@@ -195,8 +220,15 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		var i = 0;
 
 		childList[i++] = TypeIdentifierToken;
-		if (GenericArgumentsListingNode is not null)
-			childList[i++] = GenericArgumentsListingNode;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childList[i++] = GenericParameterListing.OpenAngleBracketToken;
+			foreach (var entry in GenericParameterListing.GenericParameterEntryList)
+			{
+				childList[i++] = entry.TypeClauseNode;
+			}
+			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
+		}
 		if (InheritedTypeClauseNode is not null)
 			childList[i++] = InheritedTypeClauseNode;
 		if (CodeBlockNode is not null)

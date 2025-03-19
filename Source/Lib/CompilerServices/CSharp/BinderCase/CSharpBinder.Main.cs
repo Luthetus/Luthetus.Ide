@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Utility;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -32,9 +33,11 @@ public partial class CSharpBinder
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> CSharpParserModel_ExpressionList { get; set; } = new();
     public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
     
+    public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
+    
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
 		default,
-        genericParametersListingNode: null,
+        genericParameterListing: default,
         CSharpFacts.Types.Void.ToTypeClause());
     
     public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
@@ -350,7 +353,7 @@ public partial class CSharpBinder
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
         {
-            return;
+            functionInvocationNode.SetResultTypeClauseNode(functionDefinitionNode.ReturnTypeClauseNode);
         }
         else
         {
@@ -1451,12 +1454,12 @@ public partial class CSharpBinder
         });
         
         if (closestNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-        	return GetChildNodeOrSelfByPositionIndex(closestNode, positionIndex);
+        	return GetChildNodeOrSelfByPositionIndex(closestNode, resourceUri, positionIndex);
         
         return closestNode;
     }
     
-    public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, int positionIndex)
+    public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, ResourceUri resourceUri, int positionIndex)
     {
     	switch (node.SyntaxKind)
     	{
@@ -1467,9 +1470,22 @@ public partial class CSharpBinder
     			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
     			{
     				if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
-        				variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex)
+        				variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
+    			    	variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
         			{
         				return variableDeclarationNode.TypeClauseNode;
+        			}
+        			else if (variableDeclarationNode.TypeClauseNode.GenericParameterListing.ConstructorWasInvoked)
+        			{
+        				foreach (var entry in variableDeclarationNode.TypeClauseNode.GenericParameterListing.GenericParameterEntryList)
+        				{
+        					if (entry.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
+		        				entry.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
+		    			    	entry.TypeClauseNode.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+		        			{
+		        				return entry.TypeClauseNode;
+		        			}
+        				}
         			}
     			}
     			
@@ -1660,7 +1676,7 @@ public partial class CSharpBinder
 	        	return;
 	        case SyntaxKind.FunctionDefinitionNode:
 	        	var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
-	    		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryList)
+	    		foreach (var argument in functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList)
 		    	{
 		    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
 		    	}
@@ -1671,7 +1687,7 @@ public partial class CSharpBinder
     			return;
     		case SyntaxKind.ConstructorDefinitionNode:
     			var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
-	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryList)
+	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList)
 				{
 					parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
 				}
@@ -1691,6 +1707,30 @@ public partial class CSharpBinder
 	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
 		    		parserModel.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
 		    		
+		    	return;
+		    case SyntaxKind.TypeDefinitionNode:
+		    	var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+		    	
+		    	if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
+		    	{
+		    		foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
+		    		{
+		    			parserModel.Binder.BindTypeDefinitionNode(
+					        new TypeDefinitionNode(
+								AccessModifierKind.Public,
+								hasPartialModifier: false,
+								StorageModifierKind.Class,
+								entry.TypeClauseNode.TypeIdentifierToken,
+								entry.TypeClauseNode.ValueType,
+								entry.TypeClauseNode.GenericParameterListing,
+								primaryConstructorFunctionArgumentListing: default,
+								null,
+								string.Empty),
+					        cSharpCompilationUnit,
+					        ref parserModel);
+		    		}
+		    	}
+		    	
 		    	return;
     	}
     }

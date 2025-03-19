@@ -341,7 +341,7 @@ public static class UtilityApi
     		return new TypeClauseNode(
 	    		(SyntaxToken)token,
 		        valueType: null,
-		        genericParametersListingNode: null,
+		        genericParameterListing: default,
 		        isKeywordType: false);
     	}
 	    else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
@@ -349,7 +349,7 @@ public static class UtilityApi
 	    	return new TypeClauseNode(
 	    		(SyntaxToken)token,
 		        valueType: null,
-		        genericParametersListingNode: null,
+		        genericParameterListing: default,
 		        isKeywordType: true);
 	    }
 	    else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
@@ -357,7 +357,7 @@ public static class UtilityApi
 	    	return new TypeClauseNode(
 	    		(SyntaxToken)token,
 		        valueType: null,
-		        genericParametersListingNode: null,
+		        genericParameterListing: default,
 		        isKeywordType: true);
 	    }
 	    else

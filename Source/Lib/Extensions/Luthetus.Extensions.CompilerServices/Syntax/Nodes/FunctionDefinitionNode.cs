@@ -9,14 +9,14 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// TODO: Track the open and close braces for the function body.
 /// </summary>
-public sealed class FunctionDefinitionNode : ICodeBlockOwner
+public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode, IGenericParameterNode
 {
 	public FunctionDefinitionNode(
 		AccessModifierKind accessModifierKind,
 		TypeClauseNode returnTypeClauseNode,
 		SyntaxToken functionIdentifierToken,
-		GenericParametersListingNode? genericArgumentsListingNode,
-		FunctionArgumentsListingNode functionArgumentsListingNode,
+		GenericParameterListing genericParameterListing,
+		FunctionArgumentListing functionArgumentListing,
 		CodeBlockNode? codeBlockNode)
 	{
 		#if DEBUG
@@ -26,8 +26,8 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 		AccessModifierKind = accessModifierKind;
 		ReturnTypeClauseNode = returnTypeClauseNode;
 		FunctionIdentifierToken = functionIdentifierToken;
-		GenericArgumentsListingNode = genericArgumentsListingNode;
-		FunctionArgumentsListingNode = functionArgumentsListingNode;
+		GenericParameterListing = genericParameterListing;
+		FunctionArgumentListing = functionArgumentListing;
 		CodeBlockNode = codeBlockNode;
 	}
 
@@ -37,8 +37,8 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 	public AccessModifierKind AccessModifierKind { get; }
 	public TypeClauseNode ReturnTypeClauseNode { get; }
 	public SyntaxToken FunctionIdentifierToken { get; }
-	public GenericParametersListingNode? GenericArgumentsListingNode { get; }
-	public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
+	public GenericParameterListing GenericParameterListing { get; set; }
+	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -49,11 +49,33 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
+	
+	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	
+	public bool IsParsingGenericParameters { get; set; }
+	
+	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
+	{
+		FunctionArgumentListing = functionArgumentListing;
+		_childListIsDirty = true;
+	}
+	
+	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
+	{
+		GenericParameterListing = genericParameterListing;
+		_childListIsDirty = true;
+	}
+	
+	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
+	{
+		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
+		_childListIsDirty = true;
+	}
 
 	public ICodeBlockOwner SetExpressionBody(CodeBlockNode codeBlockNode)
 	{
 		CodeBlockNode = codeBlockNode;
-
+		
 		_childListIsDirty = true;
 		return this;
 	}
@@ -103,9 +125,17 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 		if (!_childListIsDirty)
 			return _childList;
 
-		var childCount = 3; // ReturnTypeClauseNode, FunctionIdentifierToken, ...FunctionArgumentsListingNode,
-		if (GenericArgumentsListingNode is not null)
-			childCount++;
+		var childCount = 2 +                                          // ReturnTypeClauseNode, FunctionIdentifierToken
+			1 +                                                       // FunctionArgumentListing.OpenParenthesisToken
+			FunctionArgumentListing.FunctionArgumentEntryList.Count + // FunctionArgumentListing.FunctionArgumentEntryList.Count
+			1;                                                        // FunctionArgumentListing.CloseParenthesisToken
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childCount +=
+				1 +                                                       // GenericParameterListing.OpenAngleBracketToken
+				GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
+				1;                                                        // GenericParameterListing.CloseAngleBracketToken
+		}
 		if (CodeBlockNode is not null)
 			childCount++;
 
@@ -114,9 +144,23 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 
 		childList[i++] = ReturnTypeClauseNode;
 		childList[i++] = FunctionIdentifierToken;
-		if (GenericArgumentsListingNode is not null)
-			childList[i++] = GenericArgumentsListingNode;
-		childList[i++] = FunctionArgumentsListingNode;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childList[i++] = GenericParameterListing.OpenAngleBracketToken;
+			foreach (var entry in GenericParameterListing.GenericParameterEntryList)
+			{
+				childList[i++] = entry.TypeClauseNode;
+			}
+			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
+		}
+		
+		childList[i++] = FunctionArgumentListing.OpenParenthesisToken;
+		foreach (var entry in FunctionArgumentListing.FunctionArgumentEntryList)
+		{
+			childList[i++] = entry.VariableDeclarationNode;
+		}
+		childList[i++] = FunctionArgumentListing.CloseParenthesisToken;
+		
 		if (CodeBlockNode is not null)
 			childList[i++] = CodeBlockNode;
 

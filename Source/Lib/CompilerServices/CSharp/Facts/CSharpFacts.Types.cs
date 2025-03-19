@@ -18,8 +18,8 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "void")),
             typeof(void),
-            null,
-            null,
+            default,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -32,8 +32,8 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "int")),
             typeof(int),
-            null,
-            null,
+            default,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -46,8 +46,8 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "char".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "char")),
             typeof(char),
-            null,
-            null,
+            default,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -60,8 +60,8 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "string")),
             typeof(string),
-            null,
-            null,
+            default,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -74,8 +74,8 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "bool")),
             typeof(bool),
-            null,
-            null,
+            default,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {
@@ -88,8 +88,8 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "var")),
             typeof(void),
-            null,
-            null,
+            default,
+            primaryConstructorFunctionArgumentListing: default,
             null,
             string.Empty)
             {

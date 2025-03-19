@@ -6,12 +6,12 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeClauseNode"/> is used anywhere a type is referenced.
 /// </summary>
-public sealed class TypeClauseNode : IExpressionNode
+public sealed class TypeClauseNode : IGenericParameterNode
 {
 	public TypeClauseNode(
 		SyntaxToken typeIdentifier,
 		Type? valueType,
-		GenericParametersListingNode? genericParametersListingNode,
+		GenericParameterListing genericParameterListing,
 		bool isKeywordType)
 	{
 		#if DEBUG
@@ -21,7 +21,7 @@ public sealed class TypeClauseNode : IExpressionNode
 		IsKeywordType = isKeywordType;
 		TypeIdentifierToken = typeIdentifier;
 		ValueType = valueType;
-		GenericParametersListingNode = genericParametersListingNode;
+		GenericParameterListing = genericParameterListing;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -47,7 +47,7 @@ public sealed class TypeClauseNode : IExpressionNode
 	/// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
 	/// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
 	/// </summary>
-	public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
+	public GenericParameterListing GenericParameterListing { get; set; }
 
 	public bool IsKeywordType { get; init; }
 
@@ -60,13 +60,19 @@ public sealed class TypeClauseNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
+	
+	public bool IsParsingGenericParameters { get; set; }
 
-	public TypeClauseNode SetGenericParametersListingNode(GenericParametersListingNode genericParametersListingNode)
+	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
 	{
-		GenericParametersListingNode = genericParametersListingNode;
-
+		GenericParameterListing = genericParameterListing;
 		_childListIsDirty = true;
-		return this;
+	}
+	
+	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
+	{
+		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
+		_childListIsDirty = true;
 	}
 
 	public TypeClauseNode SetValueType(Type? valueType)
@@ -83,15 +89,27 @@ public sealed class TypeClauseNode : IExpressionNode
 			return _childList;
 
 		var childCount = 1; // TypeIdentifierToken
-		if (GenericParametersListingNode is not null)
-			childCount++;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childCount +=
+				1 +                                                       // GenericParameterListing.OpenAngleBracketToken
+				GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
+				1;                                                        // GenericParameterListing.CloseAngleBracketToken
+		}
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = TypeIdentifierToken;
-		if (GenericParametersListingNode is not null)
-			childList[i++] = GenericParametersListingNode;
+		if (GenericParameterListing.ConstructorWasInvoked)
+		{
+			childList[i++] = GenericParameterListing.OpenAngleBracketToken;
+			foreach (var entry in GenericParameterListing.GenericParameterEntryList)
+			{
+				childList[i++] = entry.TypeClauseNode;
+			}
+			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
+		}
 
 		_childList = childList;
 
