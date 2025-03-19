@@ -211,6 +211,8 @@ public static class ParseOthers
         {
         	/*#if DEBUG
         	WriteExpressionList(parserModel.ExpressionList);
+        	#else
+			Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
         	#endif*/
         
         	var tokenCurrent = parserModel.TokenWalker.Current;
@@ -322,6 +324,8 @@ public static class ParseOthers
 		    		/*#if DEBUG
 		    		WriteExpressionList(parserModel.ExpressionList);
 		    		Console.WriteLine("----TryParseExpressionSyntaxKindList");
+					#else
+					Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
 		    		#endif*/
     			}
     		}

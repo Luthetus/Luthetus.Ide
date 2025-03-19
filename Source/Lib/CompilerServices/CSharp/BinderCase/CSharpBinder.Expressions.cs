@@ -1198,7 +1198,7 @@ public partial class CSharpBinder
 			// '(List<(int, bool)>)' required the following hack because the CSharpParserContextKind.ForceStatementExpression enum
 			// is reset after the first TypeClauseNode in a statement is made, and there was no clear way to set it back again in this situation.;
 			// TODO: Don't do this '(List<(int, bool)>)', instead figure out how to have CSharpParserContextKind.ForceStatementExpression live longer in a statement that has many TypeClauseNode(s).
-			parserModel.ExpressionList.Any(x => x.ExpressionNode is not null && x.ExpressionNode.SyntaxKind == SyntaxKind.GenericParametersListingNode));
+			parserModel.ExpressionList.Any(x => x.ExpressionNode is IGenericParameterNode));
 			
 		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, ambiguousParenthesizedExpressionNode));
 		parserModel.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousParenthesizedExpressionNode));
