@@ -1404,46 +1404,46 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         var styleBuilder = new StringBuilder();
 
         // Width
-        if (virtualizationBoundary.WidthInPixels is null)
+        if (virtualizationBoundary.WidthInPixels == -1)
         {
             styleBuilder.Append(" width: 100%;");
         }
         else
         {
-            var widthInPixelsInvariantCulture = virtualizationBoundary.WidthInPixels.Value.ToCssValue();
+            var widthInPixelsInvariantCulture = virtualizationBoundary.WidthInPixels.ToCssValue();
             styleBuilder.Append($" width: {widthInPixelsInvariantCulture}px;");
         }
 
         // Height
-        if (virtualizationBoundary.HeightInPixels is null)
+        if (virtualizationBoundary.HeightInPixels == -1)
         {
             styleBuilder.Append(" height: 100%;");
         }
         else
         {
-            var heightInPixelsInvariantCulture = virtualizationBoundary.HeightInPixels.Value.ToCssValue();
+            var heightInPixelsInvariantCulture = virtualizationBoundary.HeightInPixels.ToCssValue();
             styleBuilder.Append($" height: {heightInPixelsInvariantCulture}px;");
         }
 
         // Left
-        if (virtualizationBoundary.LeftInPixels is null)
+        if (virtualizationBoundary.LeftInPixels == -1)
         {
             styleBuilder.Append(" left: 100%;");
         }
         else
         {
-            var leftInPixelsInvariantCulture = virtualizationBoundary.LeftInPixels.Value.ToCssValue();
+            var leftInPixelsInvariantCulture = virtualizationBoundary.LeftInPixels.ToCssValue();
             styleBuilder.Append($" left: {leftInPixelsInvariantCulture}px;");
         }
 
         // Top
-        if (virtualizationBoundary.TopInPixels is null)
+        if (virtualizationBoundary.TopInPixels == -1)
         {
             styleBuilder.Append(" top: 100%;");
         }
         else
         {
-            var topInPixelsInvariantCulture = virtualizationBoundary.TopInPixels.Value.ToCssValue();
+            var topInPixelsInvariantCulture = virtualizationBoundary.TopInPixels.ToCssValue();
             styleBuilder.Append($" top: {topInPixelsInvariantCulture}px;");
         }
 
