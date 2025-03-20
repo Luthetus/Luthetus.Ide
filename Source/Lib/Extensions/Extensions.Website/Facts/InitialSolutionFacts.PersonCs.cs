@@ -231,11 +231,16 @@ public partial class Counter : ComponentBase
 	}
 }
 
+// FunctionInvocation((ExplicitCast)variableReference, nameableToken);
+var aaa = 2;
+Aaa((List<(int, bool)>)aaa, s);
+
 // Value Tuple TypeClauseNode
 (int, bool) myVariableOne;              // (not named)
 (Apple, Banana) myVariableTwo;          // (not named)
 (int Aaa, bool Bbb) myVariableThree;    // (is named)
 (Apple Aaa, Banana Bbb) myVariableFour; // (is named)
+((int zzz, int asd) a, (int yyy, int dsa) b) zzz;
 
 // Value Tuple TypeClauseNode as a generic argument
 List<(int, bool)> myListOne;              // (not named)

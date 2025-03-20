@@ -274,6 +274,8 @@ public partial class CSharpBinder
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 		{
+			parserModel.ParserContextKind = CSharpParserContextKind.None;
+		
 			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
 			{
 				return AmbiguousParenthesizedExpressionTransformTo_LambdaExpressionNode(ambiguousParenthesizedExpressionNode, compilationUnit, ref parserModel);
@@ -1195,10 +1197,10 @@ public partial class CSharpBinder
 		var ambiguousParenthesizedExpressionNode = new AmbiguousParenthesizedExpressionNode(
 			token,
 			isParserContextKindForceStatementExpression: parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression ||
-			// '(List<(int, bool)>)' required the following hack because the CSharpParserContextKind.ForceStatementExpression enum
-			// is reset after the first TypeClauseNode in a statement is made, and there was no clear way to set it back again in this situation.;
-			// TODO: Don't do this '(List<(int, bool)>)', instead figure out how to have CSharpParserContextKind.ForceStatementExpression live longer in a statement that has many TypeClauseNode(s).
-			parserModel.ExpressionList.Any(x => x.ExpressionNode is IGenericParameterNode));
+				// '(List<(int, bool)>)' required the following hack because the CSharpParserContextKind.ForceStatementExpression enum
+				// is reset after the first TypeClauseNode in a statement is made, and there was no clear way to set it back again in this situation.;
+				// TODO: Don't do this '(List<(int, bool)>)', instead figure out how to have CSharpParserContextKind.ForceStatementExpression live longer in a statement that has many TypeClauseNode(s).
+				parserModel.ExpressionList.Any(x => x.ExpressionNode is IGenericParameterNode genericParameterNode && genericParameterNode.IsParsingGenericParameters));
 			
 		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, ambiguousParenthesizedExpressionNode));
 		parserModel.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousParenthesizedExpressionNode));
@@ -1690,7 +1692,7 @@ public partial class CSharpBinder
 			return GenericParametersListingMergeToken(
 				functionInvocationNode, ref token, compilationUnit, ref parserModel);
 		}
-	
+
 		switch (token.SyntaxKind)
 		{
 			case SyntaxKind.OpenAngleBracketToken:
