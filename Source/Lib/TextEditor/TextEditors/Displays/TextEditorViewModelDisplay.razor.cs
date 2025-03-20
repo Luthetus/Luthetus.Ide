@@ -107,6 +107,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private TouchEventArgs? _previousTouchEventArgs = null;
     private bool _userMouseIsInside;
     
+    private StringBuilder _virtualizationStringBuilder = new();
+    
     /* MeasureCharacterWidthAndRowHeight.razor Open */
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
     private const int TEST_STRING_REPEAT_COUNT = 6;
@@ -819,46 +821,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
         return $"{top} {height} {left}";
     }
-
-    public void RowSection_AppendTextEscaped(
-    	TextEditorRenderBatch renderBatchLocal,
-        StringBuilder spanBuilder,
-        RichCharacter richCharacter,
-        string tabKeyOutput,
-        string spaceKeyOutput)
-    {
-        switch (richCharacter.Value)
-        {
-            case '\t':
-                spanBuilder.Append(tabKeyOutput);
-                break;
-            case ' ':
-                spanBuilder.Append(spaceKeyOutput);
-                break;
-            case '\r':
-                break;
-            case '\n':
-                break;
-            case '<':
-                spanBuilder.Append("&lt;");
-                break;
-            case '>':
-                spanBuilder.Append("&gt;");
-                break;
-            case '"':
-                spanBuilder.Append("&quot;");
-                break;
-            case '\'':
-                spanBuilder.Append("&#39;");
-                break;
-            case '&':
-                spanBuilder.Append("&amp;");
-                break;
-            default:
-                spanBuilder.Append(richCharacter.Value);
-                break;
-        }
-    }
     
     #endregion BodyDriverClose
     
@@ -1401,53 +1363,53 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     public string Virtualization_GetStyleCssString(VirtualizationBoundary virtualizationBoundary)
     {
-        var styleBuilder = new StringBuilder();
-
+    	_virtualizationStringBuilder.Clear();
+    
         // Width
         if (virtualizationBoundary.WidthInPixels == -1)
         {
-            styleBuilder.Append(" width: 100%;");
+            _virtualizationStringBuilder.Append(" width: 100%;");
         }
         else
         {
             var widthInPixelsInvariantCulture = virtualizationBoundary.WidthInPixels.ToCssValue();
-            styleBuilder.Append($" width: {widthInPixelsInvariantCulture}px;");
+            _virtualizationStringBuilder.Append($" width: {widthInPixelsInvariantCulture}px;");
         }
 
         // Height
         if (virtualizationBoundary.HeightInPixels == -1)
         {
-            styleBuilder.Append(" height: 100%;");
+            _virtualizationStringBuilder.Append(" height: 100%;");
         }
         else
         {
             var heightInPixelsInvariantCulture = virtualizationBoundary.HeightInPixels.ToCssValue();
-            styleBuilder.Append($" height: {heightInPixelsInvariantCulture}px;");
+            _virtualizationStringBuilder.Append($" height: {heightInPixelsInvariantCulture}px;");
         }
 
         // Left
         if (virtualizationBoundary.LeftInPixels == -1)
         {
-            styleBuilder.Append(" left: 100%;");
+            _virtualizationStringBuilder.Append(" left: 100%;");
         }
         else
         {
             var leftInPixelsInvariantCulture = virtualizationBoundary.LeftInPixels.ToCssValue();
-            styleBuilder.Append($" left: {leftInPixelsInvariantCulture}px;");
+            _virtualizationStringBuilder.Append($" left: {leftInPixelsInvariantCulture}px;");
         }
 
         // Top
         if (virtualizationBoundary.TopInPixels == -1)
         {
-            styleBuilder.Append(" top: 100%;");
+            _virtualizationStringBuilder.Append(" top: 100%;");
         }
         else
         {
             var topInPixelsInvariantCulture = virtualizationBoundary.TopInPixels.ToCssValue();
-            styleBuilder.Append($" top: {topInPixelsInvariantCulture}px;");
+            _virtualizationStringBuilder.Append($" top: {topInPixelsInvariantCulture}px;");
         }
 
-        return styleBuilder.ToString();
+        return _virtualizationStringBuilder.ToString();
     }
 
     #endregion ScrollbarSectionClose
