@@ -240,6 +240,7 @@ Aaa((List<(int, bool)>)aaa, s);
 (Apple, Banana) myVariableTwo;          // (not named)
 (int Aaa, bool Bbb) myVariableThree;    // (is named)
 (Apple Aaa, Banana Bbb) myVariableFour; // (is named)
+((int zzz, int asd) a, (int yyy, int dsa) b) zzz;
 
 // Value Tuple TypeClauseNode as a generic argument
 List<(int, bool)> myListOne;              // (not named)
