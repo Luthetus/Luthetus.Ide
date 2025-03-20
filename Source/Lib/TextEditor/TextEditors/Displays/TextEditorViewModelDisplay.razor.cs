@@ -143,6 +143,12 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     			this
     		}
     	};
+    	
+    	VERTICAL_ScrollbarElementId = $"luth_te_{VERTICAL_scrollbarGuid}";
+	    VERTICAL_ScrollbarSliderElementId = $"luth_te_{VERTICAL_scrollbarGuid}-slider";
+	    
+	    HORIZONTAL_ScrollbarElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}";
+	    HORIZONTAL_ScrollbarSliderElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}-slider";
 
         ConstructRenderBatch();
 
@@ -982,17 +988,25 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
             var topInPixelsInvariantCulture = (measurements.LineHeight * renderBatchLocal.ViewModel.PrimaryCursor.LineIndex)
                 .ToCssValue();
-
-            var top = $"top: {topInPixelsInvariantCulture}px;";
+			
+			_uiStringBuilder.Clear();
+			
+			_uiStringBuilder.Append("top: ");
+			_uiStringBuilder.Append(topInPixelsInvariantCulture);
+			_uiStringBuilder.Append("px;");
 
             var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
-            var height = $"height: {heightInPixelsInvariantCulture}px;";
+            _uiStringBuilder.Append("height: ");
+            _uiStringBuilder.Append(heightInPixelsInvariantCulture);
+            _uiStringBuilder.Append("px;");
 
             var widthOfBodyInPixelsInvariantCulture =
                 (renderBatchLocal.Model.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
                 .ToCssValue();
 
-            var width = $"width: {widthOfBodyInPixelsInvariantCulture}px;";
+			_uiStringBuilder.Append("width: ");
+			_uiStringBuilder.Append(widthOfBodyInPixelsInvariantCulture);
+			_uiStringBuilder.Append("px;");
 
             // This feels a bit hacky, exceptions are happening because the UI isn't accessing
             // the text editor in a thread safe way.
@@ -1002,7 +1016,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             // 
             // So store the result of this method incase an exception occurs in future invocations,
             // to keep the cursor on screen while the state works itself out.
-            return _previousGetCaretRowStyleCss = $"{top} {width} {height}";
+            return _previousGetCaretRowStyleCss = _uiStringBuilder.ToString();
         }
         catch (LuthetusTextEditorException)
         {
@@ -1032,21 +1046,31 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             }
 
             leftInPixels += measurements.CharacterWidth * renderBatchLocal.ViewModel.PrimaryCursor.ColumnIndex;
+            
+            _uiStringBuilder.Clear();
 
             var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
-            var left = $"left: {leftInPixelsInvariantCulture}px;";
+            _uiStringBuilder.Append("left: ");
+            _uiStringBuilder.Append(leftInPixelsInvariantCulture);
+            _uiStringBuilder.Append("px;");
 
             var topInPixelsInvariantCulture = (measurements.LineHeight * (renderBatchLocal.ViewModel.PrimaryCursor.LineIndex + 1))
                 .ToCssValue();
 
             // Top is 1 row further than the cursor so it does not cover text at cursor position.
-            var top = $"top: {topInPixelsInvariantCulture}px;";
+            _uiStringBuilder.Append("top: ");
+            _uiStringBuilder.Append(topInPixelsInvariantCulture);
+            _uiStringBuilder.Append("px;");
 
             var minWidthInPixelsInvariantCulture = (measurements.CharacterWidth * 16).ToCssValue();
-            var minWidth = $"min-Width: {minWidthInPixelsInvariantCulture}px;";
+            _uiStringBuilder.Append("min-Width: ");
+            _uiStringBuilder.Append(minWidthInPixelsInvariantCulture);
+            _uiStringBuilder.Append("px;");
 
             var minHeightInPixelsInvariantCulture = (measurements.LineHeight * 4).ToCssValue();
-            var minHeight = $"min-height: {minHeightInPixelsInvariantCulture}px;";
+            _uiStringBuilder.Append("min-height: ");
+            _uiStringBuilder.Append(minHeightInPixelsInvariantCulture);
+            _uiStringBuilder.Append("px;");
 
             // This feels a bit hacky, exceptions are happening because the UI isn't accessing
             // the text editor in a thread safe way.
@@ -1056,7 +1080,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             // 
             // So store the result of this method incase an exception occurs in future invocations,
             // to keep the cursor on screen while the state works itself out.
-            return _previousGetMenuStyleCss = $"{left} {top} {minWidth} {minHeight}";
+            return _previousGetMenuStyleCss = _uiStringBuilder.ToString();
         }
         catch (LuthetusTextEditorException)
         {
@@ -1131,15 +1155,15 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	private double VERTICAL_clientXThresholdToResetScrollTopPosition;
 	private double VERTICAL_scrollTopOnMouseDown;
 
-    private string VERTICAL_ScrollbarElementId => $"luth_te_{VERTICAL_scrollbarGuid}";
-    private string VERTICAL_ScrollbarSliderElementId => $"luth_te_{VERTICAL_scrollbarGuid}-slider";
+    private string VERTICAL_ScrollbarElementId;
+    private string VERTICAL_ScrollbarSliderElementId;
 
     private bool HORIZONTAL_thinksLeftMouseButtonIsDown;
 	private double HORIZONTAL_clientYThresholdToResetScrollLeftPosition;
 	private double HORIZONTAL_scrollLeftOnMouseDown;
 
-    private string HORIZONTAL_ScrollbarElementId => $"luth_te_{HORIZONTAL_scrollbarGuid}";
-    private string HORIZONTAL_ScrollbarSliderElementId => $"luth_te_{HORIZONTAL_scrollbarGuid}-slider";
+    private string HORIZONTAL_ScrollbarElementId;
+    private string HORIZONTAL_ScrollbarSliderElementId;
 	
 	private Func<MouseEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
 
