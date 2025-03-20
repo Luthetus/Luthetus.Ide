@@ -72,7 +72,6 @@ public partial class TextEditorService : ITextEditorService
         _storageService = storageService;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetLuthetusTextEditorApi();
-		JsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dialogService = dialogService;
 
@@ -80,7 +79,7 @@ public partial class TextEditorService : ITextEditorService
 		AutocompleteService = autocompleteService;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dialogService);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _commonBackgroundTaskApi);
         DiffApi = new TextEditorDiffApi(this);
         OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi);
@@ -93,7 +92,7 @@ public partial class TextEditorService : ITextEditorService
     public IFindAllService FindAllService { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
-	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
+	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi => _commonBackgroundTaskApi.JsRuntimeCommonApi;
 	public IAutocompleteIndexer AutocompleteIndexer { get; }
 	public IAutocompleteService AutocompleteService { get; }
 	public LuthetusTextEditorConfig TextEditorConfig { get; }
@@ -648,8 +647,7 @@ public partial class TextEditorService : ITextEditorService
 	    ResourceUri resourceUri,
 	    Category category,
 	    ITextEditorService textEditorService,
-	    IDialogService dialogService,
-	    IJSRuntime jsRuntime)
+	    IDialogService dialogService)
 	{
 		// The category and ViewModelKey do NOT need to be a compound unique identifier
 		// Only check for the 'ViewModelKey' already existing.

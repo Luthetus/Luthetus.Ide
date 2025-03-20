@@ -23,8 +23,6 @@ public partial class TabDisplay : ComponentBase, IDisposable
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-	[Inject]
 	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
@@ -188,7 +186,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
-			var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+			var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
                 .MeasureElementById(HtmlId)
                 .ConfigureAwait(false);
 

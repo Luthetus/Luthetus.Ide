@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Microsoft.JSInterop;
 
 namespace Luthetus.Common.RazorLib.Storages.Models;
@@ -11,11 +11,15 @@ public class LocalStorageService : IStorageService
     {
         _jsRuntime = jsRuntime;
     }
+    
+    private LuthetusCommonJavaScriptInteropApi _jsRuntimeCommonApi;
+	
+	private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi => _jsRuntimeCommonApi
+		??= _jsRuntime.GetLuthetusCommonApi();
 
     public async ValueTask SetValue(string key, object? value)
     {
-        await _jsRuntime.GetLuthetusCommonApi()
-            .LocalStorageSetItem(
+        await JsRuntimeCommonApi.LocalStorageSetItem(
                 key,
                 value)
             .ConfigureAwait(false);
@@ -23,8 +27,7 @@ public class LocalStorageService : IStorageService
 
     public async ValueTask<object?> GetValue(string key)
     {
-        return await _jsRuntime.GetLuthetusCommonApi()
-            .LocalStorageGetItem(
+        return await JsRuntimeCommonApi.LocalStorageGetItem(
                 key)
             .ConfigureAwait(false);
     }

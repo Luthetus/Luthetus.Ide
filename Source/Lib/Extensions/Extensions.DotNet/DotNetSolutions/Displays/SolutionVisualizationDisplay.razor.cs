@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
@@ -26,9 +27,9 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	[Inject]
 	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private IJSRuntime JsRuntime { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog Dialog { get; set; }
@@ -39,7 +40,6 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	private DotNetSolutionCompilerService _dotNetSolutionCompilerService;
 	private CSharpProjectCompilerService _cSharpProjectCompilerService;
 	private CSharpCompilerService _cSharpCompilerService;
-	private LuthetusCommonJavaScriptInteropApi? _commonJavaScriptInteropApi;
 	private string _divHtmlElementId;
 	private string _svgHtmlElementId;
 
@@ -47,7 +47,6 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 
 	public string DivHtmlElementId => _divHtmlElementId ??= $"luth_ide_solution-visualization-div_{IdSalt}";
 	public string SvgHtmlElementId => _svgHtmlElementId ??= $"luth_ide_solution-visualization-svg_{IdSalt}";
-	private LuthetusCommonJavaScriptInteropApi CommonJavaScriptInteropApi => _commonJavaScriptInteropApi ??= JsRuntime.GetLuthetusCommonApi();
 
 	protected override void OnInitialized()
 	{
@@ -77,11 +76,11 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 
 	private async void OnAppDimensionStateWrapChanged()
 	{
-		_solutionVisualizationModel.Dimensions.DivBoundingClientRect = await CommonJavaScriptInteropApi
+		_solutionVisualizationModel.Dimensions.DivBoundingClientRect = await CommonBackgroundTaskApi.JsRuntimeCommonApi
 			.MeasureElementById(DivHtmlElementId)
 			.ConfigureAwait(false);
 
-		_solutionVisualizationModel.Dimensions.SvgBoundingClientRect = await CommonJavaScriptInteropApi
+		_solutionVisualizationModel.Dimensions.SvgBoundingClientRect = await CommonBackgroundTaskApi.JsRuntimeCommonApi
 			.MeasureElementById(SvgHtmlElementId)
 			.ConfigureAwait(false);
 

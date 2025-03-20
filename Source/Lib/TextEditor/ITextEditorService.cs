@@ -91,8 +91,7 @@ public partial interface ITextEditorService
 	    ResourceUri resourceUri,
 	    Category category,
 	    ITextEditorService textEditorService,
-	    IDialogService dialogService,
-	    IJSRuntime jsRuntime);
+	    IDialogService dialogService);
 	
 	public void RegisterViewModelExisting(TextEditorViewModel viewModel);
 	

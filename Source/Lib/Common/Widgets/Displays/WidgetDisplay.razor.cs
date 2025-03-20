@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Widgets.Displays;
 
 public partial class WidgetDisplay : ComponentBase
 {
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IWidgetService WidgetService { get; set; } = null!;
     
@@ -26,7 +26,7 @@ public partial class WidgetDisplay : ComponentBase
     {
         if (firstRender)
         {
-            await JsRuntime.GetLuthetusCommonApi()
+            await CommonBackgroundTaskApi.JsRuntimeCommonApi
                 .FocusHtmlElementById(WIDGET_HTML_ELEMENT_ID)
                 .ConfigureAwait(false);
         }
@@ -46,7 +46,7 @@ public partial class WidgetDisplay : ComponentBase
     
     private async Task HandleOnMouseDown()
     {
-        await JsRuntime.GetLuthetusCommonApi()
+        await CommonBackgroundTaskApi.JsRuntimeCommonApi
             .FocusHtmlElementById(WIDGET_HTML_ELEMENT_ID)
             .ConfigureAwait(false);
     }
