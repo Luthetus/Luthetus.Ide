@@ -1,19 +1,19 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
 public partial class DropdownDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	public IJSRuntime JsRuntime { get; set; } = null!;
+	public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	public IAppDimensionService AppDimensionService { get; set; } = null!;
 	[Inject]
@@ -29,8 +29,6 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
     public Func<DropdownRecord, Task> OnFocusOutFunc { get; set; } = null!;
 
 	private readonly object _hasPendingEventLock = new();
-
-	private LuthetusCommonJavaScriptInteropApi _jsRuntimeCommonApi;
 
 	private Guid _htmlElementIdSalt = Guid.NewGuid();
 	private string _htmlElementId => $"luth_dropdown_{_htmlElementIdSalt}";
@@ -51,8 +49,6 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		_jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
-
 		// TODO: Does this line work in relating to the <see cref="Dropdown"/> parameter...
 		//       ...having been changed?
 		//	   |
@@ -137,8 +133,8 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			_hasPendingEvent = true;
 		}
 
-		_htmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(_htmlElementId);
-		_globalHtmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
+		_htmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(_htmlElementId);
+		_globalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
 		await InvokeAsync(StateHasChanged);
 	}
 

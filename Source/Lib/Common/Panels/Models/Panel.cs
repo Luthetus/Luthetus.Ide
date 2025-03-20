@@ -1,4 +1,3 @@
-using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -8,6 +7,7 @@ using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.Models;
 
@@ -28,7 +28,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         Dictionary<string, object?>? componentParameterMap,
         IPanelService panelService,
         IDialogService dialogService,
-        IJSRuntime jsRuntime)
+        CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         Title = title;
         Key = key;
@@ -39,7 +39,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 
         PanelService = panelService;
         DialogService = dialogService;
-        JsRuntime = jsRuntime;
+        CommonBackgroundTaskApi = commonBackgroundTaskApi;
 
         _dragTabComponentType = typeof(TabDisplay);
         _dragTabComponentParameterMap = new()
@@ -58,7 +58,7 @@ public record Panel : IPanelTab, IDialog, IDrag
     public Key<ContextRecord> ContextRecordKey { get; }
 	public IPanelService PanelService { get;}
     public IDialogService DialogService { get;}
-    public IJSRuntime JsRuntime { get;}
+    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get;}
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
 	public string? DialogCssClass { get; set; }
@@ -107,7 +107,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 
 		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
 		{
-			var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+			var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
                 .MeasureElementById(panelGroupHtmlIdTuple.HtmlElementId)
                 .ConfigureAwait(false);
 

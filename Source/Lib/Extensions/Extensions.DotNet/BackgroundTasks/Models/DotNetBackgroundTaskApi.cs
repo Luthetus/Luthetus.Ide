@@ -53,6 +53,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
+	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 	private readonly ITreeViewService _treeViewService;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
@@ -66,7 +67,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
 	private readonly IPanelService _panelService;
 	private readonly IDialogService _dialogService;
-	private readonly IJSRuntime _jsRuntime;
 	private readonly IAppOptionsService _appOptionsService;
 	private readonly IIdeHeaderService _ideHeaderService;
 	private readonly ITextEditorHeaderRegistry _textEditorHeaderRegistry;
@@ -81,6 +81,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
+		CommonBackgroundTaskApi commonBackgroundTaskApi,
 		ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,
 		DotNetCliOutputParser dotNetCliOutputParser,
@@ -94,7 +95,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         IDotNetCommandFactory dotNetCommandFactory,
         IPanelService panelService,
         IDialogService dialogService,
-        IJSRuntime jsRuntime,
         IAppOptionsService appOptionsService,
         IIdeHeaderService ideHeaderService,
         ITextEditorHeaderRegistry textEditorHeaderRegistry,
@@ -108,6 +108,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
+		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 		_treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
@@ -122,7 +123,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         _dotNetCommandFactory = dotNetCommandFactory;
         _dialogService = dialogService;
         _panelService = panelService;
-        _jsRuntime = jsRuntime;
         _appOptionsService = appOptionsService;
         _ideHeaderService = ideHeaderService;
         _textEditorHeaderRegistry = textEditorHeaderRegistry;
@@ -308,7 +308,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(solutionExplorerPanel);
         _panelService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
 
@@ -335,7 +335,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(compilerServiceExplorerPanel);
         _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
 
@@ -349,7 +349,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(compilerServiceEditorPanel);
         _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceEditorPanel, false);
     }
@@ -369,7 +369,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(outputPanel);
         _panelService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
 
@@ -383,7 +383,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(testExplorerPanel);
         _panelService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
@@ -404,7 +404,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(nuGetPanel);
         _panelService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
     }

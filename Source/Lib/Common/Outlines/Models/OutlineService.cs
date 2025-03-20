@@ -1,6 +1,7 @@
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Outlines.Models;
 
@@ -8,19 +9,14 @@ public class OutlineService : IOutlineService
 {
     private readonly object _stateModificationLock = new();
 
-    private readonly IJSRuntime _jsRuntime;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
-	public OutlineService(IJSRuntime jsRuntime)
+	public OutlineService(CommonBackgroundTaskApi commonBackgroundTaskApi)
 	{
-		_jsRuntime = jsRuntime;
+		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 	}
 	
-	private LuthetusCommonJavaScriptInteropApi _jsRuntimeCommonApi;
-
 	private OutlineState _outlineState = new();
-	
-	private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi => _jsRuntimeCommonApi
-		??= _jsRuntime.GetLuthetusCommonApi();
 		
 	public event Action? OutlineStateChanged;
 	
@@ -47,7 +43,7 @@ public class OutlineService : IOutlineService
         {
             _ = Task.Run(async () =>
             {
-                var elementDimensions = await JsRuntimeCommonApi
+                var elementDimensions = await _commonBackgroundTaskApi.JsRuntimeCommonApi
                     .MeasureElementById(elementId)
                     .ConfigureAwait(false);
 

@@ -32,6 +32,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ITextEditorService _textEditorService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -40,7 +41,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
     private readonly INotificationService _notificationService;
-    private readonly IJSRuntime _jsRuntime;
     private readonly IServiceProvider _serviceProvider;
 
     public EditorIdeApi(
@@ -48,6 +48,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
         IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
         ICommonComponentRenderers commonComponentRenderers,
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
         IIdeComponentRenderers ideComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
@@ -56,13 +57,13 @@ public class EditorIdeApi : IBackgroundTaskGroup
         IDialogService dialogService,
         IPanelService panelService,
         INotificationService notificationService,
-        IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
         _textEditorService = textEditorService;
         _commonComponentRenderers = commonComponentRenderers;
+        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _ideComponentRenderers = ideComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
@@ -71,7 +72,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
         _dialogService = dialogService;
         _panelService = panelService;
         _notificationService = notificationService;
-        _jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
     }
 
@@ -207,7 +207,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
                 _textEditorService,
                 _panelService,
                 _dialogService,
-                _jsRuntime,
+                _commonBackgroundTaskApi,
                 VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),

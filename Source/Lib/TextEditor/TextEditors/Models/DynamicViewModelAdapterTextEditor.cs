@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -30,14 +31,14 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
         ITextEditorService textEditorService,
         IPanelService panelService,
         IDialogService dialogService,
-        IJSRuntime jsRuntime)
+        CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         ViewModelKey = viewModelKey;
 
         TextEditorService = textEditorService;
         PanelService = panelService;
         DialogService = dialogService;
-        JsRuntime = jsRuntime;
+        CommonBackgroundTaskApi = commonBackgroundTaskApi;
 
         ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()
@@ -58,7 +59,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
     public ITextEditorService TextEditorService { get; }
     public IPanelService PanelService { get; }
     public IDialogService DialogService { get; }
-    public IJSRuntime JsRuntime { get; }
+    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; }
 
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public Key<Panel> Key { get; }
@@ -156,7 +157,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
         AddFallbackDropzone(dropzoneList);
         await AddPanelDropzonesAsync(dropzoneList).ConfigureAwait(false);
 
-        var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+        var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
             .MeasureElementById(
                 $"luth_te_group_{TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.Single().GroupKey.Guid}")
             .ConfigureAwait(false);
@@ -327,7 +328,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                     },
                     PanelService,
                     DialogService,
-                    JsRuntime),
+                    CommonBackgroundTaskApi),
                 true);
 
             return Task.CompletedTask;
@@ -396,7 +397,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
 
         foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
         {
-            var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+            var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
                 .MeasureElementById(panelGroupHtmlIdTuple.HtmlElementId)
                 .ConfigureAwait(false);
 

@@ -32,6 +32,8 @@ public partial class IdeHeader : ComponentBase, IDisposable
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
@@ -74,7 +76,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
     {
         return DropdownHelper.RenderDropdownAsync(
             DropdownService,
-            IdeBackgroundTaskApi.JsRuntimeCommonApi,
+            CommonBackgroundTaskApi.JsRuntimeCommonApi,
             IdeHeaderState.ButtonFileId,
             DropdownOrientation.Bottom,
             IdeHeaderState.DropdownKeyFile,
@@ -86,7 +88,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
     {
         return DropdownHelper.RenderDropdownAsync(
             DropdownService,
-            IdeBackgroundTaskApi.JsRuntimeCommonApi,
+            CommonBackgroundTaskApi.JsRuntimeCommonApi,
             IdeHeaderState.ButtonToolsId,
             DropdownOrientation.Bottom,
             IdeHeaderState.DropdownKeyTools,
@@ -100,7 +102,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 
         return DropdownHelper.RenderDropdownAsync(
             DropdownService,
-            IdeBackgroundTaskApi.JsRuntimeCommonApi,
+            CommonBackgroundTaskApi.JsRuntimeCommonApi,
             IdeHeaderState.ButtonViewId,
             DropdownOrientation.Bottom,
             IdeHeaderState.DropdownKeyView,
@@ -112,7 +114,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
     {
         return DropdownHelper.RenderDropdownAsync(
            DropdownService,
-           IdeBackgroundTaskApi.JsRuntimeCommonApi,
+           CommonBackgroundTaskApi.JsRuntimeCommonApi,
            IdeHeaderState.ButtonRunId,
            DropdownOrientation.Bottom,
            IdeHeaderState.DropdownKeyRun,
@@ -147,7 +149,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
                                 contextRecord,
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                IdeBackgroundTaskApi.JsRuntimeCommonApi,
+                                CommonBackgroundTaskApi.JsRuntimeCommonApi,
                                 PanelService);
 
                             await command.CommandFunc.Invoke(null).ConfigureAwait(false);
@@ -162,7 +164,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
                         {
                             DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
 
-                            await IdeBackgroundTaskApi.JsRuntimeCommonApi
+                            await CommonBackgroundTaskApi.JsRuntimeCommonApi
                                 .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
                                 .ConfigureAwait(false);
                         }
@@ -179,7 +181,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
                                     contextRecord,
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                    IdeBackgroundTaskApi.JsRuntimeCommonApi,
+                                    CommonBackgroundTaskApi.JsRuntimeCommonApi,
                                     PanelService);
 
                                 await command.CommandFunc.Invoke(null).ConfigureAwait(false);

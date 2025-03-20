@@ -81,7 +81,7 @@ public partial class TextEditorService : ITextEditorService
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _jsRuntime, _dialogService);
-        GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _jsRuntime);
+        GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _commonBackgroundTaskApi);
         DiffApi = new TextEditorDiffApi(this);
         OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi);
         
@@ -685,7 +685,7 @@ public partial class TextEditorService : ITextEditorService
 				textEditorService,
 				_panelService,
 				dialogService,
-				jsRuntime,
+				_commonBackgroundTaskApi,
 				VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),

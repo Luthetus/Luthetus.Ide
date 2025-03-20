@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
 public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
 {
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IContextService ContextService { get; set; } = null!;
 
@@ -46,7 +46,7 @@ public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
 
             if (contextState.IsSelectingInspectionTarget)
             {
-                var measuredHtmlElementDimensions = await JsRuntime.GetLuthetusCommonApi()
+                var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
                     .MeasureElementById(ContextRecord.ContextElementId)
                     .ConfigureAwait(false);
                 

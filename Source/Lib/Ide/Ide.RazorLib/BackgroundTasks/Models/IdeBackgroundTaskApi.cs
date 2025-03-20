@@ -1,4 +1,3 @@
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -51,6 +50,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     private readonly IStorageService _storageService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly ITreeViewService _treeViewService;
     private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IFileSystemProvider _fileSystemProvider;
@@ -72,7 +72,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ITerminalGroupService _terminalGroupService;
 	private readonly LuthetusHostingInformation _luthetusHostingInformation;
 	private readonly IIdeHeaderService _ideHeaderService;
-	private readonly IJSRuntime _jsRuntime;
 	private readonly IServiceProvider _serviceProvider;
 
     public IdeBackgroundTaskApi(
@@ -81,6 +80,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
         ITreeViewService treeViewService,
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
@@ -101,13 +101,13 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         ITerminalGroupService terminalGroupService,
         LuthetusHostingInformation luthetusHostingInformation,
         IIdeHeaderService ideHeaderService,
-        IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
         _ideComponentRenderers = ideComponentRenderers;
         _commonComponentRenderers = commonComponentRenderers;
+        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _treeViewService = treeViewService;
         _environmentProvider = environmentProvider;
 		_fileSystemProvider = fileSystemProvider;
@@ -129,16 +129,14 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _terminalGroupService = terminalGroupService;
         _luthetusHostingInformation = luthetusHostingInformation;
         _ideHeaderService = ideHeaderService;
-		_jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
-
-        JsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
 
         Editor = new EditorIdeApi(
             this,
             _backgroundTaskService,
             _textEditorService,
             _commonComponentRenderers,
+            _commonBackgroundTaskApi,
             _ideComponentRenderers,
             _fileSystemProvider,
             _environmentProvider,
@@ -147,7 +145,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _dialogService,
             _panelService,
             _notificationService,
-            _jsRuntime,
             _serviceProvider);
 
         FileSystem = new FileSystemIdeApi(
@@ -179,7 +176,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     public FileSystemIdeApi FileSystem { get; }
     public FolderExplorerIdeApi FolderExplorer { get; }
     public InputFileIdeApi InputFile { get; }
-    public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
@@ -303,7 +299,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(folderExplorerPanel);
         _panelService.RegisterPanelTab(leftPanel.Key, folderExplorerPanel, false);
 
@@ -332,7 +328,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(terminalGroupPanel);
         _panelService.RegisterPanelTab(bottomPanel.Key, terminalGroupPanel, false);
         // This UI has resizable parts that need to be initialized.
@@ -353,7 +349,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(activeContextsPanel);
         _panelService.RegisterPanelTab(bottomPanel.Key, activeContextsPanel, false);
 
@@ -379,7 +375,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _compilerServiceRegistry,
                             _dialogService,
                             _panelService,
-                            _jsRuntime)),
+                            _commonBackgroundTaskApi)),
                     _backgroundTaskService,
                     _commonComponentRenderers,
                     _notificationService)
@@ -402,7 +398,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _compilerServiceRegistry,
                             _dialogService,
                             _panelService,
-                            _jsRuntime)),
+                            _commonBackgroundTaskApi)),
                     _backgroundTaskService,
                     _commonComponentRenderers,
                     _notificationService,
@@ -431,7 +427,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _compilerServiceRegistry,
                             _dialogService,
                             _panelService,
-                            _jsRuntime)),
+                            _commonBackgroundTaskApi)),
                     _backgroundTaskService,
                     _commonComponentRenderers,
                     _notificationService)
@@ -454,7 +450,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _compilerServiceRegistry,
                             _dialogService,
                             _panelService,
-                            _jsRuntime)),
+                            _commonBackgroundTaskApi)),
                     _backgroundTaskService,
                     _commonComponentRenderers,
                     _notificationService,
