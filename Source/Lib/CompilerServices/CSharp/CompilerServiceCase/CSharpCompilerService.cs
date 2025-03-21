@@ -171,7 +171,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	}
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -254,7 +254,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     }
 	
 	public async ValueTask OnInspect(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
 		MouseEventArgs mouseEventArgs,
@@ -366,7 +366,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     }
     
     public void GoToDefinition(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -461,7 +461,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// <summary>
     /// This implementation is NOT thread safe.
     /// </summary>
-    public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
 	{
 		var resourceUri = modelModifier.ResourceUri;
 	

@@ -48,12 +48,12 @@ public static class SyntaxTextObjectVim
         return false;
     }
 
-    public static Func<ITextEditorEditContext, ValueTask> MoveCursorOneColumnLeftFactory(
+    public static Func<TextEditorEditContext, ValueTask> MoveCursorOneColumnLeftFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (TextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -77,12 +77,12 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static Func<ITextEditorEditContext, ValueTask> MoveCursorOneRowDownFactory(
+    public static Func<TextEditorEditContext, ValueTask> MoveCursorOneRowDownFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (TextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -106,12 +106,12 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static Func<ITextEditorEditContext, ValueTask> MoveCursorOneRowUpFactory(
+    public static Func<TextEditorEditContext, ValueTask> MoveCursorOneRowUpFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (TextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -135,12 +135,12 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static Func<ITextEditorEditContext, ValueTask> MoveCursorOneColumnRightFactory(
+    public static Func<TextEditorEditContext, ValueTask> MoveCursorOneColumnRightFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (TextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -164,12 +164,12 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static Func<ITextEditorEditContext, ValueTask> MoveCursorEndCurrentLineFactory(
+    public static Func<TextEditorEditContext, ValueTask> MoveCursorEndCurrentLineFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (TextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -193,12 +193,12 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static Func<ITextEditorEditContext, ValueTask> MoveCursorStartCurrentLineFactory(
+    public static Func<TextEditorEditContext, ValueTask> MoveCursorStartCurrentLineFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCommandArgs commandArgs)
     {
-        return (ITextEditorEditContext editContext) =>
+        return (TextEditorEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);

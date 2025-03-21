@@ -21,7 +21,7 @@ public class TextEditorCursorModifier
     public bool IsPrimaryCursor {get; set; }
     public int? SelectionAnchorPositionIndex { get; set; }
     public int SelectionEndingPositionIndex { get; set; }
-    public Key<TextEditorCursor> Key { get; init; }
+    public Key<TextEditorCursor> Key { get; set; }
 
     public TextEditorCursor ToCursor()
     {

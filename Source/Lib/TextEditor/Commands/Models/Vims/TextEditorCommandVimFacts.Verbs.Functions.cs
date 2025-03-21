@@ -14,7 +14,7 @@ public static partial class TextEditorCommandVimFacts
     public static partial class Verbs
     {
         public static ValueTask DeleteLine(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -29,7 +29,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async ValueTask ChangeLine(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -51,7 +51,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async ValueTask DeleteMotion(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -101,7 +101,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async ValueTask ChangeMotion(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -118,7 +118,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async ValueTask ChangeSelection(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -133,7 +133,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async ValueTask YankAsync(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -144,7 +144,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static void NewLineBelow(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -165,7 +165,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static void NewLineAbove(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,

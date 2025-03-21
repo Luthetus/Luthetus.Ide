@@ -81,14 +81,14 @@ public interface ICompilerService
 	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu);
 
 	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
 		CursorModifierBagTextEditor cursorModifierBag,
 		TextEditorCommandArgs commandArgs);
 		
 	public ValueTask OnInspect(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
 		MouseEventArgs mouseEventArgs,
@@ -98,11 +98,11 @@ public interface ICompilerService
         
     /// <summary>TODO: This should be a ValueTask</summary>
     public void GoToDefinition(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs);
 
-	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
+	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
 }

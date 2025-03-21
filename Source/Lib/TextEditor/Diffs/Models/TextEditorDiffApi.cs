@@ -34,7 +34,7 @@ public class TextEditorDiffApi : ITextEditorDiffApi
         ReduceDisposeAction(diffModelKey);
     }
 
-    public Func<ITextEditorEditContext, Task> CalculateFactory(
+    public Func<TextEditorEditContext, Task> CalculateFactory(
         Key<TextEditorDiffModel> diffModelKey,
         CancellationToken cancellationToken)
     {

@@ -93,7 +93,7 @@ public class TextEditorWorker : IBackgroundTaskGroup
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
+        Func<TextEditorEditContext, ValueTask> textEditorFunc)
     {
     	EnqueueRedundantTextEditorWork(
     		new RedundantTextEditorWork(
@@ -106,7 +106,7 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	
 	public void PostUnique(
         string name,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
+        Func<TextEditorEditContext, ValueTask> textEditorFunc)
     {
     	EnqueueUniqueTextEditorWork(
     		new UniqueTextEditorWork(

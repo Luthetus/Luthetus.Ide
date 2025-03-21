@@ -17,6 +17,7 @@ using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -65,13 +66,52 @@ public partial interface ITextEditorService
 	/// </summary>
 	public StringBuilder __StringBuilder { get; }
 	
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public List<TextEditorCursorModifier> __CursorModifierList { get; }
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public bool __IsAvailableCursorModifierList { get; set; }
+	
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public TextEditorCursorModifier __CursorModifier { get; }
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public bool __IsAvailableCursorModifier { get; set; }
+	
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public Dictionary<ResourceUri, TextEditorModelModifier?> __ModelCache { get; }
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache { get; }
+    /// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> __ViewModelCache { get; }
+    /// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor> __CursorModifierBagCache { get; }
+    /// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> __DiffModelCache { get; }
+	
 	public event Action? TextEditorStateChanged;
         
 	/// <summmary>
 	/// This method writes any mutated data within the <see cref="ITextEditorWork.EditContext"/>
 	/// to the <see cref="TextEditorState"/>, and afterwards causes a UI render.
 	/// </summary>
-	public ValueTask FinalizePost(ITextEditorEditContext editContext);
+	public ValueTask FinalizePost(TextEditorEditContext editContext);
 	
 	public Task OpenInEditorAsync(
 		string absolutePath,
@@ -90,7 +130,7 @@ public partial interface ITextEditorService
 		
 	public void RegisterModel(TextEditorModel model);
 	public void DisposeModel(ResourceUri resourceUri);
-	public void SetModel(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier);
+	public void SetModel(TextEditorEditContext editContext, TextEditorModelModifier modelModifier);
 	
 	public void RegisterViewModel(
 	    Key<TextEditorViewModel> viewModelKey,
@@ -104,12 +144,12 @@ public partial interface ITextEditorService
 	public void DisposeViewModel(Key<TextEditorViewModel> viewModelKey);
 	
 	public void SetViewModelWith(
-	    ITextEditorEditContext editContext,
+	    TextEditorEditContext editContext,
 	    Key<TextEditorViewModel> viewModelKey,
 	    Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 	
 	public void SetModelAndViewModelRange(
-	    ITextEditorEditContext editContext,
-		Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
-		Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList);
+	    TextEditorEditContext editContext,
+		List<TextEditorModelModifier?> modelModifierList,
+		List<TextEditorViewModelModifier?> viewModelModifierList);
 }
