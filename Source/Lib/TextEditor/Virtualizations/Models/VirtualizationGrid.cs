@@ -136,7 +136,6 @@ public record VirtualizationGrid
 		
 		var spanBuilder = new StringBuilder();
 		
-		// TODO: Would the 'foreach is 500x faster for some reason' that is being seen in this file apply to this 'for' loop too?
 		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
 		{
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
@@ -148,12 +147,10 @@ public record VirtualizationGrid
 			
 			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
 		    
-		    // WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
-		    //          Presumably this is due to cache misses?
-		    foreach (var richCharacter in model.RichCharacterList
-		    		 	.Skip(virtualizationEntry.PositionIndexInclusiveStart)
-		    			 .Take(virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart))
+		    for (int i = virtualizationEntry.PositionIndexInclusiveStart; i < virtualizationEntry.PositionIndexExclusiveEnd; i++)
 		    {
+		    	var richCharacter = model.RichCharacterList[i];
+		    	 
 				if (currentDecorationByte == richCharacter.DecorationByte)
 			    {
 			        // AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
