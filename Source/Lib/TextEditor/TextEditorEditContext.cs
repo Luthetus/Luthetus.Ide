@@ -8,12 +8,6 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public sealed class TextEditorEditContext : ITextEditorEditContext
 {
-    public Dictionary<ResourceUri, TextEditorModelModifier?>? ModelCache { get; private set; }
-    public Dictionary<Key<TextEditorViewModel>, ResourceUri?>? ViewModelToModelResourceUriCache { get; private set; }
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? ViewModelCache { get; private set; }
-    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor>? CursorModifierBagCache { get; private set; }
-    public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?>? DiffModelCache { get; private set; }
-
     public TextEditorEditContext(ITextEditorService textEditorService)
     {
         TextEditorService = textEditorService;
@@ -25,17 +19,15 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
         ResourceUri modelResourceUri,
         bool isReadonly = false)
     {
-    	ModelCache ??= new();
-    
     	if (modelResourceUri == ResourceUri.Empty)
     		return null;
     
-        if (!ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
+        if (!TextEditorService.__ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
         {
             var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
             modelModifier = model is null ? null : new(model);
 
-            ModelCache.Add(modelResourceUri, modelModifier);
+            TextEditorService.__ModelCache.Add(modelResourceUri, modelModifier);
         }
 
         if (!isReadonly && modelModifier is not null)
@@ -48,16 +40,14 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
         Key<TextEditorViewModel> viewModelKey,
         bool isReadonly = false)
     {
-    	ViewModelToModelResourceUriCache ??= new();
-    	
         if (viewModelKey != Key<TextEditorViewModel>.Empty)
         {
-            if (!ViewModelToModelResourceUriCache.TryGetValue(viewModelKey, out var modelResourceUri))
+            if (!TextEditorService.__ViewModelToModelResourceUriCache.TryGetValue(viewModelKey, out var modelResourceUri))
             {
                 var model = TextEditorService.ViewModelApi.GetModelOrDefault(viewModelKey);
                 modelResourceUri = model?.ResourceUri;
 
-                ViewModelToModelResourceUriCache.Add(viewModelKey, modelResourceUri);
+                TextEditorService.__ViewModelToModelResourceUriCache.Add(viewModelKey, modelResourceUri);
             }
 
             return GetModelModifier(modelResourceUri.Value);
@@ -70,16 +60,14 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
         Key<TextEditorViewModel> viewModelKey,
         bool isReadonly = false)
     {
-    	ViewModelCache ??= new();
-    
         if (viewModelKey != Key<TextEditorViewModel>.Empty)
         {
-            if (!ViewModelCache.TryGetValue(viewModelKey, out var viewModelModifier))
+            if (!TextEditorService.__ViewModelCache.TryGetValue(viewModelKey, out var viewModelModifier))
             {
                 var viewModel = TextEditorService.ViewModelApi.GetOrDefault(viewModelKey);
                 viewModelModifier = viewModel is null ? null : new(viewModel);
 
-                ViewModelCache.Add(viewModelKey, viewModelModifier);
+                TextEditorService.__ViewModelCache.Add(viewModelKey, viewModelModifier);
             }
 
             if (!isReadonly && viewModelModifier is not null)
@@ -93,17 +81,15 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
     
     public CursorModifierBagTextEditor GetCursorModifierBag(TextEditorViewModel? viewModel)
     {
-    	CursorModifierBagCache ??= new();
-    	
         if (viewModel is not null)
         {
-            if (!CursorModifierBagCache.TryGetValue(viewModel.ViewModelKey, out var cursorModifierBag))
+            if (!TextEditorService.__CursorModifierBagCache.TryGetValue(viewModel.ViewModelKey, out var cursorModifierBag))
             {
                 cursorModifierBag = new CursorModifierBagTextEditor(
                     viewModel.ViewModelKey,
                     viewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
 
-                CursorModifierBagCache.Add(viewModel.ViewModelKey, cursorModifierBag);
+                TextEditorService.__CursorModifierBagCache.Add(viewModel.ViewModelKey, cursorModifierBag);
             }
 
             return cursorModifierBag;
@@ -126,16 +112,14 @@ public sealed class TextEditorEditContext : ITextEditorEditContext
         Key<TextEditorDiffModel> diffModelKey,
         bool isReadonly = false)
     {
-    	DiffModelCache ??= new();
-    	
         if (diffModelKey != Key<TextEditorDiffModel>.Empty)
         {
-            if (!DiffModelCache.TryGetValue(diffModelKey, out var diffModelModifier))
+            if (!TextEditorService.__DiffModelCache.TryGetValue(diffModelKey, out var diffModelModifier))
             {
                 var diffModel = TextEditorService.DiffApi.GetOrDefault(diffModelKey);
                 diffModelModifier = diffModel is null ? null : new(diffModel);
 
-                DiffModelCache.Add(diffModelKey, diffModelModifier);
+                TextEditorService.__DiffModelCache.Add(diffModelKey, diffModelModifier);
             }
 
             if (!isReadonly && diffModelModifier is not null)

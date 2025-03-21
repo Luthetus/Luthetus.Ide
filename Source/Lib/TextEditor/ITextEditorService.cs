@@ -17,6 +17,7 @@ using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -65,6 +66,35 @@ public partial interface ITextEditorService
 	/// </summary>
 	public StringBuilder __StringBuilder { get; }
 	
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public List<TextEditorCursorModifier> __CursorModifierList { get; }
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public TextEditorCursorModifier __CursorModifier { get; }
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public Dictionary<ResourceUri, TextEditorModelModifier?> __ModelCache { get; }
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache { get; }
+    /// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> __ViewModelCache { get; }
+    /// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor> __CursorModifierBagCache { get; }
+    /// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> __DiffModelCache { get; }
+	
 	public event Action? TextEditorStateChanged;
         
 	/// <summmary>
@@ -110,6 +140,6 @@ public partial interface ITextEditorService
 	
 	public void SetModelAndViewModelRange(
 	    ITextEditorEditContext editContext,
-		Dictionary<ResourceUri, TextEditorModelModifier?>? modelModifierList,
-		Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?>? viewModelModifierList);
+		List<TextEditorModelModifier?> modelModifierList,
+		List<TextEditorViewModelModifier?> viewModelModifierList);
 }
