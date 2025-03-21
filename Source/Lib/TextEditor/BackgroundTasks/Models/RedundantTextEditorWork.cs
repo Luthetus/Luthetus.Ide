@@ -79,7 +79,7 @@ public struct RedundantTextEditorWork : IBackgroundTask
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	var editContext = new TextEditorEditContext(TextEditorService);
+    	var editContext = new ITextEditorEditContext(TextEditorService);
     
 		await _textEditorFunc
             .Invoke(editContext)
