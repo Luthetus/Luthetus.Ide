@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -58,6 +59,11 @@ public partial interface ITextEditorService
 	
 	/// <summary>TODO: Delete this, this is a hack so I have it in scope for the new TextEditorWorker code.</summary>
 	public IBackgroundTaskService BackgroundTaskService { get; }
+	
+	/// <summary>
+	/// Do not touch this property, it is used for the VirtualizationGrid.
+	/// </summary>
+	public StringBuilder __StringBuilder { get; }
 	
 	public event Action? TextEditorStateChanged;
         

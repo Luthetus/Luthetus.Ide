@@ -80,6 +80,11 @@ public record VirtualizationGrid
     public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
 
     /// <summary>
+    ///
+    /// Do not invoke this method from outside an edit context.
+    /// It makes use of a shared instance of a StringBuilder
+    /// on the ITextEditorService.
+    ///
     /// The memory cost of rendering the text is currently being optimized.
     /// One side effect of this is an increased CPU cost whenever the text is rendered.
     ///
@@ -103,18 +108,6 @@ public record VirtualizationGrid
     /// I want to make sure the List is written over.
     /// I have not tested if referencing the properties through an implicit/explicit 'this' keyword
     /// would correctly update the List that the struct is contained in.
-    ///
-    /// -------------------------------------------------------------------------------------
-    ///
-    /// Extremely important detail: look into the difference between the model modifier 
-    /// and the model itself.
-    ///
-    /// This is probably why the for loop takes 500x longer.
-    ///
-    /// You are accepting an 'ITextEditorModel' but I think it is a TextEditorModelModifier,
-    /// and these are not equivalent in implementation of the properties.
-    ///
-    /// Oh my gosh: 'private RichCharacter[] _richCharacterList => _partitionList.SelectMany(x => x.RichCharacterList).ToArray();'.
     /// </summary>
     public void CreateCache(ITextEditorService textEditorService, ITextEditorModel model, TextEditorViewModel viewModel)
     {
@@ -134,7 +127,7 @@ public record VirtualizationGrid
 	        spaceKeyOutput = "·";
 	    }
 		
-		var spanBuilder = new StringBuilder();
+		textEditorService.__StringBuilder.Clear();
 		
 		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
 		{
@@ -153,36 +146,36 @@ public record VirtualizationGrid
 		    	 
 				if (currentDecorationByte == richCharacter.DecorationByte)
 			    {
-			        // AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+			        // AppendTextEscaped(textEditorService.__StringBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
 			        switch (richCharacter.Value)
 			        {
 			            case '\t':
-			                spanBuilder.Append(tabKeyOutput);
+			                textEditorService.__StringBuilder.Append(tabKeyOutput);
 			                break;
 			            case ' ':
-			                spanBuilder.Append(spaceKeyOutput);
+			                textEditorService.__StringBuilder.Append(spaceKeyOutput);
 			                break;
 			            case '\r':
 			                break;
 			            case '\n':
 			                break;
 			            case '<':
-			                spanBuilder.Append("&lt;");
+			                textEditorService.__StringBuilder.Append("&lt;");
 			                break;
 			            case '>':
-			                spanBuilder.Append("&gt;");
+			                textEditorService.__StringBuilder.Append("&gt;");
 			                break;
 			            case '"':
-			                spanBuilder.Append("&quot;");
+			                textEditorService.__StringBuilder.Append("&quot;");
 			                break;
 			            case '\'':
-			                spanBuilder.Append("&#39;");
+			                textEditorService.__StringBuilder.Append("&#39;");
 			                break;
 			            case '&':
-			                spanBuilder.Append("&amp;");
+			                textEditorService.__StringBuilder.Append("&amp;");
 			                break;
 			            default:
-			                spanBuilder.Append(richCharacter.Value);
+			                textEditorService.__StringBuilder.Append(richCharacter.Value);
 			                break;
 			        }
 			        // END OF INLINING AppendTextEscaped
@@ -191,39 +184,39 @@ public record VirtualizationGrid
 			    {
 			    	viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
 			    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
-			    		text: spanBuilder.ToString()));
-			        spanBuilder.Clear();
+			    		text: textEditorService.__StringBuilder.ToString()));
+			        textEditorService.__StringBuilder.Clear();
 			        
-			        // AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+			        // AppendTextEscaped(textEditorService.__StringBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
 			        switch (richCharacter.Value)
 			        {
 			            case '\t':
-			                spanBuilder.Append(tabKeyOutput);
+			                textEditorService.__StringBuilder.Append(tabKeyOutput);
 			                break;
 			            case ' ':
-			                spanBuilder.Append(spaceKeyOutput);
+			                textEditorService.__StringBuilder.Append(spaceKeyOutput);
 			                break;
 			            case '\r':
 			                break;
 			            case '\n':
 			                break;
 			            case '<':
-			                spanBuilder.Append("&lt;");
+			                textEditorService.__StringBuilder.Append("&lt;");
 			                break;
 			            case '>':
-			                spanBuilder.Append("&gt;");
+			                textEditorService.__StringBuilder.Append("&gt;");
 			                break;
 			            case '"':
-			                spanBuilder.Append("&quot;");
+			                textEditorService.__StringBuilder.Append("&quot;");
 			                break;
 			            case '\'':
-			                spanBuilder.Append("&#39;");
+			                textEditorService.__StringBuilder.Append("&#39;");
 			                break;
 			            case '&':
-			                spanBuilder.Append("&amp;");
+			                textEditorService.__StringBuilder.Append("&amp;");
 			                break;
 			            default:
-			                spanBuilder.Append(richCharacter.Value);
+			                textEditorService.__StringBuilder.Append(richCharacter.Value);
 			                break;
 			        }
 			        // END OF INLINING AppendTextEscaped
@@ -235,8 +228,8 @@ public record VirtualizationGrid
 			/* Final grouping of contiguous characters */
 			viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
 	    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
-	    		text: spanBuilder.ToString()));
-			spanBuilder.Clear();
+	    		text: textEditorService.__StringBuilder.ToString()));
+			textEditorService.__StringBuilder.Clear();
 			
 			virtualizationEntry.VirtualizationSpanIndexExclusiveEnd = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		    

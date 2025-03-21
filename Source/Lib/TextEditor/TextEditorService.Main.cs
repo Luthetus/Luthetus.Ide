@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -119,6 +120,11 @@ public partial class TextEditorService : ITextEditorService
     public TextEditorWorker TextEditorWorker { get; }
     
     public IBackgroundTaskService BackgroundTaskService => _backgroundTaskService;
+    
+    /// <summary>
+	/// Do not touch this property, it is used for the VirtualizationGrid.
+	/// </summary>
+	public StringBuilder __StringBuilder { get; } = new StringBuilder();
     
     public event Action? TextEditorStateChanged;
 
