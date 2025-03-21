@@ -135,8 +135,7 @@ public record VirtualizationGrid
 	    }
 		
 		var spanBuilder = new StringBuilder();
-		byte? currentDecorationByte = null;
-	
+		
 		// TODO: Would the 'foreach is 500x faster for some reason' that is being seen in this file apply to this 'for' loop too?
 		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
 		{
@@ -146,6 +145,8 @@ public record VirtualizationGrid
 				continue;
 				
 			virtualizationEntry.VirtualizationSpanIndexInclusiveStart = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			
+			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
 		    
 		    // WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
 		    //          Presumably this is due to cache misses?
@@ -153,7 +154,7 @@ public record VirtualizationGrid
 		    		 	.Skip(virtualizationEntry.PositionIndexInclusiveStart)
 		    			 .Take(virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart))
 		    {
-				if ((currentDecorationByte ??= richCharacter.DecorationByte) == richCharacter.DecorationByte)
+				if (currentDecorationByte == richCharacter.DecorationByte)
 			    {
 			        // AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
 			        switch (richCharacter.Value)
@@ -192,7 +193,7 @@ public record VirtualizationGrid
 			    else
 			    {
 			    	viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
-			    		cssClass: model.DecorationMapper.Map(currentDecorationByte.Value),
+			    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
 			    		text: spanBuilder.ToString()));
 			        spanBuilder.Clear();
 			        
@@ -236,10 +237,9 @@ public record VirtualizationGrid
 		    
 			/* Final grouping of contiguous characters */
 			viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
-	    		cssClass: model.DecorationMapper.Map(currentDecorationByte.Value),
+	    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
 	    		text: spanBuilder.ToString()));
 			spanBuilder.Clear();
-			currentDecorationByte = null;
 			
 			virtualizationEntry.VirtualizationSpanIndexExclusiveEnd = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		    
