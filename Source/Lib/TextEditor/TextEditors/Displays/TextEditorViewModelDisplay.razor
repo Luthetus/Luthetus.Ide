@@ -371,12 +371,11 @@
 							*@
 							@if (virtualizationLine.VirtualizationSpanIndexExclusiveEnd != 0)
 							{
-								// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
-						    	//          Presumably this is due to cache misses?
-								foreach (var virtualizationSpan in renderBatchValidated.ViewModel.VirtualizationResult.VirtualizationSpanList
-										 	.Skip(virtualizationLine.VirtualizationSpanIndexInclusiveStart)
-											 .Take(virtualizationLine.VirtualizationSpanIndexExclusiveEnd - virtualizationLine.VirtualizationSpanIndexInclusiveStart))
+								for (int badI = virtualizationLine.VirtualizationSpanIndexInclusiveStart; badI < virtualizationLine.VirtualizationSpanIndexExclusiveEnd; badI++)
 								{
+									var i = badI;
+									var virtualizationSpan = renderBatchValidated.ViewModel.VirtualizationResult.VirtualizationSpanList[i];
+									
 									<span class="@virtualizationSpan.CssClass">
 							            @((MarkupString)virtualizationSpan.Text)
 							        </span>
