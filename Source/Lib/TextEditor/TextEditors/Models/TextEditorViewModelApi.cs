@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -21,18 +20,17 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDialogService _dialogService;
 
-    // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
-    private readonly IJSRuntime _jsRuntime;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorViewModelApi(
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
-        IJSRuntime jsRuntime,
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDialogService dialogService)
     {
         _textEditorService = textEditorService;
         _backgroundTaskService = backgroundTaskService;
-        _jsRuntime = jsRuntime;
+        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dialogService = dialogService;
     }
     
@@ -102,8 +100,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
             resourceUri,
             category,
             _textEditorService,
-            _dialogService,
-            _jsRuntime);
+            _dialogService);
     }
     
     public void Register(TextEditorViewModel viewModel)
@@ -280,8 +277,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public ValueTask FocusPrimaryCursorAsync(string primaryCursorContentId)
     {
-    	// Why is GetLuthetusCommonApi() not cached? (2025-01-18)
-        return _jsRuntime.GetLuthetusCommonApi()
+        return _commonBackgroundTaskApi.JsRuntimeCommonApi
             .FocusHtmlElementById(primaryCursorContentId, preventScroll: true);
     }
 

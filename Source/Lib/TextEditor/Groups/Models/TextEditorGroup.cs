@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Models;
@@ -20,7 +20,7 @@ public record TextEditorGroup(
         ITextEditorService TextEditorService,
         IPanelService PanelService,
         IDialogService DialogService,
-        IJSRuntime JsRuntime)
+        CommonBackgroundTaskApi CommonBackgroundTaskApi)
      : ITabGroup
 {
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
@@ -69,7 +69,7 @@ public record TextEditorGroup(
                     TextEditorService,
                     PanelService,
                     DialogService,
-                    JsRuntime))
+                    CommonBackgroundTaskApi))
                 .ConfigureAwait(false);
         }
     }
@@ -96,7 +96,7 @@ public record TextEditorGroup(
 	                    TextEditorService,
 	                    PanelService,
 	                    DialogService,
-	                    JsRuntime))
+	                    CommonBackgroundTaskApi))
 	                .ConfigureAwait(false);
 			}
         }

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -8,6 +7,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Extensions.Git.Models;
@@ -26,7 +26,7 @@ public partial class GitDisplay : ComponentBase, IDisposable
     [Inject]
     private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -49,10 +49,8 @@ public partial class GitDisplay : ComponentBase, IDisposable
 	private async Task ShowMenuDropdown(Key<DropdownRecord> dropdownKey)
     {
         var menu = ConstructMenu();
-		
-		var jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
 
-		var buttonDimensions = await jsRuntimeCommonApi
+		var buttonDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
 			.MeasureElementById(_dropdownMenuHtmlElementId)
 			.ConfigureAwait(false);
 

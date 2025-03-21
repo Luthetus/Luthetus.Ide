@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -27,7 +26,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private IPanelService PanelService { get; set; } = null!;
 	[Inject]
-	private IJSRuntime JsRuntime { get; set; } = null!;
+	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
@@ -94,7 +93,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 					CompilerServiceRegistry,
 					DialogService,
 				    PanelService,
-					JsRuntime)),
+					CommonBackgroundTaskApi)),
 			BackgroundTaskService,
 			CommonComponentRenderers,
 			NotificationService,

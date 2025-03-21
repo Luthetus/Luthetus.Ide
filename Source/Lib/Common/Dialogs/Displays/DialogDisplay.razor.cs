@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Dialogs.Displays;
 
@@ -20,7 +21,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Inject]
     private LuthetusCommonConfig CommonConfig { get; set; } = null!;
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IDialog Dialog { get; set; } = null!;
@@ -59,7 +60,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await JsRuntime.GetLuthetusCommonApi()
+            await CommonBackgroundTaskApi.JsRuntimeCommonApi
                 .FocusHtmlElementById(Dialog.DialogFocusPointHtmlElementId)
                 .ConfigureAwait(false);
         }
@@ -99,7 +100,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
         
-        await JsRuntime.GetLuthetusCommonApi()
+        await CommonBackgroundTaskApi.JsRuntimeCommonApi
 	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
 	        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
 	        .ConfigureAwait(false);

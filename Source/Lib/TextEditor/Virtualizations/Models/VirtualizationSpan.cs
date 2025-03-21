@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components;
+
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 /// <summary>
@@ -20,9 +22,9 @@ public struct VirtualizationSpan
 	public VirtualizationSpan(string cssClass, string text)
 	{
 		CssClass = cssClass;
-		Text = text;
+		MarkupStringText = new MarkupString(text);
 	}
 	
 	public string CssClass { get; }
-	public string Text { get; }
+	public MarkupString MarkupStringText { get; }
 }

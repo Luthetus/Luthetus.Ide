@@ -1,20 +1,20 @@
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Extensions.Git.ComponentRenderers.Models;
-using Luthetus.Extensions.Git.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Extensions.Git.ComponentRenderers.Models;
+using Luthetus.Extensions.Git.Models;
 using Luthetus.Extensions.Git.Displays;
-using Microsoft.JSInterop;
 
 namespace Luthetus.Extensions.Git.BackgroundTasks.Models;
 
@@ -28,10 +28,10 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
+	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 	private readonly INotificationService _notificationService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
-    private readonly IJSRuntime _jsRuntime;
 
     public GitBackgroundTaskApi(
 		GitTreeViews gitTreeViews,
@@ -42,10 +42,10 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
         IEnvironmentProvider environmentProvider,
         IBackgroundTaskService backgroundTaskService,
         ICommonComponentRenderers commonComponentRenderers,
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
         INotificationService notificationService,
         IPanelService panelService,
-        IDialogService dialogService,
-        IJSRuntime jsRuntime)
+        IDialogService dialogService)
 	{
 		_gitTreeViews = gitTreeViews;
 		_ideComponentRenderers = ideComponentRenderers;
@@ -58,7 +58,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
         _notificationService = notificationService;
         _panelService = panelService;
         _dialogService = dialogService;
-        _jsRuntime = jsRuntime;
+        _commonComponentRenderers = commonComponentRenderers;
 
         GitCliOutputParser = new GitCliOutputParser(
 			this,
@@ -126,7 +126,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
             null,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
         _panelService.RegisterPanel(gitPanel);
         _panelService.RegisterPanelTab(leftPanel.Key, gitPanel, false);
     }

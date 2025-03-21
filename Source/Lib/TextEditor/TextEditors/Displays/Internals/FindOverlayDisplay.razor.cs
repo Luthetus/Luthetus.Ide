@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -20,9 +21,9 @@ public partial class FindOverlayDisplay : ComponentBase
 	[Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorRenderBatch? RenderBatch { get; set; }
@@ -119,7 +120,7 @@ public partial class FindOverlayDisplay : ComponentBase
             {
             	becameShown = true;
             	
-                await JsRuntime.GetLuthetusCommonApi()
+                await CommonBackgroundTaskApi.JsRuntimeCommonApi
                     .FocusHtmlElementById(renderBatchLocal.ViewModel.FindOverlayId)
                     .ConfigureAwait(false);
             }
@@ -143,7 +144,7 @@ public partial class FindOverlayDisplay : ComponentBase
     	
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await JsRuntime.GetLuthetusCommonApi()
+            await CommonBackgroundTaskApi.JsRuntimeCommonApi
                 .FocusHtmlElementById(renderBatchLocal.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 

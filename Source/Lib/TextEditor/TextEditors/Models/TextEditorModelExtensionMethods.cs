@@ -82,12 +82,24 @@ public static class TextEditorModelExtensionMethods
         var line = model.GetLineInformation(lineIndex);
 
         model.AssertColumnIndex(line, columnIndex);
-
-        var tabs = model.TabKeyPositionList
-            .SkipWhile(positionIndex => positionIndex < line.StartPositionIndexInclusive)
-            .TakeWhile(positionIndex => positionIndex < line.StartPositionIndexInclusive + columnIndex);
-
-        return tabs.Count();
+        
+        var count = 0;
+        var foundSpan = false;
+        
+        foreach (var positionIndex in model.TabKeyPositionList)
+        {
+        	if (!foundSpan && positionIndex < line.StartPositionIndexInclusive)
+        		continue;
+        	else
+        		foundSpan = true;
+        		
+        	if (positionIndex < line.StartPositionIndexInclusive + columnIndex)
+        		count++;
+        	else
+        		break;
+        }
+        
+        return count;
     }
 
     /// <summary>
