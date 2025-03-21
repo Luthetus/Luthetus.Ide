@@ -29,7 +29,7 @@ public struct OnDoubleClick
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	var editContext = new ITextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
         var modelModifier = editContext.GetModelModifier(ResourceUri, true);
         var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);

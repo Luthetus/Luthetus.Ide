@@ -167,7 +167,7 @@ public partial class TextEditorService : ITextEditorService
     
     public event Action? TextEditorStateChanged;
 
-	public async ValueTask FinalizePost(ITextEditorEditContext editContext)
+	public async ValueTask FinalizePost(TextEditorEditContext editContext)
 	{
         foreach (var modelModifier in __ModelCache.Values)
         {
@@ -376,7 +376,7 @@ public partial class TextEditorService : ITextEditorService
 	/// So, the bool is a bit hacky.
 	/// </summary>
 	public void ValidateMaximumScrollLeftAndScrollTop(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
 		TextEditorViewModelModifier viewModelModifier,
 		bool textEditorDimensionsChanged)
 	{	
@@ -669,7 +669,7 @@ public partial class TextEditorService : ITextEditorService
     }
 	
 	public void SetModel(
-	    ITextEditorEditContext editContext,
+	    TextEditorEditContext editContext,
 	    TextEditorModelModifier modelModifier)
 	{
 		lock (_stateModificationLock)
@@ -797,7 +797,7 @@ public partial class TextEditorService : ITextEditorService
     }
 	
 	public void SetViewModelWith(
-	    ITextEditorEditContext editContext,
+	    TextEditorEditContext editContext,
 	    Key<TextEditorViewModel> viewModelKey,
 	    Func<TextEditorViewModel, TextEditorViewModel> withFunc)
 	{
@@ -822,7 +822,7 @@ public partial class TextEditorService : ITextEditorService
     }
 	
 	public void SetModelAndViewModelRange(
-	    ITextEditorEditContext editContext,
+	    TextEditorEditContext editContext,
 		List<TextEditorModelModifier?>? modelModifierList,
 		List<TextEditorViewModelModifier?>? viewModelModifierList)
 	{

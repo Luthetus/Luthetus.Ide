@@ -101,7 +101,7 @@ public partial interface ITextEditorService
 	/// This method writes any mutated data within the <see cref="ITextEditorWork.EditContext"/>
 	/// to the <see cref="TextEditorState"/>, and afterwards causes a UI render.
 	/// </summary>
-	public ValueTask FinalizePost(ITextEditorEditContext editContext);
+	public ValueTask FinalizePost(TextEditorEditContext editContext);
 	
 	public Task OpenInEditorAsync(
 		string absolutePath,
@@ -120,7 +120,7 @@ public partial interface ITextEditorService
 		
 	public void RegisterModel(TextEditorModel model);
 	public void DisposeModel(ResourceUri resourceUri);
-	public void SetModel(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier);
+	public void SetModel(TextEditorEditContext editContext, TextEditorModelModifier modelModifier);
 	
 	public void RegisterViewModel(
 	    Key<TextEditorViewModel> viewModelKey,
@@ -134,12 +134,12 @@ public partial interface ITextEditorService
 	public void DisposeViewModel(Key<TextEditorViewModel> viewModelKey);
 	
 	public void SetViewModelWith(
-	    ITextEditorEditContext editContext,
+	    TextEditorEditContext editContext,
 	    Key<TextEditorViewModel> viewModelKey,
 	    Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 	
 	public void SetModelAndViewModelRange(
-	    ITextEditorEditContext editContext,
+	    TextEditorEditContext editContext,
 		List<TextEditorModelModifier?> modelModifierList,
 		List<TextEditorViewModelModifier?> viewModelModifierList);
 }

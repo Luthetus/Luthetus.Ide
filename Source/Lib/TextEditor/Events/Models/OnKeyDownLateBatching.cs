@@ -91,7 +91,7 @@ public struct OnKeyDownLateBatching
     	LuthetusDebugSomething.OnKeyDownLateBatchingCountHandled++;
     	#endif
     
-    	var editContext = new ITextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
 
         var modelModifier = editContext.GetModelModifier(ResourceUri);
         var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);

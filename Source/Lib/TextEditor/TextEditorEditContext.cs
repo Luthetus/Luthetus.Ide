@@ -6,13 +6,9 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
-/// <summary>
-/// If making this a struct works, make sure you rename this type,
-/// then delete this comment.
-/// </summary>
-public struct ITextEditorEditContext
+public struct TextEditorEditContext
 {
-    public ITextEditorEditContext(ITextEditorService textEditorService)
+    public TextEditorEditContext(ITextEditorService textEditorService)
     {
         TextEditorService = textEditorService;
     }

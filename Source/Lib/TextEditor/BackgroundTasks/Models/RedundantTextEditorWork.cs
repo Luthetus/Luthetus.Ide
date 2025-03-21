@@ -25,14 +25,14 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </remarks>
 public struct RedundantTextEditorWork : IBackgroundTask
 {
-    private readonly Func<ITextEditorEditContext, ValueTask> _textEditorFunc;
+    private readonly Func<TextEditorEditContext, ValueTask> _textEditorFunc;
 
     public RedundantTextEditorWork(
         string name,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         ITextEditorService textEditorService,
-        Func<ITextEditorEditContext, ValueTask> textEditorFunc)
+        Func<TextEditorEditContext, ValueTask> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
 
@@ -79,7 +79,7 @@ public struct RedundantTextEditorWork : IBackgroundTask
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	var editContext = new ITextEditorEditContext(TextEditorService);
+    	var editContext = new TextEditorEditContext(TextEditorService);
     
 		await _textEditorFunc
             .Invoke(editContext)

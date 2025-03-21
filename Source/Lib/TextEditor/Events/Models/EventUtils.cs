@@ -250,7 +250,7 @@ public static class EventUtils
 		Key<TextEditorViewModel> viewModelKey,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
-		ITextEditorEditContext editContext)
+		TextEditorEditContext editContext)
     {
         var modelModifier = editContext.GetModelModifier(resourceUri);
         var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);

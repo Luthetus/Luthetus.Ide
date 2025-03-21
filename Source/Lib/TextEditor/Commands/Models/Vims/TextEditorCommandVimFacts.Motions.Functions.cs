@@ -11,7 +11,7 @@ public static partial class TextEditorCommandVimFacts
     public static partial class Motions
     {
         public static void Word(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -55,7 +55,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static void End(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -70,7 +70,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         private static void PerformEnd(
-            ITextEditorEditContext editContext,
+            TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -150,7 +150,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static void Back(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -193,7 +193,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async ValueTask Visual(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -233,7 +233,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async ValueTask VisualLine(
-        	ITextEditorEditContext editContext,
+        	TextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
