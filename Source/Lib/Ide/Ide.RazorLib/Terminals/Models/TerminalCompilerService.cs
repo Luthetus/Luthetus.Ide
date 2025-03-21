@@ -136,7 +136,7 @@ public sealed class TerminalCompilerService : ICompilerService
 	}
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -146,7 +146,7 @@ public sealed class TerminalCompilerService : ICompilerService
     }
 	
 	public ValueTask OnInspect(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
 		MouseEventArgs mouseEventArgs,
@@ -158,7 +158,7 @@ public sealed class TerminalCompilerService : ICompilerService
     }
     
     public void GoToDefinition(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -167,7 +167,7 @@ public sealed class TerminalCompilerService : ICompilerService
     	return;
     }
 
-	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
     	return ValueTask.CompletedTask;
     }

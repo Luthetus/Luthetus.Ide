@@ -37,7 +37,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static async ValueTask CopyAsync(
-	    ITextEditorEditContext editContext,
+	    TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -53,7 +53,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static async ValueTask CutAsync(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -82,7 +82,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static async ValueTask PasteAsync(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -95,7 +95,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void TriggerSave(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -120,7 +120,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void SelectAll(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -133,7 +133,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void Undo(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -143,7 +143,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void Redo(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -153,7 +153,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void TriggerRemeasure(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         TextEditorCommandArgs commandArgs)
     {
@@ -161,7 +161,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void ScrollLineDown(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -174,7 +174,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void ScrollLineUp(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -187,7 +187,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void ScrollPageDown(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -200,7 +200,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void ScrollPageUp(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -213,7 +213,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void CursorMovePageBottom(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -232,7 +232,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void CursorMovePageTop(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -250,7 +250,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void Duplicate(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -288,7 +288,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void IndentMore(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -341,7 +341,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void IndentLess(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -429,7 +429,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void ClearTextSelection(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -440,7 +440,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void NewLineBelow(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -484,7 +484,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void NewLineAbove(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -537,7 +537,7 @@ public class TextEditorCommandDefaultFunctions
     }
     
     public static void MoveLineDown(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -592,7 +592,7 @@ public class TextEditorCommandDefaultFunctions
     }
     
     public static void MoveLineUp(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -648,7 +648,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void GoToMatchingCharacter(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -758,7 +758,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static async ValueTask RelatedFilesQuickPick(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -871,7 +871,7 @@ public class TextEditorCommandDefaultFunctions
     }
     
     public static async ValueTask QuickActionsSlashRefactor(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -937,7 +937,7 @@ public class TextEditorCommandDefaultFunctions
     }
     
     public static void GoToDefinition(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -952,7 +952,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void ShowFindAllDialog(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -962,7 +962,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static async ValueTask ShowTooltipByCursorPositionAsync(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -995,7 +995,7 @@ public class TextEditorCommandDefaultFunctions
 
 	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
 	public static async ValueTask HandleAfterOnKeyDownAsync(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -1072,7 +1072,7 @@ public class TextEditorCommandDefaultFunctions
 	/// This method is intended to solve this problem, but it was forgotten at some point.
 	/// </summary>
 	public static async ValueTask HandleAfterOnKeyDownRangeAsync(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -1155,7 +1155,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
 	public static ValueTask HandleMouseStoppedMovingEventAsync(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
 		MouseEventArgs mouseEventArgs,
@@ -1180,7 +1180,7 @@ public class TextEditorCommandDefaultFunctions
     /// Use the method <see cref="RemoveDropdown"/> to un-render the dropdown programmatically.
     /// </summary>
     public static void ShowDropdown(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -1231,7 +1231,7 @@ public class TextEditorCommandDefaultFunctions
 	}
 	
 	public static void RemoveDropdown(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         IDropdownService dropdownService)
     {
@@ -1245,7 +1245,7 @@ public class TextEditorCommandDefaultFunctions
 	}
 	
 	public static void ShowContextMenu(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -1278,7 +1278,7 @@ public class TextEditorCommandDefaultFunctions
 	}
 	
 	public static void ShowAutocompleteMenu(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,

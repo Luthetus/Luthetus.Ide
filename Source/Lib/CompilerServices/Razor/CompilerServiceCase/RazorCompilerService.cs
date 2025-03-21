@@ -143,7 +143,7 @@ public sealed class RazorCompilerService : ICompilerService
 	}
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -153,7 +153,7 @@ public sealed class RazorCompilerService : ICompilerService
     }
     
     public ValueTask OnInspect(
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
 		MouseEventArgs mouseEventArgs,
@@ -165,7 +165,7 @@ public sealed class RazorCompilerService : ICompilerService
     }
     
     public void GoToDefinition(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -174,7 +174,7 @@ public sealed class RazorCompilerService : ICompilerService
     	return;
     }
 
-	public ValueTask ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
     {
     	lock (_resourceMapLock)
 		{

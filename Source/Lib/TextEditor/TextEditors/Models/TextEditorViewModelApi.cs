@@ -165,7 +165,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
     public void SetScrollPosition(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double? scrollLeftInPixels,
         double? scrollTopInPixels)
@@ -192,7 +192,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void MutateScrollVerticalPosition(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double pixels)
     {
@@ -206,7 +206,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void MutateScrollHorizontalPosition(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double pixels)
     {
@@ -220,7 +220,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void ScrollIntoView(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         TextEditorTextSpan textSpan)
@@ -283,7 +283,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void MoveCursor(
         KeymapArgs keymapArgs,
-		ITextEditorEditContext editContext,
+		TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
@@ -301,7 +301,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void MoveCursorUnsafe(
         KeymapArgs keymapArgs,
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -625,7 +625,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CursorMovePageTop(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
@@ -637,7 +637,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CursorMovePageTopUnsafe(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
@@ -652,7 +652,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CursorMovePageBottom(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
@@ -666,7 +666,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CursorMovePageBottomUnsafe(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -683,7 +683,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
     
     public void RevealCursor(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -726,7 +726,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CalculateVirtualizationResult(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken)
@@ -1099,7 +1099,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public async ValueTask RemeasureAsync(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
@@ -1124,7 +1124,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void ForceRender(
-        ITextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken)
     {

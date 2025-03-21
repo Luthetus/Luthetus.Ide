@@ -18,7 +18,7 @@ public static class TestExplorerHelper
 	/// TODO: D.R.Y.: This method is copy and pasted, then altered a bit, from
 	/// <see cref="TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.GoToDefinitionFactory"/>.
 	/// </summary>
-	public static Func<ITextEditorEditContext, ValueTask> ShowTestInEditorFactory(
+	public static Func<TextEditorEditContext, ValueTask> ShowTestInEditorFactory(
 		string className,
 		string methodName,
 		ICommonComponentRenderers commonComponentRenderers,
