@@ -5,18 +5,515 @@ All notable changes to the "Luthetus.Ide" repository will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.9.1.0] - WIP_DATE
+## [0.9.6.9] - 2024-10-17
 <details>
   <summary>Click to show changes</summary>
 
-	### FIX
+	- Text Editor: fix presentation layer background highlighting.
+			You can now provide a singular text span that "spans" many lines,
+			and the text editor will highlight that area.
+			Previously, you had to break the singular text span yourself
+			into individual text spans per line.
+	- When viewing a C# file, one can have the nearest scope highlighted
+			at its start and end points by adding the following
+			(NOTE: the luthetusTextEditor.css was modified to now include .luth_te_brace_matching {...}
+					so you might have to clear your cache to get the latest CSS to load.):
+			
+			<pre>
+	private ViewModelDisplayOptions _viewModelDisplayOptions = new()
+	{
+	HeaderComponentType = typeof(TextEditorDevToolsAnchorDisplay),
+	};
+
+	&lt;TextEditorGroupDisplay TextEditorGroupKey="EditorIdeApi.EditorTextEditorGroupKey"
+	ViewModelDisplayOptions="_viewModelDisplayOptions"/&gt;</pre>
+		
+		<li>
+			Add property: LuthetusTextEditorConfig.AbsolutePathStandardizeFunc
+			<pre>
+	/// &lt;summary&gt;
+	/// Func is given as an argument a string and IServiceProvider, the string will be
+	/// made into a &lt;see cref="Luthetus.TextEditor.RazorLib.Lexers.Models.ResourceUri"/&gt;.
+	///
+	/// Returns the standardized format for the absolute path.
+	///
+	/// Example: "C:\a.txt" and "\a.txt" are two distinct resource uri's.
+	///          With this Func, if one desires, they can alter
+	///          "C:\a.txt" to remove the 'C:' from its string,
+	///          or add 'C:' to the "\a.txt" or etc...
+	///          to make these resource uris match one another.
+	/// &lt;/summary&gt;
+	public Func&lt;string, IServiceProvider, Task&lt;string&gt;&gt;? AbsolutePathStandardizeFunc { get; set; }
+			</pre>
+		- C# Parser:
+			- Function Definition and Constructor Definition and Primary Constructor arguments
+					are now added to the function body's scope.
+					(previously they were being added to the scope that contained
+						the function definition.).
+			- Parse scope of keywords that create scope blocks.
+					<pre>
+	foreach (var someVariable in list)
+	{
+	/*
+	scope is parsed here now, and the variable 'someVariable'
+	is only defined within this code block.
+	*/
+	}</pre>
+				- Progress was made on "single statement body code blocks"
+					i.e.:
+					<pre>
+	foreach (var someVariable in list)
+	Console.WriteLine(someVariable);</pre>
+					
+					A scope is made on the semicolon for now (more changes to this will be made in the future).
+				- Drastic reduction to object allocations when parsing. Previously every
+					scope held 3 or so dictionaries:
+					<pre>
+	VariableDeclarations&lt;string identifier, variableDeclarationNode&gt;
+	FunctionDefinitions&lt;string identifier, functionDefinitionNode&gt;
+	TypeDefinitions&lt;string identifier, typeDefinitionNode&gt;.</pre>
+					
+					Now, the 3 dictionaries are allocated per file, rather than
+					per scope within a file.
+					
+					Depending on how many code blocks were in a file, this could
+					end up being a substantial reduction to the amount of
+					objects that are allocated.
+					
+					Also, the Scope.cs itself was made into a struct, with minimal
+					information attached to it.
+				- Tokens are now structs (previously they were sealed records)
+				- Nodes now maintain their ChildList as an ISyntax[]
+					(previously they were ImmutableArray&lt;ISyntax&gt;)
+				- Reason for all the struct changes:
+					the parser logic gets ran frequently,
+					and is constantly constructing new syntax trees.
+					So the faster we can delete the previous syntax tree
+					the better (i.e.: not delete it via garbage collection
+					which is hard on the cpu with how much turnover on the constructed objects there are
+					in the parser code).
+				
+			</ul>
+		
+	</ul>
+</details>
+
+---
+
+## [0.9.6.8] - 2024-10-08
+<details>
+  <summary>Click to show changes</summary>
+
+	<ul>
+		- Move cursor to text span, scroll cursor into view:
+			'Output Panel', 'Code Search (Tool)', and 'Find All (Tool)'
+		- Test Explorer "Send to Output panel" context menu option will open the Output panel,
+			and will appear for individual tests, not just project test discovery.
+		- Set execution terminal active from StartupControlDisplay.razor.
+		- DotNetRunParseResult.cs add string message.
+		- TestExplorerDisplay.razor maintain ElementDimensions.
+		- Terminal panel Sync the spinner UI
+		- Fix: New C# Project should not share the same terminal command key for the 'new project' command and the 'add to solution' command.
+		- Fix: { 'Ctrl' + 'Space' } keybind to open autocomplete menu.
+	</ul>
+</details>
+
+---
+
+## [0.9.6.7] - 2024-10-07
+<details>
+  <summary>Click to show changes</summary>
+
+	<ul>
+		- Text Editor NuGet Package v3.2.0
+			<a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+		- Goto definition, respect the original cursor's syntax node kind.
+		- C# Parser:
+			- 'record struct' storage modifier kind
+			- TypeClauseNode with '?'
+			- Ambiguous property definition
+			- Constructor invocation within an expression.
+			- Record struct primary constructor
+			- ExplicitCastNode.cs 'Ex: (MyClass)someObject'
+			- Verbatim string progress
+			- Constructor ': this(...) or base(...)'
+			- 'params' keyword
+			- Constructor where clause (progress)
+			- For statement progress
+			- Foreach statement progress
+			- Lock statement progress
+			- While statement progress
+			- Do-while statement progress
+			- Switch statement progress
+			- Try-catch-finally statement progress
+
+					Breadth first parsing progress
+					(Parse all the definitions in a given scope prior to
+					parsing an inner scope where appropriate i.e.: class definitions)
+
+		- Never throw an exception in the parser, just show a diagnostic
+		- Goto definition for 'SyntaxKind.ConstructorSymbol'
+		- ContextMenu goto definition, scroll cursor into view
+		- After context menu picked SetCursorShouldBlink(false)
+		- Add: ThrottleOptimized&lt;TArgs&gt;
+		- Drag optimizations (struct drag event actions)
+	</ul>
+</details>
+
+---
+
+## [0.9.6.6] - 2024-10-03
+<details>
+  <summary>Click to show changes</summary>
+
+	- Text Editor NuGet Package v3.1.0
+			<a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+		- Fix: fatal exception from v0.9.6.5 update (when opening code search dialog).
+</details>
+
+---
+
+## [0.9.6.5] - 2024-10-03
+<details>
+  <summary>Click to show changes</summary>
+
+	- On startup, re-open the last open '.sln' file
+		- Horizontally virtualize on a line by line basis, and only if the individual line is long.
+		- Virtualization result is an array of lines (was a list)
+		- Change: SetModelAndViewModelRangeAction to a struct
+		- Change: TextEditorTextSpan to record-struct
+		- TextEditorState.Main.cs uses private-mutable dictionaries to store
+			text editor models/viewmodels.
+			(They used to be ImmutableList(s))
+		- Add: IAppDataService.cs
+		- TextEditor: Add: ITextEditorDependentComponent.cs
+				("low priority" rendering of accessory components to the text editor).
+			Render header throttled at 1 second.
+			Render footer throttled at 250 milliseconds.
+		- Move git to its own project
+		- Add: FooterJustifyEndComponent.cs
+		- Fix: Git origin/branch only settable once
+		- Add: Simple PythonCompilerService
+</details>
+
+---
+
+## [0.9.6.4] - 2024-09-21
+<details>
+  <summary>Click to show changes</summary>
+
+		- Text Editor NuGet Package v2.7.0
+			<a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+		
+		- Common: BrowserResizeInterop
+		
+		- TextEditor: User Agent resize events trigger remeasure
+		
+		- TextEditor: Changing text editor's font-size triggers re-measure 
+		
+		- TextEditor: After re-remeasuring, reload the virtualization result.
+		
+		- TextEditor: InputTextEditorFontSize.razor changes
+		
+		- TextEditor: ScrollbarSection.razor vertical reset point while dragging
+		
+		- TextEditor: DISTANCE_TO_RESET_SCROLL_POSITION is 300px
+</details>
+
+---
+
+## [0.9.6.3] - 2024-09-19
+<details>
+  <summary>Click to show changes</summary>
+
+	<ul>
+		- Text Editor NuGet Package v2.6.0
+			<a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+		
+		- Fix: Text Editor, scrollWidth and scrollHeight becoming smaller (and how this impacts scrollLeft and scrollTop)
+		
+		- Fix: Text Editor, negative scrollLeft and negative scrollTop
+		
+	</ul>
+</details>
+
+---
+
+## [0.9.6.2] - 2024-09-18
+<details>
+  <summary>Click to show changes</summary>
+
+	<ul>
+		- Add to CommonOptions.cs: ResizeHandleWidthInPixels, and ResizeHandleHeightInPixels.
+		
+		- Notifications render width and height based on character width, and character height units of measurement,
+			rather than a fixed pixel value. This lets the notifications scale with font-size.
+		
+	</ul>
+</details>
+
+---
+
+## [0.9.6.1] - 2024-09-17
+<details>
+  <summary>Click to show changes</summary>
+
+	<ul>
+		- Don't move scrollbar for terminal unless the cursor position changed
+		
+		- Implement the TerminalWebsite progress
+		
+		- Clear button no longer affects an active command
+		
+		- Add: ITerminal.ClearFireAndForget()
+		
+		- Fix: IDE settings into a table
+		
+		- Change: common inputs into a table
+		
+	</ul>
+</details>
+
+---
+
+## [0.9.6.0] - 2024-09-13
+<details>
+  <summary>Click to show changes</summary>
+
+	<ul>
+		- Update Photino.Blazor NuGet Package to v3.1.9 (from v2.6.0).
+			The version of Ubuntu tested with this change had massive usability improvements,
+			and appears to perform better too.
+			Previously, caret browsing was turned on, and it wasn't obvious how to turn it off,
+			this was creating a whole mess of problems and no longer seems an issue.
+		
+	</ul>
+</details>
+
+---
+
+## [0.9.5.1] - 2024-09-07
+<details>
+  <summary>Click to show changes</summary>
+
+		- Fix tab drag off text editor group sometimes cause fatal exception due
+			to null reference exception.
+		
+		- Fix text erroneously written out when holding non-shift modifier(s).
+			(i.e.: { 'Ctrl' + 'c' } to copy writing out the letter 'c' to the text editor)
+		
+		- Given the change "Fix text erroneously written out when holding non-shift modifier(s)."
+			all previously added hacks to fix this have been removed for the more correct implementation.
+		
+		- Add: DropdownHelper.cs, less code duplication of dropdown logic.
+		
+		- Sort codebehinds '.cs' '.css'; DragInitializer.razor is an example where it isn't sorted. (Linux specific)
+		
+		- Invoke codebehinds for the C# project immediate children.
+		
+		- Fix add '.razor.cs' for an existing '.razor' file, on linux it won't show until restart IDE.
+		
+		- Fix remove '.razor.cs' for an existing '.razor' file, but the expansion chevron still renders.
+		
+		- Sort RelatedFilesQuickPick { 'F7' }
+		
+		- RelatedFilesQuickPick set initial menu index to the opened file
+		
+</details>
+
+---
+
+## [0.9.5.0] - 2024-09-05
+<details>
+  <summary>Click to show changes</summary>
+
+		- Fix: deletion of text that spans multiple partitions.
+		
+</details>
+
+---
+
+## [0.9.4.0] - 2024-09-02
+<details>
+  <summary>Click to show changes</summary>
+
+		- Home key has indentation logic
+		
+		- Fix cursor blinking
+		
+		- Fix change keymap without having to reload
+		
+		- Track additionally, the 'Key' of a keyboard event args (previously only was tracking the 'Code')
+		
+		- Change ITextEditorWork implementations and ResourceUri to structs
+		
+		- When running the IDE natively, disable various browser keybinds;
+			for example: 'F5' won't refresh the webview.
+		
+		- Fix various 'Vim' keybind bugs. It isn't fully functional yet.
+		
+		- Add: WidgetDisplay.razor
+		
+		- ContextSwitchDisplay.razor progress (keybind: Ctrl + Tab)
+		
+		- CommandBarDisplay.razor progress (keybind: Ctrl + P)
+		
+		- Use more recent dropdown code for text editor autocomplete and context menu.
+			The newer dropdown code moves itself so it stays on screen (if it initially rendered offscreen).
+		
+		- Fix: return focus to text editor after picking a menu option in autocomplete or context menu.
+		
+		- Start code snippet logic.
+		
+		- Fix: line endings breaking due to a Post to the ITextEditorService which makes an edit,
+					but then throws an exception within the same Post.
+		
+		- Fix: Gutter width changes causing the text editor measurements to be incorrect.
+		
+		- Fix: deletion of lines will now scroll by the amount of lines deleted.
+				Previously, this was breaking the virtualization result until one triggered a re-calculation.
+		
+		- Fix: Keybinds first try to match on a JavaScript 'event.key' so to speak. Then, as a fallback
+					they will now try to match on 'event.code' so to speak.
+					Previously, on Ubuntu, if one remapped the CapsLock key to Escape, it would not work
+					in the IDE at various places. This has been fixed.
+		
+		- Text editor events now use structs to transmit event data. This is expected to be a large optimization,
+				as it tends that high turnover 'class' objects bring performance issues due to the garbage collection overhead.
+		
+		- Text editor's OnKeyDownLateBatching event uses a fixed size array for batching events, rather than what previously
+				was a List&lt;T&gt;. This is expected to be a large optimization, as it tends that high turnover 'class' objects bring
+				performance issues due to the garbage collection overhead. As well, it tends to be the case that no more than
+				3 or 4 keyboard events ever get batched together. So the fixed size array is '8' keyboard events can be made into
+				a single batch.
+		
+</details>
+
+---
+
+## [0.9.3.0] - 2024-08-16
+<details>
+  <summary>Click to show changes</summary>
+
+		- 
+			<a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">
+				Text Editor NuGet Package v2.0.0
+			</a>
+
+			--(
+			<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Docs/TextEditor/installation.md">
+				installation.md
+			</a>
+			)
+		
+		- Fix cursor "randomly" losing focus
+		
+		- Re-write virtualization in C# (it was previously done with JavaScript)
+		
+		- Change RichCharacter.cs to a struct (it was previously a class).
+		
+		- Change ITextEditorModel.RichCharacterList to an array (it was previously an ImmutableList).
+		
+		- Fix typing at start of file (position index 0) a non letter or digit.
+		
+		- Fix text editor context menu crashing when closing
+		
+		- Fix out of sync syntax highlighting.
+		
+		- IDE uses 60% less memory after various struct/array optimizations.
+		
+		- IDE "feels" an order of magnitude faster after various Blazor optimizations and
+			struct/array optimizations (which reduce the garbage collection overhead thus improving performance greatly).
+		
+		- Fix terminal ContinueWithFunc not firing.
+		
+		- Click Output panel diagnostic to open file.
+		
+		- Send test output to Output panel for it to be parsed for any errors by using
+			right click menu on test explorer tree view node.
+		
+		- Keybind { Ctrl + . } for quick actions / refactors context menu.
+		
+		- Refactor: generate parameterless constructor when cursor on a property within a class.
+		
+		- Add: TerminalWebsite.cs implementation of ITerminal to avoid confusion when running website demo.
+		
+</details>
+
+---
+
+## [0.9.2.0] - 2024-08-11
+<details>
+  <summary>Click to show changes</summary>
+
+		- Bug in this version: The text editor appears to be "randomly" losing focus.
+			I presume I can fix this, but I am sitting on too many code changes at the moment,
+			so I'll accept these changes then look at this bug.
+		
+		- Cursor blinking is purposefully broken at the moment. It was
+			causing rerenders to all the actively rendered text editors because I wanted them
+			to synchronize the blinking. I still want it synchronized but I just want to revisit the
+			implementation I think it could be better.
+		
+		- Use RenderFragment(s) instead of Blazor components were applicable
+			to avoid the overhead of a component, while still using razor markup.
+		
+		- Rewrite terminal code. (this rewrite is still in progress, not finished).
+		
+		- If a file does not save properly, make it obvious to the user
+		
+		- Only invoke 'FinalizePost' in the events if there were no unhandled exceptions.
+		
+		- Rename 'IEditContext.cs' to 'ITextEditorEditContext.cs'
+		
+		- Change Luthetus libraries to net8.0
+		
+		- Reference Fluxor v6 NuGet package
+		
+		- <a href="https://github.com/tryphotino/photino.Blazor/issues/124"
+				target="_blank">
+				Having issues with upgrading Photino.Blazor from v2.6 to a higher version
+			</a>
+
+			For me, I can run 'dotnet run -c Release' on v2.6
+			But if I try to 'dotnet publish -c Release' then 
+			'cd bin/Release/net8.0/publish/' then 'dotnet ./Luthetus.Ide.Photino.dll'
+			I get 'Unhandled exception. System.MissingMethodException: Method not found: 'PhotinoNET.PhotinoWindow Photino.Blazor.PhotinoBlazorApp.get_MainWindow()'.
+	Aborted (core dumped)'
+			If I use v3 something then I get Load("/") "/" not found
+			or something.
+
+			I hate writing notes to myself right before I go to bed but hopefully
+			this is enough to jog my memory after getting some sleep.
+
+			(it worked on Windows, but not on Ubuntu when using v3)
+		
+</details>
+
+---
+
+## [0.9.1.0] - 2024-07-24
+<details>
+	<summary>Click to show changes</summary>
+
+	- IBackgroundTask service received immense optimizations.
+			Some of these optimizations include: no Task.Delay between
+			background task invocations, and attempt to run
+			a task synchronously, and only await it if it did not finish
+			synchronously.
+
+	- The text editor's 'IEditContext' received immense optimizations.
+			Some of these optimizations include: do not instantiate a 'Func'
+			for every method that takes an 'IEditContext' as a parameter.
+
 	- 'Find All' tool shows results in a tree view.
-	  As well, it shows multiple results per file,
-	  preview text for each result,
-	  and moves cursor to the respective result within the file.
-	- '@onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"'
-      This avoids unnecessary rendering due to implicit state has changed in the Blazor events.
-      Note: the exact version this was added in is uncertain. It was recent though.
+			As well, it shows multiple results per file,
+			preview text for each result,
+			and moves cursor to the respective result within the file.
+
+	- '@@onkeydown="EventUtil.AsNonRenderingEventHandler&lt;KeyboardEventArgs&gt;(ReceiveOnKeyDown)"'
+			This avoids unnecessary rendering due to implicit state has changed in the Blazor events.
+			Note: the exact version this was added in is uncertain. It was recent though.
 </details>
 
 ---
