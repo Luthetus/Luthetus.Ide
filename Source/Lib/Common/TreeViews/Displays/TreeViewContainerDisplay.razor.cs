@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -21,8 +20,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
@@ -123,7 +120,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
             // If dedicated context menu button or shift + F10 was pressed as opposed to
             // a mouse RightClick then use JavaScript to determine the ContextMenu position.
-            contextMenuFixedPosition = await JsRuntime.GetLuthetusCommonApi()
+            contextMenuFixedPosition = await CommonBackgroundTaskApi.JsRuntimeCommonApi
                 .GetTreeViewContextMenuFixedPosition(TreeViewService.GetNodeElementId(treeViewContainer.ActiveNode))
                 .ConfigureAwait(false);
 

@@ -1,6 +1,5 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using System.Text;
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -25,6 +24,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
+	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
@@ -32,8 +33,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
 	private IPanelService PanelService { get; set; } = null!;
-	[Inject]
-	private IJSRuntime JsRuntime { get; set; } = null!;
 
 	[CascadingParameter]
 	public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -365,7 +364,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        contextRecord,
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
-		        JsRuntime.GetLuthetusCommonApi(),
+		        CommonBackgroundTaskApi.JsRuntimeCommonApi,
 		        PanelService);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);

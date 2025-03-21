@@ -1,6 +1,6 @@
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Widgets.Models;
 
@@ -8,19 +8,14 @@ public class WidgetService : IWidgetService
 {
     private readonly object _stateModificationLock = new();
 
-    private readonly IJSRuntime _jsRuntime;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
-	public WidgetService(IJSRuntime jsRuntime)
+	public WidgetService(CommonBackgroundTaskApi commonBackgroundTaskApi)
 	{
-		_jsRuntime = jsRuntime;
+		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 	}
 	
 	private WidgetState _widgetState = new();
-	
-	private LuthetusCommonJavaScriptInteropApi _jsRuntimeCommonApi;
-	
-	private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi => _jsRuntimeCommonApi
-		??= _jsRuntime.GetLuthetusCommonApi();
 	
 	public event Action? WidgetStateChanged;
 	
@@ -68,7 +63,7 @@ public class WidgetService : IWidgetService
 		{
             _ = Task.Run(async () =>
             {
-                await JsRuntimeCommonApi
+                await _commonBackgroundTaskApi.JsRuntimeCommonApi
                     .FocusHtmlElementById(IDynamicViewModel.DefaultSetFocusOnCloseElementId)
                     .ConfigureAwait(false);
             });

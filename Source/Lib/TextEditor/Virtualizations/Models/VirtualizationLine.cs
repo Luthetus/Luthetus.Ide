@@ -10,7 +10,7 @@ public record struct VirtualizationLine(
     int PositionIndexExclusiveEnd,
     int VirtualizationSpanIndexInclusiveStart,
     int VirtualizationSpanIndexExclusiveEnd,
-    double? WidthInPixels,
-    double? HeightInPixels,
-    double? LeftInPixels,
-    double? TopInPixels);
+    double WidthInPixels,
+    double HeightInPixels,
+    double LeftInPixels,
+    double TopInPixels);

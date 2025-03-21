@@ -1,4 +1,3 @@
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -7,6 +6,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Editors.Models;
@@ -21,29 +21,24 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 	private readonly IPanelService _panelService;
 	private readonly ITreeViewService _treeViewService;
 	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IJSRuntime _jsRuntime;
+	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
 	public DotNetCommandFactory(
         ITextEditorService textEditorService,
         IPanelService panelService,
         ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,
-		IJSRuntime jsRuntime)
+		CommonBackgroundTaskApi commonBackgroundTaskApi)
 	{
 		_textEditorService = textEditorService;
 		_panelService = panelService;
         _treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
-		_jsRuntime = jsRuntime;
+		_commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
 
 	private List<TreeViewNoType> _nodeList = new();
     private TreeViewNamespacePath? _nodeOfViewModel = null;
-    
-    private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
-    
-    private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
-    	_jsRuntimeCommonApi ??= _jsRuntime.GetLuthetusCommonApi();
 
 	public void Initialize()
 	{
@@ -61,7 +56,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", JsRuntimeCommonApi, _panelService));
+					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonBackgroundTaskApi.JsRuntimeCommonApi, _panelService));
 		}
 		// CSharpReplContext
 		{
@@ -77,12 +72,12 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", JsRuntimeCommonApi, _panelService));
+					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonBackgroundTaskApi.JsRuntimeCommonApi, _panelService));
 		}
 		// SolutionExplorerContext
 		{
 			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", JsRuntimeCommonApi, _panelService);
+				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _panelService);
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 					new KeymapArgs

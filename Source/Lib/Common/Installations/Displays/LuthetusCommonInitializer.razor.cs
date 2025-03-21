@@ -1,21 +1,21 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Displays;
 
-/// <remarks>
-/// This class is an exception to the naming convention, "don't use the word 'Luthetus' in class names".
-/// 
-/// Reason for this exception: when one first starts interacting with this project,
-/// 	this type might be one of the first types they interact with. So, the redundancy of namespace
-/// 	and type containing 'Luthetus' feels reasonable here.
-/// </remarks>
+/// <summary>
+/// NOT thread safe.
+///
+/// Ensure only 1 instance is rendered
+/// to avoid race condition with:
+/// 'BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run...'
+/// </summary>
 public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 {
     [Inject]
@@ -23,32 +23,17 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 	[Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
-    private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
+    private CancellationTokenSource _workerCancellationTokenSource = new();
     
-    private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
-    	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
-    
-    /// <summary>
-    /// This is to say that the order of the <Luthetus...Initializer/> components
-    /// in the markup matters?
-    /// </summary>
-    private CancellationTokenSource _cancellationTokenSource = new();
-    
-    private bool _hasStartedContinuousWorker = false;
-    private bool _hasStartedIndefiniteWorker = false;
-
 	protected override void OnInitialized()
 	{
         CommonBackgroundTaskApi.Enqueue_LuthetusCommonInitializer();
-
         base.OnInitialized();
 	}
 
@@ -56,12 +41,10 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			var token = _cancellationTokenSource.Token;
+			var token = _workerCancellationTokenSource.Token;
 
 			if (BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask is null)
 			{
-				_hasStartedContinuousWorker = true;
-
 				BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
 					() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
 					token);
@@ -71,30 +54,32 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 			{
 				if (BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask is null)
 				{
-					_hasStartedIndefiniteWorker = true;
-
 					BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
 						() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
 						token);
 				}
 			}
 
-			BrowserResizeInterop.SubscribeWindowSizeChanged(JsRuntimeCommonApi);
+			BrowserResizeInterop.SubscribeWindowSizeChanged(CommonBackgroundTaskApi.JsRuntimeCommonApi);
 		}
 
 		base.OnAfterRender(firstRender);
 	}
     
+    /// <summary>
+    /// Presumptions:
+	/// - Dispose is invoked from UI thread
+	/// - Dispose being ran stops the Blazor lifecycle from being ran in the future
+    ///     - i.e.: OnInitialized(), Dispose(), OnAfterRender() <---- bad. Is it possible?
+    /// </summary>
     public void Dispose()
     {
-    	BrowserResizeInterop.DisposeWindowSizeChanged(JsRuntimeCommonApi);
-    	_cancellationTokenSource.Cancel();
-    	_cancellationTokenSource.Dispose();
+    	BrowserResizeInterop.DisposeWindowSizeChanged(CommonBackgroundTaskApi.JsRuntimeCommonApi);
     	
-    	if (_hasStartedContinuousWorker)
-    		BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = null;
-    		
-    	if (_hasStartedIndefiniteWorker)
-    		BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = null;
+    	_workerCancellationTokenSource.Cancel();
+    	_workerCancellationTokenSource.Dispose();
+    	
+    	BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = null;
+    	BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = null;
     }
 }

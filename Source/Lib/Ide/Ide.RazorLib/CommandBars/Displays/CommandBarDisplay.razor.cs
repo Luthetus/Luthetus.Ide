@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Widgets.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandBars.Models;
 
 namespace Luthetus.Ide.RazorLib.CommandBars.Displays;
@@ -14,14 +14,9 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	[Inject]
 	private IWidgetService WidgetService { get; set; } = null!;
 	[Inject]
-	private IJSRuntime JsRuntime { get; set; } = null!;
+	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	
 	public const string INPUT_HTML_ELEMENT_ID = "luth_ide_command-bar-input-id";
-	
-	private LuthetusCommonJavaScriptInteropApi _jsRuntimeCommonApi;
-	
-	private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi => _jsRuntimeCommonApi
-		??= JsRuntime.GetLuthetusCommonApi();
 		
 	protected override void OnInitialized()
 	{
@@ -33,7 +28,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			await JsRuntimeCommonApi
+			await CommonBackgroundTaskApi.JsRuntimeCommonApi
 				.FocusHtmlElementById(CommandBarDisplay.INPUT_HTML_ELEMENT_ID)
 	            .ConfigureAwait(false);
 		}

@@ -1,7 +1,7 @@
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
@@ -14,18 +14,18 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 	private readonly ITextEditorService _textEditorService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
-    private readonly IJSRuntime _jsRuntime;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorGroupApi(
         ITextEditorService textEditorService,
         IPanelService panelService,
         IDialogService dialogService,
-        IJSRuntime jsRuntime)
+        CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         _textEditorService = textEditorService;
         _panelService = panelService;
         _dialogService = dialogService;
-        _jsRuntime = jsRuntime;
+        _commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
 
     public void SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
@@ -54,7 +54,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
             _textEditorService,
             _panelService,
             _dialogService,
-            _jsRuntime);
+            _commonBackgroundTaskApi);
 
         Register(textEditorGroup);
     }

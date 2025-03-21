@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -7,6 +6,7 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 
@@ -27,7 +27,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     private const string _startButtonElementId = "luth_ide_startup-controls-display_id";
 
@@ -50,11 +50,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     		StartupControlService.SetActiveStartupControlKey(startupControlKey);
     	}
     }
-    
-    private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
-    
-    private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
-    	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
     	
     protected override void OnInitialized()
     {
@@ -124,7 +119,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    
 			await DropdownHelper.RenderDropdownAsync(
     			DropdownService,
-    			JsRuntimeCommonApi,
+    			CommonBackgroundTaskApi.JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,
 				_startButtonDropdownKey,
@@ -141,7 +136,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	private async Task<bool> TrySetFocus(ContextRecord contextRecord)
     {
-        return await JsRuntimeCommonApi
+        return await CommonBackgroundTaskApi.JsRuntimeCommonApi
             .TryFocusHtmlElementById(contextRecord.ContextElementId)
             .ConfigureAwait(false);
     }

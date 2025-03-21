@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -30,7 +31,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDialogService _dialogService;
 	private readonly IPanelService _panelService;
-	private readonly IJSRuntime _jsRuntime;
+	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
@@ -38,14 +39,14 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDialogService dialogService,
 		IPanelService panelService,
-        IJSRuntime jsRuntime)
+        CommonBackgroundTaskApi commonBackgroundTaskApi)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_dialogService = dialogService;
 		_panelService = panelService;
-		_jsRuntime = jsRuntime;
+		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 		
 		TextEditorModelResourceUri = new(
 			ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Id.ToString());
@@ -143,7 +144,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             _textEditorService,
             _panelService,
             _dialogService,
-            _jsRuntime,
+            _commonBackgroundTaskApi,
             VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
 			new ScrollbarDimensions(0, 0, 0, 0, 0),

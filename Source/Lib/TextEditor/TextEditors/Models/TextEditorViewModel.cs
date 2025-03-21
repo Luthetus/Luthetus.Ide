@@ -2,6 +2,7 @@ using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -31,7 +32,7 @@ public sealed record TextEditorViewModel : IDisposable
         ITextEditorService textEditorService,
         IPanelService panelService,
         IDialogService dialogService,
-        IJSRuntime jsRuntime,
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
         VirtualizationGrid virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		ScrollbarDimensions scrollbarDimensions,
@@ -68,7 +69,7 @@ public sealed record TextEditorViewModel : IDisposable
             TextEditorService,
             panelService,
             dialogService,
-            jsRuntime);
+            commonBackgroundTaskApi);
 	}
 
     /// <summary>

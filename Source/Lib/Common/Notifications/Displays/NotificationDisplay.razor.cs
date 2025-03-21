@@ -1,6 +1,5 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -9,6 +8,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -21,7 +21,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public INotification Notification  { get; set; } = null!;
@@ -151,7 +151,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
             
         if (wasCausedByUiEvent)
         {
-        	await JsRuntime.GetLuthetusCommonApi()
+        	await CommonBackgroundTaskApi.JsRuntimeCommonApi
 		        .FocusHtmlElementById(Notification.SetFocusOnCloseElementId
 		        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
 		        .ConfigureAwait(false);
