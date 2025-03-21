@@ -377,7 +377,7 @@
 									var virtualizationSpan = renderBatchValidated.ViewModel.VirtualizationResult.VirtualizationSpanList[i];
 									
 									<span class="@virtualizationSpan.CssClass">
-							            @((MarkupString)virtualizationSpan.Text)
+							            @(virtualizationSpan.MarkupStringText)
 							        </span>
 							    }
 							}
