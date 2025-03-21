@@ -66,7 +66,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 			TextEditorViewModelDisplay.ComponentData,
 			TextEditorService,
             ServiceProvider,
-            default);
+            new TextEditorEditContext(TextEditorService));
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

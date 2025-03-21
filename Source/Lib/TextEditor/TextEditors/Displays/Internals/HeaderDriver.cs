@@ -52,7 +52,7 @@ public class HeaderDriver
             renderBatchLocal.ComponentData,
 			_root.TextEditorService,
             _root.ServiceProvider,
-            default);
+            new TextEditorEditContext(_root.TextEditorService));
     }
 
     public Task DoCopyOnClick(MouseEventArgs arg)

@@ -130,11 +130,21 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public List<TextEditorCursorModifier> __CursorModifierList { get; }
+	public List<TextEditorCursorModifier> __CursorModifierList { get; } = new();
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public TextEditorCursorModifier __CursorModifier { get; }
+	public bool __IsAvailableCursorModifierList { get; set; } = true;
+	
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public TextEditorCursorModifier __CursorModifier { get; } = new(new TextEditorCursor(isPrimaryCursor: true));
+	/// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public bool __IsAvailableCursorModifier { get; set; } = true;
+	
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -346,6 +356,13 @@ public partial class TextEditorService : ITextEditorService
 	    foreach (var kvp in __ViewModelCache)
 	    	__ViewModelList.Add(kvp.Value);
 	    __ViewModelCache.Clear();
+	    
+	    __ViewModelToModelResourceUriCache.Clear();
+	    __CursorModifierBagCache.Clear();
+	    __DiffModelCache.Clear();
+	    
+	    __IsAvailableCursorModifierList = true;
+	    __IsAvailableCursorModifier = true;
 	    
 	    SetModelAndViewModelRange(
 	        editContext,

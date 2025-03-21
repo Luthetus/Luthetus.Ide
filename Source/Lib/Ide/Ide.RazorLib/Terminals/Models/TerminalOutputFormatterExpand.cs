@@ -109,19 +109,11 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	private void CreateTextEditor()
     {
-    	var line1 = "Integrated-Terminal";
-        var line2 = "Try: cmd /c \"dir\"";
-        
-        var longestLineLength = Math.Max(line1.Length, line2.Length);
-    
     	var model = new TextEditorModel(
             TextEditorModelResourceUri,
             DateTime.UtcNow,
             "terminal",
-            $"{line1}\n" +
-                $"{line2}\n" +
-                new string('=', longestLineLength) +
-                "\n\n",
+            string.Empty,
             new TerminalDecorationMapper(),
             _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
             
@@ -165,54 +157,6 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
         };
         
         _textEditorService.ViewModelApi.Register(viewModel);
-
-        _textEditorService.TextEditorWorker.PostUnique(
-            nameof(TerminalOutput),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-                if (modelModifier is null)
-                    return ValueTask.CompletedTask;
-                    
-                var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-		        if (viewModelModifier is null)
-		            return ValueTask.CompletedTask;
-
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-                    return ValueTask.CompletedTask;
-
-                _textEditorService.ViewModelApi.MoveCursor(
-                    new KeymapArgs
-                    {
-                        Code = KeyboardKeyFacts.MovementKeys.END,
-                        Key = KeyboardKeyFacts.MovementKeys.END,
-                        CtrlKey = true,
-                    },
-                    editContext,
-                    modelModifier,
-                    viewModelModifier,
-                    cursorModifierBag);
-
-                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-                if (terminalCompilerService.GetResource(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                    return ValueTask.CompletedTask;
-
-                terminalResource.CompilationUnit.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
-                    0,
-                    modelModifier.GetPositionIndex(primaryCursorModifier),
-                    (byte)TerminalDecorationKind.Comment,
-                    TextEditorModelResourceUri,
-                    modelModifier.GetAllText()));
-
-                editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-                    editContext,
-                    modelModifier);
-
-                return ValueTask.CompletedTask;
-            });
     }
     
     public void Dispose()

@@ -85,9 +85,44 @@ public struct TextEditorEditContext
         {
             if (!TextEditorService.__CursorModifierBagCache.TryGetValue(viewModel.ViewModelKey, out var cursorModifierBag))
             {
+            	List<TextEditorCursorModifier> cursorModifierList;
+            
+            	if (TextEditorService.__IsAvailableCursorModifierList)
+            	{
+            		TextEditorService.__IsAvailableCursorModifierList = false;
+            		TextEditorService.__CursorModifierList.Clear();
+            		cursorModifierList = TextEditorService.__CursorModifierList;
+            	}
+            	else
+            	{
+            		cursorModifierList = new List<TextEditorCursorModifier>();
+            	}
+            	
+            	foreach (var cursor in viewModel.CursorList)
+        		{
+        			if (TextEditorService.__IsAvailableCursorModifier)
+        			{
+        				TextEditorService.__IsAvailableCursorModifier = false;
+        				
+        				TextEditorService.__CursorModifier.LineIndex = cursor.LineIndex;
+				        TextEditorService.__CursorModifier.ColumnIndex = cursor.ColumnIndex;
+				        TextEditorService.__CursorModifier.PreferredColumnIndex = cursor.PreferredColumnIndex;
+				        TextEditorService.__CursorModifier.IsPrimaryCursor = cursor.IsPrimaryCursor;
+				        TextEditorService.__CursorModifier.SelectionAnchorPositionIndex = cursor.Selection.AnchorPositionIndex;
+				        TextEditorService.__CursorModifier.SelectionEndingPositionIndex = cursor.Selection.EndingPositionIndex;
+				        TextEditorService.__CursorModifier.Key = cursor.Key;
+				        
+				        cursorModifierList.Add(TextEditorService.__CursorModifier);
+        			}
+        			else
+        			{
+        				cursorModifierList.Add(new(cursor));
+        			}
+        		}
+            
                 cursorModifierBag = new CursorModifierBagTextEditor(
                     viewModel.ViewModelKey,
-                    viewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
+                    cursorModifierList);
 
                 TextEditorService.__CursorModifierBagCache.Add(viewModel.ViewModelKey, cursorModifierBag);
             }
