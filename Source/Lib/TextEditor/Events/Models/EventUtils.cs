@@ -149,8 +149,8 @@ public static class EventUtils
                 out command);
         }
 
-        if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keymapArgs.Code && keymapArgs.ShiftKey)
-            command = TextEditorCommandDefaultFacts.NewLineBelow;
+        /*if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keymapArgs.Code && keymapArgs.ShiftKey)
+            command = TextEditorCommandDefaultFunctions.NewLineBelow();*/
 
         return command is not null;
     }

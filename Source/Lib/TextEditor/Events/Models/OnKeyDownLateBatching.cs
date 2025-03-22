@@ -128,7 +128,7 @@ public struct OnKeyDownLateBatching
 
             switch (definiteKeyboardEventArgsKind)
             {
-                case KeymapArgsKind.Command:
+                /*case KeymapArgsKind.Command:
                     shouldInvokeAfterOnKeyDownAsync = true;
 
 					var commandArgs = new TextEditorCommandArgs(
@@ -142,7 +142,7 @@ public struct OnKeyDownLateBatching
                     await command.CommandFunc
                         .Invoke(commandArgs)
                         .ConfigureAwait(false);
-                    break;
+                    break;*/
                 case KeymapArgsKind.Movement:
                     if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keymapArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keymapArgs.Key) &&
                         viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
@@ -311,8 +311,8 @@ public struct OnKeyDownLateBatching
 
             if (shouldInvokeAfterOnKeyDownAsync)
             {
-                if (command is null ||
-                    command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView)
+                if (command is null /* ||
+                    command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView*/)
                 {
                     viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
                 }

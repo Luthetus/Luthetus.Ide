@@ -85,8 +85,7 @@ public interface ICompilerService
 		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
-		CursorModifierBagTextEditor cursorModifierBag,
-		TextEditorCommandArgs commandArgs);
+		CursorModifierBagTextEditor cursorModifierBag);
 		
 	public ValueTask OnInspect(
 		TextEditorEditContext editContext,
@@ -102,8 +101,7 @@ public interface ICompilerService
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs);
+        CursorModifierBagTextEditor cursorModifierBag);
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
 	

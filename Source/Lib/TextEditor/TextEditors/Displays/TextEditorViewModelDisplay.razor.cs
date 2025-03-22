@@ -11,6 +11,8 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
@@ -66,6 +68,10 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
+    [Inject]
+    public ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    public INotificationService NotificationService { get; set; } = null!;
     [Inject]
     public IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]

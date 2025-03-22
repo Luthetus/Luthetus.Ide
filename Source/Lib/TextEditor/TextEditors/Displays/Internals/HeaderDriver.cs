@@ -40,121 +40,7 @@ public class HeaderDriver
 	}
 
 	public string _reloadButtonHtmlElementId = "luth_te_text-editor-header-reload-button";
-	
-    public TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatch renderBatchLocal)
-    {
-        var cursorSnapshotsList = new List<TextEditorCursor> { renderBatchLocal.ViewModel.PrimaryCursor };
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
-
-        return new TextEditorCommandArgs(
-            renderBatchLocal.Model.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
-            renderBatchLocal.ComponentData,
-			_root.TextEditorService,
-            _root.ServiceProvider,
-            new TextEditorEditContext(_root.TextEditorService));
-    }
-
-    public Task DoCopyOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Copy),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Copy.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoCutOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Cut),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Cut.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoPasteOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.PasteCommand),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoRedoOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Redo),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Redo.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
+    
     public Task DoSaveOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = _renderBatch;
@@ -167,161 +53,24 @@ public class HeaderDriver
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
         _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.TriggerSave),
+            nameof(TextEditorCommandDefaultFunctions.TriggerSave),
             editContext =>
             {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.TriggerSave.CommandFunc
-                    .Invoke(commandArgs);
+            	var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	TextEditorCommandDefaultFunctions.TriggerSave(
+            		editContext,
+            		modelModifier,
+            		viewModelModifier,
+            		cursorModifierBag,
+            		_root.CommonComponentRenderers,
+            		_root.NotificationService);
+            	return ValueTask.CompletedTask;
             });
         return Task.CompletedTask;
-    }
-
-    public Task DoUndoOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Undo),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Undo.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoSelectAllOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.SelectAll),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.SelectAll.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoRemeasureOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Remeasure),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Remeasure.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public async Task DoReloadOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-        
-        var dropdownKey = Key<DropdownRecord>.NewKey();
-        
-        var buttonDimensions = await _root.TextEditorService.JsRuntimeCommonApi
-			.MeasureElementById(_reloadButtonHtmlElementId)
-			.ConfigureAwait(false);
-			
-		var menuOptionList = new List<MenuOptionRecord>();
-		
-		var absolutePath = _root.EnvironmentProvider.AbsolutePathFactory(model.ResourceUri.Value, false);
-
-		menuOptionList.Add(new MenuOptionRecord(
-		    "Cancel",
-		    MenuOptionKind.Read,
-		    onClickFunc: () =>
-		    {
-			    _root.DropdownService.ReduceDisposeAction(dropdownKey);
-		    	return Task.CompletedTask;
-		    }));
-		    
-		menuOptionList.Add(new MenuOptionRecord(
-		    $"Reset: '{absolutePath.NameWithExtension}'",
-		    MenuOptionKind.Delete,
-		    onClickFunc: () =>
-		    {
-			    _root.TextEditorService.TextEditorWorker.PostUnique(
-		            nameof(DoReloadOnClick),
-		            editContext =>
-		            {
-		            	editContext.TextEditorService.ViewModelApi.Dispose(viewModel.ViewModelKey);
-		            	_root.DirtyResourceUriService.RemoveDirtyResourceUri(model.ResourceUri);
-		            	editContext.TextEditorService.ModelApi.Dispose(model.ResourceUri);
-		            	return ValueTask.CompletedTask;
-		            });
-		    	return Task.CompletedTask;
-		    }));
-		    
-		var menu = new MenuRecord(menuOptionList);
-
-		var dropdownRecord = new DropdownRecord(
-			dropdownKey,
-			buttonDimensions.LeftInPixels,
-			buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
-			typeof(MenuDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(MenuDisplay.MenuRecord),
-					menu
-				}
-			},
-			async () => await _root.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
-
-        _root.DropdownService.ReduceRegisterAction(dropdownRecord);
     }
 
     public void ShowWatchWindowDisplayDialogOnClick()
@@ -357,74 +106,5 @@ public class HeaderDriver
 			null);
 
         _root.DialogService.ReduceRegisterAction(dialogRecord);
-    }
-
-    public Task DoRefreshOnClick()
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Remeasure),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Remeasure.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// disabled=@GetUndoDisabledAttribute()
-    /// will toggle the attribute
-    /// <br/><br/>
-    /// disabled="@GetUndoDisabledAttribute()"
-    /// will toggle the value of the attribute
-    /// </summary>
-    public bool GetUndoDisabledAttribute()
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return true;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return true;
-
-        return !model.CanUndoEdit();
-    }
-
-    /// <summary>
-    /// disabled=@GetRedoDisabledAttribute()
-    /// will toggle the attribute
-    /// <br/><br/>
-    /// disabled="@GetRedoDisabledAttribute()"
-    /// will toggle the value of the attribute
-    /// </summary>
-    public bool GetRedoDisabledAttribute()
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return true;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return true;
-
-        return !model.CanRedoEdit();
     }
 }

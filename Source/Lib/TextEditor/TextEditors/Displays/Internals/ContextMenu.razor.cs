@@ -56,19 +56,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatch renderBatch)
-    {
-        var cursorSnapshotsList = new List<TextEditorCursor> { renderBatch.ViewModel.PrimaryCursor };
-
-        return new TextEditorCommandArgs(
-            renderBatch.Model.ResourceUri,
-            renderBatch.ViewModel.ViewModelKey,
-			TextEditorViewModelDisplay.ComponentData,
-			TextEditorService,
-            ServiceProvider,
-            new TextEditorEditContext(TextEditorService));
-    }
-
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
@@ -142,21 +129,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     {
     	List<MenuOptionRecord> menuOptionRecordsList = new();
 
-        var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
-        menuOptionRecordsList.Add(cut);
-
-        var copy = new MenuOptionRecord("Copy (Ctrl c)", MenuOptionKind.Other, () => SelectMenuOption(CopyMenuOption));
-        menuOptionRecordsList.Add(copy);
-
-        var paste = new MenuOptionRecord("Paste (Ctrl v)", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
-        menuOptionRecordsList.Add(paste);
-        
-        var goToDefinition = new MenuOptionRecord("Go to definition (F12)", MenuOptionKind.Other, () => SelectMenuOption(GoToDefinitionOption));
-        menuOptionRecordsList.Add(goToDefinition);
-        
-        var quickActionsSlashRefactors = new MenuOptionRecord("QuickActions/Refactors (Ctrl .)", MenuOptionKind.Other, () => SelectMenuOption(QuickActionsSlashRefactors));
-        menuOptionRecordsList.Add(quickActionsSlashRefactors);
-
         if (!menuOptionRecordsList.Any())
             menuOptionRecordsList.Add(new MenuOptionRecord("No Context Menu Options for this item", MenuOptionKind.Other));
 
@@ -203,109 +175,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         return Task.CompletedTask;
     }
 
-    public Task CutMenuOption()
-    {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
-    	if (renderBatch is null)
-    		return Task.CompletedTask;
-    		
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
-        TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Cut),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Cut.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task CopyMenuOption()
-    {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
-    	if (renderBatch is null)
-    		return Task.CompletedTask;
-    	
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
-        TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Copy),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Copy.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task PasteMenuOption()
-    {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
-    	if (renderBatch is null)
-    		return Task.CompletedTask;
-    		
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
-        TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.PasteCommand),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task GoToDefinitionOption()
-    {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
-    	if (renderBatch is null)
-    		return Task.CompletedTask;
-    		
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
-        TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.GoToDefinition),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                
-                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
-        		
-        		if (viewModelModifier is null)
-        			return ValueTask.CompletedTask;
-                
-                viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
-                
-                return TextEditorCommandDefaultFacts.GoToDefinition.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-    
-    public Task QuickActionsSlashRefactors()
-    {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
-    	if (renderBatch is null)
-    		return Task.CompletedTask;
-    	
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
-        TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.QuickActionsSlashRefactor),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.QuickActionsSlashRefactor.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-    
     public void Dispose()
     {
     	// This component isn't subscribing to the text editor render batch changing event.

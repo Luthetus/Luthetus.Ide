@@ -139,8 +139,7 @@ public sealed class JsonCompilerService : ICompilerService
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
     }
@@ -161,8 +160,7 @@ public sealed class JsonCompilerService : ICompilerService
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	return;
     }

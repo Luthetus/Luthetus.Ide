@@ -175,8 +175,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
 		var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		var compilerService = modelModifier.CompilerService;
@@ -218,14 +217,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				{
 					var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
 						
-					menuOptionList.Add(new MenuOptionRecord(
+					/*menuOptionList.Add(new MenuOptionRecord(
 						$"Copy: {usingStatementText}",
 						MenuOptionKind.Other,
 						onClickFunc: async () =>
 						{
 							var clipboardService = commandArgs.ServiceProvider.GetRequiredService<IClipboardService>();
 							await clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
-						}));
+						}));*/
 				}
 				else
 				{
@@ -370,9 +369,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
+    	return;/*
+    
         var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
         var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
@@ -456,7 +456,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 Key<TextEditorGroup>.Empty,
                 true,
                 commandArgs.ServiceProvider));
-        }
+        }*/
     }
     
     /// <summary>

@@ -600,7 +600,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     if (activeViewModel is null)
                         return Task.CompletedTask;
 
-                    _textEditorService.TextEditorWorker.PostUnique(
+                    /*_textEditorService.TextEditorWorker.PostUnique(
                         nameof(TextEditorCommandDefaultFacts.ShowFindOverlay),
                         editContext =>
                         {
@@ -612,7 +612,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                                     _textEditorService,
                                     _serviceProvider,
                                     editContext));
-                        });
+                        });*/
 
                     return Task.CompletedTask;
                 });
