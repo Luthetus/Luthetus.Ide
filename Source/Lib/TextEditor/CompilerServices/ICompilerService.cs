@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -105,4 +106,11 @@ public interface ICompilerService
         TextEditorCommandArgs commandArgs);
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
+	
+	public ValueTask FastParseAsync(TextEditorEditContext editContext, IFileSystemProvider fileSystemProvider);
+
+	
+		/*var content = await _fileSystemProvider.File
+		            .ReadAllTextAsync(resourceUri.Value)
+		            .ConfigureAwait(false);*/
 }

@@ -218,6 +218,11 @@ public sealed class RazorCompilerService : ICompilerService
 		
 		return ValueTask.CompletedTask;
     }
+	
+	public ValueTask FastParseAsync(TextEditorEditContext editContext, IFileSystemProvider fileSystemProvider)
+	{
+		return ValueTask.CompletedTask;
+	}
     
     /// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.

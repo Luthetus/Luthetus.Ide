@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -192,6 +193,11 @@ public sealed class TypeScriptCompilerService : ICompilerService
 		
 		return ValueTask.CompletedTask;
     }
+    
+    public ValueTask FastParseAsync(TextEditorEditContext editContext, IFileSystemProvider fileSystemProvider)
+	{
+		return ValueTask.CompletedTask;
+	}
     
     /// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.

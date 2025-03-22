@@ -113,6 +113,27 @@ public class EditorIdeApi : IBackgroundTaskGroup
             });
     }
 
+    public async Task FastParseFunc(FastParseArgs fastParseArgs)
+    {
+        var resourceUri = fastParseArgs.ResourceUri;
+
+        var compilerService = _compilerServiceRegistry.GetCompilerService(fastParseArgs.ExtensionNoPeriod);
+
+		compilerService.RegisterResource(
+			fastParseArgs.ResourceUri,
+			shouldTriggerResourceWasModified: false);
+			
+		var uniqueTextEditorWork = new UniqueTextEditorWork(
+            nameof(compilerService.FastParseAsync),
+            _textEditorService,
+            editContext => compilerService.FastParseAsync(editContext, _fileSystemProvider));
+		
+		if (fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
+			await _textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWorkAsync(uniqueTextEditorWork).ConfigureAwait(false);
+		else
+			_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+    }
+    
     public async Task RegisterModelFunc(RegisterModelArgs registerModelArgs)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(registerModelArgs.ResourceUri);

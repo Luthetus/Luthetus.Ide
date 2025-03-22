@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -521,6 +522,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
 		
         return ValueTask.CompletedTask;
+	}
+    
+    public ValueTask FastParseAsync(TextEditorEditContext editContext, IFileSystemProvider fileSystemProvider)
+	{
+		return ValueTask.CompletedTask;
 	}
     
     /// <summary>
