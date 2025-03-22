@@ -1,9 +1,13 @@
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -36,6 +40,11 @@ public sealed class TextEditorComponentData
 		TextEditorOptions options,
 		TextEditorViewModelDisplay textEditorViewModelDisplay,
 		IDropdownService dropdownService,
+		IClipboardService clipboardService,
+		ICommonComponentRenderers commonComponentRenderers,
+		INotificationService notificationService,
+		ITextEditorService textEditorService,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
 		IServiceProvider serviceProvider)
 	{
 		TextEditorHtmlElementId = textEditorHtmlElementId;
@@ -43,6 +52,11 @@ public sealed class TextEditorComponentData
 		Options = options;
 		TextEditorViewModelDisplay = textEditorViewModelDisplay;
 		DropdownService = dropdownService;
+		ClipboardService = clipboardService;
+		CommonComponentRenderers = commonComponentRenderers;
+		NotificationService = notificationService;
+		TextEditorService = textEditorService;
+		TextEditorComponentRenderers = textEditorComponentRenderers;
 		ServiceProvider = serviceProvider;
 	}
 
@@ -73,6 +87,11 @@ public sealed class TextEditorComponentData
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; }
 	public IDropdownService DropdownService { get; }
+	public IClipboardService ClipboardService { get; }
+	public ICommonComponentRenderers CommonComponentRenderers { get; }
+	public INotificationService NotificationService { get; }
+	public ITextEditorService TextEditorService { get; }
+	public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; }
 	public IServiceProvider ServiceProvider { get; }
 	public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
     public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;

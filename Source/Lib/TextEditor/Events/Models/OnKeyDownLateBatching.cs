@@ -126,8 +126,8 @@ public struct OnKeyDownLateBatching
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag,
-		                ComponentData.ServiceProvider.GetRequiredService<ICommonComponentRenderers>(),
-		                ComponentData.ServiceProvider.GetRequiredService<INotificationService>());
+		                ComponentData.CommonComponentRenderers,
+		                ComponentData.NotificationService);
 		            
 		            modelModifier.CompilerService.ResourceWasModified(
 		                modelModifier.ResourceUri,
@@ -140,7 +140,7 @@ public struct OnKeyDownLateBatching
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag,
-		                ComponentData.ServiceProvider.GetRequiredService<IClipboardService>());
+		                ComponentData.ClipboardService);
 		            goto finalize;
 		        case "v":
 		            await TextEditorCommandDefaultFunctions.PasteAsync(
@@ -148,7 +148,7 @@ public struct OnKeyDownLateBatching
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag,
-		                ComponentData.ServiceProvider.GetRequiredService<IClipboardService>());
+		                ComponentData.ClipboardService);
 		            goto finalize;
 		        case "x":
 		            await TextEditorCommandDefaultFunctions.CutAsync(
@@ -156,7 +156,7 @@ public struct OnKeyDownLateBatching
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag,
-		                ComponentData.ServiceProvider.GetRequiredService<IClipboardService>());
+		                ComponentData.ClipboardService);
 		            goto finalize;
 		        case "a":
 		            TextEditorCommandDefaultFunctions.SelectAll(
@@ -179,6 +179,13 @@ public struct OnKeyDownLateBatching
 		                viewModelModifier,
 		                cursorModifierBag);
 		            goto finalize;
+		        case "d":
+		            TextEditorCommandDefaultFunctions.Duplicate(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
 		        case "ArrowDown":
 		            TextEditorCommandDefaultFunctions.ScrollLineDown(
 		                editContext,
@@ -193,6 +200,30 @@ public struct OnKeyDownLateBatching
 		                viewModelModifier,
 		                cursorModifierBag);
 		            goto finalize;
+		        case "PageDown":
+					TextEditorCommandDefaultFunctions.CursorMovePageBottom(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "PageUp":
+					TextEditorCommandDefaultFunctions.CursorMovePageTop(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "/":
+					TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                ComponentData.TextEditorService,
+		                ComponentData,
+		                ComponentData.TextEditorComponentRenderers);
+		            goto finalize;
 		    }
 		}
 		else if (KeymapArgs.AltKey)
@@ -200,6 +231,23 @@ public struct OnKeyDownLateBatching
 		}
 		else
 		{
+			switch (KeymapArgs.Key)
+			{
+				case "PageDown":
+					TextEditorCommandDefaultFunctions.ScrollPageDown(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "PageUp":
+					TextEditorCommandDefaultFunctions.ScrollPageUp(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+			}
 		}
 
 		_index = 0;

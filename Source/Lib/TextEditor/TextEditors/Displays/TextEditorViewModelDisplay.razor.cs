@@ -295,6 +295,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			_currentRenderBatch.Options,
 			this,
 			DropdownService,
+			ClipboardService,
+			CommonComponentRenderers,
+			NotificationService,
+			TextEditorService,
+			TextEditorComponentRenderers,
 			ServiceProvider);
     }
 
