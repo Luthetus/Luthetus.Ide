@@ -61,6 +61,7 @@ public record LuthetusTextEditorConfig
     /// The Func takes in the resource uri that needs a model.
     /// </summary>
     public Func<RegisterModelArgs, Task>? RegisterModelFunc { get; set; }
+    public Func<FastParseArgs, Task>? FastParseFunc { get; set; }
     /// <summary>
     /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 

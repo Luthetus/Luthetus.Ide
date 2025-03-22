@@ -43,6 +43,24 @@ public static class ServiceCollectionExtensions
                 CustomThemeRecordList = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
                 AbsolutePathStandardizeFunc = AbsolutePathStandardizeFunc,
+                FastParseFunc = async (fastParseArgs) =>
+                {
+                	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
+                		fastParseArgs.ResourceUri.Value, fastParseArgs.ServiceProvider);
+                		
+                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                
+                    fastParseArgs = new FastParseArgs(
+                        standardizedResourceUri,
+                        fastParseArgs.ExtensionNoPeriod,
+                        fastParseArgs.ServiceProvider)
+                    {
+                    	ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
+                    };
+
+                    var ideBackgroundTaskApi = fastParseArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
+                    await ideBackgroundTaskApi.Editor.FastParseFunc(fastParseArgs);
+                },
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
