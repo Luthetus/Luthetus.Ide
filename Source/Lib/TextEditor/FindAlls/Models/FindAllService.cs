@@ -278,15 +278,8 @@ public class FindAllService : IFindAllService
 	
 				foreach (var subdirectory in subdirectoryList)
 				{
-					if (subdirectory.EndsWith(".git") ||
-						subdirectory.EndsWith(".vs") ||
-						subdirectory.EndsWith(".vscode") ||
-						subdirectory.EndsWith(".idea") ||
-						subdirectory == "bin" ||
-						subdirectory == "obj")
-					{
+					if (IFileSystemProvider.IsDirectoryIgnored(subdirectory))
 						continue;
-					}
 	
 					await RecursiveSearch(subdirectory).ConfigureAwait(false);
 				}
