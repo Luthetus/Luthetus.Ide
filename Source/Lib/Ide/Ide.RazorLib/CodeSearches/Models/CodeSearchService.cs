@@ -216,15 +216,8 @@ public class CodeSearchService : ICodeSearchService
                     if (cancellationToken.IsCancellationRequested)
                         return;
 
-                    if (directoryPathChild.EndsWith(".git") ||
-						directoryPathChild.EndsWith(".vs") ||
-						directoryPathChild.EndsWith(".vscode") ||
-						directoryPathChild.EndsWith(".idea") ||
-						directoryPathChild == "bin" ||
-						directoryPathChild == "obj")
-					{
+					if (IFileSystemProvider.IsDirectoryIgnored(directoryPathChild))
 						continue;
-					}
 
                     await RecursiveHandleSearchEffect(directoryPathChild).ConfigureAwait(false);
                 }
