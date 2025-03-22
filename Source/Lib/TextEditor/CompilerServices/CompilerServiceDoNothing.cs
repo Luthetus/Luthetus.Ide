@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -111,6 +112,11 @@ public class CompilerServiceDoNothing : ICompilerService
     }
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+	{
+		return ValueTask.CompletedTask;
+	}
+	
+	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider)
 	{
 		return ValueTask.CompletedTask;
 	}
