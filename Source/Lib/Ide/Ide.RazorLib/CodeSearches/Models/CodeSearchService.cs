@@ -216,12 +216,12 @@ public class CodeSearchService : ICodeSearchService
                     if (cancellationToken.IsCancellationRequested)
                         return;
 
-                    if (directoryPathChild.Contains(".git") ||
-						directoryPathChild.Contains(".vs") ||
-						directoryPathChild.Contains(".vscode") ||
-						directoryPathChild.Contains(".idea") ||
-						directoryPathChild.Contains("bin") ||
-						directoryPathChild.Contains("obj"))
+                    if (directoryPathChild.EndsWith(".git") ||
+						directoryPathChild.EndsWith(".vs") ||
+						directoryPathChild.EndsWith(".vscode") ||
+						directoryPathChild.EndsWith(".idea") ||
+						directoryPathChild == "bin" ||
+						directoryPathChild == "obj")
 					{
 						continue;
 					}

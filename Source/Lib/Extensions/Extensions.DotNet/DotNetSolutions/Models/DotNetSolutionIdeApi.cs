@@ -14,6 +14,7 @@ using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
@@ -314,8 +315,12 @@ Execution Terminal"));
 			    return Task.CompletedTask;
 			}
 		});
-
-		await ParseSolution(dotNetSolutionModel.Key).ConfigureAwait(false);
+		
+		_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(
+			new UniqueTextEditorWork(
+	            nameof(ParseSolution),
+	            _textEditorService,
+	            editContext => ParseSolution(editContext, dotNetSolutionModel.Key)));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
 	}
@@ -329,7 +334,7 @@ Execution Terminal"));
 		E,
 	}
 
-	private Task ParseSolution(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+	private async ValueTask ParseSolution(TextEditorEditContext editContext, Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
 		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
 
@@ -337,140 +342,136 @@ Execution Terminal"));
 			x => x.Key == dotNetSolutionModelKey);
 
 		if (dotNetSolutionModel is null)
-			return Task.CompletedTask;
+			return;
 			
-		_ = Task.Run(async () =>
-		{
-			var cancellationTokenSource = new CancellationTokenSource();
-			var cancellationToken = cancellationTokenSource.Token;
-			
-			var progressBarModel = new ProgressBarModel(0, "parsing...")
-			{
-				OnCancelFunc = () =>
-				{
-					cancellationTokenSource.Cancel();
-					cancellationTokenSource.Dispose();
-					return Task.CompletedTask;
-				}
-			};
-
-			NotificationHelper.DispatchProgress(
-				$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
-				progressBarModel,
-				_commonComponentRenderers,
-				_notificationService,
-				TimeSpan.FromMilliseconds(-1));
-				
-			// var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
-			var progressThrottle = new ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)>(TimeSpan.FromMilliseconds(300), (tuple, _) =>
-			{
-				switch (tuple.StageKind)
-				{
-					case ParseSolutionStageKind.A:
-						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
-						return Task.CompletedTask;
-					case ParseSolutionStageKind.B:
-						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-						progressBarModel.Dispose();
-						return Task.CompletedTask;
-					case ParseSolutionStageKind.C:
-						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
-						progressBarModel.Dispose();
-						return Task.CompletedTask;
-					case ParseSolutionStageKind.D:
-						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-						return Task.CompletedTask;
-					case ParseSolutionStageKind.E:
-						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-						return Task.CompletedTask;
-					default:
-						return Task.CompletedTask;
-				}
-			});
+		var cancellationTokenSource = new CancellationTokenSource();
+		var cancellationToken = cancellationTokenSource.Token;
 		
-			try
+		var progressBarModel = new ProgressBarModel(0, "parsing...")
+		{
+			OnCancelFunc = () =>
 			{
-				if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
-					return;
-				
-				progressThrottle.Run((ParseSolutionStageKind.A, 0.05, "Discovering projects...", null));
-				
-				foreach (var project in dotNetSolutionModel.DotNetProjectList)
-				{
-					RegisterStartupControl(project);
-				
-					var resourceUri = new ResourceUri(project.AbsolutePath.Value);
-
-					if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
-						continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
-
-					var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
-					{
-						ShouldBlockUntilBackgroundTaskIsCompleted = true,
-					};
-
-					await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
-						.ConfigureAwait(false);
-				}
-
-				var previousStageProgress = 0.05;
-				var dotNetProjectListLength = dotNetSolutionModel.DotNetProjectList.Count;
-				var projectsParsedCount = 0;
-				foreach (var project in dotNetSolutionModel.DotNetProjectList)
-				{
-					// foreach project in solution
-					// 	foreach C# file in project
-					// 		EnqueueBackgroundTask(async () =>
-					// 		{
-					// 			ParseCSharpFile();
-					// 			UpdateProgressBar();
-					// 		});
-					//
-					// Treat every project as an equal weighting with relation to remaining percent to complete
-					// on the progress bar.
-					//
-					// If the project were to be parsed, how much would it move the percent progress completed by?
-					//
-					// Then, in order to see progress while each C# file in the project gets parsed,
-					// multiply the percent progress this project can provide by the proportion
-					// of the project's C# files which have been parsed.
-					var maximumProgressAvailableToProject = (1 - previousStageProgress) * ((double)1.0 / dotNetProjectListLength);
-					var currentProgress = Math.Min(1.0, previousStageProgress + maximumProgressAvailableToProject * projectsParsedCount);
-
-					// This 'SetProgress' is being kept out the throttle, since it sets message 1
-					// whereas the per class progress updates set message 2.
-					//
-					// Otherwise an update to message 2 could result in this message 1 update never being written.
-					progressBarModel.SetProgress(
-						currentProgress,
-						$"{projectsParsedCount + 1}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
-					
-					cancellationToken.ThrowIfCancellationRequested();
-
-					await DiscoverClassesInProject(project, progressBarModel, progressThrottle, currentProgress, maximumProgressAvailableToProject);
-					projectsParsedCount++;
-				}
-
-				progressThrottle.Run((ParseSolutionStageKind.B, 1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty));
+				cancellationTokenSource.Cancel();
+				cancellationTokenSource.Dispose();
+				return Task.CompletedTask;
 			}
-			catch (Exception e)
+		};
+
+		NotificationHelper.DispatchProgress(
+			$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
+			progressBarModel,
+			_commonComponentRenderers,
+			_notificationService,
+			TimeSpan.FromMilliseconds(-1));
+			
+		// var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
+		/*var progressThrottle = new ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)>(TimeSpan.FromMilliseconds(1_000), (tuple, _) =>
+		{
+			switch (tuple.StageKind)
 			{
-				if (e is OperationCanceledException)
-					progressBarModel.IsCancelled = true;
-					
-				var currentProgress = progressBarModel.GetProgress();
-				
-				progressThrottle.Run((ParseSolutionStageKind.C, currentProgress, e.ToString(), null));
+				case ParseSolutionStageKind.A:
+					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
+					return Task.CompletedTask;
+				case ParseSolutionStageKind.B:
+					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
+					progressBarModel.Dispose();
+					return Task.CompletedTask;
+				case ParseSolutionStageKind.C:
+					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
+					progressBarModel.Dispose();
+					return Task.CompletedTask;
+				case ParseSolutionStageKind.D:
+					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
+					return Task.CompletedTask;
+				case ParseSolutionStageKind.E:
+					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
+					return Task.CompletedTask;
+				default:
+					return Task.CompletedTask;
 			}
-		});
+		});*/
+	
+		try
+		{
+			// progressThrottle.Run((ParseSolutionStageKind.A, 0.05, "Discovering projects...", null));
+			
+			foreach (var project in dotNetSolutionModel.DotNetProjectList)
+			{
+				RegisterStartupControl(project);
+			
+				var resourceUri = new ResourceUri(project.AbsolutePath.Value);
 
-		return Task.CompletedTask;
+				if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
+					continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
+
+				/*var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
+				{
+					ShouldBlockUntilBackgroundTaskIsCompleted = true,
+				};
+
+				await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
+					.ConfigureAwait(false);*/
+			}
+
+			var previousStageProgress = 0.05;
+			var dotNetProjectListLength = dotNetSolutionModel.DotNetProjectList.Count;
+			var projectsParsedCount = 0;
+			foreach (var project in dotNetSolutionModel.DotNetProjectList)
+			{
+				// foreach project in solution
+				// 	foreach C# file in project
+				// 		EnqueueBackgroundTask(async () =>
+				// 		{
+				// 			ParseCSharpFile();
+				// 			UpdateProgressBar();
+				// 		});
+				//
+				// Treat every project as an equal weighting with relation to remaining percent to complete
+				// on the progress bar.
+				//
+				// If the project were to be parsed, how much would it move the percent progress completed by?
+				//
+				// Then, in order to see progress while each C# file in the project gets parsed,
+				// multiply the percent progress this project can provide by the proportion
+				// of the project's C# files which have been parsed.
+				var maximumProgressAvailableToProject = (1 - previousStageProgress) * ((double)1.0 / dotNetProjectListLength);
+				var currentProgress = Math.Min(1.0, previousStageProgress + maximumProgressAvailableToProject * projectsParsedCount);
+
+				// This 'SetProgress' is being kept out the throttle, since it sets message 1
+				// whereas the per class progress updates set message 2.
+				//
+				// Otherwise an update to message 2 could result in this message 1 update never being written.
+				progressBarModel.SetProgress(
+					currentProgress,
+					$"{projectsParsedCount + 1}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
+				
+				cancellationToken.ThrowIfCancellationRequested();
+
+				await DiscoverClassesInProject(editContext, project, progressBarModel, currentProgress, maximumProgressAvailableToProject);
+				projectsParsedCount++;
+			}
+
+			// progressThrottle.Run((ParseSolutionStageKind.B, 1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty));
+			progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+			progressBarModel.Dispose();
+		}
+		catch (Exception e)
+		{
+			if (e is OperationCanceledException)
+				progressBarModel.IsCancelled = true;
+				
+			var currentProgress = progressBarModel.GetProgress();
+			
+			// progressThrottle.Run((ParseSolutionStageKind.C, currentProgress, e.ToString(), null));
+			progressBarModel.SetProgress(currentProgress, e.ToString());
+			progressBarModel.Dispose();
+		}
 	}
 
 	private async Task DiscoverClassesInProject(
+		TextEditorEditContext editContext, 
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
-		ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)> progressThrottle,
 		double currentProgress,
 		double maximumProgressAvailableToProject)
 	{
@@ -484,14 +485,14 @@ Execution Terminal"));
 		var startingAbsolutePathForSearch = parentDirectory;
 		var discoveredFileList = new List<string>();
 
-		progressThrottle.Run((ParseSolutionStageKind.D, null, null, "discovering files"));
+		// progressThrottle.Run((ParseSolutionStageKind.D, null, null, "discovering files"));
 		
 		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
 		await ParseClassesInProject(
+			editContext,
 			dotNetProject,
 			progressBarModel,
-			progressThrottle,
 			currentProgress,
 			maximumProgressAvailableToProject,
 			discoveredFileList);
@@ -518,12 +519,12 @@ Execution Terminal"));
 
 			foreach (var directoryPathChild in directoryPathChildList)
 			{
-				if (directoryPathChild.Contains(".git") ||
-					directoryPathChild.Contains(".vs") ||
-					directoryPathChild.Contains(".vscode") ||
-					directoryPathChild.Contains(".idea") ||
-					directoryPathChild.Contains("bin") ||
-					directoryPathChild.Contains("obj"))
+				if (directoryPathChild.EndsWith(".git") ||
+					directoryPathChild.EndsWith(".vs") ||
+					directoryPathChild.EndsWith(".vscode") ||
+					directoryPathChild.EndsWith(".idea") ||
+					directoryPathChild == "bin" ||
+					directoryPathChild == "obj")
 				{
 					continue;
 				}
@@ -545,9 +546,9 @@ Execution Terminal"));
 	}
 
 	private async Task ParseClassesInProject(
+		TextEditorEditContext editContext,
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
-		ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)> progressThrottle,
 		double currentProgress,
 		double maximumProgressAvailableToProject,
 		List<string> discoveredFileList)
@@ -560,16 +561,17 @@ Execution Terminal"));
 
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
 
-			progressThrottle.Run((ParseSolutionStageKind.E, progress, null, $"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}"));
+			// progressThrottle.Run((ParseSolutionStageKind.E, progress, null, $"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}"));
 
 			var resourceUri = new ResourceUri(file);
 			
-			var fastParseArgs = new FastParseArgs(resourceUri, fileAbsolutePath.ExtensionNoPeriod, _serviceProvider)
-			{
-				ShouldBlockUntilBackgroundTaskIsCompleted = true,
-			};
-
-			await _textEditorService.TextEditorConfig.FastParseFunc.Invoke(fastParseArgs)
+	        var compilerService = _compilerServiceRegistry.GetCompilerService(fileAbsolutePath.ExtensionNoPeriod);
+			
+			compilerService.RegisterResource(
+				resourceUri,
+				shouldTriggerResourceWasModified: false);
+				
+			await compilerService.FastParseAsync(editContext, resourceUri, _fileSystemProvider)
 				.ConfigureAwait(false);
 				
 			fileParsedCount++;
