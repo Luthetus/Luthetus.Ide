@@ -12,13 +12,10 @@ Open an existing solution:
 Run unit tests:
 ![Run unit tests](./Images/Ide/Gifs/workflowRunUnitTests.gif)
 
-Customize the UI:
-![Customize the UI](./Images/Ide/Gifs/workflowCustomizeUi.gif)
-
 And there are more features that are not shown in these gifs.
 
-1,610 C# files in total parsed in 311 milliseconds:
-![Example GIF](./Images/Ide/311milli.png)
+Only 158 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.39) (1,610 C# files in total parsed in 4.215 seconds.):
+![Example GIF](./Images/Ide/initialParseChanges.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
