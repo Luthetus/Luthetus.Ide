@@ -278,12 +278,12 @@ public class FindAllService : IFindAllService
 	
 				foreach (var subdirectory in subdirectoryList)
 				{
-					if (subdirectory.Contains(".git") ||
-						subdirectory.Contains(".vs") ||
-						subdirectory.Contains(".vscode") ||
-						subdirectory.Contains(".idea") ||
-						subdirectory.Contains("bin") ||
-						subdirectory.Contains("obj"))
+					if (subdirectory.EndsWith(".git") ||
+						subdirectory.EndsWith(".vs") ||
+						subdirectory.EndsWith(".vscode") ||
+						subdirectory.EndsWith(".idea") ||
+						subdirectory == "bin" ||
+						subdirectory == "obj")
 					{
 						continue;
 					}
