@@ -519,15 +519,8 @@ Execution Terminal"));
 
 			foreach (var directoryPathChild in directoryPathChildList)
 			{
-				if (directoryPathChild.EndsWith(".git") ||
-					directoryPathChild.EndsWith(".vs") ||
-					directoryPathChild.EndsWith(".vscode") ||
-					directoryPathChild.EndsWith(".idea") ||
-					directoryPathChild == "bin" ||
-					directoryPathChild == "obj")
-				{
+				if (IFileSystemProvider.IsDirectoryIgnored(directoryPathChild))
 					continue;
-				}
 
 				//if (isFirstInvocation)
 				//{
