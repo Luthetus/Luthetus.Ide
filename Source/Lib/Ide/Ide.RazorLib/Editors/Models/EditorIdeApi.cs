@@ -126,12 +126,9 @@ public class EditorIdeApi : IBackgroundTaskGroup
 		var uniqueTextEditorWork = new UniqueTextEditorWork(
             nameof(compilerService.FastParseAsync),
             _textEditorService,
-            editContext => compilerService.FastParseAsync(editContext, _fileSystemProvider));
+            editContext => compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
 		
-		if (fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
-			await _textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWorkAsync(uniqueTextEditorWork).ConfigureAwait(false);
-		else
-			_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+		_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
     }
     
     public async Task RegisterModelFunc(RegisterModelArgs registerModelArgs)
@@ -190,7 +187,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	            });
 			
 			if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
-				await _textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWorkAsync(uniqueTextEditorWork).ConfigureAwait(false);
+			 	await _textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWorkAsync(uniqueTextEditorWork).ConfigureAwait(false);
 			else
 				_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
         }

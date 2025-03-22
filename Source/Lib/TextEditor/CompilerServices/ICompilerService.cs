@@ -107,10 +107,5 @@ public interface ICompilerService
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
 	
-	public ValueTask FastParseAsync(TextEditorEditContext editContext, IFileSystemProvider fileSystemProvider);
-
-	
-		/*var content = await _fileSystemProvider.File
-		            .ReadAllTextAsync(resourceUri.Value)
-		            .ConfigureAwait(false);*/
+	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider);
 }

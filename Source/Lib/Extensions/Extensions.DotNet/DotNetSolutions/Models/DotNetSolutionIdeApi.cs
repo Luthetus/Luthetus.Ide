@@ -564,12 +564,12 @@ Execution Terminal"));
 
 			var resourceUri = new ResourceUri(file);
 			
-			var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
+			var fastParseArgs = new FastParseArgs(resourceUri, fileAbsolutePath.ExtensionNoPeriod, _serviceProvider)
 			{
 				ShouldBlockUntilBackgroundTaskIsCompleted = true,
 			};
 
-			await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
+			await _textEditorService.TextEditorConfig.FastParseFunc.Invoke(fastParseArgs)
 				.ConfigureAwait(false);
 				
 			fileParsedCount++;

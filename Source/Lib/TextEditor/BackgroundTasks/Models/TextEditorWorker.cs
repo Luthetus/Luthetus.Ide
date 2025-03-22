@@ -126,8 +126,9 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	}
 	
 	/// <summary>
-	/// TODO: Get this to work without boxing the uniqueTextEditorWork.
-	/// TODO: ValueTaskCompletionSource exists?
+	/// TODO: This has to repeat the logic for 'uniqueTextEditorWork.__TaskCompletionSourceWasCreated'
+	/// but do it for 'BackgroundTaskKey' otherwise two async enqueues with this group
+	/// will cause a clobber to the task completion source and it never gets set.
 	/// </summary>
 	public Task EnqueueUniqueTextEditorWorkAsync(UniqueTextEditorWork uniqueTextEditorWork)
 	{

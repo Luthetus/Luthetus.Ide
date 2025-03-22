@@ -197,7 +197,7 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 		return ValueTask.CompletedTask;
     }
 	
-	public ValueTask FastParseAsync(TextEditorEditContext editContext, IFileSystemProvider fileSystemProvider)
+	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider)
 	{
 		return ValueTask.CompletedTask;
 	}

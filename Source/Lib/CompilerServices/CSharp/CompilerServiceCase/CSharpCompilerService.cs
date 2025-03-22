@@ -524,9 +524,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return ValueTask.CompletedTask;
 	}
     
-    public ValueTask FastParseAsync(TextEditorEditContext editContext, IFileSystemProvider fileSystemProvider)
+    public async ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider)
 	{
-		return ValueTask.CompletedTask;
+		var content = await fileSystemProvider.File
+            .ReadAllTextAsync(resourceUri.Value)
+            .ConfigureAwait(false);
 	}
     
     /// <summary>
