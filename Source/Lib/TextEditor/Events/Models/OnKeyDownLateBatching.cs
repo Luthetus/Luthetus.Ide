@@ -1,7 +1,11 @@
+using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -100,6 +104,103 @@ public struct OnKeyDownLateBatching
 
         if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
+
+		if (KeymapArgs.CtrlKey && KeymapArgs.AltKey)
+		{
+		}
+		else if (KeymapArgs.CtrlKey)
+		{
+		    switch (KeymapArgs.Key)
+		    {
+		    	case "r":
+		    		modelModifier.CompilerService.ResourceWasModified(
+		                modelModifier.ResourceUri,
+		                Array.Empty<TextEditorTextSpan>());
+		            TextEditorCommandDefaultFunctions.TriggerRemeasure(
+		                editContext,
+		                viewModelModifier);
+		            goto finalize;
+		    	case "s":
+		            TextEditorCommandDefaultFunctions.TriggerSave(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                ComponentData.ServiceProvider.GetRequiredService<ICommonComponentRenderers>(),
+		                ComponentData.ServiceProvider.GetRequiredService<INotificationService>());
+		            
+		            modelModifier.CompilerService.ResourceWasModified(
+		                modelModifier.ResourceUri,
+		                Array.Empty<TextEditorTextSpan>());
+		            
+		            goto finalize;
+		        case "c":
+		            await TextEditorCommandDefaultFunctions.CopyAsync(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                ComponentData.ServiceProvider.GetRequiredService<IClipboardService>());
+		            goto finalize;
+		        case "v":
+		            await TextEditorCommandDefaultFunctions.PasteAsync(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                ComponentData.ServiceProvider.GetRequiredService<IClipboardService>());
+		            goto finalize;
+		        case "x":
+		            await TextEditorCommandDefaultFunctions.CutAsync(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                ComponentData.ServiceProvider.GetRequiredService<IClipboardService>());
+		            goto finalize;
+		        case "a":
+		            TextEditorCommandDefaultFunctions.SelectAll(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "z":
+		            TextEditorCommandDefaultFunctions.Undo(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "y":
+		            TextEditorCommandDefaultFunctions.Redo(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "ArrowDown":
+		            TextEditorCommandDefaultFunctions.ScrollLineDown(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "ArrowUp":
+		            TextEditorCommandDefaultFunctions.ScrollLineUp(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		    }
+		}
+		else if (KeymapArgs.AltKey)
+		{
+		}
+		else
+		{
+		}
 
 		_index = 0;
 		
@@ -341,6 +442,8 @@ public struct OnKeyDownLateBatching
 				}
             }
 		}
+		
+		finalize:
 		
 		// TODO: Do this code first so the user gets immediate UI feedback in the event that
 		//       their keydown code takes a long time?
