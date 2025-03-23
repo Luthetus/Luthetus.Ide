@@ -26,10 +26,10 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 	
-	private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(500);
+	// private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(500);
 
 	/// <summary>byte is used as TArgs just as a "throwaway" type. It isn't used.</summary>
-	private Debounce<byte> _debounceRender;
+	// private Debounce<byte> _debounceRender;
 	
 	private ResourceUri _resourceUriPrevious = ResourceUri.Empty;
 	
@@ -45,18 +45,18 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	
 	protected override void OnInitialized()
     {
-    	_debounceRender = new(ThrottleTimeSpan, _cancellationTokenSource.Token, async (_, _) =>
-    	{
-    		UpdateUi();
-    	});
+    	//_debounceRender = new(ThrottleTimeSpan, _cancellationTokenSource.Token, async (_, _) =>
+    	//{
+    	//	UpdateUi();
+    	//});
     
-        TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
-        OnRenderBatchChanged();
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        OnCursorShouldBlinkChanged();
         
         base.OnInitialized();
     }
 
-	private async void OnRenderBatchChanged()
+	private void OnCursorShouldBlinkChanged()
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	
@@ -66,7 +66,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	if (_shouldRender)
     	{
     		_shouldRender = false;
-    		await InvokeAsync(StateHasChanged);
+    		// Don't await this;
+    		InvokeAsync(StateHasChanged);
     	}
     
     	if (renderBatch.ViewModel.PrimaryCursor.LineIndex == _lineIndexPrevious &&
@@ -75,7 +76,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			return;
         }
         
-    	_debounceRender.Run(0);
+    	UpdateUi();
     }
     
     private void ToggleDefaultToolbar()
@@ -196,6 +197,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 					_codeBlockOwner = targetScope.CodeBlockOwner;
 					_shouldRender = true;
 				}
+				
+				// Don't await this.
+				InvokeAsync(StateHasChanged);
 		
 	    		return ValueTask.CompletedTask;
 	    	}
@@ -209,7 +213,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 
 	public void Dispose()
     {
-    	TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
+    	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
     	
     	_cancellationTokenSource.Cancel();
     	_cancellationTokenSource.Dispose();
