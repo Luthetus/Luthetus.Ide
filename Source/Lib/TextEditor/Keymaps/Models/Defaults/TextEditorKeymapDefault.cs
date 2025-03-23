@@ -1,3 +1,5 @@
+using System.Text;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -16,6 +18,8 @@ namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 public class TextEditorKeymapDefault : ITextEditorKeymap
 {
+	private readonly StringBuilder _indentationBuilder = new();
+
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
@@ -271,30 +275,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                viewModelModifier,
 		                cursorModifierBag);
 		            break;
-		        case "Tab":
-		        	if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
-		        	{
-		        		if (onKeyDown.KeymapArgs.ShiftKey)
-			        	{
-			        		TextEditorCommandDefaultFunctions.IndentLess(
-				                editContext,
-				                modelModifier,
-				                viewModelModifier,
-				                cursorModifierBag);
-			        	}
-			        	else
-			        	{
-			        		TextEditorCommandDefaultFunctions.IndentMore(
-				                editContext,
-				                modelModifier,
-				                viewModelModifier,
-				                cursorModifierBag);
-			        	}
-			        	
-			        	break;
-		        	}
-
-					break;
 				case "ArrowLeft":
 	            case "ArrowDown":
 	            case "ArrowUp":
@@ -400,8 +380,93 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    TextEditorModelModifier.DeleteKind.Delete,
 	                    CancellationToken.None);
 					break;
+				case "Enter":
+					var valueToInsert = modelModifier.LineEndKindPreference.AsCharacters();
+			
+					// Match indentation on newline keystroke
+					var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+		
+					var cursorPositionIndex = line.StartPositionIndexInclusive + primaryCursorModifier.ColumnIndex;
+					var indentationPositionIndex = line.StartPositionIndexInclusive;
+		
+					_indentationBuilder.Clear();
+					
+					while (indentationPositionIndex < cursorPositionIndex)
+					{
+						var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+		
+						if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+							_indentationBuilder.Append(possibleIndentationChar);
+						else
+							break;
+					}
+		
+					valueToInsert += _indentationBuilder.ToString();
+					
+					modelModifier.Insert(
+			            valueToInsert,
+			            cursorModifierBag,
+			            cancellationToken: CancellationToken.None);
+			            
+	                break;
+				case "Tab":
+					if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+		        	{
+		        		if (onKeyDown.KeymapArgs.ShiftKey)
+			        	{
+			        		TextEditorCommandDefaultFunctions.IndentLess(
+				                editContext,
+				                modelModifier,
+				                viewModelModifier,
+				                cursorModifierBag);
+			        	}
+			        	else
+			        	{
+			        		TextEditorCommandDefaultFunctions.IndentMore(
+				                editContext,
+				                modelModifier,
+				                viewModelModifier,
+				                cursorModifierBag);
+			        	}
+			        	
+			        	break;
+		        	}
+					else
+					{
+						if (onKeyDown.KeymapArgs.ShiftKey)
+			        	{
+			        		TextEditorCommandDefaultFunctions.IndentLess(
+				                editContext,
+				                modelModifier,
+				                viewModelModifier,
+				                cursorModifierBag);
+			        	}
+			        	else
+			        	{
+			            	modelModifier.Insert(
+			                    "\t",
+			                    cursorModifierBag,
+			                    cancellationToken: CancellationToken.None);
+			            }
+		            }
+	                break;
+				case "Space":
+	            	modelModifier.Insert(
+	                    " ",
+	                    cursorModifierBag,
+	                    cancellationToken: CancellationToken.None);
+	                break;
 				case "Backquote":
+				case "Digit0":
 				case "Digit1":
+				case "Digit2":
+				case "Digit3":
+				case "Digit4":
+				case "Digit5":
+				case "Digit6":
+				case "Digit7":
+				case "Digit8":
+				case "Digit9":
 				case "Minus":
 				case "Equal":
 				case "BracketLeft":

@@ -337,12 +337,21 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+    	
+    	(int lowerRowIndexInclusive, int upperRowIndexExclusive) selectionBoundsInRowIndexUnits;
     
-        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
-
-        var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-            modelModifier,
-            selectionBoundsInPositionIndexUnits);
+    	if (primaryCursorModifier.SelectionAnchorPositionIndex is null)
+    	{
+    		selectionBoundsInRowIndexUnits = (primaryCursorModifier.LineIndex, primaryCursorModifier.LineIndex + 1);
+    	}
+    	else
+    	{
+	        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
+	
+	        selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+	            modelModifier,
+	            selectionBoundsInPositionIndexUnits);
+        }
 
         bool isFirstLoop = true;
 
