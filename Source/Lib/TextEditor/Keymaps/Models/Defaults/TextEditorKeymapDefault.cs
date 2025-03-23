@@ -55,7 +55,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				default:
-			    	goto finalize;
+			    	break;
 	    	}
 		}
 		else if (onKeyDown.KeymapArgs.CtrlKey && onKeyDown.KeymapArgs.AltKey)
@@ -63,7 +63,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				default:
-			    	goto finalize;
+			    	break;
 	    	}
 		}
 		else if (onKeyDown.KeymapArgs.CtrlKey)
@@ -77,7 +77,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.TriggerRemeasure(
 		                editContext,
 		                viewModelModifier);
-		            goto finalize;
+		            break;
 		    	case "KeyS":
 		            TextEditorCommandDefaultFunctions.TriggerSave(
 		                editContext,
@@ -91,7 +91,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                modelModifier.ResourceUri,
 		                Array.Empty<TextEditorTextSpan>());
 		            
-		            goto finalize;
+		            break;
 		        case "KeyC":
 		            await TextEditorCommandDefaultFunctions.CopyAsync(
 		                editContext,
@@ -99,7 +99,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                viewModelModifier,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
-		            goto finalize;
+		            break;
 		        case "KeyV":
 		            await TextEditorCommandDefaultFunctions.PasteAsync(
 		                editContext,
@@ -107,7 +107,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                viewModelModifier,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
-		            goto finalize;
+		            break;
 		        case "KeyX":
 		            await TextEditorCommandDefaultFunctions.CutAsync(
 		                editContext,
@@ -115,63 +115,63 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                viewModelModifier,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
-		            goto finalize;
+		            break;
 		        case "KeyA":
 		            TextEditorCommandDefaultFunctions.SelectAll(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "Keyz":
 		            TextEditorCommandDefaultFunctions.Undo(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "KeyY":
 		            TextEditorCommandDefaultFunctions.Redo(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "KeyD":
 		            TextEditorCommandDefaultFunctions.Duplicate(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "ArrowDown":
 		            TextEditorCommandDefaultFunctions.ScrollLineDown(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "ArrowUp":
 		            TextEditorCommandDefaultFunctions.ScrollLineUp(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "PageDown":
 					TextEditorCommandDefaultFunctions.CursorMovePageBottom(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "PageUp":
 					TextEditorCommandDefaultFunctions.CursorMovePageTop(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "Slash":
 					await TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
 		                editContext,
@@ -181,7 +181,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                onKeyDown.ComponentData.TextEditorService,
 		                onKeyDown.ComponentData,
 		                onKeyDown.ComponentData.TextEditorComponentRenderers);
-		            goto finalize;
+		            break;
 		        case "KeyF":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
@@ -204,7 +204,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
 			        }
 		            
-		            goto finalize;
+		            break;
 		        case "ArrowLeft":
 	            case "ArrowRight":
 	            case "Home":
@@ -224,7 +224,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					        onKeyDown.ComponentData.DropdownService);
 				    }
 
-	                goto finalize;
+	                break;
 	            case "Backspace":
 					modelModifier.Delete(
 	                    cursorModifierBag,
@@ -232,7 +232,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModelModifier.DeleteKind.Backspace,
 	                    CancellationToken.None);
-					goto finalize;
+					break;
 				case "Delete":
 					modelModifier.Delete(
 	                    cursorModifierBag,
@@ -240,9 +240,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModelModifier.DeleteKind.Delete,
 	                    CancellationToken.None);
-	                goto finalize;
+	                break;
 	            default:
-		    		goto finalize;
+		    		break;
 		    }
 		}
 		else if (onKeyDown.KeymapArgs.AltKey)
@@ -250,7 +250,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				default:
-			    	goto finalize;
+			    	break;
 	    	}
 		}
 		else
@@ -263,14 +263,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "PageUp":
 					TextEditorCommandDefaultFunctions.ScrollPageUp(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
-		            goto finalize;
+		            break;
 		        case "Tab":
 		        	if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
 		        	{
@@ -291,7 +291,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				                cursorModifierBag);
 			        	}
 			        	
-			        	goto finalize;
+			        	break;
 		        	}
 
 					break;
@@ -329,8 +329,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 						        viewModelModifier,
 						        onKeyDown.ComponentData.DropdownService);
 					    }
-	
-		                goto finalize;
+					    
+					    break;
 		            }
 		        case "F10":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
@@ -343,7 +343,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					        primaryCursorModifier,
 					        onKeyDown.ComponentData.DropdownService,
 					        onKeyDown.ComponentData);
-					    goto finalize;
+					    break;
 		        	}
 		        	break;
 		        case "ContextMenu":
@@ -355,7 +355,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        primaryCursorModifier,
 				        onKeyDown.ComponentData.DropdownService,
 				        onKeyDown.ComponentData);
-				    goto finalize;
+				    break;
 				case "CapsLock":
 					/*
 					On Linux the 'CapsLock' to 'Escape' setting is returning:
@@ -371,7 +371,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 						        viewModelModifier,
 						        onKeyDown.ComponentData.DropdownService);
 						}
-						goto finalize;
+						break;
 					}
 					break;
 				case "Escape":
@@ -381,7 +381,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					        editContext,
 					        viewModelModifier,
 					        onKeyDown.ComponentData.DropdownService);
-					    goto finalize;
+					    break;
 					}
 					break;
 				case "Backspace":
@@ -391,7 +391,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModelModifier.DeleteKind.Backspace,
 	                    CancellationToken.None);
-					goto finalize;
+					break;
 				case "Delete":
 					modelModifier.Delete(
 	                    cursorModifierBag,
@@ -399,7 +399,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModelModifier.DeleteKind.Delete,
 	                    CancellationToken.None);
-					goto finalize;
+					break;
 				case "Backquote":
 				case "Digit1":
 				case "Minus":
@@ -442,54 +442,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.Key,
 	                    cursorModifierBag,
 	                    cancellationToken: CancellationToken.None);
-	                goto finalize;
+	                break;
 			}
 		}
-
-		var keymapArgs = onKeyDown.KeymapArgs;
-		
-        var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
-
-        var definiteKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
-            onKeyDown.ComponentData,
-			keymapArgs,
-			definiteHasSelection,
-			editContext.TextEditorService,
-			out var command);
-
-        var shouldInvokeAfterOnKeyDownAsync = false;
-
-        switch (definiteKeyboardEventArgsKind)
-        {
-            case KeymapArgsKind.Text:
-            case KeymapArgsKind.Other:
-                shouldInvokeAfterOnKeyDownAsync = true;
-
-				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-				{
-					TooltipViewModel = null
-				};
-
-				if (definiteKeyboardEventArgsKind == KeymapArgsKind.Text)
-				{
-					modelModifier.Insert(
-	                    keymapArgs.Key,
-	                    cursorModifierBag,
-	                    cancellationToken: CancellationToken.None);
-				}
-				else
-				{
-					editContext.TextEditorService.ModelApi.HandleKeyboardEvent(
-						editContext,
-				        modelModifier,
-				        cursorModifierBag,
-				        keymapArgs,
-				        CancellationToken.None);
-				}
-                break;
-        }
-		
-		finalize:
 		
 		// TODO: Do this code first so the user gets immediate UI feedback in the event that
 		//       their keydown code takes a long time?
