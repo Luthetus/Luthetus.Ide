@@ -523,13 +523,15 @@
     </div>
     
     @{
-		// var footerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.FooterComponentType;
+    
+    	var footerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.FooterComponentType;
 	
-	    if (renderBatchValidated is not null)
+	    if (footerComponentType is not null && renderBatchValidated is not null)
 	    {
-	    	<TextEditorDefaultFooterDisplay TextEditorViewModelDisplay="this"/>
-	    	@*<DynamicComponent Type="footerComponentType"
-	    					  Parameters="DependentComponentParameters"/>*@
+	    	<ShouldRenderBoundary>
+	    		<DynamicComponent Type="footerComponentType"
+	    						  Parameters="DependentComponentParameters"/>
+	    	</ShouldRenderBoundary>
 	    }
 	    
 	    // LuthetusDebugSomething.SetTextEditorUi(Stopwatch.GetElapsedTime(startTime));
