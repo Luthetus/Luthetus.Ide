@@ -364,10 +364,25 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					*/
 					if (onKeyDown.KeymapArgs.Key == "Escape")
 					{
-						break;
+						if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+	                	{
+							TextEditorCommandDefaultFunctions.RemoveDropdown(
+						        editContext,
+						        viewModelModifier,
+						        onKeyDown.ComponentData.DropdownService);
+						}
+						goto finalize;
 					}
 					break;
 				case "Escape":
+					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+                	{
+						TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        onKeyDown.ComponentData.DropdownService);
+					    goto finalize;
+					}
 					break;
 				case "Backspace":
 					modelModifier.Delete(
@@ -449,23 +464,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
             case KeymapArgsKind.Text:
             case KeymapArgsKind.Other:
                 shouldInvokeAfterOnKeyDownAsync = true;
-
-                if (!EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
-                {
-                    if (KeyboardKeyFacts.MetaKeys.ESCAPE == keymapArgs.Key ||
-                        KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key ||
-                        KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key ||
-                        !KeyboardKeyFacts.IsMetaKey(keymapArgs))
-                    {
-                    	if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
-                    	{
-							TextEditorCommandDefaultFunctions.RemoveDropdown(
-						        editContext,
-						        viewModelModifier,
-						        onKeyDown.ComponentData.DropdownService);
-						}
-                    }
-                }
 
 				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
