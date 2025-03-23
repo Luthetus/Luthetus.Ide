@@ -54,6 +54,11 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
         if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
+		var menuKind = MenuKind.None;
+		var shouldClearTooltip = false;
+		var shouldRevealCursor = false;
+		var shouldApplySyntaxHighlighting = false;
+
 		if (onKeyDown.KeymapArgs.MetaKey)
 		{
 			switch (onKeyDown.KeymapArgs.Code)
@@ -75,9 +80,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		    switch (onKeyDown.KeymapArgs.Code)
 		    {
 		    	case "KeyR":
-	    			modelModifier.CompilerService.ResourceWasModified(
-	                	modelModifier.ResourceUri,
-		                Array.Empty<TextEditorTextSpan>());
+		    		onKeyDown.ComponentData.ThrottleApplySyntaxHighlighting(modelModifier);
 		            TextEditorCommandDefaultFunctions.TriggerRemeasure(
 		                editContext,
 		                viewModelModifier);
@@ -91,9 +94,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                onKeyDown.ComponentData.CommonComponentRenderers,
 		                onKeyDown.ComponentData.NotificationService);
 		            
-		            modelModifier.CompilerService.ResourceWasModified(
-		                modelModifier.ResourceUri,
-		                Array.Empty<TextEditorTextSpan>());
+		            onKeyDown.ComponentData.ThrottleApplySyntaxHighlighting(modelModifier);
 		            
 		            break;
 		        case "KeyC":
@@ -111,6 +112,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                viewModelModifier,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
+		            shouldRevealCursor = true;
+		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "KeyX":
 		            await TextEditorCommandDefaultFunctions.CutAsync(
@@ -119,6 +122,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                viewModelModifier,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
+		            shouldRevealCursor = true;
+		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "KeyA":
 		            TextEditorCommandDefaultFunctions.SelectAll(
@@ -133,6 +138,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
+		            shouldRevealCursor = true;
+		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "KeyY":
 		            TextEditorCommandDefaultFunctions.Redo(
@@ -140,6 +147,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
+		            shouldRevealCursor = true;
+		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "KeyD":
 		            TextEditorCommandDefaultFunctions.Duplicate(
@@ -147,6 +156,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
+		            shouldRevealCursor = true;
+		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "ArrowDown":
 		            TextEditorCommandDefaultFunctions.ScrollLineDown(
@@ -185,6 +196,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                onKeyDown.ComponentData.TextEditorService,
 		                onKeyDown.ComponentData,
 		                onKeyDown.ComponentData.TextEditorComponentRenderers);
+		            shouldRevealCursor = true;
 		            break;
 		        case "KeyF":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
@@ -236,6 +248,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModelModifier.DeleteKind.Backspace,
 	                    CancellationToken.None);
+	                shouldRevealCursor = true;
 					break;
 				case "Delete":
 					modelModifier.Delete(
@@ -244,6 +257,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModelModifier.DeleteKind.Delete,
 	                    CancellationToken.None);
+	                shouldRevealCursor = true;
 	                break;
 	            case "Enter":
 					var valueToInsert = modelModifier.LineEndKindPreference.AsCharacters();
@@ -284,7 +298,27 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			            primaryCursorModifier.ColumnIndex = indentationLength;
 			        }
 			            
+	                shouldRevealCursor = true;
+		            shouldApplySyntaxHighlighting = true;
 	                break;
+	            case "BracketRight":
+	            	TextEditorCommandDefaultFunctions.GoToMatchingCharacter(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                shouldSelectText: onKeyDown.KeymapArgs.ShiftKey);
+	            	shouldRevealCursor = true;
+	            	break;
+	            case "Space":
+	            	shouldRevealCursor = true;
+	            	shouldClearTooltip = true;
+	            	menuKind = MenuKind.AutoCompleteMenu;
+		            
+		            // TODO: Fix 'shouldApplySyntaxHighlighting = true' for "Space"...
+		            // ...It is causing the autocomplete menu to lose focus.
+		            // shouldApplySyntaxHighlighting = true;
+	            	break;
 	            default:
 		    		break;
 		    }
@@ -355,26 +389,16 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        case "F10":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
-		        		TextEditorCommandDefaultFunctions.ShowContextMenu(
-					        editContext,
-					        modelModifier,
-					        viewModelModifier,
-					        cursorModifierBag,
-					        primaryCursorModifier,
-					        onKeyDown.ComponentData.DropdownService,
-					        onKeyDown.ComponentData);
+		        		menuKind = MenuKind.ContextMenu;
+	                	shouldRevealCursor = true;
+                		shouldClearTooltip = true;
 					    break;
 		        	}
 		        	break;
 		        case "ContextMenu":
-		        	TextEditorCommandDefaultFunctions.ShowContextMenu(
-				        editContext,
-				        modelModifier,
-				        viewModelModifier,
-				        cursorModifierBag,
-				        primaryCursorModifier,
-				        onKeyDown.ComponentData.DropdownService,
-				        onKeyDown.ComponentData);
+		        	menuKind = MenuKind.ContextMenu;
+	                shouldRevealCursor = true;
+	                shouldClearTooltip = true;
 				    break;
 				case "CapsLock":
 					/*
@@ -384,25 +408,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					*/
 					if (onKeyDown.KeymapArgs.Key == "Escape")
 					{
-						if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
-	                	{
-							TextEditorCommandDefaultFunctions.RemoveDropdown(
-						        editContext,
-						        viewModelModifier,
-						        onKeyDown.ComponentData.DropdownService);
-						}
+						menuKind = MenuKind.None;
+						shouldClearTooltip = true;
 						break;
 					}
 					break;
 				case "Escape":
-					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
-                	{
-						TextEditorCommandDefaultFunctions.RemoveDropdown(
-					        editContext,
-					        viewModelModifier,
-					        onKeyDown.ComponentData.DropdownService);
-					    break;
-					}
+					menuKind = MenuKind.None;
+					shouldClearTooltip = true;
 					break;
 				case "Backspace":
 					modelModifier.Delete(
@@ -411,6 +424,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModelModifier.DeleteKind.Backspace,
 	                    CancellationToken.None);
+	                shouldRevealCursor = true;
+	                menuKind = MenuKind.None;
+	                shouldClearTooltip = true;
 					break;
 				case "Delete":
 					modelModifier.Delete(
@@ -419,6 +435,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModelModifier.DeleteKind.Delete,
 	                    CancellationToken.None);
+					shouldRevealCursor = true;
+					menuKind = MenuKind.None;
+	                shouldClearTooltip = true;
 					break;
 				case "Enter":
 					var valueToInsert = modelModifier.LineEndKindPreference.AsCharacters();
@@ -455,6 +474,10 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			            cursorModifierBag,
 			            cancellationToken: CancellationToken.None);
 			            
+	                shouldRevealCursor = true;
+	                menuKind = MenuKind.None;
+	                shouldClearTooltip = true;
+		            shouldApplySyntaxHighlighting = true;
 	                break;
 				case "Tab":
 					if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
@@ -476,6 +499,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				                cursorModifierBag);
 			        	}
 			        	
+			        	shouldRevealCursor = true;
 			        	break;
 		        	}
 					else
@@ -494,7 +518,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                    "\t",
 			                    cursorModifierBag,
 			                    cancellationToken: CancellationToken.None);
+			                    
+			                menuKind = MenuKind.None;
+			                shouldClearTooltip = true;
+		            		shouldApplySyntaxHighlighting = true;
 			            }
+			            
+			            shouldRevealCursor = true;
 		            }
 	                break;
 				case "Space":
@@ -502,8 +532,32 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    " ",
 	                    cursorModifierBag,
 	                    cancellationToken: CancellationToken.None);
+	                    
+	                shouldRevealCursor = true;
+	                shouldClearTooltip = true;
+	                menuKind = MenuKind.None;
+		            shouldApplySyntaxHighlighting = true;
 	                break;
 				case "Backquote":
+				case "BracketLeft":
+				case "BracketRight":
+				case "Backslash":
+				case "Semicolon":
+				case "Quote":
+				case "Comma":
+				case "Period":
+				case "Slash":
+				case "Minus":
+				case "Equal":
+					modelModifier.Insert(
+	                    onKeyDown.KeymapArgs.Key,
+	                    cursorModifierBag,
+	                    cancellationToken: CancellationToken.None);
+	                
+	                shouldRevealCursor = true;
+	                menuKind = MenuKind.None;
+	                shouldClearTooltip = true;
+	                break;
 				case "Digit0":
 				case "Digit1":
 				case "Digit2":
@@ -514,16 +568,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				case "Digit7":
 				case "Digit8":
 				case "Digit9":
-				case "Minus":
-				case "Equal":
-				case "BracketLeft":
-				case "BracketRight":
-				case "Backslash":
-				case "Semicolon":
-				case "Quote":
-				case "Comma":
-				case "Period":
-				case "Slash":
 	            case "KeyA":
 	            case "KeyB":
 	            case "KeyC":
@@ -554,8 +598,65 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.Key,
 	                    cursorModifierBag,
 	                    cancellationToken: CancellationToken.None);
+	                shouldRevealCursor = true;
+	                menuKind = MenuKind.AutoCompleteMenu;
+	                shouldClearTooltip = true;
 	                break;
 			}
+		}
+		
+		if (viewModelModifier.ViewModel.MenuKind != menuKind)
+		{
+			switch (menuKind)
+			{
+				case MenuKind.None:
+					TextEditorCommandDefaultFunctions.RemoveDropdown(
+				        editContext,
+				        viewModelModifier,
+			        	onKeyDown.ComponentData.DropdownService);
+			        break;
+				case MenuKind.ContextMenu:
+					TextEditorCommandDefaultFunctions.ShowContextMenu(
+				        editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        primaryCursorModifier,
+				        onKeyDown.ComponentData.DropdownService,
+				        onKeyDown.ComponentData);
+			        break;
+				case MenuKind.AutoCompleteMenu:
+					TextEditorCommandDefaultFunctions.ShowAutocompleteMenu(
+		        		editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        primaryCursorModifier,
+				        onKeyDown.ComponentData.DropdownService,
+				        onKeyDown.ComponentData);
+			        break;
+			}
+		}
+		
+		if (shouldClearTooltip)
+		{
+			if (viewModelModifier.ViewModel.TooltipViewModel is not null)
+			{
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					TooltipViewModel = null
+				};
+			}
+		}
+		
+		if (shouldRevealCursor)
+		{
+			viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+		}
+		
+		if (shouldApplySyntaxHighlighting)
+		{
+			onKeyDown.ComponentData.ThrottleApplySyntaxHighlighting(modelModifier);
 		}
 		
 		// TODO: Do this code first so the user gets immediate UI feedback in the event that
