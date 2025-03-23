@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -45,6 +46,7 @@ public sealed class TextEditorComponentData
 		INotificationService notificationService,
 		ITextEditorService textEditorService,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+		IFindAllService findAllService, 
 		IServiceProvider serviceProvider)
 	{
 		TextEditorHtmlElementId = textEditorHtmlElementId;
@@ -57,10 +59,11 @@ public sealed class TextEditorComponentData
 		NotificationService = notificationService;
 		TextEditorService = textEditorService;
 		TextEditorComponentRenderers = textEditorComponentRenderers;
+		FindAllService = findAllService;
 		ServiceProvider = serviceProvider;
 	}
 
-	public TextEditorComponentData(
+	/*public TextEditorComponentData(
 		TextEditorComponentData otherComponentData,
 		Keymap keymap)
 	{
@@ -74,7 +77,7 @@ public sealed class TextEditorComponentData
 
 		TextEditorViewModelDisplay = otherComponentData.TextEditorViewModelDisplay;
 		ServiceProvider = otherComponentData.ServiceProvider;
-	}
+	}*/
 
 	/// <summary>
 	/// This property contains the global options, with an extra step of overriding any specified options
@@ -92,6 +95,7 @@ public sealed class TextEditorComponentData
 	public INotificationService NotificationService { get; }
 	public ITextEditorService TextEditorService { get; }
 	public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; }
+	public IFindAllService FindAllService { get; }
 	public IServiceProvider ServiceProvider { get; }
 	public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
     public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;

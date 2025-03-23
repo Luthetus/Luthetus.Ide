@@ -24,6 +24,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 // GutterDriver.cs
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -80,6 +81,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     public LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    [Inject]
+    private IFindAllService FindAllService { get; set; } = null!;
     // ScrollbarSection.razor.cs
     [Inject]
     private IDragService DragService { get; set; } = null!;
@@ -275,8 +278,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (renderBatchUnsafe.Options!.CommonOptions?.FontSizeInPixels is not null)
             renderBatchUnsafe.FontSizeInPixels = renderBatchUnsafe.Options!.CommonOptions.FontSizeInPixels;
         
-        if (renderBatchUnsafe.ViewModelDisplayOptions.KeymapOverride is not null)
-            renderBatchUnsafe.Options.Keymap = renderBatchUnsafe.ViewModelDisplayOptions.KeymapOverride;
+        /*if (renderBatchUnsafe.ViewModelDisplayOptions.KeymapOverride is not null)
+            renderBatchUnsafe.Options.Keymap = renderBatchUnsafe.ViewModelDisplayOptions.KeymapOverride;*/
 
         _previousRenderBatch = _currentRenderBatch;
         
@@ -284,7 +287,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         
         _activeRenderBatch = renderBatchUnsafe.Validate() ? renderBatchUnsafe : null;
         
-        RenderBatchChanged?.Invoke();
+        // RenderBatchChanged?.Invoke();
     }
     
     private void SetComponentData()
@@ -300,6 +303,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			NotificationService,
 			TextEditorService,
 			TextEditorComponentRenderers,
+			FindAllService,
 			ServiceProvider);
     }
 
@@ -308,11 +312,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         
     private async void TextEditorOptionsStateWrap_StateChanged()
     {
-    	if (TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap.Key != _componentData.Options.Keymap.Key)
+    	/*if (TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap.Key != _componentData.Options.Keymap.Key)
     	{
     		ConstructRenderBatch();
     		SetComponentData();
-    	}
+    	}*/
     	
     	await InvokeAsync(StateHasChanged);
     }
@@ -395,13 +399,13 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			return;
 		}
 
-		var onKeyDown = new OnKeyDownLateBatching(
+		var onKeyDown = new OnKeyDown(
 			_componentData,
             new KeymapArgs(keyboardEventArgs),
             resourceUri,
             viewModelKey);
 
-        TextEditorService.TextEditorWorker.EnqueueOnKeyDownLateBatching(onKeyDown);
+        TextEditorService.TextEditorWorker.EnqueueOnKeyDown(onKeyDown);
 	}
 
     private void ReceiveOnContextMenu()

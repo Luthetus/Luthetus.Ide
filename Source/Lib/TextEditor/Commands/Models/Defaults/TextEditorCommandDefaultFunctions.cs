@@ -26,6 +26,7 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -1285,4 +1286,61 @@ public class TextEditorCommandDefaultFunctions
 				},
 			});
 	}
+	
+	public static async ValueTask ShowFindOverlay(
+        TextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        LuthetusCommonJavaScriptInteropApi commonJavaScriptInteropApi)
+    {
+		// If the user has an active text selection,
+		// then populate the find overlay with their selection.
+		
+        var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursor, modelModifier);
+		if (selectedText is not null)
+		{
+			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+            {
+                FindOverlayValue = selectedText,
+                FindOverlayValueExternallyChangedMarker = !viewModelModifier.ViewModel.FindOverlayValueExternallyChangedMarker,
+            };
+		}
+
+        if (viewModelModifier.ViewModel.ShowFindOverlay)
+        {
+            await commonJavaScriptInteropApi
+                .FocusHtmlElementById(viewModelModifier.ViewModel.FindOverlayId)
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+            {
+                ShowFindOverlay = true,
+            };
+        }
+    }
+    
+    public static void PopulateSearchFindAll(
+        TextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        IFindAllService findAllService)
+    {
+		// If the user has an active text selection,
+		// then populate the find overlay with their selection.
+		
+        if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursor is null)
+            return;
+
+        var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursor, modelModifier);
+		if (selectedText is null)
+			return;
+			
+		findAllService.SetSearchQuery(selectedText);
+    }
 }

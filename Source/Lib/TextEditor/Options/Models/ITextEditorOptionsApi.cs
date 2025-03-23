@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Models;
 
@@ -13,7 +14,7 @@ public interface ITextEditorOptionsApi
     public void SetFontFamily(string? fontFamily, bool updateStorage = true);
     public void SetFontSize(int fontSizeInPixels, bool updateStorage = true);
     public void SetHeight(int? heightInPixels, bool updateStorage = true);
-    public void SetKeymap(Keymap keymap, bool updateStorage = true);
+    public void SetKeymap(ITextEditorKeymap keymap, bool updateStorage = true);
     public void SetShowNewlines(bool showNewlines, bool updateStorage = true);
     public void SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true);
     public void SetShowWhitespace(bool showWhitespace, bool updateStorage = true);

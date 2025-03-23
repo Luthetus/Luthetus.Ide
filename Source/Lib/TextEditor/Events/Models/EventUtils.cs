@@ -130,7 +130,12 @@ public static class EventUtils
         out bool success,
         out CommandNoType command)
     {
-        layerKey = ((ITextEditorKeymap)componentData.Options.Keymap!).GetLayer(hasSelection);
+    	layerKey = ((ITextEditorKeymap)componentData.Options.Keymap!).GetLayer(hasSelection);
+    	command = null;
+    	success = false;
+    	return false;
+    
+        /*layerKey = ((ITextEditorKeymap)componentData.Options.Keymap!).GetLayer(hasSelection);
 
         keymapArgs.LayerKey = layerKey;
 
@@ -150,9 +155,9 @@ public static class EventUtils
         }
 
         /*if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keymapArgs.Code && keymapArgs.ShiftKey)
-            command = TextEditorCommandDefaultFunctions.NewLineBelow();*/
+            command = TextEditorCommandDefaultFunctions.NewLineBelow();*//*
 
-        return command is not null;
+        return command is not null;*/
     }
 
     public static bool CheckIfKeyboardEventArgsMapsToMovement(KeymapArgs keymapArgs, CommandNoType command)

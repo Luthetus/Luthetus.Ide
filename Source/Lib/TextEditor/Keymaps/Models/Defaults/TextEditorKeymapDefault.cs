@@ -7,16 +7,16 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
-public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
+public class TextEditorKeymapDefault : ITextEditorKeymap
 {
-    public TextEditorKeymapDefault()
-        : base(new Key<Keymap>(Guid.Parse("4aaca759-c2c7-4e6f-9d9f-f3d17172df16")),
-               "Default")
-    {
-    }
+    public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {
@@ -38,8 +38,431 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         return string.Empty;
     }
 
-	public bool TryMap(KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
-	{
-        return MapFirstOrDefault(keymapArgument, out command);
+    public async ValueTask HandleEvent(OnKeyDown onKeyDown)
+    {
+    	var editContext = new TextEditorEditContext(onKeyDown.ComponentData.TextEditorViewModelDisplay.TextEditorService);
+
+        var modelModifier = editContext.GetModelModifier(onKeyDown.ResourceUri);
+        var viewModelModifier = editContext.GetViewModelModifier(onKeyDown.ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+        if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+            return;
+
+		if (onKeyDown.KeymapArgs.CtrlKey && onKeyDown.KeymapArgs.AltKey)
+		{
+		}
+		else if (onKeyDown.KeymapArgs.CtrlKey)
+		{
+		    switch (onKeyDown.KeymapArgs.Key)
+		    {
+		    	case "r":
+		    		modelModifier.CompilerService.ResourceWasModified(
+		                modelModifier.ResourceUri,
+		                Array.Empty<TextEditorTextSpan>());
+		            TextEditorCommandDefaultFunctions.TriggerRemeasure(
+		                editContext,
+		                viewModelModifier);
+		            goto finalize;
+		    	case "s":
+		            TextEditorCommandDefaultFunctions.TriggerSave(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                onKeyDown.ComponentData.CommonComponentRenderers,
+		                onKeyDown.ComponentData.NotificationService);
+		            
+		            modelModifier.CompilerService.ResourceWasModified(
+		                modelModifier.ResourceUri,
+		                Array.Empty<TextEditorTextSpan>());
+		            
+		            goto finalize;
+		        case "c":
+		            await TextEditorCommandDefaultFunctions.CopyAsync(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                onKeyDown.ComponentData.ClipboardService);
+		            goto finalize;
+		        case "v":
+		            await TextEditorCommandDefaultFunctions.PasteAsync(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                onKeyDown.ComponentData.ClipboardService);
+		            goto finalize;
+		        case "x":
+		            await TextEditorCommandDefaultFunctions.CutAsync(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                onKeyDown.ComponentData.ClipboardService);
+		            goto finalize;
+		        case "a":
+		            TextEditorCommandDefaultFunctions.SelectAll(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "z":
+		            TextEditorCommandDefaultFunctions.Undo(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "y":
+		            TextEditorCommandDefaultFunctions.Redo(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "d":
+		            TextEditorCommandDefaultFunctions.Duplicate(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "ArrowDown":
+		            TextEditorCommandDefaultFunctions.ScrollLineDown(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "ArrowUp":
+		            TextEditorCommandDefaultFunctions.ScrollLineUp(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "PageDown":
+					TextEditorCommandDefaultFunctions.CursorMovePageBottom(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "PageUp":
+					TextEditorCommandDefaultFunctions.CursorMovePageTop(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "/":
+					await TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                onKeyDown.ComponentData.TextEditorService,
+		                onKeyDown.ComponentData,
+		                onKeyDown.ComponentData.TextEditorComponentRenderers);
+		            goto finalize;
+		        case "f":
+		        	if (onKeyDown.KeymapArgs.ShiftKey)
+		        	{
+		        		TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
+			                editContext,
+			                modelModifier,
+			                viewModelModifier,
+			                cursorModifierBag,
+			                primaryCursorModifier,
+			                onKeyDown.ComponentData.FindAllService);
+		        	}
+		        	else
+		        	{
+						await TextEditorCommandDefaultFunctions.ShowFindOverlay(
+			                editContext,
+			                modelModifier,
+			                viewModelModifier,
+			                cursorModifierBag,
+			                primaryCursorModifier,
+			                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
+			        }
+		            goto finalize;
+		        case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+	            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+	            case KeyboardKeyFacts.MovementKeys.HOME:
+	            case KeyboardKeyFacts.MovementKeys.END:
+					editContext.TextEditorService.ViewModelApi.MoveCursor(
+                		onKeyDown.KeymapArgs,
+				        editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag);
+				        
+				    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+				    {
+				    	TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        onKeyDown.ComponentData.DropdownService);
+				    }
+
+	                goto finalize;
+		    }
+		}
+		else if (onKeyDown.KeymapArgs.AltKey)
+		{
+		}
+		else
+		{
+			switch (onKeyDown.KeymapArgs.Key)
+			{
+				case "PageDown":
+					TextEditorCommandDefaultFunctions.ScrollPageDown(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "PageUp":
+					TextEditorCommandDefaultFunctions.ScrollPageUp(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag);
+		            goto finalize;
+		        case "Tab":
+		        	if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+		        	{
+		        		if (onKeyDown.KeymapArgs.ShiftKey)
+			        	{
+			        		TextEditorCommandDefaultFunctions.IndentLess(
+				                editContext,
+				                modelModifier,
+				                viewModelModifier,
+				                cursorModifierBag);
+			        	}
+			        	else
+			        	{
+			        		TextEditorCommandDefaultFunctions.IndentMore(
+				                editContext,
+				                modelModifier,
+				                viewModelModifier,
+				                cursorModifierBag);
+			        	}
+			        	
+			        	goto finalize;
+		        	}
+
+					break;
+				case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+	            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+	            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+	            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+	            case KeyboardKeyFacts.MovementKeys.HOME:
+	            case KeyboardKeyFacts.MovementKeys.END:
+	            	if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == onKeyDown.KeymapArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == onKeyDown.KeymapArgs.Key) &&
+	                    viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
+	                {
+	                	// TODO: Focusing the menu from here isn't working?
+	                	await editContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
+	                		AutocompleteMenu.HTML_ELEMENT_ID,
+	                		preventScroll: true);
+	                		
+	                	onKeyDown.ComponentData.MenuShouldTakeFocus = true;
+	                	
+	                	break;
+	                }
+	                else
+	                {
+						editContext.TextEditorService.ViewModelApi.MoveCursor(
+	                		onKeyDown.KeymapArgs,
+					        editContext,
+					        modelModifier,
+					        viewModelModifier,
+					        cursorModifierBag);
+					        
+					    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+					    {
+					    	TextEditorCommandDefaultFunctions.RemoveDropdown(
+						        editContext,
+						        viewModelModifier,
+						        onKeyDown.ComponentData.DropdownService);
+					    }
+	
+		                goto finalize;
+		            }
+			}
+		}
+
+		var keymapArgs = onKeyDown.KeymapArgs;
+		
+        var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+
+        var definiteKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
+            onKeyDown.ComponentData,
+			keymapArgs,
+			definiteHasSelection,
+			editContext.TextEditorService,
+			out var command);
+
+        var shouldInvokeAfterOnKeyDownAsync = false;
+
+        switch (definiteKeyboardEventArgsKind)
+        {
+            case KeymapArgsKind.Movement:
+                if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keymapArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keymapArgs.Key) &&
+                    viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
+                {
+                	// TODO: Focusing the menu from here isn't working?
+                	await editContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
+                		AutocompleteMenu.HTML_ELEMENT_ID,
+                		preventScroll: true);
+                		
+                	onKeyDown.ComponentData.MenuShouldTakeFocus = true;
+                }
+                else
+                {
+                    editContext.TextEditorService.ViewModelApi.MoveCursor(
+                		keymapArgs,
+				        editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag);
+				        
+				    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+				    {
+				    	TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        onKeyDown.ComponentData.DropdownService);
+				    }
+                }
+                break;
+            case KeymapArgsKind.ContextMenu:
+            	TextEditorCommandDefaultFunctions.ShowContextMenu(
+			        editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        primaryCursorModifier,
+			        onKeyDown.ComponentData.DropdownService,
+			        onKeyDown.ComponentData);
+                break;
+            case KeymapArgsKind.Text:
+            case KeymapArgsKind.Other:
+                shouldInvokeAfterOnKeyDownAsync = true;
+
+                if (!EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
+                {
+                    if (KeyboardKeyFacts.MetaKeys.ESCAPE == keymapArgs.Key ||
+                        KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key ||
+                        KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key ||
+                        !KeyboardKeyFacts.IsMetaKey(keymapArgs))
+                    {
+                    	if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+                    	{
+							TextEditorCommandDefaultFunctions.RemoveDropdown(
+						        editContext,
+						        viewModelModifier,
+						        onKeyDown.ComponentData.DropdownService);
+						}
+                    }
+                }
+
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					TooltipViewModel = null
+				};
+
+				if (definiteKeyboardEventArgsKind == KeymapArgsKind.Text)
+				{
+					modelModifier.Insert(
+	                    keymapArgs.Key,
+	                    cursorModifierBag,
+	                    cancellationToken: CancellationToken.None);
+				}
+				else
+				{
+					if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
+	                {
+	                	var eventCounter = 1;
+	                
+	                    if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
+	                    {
+	                        modelModifier.Delete(
+	                            cursorModifierBag,
+	                            eventCounter,
+	                            keymapArgs.CtrlKey,
+	                            TextEditorModelModifier.DeleteKind.Backspace,
+	                            CancellationToken.None);
+	                    }
+	                    else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
+	                    {
+	                        modelModifier.Delete(
+	                            cursorModifierBag,
+	                            eventCounter,
+	                            keymapArgs.CtrlKey,
+	                            TextEditorModelModifier.DeleteKind.Delete,
+	                            CancellationToken.None);
+	                    }
+	                }
+					else
+					{
+						editContext.TextEditorService.ModelApi.HandleKeyboardEvent(
+							editContext,
+					        modelModifier,
+					        cursorModifierBag,
+					        keymapArgs,
+					        CancellationToken.None);
+					}
+				}
+                break;
+        }
+
+        if (shouldInvokeAfterOnKeyDownAsync)
+        {
+            if (command is null /* ||
+                command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView*/)
+            {
+                viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+            }
+
+			if (onKeyDown.ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync is not null)
+	        {
+	            await onKeyDown.ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync.Invoke(
+		                editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        keymapArgs,
+						onKeyDown.ComponentData)
+                    .ConfigureAwait(false);
+	        }
+			else
+			{
+				await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsync(
+						editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        keymapArgs,
+						onKeyDown.ComponentData)
+                    .ConfigureAwait(false);
+			}
+        }
+		
+		finalize:
+		
+		// TODO: Do this code first so the user gets immediate UI feedback in the event that
+		//       their keydown code takes a long time?
+		editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+		
+		await editContext.TextEditorService
+			.FinalizePost(editContext)
+			.ConfigureAwait(false);
     }
 }

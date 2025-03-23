@@ -70,7 +70,7 @@ public class TextEditorWorker : IBackgroundTaskGroup
     public Queue<RedundantTextEditorWork> RedundantTextEditorWorkQueue { get; } = new();
     public Queue<UniqueTextEditorWork> UniqueTextEditorWorkQueue { get; } = new();
     public Queue<OnDoubleClick> OnDoubleClickQueue { get; } = new();
-    public Queue<OnKeyDownLateBatching> OnKeyDownLateBatchingQueue { get; } = new();
+    public Queue<OnKeyDown> OnKeyDownQueue { get; } = new();
 	public Queue<OnMouseDown> OnMouseDownQueue { get; } = new();
     public Queue<OnMouseMove> OnMouseMoveQueue { get; } = new();
     public Queue<OnScrollHorizontal> OnScrollHorizontalQueue { get; } = new();
@@ -166,12 +166,12 @@ public class TextEditorWorker : IBackgroundTaskGroup
 		}
 	}
 	
-	public void EnqueueOnKeyDownLateBatching(OnKeyDownLateBatching onKeyDownLateBatching)
+	public void EnqueueOnKeyDown(OnKeyDown onKeyDown)
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnKeyDownLateBatching);
-			OnKeyDownLateBatchingQueue.Enqueue(onKeyDownLateBatching);
+			WorkKindQueue.Enqueue(TextEditorWorkKind.OnKeyDown);
+			OnKeyDownQueue.Enqueue(onKeyDown);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
 	}
@@ -264,10 +264,10 @@ public class TextEditorWorker : IBackgroundTaskGroup
 				var onDoubleClick = OnDoubleClickQueue.Dequeue();
 				_taskCompletionSourceWasCreated = false;
 				return onDoubleClick.HandleEvent(cancellationToken);
-		    case TextEditorWorkKind.OnKeyDownLateBatching:
-		    	var onKeyDownLateBatching = OnKeyDownLateBatchingQueue.Dequeue();
+		    case TextEditorWorkKind.OnKeyDown:
+		    	var onKeyDown = OnKeyDownQueue.Dequeue();
 				_taskCompletionSourceWasCreated = false;
-				return onKeyDownLateBatching.HandleEvent(cancellationToken);
+				return onKeyDown.HandleEvent(cancellationToken);
 			case TextEditorWorkKind.OnMouseDown:
 				var onMouseDown = OnMouseDownQueue.Dequeue();
 				_taskCompletionSourceWasCreated = false;

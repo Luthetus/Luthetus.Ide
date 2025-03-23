@@ -159,7 +159,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             WriteToStorage();
     }
 
-    public void SetKeymap(Keymap keymap, bool updateStorage = true)
+    public void SetKeymap(ITextEditorKeymap keymap, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -173,7 +173,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         };
         TextEditorOptionsStateChanged?.Invoke();
 
-        var activeKeymap = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
+        /*var activeKeymap = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
 
         if (activeKeymap is not null)
         {
@@ -183,7 +183,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         }
 
         if (updateStorage)
-            WriteToStorage();
+            WriteToStorage();*/
     }
 
     public void SetHeight(int? heightInPixels, bool updateStorage = true)
@@ -305,7 +305,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
         }
 
-        if (optionsJson.Keymap is not null)
+        /*if (optionsJson.Keymap is not null)
         {
             var matchedKeymap = TextEditorKeymapFacts.AllKeymapsList.FirstOrDefault(
                 x => x.Key == optionsJson.Keymap.Key);
@@ -320,7 +320,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                     ContextFacts.TextEditorContext.ContextKey,
                     activeKeymap);
             }
-        }
+        }*/
 
         if (optionsJson.CommonOptionsJsonDto?.FontSizeInPixels is not null)
             SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false);

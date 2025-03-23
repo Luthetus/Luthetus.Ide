@@ -5,7 +5,7 @@ public enum TextEditorWorkKind
 	RedundantTextEditorWork,
     UniqueTextEditorWork,
 	OnDoubleClick,
-    OnKeyDownLateBatching,
+    OnKeyDown,
 	OnMouseDown,
     OnMouseMove,
     OnScrollHorizontal,
