@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -46,7 +47,9 @@ public sealed class TextEditorComponentData
 		INotificationService notificationService,
 		ITextEditorService textEditorService,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
-		IFindAllService findAllService, 
+		IFindAllService findAllService,
+		IEnvironmentProvider environmentProvider,
+		IFileSystemProvider fileSystemProvider,
 		IServiceProvider serviceProvider)
 	{
 		TextEditorHtmlElementId = textEditorHtmlElementId;
@@ -60,6 +63,8 @@ public sealed class TextEditorComponentData
 		TextEditorService = textEditorService;
 		TextEditorComponentRenderers = textEditorComponentRenderers;
 		FindAllService = findAllService;
+		EnvironmentProvider = environmentProvider;
+		FileSystemProvider = fileSystemProvider;
 		ServiceProvider = serviceProvider;
 	}
 
@@ -96,6 +101,8 @@ public sealed class TextEditorComponentData
 	public ITextEditorService TextEditorService { get; }
 	public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; }
 	public IFindAllService FindAllService { get; }
+	public IEnvironmentProvider EnvironmentProvider { get; }
+	public IFileSystemProvider FileSystemProvider { get; }
 	public IServiceProvider ServiceProvider { get; }
 	public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
     public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;

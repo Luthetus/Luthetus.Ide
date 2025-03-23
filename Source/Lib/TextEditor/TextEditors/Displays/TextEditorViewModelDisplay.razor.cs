@@ -76,6 +76,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     [Inject]
     public IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
+    public IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    [Inject]
     public IDialogService DialogService { get; set; } = null!;
     [Inject]
     public IDropdownService DropdownService { get; set; } = null!;
@@ -304,6 +306,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			TextEditorService,
 			TextEditorComponentRenderers,
 			FindAllService,
+			EnvironmentProvider,
+			FileSystemProvider,
 			ServiceProvider);
     }
 

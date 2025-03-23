@@ -319,6 +319,16 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            // ...It is causing the autocomplete menu to lose focus.
 		            // shouldApplySyntaxHighlighting = true;
 	            	break;
+	            case "Period":
+	            	await TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
+				        editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi,
+				        onKeyDown.ComponentData.TextEditorService,
+				        onKeyDown.ComponentData.DropdownService);
+	            	break;
 	            default:
 		    		break;
 		    }
@@ -395,6 +405,18 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					    break;
 		        	}
 		        	break;
+		        case "F7":
+		        	await TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
+				        editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi,
+				        onKeyDown.ComponentData.EnvironmentProvider,
+				        onKeyDown.ComponentData.FileSystemProvider,
+				        onKeyDown.ComponentData.TextEditorService,
+				        onKeyDown.ComponentData.DropdownService);
+				    break;
 		        case "ContextMenu":
 		        	menuKind = MenuKind.ContextMenu;
 	                shouldRevealCursor = true;
