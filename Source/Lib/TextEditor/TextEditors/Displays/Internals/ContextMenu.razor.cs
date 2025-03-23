@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -25,6 +26,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
+    [Inject]
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
@@ -128,6 +131,21 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     public MenuRecord GetDefaultMenuRecord()
     {
     	List<MenuOptionRecord> menuOptionRecordsList = new();
+    	
+    	var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
+        menuOptionRecordsList.Add(cut);
+
+        var copy = new MenuOptionRecord("Copy (Ctrl c)", MenuOptionKind.Other, () => SelectMenuOption(CopyMenuOption));
+        menuOptionRecordsList.Add(copy);
+
+        var paste = new MenuOptionRecord("Paste (Ctrl v)", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
+        menuOptionRecordsList.Add(paste);
+        
+        var goToDefinition = new MenuOptionRecord("Go to definition (F12)", MenuOptionKind.Other, () => SelectMenuOption(GoToDefinitionOption));
+        menuOptionRecordsList.Add(goToDefinition);
+        
+        var quickActionsSlashRefactors = new MenuOptionRecord("QuickActions/Refactors (Ctrl .)", MenuOptionKind.Other, () => SelectMenuOption(QuickActionsSlashRefactors));
+        menuOptionRecordsList.Add(quickActionsSlashRefactors);
 
         if (!menuOptionRecordsList.Any())
             menuOptionRecordsList.Add(new MenuOptionRecord("No Context Menu Options for this item", MenuOptionKind.Other));
@@ -172,6 +190,133 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             }
         }, CancellationToken.None);
 
+        return Task.CompletedTask;
+    }
+    
+    public Task CutMenuOption()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    		
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.CutAsync),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				
+                return TextEditorCommandDefaultFunctions.CutAsync(
+                	editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        ClipboardService);
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task CopyMenuOption()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    	
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.CopyAsync),
+            editContext =>
+            {
+		        var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	
+                return TextEditorCommandDefaultFunctions.CopyAsync(
+            		editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        ClipboardService);
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task PasteMenuOption()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.PasteAsync),
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+        		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+                return TextEditorCommandDefaultFunctions.PasteAsync(
+                	editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        ClipboardService);
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task GoToDefinitionOption()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    		
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.GoToDefinition),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+        		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+
+        		if (viewModelModifier is null)
+        			return ValueTask.CompletedTask;
+                
+                viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+                
+                TextEditorCommandDefaultFunctions.GoToDefinition(
+                	editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag);
+            	return ValueTask.CompletedTask;
+            });
+        return Task.CompletedTask;
+    }
+    
+    public Task QuickActionsSlashRefactors()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    	
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor),
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+                return TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
+                	editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+                	CommonBackgroundTaskApi.JsRuntimeCommonApi,
+                	TextEditorService,
+                	DropdownService);
+            });
         return Task.CompletedTask;
     }
 

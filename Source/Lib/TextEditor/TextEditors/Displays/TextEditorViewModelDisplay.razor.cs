@@ -287,7 +287,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         
         _activeRenderBatch = renderBatchUnsafe.Validate() ? renderBatchUnsafe : null;
         
-        // RenderBatchChanged?.Invoke();
+        RenderBatchChanged?.Invoke();
     }
     
     private void SetComponentData()
