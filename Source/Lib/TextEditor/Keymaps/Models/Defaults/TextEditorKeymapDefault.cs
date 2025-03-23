@@ -55,9 +55,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		}
 		else if (onKeyDown.KeymapArgs.CtrlKey)
 		{
-		    switch (onKeyDown.KeymapArgs.Key)
+		    switch (onKeyDown.KeymapArgs.Code)
 		    {
-		    	case "r":
+		    	case "KeyR":
 		    		modelModifier.CompilerService.ResourceWasModified(
 		                modelModifier.ResourceUri,
 		                Array.Empty<TextEditorTextSpan>());
@@ -65,7 +65,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                viewModelModifier);
 		            goto finalize;
-		    	case "s":
+		    	case "KeyS":
 		            TextEditorCommandDefaultFunctions.TriggerSave(
 		                editContext,
 		                modelModifier,
@@ -79,7 +79,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                Array.Empty<TextEditorTextSpan>());
 		            
 		            goto finalize;
-		        case "c":
+		        case "KeyC":
 		            await TextEditorCommandDefaultFunctions.CopyAsync(
 		                editContext,
 		                modelModifier,
@@ -87,7 +87,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            goto finalize;
-		        case "v":
+		        case "KeyV":
 		            await TextEditorCommandDefaultFunctions.PasteAsync(
 		                editContext,
 		                modelModifier,
@@ -95,7 +95,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            goto finalize;
-		        case "x":
+		        case "KeyX":
 		            await TextEditorCommandDefaultFunctions.CutAsync(
 		                editContext,
 		                modelModifier,
@@ -103,28 +103,28 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            goto finalize;
-		        case "a":
+		        case "KeyA":
 		            TextEditorCommandDefaultFunctions.SelectAll(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
 		            goto finalize;
-		        case "z":
+		        case "Keyz":
 		            TextEditorCommandDefaultFunctions.Undo(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
 		            goto finalize;
-		        case "y":
+		        case "KeyY":
 		            TextEditorCommandDefaultFunctions.Redo(
 		                editContext,
 		                modelModifier,
 		                viewModelModifier,
 		                cursorModifierBag);
 		            goto finalize;
-		        case "d":
+		        case "KeyD":
 		            TextEditorCommandDefaultFunctions.Duplicate(
 		                editContext,
 		                modelModifier,
@@ -159,7 +159,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                viewModelModifier,
 		                cursorModifierBag);
 		            goto finalize;
-		        case "/":
+		        case "Slash":
 					await TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
 		                editContext,
 		                modelModifier,
@@ -169,16 +169,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                onKeyDown.ComponentData,
 		                onKeyDown.ComponentData.TextEditorComponentRenderers);
 		            goto finalize;
-		        case "f":
-					await TextEditorCommandDefaultFunctions.ShowFindOverlay(
-		                editContext,
-		                modelModifier,
-		                viewModelModifier,
-		                cursorModifierBag,
-		                primaryCursorModifier,
-		                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
-		            goto finalize;
-		        case "F":
+		        case "KeyF":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
 		        		TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
@@ -189,11 +180,22 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                primaryCursorModifier,
 			                onKeyDown.ComponentData.FindAllService);
 		        	}
+		        	else
+		        	{
+						await TextEditorCommandDefaultFunctions.ShowFindOverlay(
+			                editContext,
+			                modelModifier,
+			                viewModelModifier,
+			                cursorModifierBag,
+			                primaryCursorModifier,
+			                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
+			        }
+		            
 		            goto finalize;
-		        case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-	            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-	            case KeyboardKeyFacts.MovementKeys.HOME:
-	            case KeyboardKeyFacts.MovementKeys.END:
+		        case "ArrowLeft":
+	            case "ArrowRight":
+	            case "Home":
+	            case "End":
 					editContext.TextEditorService.ViewModelApi.MoveCursor(
                 		onKeyDown.KeymapArgs,
 				        editContext,
@@ -217,7 +219,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		}
 		else
 		{
-			switch (onKeyDown.KeymapArgs.Key)
+			switch (onKeyDown.KeymapArgs.Code)
 			{
 				case "PageDown":
 					TextEditorCommandDefaultFunctions.ScrollPageDown(
@@ -257,13 +259,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	}
 
 					break;
-				case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-	            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-	            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-	            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-	            case KeyboardKeyFacts.MovementKeys.HOME:
-	            case KeyboardKeyFacts.MovementKeys.END:
-	            	if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == onKeyDown.KeymapArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == onKeyDown.KeymapArgs.Key) &&
+				case "ArrowLeft":
+	            case "ArrowDown":
+	            case "ArrowUp":
+	            case "ArrowRight":
+	            case "Home":
+	            case "End":
+	            	if (("ArrowDown" == onKeyDown.KeymapArgs.Key || "ArrowUp" == onKeyDown.KeymapArgs.Key) &&
 	                    viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                {
 	                	// TODO: Focusing the menu from here isn't working?
