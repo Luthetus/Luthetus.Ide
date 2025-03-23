@@ -265,7 +265,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "ArrowRight":
 	            case "Home":
 	            case "End":
-	            	if (("ArrowDown" == onKeyDown.KeymapArgs.Key || "ArrowUp" == onKeyDown.KeymapArgs.Key) &&
+	            	if (("ArrowDown" == onKeyDown.KeymapArgs.Code || "ArrowUp" == onKeyDown.KeymapArgs.Code) &&
 	                    viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                {
 	                	// TODO: Focusing the menu from here isn't working?
