@@ -385,6 +385,49 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    TextEditorModelModifier.DeleteKind.Delete,
 	                    CancellationToken.None);
 					goto finalize;
+				case "Backquote":
+				case "Digit1":
+				case "Minus":
+				case "Equal":
+				case "BracketLeft":
+				case "BracketRight":
+				case "Backslash":
+				case "Semicolon":
+				case "Quote":
+				case "Comma":
+				case "Period":
+				case "Slash":
+	            case "KeyA":
+	            case "KeyB":
+	            case "KeyC":
+	            case "KeyD":
+	            case "KeyE":
+	            case "KeyF":
+	            case "KeyG":
+	            case "KeyH":
+	            case "KeyI":
+	            case "KeyJ":
+	            case "KeyK":
+	            case "KeyL":
+	            case "KeyM":
+	            case "KeyN":
+	            case "KeyO":
+	            case "KeyP":
+	            case "KeyQ":
+	            case "KeyR":
+	            case "KeyS":
+	            case "KeyT":
+	            case "KeyU":
+	            case "KeyV":
+	            case "KeyW":
+	            case "KeyX":
+	            case "KeyY":
+	            case "KeyZ":
+	            	modelModifier.Insert(
+	                    onKeyDown.KeymapArgs.Key,
+	                    cursorModifierBag,
+	                    cancellationToken: CancellationToken.None);
+	                goto finalize;
 			}
 		}
 
