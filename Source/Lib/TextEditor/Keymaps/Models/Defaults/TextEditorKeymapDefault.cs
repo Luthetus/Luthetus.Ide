@@ -170,6 +170,15 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                onKeyDown.ComponentData.TextEditorComponentRenderers);
 		            goto finalize;
 		        case "f":
+					await TextEditorCommandDefaultFunctions.ShowFindOverlay(
+		                editContext,
+		                modelModifier,
+		                viewModelModifier,
+		                cursorModifierBag,
+		                primaryCursorModifier,
+		                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
+		            goto finalize;
+		        case "F":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
 		        		TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
@@ -180,16 +189,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                primaryCursorModifier,
 			                onKeyDown.ComponentData.FindAllService);
 		        	}
-		        	else
-		        	{
-						await TextEditorCommandDefaultFunctions.ShowFindOverlay(
-			                editContext,
-			                modelModifier,
-			                viewModelModifier,
-			                cursorModifierBag,
-			                primaryCursorModifier,
-			                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
-			        }
 		            goto finalize;
 		        case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
 	            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
