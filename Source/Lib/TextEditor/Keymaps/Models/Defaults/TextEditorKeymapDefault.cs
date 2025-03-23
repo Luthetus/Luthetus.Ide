@@ -374,6 +374,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                		preventScroll: true);
 	                		
 	                	onKeyDown.ComponentData.MenuShouldTakeFocus = true;
+	                	menuKind = MenuKind.AutoCompleteMenu;
 	                	
 	                	break;
 	                }
@@ -396,6 +397,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					    
 					    break;
 		            }
+		        case "F12":
+		        	TextEditorCommandDefaultFunctions.GoToDefinition(
+		        		editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag);
+			        break;
 		        case "F10":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
