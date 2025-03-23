@@ -38,10 +38,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     // Service dependencies
     private readonly ITextEditorService _textEditorService;
+    private readonly IClipboardService _clipboardService;
     
-    public CSharpCompilerService(ITextEditorService textEditorService)
+    public CSharpCompilerService(ITextEditorService textEditorService, IClipboardService clipboardService)
     {
     	_textEditorService = textEditorService;
+    	_clipboardService = clipboardService;
     }
 
     public event Action? ResourceRegistered;
@@ -217,14 +219,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				{
 					var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
 						
-					/*menuOptionList.Add(new MenuOptionRecord(
+					menuOptionList.Add(new MenuOptionRecord(
 						$"Copy: {usingStatementText}",
 						MenuOptionKind.Other,
 						onClickFunc: async () =>
 						{
-							var clipboardService = commandArgs.ServiceProvider.GetRequiredService<IClipboardService>();
-							await clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
-						}));*/
+							await _clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
+						}));
 				}
 				else
 				{
