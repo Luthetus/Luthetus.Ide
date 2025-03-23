@@ -68,15 +68,15 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			{
 				default:
 			    	break;
-	    	}
+			}
 		}
 		else if (onKeyDown.KeymapArgs.CtrlKey)
 		{
 		    switch (onKeyDown.KeymapArgs.Code)
 		    {
 		    	case "KeyR":
-		    		modelModifier.CompilerService.ResourceWasModified(
-		                modelModifier.ResourceUri,
+	    			modelModifier.CompilerService.ResourceWasModified(
+	                	modelModifier.ResourceUri,
 		                Array.Empty<TextEditorTextSpan>());
 		            TextEditorCommandDefaultFunctions.TriggerRemeasure(
 		                editContext,
@@ -245,6 +245,46 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    TextEditorModelModifier.DeleteKind.Delete,
 	                    CancellationToken.None);
 	                break;
+	            case "Enter":
+					var valueToInsert = modelModifier.LineEndKindPreference.AsCharacters();
+			
+					// Match indentation on newline keystroke
+					var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+		
+					var cursorPositionIndex = line.StartPositionIndexInclusive + primaryCursorModifier.ColumnIndex;
+					var indentationPositionIndex = line.StartPositionIndexInclusive;
+		
+					_indentationBuilder.Clear();
+					
+					while (indentationPositionIndex < cursorPositionIndex)
+					{
+						var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+		
+						if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+							_indentationBuilder.Append(possibleIndentationChar);
+						else
+							break;
+					}
+		
+					var indentationLength = _indentationBuilder.Length;
+					valueToInsert = _indentationBuilder.ToString() + valueToInsert;
+					
+					primaryCursorModifier.SelectionAnchorPositionIndex = null;
+					primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
+        			primaryCursorModifier.ColumnIndex = 0;
+					
+					modelModifier.Insert(
+			            valueToInsert,
+			            cursorModifierBag,
+			            cancellationToken: CancellationToken.None);
+			            
+			        if (primaryCursorModifier.LineIndex > 1)
+			        {
+			            primaryCursorModifier.LineIndex--;
+			            primaryCursorModifier.ColumnIndex = indentationLength;
+			        }
+			            
+	                break;
 	            default:
 		    		break;
 		    }
@@ -402,6 +442,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					}
 		
 					valueToInsert += _indentationBuilder.ToString();
+					
+					if (onKeyDown.KeymapArgs.ShiftKey)
+					{
+						primaryCursorModifier.SelectionAnchorPositionIndex = null;
+						primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
+    					primaryCursorModifier.ColumnIndex = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
+					}
 					
 					modelModifier.Insert(
 			            valueToInsert,
