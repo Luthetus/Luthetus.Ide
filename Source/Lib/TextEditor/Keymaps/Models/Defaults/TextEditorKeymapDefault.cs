@@ -52,6 +52,11 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
 		if (onKeyDown.KeymapArgs.CtrlKey && onKeyDown.KeymapArgs.AltKey)
 		{
+			switch (onKeyDown.KeymapArgs.Code)
+			{
+				default:
+			    	goto finalize;
+	    	}
 		}
 		else if (onKeyDown.KeymapArgs.CtrlKey)
 		{
@@ -212,10 +217,17 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				    }
 
 	                goto finalize;
+	            default:
+		    		goto finalize;
 		    }
 		}
 		else if (onKeyDown.KeymapArgs.AltKey)
 		{
+			switch (onKeyDown.KeymapArgs.Code)
+			{
+				default:
+			    	goto finalize;
+	    	}
 		}
 		else
 		{
