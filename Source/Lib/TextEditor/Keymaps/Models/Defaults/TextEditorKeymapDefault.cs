@@ -50,7 +50,15 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
         if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
-		if (onKeyDown.KeymapArgs.CtrlKey && onKeyDown.KeymapArgs.AltKey)
+		if (onKeyDown.KeymapArgs.MetaKey)
+		{
+			switch (onKeyDown.KeymapArgs.Code)
+			{
+				default:
+			    	goto finalize;
+	    	}
+		}
+		else if (onKeyDown.KeymapArgs.CtrlKey && onKeyDown.KeymapArgs.AltKey)
 		{
 			switch (onKeyDown.KeymapArgs.Code)
 			{
@@ -217,6 +225,22 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				    }
 
 	                goto finalize;
+	            case "Backspace":
+					modelModifier.Delete(
+	                    cursorModifierBag,
+	                    1,
+	                    onKeyDown.KeymapArgs.CtrlKey,
+	                    TextEditorModelModifier.DeleteKind.Backspace,
+	                    CancellationToken.None);
+					goto finalize;
+				case "Delete":
+					modelModifier.Delete(
+	                    cursorModifierBag,
+	                    1,
+	                    onKeyDown.KeymapArgs.CtrlKey,
+	                    TextEditorModelModifier.DeleteKind.Delete,
+	                    CancellationToken.None);
+	                goto finalize;
 	            default:
 		    		goto finalize;
 		    }
@@ -308,6 +332,59 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	
 		                goto finalize;
 		            }
+		        case "F10":
+		        	if (onKeyDown.KeymapArgs.ShiftKey)
+		        	{
+		        		TextEditorCommandDefaultFunctions.ShowContextMenu(
+					        editContext,
+					        modelModifier,
+					        viewModelModifier,
+					        cursorModifierBag,
+					        primaryCursorModifier,
+					        onKeyDown.ComponentData.DropdownService,
+					        onKeyDown.ComponentData);
+					    goto finalize;
+		        	}
+		        	break;
+		        case "ContextMenu":
+		        	TextEditorCommandDefaultFunctions.ShowContextMenu(
+				        editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        primaryCursorModifier,
+				        onKeyDown.ComponentData.DropdownService,
+				        onKeyDown.ComponentData);
+				    goto finalize;
+				case "CapsLock":
+					/*
+					On Linux the 'CapsLock' to 'Escape' setting is returning:
+						event.code == CapsLock
+						event.key == Escape
+					*/
+					if (onKeyDown.KeymapArgs.Key == "Escape")
+					{
+						break;
+					}
+					break;
+				case "Escape":
+					break;
+				case "Backspace":
+					modelModifier.Delete(
+	                    cursorModifierBag,
+	                    1,
+	                    onKeyDown.KeymapArgs.CtrlKey,
+	                    TextEditorModelModifier.DeleteKind.Backspace,
+	                    CancellationToken.None);
+					goto finalize;
+				case "Delete":
+					modelModifier.Delete(
+	                    cursorModifierBag,
+	                    1,
+	                    onKeyDown.KeymapArgs.CtrlKey,
+	                    TextEditorModelModifier.DeleteKind.Delete,
+	                    CancellationToken.None);
+					goto finalize;
 			}
 		}
 
@@ -326,45 +403,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
         switch (definiteKeyboardEventArgsKind)
         {
-            case KeymapArgsKind.Movement:
-                if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keymapArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keymapArgs.Key) &&
-                    viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
-                {
-                	// TODO: Focusing the menu from here isn't working?
-                	await editContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
-                		AutocompleteMenu.HTML_ELEMENT_ID,
-                		preventScroll: true);
-                		
-                	onKeyDown.ComponentData.MenuShouldTakeFocus = true;
-                }
-                else
-                {
-                    editContext.TextEditorService.ViewModelApi.MoveCursor(
-                		keymapArgs,
-				        editContext,
-				        modelModifier,
-				        viewModelModifier,
-				        cursorModifierBag);
-				        
-				    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
-				    {
-				    	TextEditorCommandDefaultFunctions.RemoveDropdown(
-					        editContext,
-					        viewModelModifier,
-					        onKeyDown.ComponentData.DropdownService);
-				    }
-                }
-                break;
-            case KeymapArgsKind.ContextMenu:
-            	TextEditorCommandDefaultFunctions.ShowContextMenu(
-			        editContext,
-			        modelModifier,
-			        viewModelModifier,
-			        cursorModifierBag,
-			        primaryCursorModifier,
-			        onKeyDown.ComponentData.DropdownService,
-			        onKeyDown.ComponentData);
-                break;
             case KeymapArgsKind.Text:
             case KeymapArgsKind.Other:
                 shouldInvokeAfterOnKeyDownAsync = true;
@@ -400,72 +438,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				}
 				else
 				{
-					if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
-	                {
-	                	var eventCounter = 1;
-	                
-	                    if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
-	                    {
-	                        modelModifier.Delete(
-	                            cursorModifierBag,
-	                            eventCounter,
-	                            keymapArgs.CtrlKey,
-	                            TextEditorModelModifier.DeleteKind.Backspace,
-	                            CancellationToken.None);
-	                    }
-	                    else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
-	                    {
-	                        modelModifier.Delete(
-	                            cursorModifierBag,
-	                            eventCounter,
-	                            keymapArgs.CtrlKey,
-	                            TextEditorModelModifier.DeleteKind.Delete,
-	                            CancellationToken.None);
-	                    }
-	                }
-					else
-					{
-						editContext.TextEditorService.ModelApi.HandleKeyboardEvent(
-							editContext,
-					        modelModifier,
-					        cursorModifierBag,
-					        keymapArgs,
-					        CancellationToken.None);
-					}
-				}
-                break;
-        }
-
-        if (shouldInvokeAfterOnKeyDownAsync)
-        {
-            if (command is null /* ||
-                command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView*/)
-            {
-                viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
-            }
-
-			if (onKeyDown.ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync is not null)
-	        {
-	            await onKeyDown.ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync.Invoke(
-		                editContext,
-				        modelModifier,
-				        viewModelModifier,
-				        cursorModifierBag,
-				        keymapArgs,
-						onKeyDown.ComponentData)
-                    .ConfigureAwait(false);
-	        }
-			else
-			{
-				await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsync(
+					editContext.TextEditorService.ModelApi.HandleKeyboardEvent(
 						editContext,
 				        modelModifier,
-				        viewModelModifier,
 				        cursorModifierBag,
 				        keymapArgs,
-						onKeyDown.ComponentData)
-                    .ConfigureAwait(false);
-			}
+				        CancellationToken.None);
+				}
+                break;
         }
 		
 		finalize:
