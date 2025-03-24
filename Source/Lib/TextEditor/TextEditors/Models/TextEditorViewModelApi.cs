@@ -161,34 +161,53 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     #endregion
 
     #region UPDATE_METHODS
-    /// <summary>
-    /// If a parameter is null the JavaScript will not modify that value
-    /// </summary>
-    public void SetScrollPosition(
+    public void SetScrollPositionBoth(
         TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        double? scrollLeftInPixels,
-        double? scrollTopInPixels)
+        double scrollLeftInPixels,
+        double scrollTopInPixels)
     {
-        viewModelModifier.ScrollWasModified = true;
+    	viewModelModifier.ScrollWasModified = true;
 
-		if (scrollLeftInPixels is not null)
+		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 		{
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-				ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-					.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels.Value), viewModelModifier.ViewModel.TextEditorDimensions)
-			};
-		}
+			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
+				.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModelModifier.ViewModel.TextEditorDimensions)
+		};
 
-		if (scrollTopInPixels is not null)
+		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 		{
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-				ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-					.WithSetScrollTop((int)Math.Floor(scrollTopInPixels.Value), viewModelModifier.ViewModel.TextEditorDimensions)
-			};
-		}
+			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
+				.WithSetScrollTop((int)Math.Floor(scrollTopInPixels), viewModelModifier.ViewModel.TextEditorDimensions)
+		};
+    }
+        
+    public void SetScrollPositionLeft(
+        TextEditorEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
+        double scrollLeftInPixels)
+    {
+    	viewModelModifier.ScrollWasModified = true;
+
+		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
+				.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModelModifier.ViewModel.TextEditorDimensions)
+		};
+    }
+    
+    public void SetScrollPositionTop(
+        TextEditorEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
+        double scrollTopInPixels)
+    {
+    	viewModelModifier.ScrollWasModified = true;
+
+		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
+				.WithSetScrollTop((int)Math.Floor(scrollTopInPixels), viewModelModifier.ViewModel.TextEditorDimensions)
+		};
     }
 
     public void MutateScrollVerticalPosition(
@@ -230,45 +249,44 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         var columnIndex = textSpan.StartingIndexInclusive - lineInformation.StartPositionIndexInclusive;
 
         // Unit of measurement is pixels (px)
-        var scrollLeft = new Nullable<double>(columnIndex *
-            viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+        var scrollLeft = columnIndex *
+            viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
 
         // Unit of measurement is pixels (px)
-        var scrollTop = new Nullable<double>(lineIndex *
-            viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+        var scrollTop = lineIndex *
+            viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
 
+		var currentScrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
+		var currentScrollTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop;
+		
+		bool caseA;
+		bool caseB;
+		
         // If a given scroll direction is already within view of the text span, do not scroll on that direction
-        {
-            // scrollLeft needs to be modified?
-            {
-                var currentScrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
-                var currentWidth = viewModelModifier.ViewModel.TextEditorDimensions.Width;
+        
+        // scrollLeft needs to be modified?
+        var currentWidth = viewModelModifier.ViewModel.TextEditorDimensions.Width;
 
-                var caseA = currentScrollLeft <= scrollLeft;
-                var caseB = (scrollLeft ?? 0) < (currentWidth + currentScrollLeft);
+        caseA = currentScrollLeft <= scrollLeft;
+        caseB = scrollLeft < (currentWidth + currentScrollLeft);
 
-                if (caseA && caseB)
-                    scrollLeft = null;
-            }
+        if (caseA && caseB)
+            scrollLeft = currentScrollLeft;
 
-            // scrollTop needs to be modified?
-            {
-                var currentScrollTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop;
-                var currentHeight = viewModelModifier.ViewModel.TextEditorDimensions.Height;
+        // scrollTop needs to be modified?
+        var currentHeight = viewModelModifier.ViewModel.TextEditorDimensions.Height;
 
-                var caseA = currentScrollTop <= scrollTop;
-                var caseB = (scrollTop ?? 0) < (currentHeight + currentScrollTop);
+        caseA = currentScrollTop <= scrollTop;
+        caseB = scrollTop < (currentHeight + currentScrollTop);
 
-                if (caseA && caseB)
-                    scrollTop = null;
-            }
-        }
+        if (caseA && caseB)
+            scrollTop = currentScrollTop;
 
         // Return early if both values are 'null'
-        if (scrollLeft is null && scrollTop is null)
+        if (scrollLeft == currentScrollLeft && scrollTop == currentScrollTop)
             return;
 
-        SetScrollPosition(
+        SetScrollPositionBoth(
             editContext,
 	        viewModelModifier,
 	        scrollLeft,

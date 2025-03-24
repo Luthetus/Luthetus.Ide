@@ -29,11 +29,10 @@ public struct OnScrollHorizontal
         if (viewModelModifier is null)
             return;
 
-        editContext.TextEditorService.ViewModelApi.SetScrollPosition(
+        editContext.TextEditorService.ViewModelApi.SetScrollPositionLeft(
         	editContext,
     		viewModelModifier,
-        	ScrollLeft,
-        	null);
+        	ScrollLeft);
         	
         await editContext.TextEditorService
         	.FinalizePost(editContext)

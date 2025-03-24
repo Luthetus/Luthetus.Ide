@@ -40,14 +40,21 @@ public interface ITextEditorViewModelApi
     #endregion
 
     #region UPDATE_METHODS
-    /// <summary>
-    /// If a parameter is null the JavaScript will not modify that value
-    /// </summary>
-    public void SetScrollPosition(
+    public void SetScrollPositionBoth(
         TextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        double? scrollLeftInPixels,
-        double? scrollTopInPixels);
+        double scrollLeftInPixels,
+        double scrollTopInPixels);
+        
+    public void SetScrollPositionLeft(
+        TextEditorEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
+        double scrollLeftInPixels);
+    
+    public void SetScrollPositionTop(
+        TextEditorEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
+        double scrollTopInPixels);
 
     public void ScrollIntoView(
         TextEditorEditContext editContext,
