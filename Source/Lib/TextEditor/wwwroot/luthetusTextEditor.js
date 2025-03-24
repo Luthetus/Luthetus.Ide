@@ -73,7 +73,7 @@ window.luthetusTextEditor = {
             RelativeScrollTop: element.scrollTop
         }
     },
-    setScrollPosition: function (textEditorBodyId, gutterElementId, scrollLeft, scrollTop) {
+    setScrollPositionBoth: function (textEditorBodyId, gutterElementId, scrollLeft, scrollTop) {
         let textEditorBody = document.getElementById(textEditorBodyId);
         let textEditorGutter = document.getElementById(gutterElementId);
 

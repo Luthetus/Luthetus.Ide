@@ -269,7 +269,7 @@ public partial class TextEditorService : ITextEditorService
             if (viewModelModifier.ScrollWasModified)
             {
                 await JsRuntimeTextEditorApi
-		            .SetScrollPosition(
+		            .SetScrollPositionBoth(
 		                viewModelModifier.ViewModel.BodyElementId,
 		                viewModelModifier.ViewModel.GutterElementId,
 		                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft,
