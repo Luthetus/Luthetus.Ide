@@ -326,7 +326,7 @@ public partial class AdhocTest
     }
 
     /// <summary>
-    /// <see cref="ITextEditorModel.ContentList"/><br/><br/>
+    /// <see cref="TextEditorModel.ContentList"/><br/><br/>
     /// TODO: This needs to be separated out into an IReadOnlyList&lt;char&gt;...
     ///       ...and a IReadOnlyList&lt;byte&gt;
     ///       |

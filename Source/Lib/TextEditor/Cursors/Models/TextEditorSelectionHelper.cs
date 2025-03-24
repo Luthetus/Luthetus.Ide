@@ -29,7 +29,7 @@ public static class TextEditorSelectionHelper
 
     public static string? GetSelectedText(
         TextEditorSelection textEditorSelection,
-        ITextEditorModel textEditorModel)
+        TextEditorModel textEditorModel)
     {
         return GetSelectedText(
             textEditorSelection.AnchorPositionIndex,
@@ -39,7 +39,7 @@ public static class TextEditorSelectionHelper
     
     public static string? GetSelectedText(
         TextEditorCursorModifier cursorModifier,
-        ITextEditorModel textEditorModel)
+        TextEditorModel textEditorModel)
     {
         return GetSelectedText(
             cursorModifier.SelectionAnchorPositionIndex,
@@ -50,7 +50,7 @@ public static class TextEditorSelectionHelper
     public static string? GetSelectedText(
         int? anchorPositionIndex,
         int endingPositionIndex,
-        ITextEditorModel textEditorModel)
+        TextEditorModel textEditorModel)
     {
         if (HasSelectedText(anchorPositionIndex, endingPositionIndex))
         {
@@ -67,7 +67,7 @@ public static class TextEditorSelectionHelper
     }
 
     public static TextEditorCursor SelectLinesRange(
-        ITextEditorModel textEditorModel,
+        TextEditorModel textEditorModel,
         int startingRowIndex,
         int count)
     {
@@ -110,7 +110,7 @@ public static class TextEditorSelectionHelper
     }
 
     public static (int lowerRowIndexInclusive, int upperRowIndexExclusive) ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-        ITextEditorModel textEditorModel,
+        TextEditorModel textEditorModel,
         (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) positionIndexBounds)
     {
         var firstRowToSelectDataInclusive = textEditorModel.GetLineInformationFromPositionIndex(

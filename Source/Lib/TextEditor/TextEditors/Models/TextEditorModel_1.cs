@@ -32,7 +32,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// However, since <see cref="ResourceUri"/> should be unique,
 /// <see cref="TextEditorModel"/> is an exception to this pattern.
 /// </summary>
-public interface ITextEditorModel
+public interface TextEditorModel
 {
 	/// <summary>
 	/// Changed this property to an array from an ImmutableList (2024-08-13).
@@ -83,7 +83,7 @@ public interface ITextEditorModel
     public List<ITextEditorEdit> EditBlockList { get; }
     /// <summary>
     /// Convert an index for a <see cref="LineEnd"/> to a <see cref="LineInformation"/>, use the method:
-    /// <see cref="TextEditorModelExtensionMethods.GetLineInformation(ITextEditorModel, int)"/>
+    /// <see cref="TextEditorModelExtensionMethods.GetLineInformation(TextEditorModel, int)"/>
     /// </summary>
     public List<LineEnd> LineEndList { get; }
     public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; }

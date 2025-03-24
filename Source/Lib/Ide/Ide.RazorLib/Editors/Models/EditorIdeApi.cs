@@ -252,7 +252,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	
 	        return Task.FromResult(viewModelKey);
 
-	        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
+	        void HandleOnSaveRequested(TextEditorModel innerTextEditor)
 	        {
 	            var innerContent = innerTextEditor.GetAllText();
 	

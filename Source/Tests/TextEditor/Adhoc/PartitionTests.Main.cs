@@ -462,7 +462,7 @@ public partial class PartitionTests
 	/// 1 to 1 assertion by iterating over the partitions and asserting the richCharacter.Value.
 	/// </summary>
 	private void LogAndNonScientificallyAssertPartitionList(
-		ITextEditorModel model,
+		TextEditorModel model,
 		string expectedVisualizationText)
 	{
 		/*
