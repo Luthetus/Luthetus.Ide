@@ -29,10 +29,9 @@ public struct OnScrollVertical
         if (viewModelModifier is null)
             return;
 
-        editContext.TextEditorService.ViewModelApi.SetScrollPosition(
+        editContext.TextEditorService.ViewModelApi.SetScrollPositionTop(
         	editContext,
     		viewModelModifier,
-        	null,
         	ScrollTop);
         	
         await editContext.TextEditorService

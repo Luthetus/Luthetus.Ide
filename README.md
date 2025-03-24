@@ -14,8 +14,8 @@ Run unit tests:
 
 And there are more features that are not shown in these gifs.
 
-Only 158 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.42) (1,610 C# files in total parsed in 4.215 seconds.):
-![Example GIF](./Images/Ide/initialParseChanges.gif)
+Only 149 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.43) (1,610 C# files in total parsed in 3.518 seconds.):
+![Example GIF](./Images/Ide/initialParseChangesAgain.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/

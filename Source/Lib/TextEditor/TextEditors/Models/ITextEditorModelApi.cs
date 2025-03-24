@@ -66,31 +66,31 @@ public interface ITextEditorModelApi
     #region UPDATE_METHODS
     public void UndoEdit(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier);
+        TextEditorModel modelModifier);
 
     public void SetUsingLineEndKind(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         LineEndKind lineEndKind);
 
     public void SetResourceData(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         DateTime resourceLastWriteTime);
 
     public void Reload(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         string content,
         DateTime resourceLastWriteTime);
 
     public void RedoEdit(
     	TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier);
+        TextEditorModel modelModifier);
 
     public void InsertText(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken);
@@ -107,14 +107,14 @@ public interface ITextEditorModelApi
     /// </summary>
     public void InsertTextUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken);
 
     public void HandleKeyboardEvent(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         KeymapArgs keymapArgs,
         CancellationToken cancellationToken);
@@ -131,14 +131,14 @@ public interface ITextEditorModelApi
     /// </summary>
     public void HandleKeyboardEventUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         KeymapArgs keymapArgs,
         CancellationToken cancellationToken);
 
     public void DeleteTextByRange(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken);
@@ -155,14 +155,14 @@ public interface ITextEditorModelApi
     /// </summary>
     public void DeleteTextByRangeUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken);
 
     public void DeleteTextByMotion(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken);
@@ -179,14 +179,14 @@ public interface ITextEditorModelApi
     /// </summary>
     public void DeleteTextByMotionUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken);
 
     public void AddPresentationModel(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorPresentationModel emptyPresentationModel);
 
     /// <param name="emptyPresentationModel">
@@ -194,7 +194,7 @@ public interface ITextEditorModelApi
     /// </param>
     public void StartPendingCalculatePresentationModel(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel);
 
@@ -203,7 +203,7 @@ public interface ITextEditorModelApi
     /// </param>
     public void CompletePendingCalculatePresentationModel(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
         List<TextEditorTextSpan> calculatedTextSpans);
@@ -213,7 +213,7 @@ public interface ITextEditorModelApi
     /// </summary>
     public void ApplyDecorationRange(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         IEnumerable<TextEditorTextSpan> textSpans);
 
 	/// <summary>
@@ -229,7 +229,7 @@ public interface ITextEditorModelApi
 	/// </summary>
     public void ApplySyntaxHighlighting(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier);
+        TextEditorModel modelModifier);
     #endregion
 
     #region DELETE_METHODS

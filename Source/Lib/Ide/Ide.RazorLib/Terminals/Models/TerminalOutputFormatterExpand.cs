@@ -117,12 +117,12 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             new TerminalDecorationMapper(),
             _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
             
-        var modelModifier = new TextEditorModelModifier(model);
+        var modelModifier = new TextEditorModel(model);
         modelModifier.PerformRegisterPresentationModelAction(TerminalPresentationFacts.EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
         
-        model = modelModifier.ToModel();
+        model = modelModifier;
 
         _textEditorService.ModelApi.RegisterCustom(model);
         
@@ -151,10 +151,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             FindOverlayPresentationFacts.PresentationKey,
         };
             
-        viewModel = viewModel with
-        {
-            FirstPresentationLayerKeysList = firstPresentationLayerKeys
-        };
+        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
         
         _textEditorService.ViewModelApi.Register(viewModel);
     }

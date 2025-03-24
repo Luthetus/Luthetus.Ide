@@ -131,7 +131,7 @@ doremi".ReplaceLineEndings("\n");
 			        cursorModifierBag,
 			        columnCount,
 			        false,
-			        TextEditorModelModifier.DeleteKind.Delete);
+			        TextEditorModel.DeleteKind.Delete);
 			}
 			
 			Console.WriteLine(modelModifier.GetAllText());

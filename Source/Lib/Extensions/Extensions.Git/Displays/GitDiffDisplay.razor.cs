@@ -123,12 +123,12 @@ public partial class GitDiffDisplay : ComponentBase
             decorationMapper,
             compilerService);
             
-        var modelModifier = new TextEditorModelModifier(model);
+        var modelModifier = new TextEditorModel(model);
         modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
         
-        model = modelModifier.ToModel();
+        model = modelModifier;
 
         TextEditorService.ModelApi.RegisterCustom(model);
         
@@ -166,13 +166,10 @@ public partial class GitDiffDisplay : ComponentBase
 	            DiffPresentationFacts.InPresentationKey,
 	        };
 	            
-	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
+	        viewModel.ShouldSetFocusAfterNextRender = false;
 		
-            viewModel = viewModel with
-            {
-                GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys
-            };
+            viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+            viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
             
             TextEditorService.ViewModelApi.Register(viewModel);
         }
@@ -233,13 +230,10 @@ public partial class GitDiffDisplay : ComponentBase
 	            DiffPresentationFacts.OutPresentationKey,
 	        };
 	            
-	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
+	        viewModel.ShouldSetFocusAfterNextRender = false;
 		
-            viewModel = viewModel with
-            {
-                GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys
-            };
+            viewModel.GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension;
+            viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
             
             TextEditorService.ViewModelApi.Register(viewModel);
         }

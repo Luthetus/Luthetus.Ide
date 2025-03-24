@@ -25,7 +25,7 @@ public class VimMotionResultTests
 	}
 
 	/// <summary>
-	/// <see cref="VimMotionResult.GetResultAsync(ITextEditorModel, TextEditorCursorModifier, Func{Task})"/>
+	/// <see cref="VimMotionResult.GetResultAsync(TextEditorModel, TextEditorCursorModifier, Func{Task})"/>
 	/// </summary>
 	[Fact]
 	public void GetResultAsync()

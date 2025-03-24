@@ -87,7 +87,7 @@ public partial interface ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public Dictionary<ResourceUri, TextEditorModelModifier?> __ModelCache { get; }
+	public Dictionary<ResourceUri, TextEditorModel?> __ModelCache { get; }
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -95,7 +95,7 @@ public partial interface ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> __ViewModelCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel?> __ViewModelCache { get; }
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -130,7 +130,7 @@ public partial interface ITextEditorService
 		
 	public void RegisterModel(TextEditorModel model);
 	public void DisposeModel(ResourceUri resourceUri);
-	public void SetModel(TextEditorEditContext editContext, TextEditorModelModifier modelModifier);
+	public void SetModel(TextEditorEditContext editContext, TextEditorModel modelModifier);
 	
 	public void RegisterViewModel(
 	    Key<TextEditorViewModel> viewModelKey,
@@ -150,6 +150,6 @@ public partial interface ITextEditorService
 	
 	public void SetModelAndViewModelRange(
 	    TextEditorEditContext editContext,
-		List<TextEditorModelModifier?> modelModifierList,
-		List<TextEditorViewModelModifier?> viewModelModifierList);
+		List<TextEditorModel?> modelModifierList,
+		List<TextEditorViewModel?> viewModelModifierList);
 }

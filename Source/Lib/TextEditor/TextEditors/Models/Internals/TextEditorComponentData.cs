@@ -117,7 +117,7 @@ public sealed class TextEditorComponentData
     
     public bool MenuShouldTakeFocus { get; set; }
 
-	public void ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
+	public void ThrottleApplySyntaxHighlighting(TextEditorModel modelModifier)
     {
         _throttleApplySyntaxHighlighting.Run(_ =>
         {

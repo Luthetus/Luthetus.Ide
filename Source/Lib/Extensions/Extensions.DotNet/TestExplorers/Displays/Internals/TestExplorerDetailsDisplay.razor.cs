@@ -123,7 +123,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 				{
 					var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 					var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
-					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
 					if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
@@ -146,7 +146,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 							modelModifier);
 					}
 
-					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+					viewModelModifier.ShouldRevealCursor = true;
 					return ValueTask.CompletedTask;
 				});
 		}

@@ -48,14 +48,14 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             if (diffModelModifier is null)
                 return Task.CompletedTask;
 
-            var inViewModelModifier = editContext.GetViewModelModifier(diffModelModifier.DiffModel.InViewModelKey);
-            var outViewModelModifier = editContext.GetViewModelModifier(diffModelModifier.DiffModel.OutViewModelKey);
+            var inViewModel = editContext.GetViewModelModifier(diffModelModifier.DiffModel.InViewModelKey);
+            var outViewModel = editContext.GetViewModelModifier(diffModelModifier.DiffModel.OutViewModelKey);
 
-            if (inViewModelModifier is null || outViewModelModifier is null)
+            if (inViewModel is null || outViewModel is null)
                 return Task.CompletedTask;
 
-            var inModelModifier = editContext.GetModelModifier(inViewModelModifier.ViewModel.ResourceUri);
-            var outModelModifier = editContext.GetModelModifier(outViewModelModifier.ViewModel.ResourceUri);
+            var inModelModifier = editContext.GetModelModifier(inViewModel.ResourceUri);
+            var outModelModifier = editContext.GetModelModifier(outViewModel.ResourceUri);
 
             if (inModelModifier is null || outModelModifier is null)
                 return Task.CompletedTask;

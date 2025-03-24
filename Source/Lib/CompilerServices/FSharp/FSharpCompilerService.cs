@@ -137,8 +137,8 @@ public sealed class FSharpCompilerService : ICompilerService
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
@@ -146,8 +146,8 @@ public sealed class FSharpCompilerService : ICompilerService
 	
 	public ValueTask OnInspect(
 		TextEditorEditContext editContext,
-		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorModel modelModifier,
+		TextEditorViewModel viewModelModifier,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
@@ -158,14 +158,14 @@ public sealed class FSharpCompilerService : ICompilerService
     
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.CompletedTask;
     }
 
-	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
     	var lexer = new TextEditorFSharpLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
     	lexer.Lex();

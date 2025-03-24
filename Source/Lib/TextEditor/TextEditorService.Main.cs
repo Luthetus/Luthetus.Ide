@@ -148,7 +148,7 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public Dictionary<ResourceUri, TextEditorModelModifier?> __ModelCache { get; } = new();
+	public Dictionary<ResourceUri, TextEditorModel?> __ModelCache { get; } = new();
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -156,7 +156,7 @@ public partial class TextEditorService : ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> __ViewModelCache { get; } = new();
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel?> __ViewModelCache { get; } = new();
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -169,11 +169,11 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public List<TextEditorModelModifier?> __ModelList { get; } = new();   
+	public List<TextEditorModel?> __ModelList { get; } = new();   
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public List<TextEditorViewModelModifier?> __ViewModelList { get; } = new();
+    public List<TextEditorViewModel?> __ViewModelList { get; } = new();
     
     public event Action? TextEditorStateChanged;
 
@@ -220,26 +220,23 @@ public partial class TextEditorService : ITextEditorService
 			else
 			{
 	            successCursorModifierBag = __CursorModifierBagCache.TryGetValue(
-	                viewModelModifier.ViewModel.ViewModelKey,
+	                viewModelModifier.ViewModelKey,
 	                out cursorModifierBag);
 	        }
 
             if (successCursorModifierBag && cursorModifierBag.ConstructorWasInvoked)
             {
-                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                {
-                    CursorList = cursorModifierBag.List
-                        .Select(x => x.ToCursor())
-						.ToList()
-                };
+                viewModelModifier.CursorList = cursorModifierBag.List
+	                .Select(x => x.ToCursor())
+					.ToList();
             }
             
-            if (viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
+            if (viewModelModifier.ShouldRevealCursor)
             {
-            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
             	
             	if (!cursorModifierBag.ConstructorWasInvoked)
-            		cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            		cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             	
             	var cursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
             	
@@ -269,11 +266,11 @@ public partial class TextEditorService : ITextEditorService
             if (viewModelModifier.ScrollWasModified)
             {
                 await JsRuntimeTextEditorApi
-		            .SetScrollPosition(
-		                viewModelModifier.ViewModel.BodyElementId,
-		                viewModelModifier.ViewModel.GutterElementId,
-		                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft,
-		                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop)
+		            .SetScrollPositionBoth(
+		                viewModelModifier.BodyElementId,
+		                viewModelModifier.GutterElementId,
+		                viewModelModifier.ScrollbarDimensions.ScrollLeft,
+		                viewModelModifier.ScrollbarDimensions.ScrollTop)
 		            .ConfigureAwait(false);
             }
             
@@ -286,22 +283,22 @@ public partial class TextEditorService : ITextEditorService
             	//
             	// This code only needs to run if the scrollbar was modified.
             	
-            	if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Length > 0)
+            	if (viewModelModifier.VirtualizationResult.EntryList.Length > 0)
             	{
-            		var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
-            		var firstEntryTop = firstEntry.LineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+            		var firstEntry = viewModelModifier.VirtualizationResult.EntryList.First();
+            		var firstEntryTop = firstEntry.LineIndex * viewModelModifier.CharAndLineMeasurements.LineHeight;
             		
-            		if (viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop < firstEntryTop)
+            		if (viewModelModifier.ScrollbarDimensions.ScrollTop < firstEntryTop)
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
             		else
             		{
-            			var bigTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop +
-            				viewModelModifier.ViewModel.TextEditorDimensions.Height;
+            			var bigTop = viewModelModifier.ScrollbarDimensions.ScrollTop +
+            				viewModelModifier.TextEditorDimensions.Height;
             				
-            			var imaginaryLastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
-            			var imaginaryLastEntryTop = (imaginaryLastEntry.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+            			var imaginaryLastEntry = viewModelModifier.VirtualizationResult.EntryList.Last();
+            			var imaginaryLastEntryTop = (imaginaryLastEntry.LineIndex + 1) * viewModelModifier.CharAndLineMeasurements.LineHeight;
             				
             			if (bigTop > imaginaryLastEntryTop)
             				viewModelModifier.ShouldReloadVirtualizationResult = true;
@@ -316,8 +313,8 @@ public partial class TextEditorService : ITextEditorService
             	{
             		// low end plus width of it
             	
-            		var leftBoundary = viewModelModifier.ViewModel.VirtualizationResult.LeftVirtualizationBoundary;
-            		var scrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
+            		var leftBoundary = viewModelModifier.VirtualizationResult.LeftVirtualizationBoundary;
+            		var scrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
             		
             		if (scrollLeft < (leftBoundary.LeftInPixels + leftBoundary.WidthInPixels))
             		{
@@ -325,8 +322,8 @@ public partial class TextEditorService : ITextEditorService
             		}
             		else
             		{
-            			var rightBoundary = viewModelModifier.ViewModel.VirtualizationResult.RightVirtualizationBoundary;
-						var bigLeft = scrollLeft + viewModelModifier.ViewModel.TextEditorDimensions.Width;
+            			var rightBoundary = viewModelModifier.VirtualizationResult.RightVirtualizationBoundary;
+						var bigLeft = scrollLeft + viewModelModifier.TextEditorDimensions.Width;
             			
             			if (bigLeft > rightBoundary.LeftInPixels)
             			{
@@ -341,7 +338,7 @@ public partial class TextEditorService : ITextEditorService
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
 	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
 	            	editContext,
-	            	editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri),
+	            	editContext.GetModelModifier(viewModelModifier.ResourceUri),
 			        viewModelModifier,
 			        CancellationToken.None);
 			}
@@ -394,19 +391,19 @@ public partial class TextEditorService : ITextEditorService
 	/// </summary>
 	public void ValidateMaximumScrollLeftAndScrollTop(
 		TextEditorEditContext editContext,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModelModifier,
 		bool textEditorDimensionsChanged)
 	{	
-		var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+		var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
     	
     	if (modelModifier is null)
     		return;
 		
-		var originalScrollWidth = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth;
-		var originalScrollHeight = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight;
+		var originalScrollWidth = viewModelModifier.ScrollbarDimensions.ScrollWidth;
+		var originalScrollHeight = viewModelModifier.ScrollbarDimensions.ScrollHeight;
 	
 		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
-			viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+			viewModelModifier.CharAndLineMeasurements.CharacterWidth);
 
 		// Account for any tab characters on the 'MostCharactersOnASingleLineTuple'
 		//
@@ -428,47 +425,44 @@ public partial class TextEditorService : ITextEditorService
 
 			totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
 				tabCountOnLongestLine *
-				viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+				viewModelModifier.CharAndLineMeasurements.CharacterWidth);
 		}
 
 		var totalHeight = (int)Math.Ceiling(modelModifier.LineEndList.Count *
-			viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+			viewModelModifier.CharAndLineMeasurements.LineHeight);
 
 		// Add vertical margin so the user can scroll beyond the final line of content
 		int marginScrollHeight;
 		{
 			var percentOfMarginScrollHeightByPageUnit = 0.4;
 
-			marginScrollHeight = (int)Math.Ceiling(viewModelModifier.ViewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
+			marginScrollHeight = (int)Math.Ceiling(viewModelModifier.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
 			totalHeight += marginScrollHeight;
 		}
 
-		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions with
 		{
-			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions with
-			{
-				ScrollWidth = totalWidth,
-				ScrollHeight = totalHeight,
-				MarginScrollHeight = marginScrollHeight
-			},
+			ScrollWidth = totalWidth,
+			ScrollHeight = totalHeight,
+			MarginScrollHeight = marginScrollHeight
 		};
 		
-		var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
+		var validateScrollbarDimensions = viewModelModifier.ScrollbarDimensions;
 		
-		if (originalScrollWidth > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth ||
+		if (originalScrollWidth > viewModelModifier.ScrollbarDimensions.ScrollWidth ||
 			textEditorDimensionsChanged)
 		{
-			validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions.WithSetScrollLeft(
+			validateScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithSetScrollLeft(
 				(int)validateScrollbarDimensions.ScrollLeft,
-				viewModelModifier.ViewModel.TextEditorDimensions);
+				viewModelModifier.TextEditorDimensions);
 		}
 		
-		if (originalScrollHeight > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight ||
+		if (originalScrollHeight > viewModelModifier.ScrollbarDimensions.ScrollHeight ||
 			textEditorDimensionsChanged)
 		{
 			validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
 				(int)validateScrollbarDimensions.ScrollTop,
-				viewModelModifier.ViewModel.TextEditorDimensions);
+				viewModelModifier.TextEditorDimensions);
 			
 			// The scrollLeft currently does not have any margin. Therefore subtracting the margin isn't needed.
 			//
@@ -478,26 +472,23 @@ public partial class TextEditorService : ITextEditorService
 			// Then a "void" will render at the top portion of the text editor, seemingly the size
 			// of the MarginScrollHeight.
 			if (textEditorDimensionsChanged &&
-				viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop)
+				viewModelModifier.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop)
 			{
 				validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
 					(int)validateScrollbarDimensions.ScrollTop - (int)validateScrollbarDimensions.MarginScrollHeight,
-					viewModelModifier.ViewModel.TextEditorDimensions);
+					viewModelModifier.TextEditorDimensions);
 			}
 		}
 		
 		var changeOccurred =
-			viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft != validateScrollbarDimensions.ScrollLeft ||
-			viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop;
+			viewModelModifier.ScrollbarDimensions.ScrollLeft != validateScrollbarDimensions.ScrollLeft ||
+			viewModelModifier.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop;
 		
 		if (changeOccurred)
 		{
 			viewModelModifier.ScrollWasModified = true;
 			
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-				ScrollbarDimensions = validateScrollbarDimensions
-			};
+			viewModelModifier.ScrollbarDimensions = validateScrollbarDimensions;
 		}
 	}
 	
@@ -524,7 +515,7 @@ public partial class TextEditorService : ITextEditorService
 			{
 				var modelModifier = editContext.GetModelModifier(resourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
@@ -535,7 +526,7 @@ public partial class TextEditorService : ITextEditorService
 				primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
 				primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
 				
-				viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+				viewModelModifier.ShouldRevealCursor = true;
 				return ValueTask.CompletedTask;
 			});
 		}
@@ -580,7 +571,7 @@ public partial class TextEditorService : ITextEditorService
 			{
 				var modelModifier = editContext.GetModelModifier(resourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
@@ -599,7 +590,7 @@ public partial class TextEditorService : ITextEditorService
 				if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
 					primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 					
-				viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+				viewModelModifier.ShouldRevealCursor = true;
 				
 				return ValueTask.CompletedTask;
 			});
@@ -687,7 +678,7 @@ public partial class TextEditorService : ITextEditorService
 	
 	public void SetModel(
 	    TextEditorEditContext editContext,
-	    TextEditorModelModifier modelModifier)
+	    TextEditorModel modelModifier)
 	{
 		lock (_stateModificationLock)
 		{
@@ -699,7 +690,7 @@ public partial class TextEditorService : ITextEditorService
 			if (!exists)
                 goto finalize;
 
-			inState._modelMap[inModel.ResourceUri] = modelModifier.ToModel();
+			inState._modelMap[inModel.ResourceUri] = modelModifier;
 
             goto finalize;
         }
@@ -840,8 +831,8 @@ public partial class TextEditorService : ITextEditorService
 	
 	public void SetModelAndViewModelRange(
 	    TextEditorEditContext editContext,
-		List<TextEditorModelModifier?>? modelModifierList,
-		List<TextEditorViewModelModifier?>? viewModelModifierList)
+		List<TextEditorModel?>? modelModifierList,
+		List<TextEditorViewModel?>? viewModelModifierList)
 	{
 		lock (_stateModificationLock)
 		{
@@ -861,7 +852,7 @@ public partial class TextEditorService : ITextEditorService
 				if (!exists)
 					continue;
 
-				inState._modelMap[kvpModelModifier.ResourceUri] = kvpModelModifier.ToModel();
+				inState._modelMap[kvpModelModifier.ResourceUri] = kvpModelModifier;
 			}
 
 			// ViewModels
@@ -873,12 +864,12 @@ public partial class TextEditorService : ITextEditorService
 				// Enumeration was modified shouldn't occur here because only the reducer
 				// should be adding or removing, and the reducer is thread safe.
 				var exists = inState._viewModelMap.TryGetValue(
-					kvpViewModelModifier.ViewModel.ViewModelKey, out var inViewModel);
+					kvpViewModelModifier.ViewModelKey, out var inViewModel);
 
 				if (!exists)
 					continue;
 
-				inState._viewModelMap[kvpViewModelModifier.ViewModel.ViewModelKey] = kvpViewModelModifier.ViewModel;
+				inState._viewModelMap[kvpViewModelModifier.ViewModelKey] = kvpViewModelModifier;
 			}
 
             goto finalize;
