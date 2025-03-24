@@ -15,7 +15,12 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-/// <inheritdoc cref="TextEditorModel"/>
+/// <summary>
+/// Do not mutate state on this type unless you
+/// have a TextEditorEditContext.
+///
+/// TODO: 2 interfaces, 1 mutable one readonly?
+/// </summary>
 public partial class TextEditorModel
 {
 	#region TextEditorModelBad

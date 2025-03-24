@@ -14,6 +14,11 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
+/// Do not mutate state on this type unless you
+/// have a TextEditorEditContext.
+///
+/// TODO: 2 interfaces, 1 mutable one readonly?
+///
 /// Stores the state of the user interface. For example, the user's <see cref="TextEditorCursor"/> instances are stored here.<br/><br/>
 /// 
 /// Each <see cref="TextEditorViewModel"/> has a unique underlying <see cref="TextEditorModel"/>. Therefore, if one has a
