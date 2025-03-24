@@ -19,32 +19,24 @@ public partial class TextEditorModelModifier
 {
 	public void ClearContent()
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
-            _lineEndList ??= _textEditorModel.LineEndList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
-            _lineEndKindCountList ??= _textEditorModel.LineEndKindCountList.ToList();
-        }
-
-        _mostCharactersOnASingleLineTuple = (0, TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+        MostCharactersOnASingleLineTuple = (0, TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
         PartitionList = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
         _partitionListChanged = true;
 
-        _lineEndList = new List<LineEnd> 
+        LineEndList = new List<LineEnd> 
         {
             new LineEnd(0, 0, LineEndKind.EndOfFile)
         };
 
-        _lineEndKindCountList = new List<(LineEndKind rowEndingKind, int count)>
+        LineEndKindCountList = new List<(LineEndKind rowEndingKind, int count)>
         {
             (LineEndKind.CarriageReturn, 0),
             (LineEndKind.LineFeed, 0),
             (LineEndKind.CarriageReturnLineFeed, 0),
         };
 
-        _tabKeyPositionsList = new List<int>();
+        TabKeyPositionList = new List<int>();
 
         SetIsDirtyTrue();
     }
@@ -217,20 +209,10 @@ public partial class TextEditorModelModifier
 
 	public void SetContent(string content)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
-            _lineEndList ??= _textEditorModel.LineEndList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
-            _lineEndKindCountList ??= _textEditorModel.LineEndKindCountList.ToList();
-            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
         ClearAllStatesButKeepEditHistory();
 
-		if (_editBlocksList.Count == 0 && _editBlockIndex == 0)
-			_editBlocksList.Add(new TextEditorEditConstructor());
+		if (EditBlockList.Count == 0 && EditBlockIndex == 0)
+			EditBlockList.Add(new TextEditorEditConstructor());
 
         var rowIndex = 0;
         var previousCharacter = '\0';
@@ -250,7 +232,7 @@ public partial class TextEditorModelModifier
             if (character == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
             {
                 if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-                    _mostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+                    MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
                 LineEndList.Insert(rowIndex, new(index, index + 1, LineEndKind.CarriageReturn));
                 rowIndex++;
@@ -262,7 +244,7 @@ public partial class TextEditorModelModifier
             else if (character == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
             {
                 if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-                    _mostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+                    MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
                 if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
                 {
@@ -299,27 +281,27 @@ public partial class TextEditorModelModifier
         // Update the line end count list (TODO: Fix the awkward tuple not a variable logic going on here)
         {
             {
-                var indexCarriageReturn = _lineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.CarriageReturn);
-                _lineEndKindCountList[indexCarriageReturn] = (LineEndKind.CarriageReturn, carriageReturnCount);
+                var indexCarriageReturn = LineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.CarriageReturn);
+                LineEndKindCountList[indexCarriageReturn] = (LineEndKind.CarriageReturn, carriageReturnCount);
             }
             {
-                var indexLineFeed = _lineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.LineFeed);
-                _lineEndKindCountList[indexLineFeed] = (LineEndKind.LineFeed, linefeedCount);
+                var indexLineFeed = LineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.LineFeed);
+                LineEndKindCountList[indexLineFeed] = (LineEndKind.LineFeed, linefeedCount);
             }
             {
-                var indexCarriageReturnLineFeed = _lineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed);
-                _lineEndKindCountList[indexCarriageReturnLineFeed] = (LineEndKind.CarriageReturnLineFeed, carriageReturnLinefeedCount);
+                var indexCarriageReturnLineFeed = LineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed);
+                LineEndKindCountList[indexCarriageReturnLineFeed] = (LineEndKind.CarriageReturnLineFeed, carriageReturnLinefeedCount);
             }
         }
 
         // Update the EndOfFile line end.
         {
-            var endOfFile = _lineEndList[^1];
+            var endOfFile = LineEndList[^1];
 
             if (endOfFile.LineEndKind != LineEndKind.EndOfFile)
-                throw new LuthetusTextEditorException($"The text editor model is malformed; the final entry of {nameof(_lineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
+                throw new LuthetusTextEditorException($"The text editor model is malformed; the final entry of {nameof(LineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
 
-            _lineEndList[^1] = endOfFile with
+            LineEndList[^1] = endOfFile with
 			{
 				StartPositionIndexInclusive = content.Length,
 				EndPositionIndexExclusive = content.Length,
@@ -333,36 +315,24 @@ public partial class TextEditorModelModifier
 
 	public void ClearEditBlocks()
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
-        _editBlockIndex = 0;
+        EditBlockIndex = 0;
         EditBlockList.Clear();
     }
 
 	private void EnsureUndoPoint(ITextEditorEdit newEdit)
 	{
-		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
-		if (_editBlockIndex.Value < _editBlocksList.Count - 1)
+		if (EditBlockIndex < EditBlockList.Count - 1)
 		{
 			// Clear redo history
-			for (int i = _editBlockIndex.Value + 1; i < _editBlocksList.Count; i++)
+			for (int i = EditBlockIndex + 1; i < EditBlockList.Count; i++)
 			{
-				_editBlocksList.RemoveAt(i);
+				EditBlockList.RemoveAt(i);
 			}
 		}
 
 		if (newEdit.EditKind == TextEditorEditKind.Insert)
 		{
-			var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
+			var mostRecentEdit = EditBlockList[EditBlockIndex];
 
 			var newEditInsert = (TextEditorEditInsert)newEdit;
 			var positionIndex = newEditInsert.PositionIndex;
@@ -383,7 +353,7 @@ public partial class TextEditorModelModifier
 						mostRecentEditInsert.PositionIndex,
 						contentBuilder);
 		
-					_editBlocksList[_editBlockIndex.Value] = insertBatch;
+					EditBlockList[EditBlockIndex] = insertBatch;
 					return;
 				}
 			}
@@ -402,14 +372,14 @@ public partial class TextEditorModelModifier
 			
 			// Default case
 			{
-				_editBlocksList.Add(new TextEditorEditInsert(positionIndex, content));
-				_editBlockIndex++;
+				EditBlockList.Add(new TextEditorEditInsert(positionIndex, content));
+				EditBlockIndex++;
 				return;
 			}
 		}
 		else if (newEdit.EditKind == TextEditorEditKind.Backspace)
 		{
-			var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
+			var mostRecentEdit = EditBlockList[EditBlockIndex];
 
 			var newEditBackspace = (TextEditorEditBackspace)newEdit;
 			var positionIndex = newEditBackspace.PositionIndex;
@@ -433,7 +403,7 @@ public partial class TextEditorModelModifier
 						count + mostRecentEditBackspace.Count,
 						textRemovedBuilder);
 	
-					_editBlocksList[_editBlockIndex.Value] = editBackspaceBatch;
+					EditBlockList[EditBlockIndex] = editBackspaceBatch;
 					return;
 				}
 			}
@@ -454,14 +424,14 @@ public partial class TextEditorModelModifier
 			{
 				var editBackspace = new TextEditorEditBackspace(positionIndex, count);
 				editBackspace.TextRemoved = textRemoved;
-				_editBlocksList.Add(editBackspace);
-				_editBlockIndex++;
+				EditBlockList.Add(editBackspace);
+				EditBlockIndex++;
 				return;
 			}
 		}
 		else if (newEdit.EditKind == TextEditorEditKind.Delete)
 		{
-			var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
+			var mostRecentEdit = EditBlockList[EditBlockIndex];
 
 			var newEditDelete = (TextEditorEditDelete)newEdit;
 			var positionIndex = newEditDelete.PositionIndex;
@@ -484,7 +454,7 @@ public partial class TextEditorModelModifier
 						count + mostRecentEditDelete.Count,
 						textRemovedBuilder);
 	
-					_editBlocksList[_editBlockIndex.Value] = editDeleteBatch;
+					EditBlockList[EditBlockIndex] = editDeleteBatch;
 					return;
 				}
 			}
@@ -505,8 +475,8 @@ public partial class TextEditorModelModifier
 			{
 				var editDelete = new TextEditorEditDelete(positionIndex, count);
 				editDelete.TextRemoved = textRemoved;
-				_editBlocksList.Add(editDelete);
-				_editBlockIndex++;
+				EditBlockList.Add(editDelete);
+				EditBlockIndex++;
 				return;
 			}
 		}
@@ -543,25 +513,13 @@ public partial class TextEditorModelModifier
 
 	public void OpenOtherEdit(TextEditorEditOther editOther)
 	{
-		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
 		OtherEditStack.Push(editOther);
-		_editBlocksList.Add(editOther);
-		_editBlockIndex++;
+		EditBlockList.Add(editOther);
+		EditBlockIndex++;
 	}
 
 	public void CloseOtherEdit(string predictedTag)
 	{
-		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
 		var peek = OtherEditStack.Peek();
 		if (peek.Tag != predictedTag)
 		{
@@ -571,27 +529,21 @@ public partial class TextEditorModelModifier
 		}
 
 		var pop = OtherEditStack.Pop();
-		_editBlocksList.Add(pop);
-		_editBlockIndex++;
+		EditBlockList.Add(pop);
+		EditBlockIndex++;
 	}
 
 	public void UndoEdit()
 	{
-		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
-		if (_editBlockIndex <= 0)
+		if (EditBlockIndex <= 0)
 			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
 
-		var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
+		var mostRecentEdit = EditBlockList[EditBlockIndex];
 		var undoEdit = mostRecentEdit.ToUndo();
 		
 		// In case the 'ToUndo(...)' throws an exception, the decrement to the EditIndex
 		// is being done only after a successful ToUndo(...)
-		_editBlockIndex--;
+		EditBlockIndex--;
 
 		switch (undoEdit.EditKind)
 		{
@@ -610,7 +562,7 @@ public partial class TextEditorModelModifier
 			case TextEditorEditKind.Other:
 				while (true)
 				{
-					if (_editBlockIndex == 0)
+					if (EditBlockIndex == 0)
 					{
 						// TODO: How does one handle the 'undo limit'...
 						//       ...with respect to 'other' edits?
@@ -626,7 +578,7 @@ public partial class TextEditorModelModifier
 						break;
 					}
 
-					mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
+					mostRecentEdit = EditBlockList[EditBlockIndex];
 
 					if (mostRecentEdit.EditKind == TextEditorEditKind.Other)
 					{
@@ -643,7 +595,7 @@ public partial class TextEditorModelModifier
 						if (mostRecentEditOther.Tag == (((TextEditorEditOther)undoEdit).Tag))
 						{
 							// Need to go one further than the opening,
-							_editBlockIndex--;
+							EditBlockIndex--;
 							break;
 						}
 					}
@@ -660,18 +612,12 @@ public partial class TextEditorModelModifier
 
 	public void RedoEdit()
 	{
-		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
 		// If there is no next then throw exception
-		if (_editBlockIndex >= _editBlocksList.Count - 1)
+		if (EditBlockIndex >= EditBlockList.Count - 1)
 			throw new LuthetusTextEditorException("No edits are available to perform 'redo' on");
 
-		_editBlockIndex++;
-		var redoEdit = _editBlocksList[_editBlockIndex.Value];
+		EditBlockIndex++;
+		var redoEdit = EditBlockList[EditBlockIndex];
 
 		switch (redoEdit.EditKind)
 		{
@@ -702,7 +648,7 @@ public partial class TextEditorModelModifier
 			case TextEditorEditKind.Other:
 				while (true)
 				{
-					if (_editBlockIndex >= _editBlocksList.Count - 1)
+					if (EditBlockIndex >= EditBlockList.Count - 1)
 					{
 						// The 'Redo()' method deals with the next-edit
 						// as opposed to the 'Undo()' method that deals with the current-edit
@@ -711,14 +657,14 @@ public partial class TextEditorModelModifier
 						break;
 					}
 
-					var nextEdit = _editBlocksList[_editBlockIndex.Value + 1];
+					var nextEdit = EditBlockList[EditBlockIndex + 1];
 
 					if (nextEdit.EditKind == TextEditorEditKind.Other)
 					{
 						var nextEditOther = (TextEditorEditOther)nextEdit;
 
 						// Regardless of the tag of the next edit. One will need to increment EditIndex.
-						_editBlockIndex++;
+						EditBlockIndex++;
 
 						if (nextEditOther.Tag == (((TextEditorEditOther)redoEdit).Tag))
 							break;

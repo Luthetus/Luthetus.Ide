@@ -18,7 +18,7 @@ public partial class TextEditorModel
     public const int MAXIMUM_EDIT_BLOCKS = 10;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
 
-    private string? _allText;
+    public string? __AllText;
 
     public RichCharacter[] RichCharacterList { get; init; }
     public List<TextEditorPartition> PartitionList { get; init; } = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
@@ -34,7 +34,7 @@ public partial class TextEditorModel
 	public List<int> TabKeyPositionList { get; } = new();
     
     /// <inheritdoc cref="ITextEditorModel.OnlyLineEndKind"/>
-    public LineEndKind? OnlyLineEndKind { get; init; }
+    public LineEndKind OnlyLineEndKind { get; init; }
     public LineEndKind LineEndKindPreference { get; init; }
     
     /// <inheritdoc cref="ITextEditorModel.ResourceUri"/>
@@ -52,7 +52,7 @@ public partial class TextEditorModel
 	public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; init; }
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 
-    public string AllText => _allText ??= new string (RichCharacterList.Select(x => x.Value).ToArray());
+    public string AllText => __AllText ??= new string (RichCharacterList.Select(x => x.Value).ToArray());
 
     public int LineCount => LineEndList.Count;
     public int DocumentLength => RichCharacterList.Length;

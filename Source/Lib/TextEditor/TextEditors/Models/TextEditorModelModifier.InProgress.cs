@@ -27,13 +27,6 @@ public partial class TextEditorModelModifier
         CancellationToken cancellationToken = default,
 		bool shouldCreateEditHistory = true)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _lineEndList ??= _textEditorModel.LineEndList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
-            _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
-        }
-
         for (var cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
         {
             var cursorModifier = cursorModifierBag.List[cursorIndex];
@@ -100,7 +93,7 @@ public partial class TextEditorModelModifier
                 localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
                     localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-                _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
+                MostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
             }
         }
 
@@ -114,13 +107,6 @@ public partial class TextEditorModelModifier
         bool useLineEndKindPreference,
         CancellationToken cancellationToken)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _lineEndList ??= _textEditorModel.LineEndList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
-            _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
-        }
-
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
         var initialCursorLineIndex = cursorModifier.LineIndex;
 
@@ -223,10 +209,10 @@ public partial class TextEditorModelModifier
                 {
                     if (tabPositionLazyInsertRange.index is null)
                     {
-                        tabPositionLazyInsertRange.index = _tabKeyPositionsList.FindIndex(x => x >= initialCursorPositionIndex);
+                        tabPositionLazyInsertRange.index = TabKeyPositionList.FindIndex(x => x >= initialCursorPositionIndex);
 
                         if (tabPositionLazyInsertRange.index == -1)
-                            tabPositionLazyInsertRange.index = _tabKeyPositionsList.Count;
+                            tabPositionLazyInsertRange.index = TabKeyPositionList.Count;
                     }
 
                     tabPositionLazyInsertRange.localTabPositionList.Add(initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length);
@@ -253,7 +239,7 @@ public partial class TextEditorModelModifier
 
         // Reposition the Tabs
         {
-            var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= initialCursorPositionIndex);
+            var firstTabKeyPositionIndexToModify = TabKeyPositionList.FindIndex(x => x >= initialCursorPositionIndex);
 
             if (firstTabKeyPositionIndexToModify != -1)
             {
@@ -286,14 +272,14 @@ public partial class TextEditorModelModifier
         {
             if (lineEndPositionLazyInsertRange.index is not null)
             {
-                _lineEndList.InsertRange(
+                LineEndList.InsertRange(
                     lineEndPositionLazyInsertRange.index.Value,
                     lineEndPositionLazyInsertRange.localLineEndList);
             }
 
             if (tabPositionLazyInsertRange.index is not null)
             {
-                _tabKeyPositionsList.InsertRange(
+                TabKeyPositionList.InsertRange(
                     tabPositionLazyInsertRange.index.Value,
                     tabPositionLazyInsertRange.localTabPositionList);
             }
@@ -357,13 +343,6 @@ public partial class TextEditorModelModifier
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
 
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _lineEndList ??= _textEditorModel.LineEndList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
-            _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
-		}
-	
         for (var cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
         {
             var cursorModifier = cursorModifierBag.List[cursorIndex];
@@ -417,7 +396,7 @@ public partial class TextEditorModelModifier
                     localMostCharactersOnASingleLineTuple.lineIndex,
                     localMostCharactersOnASingleLineTuple.lineLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-                _mostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
+                MostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
             }
         }
 
@@ -442,13 +421,6 @@ public partial class TextEditorModelModifier
         DeleteKind deleteKind,
         CancellationToken cancellationToken)
 	{
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _lineEndList ??= _textEditorModel.LineEndList.ToList();
-            _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
-            _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
-        }
-
         var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
         var initialLineIndex = cursorModifier.LineIndex;
         var positionIndex = this.GetPositionIndex(cursorModifier);
@@ -519,7 +491,7 @@ public partial class TextEditorModelModifier
                 {
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
-                    var indexLineEnd = _lineEndList.FindIndex(
+                    var indexLineEnd = LineEndList.FindIndex(
                         x => x.StartPositionIndexInclusive == toDeletePositionIndex);
 
                     var lineEnd = LineEndList[indexLineEnd];
@@ -546,7 +518,7 @@ public partial class TextEditorModelModifier
 
                     if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                     {
-                        var indexTabKey = _tabKeyPositionsList.FindIndex(
+                        var indexTabKey = TabKeyPositionList.FindIndex(
                             x => x == toDeletePositionIndex);
 
                         // Delete starts at the lowest index, therefore use '??=' to only assign once.
@@ -589,7 +561,7 @@ public partial class TextEditorModelModifier
                 {
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
-                    var indexLineEnd = _lineEndList.FindIndex(
+                    var indexLineEnd = LineEndList.FindIndex(
                         // Check for '\n' or '\r'
                         x => x.EndPositionIndexExclusive == toDeletePositionIndex + 1 ||
                         // Check for "\r\n"
@@ -612,7 +584,7 @@ public partial class TextEditorModelModifier
 
                     if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                     {
-                        var indexTabKey = _tabKeyPositionsList.FindIndex(
+                        var indexTabKey = TabKeyPositionList.FindIndex(
                             x => x == toDeletePositionIndex);
 
                         // Backspace starts at the highest index, therefore use '=' to only assign everytime.
@@ -643,7 +615,7 @@ public partial class TextEditorModelModifier
 
         // Reposition the Tab(s)
         {
-            var firstTabKeyPositionIndexToModify = _tabKeyPositionsList.FindIndex(x => x >= positionIndex);
+            var firstTabKeyPositionIndexToModify = TabKeyPositionList.FindIndex(x => x >= positionIndex);
 
             if (firstTabKeyPositionIndexToModify != -1)
             {
@@ -676,14 +648,14 @@ public partial class TextEditorModelModifier
         {
             if (lineEndPositionLazyRemoveRange.index is not null)
             {
-                _lineEndList.RemoveRange(
+                LineEndList.RemoveRange(
                     lineEndPositionLazyRemoveRange.index.Value,
                     lineEndPositionLazyRemoveRange.count);
             }
 
             if (tabPositionLazyRemoveRange.index is not null)
             {
-                _tabKeyPositionsList.RemoveRange(
+                TabKeyPositionList.RemoveRange(
                     tabPositionLazyRemoveRange.index.Value,
                     tabPositionLazyRemoveRange.count);
             }

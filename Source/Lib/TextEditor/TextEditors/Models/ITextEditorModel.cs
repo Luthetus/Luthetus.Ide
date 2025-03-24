@@ -97,7 +97,7 @@ public interface ITextEditorModel
 	/// Then this will be null.<br/><br/>
 	/// If there are no line endings then this will be null.
 	/// </summary>
-	public LineEndKind? OnlyLineEndKind { get; }
+	public LineEndKind OnlyLineEndKind { get; }
     public LineEndKind LineEndKindPreference { get; }
     /// <summary>
     /// TODO: On (2023-10-02) Key&lt;TextEditorModel&gt; was removed, because it felt redundant...

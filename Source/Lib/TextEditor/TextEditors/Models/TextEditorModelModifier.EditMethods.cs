@@ -19,34 +19,33 @@ public partial class TextEditorModelModifier : ITextEditorModel
 {
 	public void ClearOnlyRowEndingKind()
     {
-        _onlyLineEndKind = null;
-        _onlyLineEndKindWasModified = true;
+        OnlyLineEndKind = LineEndKind.Unset;
     }
 
     public void SetLineEndKindPreference(LineEndKind rowEndingKind)
     {
-        _usingLineEndKind = rowEndingKind;
+        LineEndKindPreference = rowEndingKind;
     }
 
     public void SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
     {
-        _resourceUri = resourceUri;
-        _resourceLastWriteTime = resourceLastWriteTime;
+        ResourceUri = resourceUri;
+        ResourceLastWriteTime = resourceLastWriteTime;
     }
 
     public void SetDecorationMapper(IDecorationMapper decorationMapper)
     {
-        _decorationMapper = decorationMapper;
+        DecorationMapper = decorationMapper;
     }
 
     public void SetCompilerService(ICompilerService compilerService)
     {
-        _compilerService = compilerService;
+        CompilerService = compilerService;
     }
 
     public void SetTextEditorSaveFileHelper(SaveFileHelper textEditorSaveFileHelper)
     {
-        _textEditorSaveFileHelper = textEditorSaveFileHelper;
+        TextEditorSaveFileHelper = textEditorSaveFileHelper;
     }
 
     public void ClearAllStatesButKeepEditHistory()
@@ -60,22 +59,17 @@ public partial class TextEditorModelModifier : ITextEditorModel
     {
         // Setting _allText to null will clear the 'cache' for the all 'AllText' property.
         _allText = null;
-        _isDirty = true;
+        IsDirty = true;
     }
 
     public void SetIsDirtyFalse()
     {
-        _isDirty = false;
+        IsDirty = false;
     }
 
     public void PerformRegisterPresentationModelAction(
     TextEditorPresentationModel presentationModel)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _presentationModelsList ??= _textEditorModel.PresentationModelList.ToList();
-        }
-
         if (!PresentationModelList.Any(x => x.TextEditorPresentationKey == presentationModel.TextEditorPresentationKey))
             PresentationModelList.Add(presentationModel);
     }
@@ -84,15 +78,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _presentationModelsList ??= _textEditorModel.PresentationModelList.ToList();
-        }
-
         // If the presentation model has not yet been registered, then this will register it.
         PerformRegisterPresentationModelAction(emptyPresentationModel);
 
-        var indexOfPresentationModel = _presentationModelsList.FindIndex(
+        var indexOfPresentationModel = PresentationModelList.FindIndex(
             x => x.TextEditorPresentationKey == presentationKey);
 
         // The presentation model is expected to always be registered at this point.
@@ -109,15 +98,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
         TextEditorPresentationModel emptyPresentationModel,
         List<TextEditorTextSpan> calculatedTextSpans)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _presentationModelsList ??= _textEditorModel.PresentationModelList.ToList();
-        }
-
         // If the presentation model has not yet been registered, then this will register it.
         PerformRegisterPresentationModelAction(emptyPresentationModel);
 
-        var indexOfPresentationModel = _presentationModelsList.FindIndex(
+        var indexOfPresentationModel = PresentationModelList.FindIndex(
             x => x.TextEditorPresentationKey == presentationKey);
 
         // The presentation model is expected to always be registered at this point.
@@ -146,12 +130,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     private void MutateLineEndKindCount(LineEndKind rowEndingKind, int changeBy)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _lineEndKindCountList ??= _textEditorModel.LineEndKindCountList.ToList();
-        }
-
-        var indexOfRowEndingKindCount = _lineEndKindCountList.FindIndex(x => x.lineEndKind == rowEndingKind);
+        var indexOfRowEndingKindCount = LineEndKindCountList.FindIndex(x => x.lineEndKind == rowEndingKind);
         var currentRowEndingKindCount = LineEndKindCountList[indexOfRowEndingKindCount].count;
 
         LineEndKindCountList[indexOfRowEndingKindCount] = (rowEndingKind, currentRowEndingKindCount + changeBy);
@@ -161,21 +140,14 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     private void CheckRowEndingPositions(bool setUsingRowEndingKind)
     {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _lineEndKindCountList ??= _textEditorModel.LineEndKindCountList.ToList();
-            _onlyLineEndKind ??= _textEditorModel.OnlyLineEndKind;
-            _usingLineEndKind ??= _textEditorModel.LineEndKindPreference;
-        }
-
         var existingRowEndingsList = LineEndKindCountList
             .Where(x => x.count > 0)
             .ToArray();
 
         if (!existingRowEndingsList.Any())
         {
-            _onlyLineEndKind = LineEndKind.Unset;
-            _usingLineEndKind = LineEndKind.LineFeed;
+            OnlyLineEndKind = LineEndKind.Unset;
+            LineEndKindPreference = LineEndKind.LineFeed;
         }
         else
         {
@@ -184,16 +156,16 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 var rowEndingKind = existingRowEndingsList.Single().lineEndKind;
 
                 if (setUsingRowEndingKind)
-                    _usingLineEndKind = rowEndingKind;
+                    LineEndKindPreference = rowEndingKind;
 
-                _onlyLineEndKind = rowEndingKind;
+                OnlyLineEndKind = rowEndingKind;
             }
             else
             {
                 if (setUsingRowEndingKind)
-                    _usingLineEndKind = existingRowEndingsList.MaxBy(x => x.count).lineEndKind;
+                    LineEndKindPreference = existingRowEndingsList.MaxBy(x => x.count).lineEndKind;
 
-                _onlyLineEndKind = null;
+                OnlyLineEndKind = LineEndKind.Unset;
             }
         }
     }

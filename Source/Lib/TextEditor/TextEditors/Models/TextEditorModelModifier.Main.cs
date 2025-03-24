@@ -28,9 +28,11 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
     /// </summary>
     public const int MINIMUM_PARTITION_SIZE = 4;
 
-    private readonly TextEditorModel _textEditorModel;
-
-    public TextEditorModelModifier(TextEditorModel model)
+	/// <summary>
+	/// The first time a model is constructed it will throw an exception when accessing AllText,
+	/// therefore pass it in as an argument.
+	/// </summary>
+    public TextEditorModelModifier(TextEditorModel model, string? allText)
     {
         if (model.PartitionSize < MINIMUM_PARTITION_SIZE)
             throw new LuthetusTextEditorException($"{nameof(model)}.{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
@@ -38,17 +40,35 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
         PartitionSize = model.PartitionSize;
         WasDirty = model.IsDirty;
 
-        _isDirty = model.IsDirty;
+        IsDirty = model.IsDirty;
 
-        _textEditorModel = model;
-        _partitionList = _textEditorModel.PartitionList;
-        _richCharacterList = _textEditorModel.RichCharacterList;
+        _partitionList = model.PartitionList;
+        _richCharacterList = model.RichCharacterList;
+        
+        EditBlockList = model.EditBlockList;
+	    LineEndList = model.LineEndList;
+	    LineEndKindCountList = model.LineEndKindCountList;
+	    PresentationModelList = model.PresentationModelList;
+	    TabKeyPositionList = model.TabKeyPositionList;
+        
+        OnlyLineEndKind = model.OnlyLineEndKind;
+	    LineEndKindPreference = model.LineEndKindPreference;
+	    ResourceUri = model.ResourceUri;
+	    ResourceLastWriteTime = model.ResourceLastWriteTime;
+	    FileExtension = model.FileExtension;
+	    DecorationMapper = model.DecorationMapper;
+	    CompilerService = model.CompilerService;
+	    TextEditorSaveFileHelper = model.TextEditorSaveFileHelper;
+	    EditBlockIndex = model.EditBlockIndex;
+	    IsDirty = model.IsDirty;
+	    MostCharactersOnASingleLineTuple = model.MostCharactersOnASingleLineTuple;
+	    _allText = allText;
+	    RenderStateKey = Key<RenderState>.NewKey();
+	    
+	    PreviousLineCount = model.LineEndList.Count;
     }
-    
-    private bool _partitionListChanged;
 
     public RichCharacter[] _richCharacterList;
-    
     public RichCharacter[] RichCharacterList
     {
     	get
@@ -68,8 +88,9 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
     	}
     }
     
+    private bool _partitionListChanged;
+    private bool _partitionListIsShallowCopy = false;
     public List<TextEditorPartition> _partitionList;
-    
     public List<TextEditorPartition> PartitionList
     {
     	get
@@ -82,62 +103,36 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
     		_partitionList = value;
     	}
     }
-    
-    private bool _partitionListIsShallowCopy = false;
 
-    public List<ITextEditorEdit> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList;
-    public List<LineEnd> LineEndList => _lineEndList is null ? _textEditorModel.LineEndList : _lineEndList;
-    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList => _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList;
-    public List<TextEditorPresentationModel> PresentationModelList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
-    public List<int> TabKeyPositionList => _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList;
-    public LineEndKind? OnlyLineEndKind => _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind;
-    public LineEndKind LineEndKindPreference => _usingLineEndKind ?? _textEditorModel.LineEndKindPreference;
-    public ResourceUri ResourceUri => _resourceUri ?? _textEditorModel.ResourceUri;
-    public DateTime ResourceLastWriteTime => _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime;
-    public string FileExtension => _fileExtension ?? _textEditorModel.FileExtension;
-    public IDecorationMapper DecorationMapper => _decorationMapper ?? _textEditorModel.DecorationMapper;
-    public ICompilerService CompilerService => _compilerService ?? _textEditorModel.CompilerService;
-    public SaveFileHelper TextEditorSaveFileHelper => _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper;
-    public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
-    public bool IsDirty => _isDirty;
-    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple => _mostCharactersOnASingleLineTuple ?? _textEditorModel.MostCharactersOnASingleLineTuple;
-    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple => _textEditorModel.MostCharactersOnASingleLineTuple;
-    public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
+    public List<ITextEditorEdit> EditBlockList { get; set; }
+    public List<LineEnd> LineEndList { get; set; }
+    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; }
+    public List<TextEditorPresentationModel> PresentationModelList { get; set; }
+    public List<int> TabKeyPositionList { get; set; }
+    public LineEndKind OnlyLineEndKind { get; set; }
+    public LineEndKind LineEndKindPreference { get; set; }
+    public ResourceUri ResourceUri { get; set; }
+    public DateTime ResourceLastWriteTime { get; set; }
+    public string FileExtension { get; set; }
+    public IDecorationMapper DecorationMapper { get; set; }
+    public ICompilerService CompilerService { get; set; }
+    public SaveFileHelper TextEditorSaveFileHelper { get; set; }
+    public int EditBlockIndex { get; set; }
+    public bool IsDirty { get; set; }
+    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; set; }
+    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple { get; set; }
+    public Key<RenderState> RenderStateKey { get; set; }
 
     public int LineCount => LineEndList.Count;
-    public int PreviousLineCount => _textEditorModel.LineEndList.Count;
+    public int PreviousLineCount { get; set; }
+    
+    // TODO: Remove Linq?
     public int CharCount => PartitionList.Sum(x => x.Count);
 
 	/// <summary>
 	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
 	/// </summary>
 	public Stack<TextEditorEditOther> OtherEditStack { get; } = new();
-
-    private List<ITextEditorEdit>? _editBlocksList;
-    private List<LineEnd>? _lineEndList;
-    private List<(LineEndKind lineEndKind, int count)>? _lineEndKindCountList;
-    private List<TextEditorPresentationModel>? _presentationModelsList;
-    private List<int>? _tabKeyPositionsList;
-
-    private LineEndKind? _onlyLineEndKind;
-    /// <summary>
-    /// Awkward special case here: <see cref="_onlyLineEndKind"/> is allowed to be null.
-    /// So, the design of this class where null means unmodified, doesn't work well here.
-    /// </summary>
-    private bool _onlyLineEndKindWasModified;
-
-    private LineEndKind? _usingLineEndKind;
-    private ResourceUri? _resourceUri;
-    private DateTime? _resourceLastWriteTime;
-    private string? _fileExtension;
-    private IDecorationMapper? _decorationMapper;
-    private ICompilerService? _compilerService;
-    private SaveFileHelper? _textEditorSaveFileHelper;
-    private int? _editBlockIndex;
-    private bool _isDirty;
-    private (int rowIndex, int rowLength)? _mostCharactersOnASingleLineTuple;
-    private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
-    private string? _allText;
 
     /// <summary>
     /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
@@ -158,6 +153,7 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
 	/// </summary>
     public bool ShouldReloadVirtualizationResult { get; internal set; }
 
+	private string _allText;
     public string AllText => _allText ??= new string(RichCharacterList.Select(x => x.Value).ToArray());
 
     public TextEditorModel ToModel()
@@ -167,23 +163,23 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
             RichCharacterList,
             PartitionSize,
             PartitionList,
-            _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList,
-            _lineEndList is null ? _textEditorModel.LineEndList : _lineEndList,
-            _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList,
-            _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList,
-            _tabKeyPositionsList is null ? _textEditorModel.TabKeyPositionList : _tabKeyPositionsList,
-            _onlyLineEndKindWasModified ? _onlyLineEndKind : _textEditorModel.OnlyLineEndKind,
-            _usingLineEndKind ?? _textEditorModel.LineEndKindPreference,
-            _resourceUri ?? _textEditorModel.ResourceUri,
-            _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime,
-            _fileExtension ?? _textEditorModel.FileExtension,
-            _decorationMapper ?? _textEditorModel.DecorationMapper,
-            _compilerService ?? _textEditorModel.CompilerService,
-            _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper,
-            _editBlockIndex ?? _textEditorModel.EditBlockIndex,
+            EditBlockList,
+            LineEndList,
+            LineEndKindCountList,
+            PresentationModelList,
+            TabKeyPositionList,
+            OnlyLineEndKind,
+            LineEndKindPreference,
+            ResourceUri,
+            ResourceLastWriteTime,
+            FileExtension,
+            DecorationMapper,
+            CompilerService,
+            TextEditorSaveFileHelper,
+            EditBlockIndex,
             IsDirty,
-            _mostCharactersOnASingleLineTuple ?? _textEditorModel.MostCharactersOnASingleLineTuple,
-            _renderStateKey ?? _textEditorModel.RenderStateKey);
+            MostCharactersOnASingleLineTuple,
+            RenderStateKey);
     }
 
     public enum DeleteKind

@@ -29,10 +29,10 @@ public sealed partial class TextEditorModel : ITextEditorModel
         CompilerService = compilerService ?? new CompilerServiceDoNothing();
 
 		PartitionSize = partitionSize;
-		var modifier = new TextEditorModelModifier(this);
+		var modifier = new TextEditorModelModifier(this, __AllText);
 		modifier.SetContent(content);
 
-		_allText = modifier.AllText;
+		__AllText = modifier.AllText;
         RichCharacterList = modifier.RichCharacterList;
         PartitionList = modifier.PartitionList;
         LineEndKindCountList = modifier.LineEndKindCountList;
@@ -55,7 +55,7 @@ public sealed partial class TextEditorModel : ITextEditorModel
 		List<(LineEndKind rowEndingKind, int count)> rowEndingKindCountsList,
 		List<TextEditorPresentationModel> presentationModelsList,
 		List<int> tabKeyPositionsList,
-		LineEndKind? onlyRowEndingKind,
+		LineEndKind onlyRowEndingKind,
 		LineEndKind usingRowEndingKind,
 		ResourceUri resourceUri,
 		DateTime resourceLastWriteTime,
@@ -68,7 +68,7 @@ public sealed partial class TextEditorModel : ITextEditorModel
         (int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
 		Key<RenderState>  renderStateKey)
 	{
-		_allText = allText;
+		__AllText = allText;
         RichCharacterList = richCharacterList;
         PartitionSize = partitionSize;
         PartitionList = partitionList;
