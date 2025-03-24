@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -28,6 +29,10 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
@@ -146,6 +151,12 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         
         var quickActionsSlashRefactors = new MenuOptionRecord("QuickActions/Refactors (Ctrl .)", MenuOptionKind.Other, () => SelectMenuOption(QuickActionsSlashRefactors));
         menuOptionRecordsList.Add(quickActionsSlashRefactors);
+        
+        var findInTextEditor = new MenuOptionRecord("Find (Ctrl f)", MenuOptionKind.Other, () => SelectMenuOption(FindInTextEditor));
+        menuOptionRecordsList.Add(findInTextEditor);
+        
+        var relatedFilesQuickPick = new MenuOptionRecord("Related Files (F7)", MenuOptionKind.Other, () => SelectMenuOption(RelatedFilesQuickPick));
+        menuOptionRecordsList.Add(relatedFilesQuickPick);
 
         if (!menuOptionRecordsList.Any())
             menuOptionRecordsList.Add(new MenuOptionRecord("No Context Menu Options for this item", MenuOptionKind.Other));
@@ -316,6 +327,60 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
                 	CommonBackgroundTaskApi.JsRuntimeCommonApi,
                 	TextEditorService,
                 	DropdownService);
+            });
+        return Task.CompletedTask;
+    }
+    
+    public Task FindInTextEditor()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    	
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.ShowFindOverlay),
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+            
+                return TextEditorCommandDefaultFunctions.ShowFindOverlay(
+			        editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+			        primaryCursor,
+			        CommonBackgroundTaskApi.JsRuntimeCommonApi);
+            });
+        return Task.CompletedTask;
+    }
+    
+    public Task RelatedFilesQuickPick()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    	
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.RelatedFilesQuickPick),
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+                return TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
+			        editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+			        CommonBackgroundTaskApi.JsRuntimeCommonApi,
+			        EnvironmentProvider,
+			        FileSystemProvider,
+			        TextEditorService,
+			        DropdownService);
             });
         return Task.CompletedTask;
     }
