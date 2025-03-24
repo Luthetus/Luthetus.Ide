@@ -123,12 +123,12 @@ public partial class GitDiffDisplay : ComponentBase
             decorationMapper,
             compilerService);
             
-        var modelModifier = new TextEditorModel(model, model.__AllText);
+        var modelModifier = new TextEditorModel(model);
         modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
         
-        model = modelModifier.ToModel();
+        model = modelModifier;
 
         TextEditorService.ModelApi.RegisterCustom(model);
         

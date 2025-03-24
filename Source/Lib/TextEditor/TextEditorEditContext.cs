@@ -25,7 +25,7 @@ public struct TextEditorEditContext
         if (!TextEditorService.__ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
         {
             var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
-            modelModifier = model is null ? null : new(model, model.__AllText);
+            modelModifier = model is null ? null : new(model);
 
             TextEditorService.__ModelCache.Add(modelResourceUri, modelModifier);
         }

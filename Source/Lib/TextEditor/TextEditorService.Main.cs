@@ -690,7 +690,7 @@ public partial class TextEditorService : ITextEditorService
 			if (!exists)
                 goto finalize;
 
-			inState._modelMap[inModel.ResourceUri] = modelModifier.ToModel();
+			inState._modelMap[inModel.ResourceUri] = modelModifier;
 
             goto finalize;
         }
@@ -852,7 +852,7 @@ public partial class TextEditorService : ITextEditorService
 				if (!exists)
 					continue;
 
-				inState._modelMap[kvpModelModifier.ResourceUri] = kvpModelModifier.ToModel();
+				inState._modelMap[kvpModelModifier.ResourceUri] = kvpModelModifier;
 			}
 
 			// ViewModels

@@ -159,13 +159,13 @@ public class EditorIdeApi : IBackgroundTaskGroup
                 decorationMapper,
                 compilerService);
                 
-            var modelModifier = new TextEditorModel(model, model.__AllText);
+            var modelModifier = new TextEditorModel(model);
             modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
             modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
             modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
             modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyOutPresentationModel);
             
-            model = modelModifier.ToModel();
+            model = modelModifier;
 
             _textEditorService.ModelApi.RegisterCustom(model);
             

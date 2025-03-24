@@ -117,12 +117,12 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             new TerminalDecorationMapper(),
             _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
             
-        var modelModifier = new TextEditorModel(model, model.__AllText);
+        var modelModifier = new TextEditorModel(model);
         modelModifier.PerformRegisterPresentationModelAction(TerminalPresentationFacts.EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
         
-        model = modelModifier.ToModel();
+        model = modelModifier;
 
         _textEditorService.ModelApi.RegisterCustom(model);
         

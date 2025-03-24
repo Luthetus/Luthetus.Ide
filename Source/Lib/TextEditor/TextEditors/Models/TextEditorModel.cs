@@ -2,11 +2,16 @@ using System.Text;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -735,7 +740,7 @@ public partial class TextEditorModel
     public void SetIsDirtyTrue()
     {
         // Setting _allText to null will clear the 'cache' for the all 'AllText' property.
-        _allText = null;
+        __AllText = null;
         IsDirty = true;
     }
 
@@ -798,11 +803,6 @@ public partial class TextEditorModel
             PendingCalculation = null,
             CompletedCalculation = calculation,
         };
-    }
-
-    public TextEditorModel ForceRerenderAction()
-    {
-        return ToModel();
     }
 
     private void MutateLineEndKindCount(LineEndKind rowEndingKind, int changeBy)
@@ -1556,7 +1556,7 @@ public partial class TextEditorModel
         CompilerService = compilerService ?? new CompilerServiceDoNothing();
 
 		PartitionSize = partitionSize;
-		var modifier = new TextEditorModel(this, __AllText);
+		var modifier = new TextEditorModel(this);
 		modifier.SetContent(content);
 
 		__AllText = modifier.AllText;
@@ -1619,201 +1619,23 @@ public partial class TextEditorModel
 	}
 	#endregion
 	
-	#region TextEditorModelMain2
-	/// <summary>
-	/// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-	///
-	/// When reading state, if the state had been 'null coallesce assigned' then the field will
-	/// be read. Otherwise, the existing TextEditorModel's value will be read.
-	/// <br/><br/>
-	/// <inheritdoc cref="TextEditorModel"/>
-	/// </summary>
-
-    /// <summary>
-    /// <see cref="__SplitIntoTwoPartitions(int)"/> will divide by 2 and give the first split the remainder,
-    /// then add 1 to the first split if there is a multibyte scenario.
-    /// Therefore partition size of 3 would infinitely try to split itself.
-    /// </summary>
-    public const int MINIMUM_PARTITION_SIZE = 4;
-
-	/// <summary>
-	/// The first time a model is constructed it will throw an exception when accessing AllText,
-	/// therefore pass it in as an argument.
-	/// </summary>
-    public TextEditorModel(TextEditorModel model, string? allText)
-    {
-        if (model.PartitionSize < MINIMUM_PARTITION_SIZE)
-            throw new LuthetusTextEditorException($"{nameof(model)}.{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
-
-        PartitionSize = model.PartitionSize;
-        WasDirty = model.IsDirty;
-
-        IsDirty = model.IsDirty;
-
-        _partitionList = model.PartitionList;
-        _richCharacterList = model.RichCharacterList;
-        
-        EditBlockList = model.EditBlockList;
-	    LineEndList = model.LineEndList;
-	    LineEndKindCountList = model.LineEndKindCountList;
-	    PresentationModelList = model.PresentationModelList;
-	    TabKeyPositionList = model.TabKeyPositionList;
-        
-        OnlyLineEndKind = model.OnlyLineEndKind;
-	    LineEndKindPreference = model.LineEndKindPreference;
-	    ResourceUri = model.ResourceUri;
-	    ResourceLastWriteTime = model.ResourceLastWriteTime;
-	    FileExtension = model.FileExtension;
-	    DecorationMapper = model.DecorationMapper;
-	    CompilerService = model.CompilerService;
-	    TextEditorSaveFileHelper = model.TextEditorSaveFileHelper;
-	    EditBlockIndex = model.EditBlockIndex;
-	    IsDirty = model.IsDirty;
-	    MostCharactersOnASingleLineTuple = model.MostCharactersOnASingleLineTuple;
-	    _allText = allText;
-	    RenderStateKey = Key<RenderState>.NewKey();
-	    
-	    PreviousLineCount = model.LineEndList.Count;
-    }
-
-    public RichCharacter[] _richCharacterList;
-    public RichCharacter[] RichCharacterList
-    {
-    	get
-    	{
-    		if (_partitionListChanged)
-    		{
-    			_partitionListChanged = false;
-    			_richCharacterList = PartitionList.SelectMany(x => x.RichCharacterList).ToArray();
-    		}
-    		
-    		return _richCharacterList;
-    	}
-    	set
-    	{
-    		_partitionListChanged = false;
-    		_richCharacterList = value;
-    	}
-    }
-    
-    private bool _partitionListChanged;
-    private bool _partitionListIsShallowCopy = false;
-    public List<TextEditorPartition> _partitionList;
-    public List<TextEditorPartition> PartitionList
-    {
-    	get
-    	{
-    		return _partitionList;
-    	}
-    	set
-    	{
-    		_partitionListChanged = true;
-    		_partitionList = value;
-    	}
-    }
-
-    public List<ITextEditorEdit> EditBlockList { get; set; }
-    public List<LineEnd> LineEndList { get; set; }
-    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; }
-    public List<TextEditorPresentationModel> PresentationModelList { get; set; }
-    public List<int> TabKeyPositionList { get; set; }
-    public LineEndKind OnlyLineEndKind { get; set; }
-    public LineEndKind LineEndKindPreference { get; set; }
-    public ResourceUri ResourceUri { get; set; }
-    public DateTime ResourceLastWriteTime { get; set; }
-    public string FileExtension { get; set; }
-    public IDecorationMapper DecorationMapper { get; set; }
-    public ICompilerService CompilerService { get; set; }
-    public SaveFileHelper TextEditorSaveFileHelper { get; set; }
-    public int EditBlockIndex { get; set; }
-    public bool IsDirty { get; set; }
-    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; set; }
-    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple { get; set; }
-    public Key<RenderState> RenderStateKey { get; set; }
-
-    public int LineCount => LineEndList.Count;
-    public int PreviousLineCount { get; set; }
-    
-    // TODO: Remove Linq?
-    public int CharCount => PartitionList.Sum(x => x.Count);
-
-	/// <summary>
-	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
-	/// </summary>
-	public Stack<TextEditorEditOther> OtherEditStack { get; } = new();
-
-    /// <summary>
-    /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
-    /// This involves writing to dependency injectable state, then triggering a re-render in the <see cref="Edits.Displays.DirtyResourceUriInteractiveIconDisplay"/>
-    /// </summary>
-    public bool WasDirty { get; }
-
-    private int PartitionSize { get; }
-
-	/// <summary>
-	/// This property decides whether or not to replace the existing model in IState<TextEditorState> with
-	/// the instance that comes from this modifier.
-	/// </summary>
-    public bool WasModified { get; internal set; }
-	
-	/// <summary>
-	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
-	/// </summary>
-    public bool ShouldReloadVirtualizationResult { get; internal set; }
-
-	private string _allText;
-    public string AllText => _allText ??= new string(RichCharacterList.Select(x => x.Value).ToArray());
-
-    public TextEditorModel ToModel()
-    {
-        return new TextEditorModel(
-            AllText,
-            RichCharacterList,
-            PartitionSize,
-            PartitionList,
-            EditBlockList,
-            LineEndList,
-            LineEndKindCountList,
-            PresentationModelList,
-            TabKeyPositionList,
-            OnlyLineEndKind,
-            LineEndKindPreference,
-            ResourceUri,
-            ResourceLastWriteTime,
-            FileExtension,
-            DecorationMapper,
-            CompilerService,
-            TextEditorSaveFileHelper,
-            EditBlockIndex,
-            IsDirty,
-            MostCharactersOnASingleLineTuple,
-            RenderStateKey);
-    }
-
-    public enum DeleteKind
-    {
-        Backspace,
-        Delete,
-    }
-    #endregion
-    
-    #region TextEditorModelMethods
+	#region TextEditorModelMethods
     /// <summary>
 	/// Returns the Length of a line however it does not include the line ending characters by default.
 	/// To include line ending characters the parameter <see cref="includeLineEndingCharacters" /> must be true.
 	/// </summary>
-    public static int GetLineLength(this TextEditorModel model, int lineIndex, bool includeLineEndingCharacters = false)
+    public int GetLineLength(int lineIndex, bool includeLineEndingCharacters = false)
     {
-        if (!model.LineEndList.Any())
+        if (!LineEndList.Any())
             return 0;
 
-        if (lineIndex > model.LineEndList.Count - 1)
-            lineIndex = model.LineEndList.Count - 1;
+        if (lineIndex > LineEndList.Count - 1)
+            lineIndex = LineEndList.Count - 1;
 
         if (lineIndex < 0)
             lineIndex = 0;
 
-        var line = model.GetLineInformation(lineIndex);
+        var line = GetLineInformation(lineIndex);
         var lineLengthWithLineEndings = line.EndPositionIndexExclusive - line.StartPositionIndexInclusive;
 
         if (includeLineEndingCharacters)
@@ -1831,9 +1653,9 @@ public partial class TextEditorModel
     /// A count of 1 returns lines[startingLineIndex] only.<br/>
     /// A count of 2 returns lines[startingLineIndex] and lines[startingLineIndex + 1].<br/>
     /// </param>
-    public static RichCharacter[][] GetLineRichCharacterRange(this TextEditorModel model, int startingLineIndex, int count)
+    public RichCharacter[][] GetLineRichCharacterRange(int startingLineIndex, int count)
     {
-        var lineCountAvailable = model.LineEndList.Count - startingLineIndex;
+        var lineCountAvailable = LineEndList.Count - startingLineIndex;
 
         var lineCountToReturn = count < lineCountAvailable
             ? count
@@ -1850,11 +1672,11 @@ public partial class TextEditorModel
         for (var i = startingLineIndex; i < endingLineIndexExclusive; i++)
         {
             // Previous line's end-position-exclusive is this row's start.
-            var startOfLineInclusive = model.GetLineInformation(i).StartPositionIndexInclusive;
-            var endOfLineExclusive = model.LineEndList[i].EndPositionIndexExclusive;
+            var startOfLineInclusive = GetLineInformation(i).StartPositionIndexInclusive;
+            var endOfLineExclusive = LineEndList[i].EndPositionIndexExclusive;
 
 			// TODO: LINQ used in a hot path (the virtualization invokes this method)
-            var line = model.RichCharacterList
+            var line = RichCharacterList
                 .Skip(startOfLineInclusive)
                 .Take(endOfLineExclusive - startOfLineInclusive)
                 .ToArray();
@@ -1865,16 +1687,16 @@ public partial class TextEditorModel
         return lineList;
     }
 
-    public static int GetTabCountOnSameLineBeforeCursor(this TextEditorModel model, int lineIndex, int columnIndex)
+    public int GetTabCountOnSameLineBeforeCursor(int lineIndex, int columnIndex)
     {
-        var line = model.GetLineInformation(lineIndex);
+        var line = GetLineInformation(lineIndex);
 
-        model.AssertColumnIndex(line, columnIndex);
+        AssertColumnIndex(line, columnIndex);
         
         var count = 0;
         var foundSpan = false;
         
-        foreach (var positionIndex in model.TabKeyPositionList)
+        foreach (var positionIndex in TabKeyPositionList)
         {
         	if (!foundSpan && positionIndex < line.StartPositionIndexInclusive)
         		continue;
@@ -1893,35 +1715,34 @@ public partial class TextEditorModel
     /// <summary>
     /// Implementations of this method are expected to have caching.
     /// </summary>
-    public static string GetAllText(this TextEditorModel model)
+    public string GetAllText()
     {
-        return model.AllText;
+        return AllText;
     }
 
-    public static int GetPositionIndex(this TextEditorModel model, TextEditorCursor cursor)
+    public int GetPositionIndex(TextEditorCursor cursor)
     {
-        return model.GetPositionIndex(cursor.LineIndex, cursor.ColumnIndex);
+        return GetPositionIndex(cursor.LineIndex, cursor.ColumnIndex);
     }
 
-    public static int GetPositionIndex(this TextEditorModel model, TextEditorCursorModifier cursorModifier)
+    public int GetPositionIndex(TextEditorCursorModifier cursorModifier)
     {
-        return model.GetPositionIndex(cursorModifier.LineIndex, cursorModifier.ColumnIndex);
+        return GetPositionIndex(cursorModifier.LineIndex, cursorModifier.ColumnIndex);
     }
 
-    public static int GetPositionIndex(this TextEditorModel model, int lineIndex, int columnIndex)
+    public int GetPositionIndex(int lineIndex, int columnIndex)
     {
-        var line = model.GetLineInformation(lineIndex);
+        var line = GetLineInformation(lineIndex);
 
-        model.AssertColumnIndex(line, columnIndex);
+        AssertColumnIndex(line, columnIndex);
 
         return line.StartPositionIndexInclusive + columnIndex;
     }
 
-    public static (int lineIndex, int columnIndex) GetLineAndColumnIndicesFromPositionIndex(
-        this TextEditorModel model,
+    public (int lineIndex, int columnIndex) GetLineAndColumnIndicesFromPositionIndex(
         int positionIndex)
     {
-        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex);
+        var lineInformation = GetLineInformationFromPositionIndex(positionIndex);
 
         return (
             lineInformation.Index,
@@ -1931,49 +1752,49 @@ public partial class TextEditorModel
     /// <summary>
     /// To receive a <see cref="string"/> value, one can use <see cref="GetString"/> instead.
     /// </summary>
-    public static char GetCharacter(this TextEditorModel model, int positionIndex)
+    public char GetCharacter(int positionIndex)
     {
-        model.AssertPositionIndex(positionIndex);
+        AssertPositionIndex(positionIndex);
 
-        if (positionIndex == model.CharCount)
+        if (positionIndex == CharCount)
             return ParserFacts.END_OF_FILE;
 
-        return model.RichCharacterList[positionIndex].Value;
+        return RichCharacterList[positionIndex].Value;
     }
 
     /// <summary>
     /// To receive a <see cref="char"/> value, one can use <see cref="GetCharacter"/> instead.
     /// </summary>
-    public static string GetString(this TextEditorModel model, int positionIndex, int count)
+    public string GetString(int positionIndex, int count)
     {
-        model.AssertPositionIndex(positionIndex);
-        model.AssertCount(count);
+        AssertPositionIndex(positionIndex);
+        AssertCount(count);
 
-        return new string(model.RichCharacterList
+        return new string(RichCharacterList
             .Skip(positionIndex)
             .Take(count)
             .Select(x => x.Value)
             .ToArray());
     }
 
-    public static string GetLineTextRange(this TextEditorModel model, int lineIndex, int count)
+    public string GetLineTextRange(int lineIndex, int count)
     {
-        model.AssertCount(count);
+        AssertCount(count);
 
-        var startPositionIndexInclusive = model.GetPositionIndex(lineIndex, 0);
+        var startPositionIndexInclusive = GetPositionIndex(lineIndex, 0);
         var lastLineIndexExclusive = lineIndex + count;
         int endPositionIndexExclusive;
 
-        if (lastLineIndexExclusive > model.LineCount - 1)
+        if (lastLineIndexExclusive > LineCount - 1)
         {
-            endPositionIndexExclusive = model.CharCount;
+            endPositionIndexExclusive = CharCount;
         }
         else
         {
-            endPositionIndexExclusive = model.GetPositionIndex(lastLineIndexExclusive, 0);
+            endPositionIndexExclusive = GetPositionIndex(lastLineIndexExclusive, 0);
         }
 
-        return model.GetString(
+        return GetString(
             startPositionIndexInclusive,
             endPositionIndexExclusive - startPositionIndexInclusive);
     }
@@ -1983,20 +1804,20 @@ public partial class TextEditorModel
     ///     -IF the cursor is amongst a word, that word will be returned.<br/><br/>
     ///     -ELSE IF the start of a word is to the right of the cursor that word will be returned.<br/><br/>
     ///     -ELSE IF the end of a word is to the left of the cursor that word will be returned.</summary>
-    public static TextEditorTextSpan? GetWordTextSpan(this TextEditorModel model, int positionIndex)
+    public TextEditorTextSpan? GetWordTextSpan(int positionIndex)
     {
-        var previousCharacter = model.GetCharacter(positionIndex - 1);
-        var currentCharacter = model.GetCharacter(positionIndex);
+        var previousCharacter = GetCharacter(positionIndex - 1);
+        var currentCharacter = GetCharacter(positionIndex);
 
         var previousCharacterKind = CharacterKindHelper.CharToCharacterKind(previousCharacter);
         var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
 
-        var lineInformation = model.GetLineInformationFromPositionIndex(positionIndex);
+        var lineInformation = GetLineInformationFromPositionIndex(positionIndex);
         var columnIndex = positionIndex - lineInformation.StartPositionIndexInclusive;
 
         if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
         {
-            var wordColumnIndexStartInclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
+            var wordColumnIndexStartInclusive = GetColumnIndexOfCharacterWithDifferingKind(
                 lineInformation.Index,
                 columnIndex,
                 true);
@@ -2004,41 +1825,41 @@ public partial class TextEditorModel
             if (wordColumnIndexStartInclusive == -1)
                 wordColumnIndexStartInclusive = 0;
 
-            var wordColumnIndexEndExclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
+            var wordColumnIndexEndExclusive = GetColumnIndexOfCharacterWithDifferingKind(
                 lineInformation.Index,
                 columnIndex,
                 false);
 
             if (wordColumnIndexEndExclusive == -1)
-                wordColumnIndexEndExclusive = model.GetLineLength(lineInformation.Index);
+                wordColumnIndexEndExclusive = GetLineLength(lineInformation.Index);
 
             return new TextEditorTextSpan(
                 wordColumnIndexStartInclusive + lineInformation.StartPositionIndexInclusive,
                 wordColumnIndexEndExclusive + lineInformation.StartPositionIndexInclusive,
                 0,
-                model.ResourceUri,
-                model.GetAllText());
+                ResourceUri,
+                GetAllText());
         }
         else if (currentCharacterKind == CharacterKind.LetterOrDigit)
         {
-            var wordColumnIndexEndExclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
+            var wordColumnIndexEndExclusive = GetColumnIndexOfCharacterWithDifferingKind(
                 lineInformation.Index,
                 columnIndex,
                 false);
 
             if (wordColumnIndexEndExclusive == -1)
-                wordColumnIndexEndExclusive = model.GetLineLength(lineInformation.Index);
+                wordColumnIndexEndExclusive = GetLineLength(lineInformation.Index);
 
             return new TextEditorTextSpan(
                 columnIndex + lineInformation.StartPositionIndexInclusive,
                 wordColumnIndexEndExclusive + lineInformation.StartPositionIndexInclusive,
                 0,
-                model.ResourceUri,
-                model.GetAllText());
+                ResourceUri,
+                GetAllText());
         }
         else if (previousCharacterKind == CharacterKind.LetterOrDigit)
         {
-            var wordColumnIndexStartInclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
+            var wordColumnIndexStartInclusive = GetColumnIndexOfCharacterWithDifferingKind(
                 lineInformation.Index,
                 columnIndex,
                 true);
@@ -2050,16 +1871,16 @@ public partial class TextEditorModel
                 wordColumnIndexStartInclusive + lineInformation.StartPositionIndexInclusive,
                 columnIndex + lineInformation.StartPositionIndexInclusive,
                 0,
-                model.ResourceUri,
-                model.GetAllText());
+                ResourceUri,
+                GetAllText());
         }
 
         return null;
     }
 
-    public static List<TextEditorTextSpan> FindMatches(this TextEditorModel model, string query)
+    public List<TextEditorTextSpan> FindMatches(string query)
     {
-        var text = model.GetAllText();
+        var text = GetAllText();
         var matchedTextSpans = new List<TextEditorTextSpan>();
 
         for (int outerI = 0; outerI < text.Length; outerI++)
@@ -2080,7 +1901,7 @@ public partial class TextEditorModel
                         outerI,
                         outerI + innerI,
                         (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
-                        model.ResourceUri,
+                        ResourceUri,
                         text));
                 }
             }
@@ -2103,34 +1924,34 @@ public partial class TextEditorModel
     /// When 'lineIndex' == 0, then a "made-up" line ending named <see cref="LineEnd.StartOfFile"/> will be used
     /// in place of indexing at '<see cref="TextEditorModel.LineEndList"/>[-1]'
     /// </remarks>
-    public static LineInformation GetLineInformation(this TextEditorModel model, int lineIndex)
+    public LineInformation GetLineInformation(int lineIndex)
     {
-        model.AssertLineIndex(lineIndex);
+        AssertLineIndex(lineIndex);
 
         LineEnd GetLineEndLower(int lineIndex)
         {
             // Large index? Then set the index to the last index.
-            lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
+            lineIndex = Math.Min(lineIndex, LineEndList.Count - 1);
 
             // Small index? Then return StartOfFile.
             if (lineIndex <= 0)
                 return new(0, 0, LineEndKind.StartOfFile);
 
             // In-range index? Then return the previous line's line ending.
-            return model.LineEndList[lineIndex - 1];
+            return LineEndList[lineIndex - 1];
         }
 
         LineEnd GetLineEndUpper(int lineIndex)
         {
             // Large index? Then set the index to the last index.
-            lineIndex = Math.Min(lineIndex, model.LineEndList.Count - 1);
+            lineIndex = Math.Min(lineIndex, LineEndList.Count - 1);
 
             // Small index? Then return the first LineEnd
             if (lineIndex <= 0)
-                return model.LineEndList[0];
+                return LineEndList[0];
 
             // In-range index? Then return the LineEnd at that index.
-            return model.LineEndList[lineIndex];
+            return LineEndList[lineIndex];
         }
         
         var lineEndLower = GetLineEndLower(lineIndex);
@@ -2144,24 +1965,24 @@ public partial class TextEditorModel
             lineEndUpper);
     }
 
-    public static LineInformation GetLineInformationFromPositionIndex(this TextEditorModel model, int positionIndex)
+    public LineInformation GetLineInformationFromPositionIndex(int positionIndex)
     {
-        model.AssertPositionIndex(positionIndex);
+        AssertPositionIndex(positionIndex);
 
         int GetLineIndexFromPositionIndex()
         {
             // StartOfFile
-            if (model.LineEndList[0].EndPositionIndexExclusive > positionIndex)
+            if (LineEndList[0].EndPositionIndexExclusive > positionIndex)
                 return 0;
 
             // EndOfFile
-            if (model.LineEndList[^1].EndPositionIndexExclusive <= positionIndex)
-                return model.LineEndList.Count - 1;
+            if (LineEndList[^1].EndPositionIndexExclusive <= positionIndex)
+                return LineEndList.Count - 1;
 
             // In-between
-            for (var i = 1; i < model.LineEndList.Count; i++)
+            for (var i = 1; i < LineEndList.Count; i++)
             {
-                var lineEndTuple = model.LineEndList[i];
+                var lineEndTuple = LineEndList[i];
 
                 if (lineEndTuple.EndPositionIndexExclusive > positionIndex)
                     return i;
@@ -2171,7 +1992,7 @@ public partial class TextEditorModel
             return 0;
         }
 
-        return model.GetLineInformation(GetLineIndexFromPositionIndex());
+        return GetLineInformation(GetLineIndexFromPositionIndex());
     }
 
     /// <summary>
@@ -2179,8 +2000,7 @@ public partial class TextEditorModel
     /// (lower column index or lower row index depending on position) 
     /// </summary>
     /// <returns>Will return -1 if no valid result was found.</returns>
-    public static int GetColumnIndexOfCharacterWithDifferingKind(
-        this TextEditorModel model,
+    public int GetColumnIndexOfCharacterWithDifferingKind(
         int lineIndex,
         int columnIndex,
         bool moveBackwards)
@@ -2189,13 +2009,13 @@ public partial class TextEditorModel
             ? -1
             : 1;
 
-        var lineStartPositionIndex = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
+        var lineStartPositionIndex = GetLineInformation(lineIndex).StartPositionIndexInclusive;
 
-        if (lineIndex > model.LineEndList.Count - 1)
+        if (lineIndex > LineEndList.Count - 1)
             return -1;
 
-        var lastPositionIndexOnRow = model.LineEndList[lineIndex].EndPositionIndexExclusive - 1;
-        var positionIndex = model.GetPositionIndex(lineIndex, columnIndex);
+        var lastPositionIndexOnRow = LineEndList[lineIndex].EndPositionIndexExclusive - 1;
+        var positionIndex = GetPositionIndex(lineIndex, columnIndex);
 
         if (moveBackwards)
         {
@@ -2205,21 +2025,21 @@ public partial class TextEditorModel
             positionIndex -= 1;
         }
 
-        if (positionIndex < 0 || positionIndex >= model.RichCharacterList.Length)
+        if (positionIndex < 0 || positionIndex >= RichCharacterList.Length)
             return -1;
 
-        var startCharacterKind = CharacterKindHelper.CharToCharacterKind(model.RichCharacterList[positionIndex].Value);
+        var startCharacterKind = CharacterKindHelper.CharToCharacterKind(RichCharacterList[positionIndex].Value);
 
         while (true)
         {
-            if (positionIndex >= model.RichCharacterList.Length ||
+            if (positionIndex >= RichCharacterList.Length ||
                 positionIndex > lastPositionIndexOnRow ||
                 positionIndex < lineStartPositionIndex)
             {
                 return -1;
             }
 
-            var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(model.RichCharacterList[positionIndex].Value);
+            var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(RichCharacterList[positionIndex].Value);
 
             if (currentCharacterKind != startCharacterKind)
                 break;
@@ -2233,38 +2053,37 @@ public partial class TextEditorModel
         return positionIndex - lineStartPositionIndex;
     }
 
-    public static bool CanUndoEdit(this TextEditorModel model)
+    public bool CanUndoEdit()
     {
-        return model.EditBlockIndex > 0;
+        return EditBlockIndex > 0;
     }
 
-    public static bool CanRedoEdit(this TextEditorModel model)
+    public bool CanRedoEdit()
     {
-        return model.EditBlockIndex < model.EditBlockList.Count - 1;
+        return EditBlockIndex < EditBlockList.Count - 1;
     }
 
-    public static CharacterKind GetCharacterKind(this TextEditorModel model, int positionIndex)
+    public CharacterKind GetCharacterKind(int positionIndex)
     {
-        model.AssertPositionIndex(positionIndex);
+        AssertPositionIndex(positionIndex);
 
-        if (positionIndex == model.CharCount)
+        if (positionIndex == CharCount)
             return CharacterKind.Bad;
 
-        return CharacterKindHelper.CharToCharacterKind(model.RichCharacterList[positionIndex].Value);
+        return CharacterKindHelper.CharToCharacterKind(RichCharacterList[positionIndex].Value);
     }
 
     /// <summary>
     /// This method and <see cref="ReadNextWordOrDefault(TextEditorModel, int, int)"/>
     /// are separate because of 'Ctrl + Space' bring up autocomplete when at a period.
     /// </summary>
-    public static string? ReadPreviousWordOrDefault(
-        this TextEditorModel model,
+    public string? ReadPreviousWordOrDefault(
         int lineIndex,
         int columnIndex,
         bool isRecursiveCall = false)
     {
-        var wordPositionIndexEndExclusive = model.GetPositionIndex(lineIndex, columnIndex);
-        var wordCharacterKind = model.GetCharacterKind(wordPositionIndexEndExclusive - 1);
+        var wordPositionIndexEndExclusive = GetPositionIndex(lineIndex, columnIndex);
+        var wordCharacterKind = GetCharacterKind(wordPositionIndexEndExclusive - 1);
 
         if (wordCharacterKind == CharacterKind.Punctuation && !isRecursiveCall)
         {
@@ -2277,12 +2096,12 @@ public partial class TextEditorModel
             var anotherAttemptColumnIndex = columnIndex - 1;
 
             if (anotherAttemptColumnIndex >= 0)
-                return model.ReadPreviousWordOrDefault(lineIndex, anotherAttemptColumnIndex, true);
+                return ReadPreviousWordOrDefault(lineIndex, anotherAttemptColumnIndex, true);
         }
 
         if (wordCharacterKind == CharacterKind.LetterOrDigit)
         {
-            var wordColumnIndexStartInclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
+            var wordColumnIndexStartInclusive = GetColumnIndexOfCharacterWithDifferingKind(
                 lineIndex,
                 columnIndex,
                 true);
@@ -2293,7 +2112,7 @@ public partial class TextEditorModel
             var wordLength = columnIndex - wordColumnIndexStartInclusive;
             var wordPositionIndexStartInclusive = wordPositionIndexEndExclusive - wordLength;
 
-            return model.GetString(wordPositionIndexStartInclusive, wordLength);
+            return GetString(wordPositionIndexStartInclusive, wordLength);
         }
 
         return null;
@@ -2303,24 +2122,24 @@ public partial class TextEditorModel
     /// This method and <see cref="ReadPreviousWordOrDefault(TextEditorModel, int, int, bool)"/>
     /// are separate because of 'Ctrl + Space' bring up autocomplete when at a period.
     /// </summary>
-    public static string? ReadNextWordOrDefault(this TextEditorModel model, int lineIndex, int columnIndex)
+    public string? ReadNextWordOrDefault(int lineIndex, int columnIndex)
     {
-        var wordPositionIndexStartInclusive = model.GetPositionIndex(lineIndex, columnIndex);
-        var wordCharacterKind = model.GetCharacterKind(wordPositionIndexStartInclusive);
+        var wordPositionIndexStartInclusive = GetPositionIndex(lineIndex, columnIndex);
+        var wordCharacterKind = GetCharacterKind(wordPositionIndexStartInclusive);
 
         if (wordCharacterKind == CharacterKind.LetterOrDigit)
         {
-            var wordColumnIndexEndExclusive = model.GetColumnIndexOfCharacterWithDifferingKind(
+            var wordColumnIndexEndExclusive = GetColumnIndexOfCharacterWithDifferingKind(
                 lineIndex,
                 columnIndex,
                 false);
 
             if (wordColumnIndexEndExclusive == -1)
-                wordColumnIndexEndExclusive = model.GetLineLength(lineIndex);
+                wordColumnIndexEndExclusive = GetLineLength(lineIndex);
 
             var wordLength = wordColumnIndexEndExclusive - columnIndex;
 
-            return model.GetString(wordPositionIndexStartInclusive, wordLength);
+            return GetString(wordPositionIndexStartInclusive, wordLength);
         }
 
         return null;
@@ -2332,23 +2151,23 @@ public partial class TextEditorModel
     /// One uses this method most often to measure the position of the cursor when rendering the
     /// UI for a font-family which is proportional (i.e. not monospace).
     /// </summary>
-    public static string GetTextOffsettingCursor(this TextEditorModel model, TextEditorCursor textEditorCursor)
+    public string GetTextOffsettingCursor(TextEditorCursor textEditorCursor)
     {
-        var cursorPositionIndex = model.GetPositionIndex(textEditorCursor);
-        var lineStartPositionIndexInclusive = model.GetLineInformation(textEditorCursor.LineIndex).StartPositionIndexInclusive;
+        var cursorPositionIndex = GetPositionIndex(textEditorCursor);
+        var lineStartPositionIndexInclusive = GetLineInformation(textEditorCursor.LineIndex).StartPositionIndexInclusive;
 
-        return model.GetString(lineStartPositionIndexInclusive, cursorPositionIndex - lineStartPositionIndexInclusive);
+        return GetString(lineStartPositionIndexInclusive, cursorPositionIndex - lineStartPositionIndexInclusive);
     }
 
-    public static string GetLineText(this TextEditorModel model, int lineIndex)
+    public string GetLineText(int lineIndex)
     {
-        var lineStartPositionIndexInclusive = model.GetLineInformation(lineIndex).StartPositionIndexInclusive;
-        var lengthOfLine = model.GetLineLength(lineIndex, true);
+        var lineStartPositionIndexInclusive = GetLineInformation(lineIndex).StartPositionIndexInclusive;
+        var lengthOfLine = GetLineLength(lineIndex, true);
 
-        return model.GetString(lineStartPositionIndexInclusive, lengthOfLine);
+        return GetString(lineStartPositionIndexInclusive, lengthOfLine);
     }
 
-    public static void AssertColumnIndex(this TextEditorModel model, LineInformation line, int columnIndex)
+    public void AssertColumnIndex(LineInformation line, int columnIndex)
     {
         if (columnIndex < 0)
             throw new LuthetusTextEditorException($"'{nameof(columnIndex)}:{columnIndex}' < 0");
@@ -2357,26 +2176,26 @@ public partial class TextEditorModel
             throw new LuthetusTextEditorException($"'{nameof(columnIndex)}:{columnIndex}' > {nameof(line)}.{nameof(line.LastValidColumnIndex)}:{line.LastValidColumnIndex}");
     }
     
-    public static void AssertLineIndex(this TextEditorModel model, int lineIndex)
+    public void AssertLineIndex(int lineIndex)
     {
         if (lineIndex < 0)
             throw new LuthetusTextEditorException($"'{nameof(lineIndex)}:{lineIndex}' < 0");
         
-        if (lineIndex >= model.LineCount)
-            throw new LuthetusTextEditorException($"'{nameof(lineIndex)}:{lineIndex}' >= {nameof(model)}.{nameof(model.LineCount)}:{model.LineCount}");
+        if (lineIndex >= LineCount)
+            throw new LuthetusTextEditorException($"'{nameof(lineIndex)}:{lineIndex}' >= {nameof(LineCount)}:{LineCount}");
     }
 
-    public static void AssertPositionIndex(this TextEditorModel model, int positionIndex)
+    public void AssertPositionIndex(int positionIndex)
     {
         if (positionIndex < 0)
             throw new LuthetusTextEditorException($"'{nameof(positionIndex)}:{positionIndex}' < 0");
         
-        // NOTE: model.DocumentLength is a valid position for the cursor to be at.
-        if (positionIndex > model.CharCount)
-            throw new LuthetusTextEditorException($"'{nameof(positionIndex)}:{positionIndex}' > {nameof(model)}.{nameof(model.CharCount)}:{model.CharCount}");
+        // NOTE: DocumentLength is a valid position for the cursor to be at.
+        if (positionIndex > CharCount)
+            throw new LuthetusTextEditorException($"'{nameof(positionIndex)}:{positionIndex}' > {nameof(CharCount)}:{CharCount}");
     }
     
-    public static void AssertCount(this TextEditorModel model, int count)
+    public void AssertCount(int count)
     {
         if (count < 0)
             throw new LuthetusTextEditorException($"'{nameof(count)}:{count}' < 0");
@@ -2776,46 +2595,156 @@ public partial class TextEditorModel
 
     public string? __AllText;
 
-    public RichCharacter[] RichCharacterList { get; init; }
-    public List<TextEditorPartition> PartitionList { get; init; } = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
+    public int DocumentLength => RichCharacterList.Length;
+    #endregion
+    
+    #region TextEditorModelMain2
+	/// <summary>
+	/// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
+	///
+	/// When reading state, if the state had been 'null coallesce assigned' then the field will
+	/// be read. Otherwise, the existing TextEditorModel's value will be read.
+	/// <br/><br/>
+	/// <inheritdoc cref="TextEditorModel"/>
+	/// </summary>
 
-    public List<ITextEditorEdit> EditBlockList { get; init; } = new();
+    /// <summary>
+    /// <see cref="__SplitIntoTwoPartitions(int)"/> will divide by 2 and give the first split the remainder,
+    /// then add 1 to the first split if there is a multibyte scenario.
+    /// Therefore partition size of 3 would infinitely try to split itself.
+    /// </summary>
+    public const int MINIMUM_PARTITION_SIZE = 4;
 
-    /// <inheritdoc cref="TextEditorModel.LineEndList"/>
-	public List<LineEnd> LineEndList { get; init; } = new();
-	public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; init; } = new();
-	public List<TextEditorPresentationModel> PresentationModelList { get; init; } = new();
-    
-    /// <inheritdoc cref="TextEditorModel.TabKeyPositionList"/>
-	public List<int> TabKeyPositionList { get; } = new();
-    
-    /// <inheritdoc cref="TextEditorModel.OnlyLineEndKind"/>
-    public LineEndKind OnlyLineEndKind { get; init; }
-    public LineEndKind LineEndKindPreference { get; init; }
-    
-    /// <inheritdoc cref="TextEditorModel.ResourceUri"/>
-    public ResourceUri ResourceUri { get; init; }
-    public DateTime ResourceLastWriteTime { get; init; }
-    public int PartitionSize { get; init; }
-    
-    /// <inheritdoc cref="TextEditorModel.FileExtension"/>
-    public string FileExtension { get; init; }
-    public IDecorationMapper DecorationMapper { get; init; }
-    public ICompilerService CompilerService { get; init; }
-    public SaveFileHelper TextEditorSaveFileHelper { get; init; } = new();
-    public int EditBlockIndex { get; init; }
-    public bool IsDirty { get; init; }
-	public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; init; }
-    public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
+	/// <summary>
+	/// The first time a model is constructed it will throw an exception when accessing AllText,
+	/// therefore pass it in as an argument.
+	/// </summary>
+    public TextEditorModel(TextEditorModel model)
+    {
+        if (model.PartitionSize < MINIMUM_PARTITION_SIZE)
+            throw new LuthetusTextEditorException($"{nameof(model)}.{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
 
-    public string AllText => __AllText ??= new string (RichCharacterList.Select(x => x.Value).ToArray());
+        PartitionSize = model.PartitionSize;
+        WasDirty = model.IsDirty;
+
+        IsDirty = model.IsDirty;
+
+        _partitionList = model.PartitionList ?? new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };;
+        _richCharacterList = model.RichCharacterList;
+        
+        EditBlockList = model.EditBlockList;
+	    LineEndList = model.LineEndList;
+	    LineEndKindCountList = model.LineEndKindCountList;
+	    PresentationModelList = model.PresentationModelList;
+	    TabKeyPositionList = model.TabKeyPositionList;
+        
+        OnlyLineEndKind = model.OnlyLineEndKind;
+	    LineEndKindPreference = model.LineEndKindPreference;
+	    ResourceUri = model.ResourceUri;
+	    ResourceLastWriteTime = model.ResourceLastWriteTime;
+	    FileExtension = model.FileExtension;
+	    DecorationMapper = model.DecorationMapper;
+	    CompilerService = model.CompilerService;
+	    TextEditorSaveFileHelper = model.TextEditorSaveFileHelper;
+	    EditBlockIndex = model.EditBlockIndex;
+	    IsDirty = model.IsDirty;
+	    MostCharactersOnASingleLineTuple = model.MostCharactersOnASingleLineTuple;
+	    __AllText = model.__AllText;
+	    
+	    PreviousLineCount = model.LineEndList.Count;
+    }
+
+    public RichCharacter[] _richCharacterList;
+    public RichCharacter[] RichCharacterList
+    {
+    	get
+    	{
+    		if (_partitionListChanged)
+    		{
+    			_partitionListChanged = false;
+    			_richCharacterList = PartitionList.SelectMany(x => x.RichCharacterList).ToArray();
+    		}
+    		
+    		return _richCharacterList;
+    	}
+    	set
+    	{
+    		_partitionListChanged = false;
+    		_richCharacterList = value;
+    	}
+    }
+    
+    private bool _partitionListChanged;
+    private bool _partitionListIsShallowCopy = false;
+    public List<TextEditorPartition> _partitionList;
+    public List<TextEditorPartition> PartitionList
+    {
+    	get
+    	{
+    		return _partitionList;
+    	}
+    	set
+    	{
+    		_partitionListChanged = true;
+    		_partitionList = value;
+    	}
+    }
+
+    public List<ITextEditorEdit> EditBlockList { get; set; } = new();
+    public List<LineEnd> LineEndList { get; set; } = new();
+    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; } = new();
+    public List<TextEditorPresentationModel> PresentationModelList { get; set; } = new();
+    public List<int> TabKeyPositionList { get; set; } = new();
+    public LineEndKind OnlyLineEndKind { get; set; }
+    public LineEndKind LineEndKindPreference { get; set; }
+    public ResourceUri ResourceUri { get; set; }
+    public DateTime ResourceLastWriteTime { get; set; }
+    public string FileExtension { get; set; }
+    public IDecorationMapper DecorationMapper { get; set; }
+    public ICompilerService CompilerService { get; set; }
+    public SaveFileHelper TextEditorSaveFileHelper { get; set; } = new();
+    public int EditBlockIndex { get; set; }
+    public bool IsDirty { get; set; }
+    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; set; }
+    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple { get; set; }
+    public Key<RenderState> RenderStateKey { get; set; } = Key<RenderState>.NewKey();
 
     public int LineCount => LineEndList.Count;
-    public int DocumentLength => RichCharacterList.Length;
+    public int PreviousLineCount { get; set; }
     
-    RichCharacter[] TextEditorModel.RichCharacterList => RichCharacterList;
+    // TODO: Remove Linq?
+    public int CharCount => PartitionList.Sum(x => x.Count);
 
-    int TextEditorModel.LineCount => LineCount;
-    int TextEditorModel.CharCount => DocumentLength;
+	/// <summary>
+	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
+	/// </summary>
+	public Stack<TextEditorEditOther> OtherEditStack { get; } = new();
+
+    /// <summary>
+    /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
+    /// This involves writing to dependency injectable state, then triggering a re-render in the <see cref="Edits.Displays.DirtyResourceUriInteractiveIconDisplay"/>
+    /// </summary>
+    public bool WasDirty { get; }
+
+    private int PartitionSize { get; }
+
+	/// <summary>
+	/// This property decides whether or not to replace the existing model in IState<TextEditorState> with
+	/// the instance that comes from this modifier.
+	/// </summary>
+    public bool WasModified { get; internal set; }
+	
+	/// <summary>
+	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
+	/// </summary>
+    public bool ShouldReloadVirtualizationResult { get; internal set; }
+
+    public string AllText => __AllText ??= new string(RichCharacterList.Select(x => x.Value).ToArray());
+
+    public enum DeleteKind
+    {
+        Backspace,
+        Delete,
+    }
     #endregion
 }
