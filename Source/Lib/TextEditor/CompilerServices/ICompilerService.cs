@@ -85,8 +85,7 @@ public interface ICompilerService
 		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
-		CursorModifierBagTextEditor cursorModifierBag,
-		TextEditorCommandArgs commandArgs);
+		CursorModifierBagTextEditor cursorModifierBag);
 		
 	public ValueTask OnInspect(
 		TextEditorEditContext editContext,
@@ -97,13 +96,11 @@ public interface ICompilerService
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri);
         
-    /// <summary>TODO: This should be a ValueTask</summary>
-    public void GoToDefinition(
+    public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs);
+        CursorModifierBagTextEditor cursorModifierBag);
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);
 	

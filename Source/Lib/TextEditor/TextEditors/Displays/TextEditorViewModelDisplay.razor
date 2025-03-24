@@ -11,7 +11,6 @@
 @using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
 @using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 @using Luthetus.TextEditor.RazorLib.Cursors.Models
-@using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 @using Luthetus.TextEditor.RazorLib.Rows.Models;
 @using Luthetus.TextEditor.RazorLib.Options.Models;
 @using Luthetus.TextEditor.RazorLib.Htmls.Models;
@@ -524,7 +523,8 @@
     </div>
     
     @{
-		var footerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.FooterComponentType;
+    
+    	var footerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.FooterComponentType;
 	
 	    if (footerComponentType is not null && renderBatchValidated is not null)
 	    {

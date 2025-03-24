@@ -211,10 +211,6 @@ public sealed class DisplayTracker : IDisposable
         if (model is null || viewModel is null)
             return;
 
-		// The 'Remeasure' command as of this comment
-		// does not use the 'commandArgs' parameter
-        var commandArgs = (TextEditorCommandArgs?)null;
-
 		_textEditorService.TextEditorWorker.PostRedundant(
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,

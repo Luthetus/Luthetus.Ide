@@ -73,11 +73,11 @@ public partial class SymbolDisplay : ComponentBase
 	///
 	/// The 'targetNode' is whichever node the ISymbol directly mapped to.
 	/// </summary>
-    private ISyntaxNode? GetTargetNode(Symbol symbolLocal)
+    public static ISyntaxNode? GetTargetNode(ITextEditorService textEditorService, Symbol symbolLocal)
     {
     	try
     	{
-	    	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
+	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
 	    	if (textEditorModel is null)
 	    		return null;
 	    	
@@ -104,7 +104,7 @@ public partial class SymbolDisplay : ComponentBase
 	///
 	/// Otherwise, ask the IBinder for the definition node:
 	/// </summary>
-    private ISyntaxNode? GetDefinitionNode(Symbol symbolLocal, ISyntaxNode targetNode)
+    public static ISyntaxNode? GetDefinitionNode(ITextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode)
     {
     	try
     	{
@@ -121,7 +121,7 @@ public partial class SymbolDisplay : ComponentBase
 		    	}
 	    	}
 	    
-	    	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
+	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
 	    	var extendedCompilerService = (IExtendedCompilerService)textEditorModel.CompilerService;
 	    	var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.ResourceUri);
 	

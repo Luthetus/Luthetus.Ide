@@ -22,7 +22,7 @@ public partial class InputTextEditorKeymap : ComponentBase, IDisposable
 
     private void SelectedKeymapChanged(ChangeEventArgs changeEventArgs)
     {
-        var allKeymapDefinitionsList = TextEditorKeymapFacts.AllKeymapsList;
+        /*var allKeymapDefinitionsList = TextEditorKeymapFacts.AllKeymapsList;
         var chosenKeymapGuidString = changeEventArgs.Value?.ToString() ?? string.Empty;
 
         if (Guid.TryParse(chosenKeymapGuidString, out var chosenKeymapKeyGuid))
@@ -36,7 +36,7 @@ public partial class InputTextEditorKeymap : ComponentBase, IDisposable
         else
         {
             TextEditorService.OptionsApi.SetKeymap(TextEditorKeymapFacts.DefaultKeymap);
-        }
+        }*/
     }
     
     private async void TextEditorOptionsStateWrapOnStateChanged()

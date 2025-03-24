@@ -583,43 +583,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             menuOptionsList.Add(menuOptionCodeSearch);
         }
 
-        // Menu Option Find
-        {
-            var menuOptionFind = new MenuOptionRecord(
-                "Find in text editor (Ctrl f)",
-                MenuOptionKind.Delete,
-                () =>
-                {
-                    var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
-
-                    if (group is null)
-                        return Task.CompletedTask;
-
-                    var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
-
-                    if (activeViewModel is null)
-                        return Task.CompletedTask;
-
-                    _textEditorService.TextEditorWorker.PostUnique(
-                        nameof(TextEditorCommandDefaultFacts.ShowFindOverlay),
-                        editContext =>
-                        {
-                            return TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
-                                new TextEditorCommandArgs(
-                                    ResourceUri.Empty,
-                                    activeViewModel.ViewModelKey,
-                                    null,
-                                    _textEditorService,
-                                    _serviceProvider,
-                                    editContext));
-                        });
-
-                    return Task.CompletedTask;
-                });
-
-            menuOptionsList.Add(menuOptionFind);
-        }
-
         // Menu Option BackgroundTasks
         {
             var menuOptionBackgroundTasks = new MenuOptionRecord(

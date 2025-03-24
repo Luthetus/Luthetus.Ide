@@ -26,6 +26,7 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -99,7 +100,8 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        ICommonComponentRenderers commonComponentRenderers,
+        INotificationService notificationService)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
     	
@@ -108,8 +110,8 @@ public class TextEditorCommandDefaultFunctions
     		NotificationHelper.DispatchError(
 		        nameof(TriggerSave),
 		        $"{nameof(TriggerSave)} was null",
-		        commandArgs.ServiceProvider.GetRequiredService<ICommonComponentRenderers>(),
-				commandArgs.ServiceProvider.GetRequiredService<INotificationService>(),
+		        commonComponentRenderers,
+				notificationService,
 		        TimeSpan.FromSeconds(7));
     	}
     	else
@@ -123,8 +125,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
     	
@@ -136,8 +137,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         modelModifier.UndoEdit();
     }
@@ -146,16 +146,14 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
 		modelModifier.RedoEdit();
     }
 
     public static void TriggerRemeasure(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
-        TextEditorCommandArgs commandArgs)
+        TextEditorViewModelModifier viewModelModifier)
     {
         editContext.TextEditorService.OptionsApi.SetRenderStateKey(Key<RenderState>.NewKey());
     }
@@ -164,8 +162,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
     		editContext,
@@ -177,8 +174,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
@@ -190,8 +186,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
@@ -203,8 +198,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
@@ -216,8 +210,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
         {
@@ -235,8 +228,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
         {
@@ -253,8 +245,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
     
@@ -291,8 +282,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
     
@@ -344,16 +334,24 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+    	
+    	(int lowerRowIndexInclusive, int upperRowIndexExclusive) selectionBoundsInRowIndexUnits;
     
-        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
-
-        var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-            modelModifier,
-            selectionBoundsInPositionIndexUnits);
+    	if (primaryCursorModifier.SelectionAnchorPositionIndex is null)
+    	{
+    		selectionBoundsInRowIndexUnits = (primaryCursorModifier.LineIndex, primaryCursorModifier.LineIndex + 1);
+    	}
+    	else
+    	{
+	        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
+	
+	        selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+	            modelModifier,
+	            selectionBoundsInPositionIndexUnits);
+        }
 
         bool isFirstLoop = true;
 
@@ -432,8 +430,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
@@ -443,8 +440,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
@@ -487,8 +483,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
@@ -540,8 +535,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         var lineIndexOriginal = primaryCursorModifier.LineIndex;
@@ -595,8 +589,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         var lineIndexOriginal = primaryCursorModifier.LineIndex;
@@ -652,12 +645,12 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        bool shouldSelectText)
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
-        if (commandArgs.ShouldSelectText)
+        if (shouldSelectText)
         {
             if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
                 primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
@@ -718,7 +711,7 @@ public class TextEditorCommandDefaultFunctions
                 keymapArgs = new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                    ShiftKey = commandArgs.ShouldSelectText,
+                    ShiftKey = shouldSelectText,
                 };
             }
             else
@@ -726,7 +719,7 @@ public class TextEditorCommandDefaultFunctions
                 keymapArgs = new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                    ShiftKey = commandArgs.ShouldSelectText,
+                    ShiftKey = shouldSelectText,
                 };
             }
 
@@ -753,7 +746,7 @@ public class TextEditorCommandDefaultFunctions
                 break;
         }
 
-        if (commandArgs.ShouldSelectText)
+        if (shouldSelectText)
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
     }
 
@@ -762,22 +755,19 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        LuthetusCommonJavaScriptInteropApi jsRuntimeCommonApi,
+        IEnvironmentProvider environmentProvider,
+        IFileSystemProvider fileSystemProvider,
+        ITextEditorService textEditorService,
+        IDropdownService dropdownService)
     {
-        var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
-        var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
-		       
 		var cursorDimensions = await jsRuntimeCommonApi
 			.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
-        var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
-        
 		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
 		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
 	
-		var fileSystemProvider = commandArgs.ServiceProvider.GetRequiredService<IFileSystemProvider>();
-		
 		var siblingFileStringList = Array.Empty<string>();
 		
 		try
@@ -806,7 +796,7 @@ public class TextEditorCommandDefaultFunctions
 			menuOptionList.Add(new MenuOptionRecord(
 				siblingAbsolutePath.NameWithExtension,
 				MenuOptionKind.Other,
-				onClickFunc: async () => commandArgs.TextEditorService.OpenInEditorAsync(
+				onClickFunc: async () => textEditorService.OpenInEditorAsync(
 					file,
 					true,
 					null,
@@ -852,12 +842,12 @@ public class TextEditorCommandDefaultFunctions
 				//       |
 				//       I ran this and it didn't work. Its for the best that it doesn't.
 				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-				var mainEditorGroup = commandArgs.TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
+				var mainEditorGroup = textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
 				
 				if (mainEditorGroup is not null &&
 					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
 				{
-					var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+					var activeViewModel = textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
 					if (activeViewModel is not null)
 						await activeViewModel.FocusAsync();
@@ -866,7 +856,6 @@ public class TextEditorCommandDefaultFunctions
 				await viewModelModifier.ViewModel.FocusAsync();
 			});
 
-		var dropdownService = commandArgs.ServiceProvider.GetRequiredService<IDropdownService>();
         dropdownService.ReduceRegisterAction(dropdownRecord);
     }
     
@@ -875,11 +864,10 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        LuthetusCommonJavaScriptInteropApi jsRuntimeCommonApi,
+        ITextEditorService textEditorService,
+        IDropdownService dropdownService)
     {
-        var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
-        var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
-
 		var cursorDimensions = await jsRuntimeCommonApi
 			.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
 			.ConfigureAwait(false);
@@ -891,8 +879,7 @@ public class TextEditorCommandDefaultFunctions
 			editContext,
 	        modelModifier,
 	        viewModelModifier,
-	        cursorModifierBag,
-	        commandArgs);
+	        cursorModifierBag);
 
 		var dropdownRecord = new DropdownRecord(
 			Key<DropdownRecord>.NewKey(),
@@ -918,12 +905,12 @@ public class TextEditorCommandDefaultFunctions
 				//       |
 				//       I ran this and it didn't work. Its for the best that it doesn't.
 				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-				var mainEditorGroup = commandArgs.TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
+				var mainEditorGroup = textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
 				
 				if (mainEditorGroup is not null &&
 					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
 				{
-					var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+					var activeViewModel = textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
 					if (activeViewModel is not null)
 						await activeViewModel.FocusAsync();
@@ -932,7 +919,6 @@ public class TextEditorCommandDefaultFunctions
 				await viewModelModifier.ViewModel.FocusAsync();
 			});
 
-		var dropdownService = commandArgs.ServiceProvider.GetRequiredService<IDropdownService>();
         dropdownService.ReduceRegisterAction(dropdownRecord);
     }
     
@@ -940,15 +926,13 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
     	modelModifier.CompilerService.GoToDefinition(
 			editContext,
 	        modelModifier,
 	        viewModelModifier,
-	        cursorModifierBag,
-	        commandArgs);
+	        cursorModifierBag);
     }
 
     public static void ShowFindAllDialog(
@@ -956,9 +940,9 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        ITextEditorService textEditorService)
     {
-        commandArgs.TextEditorService.OptionsApi.ShowFindAllDialog();
+        textEditorService.OptionsApi.ShowFindAllDialog();
     }
 
     public static async ValueTask ShowTooltipByCursorPositionAsync(
@@ -966,9 +950,11 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCommandArgs commandArgs)
+        ITextEditorService textEditorService,
+        TextEditorComponentData componentData,
+        ILuthetusTextEditorComponentRenderers textEditorComponentRenderers)
     {
-        var elementPositionInPixels = await commandArgs.TextEditorService.JsRuntimeTextEditorApi
+        var elementPositionInPixels = await textEditorService.JsRuntimeTextEditorApi
             .GetBoundingClientRect(viewModelModifier.ViewModel.PrimaryCursorContentId)
             .ConfigureAwait(false);
 
@@ -987,8 +973,8 @@ public class TextEditorCommandDefaultFunctions
 	                ClientX = elementPositionInPixels.Left,
 	                ClientY = elementPositionInPixels.Top
 	            },
-				commandArgs.ComponentData,
-				commandArgs.ServiceProvider.GetRequiredService<ILuthetusTextEditorComponentRenderers>(),
+				componentData,
+				textEditorComponentRenderers,
 				modelModifier.ResourceUri)
 			.ConfigureAwait(false);
     }
@@ -1309,4 +1295,61 @@ public class TextEditorCommandDefaultFunctions
 				},
 			});
 	}
+	
+	public static async ValueTask ShowFindOverlay(
+        TextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        LuthetusCommonJavaScriptInteropApi commonJavaScriptInteropApi)
+    {
+		// If the user has an active text selection,
+		// then populate the find overlay with their selection.
+		
+        var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursor, modelModifier);
+		if (selectedText is not null)
+		{
+			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+            {
+                FindOverlayValue = selectedText,
+                FindOverlayValueExternallyChangedMarker = !viewModelModifier.ViewModel.FindOverlayValueExternallyChangedMarker,
+            };
+		}
+
+        if (viewModelModifier.ViewModel.ShowFindOverlay)
+        {
+            await commonJavaScriptInteropApi
+                .FocusHtmlElementById(viewModelModifier.ViewModel.FindOverlayId)
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+            {
+                ShowFindOverlay = true,
+            };
+        }
+    }
+    
+    public static void PopulateSearchFindAll(
+        TextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        IFindAllService findAllService)
+    {
+		// If the user has an active text selection,
+		// then populate the find overlay with their selection.
+		
+        if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursor is null)
+            return;
+
+        var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursor, modelModifier);
+		if (selectedText is null)
+			return;
+			
+		findAllService.SetSearchQuery(selectedText);
+    }
 }
