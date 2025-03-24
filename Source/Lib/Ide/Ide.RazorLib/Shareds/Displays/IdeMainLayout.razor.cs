@@ -26,7 +26,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ElementDimensions _bodyElementDimensions = new();
     private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
 
-    private string UnselectableClassCss => DragService.GetDragState().ShouldDisplay ? "balc_unselectable" : string.Empty;
+    private string UnselectableClassCss => DragService.GetDragState().ShouldDisplay ? "luth_unselectable" : string.Empty;
 
     protected override void OnInitialized()
     {
