@@ -40,288 +40,31 @@ public class HeaderDriver
 	}
 
 	public string _reloadButtonHtmlElementId = "luth_te_text-editor-header-reload-button";
-	
-    public TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatch renderBatchLocal)
-    {
-        var cursorSnapshotsList = new List<TextEditorCursor> { renderBatchLocal.ViewModel.PrimaryCursor };
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
-
-        return new TextEditorCommandArgs(
-            renderBatchLocal.Model.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
-            renderBatchLocal.ComponentData,
-			_root.TextEditorService,
-            _root.ServiceProvider,
-            new TextEditorEditContext(_root.TextEditorService));
-    }
-
-    public Task DoCopyOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Copy),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Copy.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoCutOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Cut),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Cut.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoPasteOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.PasteCommand),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoRedoOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Redo),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Redo.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
+    
     public Task DoSaveOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = _renderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.TriggerSave),
+            nameof(TextEditorCommandDefaultFunctions.TriggerSave),
             editContext =>
             {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.TriggerSave.CommandFunc
-                    .Invoke(commandArgs);
+            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	TextEditorCommandDefaultFunctions.TriggerSave(
+            		editContext,
+            		modelModifier,
+            		viewModelModifier,
+            		cursorModifierBag,
+            		_root.CommonComponentRenderers,
+            		_root.NotificationService);
+            	return ValueTask.CompletedTask;
             });
         return Task.CompletedTask;
-    }
-
-    public Task DoUndoOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Undo),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Undo.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoSelectAllOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.SelectAll),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.SelectAll.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public Task DoRemeasureOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
-        _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Remeasure),
-            editContext =>
-            {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Remeasure.CommandFunc
-                    .Invoke(commandArgs);
-            });
-        return Task.CompletedTask;
-    }
-
-    public async Task DoReloadOnClick(MouseEventArgs arg)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return;
-    	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-        
-        var dropdownKey = Key<DropdownRecord>.NewKey();
-        
-        var buttonDimensions = await _root.TextEditorService.JsRuntimeCommonApi
-			.MeasureElementById(_reloadButtonHtmlElementId)
-			.ConfigureAwait(false);
-			
-		var menuOptionList = new List<MenuOptionRecord>();
-		
-		var absolutePath = _root.EnvironmentProvider.AbsolutePathFactory(model.ResourceUri.Value, false);
-
-		menuOptionList.Add(new MenuOptionRecord(
-		    "Cancel",
-		    MenuOptionKind.Read,
-		    onClickFunc: () =>
-		    {
-			    _root.DropdownService.ReduceDisposeAction(dropdownKey);
-		    	return Task.CompletedTask;
-		    }));
-		    
-		menuOptionList.Add(new MenuOptionRecord(
-		    $"Reset: '{absolutePath.NameWithExtension}'",
-		    MenuOptionKind.Delete,
-		    onClickFunc: () =>
-		    {
-			    _root.TextEditorService.TextEditorWorker.PostUnique(
-		            nameof(DoReloadOnClick),
-		            editContext =>
-		            {
-		            	editContext.TextEditorService.ViewModelApi.Dispose(viewModel.ViewModelKey);
-		            	_root.DirtyResourceUriService.RemoveDirtyResourceUri(model.ResourceUri);
-		            	editContext.TextEditorService.ModelApi.Dispose(model.ResourceUri);
-		            	return ValueTask.CompletedTask;
-		            });
-		    	return Task.CompletedTask;
-		    }));
-		    
-		var menu = new MenuRecord(menuOptionList);
-
-		var dropdownRecord = new DropdownRecord(
-			dropdownKey,
-			buttonDimensions.LeftInPixels,
-			buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
-			typeof(MenuDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(MenuDisplay.MenuRecord),
-					menu
-				}
-			},
-			async () => await _root.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
-
-        _root.DropdownService.ReduceRegisterAction(dropdownRecord);
     }
 
     public void ShowWatchWindowDisplayDialogOnClick()
@@ -359,27 +102,254 @@ public class HeaderDriver
         _root.DialogService.ReduceRegisterAction(dialogRecord);
     }
 
+	public Task DoCopyOnClick(MouseEventArgs arg)
+    {
+    	var renderBatchLocal = _renderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        _root.TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.CopyAsync),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	return TextEditorCommandDefaultFunctions.CopyAsync(
+                	editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+                	_root.ClipboardService);
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task DoCutOnClick(MouseEventArgs arg)
+    {
+    	var renderBatchLocal = _renderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        _root.TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.CutAsync),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	return TextEditorCommandDefaultFunctions.CutAsync(
+            		editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+                	_root.ClipboardService);
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task DoPasteOnClick(MouseEventArgs arg)
+    {
+    	var renderBatchLocal = _renderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        _root.TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.PasteAsync),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	return TextEditorCommandDefaultFunctions.PasteAsync(
+                	editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+                	_root.ClipboardService);
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task DoRedoOnClick(MouseEventArgs arg)
+    {
+    	var renderBatchLocal = _renderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+
+        _root.TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.Redo),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	TextEditorCommandDefaultFunctions.Redo(
+            		editContext,
+            		modelModifier,
+            		viewModelModifier,
+            		cursorModifierBag);
+            	
+            	return ValueTask.CompletedTask;
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task DoUndoOnClick(MouseEventArgs arg)
+    {
+    	var renderBatchLocal = _renderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        _root.TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.Undo),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	TextEditorCommandDefaultFunctions.Undo(
+            		editContext,
+            		modelModifier,
+            		viewModelModifier,
+            		cursorModifierBag);
+        		return ValueTask.CompletedTask;
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task DoSelectAllOnClick(MouseEventArgs arg)
+    {
+    	var renderBatchLocal = _renderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        _root.TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.SelectAll),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	TextEditorCommandDefaultFunctions.SelectAll(
+            		editContext,
+            		modelModifier,
+            		viewModelModifier,
+            		cursorModifierBag);
+            		
+        		return ValueTask.CompletedTask;
+            });
+        return Task.CompletedTask;
+    }
+
+    public Task DoRemeasureOnClick(MouseEventArgs arg)
+    {
+    	var renderBatchLocal = _renderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        _root.TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.TriggerRemeasure),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	TextEditorCommandDefaultFunctions.TriggerRemeasure(
+            		editContext,
+            		viewModelModifier);
+            		
+        		return ValueTask.CompletedTask;
+            });
+        return Task.CompletedTask;
+    }
+
+    public async Task DoReloadOnClick(MouseEventArgs arg)
+    {
+    	var renderBatchLocal = _renderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+        
+        var dropdownKey = Key<DropdownRecord>.NewKey();
+        
+        var buttonDimensions = await _root.TextEditorService.JsRuntimeCommonApi
+			.MeasureElementById(_reloadButtonHtmlElementId)
+			.ConfigureAwait(false);
+			
+		var menuOptionList = new List<MenuOptionRecord>();
+		
+		var absolutePath = _root.EnvironmentProvider.AbsolutePathFactory(renderBatchLocal.Model.ResourceUri.Value, false);
+
+		menuOptionList.Add(new MenuOptionRecord(
+		    "Cancel",
+		    MenuOptionKind.Read,
+		    onClickFunc: () =>
+		    {
+			    _root.DropdownService.ReduceDisposeAction(dropdownKey);
+		    	return Task.CompletedTask;
+		    }));
+		    
+		menuOptionList.Add(new MenuOptionRecord(
+		    $"Reset: '{absolutePath.NameWithExtension}'",
+		    MenuOptionKind.Delete,
+		    onClickFunc: () =>
+		    {
+			    _root.TextEditorService.TextEditorWorker.PostUnique(
+		            nameof(DoReloadOnClick),
+		            editContext =>
+		            {
+		            	editContext.TextEditorService.ViewModelApi.Dispose(renderBatchLocal.ViewModel.ViewModelKey);
+		            	_root.DirtyResourceUriService.RemoveDirtyResourceUri(renderBatchLocal.Model.ResourceUri);
+		            	editContext.TextEditorService.ModelApi.Dispose(renderBatchLocal.Model.ResourceUri);
+		            	return ValueTask.CompletedTask;
+		            });
+		    	return Task.CompletedTask;
+		    }));
+		    
+		var menu = new MenuRecord(menuOptionList);
+
+		var dropdownRecord = new DropdownRecord(
+			dropdownKey,
+			buttonDimensions.LeftInPixels,
+			buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
+			typeof(MenuDisplay),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(MenuDisplay.MenuRecord),
+					menu
+				}
+			},
+			async () => await _root.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
+
+        _root.DropdownService.ReduceRegisterAction(dropdownRecord);
+    }
+
     public Task DoRefreshOnClick()
     {
     	var renderBatchLocal = _renderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
-
         _root.TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Remeasure),
+            nameof(TextEditorCommandDefaultFunctions.TriggerRemeasure),
             editContext =>
             {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Remeasure.CommandFunc
-                    .Invoke(commandArgs);
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+            	TextEditorCommandDefaultFunctions.TriggerRemeasure(
+            		editContext,
+            		viewModelModifier);
+            	return ValueTask.CompletedTask;
             });
         return Task.CompletedTask;
     }

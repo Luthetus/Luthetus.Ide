@@ -1,9 +1,15 @@
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -36,6 +42,14 @@ public sealed class TextEditorComponentData
 		TextEditorOptions options,
 		TextEditorViewModelDisplay textEditorViewModelDisplay,
 		IDropdownService dropdownService,
+		IClipboardService clipboardService,
+		ICommonComponentRenderers commonComponentRenderers,
+		INotificationService notificationService,
+		ITextEditorService textEditorService,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+		IFindAllService findAllService,
+		IEnvironmentProvider environmentProvider,
+		IFileSystemProvider fileSystemProvider,
 		IServiceProvider serviceProvider)
 	{
 		TextEditorHtmlElementId = textEditorHtmlElementId;
@@ -43,10 +57,18 @@ public sealed class TextEditorComponentData
 		Options = options;
 		TextEditorViewModelDisplay = textEditorViewModelDisplay;
 		DropdownService = dropdownService;
+		ClipboardService = clipboardService;
+		CommonComponentRenderers = commonComponentRenderers;
+		NotificationService = notificationService;
+		TextEditorService = textEditorService;
+		TextEditorComponentRenderers = textEditorComponentRenderers;
+		FindAllService = findAllService;
+		EnvironmentProvider = environmentProvider;
+		FileSystemProvider = fileSystemProvider;
 		ServiceProvider = serviceProvider;
 	}
 
-	public TextEditorComponentData(
+	/*public TextEditorComponentData(
 		TextEditorComponentData otherComponentData,
 		Keymap keymap)
 	{
@@ -60,7 +82,7 @@ public sealed class TextEditorComponentData
 
 		TextEditorViewModelDisplay = otherComponentData.TextEditorViewModelDisplay;
 		ServiceProvider = otherComponentData.ServiceProvider;
-	}
+	}*/
 
 	/// <summary>
 	/// This property contains the global options, with an extra step of overriding any specified options
@@ -73,6 +95,14 @@ public sealed class TextEditorComponentData
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; }
 	public IDropdownService DropdownService { get; }
+	public IClipboardService ClipboardService { get; }
+	public ICommonComponentRenderers CommonComponentRenderers { get; }
+	public INotificationService NotificationService { get; }
+	public ITextEditorService TextEditorService { get; }
+	public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; }
+	public IFindAllService FindAllService { get; }
+	public IEnvironmentProvider EnvironmentProvider { get; }
+	public IFileSystemProvider FileSystemProvider { get; }
 	public IServiceProvider ServiceProvider { get; }
 	public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
     public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
@@ -15,11 +15,11 @@ public record TextEditorOptionsJsonDto(
     bool? ShowNewlines,
     int? TextEditorHeightInPixels,
     double? CursorWidthInPixels,
-    Keymap? Keymap,
+    //ITextEditorKeymap? Keymap,
     bool? UseMonospaceOptimizations)
 {
     public TextEditorOptionsJsonDto()
-        : this(null, null, null, null, null, null, null)
+        : this(null, null, null, null, null, null)
     {
     }
     
@@ -30,7 +30,7 @@ public record TextEditorOptionsJsonDto(
               options.ShowNewlines,
               options.TextEditorHeightInPixels,
               options.CursorWidthInPixels,
-              options.Keymap,
+              //options.Keymap,
               options.UseMonospaceOptimizations)
     {
         

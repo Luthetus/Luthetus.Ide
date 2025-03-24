@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Python;
@@ -28,9 +29,10 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
     public ConfigCompilerServiceRegistry(
         ITextEditorService textEditorService,
         IEnvironmentProvider environmentProvider,
-        ITerminalService terminalService)
+        ITerminalService terminalService,
+        IClipboardService clipboardService)
     {
-        CSharpCompilerService = new CSharpCompilerService(textEditorService);
+        CSharpCompilerService = new CSharpCompilerService(textEditorService, clipboardService);
         CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);
         CssCompilerService = new CssCompilerService(textEditorService);
         DotNetSolutionCompilerService = new DotNetSolutionCompilerService(textEditorService);

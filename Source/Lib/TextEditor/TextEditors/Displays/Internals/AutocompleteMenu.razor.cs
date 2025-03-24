@@ -67,9 +67,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     	await base.OnAfterRenderAsync(firstRender);
     }
     
-    private async void OnRenderBatchChanged()
+    private void OnRenderBatchChanged()
     {
-    	await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    	InvokeAsync(StateHasChanged);
     }
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

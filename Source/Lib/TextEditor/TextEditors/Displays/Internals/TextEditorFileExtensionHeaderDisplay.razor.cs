@@ -25,11 +25,11 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IText
 			}
 		};
 		
-        TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
-        OnRenderBatchChanged();
+        TextEditorViewModelDisplay.TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        OnCursorShouldBlinkChanged();
 	}
 	
-	private async void OnRenderBatchChanged()
+	private void OnCursorShouldBlinkChanged()
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	
@@ -40,12 +40,13 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IText
     	if (fileExtensionLocal != _fileExtensionCurrent)
     	{
     		_fileExtensionCurrent = fileExtensionLocal;
-    		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    		// Don't await this;
+    		InvokeAsync(StateHasChanged);
     	}
     }
 
 	public void Dispose()
     {
-    	TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
+    	TextEditorViewModelDisplay.TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
     }
 }

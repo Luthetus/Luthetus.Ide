@@ -4,6 +4,8 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -25,6 +27,12 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
+    [Inject]
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
@@ -54,19 +62,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         }
 
         await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatch renderBatch)
-    {
-        var cursorSnapshotsList = new List<TextEditorCursor> { renderBatch.ViewModel.PrimaryCursor };
-
-        return new TextEditorCommandArgs(
-            renderBatch.Model.ResourceUri,
-            renderBatch.ViewModel.ViewModelKey,
-			TextEditorViewModelDisplay.ComponentData,
-			TextEditorService,
-            ServiceProvider,
-            new TextEditorEditContext(TextEditorService));
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -141,8 +136,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     public MenuRecord GetDefaultMenuRecord()
     {
     	List<MenuOptionRecord> menuOptionRecordsList = new();
-
-        var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
+    	
+    	var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
         menuOptionRecordsList.Add(cut);
 
         var copy = new MenuOptionRecord("Copy (Ctrl c)", MenuOptionKind.Other, () => SelectMenuOption(CopyMenuOption));
@@ -150,6 +145,12 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
         var paste = new MenuOptionRecord("Paste (Ctrl v)", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
         menuOptionRecordsList.Add(paste);
+        
+        var findInTextEditor = new MenuOptionRecord("Find (Ctrl f)", MenuOptionKind.Other, () => SelectMenuOption(FindInTextEditor));
+        menuOptionRecordsList.Add(findInTextEditor);
+        
+        var relatedFilesQuickPick = new MenuOptionRecord("Related Files (F7)", MenuOptionKind.Other, () => SelectMenuOption(RelatedFilesQuickPick));
+        menuOptionRecordsList.Add(relatedFilesQuickPick);
         
         var goToDefinition = new MenuOptionRecord("Go to definition (F12)", MenuOptionKind.Other, () => SelectMenuOption(GoToDefinitionOption));
         menuOptionRecordsList.Add(goToDefinition);
@@ -202,22 +203,27 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
         return Task.CompletedTask;
     }
-
+    
     public Task CutMenuOption()
     {
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
         TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Cut),
+            nameof(TextEditorCommandDefaultFunctions.CutAsync),
             editContext =>
             {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Cut.CommandFunc
-                    .Invoke(commandArgs);
+                var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				
+                return TextEditorCommandDefaultFunctions.CutAsync(
+                	editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        ClipboardService);
             });
         return Task.CompletedTask;
     }
@@ -228,15 +234,20 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
         TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.Copy),
+            nameof(TextEditorCommandDefaultFunctions.CopyAsync),
             editContext =>
             {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.Copy.CommandFunc
-                    .Invoke(commandArgs);
+		        var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	
+                return TextEditorCommandDefaultFunctions.CopyAsync(
+            		editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        ClipboardService);
             });
         return Task.CompletedTask;
     }
@@ -246,16 +257,21 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
-    		
-        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.PasteCommand),
+            nameof(TextEditorCommandDefaultFunctions.PasteAsync),
             editContext =>
             {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
-                    .Invoke(commandArgs);
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+        		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+                return TextEditorCommandDefaultFunctions.PasteAsync(
+                	editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        ClipboardService);
             });
         return Task.CompletedTask;
     }
@@ -266,23 +282,25 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
         TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.GoToDefinition),
+            nameof(TextEditorCommandDefaultFunctions.GoToDefinition),
             editContext =>
             {
-                commandArgs.EditContext = editContext;
-                
-                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
-        		
+                var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+        		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+
         		if (viewModelModifier is null)
         			return ValueTask.CompletedTask;
                 
                 viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
                 
-                return TextEditorCommandDefaultFacts.GoToDefinition.CommandFunc
-                    .Invoke(commandArgs);
+                TextEditorCommandDefaultFunctions.GoToDefinition(
+                	editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag);
+            	return ValueTask.CompletedTask;
             });
         return Task.CompletedTask;
     }
@@ -293,19 +311,80 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        var commandArgs = ConstructCommandArgs(renderBatch);
-
         TextEditorService.TextEditorWorker.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.QuickActionsSlashRefactor),
+            nameof(TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor),
             editContext =>
             {
-                commandArgs.EditContext = editContext;
-                return TextEditorCommandDefaultFacts.QuickActionsSlashRefactor.CommandFunc
-                    .Invoke(commandArgs);
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+                return TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
+                	editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+                	CommonBackgroundTaskApi.JsRuntimeCommonApi,
+                	TextEditorService,
+                	DropdownService);
             });
         return Task.CompletedTask;
     }
     
+    public Task FindInTextEditor()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    	
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.ShowFindOverlay),
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+            
+                return TextEditorCommandDefaultFunctions.ShowFindOverlay(
+			        editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+			        primaryCursor,
+			        CommonBackgroundTaskApi.JsRuntimeCommonApi);
+            });
+        return Task.CompletedTask;
+    }
+    
+    public Task RelatedFilesQuickPick()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    	
+        TextEditorService.TextEditorWorker.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.RelatedFilesQuickPick),
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            
+                return TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
+			        editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+			        CommonBackgroundTaskApi.JsRuntimeCommonApi,
+			        EnvironmentProvider,
+			        FileSystemProvider,
+			        TextEditorService,
+			        DropdownService);
+            });
+        return Task.CompletedTask;
+    }
+
     public void Dispose()
     {
     	// This component isn't subscribing to the text editor render batch changing event.

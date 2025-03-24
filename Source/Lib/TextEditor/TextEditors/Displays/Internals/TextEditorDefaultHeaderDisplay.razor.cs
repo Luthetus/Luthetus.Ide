@@ -15,10 +15,10 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 
-	private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(500);
+	// private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(500);
 
 	/// <summary>byte is used as TArgs just as a "throwaway" type. It isn't used.</summary>
-	private ThrottleOptimized<byte> _throttleRender;
+	// private ThrottleOptimized<byte> _throttleRender;
 
 	private HeaderDriver _headerDriver;
 
@@ -26,24 +26,25 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     {
     	_headerDriver = new HeaderDriver(TextEditorViewModelDisplay);
     	
-    	_throttleRender = new(ThrottleTimeSpan, async (_, _) =>
+    	/*_throttleRender = new(ThrottleTimeSpan, async (_, _) =>
     	{
     		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-    	});
+    	});*/
     
-        TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
-        OnRenderBatchChanged();
+        TextEditorViewModelDisplay.TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        OnCursorShouldBlinkChanged();
         
         base.OnInitialized();
     }
 
-	private void OnRenderBatchChanged()
+	private void OnCursorShouldBlinkChanged()
     {
-    	_throttleRender.Run(0);
+    	// Don't await this;
+    	InvokeAsync(StateHasChanged);
     }
 
 	public void Dispose()
     {
-    	TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
+    	TextEditorViewModelDisplay.TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
     }
 }
