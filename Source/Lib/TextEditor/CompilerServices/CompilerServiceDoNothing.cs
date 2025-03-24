@@ -82,7 +82,7 @@ public class CompilerServiceDoNothing : ICompilerService
 	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
 		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModel,
 		CursorModifierBagTextEditor cursorModifierBag)
 	{
 		return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
@@ -91,7 +91,7 @@ public class CompilerServiceDoNothing : ICompilerService
 	public ValueTask OnInspect(
 		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModel,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,

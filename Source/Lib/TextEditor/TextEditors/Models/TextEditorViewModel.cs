@@ -79,7 +79,7 @@ public sealed record TextEditorViewModel : IDisposable
     /// <summary>
     /// The first entry of <see cref="CursorList"/> should be the PrimaryCursor
     /// </summary>
-    public List<TextEditorCursor> CursorList { get; init; }
+    public List<TextEditorCursor> CursorList { get; set; }
     /// <summary>
     /// This tracks which view models are actively rendered from Blazor's perspective. Thus, using this allows lazy recalculation
     /// of view model state when an underlying model changes.
@@ -88,72 +88,72 @@ public sealed record TextEditorViewModel : IDisposable
     /// <summary>
     /// The main unique identifier for a <see cref="TextEditorViewModel"/>, used in many API.
     /// </summary>
-    public Key<TextEditorViewModel> ViewModelKey { get; init; }
+    public Key<TextEditorViewModel> ViewModelKey { get; set; }
     /// <summary>
     /// The unique identifier for a <see cref="TextEditorModel"/>. The model is to say a representation of the file on a filesystem.
     /// The contents and such. Whereas the viewmodel is to track state regarding a rendered editor for that file, for example the cursor position.
     /// </summary>
-    public ResourceUri ResourceUri { get; init; }
+    public ResourceUri ResourceUri { get; set; }
     /// <summary>
     /// Most API invocation (if not all) occurs through the <see cref="ITextEditorService"/>
     /// </summary>
-    public ITextEditorService TextEditorService { get; init; }
+    public ITextEditorService TextEditorService { get; set; }
     /// <summary>
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
-    public VirtualizationGrid VirtualizationResult { get; init; }
-	public TextEditorDimensions TextEditorDimensions { get; init; }
-	public ScrollbarDimensions ScrollbarDimensions { get; init; }
+    public VirtualizationGrid VirtualizationResult { get; set; }
+	public TextEditorDimensions TextEditorDimensions { get; set; }
+	public ScrollbarDimensions ScrollbarDimensions { get; set; }
 	/// <summary>
 	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...
 	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
 	/// </summary>
-    public CharAndLineMeasurements CharAndLineMeasurements { get; init; }
+    public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// </summary>
-    public bool ShowCommandBar { get; init; }
+    public bool ShowCommandBar { get; set; }
 	/// <summary>
 	/// This property determines the menu that is shown in the text editor.
 	///
 	/// For example, when this property is <see cref="MenuKind.AutoCompleteMenu"/>,
 	/// then the autocomplete menu is displayed in the text editor.
 	/// </summary>
-    public MenuKind MenuKind { get; init; }
+    public MenuKind MenuKind { get; set; }
 	/// <summary>
 	/// This property determines the tooltip that is shown in the text editor.
 	/// </summary>
-    public TooltipViewModel? TooltipViewModel { get; init; }
+    public TooltipViewModel? TooltipViewModel { get; set; }
     /// <summary>
     /// <inheritdoc cref="Models.Category"/>
     /// </summary>
-    public Category Category { get; }
+    public Category Category { get; set; }
     /// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
     /// </summary>
-    public bool ShowFindOverlay { get; init; }
+    public bool ShowFindOverlay { get; set; }
     /// <summary>
     /// If one hits the keymap { Ctrl + s } when browser focus is within a text editor.
     /// </summary>
-    public Action<ITextEditorModel>? OnSaveRequested { get; init; }
+    public Action<ITextEditorModel>? OnSaveRequested { get; set; }
     /// <summary>
     /// When a view model is rendered within a <see cref="TextEditorGroup"/>, this Func can be used to render a more friendly tab name, than the resource uri path.
     /// </summary>
-    public Func<TextEditorModel, string>? GetTabDisplayNameFunc { get; init; }
+    public Func<TextEditorModel, string>? GetTabDisplayNameFunc { get; set; }
     /// <summary>
     /// <see cref="FirstPresentationLayerKeysList"/> is painted prior to any internal workings of the text editor.<br/><br/>
     /// Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysList"/>.<br/><br/>
     /// When using the <see cref="FirstPresentationLayerKeysList"/> one might find their css overriden by for example, text being selected.
     /// </summary>
-    public List<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; init; } = new();
+    public List<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; set; } = new();
     /// <summary>
     /// <see cref="LastPresentationLayerKeysList"/> is painted after any internal workings of the text editor.<br/><br/>
     /// Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysList"/>.<br/><br/>
     /// When using the <see cref="LastPresentationLayerKeysList"/> one might find the selected text background
     /// not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysList"/>.
     /// </summary>
-    public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; init; } = new();
+    public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; set; } = new();
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// In the command line program "Vim" one can hit 'colon' to bring up a command bar.
@@ -182,26 +182,31 @@ public sealed record TextEditorViewModel : IDisposable
     /// then the UI is to set the input element's value equal to the 'FindOverlayValue'
     /// because a 'background action' modified the value.
     /// </summary>
-    public bool FindOverlayValueExternallyChangedMarker { get; init; }
-	/// <inheritdoc cref="ViewModelUnsafeState"/>
-    public ViewModelUnsafeState UnsafeState { get; }
+    public bool FindOverlayValueExternallyChangedMarker { get; set; }
+	/// <summary>
+    /// If one opens a file with the 'Enter' key, they might want focus to then be set on that
+    /// newly opened file. However, perhaps one wants the 'Space' key to also open the file,
+    /// but not set focus to it.
+    /// </summary>
+    public bool ShouldSetFocusAfterNextRender { get; set; }
+    public bool ShouldRevealCursor { get; set; }
+    /// <summary>
+    /// Relates to whether the cursor is within the viewable area of the Text Editor on the UI
+    /// </summary>
+    public bool CursorIsIntersecting { get; set; }
     /// <summary>
     /// This property contains all data, and logic, necessary to render a text editor from within a dialog,
     /// a panel tab, or a text editor group tab.
     /// </summary>
-    public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; init; }
+    public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
+    
+    public bool WasModified { get; set; }
+    public bool ScrollWasModified { get; set; }
+
 	/// <summary>
-	/// This property is intended to be used for displaying 'code lens' comments.
-	/// For example, above a property perhaps the text "3 references".
+	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
 	/// </summary>
-    public List<WidgetBlock> WidgetBlockList { get; init; } = null;
-    /// <summary>
-    /// This property is intended to be used for displaying 'inline hints'.
-    /// For example, if the type of a lambda's parameter is not deemed obvious,
-    /// one could inline the parameter's type. This inline hint wouldn't be actual text in the document.
-    /// </summary>
-    public List<WidgetInline> WidgetInlineList { get; init; } = null;
-    public List<WidgetOverlay> WidgetOverlayList { get; init; } = null;
+    public bool ShouldReloadVirtualizationResult { get; set; }
 
 	public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
