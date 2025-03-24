@@ -96,7 +96,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		{
 	    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
 	            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
-	            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+	            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 	            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 	
 	            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
@@ -105,16 +105,13 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	            _lineIndexPrevious = primaryCursorModifier.LineIndex;
 	            _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
 	            
-	            if (!viewModelModifier.ViewModel.FirstPresentationLayerKeysList.Contains(
+	            if (!viewModelModifier.FirstPresentationLayerKeysList.Contains(
 	            		TextEditorDevToolsPresentationFacts.PresentationKey))
 	            {
-					var copy = new List<Key<TextEditorPresentationModel>>(viewModelModifier.ViewModel.FirstPresentationLayerKeysList);
+					var copy = new List<Key<TextEditorPresentationModel>>(viewModelModifier.FirstPresentationLayerKeysList);
 					copy.Add(TextEditorDevToolsPresentationFacts.PresentationKey);
 
-					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-		            {
-		            	FirstPresentationLayerKeysList = copy
-					};
+					viewModelModifier.FirstPresentationLayerKeysList = copy;
 		        }
 	    	
 	    		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(

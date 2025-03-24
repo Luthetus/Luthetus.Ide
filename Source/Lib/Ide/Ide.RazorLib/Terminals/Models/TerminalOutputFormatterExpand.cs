@@ -151,10 +151,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             FindOverlayPresentationFacts.PresentationKey,
         };
             
-        viewModel = viewModel with
-        {
-            FirstPresentationLayerKeysList = firstPresentationLayerKeys
-        };
+        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
         
         _textEditorService.ViewModelApi.Register(viewModel);
     }

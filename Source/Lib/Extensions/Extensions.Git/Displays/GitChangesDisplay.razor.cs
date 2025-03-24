@@ -69,10 +69,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                             DiffPresentationFacts.InPresentationKey,
                         };
 
-                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                        {
-                            FirstPresentationLayerKeysList = presentationKeys
-                        };
+                        viewModelModifier.FirstPresentationLayerKeysList = presentationKeys;
                         
                         return ValueTask.CompletedTask;
                     });
@@ -118,10 +115,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                             DiffPresentationFacts.OutPresentationKey,
                         };
 
-                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                        {
-                            FirstPresentationLayerKeysList = presentationKeys
-                        };
+                        viewModelModifier.FirstPresentationLayerKeysList = presentationKeys;
 
                         return ValueTask.CompletedTask;
                     });

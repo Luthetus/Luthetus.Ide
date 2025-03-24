@@ -56,17 +56,14 @@ public partial class CommandBarDisplay : ComponentBase
                 {
                 	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
 		            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 		            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 		                return ValueTask.CompletedTask;
 
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                    {
-                        CommandBarValue = string.Empty,
-                        ShowCommandBar = false
-                    };
+                    viewModelModifier.CommandBarValue = string.Empty;
+                    viewModelModifier.ShowCommandBar = false;
 
                     return ValueTask.CompletedTask;
                 });
@@ -79,17 +76,14 @@ public partial class CommandBarDisplay : ComponentBase
                 {
                 	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
 		            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 		            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 		                return ValueTask.CompletedTask;
 
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                    {
-                        CommandBarValue = string.Empty,
-                        ShowCommandBar = false
-                    };
+                    viewModelModifier.CommandBarValue = string.Empty;
+                    viewModelModifier.ShowCommandBar = false;
 
                     return ValueTask.CompletedTask;
                 });

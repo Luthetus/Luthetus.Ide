@@ -249,9 +249,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
         }
 
-        if (_currentRenderBatch.ViewModel is not null && _currentRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender)
+        if (_currentRenderBatch.ViewModel is not null && _currentRenderBatch.ViewModel.ShouldSetFocusAfterNextRender)
         {
-            _currentRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
+            _currentRenderBatch.ViewModel.ShouldSetFocusAfterNextRender = false;
             // await FocusTextEditorAsync().ConfigureAwait(false);
         }
 
@@ -354,7 +354,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 _linkedViewModel = nextViewModel;
 
                 if (nextViewModel is not null)
-                    nextViewModel.UnsafeState.ShouldRevealCursor = true;
+                    nextViewModel.ShouldRevealCursor = true;
             }
         }
     }
@@ -422,9 +422,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
 				
-				var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+				var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
 				
-				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
         		var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
 				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursor is null)
@@ -483,7 +483,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
 
         if (viewModel is not null)
-            viewModel.UnsafeState.ShouldRevealCursor = false;
+            viewModel.ShouldRevealCursor = false;
 
 		var onMouseDown = new OnMouseDown(
             mouseEventArgs,
@@ -538,10 +538,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                                 if (viewModelModifier is null)
                                     return ValueTask.CompletedTask;
 
-                                viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
-								{
-									TooltipViewModel = null
-								};
+                                viewModelModifier.TooltipViewModel = null;
 
 								return ValueTask.CompletedTask;
 							});
@@ -568,7 +565,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 						{
 							var modelModifier = editContext.GetModelModifier(resourceUri);
 			                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-			                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 			                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 			
 			                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)

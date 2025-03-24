@@ -163,85 +163,67 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     #region UPDATE_METHODS
     public void SetScrollPositionBoth(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         double scrollLeftInPixels,
         double scrollTopInPixels)
     {
-    	viewModelModifier.ScrollWasModified = true;
+    	viewModel.ScrollWasModified = true;
 
-		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-		{
-			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-				.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModelModifier.ViewModel.TextEditorDimensions)
-		};
+		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
+			.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.TextEditorDimensions);
 
-		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-		{
-			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-				.WithSetScrollTop((int)Math.Floor(scrollTopInPixels), viewModelModifier.ViewModel.TextEditorDimensions)
-		};
+		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
+			.WithSetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.TextEditorDimensions);
     }
         
     public void SetScrollPositionLeft(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         double scrollLeftInPixels)
     {
-    	viewModelModifier.ScrollWasModified = true;
+    	viewModel.ScrollWasModified = true;
 
-		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-		{
-			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-				.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModelModifier.ViewModel.TextEditorDimensions)
-		};
+		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
+			.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.TextEditorDimensions);
     }
     
     public void SetScrollPositionTop(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         double scrollTopInPixels)
     {
-    	viewModelModifier.ScrollWasModified = true;
+    	viewModel.ScrollWasModified = true;
 
-		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-		{
-			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-				.WithSetScrollTop((int)Math.Floor(scrollTopInPixels), viewModelModifier.ViewModel.TextEditorDimensions)
-		};
+		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
+			.WithSetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.TextEditorDimensions);
     }
 
     public void MutateScrollVerticalPosition(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         double pixels)
     {
-        viewModelModifier.ScrollWasModified = true;
+        viewModel.ScrollWasModified = true;
 
-        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-        {
-			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-				.WithMutateScrollTop((int)Math.Ceiling(pixels), viewModelModifier.ViewModel.TextEditorDimensions)
-        };
+        viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
+			.WithMutateScrollTop((int)Math.Ceiling(pixels), viewModel.TextEditorDimensions);
     }
 
     public void MutateScrollHorizontalPosition(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         double pixels)
     {
-        viewModelModifier.ScrollWasModified = true;
+        viewModel.ScrollWasModified = true;
 
-		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-        {
-			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-				.WithMutateScrollLeft((int)Math.Ceiling(pixels), viewModelModifier.ViewModel.TextEditorDimensions)
-        };
+		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
+			.WithMutateScrollLeft((int)Math.Ceiling(pixels), viewModel.TextEditorDimensions);
     }
 
     public void ScrollIntoView(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         TextEditorTextSpan textSpan)
     {
         var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive);
@@ -250,14 +232,14 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
         // Unit of measurement is pixels (px)
         var scrollLeft = columnIndex *
-            viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+            viewModel.CharAndLineMeasurements.CharacterWidth;
 
         // Unit of measurement is pixels (px)
         var scrollTop = lineIndex *
-            viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+            viewModel.CharAndLineMeasurements.LineHeight;
 
-		var currentScrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
-		var currentScrollTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop;
+		var currentScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
+		var currentScrollTop = viewModel.ScrollbarDimensions.ScrollTop;
 		
 		bool caseA;
 		bool caseB;
@@ -265,7 +247,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         // If a given scroll direction is already within view of the text span, do not scroll on that direction
         
         // scrollLeft needs to be modified?
-        var currentWidth = viewModelModifier.ViewModel.TextEditorDimensions.Width;
+        var currentWidth = viewModel.TextEditorDimensions.Width;
 
         caseA = currentScrollLeft <= scrollLeft;
         caseB = scrollLeft < (currentWidth + currentScrollLeft);
@@ -274,7 +256,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
             scrollLeft = currentScrollLeft;
 
         // scrollTop needs to be modified?
-        var currentHeight = viewModelModifier.ViewModel.TextEditorDimensions.Height;
+        var currentHeight = viewModel.TextEditorDimensions.Height;
 
         caseA = currentScrollTop <= scrollTop;
         caseB = scrollTop < (currentHeight + currentScrollTop);
@@ -288,7 +270,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
         SetScrollPositionBoth(
             editContext,
-	        viewModelModifier,
+	        viewModel,
 	        scrollLeft,
             scrollTop);
     }
@@ -303,25 +285,25 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         KeymapArgs keymapArgs,
 		TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
         MoveCursorUnsafe(
             keymapArgs,
 	        editContext,
 	        modelModifier,
-	        viewModelModifier,
+	        viewModel,
 	        cursorModifierBag,
 	        editContext.GetPrimaryCursorModifier(cursorModifierBag));
 
-        viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+        viewModel.ShouldRevealCursor = true;
     }
 
     public void MoveCursorUnsafe(
         KeymapArgs keymapArgs,
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
@@ -644,25 +626,25 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageTop(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
         CursorMovePageTopUnsafe(
 	        editContext,
-        	viewModelModifier,
+        	viewModel,
         	cursorModifierBag,
         	editContext.GetPrimaryCursorModifier(cursorModifierBag));
     }
 
     public void CursorMovePageTopUnsafe(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
-        if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
+        if (viewModel.VirtualizationResult.EntryList.Any())
         {
-            var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
+            var firstEntry = viewModel.VirtualizationResult.EntryList.First();
 
             cursorModifier.LineIndex = firstEntry.LineIndex;
             cursorModifier.ColumnIndex = 0;
@@ -672,13 +654,13 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CursorMovePageBottom(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
         CursorMovePageBottomUnsafe(
         	editContext,
         	modelModifier,
-        	viewModelModifier,
+        	viewModel,
         	cursorModifierBag,
         	editContext.GetPrimaryCursorModifier(cursorModifierBag));
     }
@@ -686,13 +668,13 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CursorMovePageBottomUnsafe(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
-        if ((viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any()))
+        if ((viewModel.VirtualizationResult.EntryList.Any()))
         {
-            var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
+            var lastEntry = viewModel.VirtualizationResult.EntryList.Last();
             var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.LineIndex);
 
             cursorModifier.LineIndex = lastEntry.LineIndex;
@@ -703,16 +685,16 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void RevealCursor(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
     	try
     	{
-    		if (!viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
+    		if (!viewModel.ShouldRevealCursor)
     			return;
     			
-    		viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = false;
+    		viewModel.ShouldRevealCursor = false;
     	
     		var cursorIsVisible = false;
     		
@@ -734,7 +716,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
             ScrollIntoView(
         		editContext,
 		        modelModifier,
-		        viewModelModifier,
+		        viewModel,
 		        cursorTextSpan);
     	}
     	catch (LuthetusTextEditorException exception)
@@ -746,7 +728,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CalculateVirtualizationResult(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-		TextEditorViewModel viewModelModifier,
+		TextEditorViewModel viewModel,
         CancellationToken cancellationToken)
     {
     	#if DEBUG
@@ -755,15 +737,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     	
         try
 		{
-			var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
+			var virtualizationResult = viewModel.VirtualizationResult;
 			
 			var verticalStartingIndex = (int)Math.Floor(
-				viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop /
-				viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+				viewModel.ScrollbarDimensions.ScrollTop /
+				viewModel.CharAndLineMeasurements.LineHeight);
 
 			var verticalTake = (int)Math.Ceiling(
-				viewModelModifier.ViewModel.TextEditorDimensions.Height /
-				viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+				viewModel.TextEditorDimensions.Height /
+				viewModel.CharAndLineMeasurements.LineHeight);
 
 			// Vertical Padding (render some offscreen data)
 			verticalTake += 1;
@@ -781,12 +763,12 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			}
 
 			var horizontalStartingIndex = (int)Math.Floor(
-				viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft /
-				viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+				viewModel.ScrollbarDimensions.ScrollLeft /
+				viewModel.CharAndLineMeasurements.CharacterWidth);
 
 			var horizontalTake = (int)Math.Ceiling(
-				viewModelModifier.ViewModel.TextEditorDimensions.Width /
-				viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+				viewModel.TextEditorDimensions.Width /
+				viewModel.CharAndLineMeasurements.CharacterWidth);
 			
 			var lineCountAvailable = modelModifier.LineEndList.Count - verticalStartingIndex;
 
@@ -807,7 +789,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				const double LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION = 1.25;
 				
 				var minLineWidthToTriggerVirtualizationExclusive = LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION *
-					viewModelModifier.ViewModel.TextEditorDimensions.Width;
+					viewModel.TextEditorDimensions.Width;
 					
 				for (int lineOffset = 0; lineOffset < lineCountToReturn; lineOffset++)
 				{
@@ -824,7 +806,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					// It is thought to be too costly on average to get the tab count for the line in order to take less text overall
 					// than to just take the estimated amount of characters.
 					
-					var widthInPixels = lineLength * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+					var widthInPixels = lineLength * viewModel.CharAndLineMeasurements.CharacterWidth;
 
 					if (widthInPixels > minLineWidthToTriggerVirtualizationExclusive)
 					{
@@ -898,19 +880,19 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						}
 						
 						widthInPixels = ((localHorizontalTake - localHorizontalStartingIndex) + (extraWidthPerTabKey * resultTabCount)) *
-							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+							viewModel.CharAndLineMeasurements.CharacterWidth;
 	
 						double leftInPixels = localHorizontalStartingIndex *
-							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+							viewModel.CharAndLineMeasurements.CharacterWidth;
 	
 						// Adjust the unrendered for tab key width
 						leftInPixels += (extraWidthPerTabKey *
 							unrenderedTabCount *
-							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+							viewModel.CharAndLineMeasurements.CharacterWidth);
 	
 						leftInPixels = Math.Max(0, leftInPixels);
 	
-						var topInPixels = lineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+						var topInPixels = lineIndex * viewModel.CharAndLineMeasurements.LineHeight;
 
 						var positionIndexInclusiveStart = lineStartPositionIndexInclusive + localHorizontalStartingIndex;
 						
@@ -925,7 +907,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							VirtualizationSpanIndexInclusiveStart: 0,
 							VirtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
-							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
+							viewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
 							topInPixels);
 					}
@@ -955,7 +937,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						}
 						
 						widthInPixels += (extraWidthPerTabKey * resultTabCount) *
-							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+							viewModel.CharAndLineMeasurements.CharacterWidth;
 					
 						virtualizedLineList[lineOffset] = new VirtualizationLine(
 							lineIndex,
@@ -964,15 +946,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							VirtualizationSpanIndexInclusiveStart: 0,
 							VirtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
-							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
+							viewModel.CharAndLineMeasurements.LineHeight,
 							0,
-							lineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+							lineIndex * viewModel.CharAndLineMeasurements.LineHeight);
 					}
 				}
 			}
 
 			var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
-				viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+				viewModel.CharAndLineMeasurements.CharacterWidth);
 
 			// Account for any tab characters on the 'MostCharactersOnASingleLineTuple'
 			//
@@ -994,23 +976,23 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
 				totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
 					tabCountOnLongestLine *
-					viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+					viewModel.CharAndLineMeasurements.CharacterWidth);
 			}
 
 			var totalHeight = (int)Math.Ceiling(modelModifier.LineEndList.Count *
-				viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+				viewModel.CharAndLineMeasurements.LineHeight);
 
 			// Add vertical margin so the user can scroll beyond the final line of content
 			int marginScrollHeight;
 			{
 				var percentOfMarginScrollHeightByPageUnit = 0.4;
 
-				marginScrollHeight = (int)Math.Ceiling(viewModelModifier.ViewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
+				marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
 				totalHeight += marginScrollHeight;
 			}
 
 			var leftBoundaryWidthInPixels = horizontalStartingIndex *
-				viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+				viewModel.CharAndLineMeasurements.CharacterWidth;
 
 			var leftBoundary = new VirtualizationBoundary(
 				leftBoundaryWidthInPixels,
@@ -1019,7 +1001,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				0);
 
 			var rightBoundaryLeftInPixels = leftBoundary.WidthInPixels +
-				viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth *
+				viewModel.CharAndLineMeasurements.CharacterWidth *
 				horizontalTake;
 
 			var rightBoundaryWidthInPixels = totalWidth - rightBoundaryLeftInPixels;
@@ -1031,7 +1013,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				0);
 
 			var topBoundaryHeightInPixels = verticalStartingIndex *
-				viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+				viewModel.CharAndLineMeasurements.LineHeight;
 
 			var topBoundary = new VirtualizationBoundary(
 				totalWidth,
@@ -1040,7 +1022,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				0);
 
 			var bottomBoundaryTopInPixels = topBoundary.HeightInPixels +
-				viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight *
+				viewModel.CharAndLineMeasurements.LineHeight *
 				verticalTake;
 
 			var bottomBoundaryHeightInPixels = totalHeight - bottomBoundaryTopInPixels;
@@ -1059,22 +1041,20 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				topBoundary,
 				bottomBoundary);
 						
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+			viewModel.VirtualizationResult = virtualizationResult;
+			
+			viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions with
 			{
-				VirtualizationResult = virtualizationResult,
-				ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions with
-				{
-					ScrollWidth = totalWidth,
-					ScrollHeight = totalHeight,
-					MarginScrollHeight = marginScrollHeight
-				},
+				ScrollWidth = totalWidth,
+				ScrollHeight = totalHeight,
+				MarginScrollHeight = marginScrollHeight
 			};
 			
 			#if DEBUG
 			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
 			#endif
 			
-			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
+			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
 		}
 		catch (LuthetusTextEditorException exception)
 		{
@@ -1094,7 +1074,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			 at Luthetus.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 49
 			 */
 			
-			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
 			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 			
 			if (primaryCursorModifier is not null)
@@ -1118,7 +1098,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public async ValueTask RemeasureAsync(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken)
@@ -1131,28 +1111,25 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			.ConfigureAwait(false);
 
 		var textEditorMeasurements = await _textEditorService.ViewModelApi
-			.GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
+			.GetTextEditorMeasurementsAsync(viewModel.BodyElementId)
 			.ConfigureAwait(false);
 
-		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-		{
-			CharAndLineMeasurements = characterWidthAndLineHeight,
-			TextEditorDimensions = textEditorMeasurements
-		};
+		viewModel.CharAndLineMeasurements = characterWidthAndLineHeight;
+		viewModel.TextEditorDimensions = textEditorMeasurements;
     }
 
     public void ForceRender(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
+        TextEditorViewModel viewModel,
         CancellationToken cancellationToken)
     {
         // Getting the ViewModel from the 'editContext' triggers a re-render
         //
         // A lot code is being changed and one result is this method now reads like non-sense,
         // (or more non-sense than it previously did)
-        // Because we get a viewModelModifier passed in to this method as an argument.
+        // Because we get a viewModel passed in to this method as an argument.
         // So this seems quite silly.
-		_ = editContext.GetViewModelModifier(viewModelModifier.ViewModel.ViewModelKey);
+		_ = editContext.GetViewModelModifier(viewModel.ViewModelKey);
     }
     #endregion
 

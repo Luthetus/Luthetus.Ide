@@ -98,7 +98,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 				{
 					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 
-					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+					if (viewModelModifier.MenuKind != MenuKind.None)
 					{
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
@@ -220,7 +220,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 					{
 						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 	
-						if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+						if (viewModelModifier.MenuKind != MenuKind.None)
 						{
 							TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
@@ -275,7 +275,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             {
             	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)

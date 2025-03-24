@@ -24,7 +24,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// Both of those <see cref="TextEditorViewModel"/>(s) are referencing the same <see cref="TextEditorModel"/>.
 /// Therefore typing into the peek window will also result in the main text editor re-rendering with the updated text and vice versa.
 /// </summary>
-public sealed record TextEditorViewModel : IDisposable
+public sealed class TextEditorViewModel : IDisposable
 {
 	public TextEditorViewModel(
         Key<TextEditorViewModel> viewModelKey,
@@ -61,8 +61,6 @@ public sealed record TextEditorViewModel : IDisposable
             textEditorService,
             resourceUri,
             viewModelKey);
-
-        UnsafeState = new();
         
         DynamicViewModelAdapter = new DynamicViewModelAdapterTextEditor(
             ViewModelKey,
@@ -70,6 +68,47 @@ public sealed record TextEditorViewModel : IDisposable
             panelService,
             dialogService,
             commonBackgroundTaskApi);
+	}
+	
+	public TextEditorViewModel(TextEditorViewModel other)
+	{
+		/*
+		// Don't copy this?
+		PrimaryCursor;
+		*/
+		
+	    CursorList = other.CursorList;
+	    DisplayTracker = other.DisplayTracker;
+	    ViewModelKey = other.ViewModelKey;
+	    ResourceUri = other.ResourceUri;
+	    TextEditorService = other.TextEditorService;
+	    VirtualizationResult = other.VirtualizationResult;
+		TextEditorDimensions = other.TextEditorDimensions;
+		ScrollbarDimensions = other.ScrollbarDimensions;
+	    CharAndLineMeasurements = other.CharAndLineMeasurements;
+	    ShowCommandBar = other.ShowCommandBar;
+	    MenuKind = other.MenuKind;
+	    TooltipViewModel = other.TooltipViewModel;
+	    Category = other.Category;
+	    ShowFindOverlay = other.ShowFindOverlay;
+	    OnSaveRequested = other.OnSaveRequested;
+	    GetTabDisplayNameFunc = other.GetTabDisplayNameFunc;
+	    FirstPresentationLayerKeysList = other.FirstPresentationLayerKeysList;
+	    LastPresentationLayerKeysList = other.LastPresentationLayerKeysList;
+	    CommandBarValue = other.CommandBarValue;
+	    FindOverlayValue = other.FindOverlayValue;
+	    FindOverlayValueExternallyChangedMarker = other.FindOverlayValueExternallyChangedMarker;
+	    ShouldSetFocusAfterNextRender = other.ShouldSetFocusAfterNextRender;
+	    ShouldRevealCursor = other.ShouldRevealCursor;
+	    CursorIsIntersecting = other.CursorIsIntersecting;
+	    DynamicViewModelAdapter = other.DynamicViewModelAdapter;
+	    
+	    /*
+	    // Don't copy these properties
+	    WasModified { get; set; }
+	    ScrollWasModified { get; set; }
+	    ShouldReloadVirtualizationResult { get; set; }
+	    */
 	}
 
     /// <summary>
@@ -202,7 +241,6 @@ public sealed record TextEditorViewModel : IDisposable
     
     public bool WasModified { get; set; }
     public bool ScrollWasModified { get; set; }
-
 	/// <summary>
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
 	/// </summary>

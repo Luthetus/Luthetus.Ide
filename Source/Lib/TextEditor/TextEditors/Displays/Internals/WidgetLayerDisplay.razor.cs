@@ -55,23 +55,20 @@ public partial class WidgetLayerDisplay : ComponentBase
     /// </summary>
     private void CloseWidgetOnClick(TextEditorRenderBatch localRenderBatch, WidgetBlock widget)
     {
-    	TextEditorService.TextEditorWorker.PostUnique(
+    	/*TextEditorService.TextEditorWorker.PostUnique(
     		nameof(CloseWidgetOnClick),
     		editContext =>
     		{
     			var viewModelModifier = editContext.GetViewModelModifier(localRenderBatch.ViewModel.ViewModelKey);
 
-                var index = viewModelModifier.ViewModel.WidgetBlockList.FindIndex(x => x.Key == widget.Key);
+                var index = viewModelModifier.WidgetBlockList.FindIndex(x => x.Key == widget.Key);
 
-				var outWidgetBlockList = viewModelModifier.ViewModel.WidgetBlockList;
+				var outWidgetBlockList = viewModelModifier.WidgetBlockList;
 				outWidgetBlockList.RemoveAt(index);
 
-				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-    			{
-    				WidgetBlockList = outWidgetBlockList
-				};
+				viewModelModifier.WidgetBlockList = outWidgetBlockList;
     			
     			return ValueTask.CompletedTask;
-    		});
+    		});*/
     }
 }

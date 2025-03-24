@@ -47,11 +47,11 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
     	var editContext = new TextEditorEditContext(onKeyDown.ComponentData.TextEditorViewModelDisplay.TextEditorService);
 
         var modelModifier = editContext.GetModelModifier(onKeyDown.ResourceUri);
-        var viewModelModifier = editContext.GetViewModelModifier(onKeyDown.ViewModelKey);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var viewModel = editContext.GetViewModelModifier(onKeyDown.ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+        if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
 		var menuKind = MenuKind.None;
@@ -83,13 +83,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		    		onKeyDown.ComponentData.ThrottleApplySyntaxHighlighting(modelModifier);
 		            TextEditorCommandDefaultFunctions.TriggerRemeasure(
 		                editContext,
-		                viewModelModifier);
+		                viewModel);
 		            break;
 		    	case "KeyS":
 		            TextEditorCommandDefaultFunctions.TriggerSave(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.CommonComponentRenderers,
 		                onKeyDown.ComponentData.NotificationService);
@@ -101,7 +101,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            await TextEditorCommandDefaultFunctions.CopyAsync(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            break;
@@ -109,7 +109,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            await TextEditorCommandDefaultFunctions.PasteAsync(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            shouldRevealCursor = true;
@@ -119,7 +119,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            await TextEditorCommandDefaultFunctions.CutAsync(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            shouldRevealCursor = true;
@@ -129,14 +129,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.SelectAll(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            break;
 		        case "Keyz":
 		            TextEditorCommandDefaultFunctions.Undo(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
@@ -145,7 +145,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.Redo(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
@@ -154,7 +154,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.Duplicate(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
@@ -163,35 +163,35 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.ScrollLineDown(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            break;
 		        case "ArrowUp":
 		            TextEditorCommandDefaultFunctions.ScrollLineUp(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            break;
 		        case "PageDown":
 					TextEditorCommandDefaultFunctions.CursorMovePageBottom(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            break;
 		        case "PageUp":
 					TextEditorCommandDefaultFunctions.CursorMovePageTop(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            break;
 		        case "Slash":
 					await TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag,
 		                onKeyDown.ComponentData.TextEditorService,
 		                onKeyDown.ComponentData,
@@ -204,7 +204,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        		TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
 			                editContext,
 			                modelModifier,
-			                viewModelModifier,
+			                viewModel,
 			                cursorModifierBag,
 			                primaryCursorModifier,
 			                onKeyDown.ComponentData.FindAllService);
@@ -214,7 +214,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 						await TextEditorCommandDefaultFunctions.ShowFindOverlay(
 			                editContext,
 			                modelModifier,
-			                viewModelModifier,
+			                viewModel,
 			                cursorModifierBag,
 			                primaryCursorModifier,
 			                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
@@ -229,14 +229,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
                 		onKeyDown.KeymapArgs,
 				        editContext,
 				        modelModifier,
-				        viewModelModifier,
+				        viewModel,
 				        cursorModifierBag);
 				        
-				    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+				    if (viewModel.MenuKind != MenuKind.None)
 				    {
 				    	TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
-					        viewModelModifier,
+					        viewModel,
 					        onKeyDown.ComponentData.DropdownService);
 				    }
 
@@ -305,7 +305,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            	TextEditorCommandDefaultFunctions.GoToMatchingCharacter(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag,
 		                shouldSelectText: onKeyDown.KeymapArgs.ShiftKey);
 	            	shouldRevealCursor = true;
@@ -323,7 +323,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            	await TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
 				        editContext,
 				        modelModifier,
-				        viewModelModifier,
+				        viewModel,
 				        cursorModifierBag,
 				        onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi,
 				        onKeyDown.ComponentData.TextEditorService,
@@ -349,14 +349,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					TextEditorCommandDefaultFunctions.ScrollPageDown(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            break;
 		        case "PageUp":
 					TextEditorCommandDefaultFunctions.ScrollPageUp(
 		                editContext,
 		                modelModifier,
-		                viewModelModifier,
+		                viewModel,
 		                cursorModifierBag);
 		            break;
 				case "ArrowLeft":
@@ -366,7 +366,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "Home":
 	            case "End":
 	            	if (("ArrowDown" == onKeyDown.KeymapArgs.Code || "ArrowUp" == onKeyDown.KeymapArgs.Code) &&
-	                    viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
+	                    viewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                {
 	                	// TODO: Focusing the menu from here isn't working?
 	                	await editContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
@@ -384,14 +384,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                		onKeyDown.KeymapArgs,
 					        editContext,
 					        modelModifier,
-					        viewModelModifier,
+					        viewModel,
 					        cursorModifierBag);
 					        
-					    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+					    if (viewModel.MenuKind != MenuKind.None)
 					    {
 					    	TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
-						        viewModelModifier,
+						        viewModel,
 						        onKeyDown.ComponentData.DropdownService);
 					    }
 					    
@@ -401,7 +401,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	TextEditorCommandDefaultFunctions.GoToDefinition(
 		        		editContext,
 				        modelModifier,
-				        viewModelModifier,
+				        viewModel,
 				        cursorModifierBag);
 			        break;
 		        case "F10":
@@ -417,7 +417,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	await TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
 				        editContext,
 				        modelModifier,
-				        viewModelModifier,
+				        viewModel,
 				        cursorModifierBag,
 				        onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi,
 				        onKeyDown.ComponentData.EnvironmentProvider,
@@ -517,7 +517,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        		TextEditorCommandDefaultFunctions.IndentLess(
 				                editContext,
 				                modelModifier,
-				                viewModelModifier,
+				                viewModel,
 				                cursorModifierBag);
 			        	}
 			        	else
@@ -525,7 +525,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        		TextEditorCommandDefaultFunctions.IndentMore(
 				                editContext,
 				                modelModifier,
-				                viewModelModifier,
+				                viewModel,
 				                cursorModifierBag);
 			        	}
 			        	
@@ -539,7 +539,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        		TextEditorCommandDefaultFunctions.IndentLess(
 				                editContext,
 				                modelModifier,
-				                viewModelModifier,
+				                viewModel,
 				                cursorModifierBag);
 			        	}
 			        	else
@@ -635,21 +635,21 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			}
 		}
 		
-		if (viewModelModifier.ViewModel.MenuKind != menuKind)
+		if (viewModel.MenuKind != menuKind)
 		{
 			switch (menuKind)
 			{
 				case MenuKind.None:
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
-				        viewModelModifier,
+				        viewModel,
 			        	onKeyDown.ComponentData.DropdownService);
 			        break;
 				case MenuKind.ContextMenu:
 					TextEditorCommandDefaultFunctions.ShowContextMenu(
 				        editContext,
 				        modelModifier,
-				        viewModelModifier,
+				        viewModel,
 				        cursorModifierBag,
 				        primaryCursorModifier,
 				        onKeyDown.ComponentData.DropdownService,
@@ -659,7 +659,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					TextEditorCommandDefaultFunctions.ShowAutocompleteMenu(
 		        		editContext,
 				        modelModifier,
-				        viewModelModifier,
+				        viewModel,
 				        cursorModifierBag,
 				        primaryCursorModifier,
 				        onKeyDown.ComponentData.DropdownService,
@@ -670,18 +670,15 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		
 		if (shouldClearTooltip)
 		{
-			if (viewModelModifier.ViewModel.TooltipViewModel is not null)
+			if (viewModel.TooltipViewModel is not null)
 			{
-				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-				{
-					TooltipViewModel = null
-				};
+				viewModel.TooltipViewModel = null;
 			}
 		}
 		
 		if (shouldRevealCursor)
 		{
-			viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+			viewModel.ShouldRevealCursor = true;
 		}
 		
 		if (shouldApplySyntaxHighlighting)

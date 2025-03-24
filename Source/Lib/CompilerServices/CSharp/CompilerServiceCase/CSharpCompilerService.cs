@@ -267,14 +267,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
         var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
 				resourceUri,
-				viewModelModifier.ViewModel.ViewModelKey,
+				viewModelModifier.ViewModelKey,
 				mouseEventArgs,
 				componentData,
 				editContext)
 			.ConfigureAwait(false);
 
-		var textEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions;
-		var scrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
+		var textEditorDimensions = viewModelModifier.TextEditorDimensions;
+		var scrollbarDimensions = viewModelModifier.ScrollbarDimensions;
 	
 		var relativeCoordinatesOnClick = new RelativeCoordinates(
 		    mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft,
@@ -313,15 +313,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-					{
-						TooltipViewModel = new(
-		                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
-		                    parameterMap,
-		                    relativeCoordinatesOnClick,
-		                    null,
-		                    componentData.ContinueRenderingTooltipAsync)
-					};
+                    viewModelModifier.TooltipViewModel = new(
+	                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
+	                    parameterMap,
+	                    relativeCoordinatesOnClick,
+	                    null,
+	                    componentData.ContinueRenderingTooltipAsync);
                 }
             }
         }
@@ -343,25 +340,19 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-					{
-						TooltipViewModel = new(
-	                        typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
-	                        parameters,
-	                        relativeCoordinatesOnClick,
-	                        null,
-	                        componentData.ContinueRenderingTooltipAsync)
-					};
+                    viewModelModifier.TooltipViewModel = new(
+                        typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
+                        parameters,
+                        relativeCoordinatesOnClick,
+                        null,
+                        componentData.ContinueRenderingTooltipAsync);
                 }
             }
         }
 
         if (!foundMatch)
         {
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-            	TooltipViewModel = null
-			};
+			viewModelModifier.TooltipViewModel = null;
         }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
@@ -785,7 +776,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                                foreach (var unsafeViewModel in viewModelList)
 	                                {
 	                                    var viewModelModifier = editContext.GetViewModelModifier(unsafeViewModel.ViewModelKey);
-	                                    var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+	                                    var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 	
 	                                    if (viewModelModifier is null || viewModelCursorModifierBag is null)
 	                                        continue;
@@ -864,7 +855,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
 
 	            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(
-	            	editContext.GetCursorModifierBag(viewModelModifier?.ViewModel));
+	            	editContext.GetCursorModifierBag(viewModelModifier));
 	            
 	            if (viewModelModifier is null || primaryCursorModifier is null)
 	            	return ValueTask.CompletedTask;

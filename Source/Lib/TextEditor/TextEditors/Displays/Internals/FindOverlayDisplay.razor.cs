@@ -60,10 +60,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
                         var localInputValue = _inputValue;
 
-                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                        {
-                            FindOverlayValue = localInputValue,
-                        };
+                        viewModelModifier.FindOverlayValue = localInputValue;
 
                         var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
 
@@ -159,10 +156,7 @@ public partial class FindOverlayDisplay : ComponentBase
                     if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
 
-                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                    {
-                        ShowFindOverlay = false,
-                    };
+                    viewModelModifier.ShowFindOverlay = false;
 
                     var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
 

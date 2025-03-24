@@ -258,15 +258,15 @@ public static class EventUtils
 		TextEditorEditContext editContext)
     {
         var modelModifier = editContext.GetModelModifier(resourceUri);
-        var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+        var viewModel = editContext.GetViewModelModifier(viewModelKey);
         var globalTextEditorOptions = editContext.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
 
-        if (modelModifier is null || viewModelModifier is null)
+        if (modelModifier is null || viewModel is null)
             return (0, 0);
 
-        var charMeasurements = viewModelModifier.ViewModel.CharAndLineMeasurements;
-		var textEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions;
-		var scrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
+        var charMeasurements = viewModel.CharAndLineMeasurements;
+		var textEditorDimensions = viewModel.TextEditorDimensions;
+		var scrollbarDimensions = viewModel.ScrollbarDimensions;
 
 		var relativeX = mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft;
         var relativeY = mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop;

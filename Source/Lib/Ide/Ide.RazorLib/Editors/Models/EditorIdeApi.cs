@@ -243,14 +243,10 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	            registerViewModelArgs.ResourceUri.Value,
 	            false);
 	            
-	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
-		
-            viewModel = viewModel with
-            {
-                OnSaveRequested = HandleOnSaveRequested,
-                GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys
-            };
+	        viewModel.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+            viewModel.OnSaveRequested = HandleOnSaveRequested;
+            viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+            viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
             
             _textEditorService.ViewModelApi.Register(viewModel);
 	
@@ -341,8 +337,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	        {
 	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
 	        	
-	        	viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender =
-	        		showViewModelArgs.ShouldSetFocusToEditor;
+	        	viewModelModifier.ShouldSetFocusAfterNextRender = showViewModelArgs.ShouldSetFocusToEditor;
 	        		
 	        	return viewModel.FocusAsync();
 	        });

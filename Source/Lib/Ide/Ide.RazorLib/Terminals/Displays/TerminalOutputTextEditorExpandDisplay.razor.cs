@@ -206,7 +206,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					
 					var modelModifier = editContext.GetModelModifier(terminalOutputFormatterExpand.TextEditorModelResourceUri);
 					var viewModelModifier = editContext.GetViewModelModifier(terminalOutputFormatterExpand.TextEditorViewModelKey);
-					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
 					if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
@@ -235,7 +235,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						if (lineIndexOriginal != primaryCursorModifier.LineIndex ||
 							columnIndexOriginal != primaryCursorModifier.ColumnIndex)
 						{
-							viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+							viewModelModifier.ShouldRevealCursor = true;
 						}
 					}
 					
