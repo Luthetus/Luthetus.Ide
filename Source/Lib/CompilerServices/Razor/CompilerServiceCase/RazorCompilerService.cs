@@ -145,7 +145,7 @@ public sealed class RazorCompilerService : ICompilerService
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
@@ -154,7 +154,7 @@ public sealed class RazorCompilerService : ICompilerService
     public ValueTask OnInspect(
 		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModelModifier,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
@@ -166,7 +166,7 @@ public sealed class RazorCompilerService : ICompilerService
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.CompletedTask;

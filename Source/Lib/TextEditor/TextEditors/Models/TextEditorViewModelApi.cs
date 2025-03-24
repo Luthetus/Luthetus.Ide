@@ -163,7 +163,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     #region UPDATE_METHODS
     public void SetScrollPositionBoth(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         double scrollLeftInPixels,
         double scrollTopInPixels)
     {
@@ -184,7 +184,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         
     public void SetScrollPositionLeft(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         double scrollLeftInPixels)
     {
     	viewModelModifier.ScrollWasModified = true;
@@ -198,7 +198,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     
     public void SetScrollPositionTop(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         double scrollTopInPixels)
     {
     	viewModelModifier.ScrollWasModified = true;
@@ -212,7 +212,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void MutateScrollVerticalPosition(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         double pixels)
     {
         viewModelModifier.ScrollWasModified = true;
@@ -226,7 +226,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void MutateScrollHorizontalPosition(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         double pixels)
     {
         viewModelModifier.ScrollWasModified = true;
@@ -241,7 +241,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void ScrollIntoView(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         TextEditorTextSpan textSpan)
     {
         var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive);
@@ -303,7 +303,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         KeymapArgs keymapArgs,
 		TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
         MoveCursorUnsafe(
@@ -321,7 +321,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         KeymapArgs keymapArgs,
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
@@ -644,7 +644,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageTop(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
         CursorMovePageTopUnsafe(
@@ -656,7 +656,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageTopUnsafe(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
@@ -672,7 +672,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CursorMovePageBottom(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
         CursorMovePageBottomUnsafe(
@@ -686,7 +686,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CursorMovePageBottomUnsafe(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
@@ -703,7 +703,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void RevealCursor(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
@@ -746,7 +746,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CalculateVirtualizationResult(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModelModifier,
         CancellationToken cancellationToken)
     {
     	#if DEBUG
@@ -1118,7 +1118,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public async ValueTask RemeasureAsync(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken)
@@ -1143,7 +1143,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void ForceRender(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CancellationToken cancellationToken)
     {
         // Getting the ViewModel from the 'editContext' triggers a re-render

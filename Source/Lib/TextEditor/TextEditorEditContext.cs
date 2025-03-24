@@ -56,7 +56,7 @@ public struct TextEditorEditContext
         return null;
     }
 
-    public TextEditorViewModelModifier? GetViewModelModifier(
+    public TextEditorViewModel? GetViewModelModifier(
         Key<TextEditorViewModel> viewModelKey,
         bool isReadonly = false)
     {

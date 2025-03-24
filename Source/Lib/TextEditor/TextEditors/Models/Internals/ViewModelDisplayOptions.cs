@@ -26,7 +26,7 @@ public sealed class ViewModelDisplayOptions
     public Func<
     	TextEditorEditContext,
         TextEditorModelModifier,
-        TextEditorViewModelModifier,
+        TextEditorViewModel,
         CursorModifierBagTextEditor,
         KeymapArgs,
 		TextEditorComponentData,
@@ -44,7 +44,7 @@ public sealed class ViewModelDisplayOptions
     public Func<
     	TextEditorEditContext,
         TextEditorModelModifier,
-        TextEditorViewModelModifier,
+        TextEditorViewModel,
         CursorModifierBagTextEditor,
         KeymapArgs[], // batchKeymapArgsList
         int, // batchKeymapArgsListLength

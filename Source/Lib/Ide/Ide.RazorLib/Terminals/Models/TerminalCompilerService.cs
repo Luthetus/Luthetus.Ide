@@ -139,7 +139,7 @@ public sealed class TerminalCompilerService : ICompilerService
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
@@ -148,7 +148,7 @@ public sealed class TerminalCompilerService : ICompilerService
 	public ValueTask OnInspect(
 		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModelModifier,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
@@ -160,7 +160,7 @@ public sealed class TerminalCompilerService : ICompilerService
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.CompletedTask;

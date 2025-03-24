@@ -84,13 +84,13 @@ public interface ICompilerService
 	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
 		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModelModifier,
 		CursorModifierBagTextEditor cursorModifierBag);
 		
 	public ValueTask OnInspect(
 		TextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModelModifier,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
@@ -99,7 +99,7 @@ public interface ICompilerService
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting);

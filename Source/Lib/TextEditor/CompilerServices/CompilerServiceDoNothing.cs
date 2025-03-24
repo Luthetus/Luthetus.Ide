@@ -103,7 +103,7 @@ public class CompilerServiceDoNothing : ICompilerService
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.CompletedTask;

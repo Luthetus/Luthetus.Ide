@@ -156,7 +156,7 @@ public partial class TextEditorService : ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> __ViewModelCache { get; } = new();
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel?> __ViewModelCache { get; } = new();
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -173,7 +173,7 @@ public partial class TextEditorService : ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public List<TextEditorViewModelModifier?> __ViewModelList { get; } = new();
+    public List<TextEditorViewModel?> __ViewModelList { get; } = new();
     
     public event Action? TextEditorStateChanged;
 
@@ -394,7 +394,7 @@ public partial class TextEditorService : ITextEditorService
 	/// </summary>
 	public void ValidateMaximumScrollLeftAndScrollTop(
 		TextEditorEditContext editContext,
-		TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModel viewModelModifier,
 		bool textEditorDimensionsChanged)
 	{	
 		var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
@@ -841,7 +841,7 @@ public partial class TextEditorService : ITextEditorService
 	public void SetModelAndViewModelRange(
 	    TextEditorEditContext editContext,
 		List<TextEditorModelModifier?>? modelModifierList,
-		List<TextEditorViewModelModifier?>? viewModelModifierList)
+		List<TextEditorViewModel?>? viewModelModifierList)
 	{
 		lock (_stateModificationLock)
 		{

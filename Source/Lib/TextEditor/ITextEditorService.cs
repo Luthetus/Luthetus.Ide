@@ -95,7 +95,7 @@ public partial interface ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> __ViewModelCache { get; }
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel?> __ViewModelCache { get; }
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -151,5 +151,5 @@ public partial interface ITextEditorService
 	public void SetModelAndViewModelRange(
 	    TextEditorEditContext editContext,
 		List<TextEditorModelModifier?> modelModifierList,
-		List<TextEditorViewModelModifier?> viewModelModifierList);
+		List<TextEditorViewModel?> viewModelModifierList);
 }
