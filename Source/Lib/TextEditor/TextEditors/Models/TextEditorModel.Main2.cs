@@ -19,7 +19,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// <br/><br/>
 /// <inheritdoc cref="ITextEditorModel"/>
 /// </summary>
-public sealed partial class TextEditorModelModifier : ITextEditorModel
+public sealed partial class TextEditorModel : ITextEditorModel
 {
     /// <summary>
     /// <see cref="__SplitIntoTwoPartitions(int)"/> will divide by 2 and give the first split the remainder,
@@ -32,7 +32,7 @@ public sealed partial class TextEditorModelModifier : ITextEditorModel
 	/// The first time a model is constructed it will throw an exception when accessing AllText,
 	/// therefore pass it in as an argument.
 	/// </summary>
-    public TextEditorModelModifier(TextEditorModel model, string? allText)
+    public TextEditorModel(TextEditorModel model, string? allText)
     {
         if (model.PartitionSize < MINIMUM_PARTITION_SIZE)
             throw new LuthetusTextEditorException($"{nameof(model)}.{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");

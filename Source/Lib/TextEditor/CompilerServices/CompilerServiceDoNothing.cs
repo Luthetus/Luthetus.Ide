@@ -81,7 +81,7 @@ public class CompilerServiceDoNothing : ICompilerService
 
 	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
 		TextEditorEditContext editContext,
-		TextEditorModelModifier modelModifier,
+		TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
 		CursorModifierBagTextEditor cursorModifierBag)
 	{
@@ -90,7 +90,7 @@ public class CompilerServiceDoNothing : ICompilerService
 	
 	public ValueTask OnInspect(
 		TextEditorEditContext editContext,
-		TextEditorModelModifier modelModifier,
+		TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
@@ -102,14 +102,14 @@ public class CompilerServiceDoNothing : ICompilerService
     
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	return ValueTask.CompletedTask;
     }
 
-	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
 	{
 		return ValueTask.CompletedTask;
 	}

@@ -25,7 +25,7 @@ public sealed class ViewModelDisplayOptions
     /// </summary>
     public Func<
     	TextEditorEditContext,
-        TextEditorModelModifier,
+        TextEditorModel,
         TextEditorViewModel,
         CursorModifierBagTextEditor,
         KeymapArgs,
@@ -43,7 +43,7 @@ public sealed class ViewModelDisplayOptions
     /// </summary>
     public Func<
     	TextEditorEditContext,
-        TextEditorModelModifier,
+        TextEditorModel,
         TextEditorViewModel,
         CursorModifierBagTextEditor,
         KeymapArgs[], // batchKeymapArgsList

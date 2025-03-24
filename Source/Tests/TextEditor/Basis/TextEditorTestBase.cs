@@ -68,7 +68,7 @@ public class TextEditorTestBase
             serviceProvider.GetRequiredService<ITextEditorService>());
     }
 
-    protected (TextEditorModel inModel, TextEditorModelModifier modelModifier) EmptyEditor_TestData_And_PerformPreAssertions(
+    protected (TextEditorModel inModel, TextEditorModel modelModifier) EmptyEditor_TestData_And_PerformPreAssertions(
         ResourceUri resourceUri,
         DateTime resourceLastWriteTime,
         string fileExtension,
@@ -106,7 +106,7 @@ public class TextEditorTestBase
 
         // Create test data
         TextEditorModel inModel;
-        TextEditorModelModifier modelModifier;
+        TextEditorModel modelModifier;
         {
             inModel = new TextEditorModel(
                 resourceUri,
@@ -199,7 +199,7 @@ public class TextEditorTestBase
     /// 3 9B\r\n                                                                                      <br/>
     /// 4 --->$;∙EOF                                                                                  <br/>
     /// </summary>
-    protected (TextEditorModel inModel, TextEditorModelModifier modelModifier) NotEmptyEditor_TestData_And_PerformPreAssertions(
+    protected (TextEditorModel inModel, TextEditorModel modelModifier) NotEmptyEditor_TestData_And_PerformPreAssertions(
         ResourceUri resourceUri,
         DateTime resourceLastWriteTime,
         string fileExtension,
@@ -245,7 +245,7 @@ public class TextEditorTestBase
 
         // Create test data
         TextEditorModel inModel;
-        TextEditorModelModifier modelModifier;
+        TextEditorModel modelModifier;
         {
             inModel = new TextEditorModel(
                 resourceUri,

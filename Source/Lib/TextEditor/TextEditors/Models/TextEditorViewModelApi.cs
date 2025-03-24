@@ -222,7 +222,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void ScrollIntoView(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         TextEditorTextSpan textSpan)
     {
@@ -284,7 +284,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void MoveCursor(
         KeymapArgs keymapArgs,
 		TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
@@ -302,7 +302,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void MoveCursorUnsafe(
         KeymapArgs keymapArgs,
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
@@ -653,7 +653,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageBottom(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
@@ -667,7 +667,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageBottomUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
@@ -684,7 +684,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     
     public void RevealCursor(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
@@ -727,7 +727,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CalculateVirtualizationResult(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
         CancellationToken cancellationToken)
     {

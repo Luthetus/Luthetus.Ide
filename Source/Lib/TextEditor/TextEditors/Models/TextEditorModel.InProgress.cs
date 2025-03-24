@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// (2024-06-08) I've been dogfooding the IDE, and the 'TextEditorModelModifier.cs' file demonstrates some clear issues regarding text editor optimization.
 ///              Im breaking up the 80,000 character file a bit here into partial classes for now. TODO: merge the partial classes back?
 /// </summary>
-public partial class TextEditorModelModifier
+public partial class TextEditorModel
 {
 	/// <param name="useLineEndKindPreference">
     /// If false, then the string will be inserted as is.

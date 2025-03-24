@@ -176,7 +176,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
@@ -257,7 +257,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	
 	public async ValueTask OnInspect(
 		TextEditorEditContext editContext,
-		TextEditorModelModifier modelModifier,
+		TextEditorModel modelModifier,
 		TextEditorViewModel viewModelModifier,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
@@ -360,7 +360,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public async ValueTask GoToDefinition(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
@@ -447,7 +447,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// <summary>
     /// This implementation is NOT thread safe.
     /// </summary>
-    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
 	{
 		var resourceUri = modelModifier.ResourceUri;
 	
@@ -835,9 +835,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     private Task PropSnippet(string word, TextEditorTextSpan textSpan, string textToInsert)
     {
-    	_textEditorService.TextEditorWorker.PostUnique(
+        _textEditorService.TextEditorWorker.PostUnique(
 	        nameof(PropSnippet),
-	        editContext =>
+	        (Func<TextEditorEditContext, ValueTask>)(	        editContext =>
 	        {
 	            var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
 	
@@ -861,7 +861,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            	return ValueTask.CompletedTask;
 	
 	            var cursorModifierBag = new CursorModifierBagTextEditor(
-	                Key<TextEditorViewModel>.Empty,
+                    Key<TextEditorViewModel>.Empty,
 	                new List<TextEditorCursorModifier> { primaryCursorModifier });
 	                
 	            var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
@@ -881,19 +881,19 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            {
 	            	modelModifier.Delete(
 				        new CursorModifierBagTextEditor(
-			                Key<TextEditorViewModel>.Empty,
+                            Key<TextEditorViewModel>.Empty,
 			                new List<TextEditorCursorModifier> { new(behindCursor) }),
 				        1,
 				        expandWord: false,
-				        TextEditorModelModifier.DeleteKind.Delete);
+                        TextEditorModel.DeleteKind.Delete);
 	            }
 	
 	            modelModifier.CompilerService.ResourceWasModified(
-	            	modelModifier.ResourceUri,
-	            	Array.Empty<TextEditorTextSpan>());
+	            	(ResourceUri)modelModifier.ResourceUri,
+	            	(IReadOnlyList<TextEditorTextSpan>)Array.Empty<TextEditorTextSpan>());
 	            	
 	            return ValueTask.CompletedTask;
-	        });
+	        }));
 	        
 	    return Task.CompletedTask;
     }

@@ -148,7 +148,7 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public Dictionary<ResourceUri, TextEditorModelModifier?> __ModelCache { get; } = new();
+	public Dictionary<ResourceUri, TextEditorModel?> __ModelCache { get; } = new();
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -169,7 +169,7 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public List<TextEditorModelModifier?> __ModelList { get; } = new();   
+	public List<TextEditorModel?> __ModelList { get; } = new();   
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -678,7 +678,7 @@ public partial class TextEditorService : ITextEditorService
 	
 	public void SetModel(
 	    TextEditorEditContext editContext,
-	    TextEditorModelModifier modelModifier)
+	    TextEditorModel modelModifier)
 	{
 		lock (_stateModificationLock)
 		{
@@ -831,7 +831,7 @@ public partial class TextEditorService : ITextEditorService
 	
 	public void SetModelAndViewModelRange(
 	    TextEditorEditContext editContext,
-		List<TextEditorModelModifier?>? modelModifierList,
+		List<TextEditorModel?>? modelModifierList,
 		List<TextEditorViewModel?>? viewModelModifierList)
 	{
 		lock (_stateModificationLock)

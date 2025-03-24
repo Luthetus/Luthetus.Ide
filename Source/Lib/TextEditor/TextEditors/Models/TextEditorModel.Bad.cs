@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 ///              Any code I currently have in 'TextEditorModelModifier.cs' that I deem as technical debt or a bad idea will be put in this file.
 ///              Then, once organized I hope to make sense of what the "lean" solution is.
 /// </summary>
-public partial class TextEditorModelModifier
+public partial class TextEditorModel
 {
 	public void ClearContent()
     {

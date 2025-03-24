@@ -29,7 +29,7 @@ public sealed partial class TextEditorModel : ITextEditorModel
         CompilerService = compilerService ?? new CompilerServiceDoNothing();
 
 		PartitionSize = partitionSize;
-		var modifier = new TextEditorModelModifier(this, __AllText);
+		var modifier = new TextEditorModel(this, __AllText);
 		modifier.SetContent(content);
 
 		__AllText = modifier.AllText;

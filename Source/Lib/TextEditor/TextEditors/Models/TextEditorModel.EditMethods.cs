@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// <br/><br/>
 /// <inheritdoc cref="ITextEditorModel"/>
 /// </summary>
-public partial class TextEditorModelModifier : ITextEditorModel
+public partial class TextEditorModel : ITextEditorModel
 {
 	public void ClearOnlyRowEndingKind()
     {

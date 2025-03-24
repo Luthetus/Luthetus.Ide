@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public partial class TextEditorModelModifier : ITextEditorModel
+public partial class TextEditorModel : ITextEditorModel
 {
     public void __Insert(int globalPositionIndex, RichCharacter richCharacter)
     {

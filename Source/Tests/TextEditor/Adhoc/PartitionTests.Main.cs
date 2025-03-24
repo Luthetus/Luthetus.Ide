@@ -104,7 +104,7 @@ public partial class PartitionTests
 						cursorModifierBag,
 						columnCount: 0, // Delete the selection, odd to give 0?
 						expandWord: false,
-						TextEditorModelModifier.DeleteKind.Delete);
+						TextEditorModel.DeleteKind.Delete);
 					
 					LogAndNonScientificallyAssertPartitionList(modelModifier, "[][\\r\\n]");
 					
@@ -202,7 +202,7 @@ public partial class PartitionTests
 						cursorModifierBag,
 						columnCount: 0, // Delete the selection, odd to give 0?
 						expandWord: false,
-						TextEditorModelModifier.DeleteKind.Backspace);
+						TextEditorModel.DeleteKind.Backspace);
 					
 					LogAndNonScientificallyAssertPartitionList(modelModifier, "[][\\r\\n]");
 					
@@ -426,7 +426,7 @@ public partial class PartitionTests
 						cursorModifierBag,
 						columnCount: 0, // Delete the selection, odd to give 0?
 						expandWord: false,
-						TextEditorModelModifier.DeleteKind.Backspace);
+						TextEditorModel.DeleteKind.Backspace);
 					
 					LogAndNonScientificallyAssertPartitionList(modelModifier, "[][][\\r\\n]");
 					
@@ -619,7 +619,7 @@ PartitionSize = 4
 								cursorModifierBag,
 								columnCount: 0, // Delete the selection, odd to give 0?
 								expandWord: false,
-								TextEditorModelModifier.DeleteKind.Delete);
+								TextEditorModel.DeleteKind.Delete);
 	
 							var expectedText = @"public class Person
 {
@@ -755,7 +755,7 @@ PartitionSize = 4
                                 cursorModifierBag,
                                 columnCount: 0, // Delete the selection, odd to give 0?
                                 expandWord: false,
-                                TextEditorModelModifier.DeleteKind.Delete);
+                                TextEditorModel.DeleteKind.Delete);
 
                             var expectedText = @"using System.Collections.Immutable;
 using System.Runtime.InteropServices;
@@ -921,7 +921,7 @@ public class DotNetSolutionIdeApi
                                 cursorModifierBag,
                                 columnCount: 0, // Delete the selection, odd to give 0?
                                 expandWord: false,
-                                TextEditorModelModifier.DeleteKind.Backspace);
+                                TextEditorModel.DeleteKind.Backspace);
 
                             var expectedText = @"using System.Collections.Immutable;
 using System.Runtime.InteropServices;

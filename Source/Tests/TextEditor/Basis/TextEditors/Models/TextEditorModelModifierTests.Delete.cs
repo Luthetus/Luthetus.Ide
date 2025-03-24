@@ -4,12 +4,12 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelModifier;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModel;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>
-/// <see cref="TextEditorModelModifier"/>
+/// <see cref="TextEditorModel"/>
 /// </summary>
 public partial class TextEditorModelModifierTests
 {
@@ -238,12 +238,12 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<LuthetusTextEditorException>(() =>
+        Assert.Throws<LuthetusTextEditorException>((Action)(() =>
         {
             // Do something
             TextEditorModel outModel;
             {
-                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+                var lastLine = modelModifier.GetLineInformation((int)(modelModifier.LineCount - 1));
 
                 var cursor = new TextEditorCursor(
                     lineIndex: lastLine.Index,
@@ -263,7 +263,7 @@ public partial class TextEditorModelModifierTests
                     deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
-        });
+        }));
     }
 
     [Fact]
@@ -491,12 +491,12 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<LuthetusTextEditorException>(() =>
+        Assert.Throws<LuthetusTextEditorException>((Action)(() =>
         {
             // Do something
             TextEditorModel outModel;
             {
-                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+                var lastLine = modelModifier.GetLineInformation((int)(modelModifier.LineCount - 1));
 
                 var cursor = new TextEditorCursor(
                     lineIndex: lastLine.Index,
@@ -516,7 +516,7 @@ public partial class TextEditorModelModifierTests
                     deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
-        });
+        }));
     }
     #endregion
 
@@ -1228,12 +1228,12 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<LuthetusTextEditorException>(() =>
+        Assert.Throws<LuthetusTextEditorException>((Action)(() =>
         {
             // Do something
             TextEditorModel outModel;
             {
-                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+                var lastLine = modelModifier.GetLineInformation((int)(modelModifier.LineCount - 1));
 
                 var cursor = new TextEditorCursor(
                     lineIndex: lastLine.Index,
@@ -1253,7 +1253,7 @@ public partial class TextEditorModelModifierTests
                     deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
-        });
+        }));
     }
 
     [Fact]
@@ -1966,12 +1966,12 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<LuthetusTextEditorException>(() =>
+        Assert.Throws<LuthetusTextEditorException>((Action)(() =>
         {
             // Do something
             TextEditorModel outModel;
             {
-                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+                var lastLine = modelModifier.GetLineInformation((int)(modelModifier.LineCount - 1));
 
                 var cursor = new TextEditorCursor(
                     lineIndex: lastLine.Index,
@@ -1991,7 +1991,7 @@ public partial class TextEditorModelModifierTests
                     deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
-        });
+        }));
     }
     #endregion
 
@@ -2726,12 +2726,12 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<LuthetusTextEditorException>(() =>
+        Assert.Throws<LuthetusTextEditorException>((Action)(() =>
         {
             // Do something
             TextEditorModel outModel;
             {
-                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+                var lastLine = modelModifier.GetLineInformation((int)(modelModifier.LineCount - 1));
 
                 var cursor = new TextEditorCursor(
                     LineIndex: lastLine.Index,
@@ -2755,7 +2755,7 @@ public partial class TextEditorModelModifierTests
                     deleteKind: DeleteKind.Delete);
                 outModel = modelModifier.ToModel();
             }
-        });
+        }));
     }
 
     [Fact]
@@ -3490,12 +3490,12 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<LuthetusTextEditorException>(() =>
+        Assert.Throws<LuthetusTextEditorException>((Action)(() =>
         {
             // Do something
             TextEditorModel outModel;
             {
-                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+                var lastLine = modelModifier.GetLineInformation((int)(modelModifier.LineCount - 1));
 
                 var cursor = new TextEditorCursor(
                     LineIndex: lastLine.Index,
@@ -3519,7 +3519,7 @@ public partial class TextEditorModelModifierTests
                     deleteKind: DeleteKind.Backspace);
                 outModel = modelModifier.ToModel();
             }
-        });
+        }));
     }
     #endregion
 }

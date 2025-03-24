@@ -246,7 +246,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    cursorModifierBag,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
-	                    TextEditorModelModifier.DeleteKind.Backspace,
+	                    TextEditorModel.DeleteKind.Backspace,
 	                    CancellationToken.None);
 	                shouldRevealCursor = true;
 					break;
@@ -255,7 +255,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    cursorModifierBag,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
-	                    TextEditorModelModifier.DeleteKind.Delete,
+	                    TextEditorModel.DeleteKind.Delete,
 	                    CancellationToken.None);
 	                shouldRevealCursor = true;
 	                break;
@@ -452,7 +452,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    cursorModifierBag,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
-	                    TextEditorModelModifier.DeleteKind.Backspace,
+	                    TextEditorModel.DeleteKind.Backspace,
 	                    CancellationToken.None);
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.None;
@@ -463,7 +463,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    cursorModifierBag,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
-	                    TextEditorModelModifier.DeleteKind.Delete,
+	                    TextEditorModel.DeleteKind.Delete,
 	                    CancellationToken.None);
 					shouldRevealCursor = true;
 					menuKind = MenuKind.None;
