@@ -385,8 +385,8 @@ public class CommandFactory : ICommandFactory
 						// If the user has an active text selection,
 						// then populate the code search with their selection.
 						
-						var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
-			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+						var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 			            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 			
 			            if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)

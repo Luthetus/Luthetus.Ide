@@ -8,13 +8,13 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>
-/// <see cref="TextEditorModelModifier"/>
+/// <see cref="TextEditorModel"/>
 /// </summary>
 public partial class TextEditorModelModifierTests
 {
     #region Insert_Into_EmptyEditor
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into an empty editor, at positionIndex equal to 0 (2024-04-14)<br/>
     /// Purpose: Index 0 is the first valid positionIndex, thus it bears significance as a boundary.<br/>
     /// </summary>
@@ -147,7 +147,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into an empty editor, at positionIndex equal to DocumentLength (2024-04-14)<br/>
     /// Purpose: Index of 'DocumentLength' is the last valid positionIndex, thus it bears significance as a boundary.<br/>
     /// </summary>
@@ -281,7 +281,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into an empty editor, at positionIndex equal to -1 (2024-04-14)<br/>
     /// Purpose: Index -1 is a value which is less than than the lower-bound for valid positionIndices,
     ///          thus it bears significance as a unique case.<br/>
@@ -331,7 +331,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into an empty editor, at a positionIndex equal to '1 + DocumentLength' (2024-04-14)<br/>
     /// Purpose: Index '1 + DocumentLength' is a value which is greater than than the upper-bound for valid positionIndices,
     ///          thus it bears significance as a unique case.<br/>
@@ -352,13 +352,13 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<LuthetusTextEditorException>(() =>
+        Assert.Throws<LuthetusTextEditorException>((Action)(() =>
         {
             // Do something
             TextEditorModel outModel;
             TextEditorCursorModifier cursorModifier;
             {
-                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+                var lastLine = modelModifier.GetLineInformation((int)(modelModifier.LineCount - 1));
 
                 var cursor = new TextEditorCursor(
                     lineIndex: lastLine.Index,
@@ -383,11 +383,11 @@ public partial class TextEditorModelModifierTests
                     cancellationToken: CancellationToken.None);
                 outModel = modelModifier.ToModel();
             }
-        });
+        }));
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into an empty editor, a null string (2024-04-14)<br/>
     /// Purpose: The string argument of Insert(...) has 3 states as far as the text editor is concerned.<br/>
     ///              -It is null<br/>
@@ -440,7 +440,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into an empty editor, a value of 'string.Empty' (2024-04-14)<br/>
     /// Purpose: The string argument of Insert(...) has 3 states as far as the text editor is concerned.<br/>
     ///              -It is null<br/>
@@ -568,7 +568,7 @@ public partial class TextEditorModelModifierTests
 
     #region Insert_Into_NotEmptyEditor
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, at positionIndex equal to 0 (2024-04-14)<br/>
     /// Purpose: Index 0 is the first valid positionIndex, thus it bears significance as a boundary.<br/>
     /// </summary>
@@ -737,7 +737,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, at positionIndex equal to DocumentLength (2024-04-14)<br/>
     /// Purpose: Index of 'DocumentLength' is the last valid positionIndex, thus it bears significance as a boundary.<br/>
     /// </summary>
@@ -908,7 +908,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, bool, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, bool, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, at positionIndex between 0 and DocumentLength; exclusive bounds (2024-04-14)<br/>
     /// Purpose: With 0 being the first valid position, and DocumentLength being the last valid position;
     ///          testing a value between the valid positionIndex boundaries bears significance as a unique case.<br/>
@@ -1034,7 +1034,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, at positionIndex equal to -1 (2024-04-14)<br/>
     /// Purpose: Index -1 is a value which is less than than the lower-bound for valid positionIndices,
     ///          thus it bears significance as a unique case.<br/>
@@ -1098,7 +1098,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, at a positionIndex equal to '1 + DocumentLength' (2024-04-14)<br/>
     /// Purpose: Index '1 + DocumentLength' is a value which is greater than than the upper-bound for valid positionIndices,
     ///          thus it bears significance as a unique case.<br/>
@@ -1130,13 +1130,13 @@ public partial class TextEditorModelModifierTests
         //
         // This test expects the 'Do Something' step to throw an exception.
         // That is all that needs to be tested here.
-        Assert.Throws<LuthetusTextEditorException>(() =>
+        Assert.Throws<LuthetusTextEditorException>((Action)(() =>
         {
             // Do something
             TextEditorModel outModel;
             TextEditorCursorModifier cursorModifier;
             {
-                var lastLine = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+                var lastLine = modelModifier.GetLineInformation((int)(modelModifier.LineCount - 1));
 
                 var cursor = new TextEditorCursor(
                     lineIndex: lastLine.Index,
@@ -1161,11 +1161,11 @@ public partial class TextEditorModelModifierTests
                     cancellationToken: CancellationToken.None);
                 outModel = modelModifier.ToModel();
             }
-        });
+        }));
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, a null string (2024-04-14)<br/>
     /// Purpose: The string argument of Insert(...) has 3 states as far as the text editor is concerned.<br/>
     ///              -It is null<br/>
@@ -1229,7 +1229,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, a value of 'string.Empty' (2024-04-14)<br/>
     /// Purpose: The string argument of Insert(...) has 3 states as far as the text editor is concerned.<br/>
     ///              -It is null<br/>
@@ -1368,7 +1368,7 @@ public partial class TextEditorModelModifierTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.Insert(string, CursorModifierBagTextEditor, bool, CancellationToken)"/><br/>
+    /// <see cref="TextEditorModel.Insert(string, CursorModifierBagTextEditor, bool, CancellationToken)"/><br/>
     /// Case: Insert into a not empty editor, at positionIndex between 0 and DocumentLength; exclusive bounds
     ///       while the cursor has an active selection(2024-04-14)<br/>
     /// Purpose: insertion while the cursor has an active selection means that the selected text

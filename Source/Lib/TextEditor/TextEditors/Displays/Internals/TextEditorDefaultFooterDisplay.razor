@@ -97,13 +97,13 @@
 	                </div>
 	
 	                <div class="luth_te_text-editor-footer-entry">
-	                    @if (model.OnlyLineEndKind is null)
+	                    @if (model.OnlyLineEndKind == LineEndKind.Unset)
 	                    {
-	                        <text>has:mixed </text>
+	                        <text>has:unset </text>
 	                    }
 	                    else
 	                    {
-	                        <text>has:@model.OnlyLineEndKind.Value.AsFriendlyName() </text>
+	                        <text>has:@model.OnlyLineEndKind.AsFriendlyName() </text>
 	                    }
 	
 	                    use:

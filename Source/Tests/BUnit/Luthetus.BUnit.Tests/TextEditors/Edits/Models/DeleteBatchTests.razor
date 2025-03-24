@@ -53,7 +53,7 @@
 					cursorModifierBag,
 			        lengthAbc,
 			        false,
-			        TextEditorModelModifier.DeleteKind.Delete);
+			        TextEditorModel.DeleteKind.Delete);
 
 				Assert.Equal("123Do-Re-Mi", textEditor.AllText);
 				Assert.Equal(2, textEditor.EditBlockList.Count);
@@ -70,7 +70,7 @@
 					cursorModifierBag,
 			        length123,
 			        false,
-			        TextEditorModelModifier.DeleteKind.Delete);
+			        TextEditorModel.DeleteKind.Delete);
 
 				Assert.Equal("Do-Re-Mi", textEditor.AllText);
 				Assert.Equal(2, textEditor.EditBlockList.Count);
@@ -87,7 +87,7 @@
 					cursorModifierBag,
 			        lengthDoReMi,
 			        false,
-			        TextEditorModelModifier.DeleteKind.Delete);
+			        TextEditorModel.DeleteKind.Delete);
 
 				Assert.Equal(string.Empty, textEditor.AllText);
 				Assert.Equal(2, textEditor.EditBlockList.Count);

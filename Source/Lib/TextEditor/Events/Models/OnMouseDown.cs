@@ -33,25 +33,25 @@ public struct OnMouseDown
     	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
         var modelModifier = editContext.GetModelModifier(ResourceUri, true);
-        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var viewModel = editContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+        if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
-        viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = false;
+        viewModel.ShouldRevealCursor = false;
 
         var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
         if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
             return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
-		if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+		if (viewModel.MenuKind != MenuKind.None)
 		{
 			TextEditorCommandDefaultFunctions.RemoveDropdown(
 		        editContext,
-		        viewModelModifier,
+		        viewModel,
 		        ComponentData.DropdownService);
 		}
 

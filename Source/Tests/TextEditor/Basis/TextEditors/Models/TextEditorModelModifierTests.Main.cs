@@ -13,32 +13,32 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
 /// <summary>
-/// <see cref="TextEditorModelModifier"/>
+/// <see cref="TextEditorModel"/>
 /// </summary>
 public partial class TextEditorModelModifierTests : TextEditorTestBase
 {
     /// <summary>
     /// <see cref="TextEditorModelModifier(TextEditorModel)"/>
     /// <br/>----<br/>
-    /// <see cref="TextEditorModelModifier.ToModel()"/>
-    /// <see cref="TextEditorModelModifier.CharList"/>
-	/// <see cref="TextEditorModelModifier.DecorationByteList"/>
-    /// <see cref="TextEditorModelModifier.EditBlockList"/>
-    /// <see cref="TextEditorModelModifier.LineEndList"/>
-    /// <see cref="TextEditorModelModifier.LineEndKindCountList"/>
-    /// <see cref="TextEditorModelModifier.PresentationModelList"/>
-    /// <see cref="TextEditorModelModifier.TabKeyPositionList"/>
-    /// <see cref="TextEditorModelModifier.OnlyLineEndKind"/>
-    /// <see cref="TextEditorModelModifier.LineEndKindPreference"/>
-    /// <see cref="TextEditorModelModifier.ResourceUri"/>
-    /// <see cref="TextEditorModelModifier.ResourceLastWriteTime"/>
-    /// <see cref="TextEditorModelModifier.FileExtension"/>
-    /// <see cref="TextEditorModelModifier.DecorationMapper"/>
-    /// <see cref="TextEditorModelModifier.CompilerService"/>
-    /// <see cref="TextEditorModelModifier.TextEditorSaveFileHelper"/>
-    /// <see cref="TextEditorModelModifier.EditBlockIndex"/>
-    /// <see cref="TextEditorModelModifier.MostCharactersOnASingleLineTuple"/>
-    /// <see cref="TextEditorModelModifier.RenderStateKey"/>
+    /// <see cref="TextEditorModel.ToModel()"/>
+    /// <see cref="TextEditorModel.CharList"/>
+	/// <see cref="TextEditorModel.DecorationByteList"/>
+    /// <see cref="TextEditorModel.EditBlockList"/>
+    /// <see cref="TextEditorModel.LineEndList"/>
+    /// <see cref="TextEditorModel.LineEndKindCountList"/>
+    /// <see cref="TextEditorModel.PresentationModelList"/>
+    /// <see cref="TextEditorModel.TabKeyPositionList"/>
+    /// <see cref="TextEditorModel.OnlyLineEndKind"/>
+    /// <see cref="TextEditorModel.LineEndKindPreference"/>
+    /// <see cref="TextEditorModel.ResourceUri"/>
+    /// <see cref="TextEditorModel.ResourceLastWriteTime"/>
+    /// <see cref="TextEditorModel.FileExtension"/>
+    /// <see cref="TextEditorModel.DecorationMapper"/>
+    /// <see cref="TextEditorModel.CompilerService"/>
+    /// <see cref="TextEditorModel.TextEditorSaveFileHelper"/>
+    /// <see cref="TextEditorModel.EditBlockIndex"/>
+    /// <see cref="TextEditorModel.MostCharactersOnASingleLineTuple"/>
+    /// <see cref="TextEditorModel.RenderStateKey"/>
     /// </summary>
     [Fact]
     public void Constructor()
@@ -148,7 +148,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         }
 
         // Backspace with count of 1
-        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModelModifier.DeleteKind.Backspace, CancellationToken.None);
+        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModel.DeleteKind.Backspace, CancellationToken.None);
 
         // Assert backspace
         {
@@ -225,7 +225,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         }
 
         // Backspace with count of 1
-        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModelModifier.DeleteKind.Backspace, CancellationToken.None);
+        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModel.DeleteKind.Backspace, CancellationToken.None);
 
         // Assert backspace
         {
@@ -302,7 +302,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         }
 
         // Backspace with count of 1
-        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModelModifier.DeleteKind.Backspace, CancellationToken.None);
+        modelModifier.Delete(cursorModifierBag, 1, false, TextEditorModel.DeleteKind.Backspace, CancellationToken.None);
 
         // Assert result
         {
@@ -320,7 +320,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearContent()"/>
+    /// <see cref="TextEditorModel.ClearContent()"/>
     /// ----------------------------------------------------
     /// This test was deemed valuable on (2024-04-13)
     /// </summary>
@@ -329,7 +329,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     {
         // Create test data
         TextEditorModel inModel;
-        TextEditorModelModifier modelModifier;
+        TextEditorModel modelModifier;
         {
             inModel = new TextEditorModel(
                 new ResourceUri($"/{nameof(ClearContent)}.txt"),
@@ -486,7 +486,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearOnlyRowEndingKind()"/>
+    /// <see cref="TextEditorModel.ClearOnlyRowEndingKind()"/>
     /// </summary>
     [Fact]
     public void ClearOnlyRowEndingKind()
@@ -502,7 +502,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetLineEndKindPreference(LineEndKind)"/>
+    /// <see cref="TextEditorModel.SetLineEndKindPreference(LineEndKind)"/>
     /// </summary>
     [Fact]
     public void ModifyUsingRowEndingKind()
@@ -518,7 +518,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetResourceData(ResourceUri, DateTime)"/>
+    /// <see cref="TextEditorModel.SetResourceData(ResourceUri, DateTime)"/>
     /// </summary>
     [Fact]
     public void ModifyResourceData()
@@ -541,7 +541,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetDecorationMapper(IDecorationMapper)"/>
+    /// <see cref="TextEditorModel.SetDecorationMapper(IDecorationMapper)"/>
     /// </summary>
     [Fact]
     public void ModifyDecorationMapper()
@@ -550,7 +550,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetCompilerService(ILuthCompilerService)"/>
+    /// <see cref="TextEditorModel.SetCompilerService(ILuthCompilerService)"/>
     /// </summary>
     [Fact]
     public void ModifyCompilerService()
@@ -559,7 +559,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetTextEditorSaveFileHelper(SaveFileHelper)"/>
+    /// <see cref="TextEditorModel.SetTextEditorSaveFileHelper(SaveFileHelper)"/>
     /// </summary>
     [Fact]
     public void ModifyTextEditorSaveFileHelper()
@@ -568,7 +568,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetContent(string)"/><br/>
+    /// <see cref="TextEditorModel.SetContent(string)"/><br/>
     /// Case: Decrease counters (2024-04-14)<br/>
     /// <br/>
     /// Setting the content can result in a decrease in the amount of line endings in a text editor, as just one example.
@@ -679,7 +679,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetContent(string)"/><br/>
+    /// <see cref="TextEditorModel.SetContent(string)"/><br/>
     /// Case: Maintain counters (2024-04-14)<br/>
     /// <br/>
     /// Setting the content can result in NO-change in the amount of line endings in a text editor.
@@ -829,7 +829,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.SetContent(string)"/><br/>
+    /// <see cref="TextEditorModel.SetContent(string)"/><br/>
     /// Case: Increase counters (2024-04-14)<br/>
     /// <br/>
     /// Setting the content can result in an increase in the amount of line endings in a text editor.
@@ -1014,7 +1014,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearAllStatesButKeepEditHistory()"/>
+    /// <see cref="TextEditorModel.ClearAllStatesButKeepEditHistory()"/>
     /// </summary>
     [Fact]
     public void ModifyResetStateButNotEditHistory()
@@ -1023,7 +1023,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.HandleKeyboardEvent(KeyboardEventArgs, CursorModifierBagTextEditor, CancellationToken)"/>
+    /// <see cref="TextEditorModel.HandleKeyboardEvent(KeyboardEventArgs, CursorModifierBagTextEditor, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void HandleKeyboardEvent()
@@ -1069,7 +1069,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.PerformRegisterPresentationModelAction(TextEditorPresentationModel)"/>
+    /// <see cref="TextEditorModel.PerformRegisterPresentationModelAction(TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
     public void PerformRegisterPresentationModelAction()
@@ -1078,7 +1078,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.StartPendingCalculatePresentationModel(Key{TextEditorPresentationModel}, TextEditorPresentationModel)"/>
+    /// <see cref="TextEditorModel.StartPendingCalculatePresentationModel(Key{TextEditorPresentationModel}, TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
     public void PerformCalculatePresentationModelAction()
@@ -1087,7 +1087,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.ClearEditBlocks()"/>
+    /// <see cref="TextEditorModel.ClearEditBlocks()"/>
     /// </summary>
     [Fact]
     public void ClearEditBlocks()
@@ -1096,7 +1096,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.UndoEdit()"/>
+    /// <see cref="TextEditorModel.UndoEdit()"/>
     /// </summary>
     [Fact]
     public void UndoEdit()
@@ -1105,7 +1105,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.RedoEdit()"/>
+    /// <see cref="TextEditorModel.RedoEdit()"/>
     /// </summary>
     [Fact]
     public void RedoEdit()
@@ -1114,7 +1114,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelModifier.__Add(RichCharacter)"/>
+    /// <see cref="TextEditorModel.__Add(RichCharacter)"/>
     /// </summary>
     [Fact]
     public void __Add()

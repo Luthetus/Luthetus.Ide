@@ -15,7 +15,7 @@ public struct TextEditorEditContext
 
     public ITextEditorService TextEditorService { get; }
 
-    public TextEditorModelModifier? GetModelModifier(
+    public TextEditorModel? GetModelModifier(
         ResourceUri modelResourceUri,
         bool isReadonly = false)
     {
@@ -36,7 +36,7 @@ public struct TextEditorEditContext
         return modelModifier;
     }
 
-    public TextEditorModelModifier? GetModelModifierByViewModelKey(
+    public TextEditorModel? GetModelModifierByViewModelKey(
         Key<TextEditorViewModel> viewModelKey,
         bool isReadonly = false)
     {
@@ -56,7 +56,7 @@ public struct TextEditorEditContext
         return null;
     }
 
-    public TextEditorViewModelModifier? GetViewModelModifier(
+    public TextEditorViewModel? GetViewModelModifier(
         Key<TextEditorViewModel> viewModelKey,
         bool isReadonly = false)
     {

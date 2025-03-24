@@ -53,7 +53,7 @@ public class HeaderDriver
             {
             	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.TriggerSave(
             		editContext,
@@ -114,7 +114,7 @@ public class HeaderDriver
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	return TextEditorCommandDefaultFunctions.CopyAsync(
                 	editContext,
@@ -138,7 +138,7 @@ public class HeaderDriver
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	return TextEditorCommandDefaultFunctions.CutAsync(
             		editContext,
@@ -162,7 +162,7 @@ public class HeaderDriver
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	return TextEditorCommandDefaultFunctions.PasteAsync(
                 	editContext,
@@ -186,7 +186,7 @@ public class HeaderDriver
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.Redo(
             		editContext,
@@ -211,7 +211,7 @@ public class HeaderDriver
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.Undo(
             		editContext,
@@ -235,7 +235,7 @@ public class HeaderDriver
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.SelectAll(
             		editContext,
@@ -260,7 +260,7 @@ public class HeaderDriver
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.TriggerRemeasure(
             		editContext,
@@ -344,7 +344,7 @@ public class HeaderDriver
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.TriggerRemeasure(
             		editContext,

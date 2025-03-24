@@ -31,11 +31,11 @@ public struct OnMouseMove
     	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
         var modelModifier = editContext.GetModelModifier(ResourceUri, true);
-        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+        var viewModel = editContext.GetViewModelModifier(ViewModelKey);
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-        if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+        if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.

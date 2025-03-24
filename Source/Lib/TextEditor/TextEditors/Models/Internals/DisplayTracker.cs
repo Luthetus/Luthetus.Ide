@@ -224,13 +224,10 @@ public sealed class DisplayTracker : IDisposable
 	                return;
 				
 				var textEditorMeasurements = await _textEditorService.ViewModelApi
-					.GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
+					.GetTextEditorMeasurementsAsync(viewModelModifier.BodyElementId)
 					.ConfigureAwait(false);
 		
-				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-				{
-					TextEditorDimensions = textEditorMeasurements
-				};
+				viewModelModifier.TextEditorDimensions = textEditorMeasurements;
 				
 				viewModelModifier.ShouldReloadVirtualizationResult = true;
 				

@@ -40,29 +40,36 @@ public interface ITextEditorViewModelApi
     #endregion
 
     #region UPDATE_METHODS
-    /// <summary>
-    /// If a parameter is null the JavaScript will not modify that value
-    /// </summary>
-    public void SetScrollPosition(
+    public void SetScrollPositionBoth(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
-        double? scrollLeftInPixels,
-        double? scrollTopInPixels);
+        TextEditorViewModel viewModelModifier,
+        double scrollLeftInPixels,
+        double scrollTopInPixels);
+        
+    public void SetScrollPositionLeft(
+        TextEditorEditContext editContext,
+        TextEditorViewModel viewModelModifier,
+        double scrollLeftInPixels);
+    
+    public void SetScrollPositionTop(
+        TextEditorEditContext editContext,
+        TextEditorViewModel viewModelModifier,
+        double scrollTopInPixels);
 
     public void ScrollIntoView(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         TextEditorTextSpan textSpan);
 
     public void MutateScrollVerticalPosition(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         double pixels);
 
     public void MutateScrollHorizontalPosition(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         double pixels);
 
     public ValueTask FocusPrimaryCursorAsync(string primaryCursorContentId);
@@ -70,8 +77,8 @@ public interface ITextEditorViewModelApi
     public void MoveCursor(
     	KeymapArgs keymapArgs,
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
@@ -87,14 +94,14 @@ public interface ITextEditorViewModelApi
     public void MoveCursorUnsafe(
         KeymapArgs keymapArgs,
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
     public void CursorMovePageTop(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
@@ -109,14 +116,14 @@ public interface ITextEditorViewModelApi
     /// </summary>
     public void CursorMovePageTopUnsafe(
     	TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
 		CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
     public void CursorMovePageBottom(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
@@ -131,34 +138,34 @@ public interface ITextEditorViewModelApi
     /// </summary>
     public void CursorMovePageBottomUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier);
         
     public void RevealCursor(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier);
 
     public void CalculateVirtualizationResult(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
         CancellationToken cancellationToken);
 
     public ValueTask RemeasureAsync(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken);
 
     public void ForceRender(
         TextEditorEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
+        TextEditorViewModel viewModelModifier,
         CancellationToken cancellationToken);
     #endregion
 

@@ -79,14 +79,14 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
     #region UPDATE_METHODS
     public void UndoEdit(
 	    TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier)
+        TextEditorModel modelModifier)
     {
         modelModifier.UndoEdit();
     }
 
     public void SetUsingLineEndKind(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         LineEndKind lineEndKind)
     {
         modelModifier.SetLineEndKindPreference(lineEndKind);
@@ -94,7 +94,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void SetResourceData(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         DateTime resourceLastWriteTime)
     {
         modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
@@ -102,7 +102,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void Reload(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         string content,
         DateTime resourceLastWriteTime)
     {
@@ -112,14 +112,14 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void RedoEdit(
     	TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier)
+        TextEditorModel modelModifier)
     {
         modelModifier.RedoEdit();
     }
 
     public void InsertText(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken)
@@ -129,7 +129,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void InsertTextUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken)
@@ -139,7 +139,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void HandleKeyboardEvent(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         KeymapArgs keymapArgs,
         CancellationToken cancellationToken)
@@ -149,7 +149,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void HandleKeyboardEventUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         KeymapArgs keymapArgs,
         CancellationToken cancellationToken)
@@ -159,7 +159,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void DeleteTextByRange(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken)
@@ -169,7 +169,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void DeleteTextByRangeUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken)
@@ -179,7 +179,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void DeleteTextByMotion(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken)
@@ -189,7 +189,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void DeleteTextByMotionUnsafe(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken)
@@ -199,7 +199,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void AddPresentationModel(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         TextEditorPresentationModel emptyPresentationModel)
     {
         modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
@@ -207,7 +207,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void StartPendingCalculatePresentationModel(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel)
     {
@@ -216,7 +216,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void CompletePendingCalculatePresentationModel(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
         List<TextEditorTextSpan> calculatedTextSpans)
@@ -229,7 +229,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void ApplyDecorationRange(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier,
+        TextEditorModel modelModifier,
         IEnumerable<TextEditorTextSpan> textSpans)
     {
         var localRichCharacterList = modelModifier.RichCharacterList;
@@ -262,7 +262,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
     public void ApplySyntaxHighlighting(
         TextEditorEditContext editContext,
-        TextEditorModelModifier modelModifier)
+        TextEditorModel modelModifier)
     {
         var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
         if (compilerServiceResource is null)

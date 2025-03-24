@@ -159,13 +159,13 @@ public class EditorIdeApi : IBackgroundTaskGroup
                 decorationMapper,
                 compilerService);
                 
-            var modelModifier = new TextEditorModelModifier(model);
+            var modelModifier = new TextEditorModel(model);
             modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
             modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
             modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
             modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyOutPresentationModel);
             
-            model = modelModifier.ToModel();
+            model = modelModifier;
 
             _textEditorService.ModelApi.RegisterCustom(model);
             
@@ -243,20 +243,16 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	            registerViewModelArgs.ResourceUri.Value,
 	            false);
 	            
-	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
-		
-            viewModel = viewModel with
-            {
-                OnSaveRequested = HandleOnSaveRequested,
-                GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                FirstPresentationLayerKeysList = firstPresentationLayerKeys
-            };
+	        viewModel.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+            viewModel.OnSaveRequested = HandleOnSaveRequested;
+            viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+            viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
             
             _textEditorService.ViewModelApi.Register(viewModel);
 	
 	        return Task.FromResult(viewModelKey);
 
-	        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
+	        void HandleOnSaveRequested(TextEditorModel innerTextEditor)
 	        {
 	            var innerContent = innerTextEditor.GetAllText();
 	
@@ -341,8 +337,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	        {
 	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
 	        	
-	        	viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender =
-	        		showViewModelArgs.ShouldSetFocusToEditor;
+	        	viewModelModifier.ShouldSetFocusAfterNextRender = showViewModelArgs.ShouldSetFocusToEditor;
 	        		
 	        	return viewModel.FocusAsync();
 	        });
