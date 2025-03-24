@@ -96,8 +96,7 @@ public interface ICompilerService
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri);
         
-    /// <summary>TODO: This should be a ValueTask</summary>
-    public void GoToDefinition(
+    public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,

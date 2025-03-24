@@ -21,6 +21,7 @@ using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+using Luthetus.Extensions.CompilerServices.Displays;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
@@ -366,98 +367,90 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
     
-    public void GoToDefinition(
+    public async ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-    	return;/*
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+    	
+        var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+
+        var foundMatch = false;
+        
+        var resource = GetResource(modelModifier.ResourceUri);
+        var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
+        
+        var symbolList = compilationUnitLocal.SymbolList;
+        var foundSymbol = default(Symbol);
+        
+        foreach (var symbol in symbolList)
+        {
+            if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+            {
+                foundMatch = true;
+				foundSymbol = symbol;
+            }
+        }
+        
+        if (!foundMatch)
+        	return;
     
-        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-        var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-        
-        var wordTextSpan = modelModifier.GetWordTextSpan(positionIndex);
-        if (wordTextSpan is null)
-            return;
-
-		var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
-		if (compilerServiceResource?.CompilationUnit is null)
+    	var symbolLocal = foundSymbol;
+		var targetNode = SymbolDisplay.GetTargetNode(_textEditorService, symbolLocal);
+		var definitionNode = SymbolDisplay.GetDefinitionNode(_textEditorService, symbolLocal, targetNode);
+		
+		if (definitionNode is null)
 			return;
-
-        var definitionTextSpan = GetDefinitionTextSpan(wordTextSpan.Value, compilerServiceResource);
-        if (definitionTextSpan is null)
-            return;
-
-        var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.Value.ResourceUri);
-        if (definitionModel is null)
-        {
-            if (commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc is not null)
-            {
-                commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
-                    new RegisterModelArgs(definitionTextSpan.Value.ResourceUri, commandArgs.ServiceProvider));
-
-                var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.Value.ResourceUri);
-
-                if (definitionModel is null) // TODO: Should this be null checking instead: 'definitionModelModifier'?
-                    return;
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        var definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.Value.ResourceUri);
-
-        if (!definitionViewModels.Any())
-        {
-            if (commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc is not null)
-            {
-                commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                    Key<TextEditorViewModel>.NewKey(),
-                    definitionTextSpan.Value.ResourceUri,
-                    new Category("main"),
-                    true,
-                    commandArgs.ServiceProvider));
-
-                definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.Value.ResourceUri);
-
-                if (!definitionViewModels.Any())
-                    return;
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
-        
-        var definitionViewModelModifier = editContext.GetViewModelModifier(definitionViewModelKey);
-        var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier?.ViewModel);
-        var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
-
-        if (definitionViewModelModifier is null || !definitionCursorModifierBag.ConstructorWasInvoked || definitionPrimaryCursorModifier is null)
-            return;
-
-        var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.Value.StartingIndexInclusive);
-        var columnIndex = definitionTextSpan.Value.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
-
-        definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
-        definitionPrimaryCursorModifier.LineIndex = rowData.Index;
-        definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
-        definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
-
-        if (commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
-        {
-            commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-                definitionViewModelKey,
-                Key<TextEditorGroup>.Empty,
-                true,
-                commandArgs.ServiceProvider));
-        }*/
+			
+		// TODO: Do not duplicate this code from SyntaxViewModel.HandleOnClick(...)
+		
+		string? resourceUriValue = null;
+		var indexInclusiveStart = -1;
+		
+		if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		{
+			var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
+			resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+		}
+		else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+		{
+			var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
+			resourceUriValue = variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+		}
+		else if (definitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+		{
+			var namespaceStatementNode = (NamespaceStatementNode)definitionNode;
+			resourceUriValue = namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+		}
+		else if (definitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+		{
+			var functionDefinitionNode = (FunctionDefinitionNode)definitionNode;
+			resourceUriValue = functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive;
+		}
+		else if (definitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+		{
+			var constructorDefinitionNode = (ConstructorDefinitionNode)definitionNode;
+			resourceUriValue = constructorDefinitionNode.FunctionIdentifier.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartingIndexInclusive;
+		}
+		
+		if (resourceUriValue is null || indexInclusiveStart == -1)
+			return;
+		
+		await _textEditorService.OpenInEditorAsync(
+				resourceUriValue,
+				true,
+				indexInclusiveStart,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey())
+			.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
     }
     
     /// <summary>

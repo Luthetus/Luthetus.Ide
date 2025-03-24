@@ -157,13 +157,13 @@ public sealed class TerminalCompilerService : ICompilerService
     	return ValueTask.CompletedTask;
     }
     
-    public void GoToDefinition(
+    public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-    	return;
+    	return ValueTask.CompletedTask;
     }
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
