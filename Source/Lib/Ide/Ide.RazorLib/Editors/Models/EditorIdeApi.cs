@@ -141,9 +141,10 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	                registerModelArgs.ResourceUri.Value,
 	                model)
 	            .ConfigureAwait(false);
+	        return;
         }
 			
-		var uniqueTextEditorWork = new UniqueTextEditorWork(nameof(ICompilerService.ParseAsync), _textEditorService, async editContext =>
+		var asyncTextEditorWork = new AsyncTextEditorWork(_textEditorService, async editContext =>
         {
         	var resourceUri = registerModelArgs.ResourceUri;
 
@@ -187,24 +188,16 @@ public class EditorIdeApi : IBackgroundTaskGroup
 				return;
 
 			await compilerService.ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: false);
-			
-			await CheckIfContentsWereModifiedAsync(
-	                registerModelArgs.ResourceUri.Value,
-	                model)
-	            .ConfigureAwait(false);
         });
 		
-		if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
-		 	await _textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWorkAsync(uniqueTextEditorWork).ConfigureAwait(false);
-		else
-			_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+		await _textEditorService.TextEditorWorker.EnqueueTextEditorWorkAsync(asyncTextEditorWork).ConfigureAwait(false);
     }
 
-    public Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
+    public async Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
     {
     	var viewModelKey = Key<TextEditorViewModel>.NewKey();
     	
-    	_textEditorService.TextEditorWorker.PostUnique(nameof(EditorIdeApi), editContext =>
+    	var asyncTextEditorWork = new AsyncTextEditorWork(_textEditorService, editContext =>
     	{
     		var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
 	
@@ -253,10 +246,9 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	        _textEditorService.ViewModelApi.Register(editContext, viewModel);
 	        return ValueTask.CompletedTask;
     	});
-
-        return Task.FromResult(viewModelKey);
-
-        
+    	
+    	await _textEditorService.TextEditorWorker.EnqueueTextEditorWorkAsync(asyncTextEditorWork);
+    	return viewModelKey;
     }
     
     private void HandleOnSaveRequested(TextEditorModel innerTextEditor)
