@@ -82,50 +82,41 @@ public partial class TextEditorModel
         }
         else
         {
-            for (int i = cursorModifierBag.List.Count - 1; i >= 0; i--)
-            {
-                var cursor = cursorModifierBag.List[i];
+            var valueToInsert = keymapArgs.Key.First().ToString();
 
-                var singledCursorModifierBag = new CursorModifierBagTextEditor(
-                    cursorModifierBag.ViewModelKey,
-                    new List<TextEditorCursorModifier> { cursor });
+            if (keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+			{
+                valueToInsert = LineEndKindPreference.AsCharacters();
+				
+				// GOAL: Match indentation on newline keystroke (2024-07-04)
+				var line = this.GetLineInformation(cursorModifierBag.CursorModifier.LineIndex);
 
-                var valueToInsert = keymapArgs.Key.First().ToString();
+				var cursorPositionIndex = line.StartPositionIndexInclusive + cursorModifierBag.CursorModifier.ColumnIndex;
+				var indentationPositionIndex = line.StartPositionIndexInclusive;
 
-                if (keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+				var indentationBuilder = new StringBuilder();
+
+				while (indentationPositionIndex < cursorPositionIndex)
 				{
-                    valueToInsert = LineEndKindPreference.AsCharacters();
-					
-					// GOAL: Match indentation on newline keystroke (2024-07-04)
-					var line = this.GetLineInformation(cursor.LineIndex);
+					var possibleIndentationChar = RichCharacterList[indentationPositionIndex++].Value;
 
-					var cursorPositionIndex = line.StartPositionIndexInclusive + cursor.ColumnIndex;
-					var indentationPositionIndex = line.StartPositionIndexInclusive;
-
-					var indentationBuilder = new StringBuilder();
-
-					while (indentationPositionIndex < cursorPositionIndex)
-					{
-						var possibleIndentationChar = RichCharacterList[indentationPositionIndex++].Value;
-
-						if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
-							indentationBuilder.Append(possibleIndentationChar);
-						else
-							break;
-					}
-
-					valueToInsert += indentationBuilder.ToString();
-				}
-                else if (keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
-				{
-                    valueToInsert = "\t";
+					if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+						indentationBuilder.Append(possibleIndentationChar);
+					else
+						break;
 				}
 
-                Insert(
-                    valueToInsert,
-                    singledCursorModifierBag,
-                    cancellationToken: cancellationToken);
-            }
+				valueToInsert += indentationBuilder.ToString();
+			}
+            else if (keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
+			{
+                valueToInsert = "\t";
+			}
+
+            Insert(
+                valueToInsert,
+                cursorModifierBag,
+                cancellationToken: cancellationToken);
         }
     }
 
@@ -135,7 +126,7 @@ public partial class TextEditorModel
 		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
 		var cursorModifierBag = new CursorModifierBagTextEditor(
 			Key<TextEditorViewModel>.Empty,
-			new List<TextEditorCursorModifier> { new(cursor) });
+			new(cursor));
 	
 		Insert(content, cursorModifierBag, false, CancellationToken.None, shouldCreateEditHistory: false);
 	}
@@ -146,7 +137,7 @@ public partial class TextEditorModel
 		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
 		var cursorModifierBag = new CursorModifierBagTextEditor(
 			Key<TextEditorViewModel>.Empty,
-			new List<TextEditorCursorModifier> { new(cursor) });
+			new(cursor));
 
 		Delete(
 			cursorModifierBag,
@@ -163,7 +154,7 @@ public partial class TextEditorModel
 		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
 		var cursorModifierBag = new CursorModifierBagTextEditor(
 			Key<TextEditorViewModel>.Empty,
-			new List<TextEditorCursorModifier> { new(cursor) });
+			new(cursor));
 
 		Delete(
 			cursorModifierBag,
@@ -197,26 +188,17 @@ public partial class TextEditorModel
         CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken)
     {
-        for (int cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
+        // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
+        for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
         {
-            var cursor = cursorModifierBag.List[cursorIndex];
-
-            var singledCursorModifierBag = new CursorModifierBagTextEditor(
-                cursorModifierBag.ViewModelKey,
-                new List<TextEditorCursorModifier> { cursor });
-
-            // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
-            for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
-            {
-                HandleKeyboardEvent(
-                    new KeymapArgs
-                    {
-                        Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                        Key = KeyboardKeyFacts.MetaKeys.DELETE,
-                    },
-                    singledCursorModifierBag,
-                    CancellationToken.None);
-            }
+            HandleKeyboardEvent(
+                new KeymapArgs
+                {
+                    Code = KeyboardKeyFacts.MetaKeys.DELETE,
+                    Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                },
+                cursorModifierBag,
+                CancellationToken.None);
         }
     }
 
@@ -870,74 +852,71 @@ public partial class TextEditorModel
         CancellationToken cancellationToken = default,
 		bool shouldCreateEditHistory = true)
     {
-        for (var cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
+        var cursorModifier = cursorModifierBag.CursorModifier;
+
+        if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
         {
-            var cursorModifier = cursorModifierBag.List[cursorIndex];
+            Delete(
+				// TODO: 'cursorModifierBag' is not the correcy parameter here...
+				//       ...one needs to create a new cursor modifier bag which contains the single cursor that is being looked at. 
+                cursorModifierBag,
+                1,
+                false,
+                DeleteKind.Delete,
+                CancellationToken.None);
+        }
 
-            if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
+        {
+            // TODO: If one inserts a carriage return character,
+            //       meanwhile the text editor model happens to have a line feed character at the position
+            //       you are inserting at.
+            //       |
+            //       Then, the '\r' takes the position of the '\n', and the '\n' is shifted further
+            //       by 1 position in order to allow space the '\r'.
+            //       |
+            //       Well, now the text editor model sees its contents as "\r\n".
+            //       What is to be done in this scenario?
+            //       (2024-04-22)
+        }
+
+        // Remember the cursorPositionIndex
+        var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
+
+        // Track metadata with the cursorModifier itself
+        //
+        // Metadata must be done prior to 'InsertValue'
+        //
+        // 'value' is replaced by the original with any line endings changed (based on 'useLineEndKindPreference').
+        value = InsertMetadata(value, cursorModifier, useLineEndKindPreference, cancellationToken);
+
+        // Now the text still needs to be inserted.
+        // The cursorModifier is invalid, because the metadata step moved its position.
+        // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
+        InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
+
+		if (shouldCreateEditHistory)
+			EnsureUndoPoint(new TextEditorEditInsert(initialCursorPositionIndex, value));
+
+        // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'InsertMetadata(...)'
+        //       method because this specific metadata is being calculated by counting the characters, which
+        //       in the case of 'InsertMetadata(...)' wouldn't have been inserted yet.
+        //
+        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+        {
+            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
+
+            for (var i = 0; i < LineEndList.Count; i++)
             {
-                Delete(
-					// TODO: 'cursorModifierBag' is not the correcy parameter here...
-					//       ...one needs to create a new cursor modifier bag which contains the single cursor that is being looked at. 
-                    cursorModifierBag,
-                    1,
-                    false,
-                    DeleteKind.Delete,
-                    CancellationToken.None);
+                var lengthOfRow = this.GetLineLength(i);
+
+                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
+                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
             }
 
-            {
-                // TODO: If one inserts a carriage return character,
-                //       meanwhile the text editor model happens to have a line feed character at the position
-                //       you are inserting at.
-                //       |
-                //       Then, the '\r' takes the position of the '\n', and the '\n' is shifted further
-                //       by 1 position in order to allow space the '\r'.
-                //       |
-                //       Well, now the text editor model sees its contents as "\r\n".
-                //       What is to be done in this scenario?
-                //       (2024-04-22)
-            }
+            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
+                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-            // Remember the cursorPositionIndex
-            var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
-
-            // Track metadata with the cursorModifier itself
-            //
-            // Metadata must be done prior to 'InsertValue'
-            //
-            // 'value' is replaced by the original with any line endings changed (based on 'useLineEndKindPreference').
-            value = InsertMetadata(value, cursorModifier, useLineEndKindPreference, cancellationToken);
-
-            // Now the text still needs to be inserted.
-            // The cursorModifier is invalid, because the metadata step moved its position.
-            // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
-            InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
-
-			if (shouldCreateEditHistory)
-				EnsureUndoPoint(new TextEditorEditInsert(initialCursorPositionIndex, value));
-
-            // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'InsertMetadata(...)'
-            //       method because this specific metadata is being calculated by counting the characters, which
-            //       in the case of 'InsertMetadata(...)' wouldn't have been inserted yet.
-            //
-            // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
-            {
-                (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
-
-                for (var i = 0; i < LineEndList.Count; i++)
-                {
-                    var lengthOfRow = this.GetLineLength(i);
-
-                    if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
-                        localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
-                }
-
-                localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
-                    localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-                MostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
-            }
+            MostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
         }
 
         SetIsDirtyTrue();
@@ -1186,61 +1165,58 @@ public partial class TextEditorModel
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
 
-        for (var cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
+        var cursorModifier = cursorModifierBag.CursorModifier;
+
+		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
+
+        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
+
+        if (tuple is null)
         {
-            var cursorModifier = cursorModifierBag.List[cursorIndex];
+            SetIsDirtyTrue();
+            return;
+		}
 
-			var initialPositionIndex = this.GetPositionIndex(cursorModifier);
+        var (positionIndex, charCount) = tuple.Value;
 
-            var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
+		var textRemoved = this.GetString(positionIndex, charCount);
 
-            if (tuple is null)
+        DeleteValue(positionIndex, charCount, cancellationToken);
+
+		if (shouldCreateEditHistory)
+		{
+			if (deleteKind == DeleteKind.Delete)
+				EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount) { TextRemoved = textRemoved });
+			else if (deleteKind == DeleteKind.Backspace)
+				EnsureUndoPoint(new TextEditorEditBackspace(initialPositionIndex, charCount) { TextRemoved = textRemoved });
+			else
+				throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
+		}
+
+        // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'DeleteMetadata(...)'
+        //       method because this specific metadata is being calculated by counting the characters, which
+        //       in the case of 'DeleteMetadata(...)' wouldn't have been deleted yet.
+        //
+        // TODO: Fix tracking the MostCharactersOnASingleLineTuple this way is possibly inefficient - should instead only check the rows that changed
+        {
+            (int lineIndex, int lineLength) localMostCharactersOnASingleLineTuple = (0, 0);
+
+            for (var i = 0; i < LineEndList.Count; i++)
             {
-                SetIsDirtyTrue();
-                return;
-			}
+                var lengthOfLine = this.GetLineLength(i);
 
-            var (positionIndex, charCount) = tuple.Value;
-
-			var textRemoved = this.GetString(positionIndex, charCount);
-
-            DeleteValue(positionIndex, charCount, cancellationToken);
-
-			if (shouldCreateEditHistory)
-			{
-				if (deleteKind == DeleteKind.Delete)
-					EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount) { TextRemoved = textRemoved });
-				else if (deleteKind == DeleteKind.Backspace)
-					EnsureUndoPoint(new TextEditorEditBackspace(initialPositionIndex, charCount) { TextRemoved = textRemoved });
-				else
-					throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
-			}
-
-            // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'DeleteMetadata(...)'
-            //       method because this specific metadata is being calculated by counting the characters, which
-            //       in the case of 'DeleteMetadata(...)' wouldn't have been deleted yet.
-            //
-            // TODO: Fix tracking the MostCharactersOnASingleLineTuple this way is possibly inefficient - should instead only check the rows that changed
-            {
-                (int lineIndex, int lineLength) localMostCharactersOnASingleLineTuple = (0, 0);
-
-                for (var i = 0; i < LineEndList.Count; i++)
+                if (lengthOfLine > localMostCharactersOnASingleLineTuple.lineLength)
                 {
-                    var lengthOfLine = this.GetLineLength(i);
-
-                    if (lengthOfLine > localMostCharactersOnASingleLineTuple.lineLength)
-                    {
-                        localMostCharactersOnASingleLineTuple = (i, lengthOfLine);
-                    }
-				
+                    localMostCharactersOnASingleLineTuple = (i, lengthOfLine);
                 }
-
-                localMostCharactersOnASingleLineTuple = (
-                    localMostCharactersOnASingleLineTuple.lineIndex,
-                    localMostCharactersOnASingleLineTuple.lineLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-                MostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
+			
             }
+
+            localMostCharactersOnASingleLineTuple = (
+                localMostCharactersOnASingleLineTuple.lineIndex,
+                localMostCharactersOnASingleLineTuple.lineLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
+            MostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
         }
 
         SetIsDirtyTrue();

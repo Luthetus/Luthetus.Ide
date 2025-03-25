@@ -294,7 +294,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	        modelModifier,
 	        viewModel,
 	        cursorModifierBag,
-	        editContext.GetPrimaryCursorModifier(cursorModifierBag));
+	        cursorModifierBag.CursorModifier);
 
         viewModel.ShouldRevealCursor = true;
     }
@@ -633,7 +633,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	        editContext,
         	viewModel,
         	cursorModifierBag,
-        	editContext.GetPrimaryCursorModifier(cursorModifierBag));
+        	cursorModifierBag.CursorModifier);
     }
 
     public void CursorMovePageTopUnsafe(
@@ -662,7 +662,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         	modelModifier,
         	viewModel,
         	cursorModifierBag,
-        	editContext.GetPrimaryCursorModifier(cursorModifierBag));
+        	cursorModifierBag.CursorModifier);
     }
 
     public void CursorMovePageBottomUnsafe(
@@ -1075,7 +1075,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			 */
 			
 			var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
-			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+			var primaryCursorModifier = cursorModifierBag.CursorModifier;
 			
 			if (primaryCursorModifier is not null)
 			{

@@ -35,7 +35,7 @@ public struct OnMouseDown
         var modelModifier = editContext.GetModelModifier(ResourceUri, true);
         var viewModel = editContext.GetViewModelModifier(ViewModelKey);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
-        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
         if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;

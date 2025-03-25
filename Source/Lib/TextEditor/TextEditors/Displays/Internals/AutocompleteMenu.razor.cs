@@ -276,7 +276,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+                var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
                 if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
                     return ValueTask.CompletedTask;

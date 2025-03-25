@@ -344,7 +344,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-            	var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+            	var primaryCursor = cursorModifierBag.CursorModifier;
             
                 return TextEditorCommandDefaultFunctions.ShowFindOverlay(
 			        editContext,

@@ -79,7 +79,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
 				var cursorModifierBag = new CursorModifierBagTextEditor(
 					Key<TextEditorViewModel>.Empty,
-					new List<TextEditorCursorModifier> { new(cursor) });
+					new(cursor));
 
 				TextEditorService.ModelApi.InsertTextUnsafe(
 					editContext,

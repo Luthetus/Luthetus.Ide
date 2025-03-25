@@ -387,7 +387,7 @@ public class CommandFactory : ICommandFactory
 						
 						var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
 			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-			            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+			            var primaryCursorModifier = cursorModifierBag.CursorModifier;
 			
 			            if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 			                return ValueTask.CompletedTask;
