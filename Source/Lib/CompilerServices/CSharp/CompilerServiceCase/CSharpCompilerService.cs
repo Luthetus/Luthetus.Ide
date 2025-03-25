@@ -180,7 +180,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-		var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		var primaryCursorModifier = cursorModifierBag.CursorModifier;
 		var compilerService = modelModifier.CompilerService;
 	
 		var compilerServiceResource = viewModelModifier is null
@@ -364,7 +364,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         TextEditorViewModel viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+    	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	
         var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
@@ -854,15 +854,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            	
 	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
 
-	            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(
-	            	editContext.GetCursorModifierBag(viewModelModifier));
+	            var primaryCursorModifier = editContext.GetCursorModifierBag(viewModelModifier).CursorModifier;
 	            
 	            if (viewModelModifier is null || primaryCursorModifier is null)
 	            	return ValueTask.CompletedTask;
 	
 	            var cursorModifierBag = new CursorModifierBagTextEditor(
                     Key<TextEditorViewModel>.Empty,
-	                new List<TextEditorCursorModifier> { primaryCursorModifier });
+	                primaryCursorModifier);
 	                
 	            var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 	            var behindPositionIndex = cursorPositionIndex - 1;
@@ -882,7 +881,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            	modelModifier.Delete(
 				        new CursorModifierBagTextEditor(
                             Key<TextEditorViewModel>.Empty,
-			                new List<TextEditorCursorModifier> { new(behindCursor) }),
+			                new(behindCursor)),
 				        1,
 				        expandWord: false,
                         TextEditorModel.DeleteKind.Delete);

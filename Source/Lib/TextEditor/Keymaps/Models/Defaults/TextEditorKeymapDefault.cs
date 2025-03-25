@@ -49,7 +49,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
         var modelModifier = editContext.GetModelModifier(onKeyDown.ResourceUri);
         var viewModel = editContext.GetViewModelModifier(onKeyDown.ViewModelKey);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
-        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
         if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;

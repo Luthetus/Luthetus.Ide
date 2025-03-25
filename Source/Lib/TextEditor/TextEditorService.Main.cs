@@ -225,11 +225,7 @@ public partial class TextEditorService : ITextEditorService
 	        }
 
             if (successCursorModifierBag && cursorModifierBag.ConstructorWasInvoked)
-            {
-                viewModelModifier.CursorList = cursorModifierBag.List
-	                .Select(x => x.ToCursor())
-					.ToList();
-            }
+                viewModelModifier.PrimaryCursor = cursorModifierBag.CursorModifier.ToCursor();
             
             if (viewModelModifier.ShouldRevealCursor)
             {
@@ -238,7 +234,7 @@ public partial class TextEditorService : ITextEditorService
             	if (!cursorModifierBag.ConstructorWasInvoked)
             		cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             	
-            	var cursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+            	var cursorModifier = cursorModifierBag.CursorModifier;
             	
             	if (modelModifier is not null)
             	{
@@ -516,7 +512,7 @@ public partial class TextEditorService : ITextEditorService
 				var modelModifier = editContext.GetModelModifier(resourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+				var primaryCursorModifier = cursorModifierBag.CursorModifier;
 		
 				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 					return ValueTask.CompletedTask;
@@ -572,7 +568,7 @@ public partial class TextEditorService : ITextEditorService
 				var modelModifier = editContext.GetModelModifier(resourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+				var primaryCursorModifier = cursorModifierBag.CursorModifier;
 		
 				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 					return ValueTask.CompletedTask;

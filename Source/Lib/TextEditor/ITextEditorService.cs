@@ -69,15 +69,6 @@ public partial interface ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public List<TextEditorCursorModifier> __CursorModifierList { get; }
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-	public bool __IsAvailableCursorModifierList { get; set; }
-	
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
 	public TextEditorCursorModifier __CursorModifier { get; }
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
