@@ -97,7 +97,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
 	            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 	            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-	            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+	            var primaryCursorModifier = cursorModifierBag.CursorModifier;
 	
 	            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 	                return ValueTask.CompletedTask;

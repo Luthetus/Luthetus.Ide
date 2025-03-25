@@ -55,12 +55,7 @@ public sealed class TextEditorViewModel : IDisposable
         ShowCommandBar = displayCommandBar;
         Category = category;
 
-        var primaryCursor = new TextEditorCursor(true);
-
-        CursorList = new List<TextEditorCursor>()
-        {
-            primaryCursor
-        };
+        PrimaryCursor = new TextEditorCursor(true);
 
         DisplayTracker = new(
             textEditorService,
@@ -77,12 +72,7 @@ public sealed class TextEditorViewModel : IDisposable
 	
 	public TextEditorViewModel(TextEditorViewModel other)
 	{
-		/*
-		// Don't copy this?
-		PrimaryCursor;
-		*/
-		
-	    CursorList = other.CursorList;
+	    PrimaryCursor = other.PrimaryCursor;
 	    DisplayTracker = other.DisplayTracker;
 	    ViewModelKey = other.ViewModelKey;
 	    ResourceUri = other.ResourceUri;
@@ -116,14 +106,7 @@ public sealed class TextEditorViewModel : IDisposable
 	    */
 	}
 
-    /// <summary>
-    /// The first entry of <see cref="CursorList"/> should be the PrimaryCursor
-    /// </summary>
-    public TextEditorCursor PrimaryCursor => CursorList.First();
-    /// <summary>
-    /// The first entry of <see cref="CursorList"/> should be the PrimaryCursor
-    /// </summary>
-    public List<TextEditorCursor> CursorList { get; set; }
+    public TextEditorCursor PrimaryCursor { get; set; }
     /// <summary>
     /// This tracks which view models are actively rendered from Blazor's perspective. Thus, using this allows lazy recalculation
     /// of view model state when an underlying model changes.

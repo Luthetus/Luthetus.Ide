@@ -425,7 +425,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 				var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
 				
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-        		var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        		var primaryCursor = cursorModifierBag.CursorModifier;
 
 				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursor is null)
 					return ValueTask.CompletedTask;
@@ -566,7 +566,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 							var modelModifier = editContext.GetModelModifier(resourceUri);
 			                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 			                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-			                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+			                var primaryCursorModifier = cursorModifierBag.CursorModifier;
 			
 			                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 			                    return ValueTask.CompletedTask;

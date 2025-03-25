@@ -57,7 +57,7 @@ public partial class CommandBarDisplay : ComponentBase
                 	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
 		            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		            var primaryCursorModifier = cursorModifierBag.CursorModifier;
 		
 		            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 		                return ValueTask.CompletedTask;
@@ -77,7 +77,7 @@ public partial class CommandBarDisplay : ComponentBase
                 	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
 		            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		            var primaryCursorModifier = cursorModifierBag.CursorModifier;
 		
 		            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 		                return ValueTask.CompletedTask;

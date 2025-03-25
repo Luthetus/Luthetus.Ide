@@ -124,7 +124,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 					var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 					var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
 					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+					var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
 					if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 						return ValueTask.CompletedTask;
