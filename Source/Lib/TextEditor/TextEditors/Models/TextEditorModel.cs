@@ -1551,6 +1551,7 @@ public partial class TextEditorModel
 		MostCharactersOnASingleLineTuple = modifier.MostCharactersOnASingleLineTuple;
 		EditBlockList = modifier.EditBlockList;
 		EditBlockIndex = modifier.EditBlockIndex;
+		ViewModelKeyList = modifier.ViewModelKeyList;
 	}
 
 	public TextEditorModel(
@@ -1574,7 +1575,8 @@ public partial class TextEditorModel
 		int editBlockIndex,
         bool isDirty,
         (int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
-		Key<RenderState>  renderStateKey)
+		Key<RenderState>  renderStateKey,
+		List<Key<TextEditorViewModel>> viewModelKeyList)
 	{
 		__AllText = allText;
         RichCharacterList = richCharacterList;
@@ -1597,6 +1599,7 @@ public partial class TextEditorModel
         IsDirty = isDirty;
 		MostCharactersOnASingleLineTuple = mostCharactersOnASingleRowTuple;
 		RenderStateKey = renderStateKey;
+		ViewModelKeyList = viewModelKeyList;
 	}
 	#endregion
 	

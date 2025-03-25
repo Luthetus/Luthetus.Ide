@@ -60,12 +60,17 @@ public static class OutputTextSpanHelper
 		if (columnIndex < 0)
 			columnIndex = null;
 		
-		return textEditorService.OpenInEditorAsync(
-			treeViewDiagnosticLine.Item.FilePathTextSpan.Text,
-			shouldSetFocusToEditor,
-			lineIndex,
-			columnIndex,
-			category,
-			Key<TextEditorViewModel>.NewKey());
+		textEditorService.TextEditorWorker.PostUnique(nameof(OutputTextSpanHelper), async editContext =>
+		{
+			await textEditorService.OpenInEditorAsync(
+				editContext,
+				treeViewDiagnosticLine.Item.FilePathTextSpan.Text,
+				shouldSetFocusToEditor,
+				lineIndex,
+				columnIndex,
+				category,
+				Key<TextEditorViewModel>.NewKey());
+		});
+		return Task.CompletedTask;
 	}
 }

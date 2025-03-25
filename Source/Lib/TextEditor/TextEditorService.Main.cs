@@ -184,12 +184,10 @@ public partial class TextEditorService : ITextEditorService
             if (modelModifier is null || !modelModifier.WasModified)
                 continue;
 
-            var viewModelBag = editContext.TextEditorService.ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
-
-            foreach (var viewModel in viewModelBag)
+            foreach (var viewModelKey in modelModifier.ViewModelKeyList)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
-                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
 				if (!viewModelModifier.ShouldReloadVirtualizationResult)
 					viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
@@ -489,6 +487,7 @@ public partial class TextEditorService : ITextEditorService
 	}
 	
 	public async Task OpenInEditorAsync(
+		TextEditorEditContext editContext,
 		string absolutePath,
 		bool shouldSetFocusToEditor,
 		int? cursorPositionIndex,
@@ -499,6 +498,7 @@ public partial class TextEditorService : ITextEditorService
 		{
 			var resourceUri = new ResourceUri(absolutePath);
 			var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
+				editContext,
 				resourceUri,
 				shouldSetFocusToEditor,
 				category,
@@ -535,6 +535,7 @@ public partial class TextEditorService : ITextEditorService
 	}
 	
 	public async Task OpenInEditorAsync(
+		TextEditorEditContext editContext,
 		string absolutePath,
 		bool shouldSetFocusToEditor,
 		int? lineIndex,
@@ -555,6 +556,7 @@ public partial class TextEditorService : ITextEditorService
 			var resourceUri = new ResourceUri(standardizedFilePathString);
 
 			var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
+				editContext,
 				resourceUri,
 				shouldSetFocusToEditor,
 				category,
@@ -604,6 +606,7 @@ public partial class TextEditorService : ITextEditorService
 	/// Returns the ViewModel's key (non Key<TextEditorViewModel>.Empty value) if it successfully opened in editor.
 	/// </summary>
 	private async Task<Key<TextEditorViewModel>> CommonLogic_OpenInEditorAsync(
+		TextEditorEditContext editContext,
 		ResourceUri resourceUri,
 		bool shouldSetFocusToEditor,
 		Category category,
@@ -612,19 +615,23 @@ public partial class TextEditorService : ITextEditorService
 		// RegisterModelFunc
 		if (TextEditorConfig.RegisterModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
-		await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(resourceUri, _serviceProvider)).ConfigureAwait(false);
+		await TextEditorConfig.RegisterModelFunc
+			.Invoke(new RegisterModelArgs(editContext, resourceUri, _serviceProvider))
+			.ConfigureAwait(false);
 	
 		// TryRegisterViewModelFunc
 		if (TextEditorConfig.TryRegisterViewModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
-		var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-			preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
+		var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc
+			.Invoke(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, _serviceProvider))
+			.ConfigureAwait(false);
 	
 		// TryShowViewModelFunc
 		if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
-		await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-			actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
+		await TextEditorConfig.TryShowViewModelFunc
+			.Invoke(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, _serviceProvider))
+			.ConfigureAwait(false);
 		
 		return actualViewModelKey;
 	}

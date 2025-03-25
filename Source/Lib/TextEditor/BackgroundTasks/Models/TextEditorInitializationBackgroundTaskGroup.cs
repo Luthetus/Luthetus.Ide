@@ -108,12 +108,17 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                                     MenuOptionKind.Other,
                                     onClickFunc: () =>
                                     {
-                                        return _textEditorService.OpenInEditorAsync(
-                                            absolutePath.Value,
-                                            true,
-                                            cursorPositionIndex: null,
-                                            new Category("main"),
-                                            viewModel.ViewModelKey);
+                                    	_textEditorService.TextEditorWorker.PostUnique(nameof(TextEditorInitializationBackgroundTaskGroup), async editContext =>
+                                    	{
+                                    		await _textEditorService.OpenInEditorAsync(
+                                    			editContext,
+	                                            absolutePath.Value,
+	                                            true,
+	                                            cursorPositionIndex: null,
+	                                            new Category("main"),
+	                                            viewModel.ViewModelKey);
+                                    	});
+                                    	return Task.CompletedTask;
                                     }));
                             }
                         }

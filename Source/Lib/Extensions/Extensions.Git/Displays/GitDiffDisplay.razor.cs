@@ -188,7 +188,7 @@ public partial class GitDiffDisplay : ComponentBase
 			var originalModel = TextEditorService.ModelApi.GetOrDefault(originalResourceUri);
 			if (originalModel is null)
 			{
-				var registerModelArgs = new RegisterModelArgs(originalResourceUri, ServiceProvider);
+				var registerModelArgs = new RegisterModelArgs(editContext, originalResourceUri, ServiceProvider);
 	
 				await TextEditorService.TextEditorConfig.RegisterModelFunc
 					.Invoke(registerModelArgs).ConfigureAwait(false);

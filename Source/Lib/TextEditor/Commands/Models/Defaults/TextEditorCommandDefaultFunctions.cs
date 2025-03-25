@@ -796,12 +796,19 @@ public class TextEditorCommandDefaultFunctions
 			menuOptionList.Add(new MenuOptionRecord(
 				siblingAbsolutePath.NameWithExtension,
 				MenuOptionKind.Other,
-				onClickFunc: async () => textEditorService.OpenInEditorAsync(
-					file,
-					true,
-					null,
-					new Category("main"),
-					Key<TextEditorViewModel>.NewKey())));
+				onClickFunc: async () => 
+				{
+					textEditorService.TextEditorWorker.PostUnique(nameof(TextEditorCommandDefaultFunctions), async editContext =>
+			    	{
+			    		await textEditorService.OpenInEditorAsync(
+			    			editContext,
+			                file,
+							true,
+							null,
+							new Category("main"),
+							Key<TextEditorViewModel>.NewKey());
+			    	});
+				}));
 					
 			if (siblingAbsolutePath.NameWithExtension == resourceAbsolutePath.NameWithExtension)
 				initialActiveMenuOptionRecordIndex = i;

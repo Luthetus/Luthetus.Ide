@@ -105,6 +105,7 @@ public partial interface ITextEditorService
 	public ValueTask FinalizePost(TextEditorEditContext editContext);
 	
 	public Task OpenInEditorAsync(
+		TextEditorEditContext editContext,
 		string absolutePath,
 		bool shouldSetFocusToEditor,
 		int? cursorPositionIndex,
@@ -112,6 +113,7 @@ public partial interface ITextEditorService
 		Key<TextEditorViewModel> preferredViewModelKey);
 		
 	public Task OpenInEditorAsync(
+		TextEditorEditContext editContext,
 		string absolutePath,
 		bool shouldSetFocusToEditor,
 		int? lineIndex,

@@ -21,7 +21,12 @@ public struct TextEditorEditContext
     {
     	if (modelResourceUri == ResourceUri.Empty)
     		return null;
-    
+
+        if (TextEditorService is null)
+            Console.WriteLine("TextEditorService is null");
+        if (TextEditorService.__ModelCache is null)
+            Console.WriteLine("TextEditorService.__ModelCache is null");
+
         if (!TextEditorService.__ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
         {
             var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
