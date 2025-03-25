@@ -188,7 +188,11 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
                 if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty &&
                     inPreviewViewModelKey != viewModelKey)
 				{
-                    TextEditorService.ViewModelApi.Dispose(inPreviewViewModelKey);
+					TextEditorService.TextEditorWorker.PostUnique(nameof(CodeSearchDisplay), editContext =>
+					{
+						TextEditorService.ViewModelApi.Dispose(editContext, inPreviewViewModelKey);
+						return ValueTask.CompletedTask;
+					});
 				}
             }
         }

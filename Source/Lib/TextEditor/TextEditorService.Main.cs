@@ -81,7 +81,7 @@ public partial class TextEditorService : ITextEditorService
 		AutocompleteService = autocompleteService;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _dialogService);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _dialogService, _panelService);
         GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _commonBackgroundTaskApi);
         DiffApi = new TextEditorDiffApi(this);
         OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi);
@@ -630,47 +630,42 @@ public partial class TextEditorService : ITextEditorService
 	}
 	
 	// Move TextEditorState.Reducer.cs here
-	public void RegisterModel(TextEditorModel model)
+	public void RegisterModel(TextEditorEditContext editContext, TextEditorModel model)
 	{
-		lock (_stateModificationLock)
-		{
-			var inState = TextEditorState;
+	    var inState = TextEditorState;
 	
-			var exists = inState._modelMap.TryGetValue(
-				model.ResourceUri, out var inModel);
-		
-			if (exists)
-                goto finalize;
-		
-			inState._modelMap.Add(model.ResourceUri, model);
-		
-			goto finalize;
-        }
+	    var exists = inState._modelMap.TryGetValue(
+	        model.ResourceUri,
+	        out _);
+	
+	    if (exists)
+	        return;
+	
+	    inState._modelMap.Add(model.ResourceUri, model);
+	
+	    TextEditorStateChanged?.Invoke();
+	}
 
-		finalize:
-        TextEditorStateChanged?.Invoke();
-    }
-
-	public void DisposeModel(ResourceUri resourceUri)
+	public void DisposeModel(TextEditorEditContext editContext, ResourceUri resourceUri)
 	{
-		lock (_stateModificationLock)
-		{
-			var inState = TextEditorState;
-
-			var exists = inState._modelMap.TryGetValue(
-				resourceUri, out var inModel);
-
-			if (!exists)
-                goto finalize;
-
-			inState._modelMap.Remove(resourceUri);
-
-            goto finalize;
-        }
-
-        finalize:
-        TextEditorStateChanged?.Invoke();
-    }
+	    var inState = TextEditorState;
+	
+	    var exists = inState._modelMap.TryGetValue(
+	        resourceUri,
+	        out var model);
+	
+	    if (!exists)
+	        return;
+	        
+	    foreach (var viewModelKey in model.ViewModelKeyList)
+	    {
+	        DisposeViewModel(editContext, viewModelKey);
+	    }
+	
+	    inState._modelMap.Remove(resourceUri);
+	
+	    TextEditorStateChanged?.Invoke();
+	}
 	
 	public void SetModel(
 	    TextEditorEditContext editContext,
@@ -695,135 +690,48 @@ public partial class TextEditorService : ITextEditorService
         TextEditorStateChanged?.Invoke();
     }
 	
-	public void RegisterViewModel(
-	    Key<TextEditorViewModel> viewModelKey,
-	    ResourceUri resourceUri,
-	    Category category,
-	    ITextEditorService textEditorService,
-	    IDialogService dialogService)
+	public void RegisterViewModel(TextEditorEditContext editContext, TextEditorViewModel viewModel)
 	{
-		// The category and ViewModelKey do NOT need to be a compound unique identifier
-		// Only check for the 'ViewModelKey' already existing.
-		//
-		// Category is just a way to filter a list of view models.
-		//
-		// TODO: What is the difference between Category and Group? I'm asking this to myself. If their redundant then get rid of one. Otherwise...
-		//       ...write down the justification for both existing before you forget again.
-		//
-		// I think I made both Category and Group because:
-		// Category describes relationships between view models
-		//
-		// Group is solely meant to provide tab UI.
-		// 	- One can put a view model of any category into a group.
-		// 	- Or one could add dropzone logic that validates the category of a 'being dragged view model'
-		//     	  to ensure it belongs in that group.
-
-		lock (_stateModificationLock)
-		{
-			var inState = TextEditorState;
-
-			var inViewModel = inState.ViewModelGetOrDefault(viewModelKey);
-
-			if (inViewModel is not null)
-                goto finalize;
-
-			if (viewModelKey == Key<TextEditorViewModel>.Empty)
-				throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
-
-			var viewModel = new TextEditorViewModel(
-				viewModelKey,
-				resourceUri,
-				textEditorService,
-				_panelService,
-				dialogService,
-				_commonBackgroundTaskApi,
-				VirtualizationGrid.Empty,
-				new TextEditorDimensions(0, 0, 0, 0),
-				new ScrollbarDimensions(0, 0, 0, 0, 0),
-				new CharAndLineMeasurements(0, 0),
-				false,
-				category);
-
-			inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
-
-            goto finalize;
-        }
-
-        finalize:
-        TextEditorStateChanged?.Invoke();
-    }
+	    var inState = TextEditorState;
 	
-	public void RegisterViewModelExisting(
-	    TextEditorViewModel viewModel)
-	{
-		lock (_stateModificationLock)
-		{
-			var inState = TextEditorState;
-
-			var inViewModel = inState.ViewModelGetOrDefault(viewModel.ViewModelKey);
-
-			if (inViewModel is not null)
-                goto finalize;
-
-			if (viewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
-				throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
-
-			inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
-
-            goto finalize;
-        }
-
-        finalize:
-        TextEditorStateChanged?.Invoke();
-    }
+	    var modelExisting = inState._modelMap.TryGetValue(
+	        viewModel.ResourceUri,
+	        out var model);
 	
-	public void DisposeViewModel(
-	    Key<TextEditorViewModel> viewModelKey)
-	{
-		lock (_stateModificationLock)
-		{
-			var inState = TextEditorState;
-
-			var inViewModel = inState.ViewModelGetOrDefault(
-				viewModelKey);
-
-			if (inViewModel is null)
-                goto finalize;
-
-			inState._viewModelMap.Remove(inViewModel.ViewModelKey);
-			inViewModel.Dispose();
-
-            goto finalize;
-        }
-
-        finalize:
-        TextEditorStateChanged?.Invoke();
-    }
+	    if (!modelExisting)
+	        return;
 	
-	public void SetViewModelWith(
-	    TextEditorEditContext editContext,
-	    Key<TextEditorViewModel> viewModelKey,
-	    Func<TextEditorViewModel, TextEditorViewModel> withFunc)
+	    if (viewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
+	        throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
+	
+	    var viewModelExisting = inState.ViewModelGetOrDefault(viewModel.ViewModelKey);
+	    if (viewModelExisting is not null)
+	        return;
+	
+	    model.ViewModelKeyList.Add(viewModel.ViewModelKey);
+	
+	    inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
+	
+	    TextEditorStateChanged?.Invoke();
+	}
+	
+	public void DisposeViewModel(TextEditorEditContext editContext, Key<TextEditorViewModel> viewModelKey)
 	{
-		lock (_stateModificationLock)
-		{
-			var inState = TextEditorState;
-
-			var inViewModel = inState.ViewModelGetOrDefault(
-				viewModelKey);
-
-			if (inViewModel is null)
-                goto finalize;
-
-			var outViewModel = withFunc.Invoke(inViewModel);
-			inState._viewModelMap[inViewModel.ViewModelKey] = outViewModel;
-
-            goto finalize;
-        }
-
-        finalize:
-        TextEditorStateChanged?.Invoke();
-    }
+	    var inState = TextEditorState;
+	    
+	    var viewModel = inState.ViewModelGetOrDefault(viewModelKey);
+	    if (viewModel is null)
+	        return;
+	    
+	    inState._viewModelMap.Remove(viewModel.ViewModelKey);
+	    viewModel.Dispose();
+	
+	    var model = inState.ModelGetOrDefault(viewModel.ResourceUri);
+	    if (model is not null)
+	        model.ViewModelKeyList.Remove(viewModel.ViewModelKey);
+	    
+	    TextEditorStateChanged?.Invoke();
+	}
 	
 	public void SetModelAndViewModelRange(
 	    TextEditorEditContext editContext,

@@ -10,11 +10,12 @@ public interface ITextEditorViewModelApi
 {
     #region CREATE_METHODS
     public void Register(
+    	TextEditorEditContext editContext,
         Key<TextEditorViewModel> textEditorViewModelKey,
         ResourceUri resourceUri,
         Category category);
         
-    public void Register(TextEditorViewModel viewModel);
+    public void Register(TextEditorEditContext editContext, TextEditorViewModel viewModel);
     #endregion
 
     #region READ_METHODS
@@ -170,7 +171,7 @@ public interface ITextEditorViewModelApi
     #endregion
 
     #region DELETE_METHODS
-    public void Dispose(Key<TextEditorViewModel> viewModelKey);
+    public void Dispose(TextEditorEditContext editContext, Key<TextEditorViewModel> viewModelKey);
     #endregion
     
     public bool CursorShouldBlink { get; }

@@ -2672,6 +2672,7 @@ public partial class TextEditorModel
     }
 
     public List<ITextEditorEdit> EditBlockList { get; set; } = new();
+    public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; } = new();
     public List<LineEnd> LineEndList { get; set; } = new();
     public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; } = new();
     public List<TextEditorPresentationModel> PresentationModelList { get; set; } = new();

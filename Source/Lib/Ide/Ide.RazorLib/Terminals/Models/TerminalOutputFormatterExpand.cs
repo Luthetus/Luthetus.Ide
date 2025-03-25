@@ -109,51 +109,56 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	private void CreateTextEditor()
     {
-    	var model = new TextEditorModel(
-            TextEditorModelResourceUri,
-            DateTime.UtcNow,
-            "terminal",
-            string.Empty,
-            new TerminalDecorationMapper(),
-            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
-            
-        var modelModifier = new TextEditorModel(model);
-        modelModifier.PerformRegisterPresentationModelAction(TerminalPresentationFacts.EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
-        
-        model = modelModifier;
-
-        _textEditorService.ModelApi.RegisterCustom(model);
-        
-		model.CompilerService.RegisterResource(
-			model.ResourceUri,
-			shouldTriggerResourceWasModified: true);
-			
-        var viewModel = new TextEditorViewModel(
-            TextEditorViewModelKey,
-            TextEditorModelResourceUri,
-            _textEditorService,
-            _panelService,
-            _dialogService,
-            _commonBackgroundTaskApi,
-            VirtualizationGrid.Empty,
-			new TextEditorDimensions(0, 0, 0, 0),
-			new ScrollbarDimensions(0, 0, 0, 0, 0),
-    		new CharAndLineMeasurements(0, 0),
-            false,
-            new Category("terminal"));
-
-        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>()
-        {
-            TerminalPresentationFacts.PresentationKey,
-            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-            FindOverlayPresentationFacts.PresentationKey,
-        };
-            
-        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
-        
-        _textEditorService.ViewModelApi.Register(viewModel);
+    	_textEditorService.TextEditorWorker.PostUnique(nameof(TerminalOutputFormatterExpand), editContext =>
+    	{
+    		var model = new TextEditorModel(
+	            TextEditorModelResourceUri,
+	            DateTime.UtcNow,
+	            "terminal",
+	            string.Empty,
+	            new TerminalDecorationMapper(),
+	            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
+	            
+	        var modelModifier = new TextEditorModel(model);
+	        modelModifier.PerformRegisterPresentationModelAction(TerminalPresentationFacts.EmptyPresentationModel);
+	        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+	        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
+	        
+	        model = modelModifier;
+	
+	        _textEditorService.ModelApi.RegisterCustom(editContext, model);
+	        
+			model.CompilerService.RegisterResource(
+				model.ResourceUri,
+				shouldTriggerResourceWasModified: true);
+				
+	        var viewModel = new TextEditorViewModel(
+	            TextEditorViewModelKey,
+	            TextEditorModelResourceUri,
+	            _textEditorService,
+	            _panelService,
+	            _dialogService,
+	            _commonBackgroundTaskApi,
+	            VirtualizationGrid.Empty,
+				new TextEditorDimensions(0, 0, 0, 0),
+				new ScrollbarDimensions(0, 0, 0, 0, 0),
+	    		new CharAndLineMeasurements(0, 0),
+	            false,
+	            new Category("terminal"));
+	
+	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>()
+	        {
+	            TerminalPresentationFacts.PresentationKey,
+	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+	            FindOverlayPresentationFacts.PresentationKey,
+	        };
+	            
+	        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+	        
+	        _textEditorService.ViewModelApi.Register(editContext, viewModel);
+	        
+	        return ValueTask.CompletedTask;
+    	});
     }
     
     public void Dispose()
