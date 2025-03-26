@@ -81,7 +81,7 @@ public partial class TextEditorService : ITextEditorService
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _dialogService, _panelService);
         GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _commonBackgroundTaskApi);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, _commonBackgroundTaskApi);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, themeService, _commonBackgroundTaskApi);
         
         TextEditorState = new();
     }
@@ -102,10 +102,7 @@ public partial class TextEditorService : ITextEditorService
     public string StorageKey => "luth_te_text-editor-options";
 #endif
 
-    public string ThemeCssClassString => ThemeService.GetThemeState().ThemeList.FirstOrDefault(
-        x => x.Key == OptionsApi.GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
-        ?.CssClassString
-            ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
+    public string ThemeCssClassString { get; set; }
 
     public ITextEditorModelApi ModelApi { get; }
     public ITextEditorViewModelApi ViewModelApi { get; }

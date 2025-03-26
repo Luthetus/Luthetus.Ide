@@ -21,6 +21,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private readonly IStorageService _storageService;
     private readonly IDialogService _dialogService;
     private readonly IContextService _contextService;
+    private readonly IThemeService _themeService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorOptionsApi(
@@ -29,6 +30,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         IStorageService storageService,
         IDialogService dialogService,
         IContextService contextService,
+        IThemeService themeService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         _textEditorService = textEditorService;
@@ -36,6 +38,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         _storageService = storageService;
         _dialogService = dialogService;
         _contextService = contextService;
+        _themeService = themeService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
     
@@ -99,6 +102,17 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
+        
+        // I'm optimizing all the expression bound properties that construct
+		// a string, and specifically the ones that are rendered in the UI many times.
+		//
+		// Can probably use 'theme' variable here but
+		// I don't want to touch that right now -- incase there are unexpected consequences.
+        var usingTheme = _themeService.GetThemeState().ThemeList
+        	.FirstOrDefault(x => x.Key == GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
+        	?.CssClassString
+            ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
+        
         TextEditorOptionsStateChanged?.Invoke();
 
         if (updateStorage)
