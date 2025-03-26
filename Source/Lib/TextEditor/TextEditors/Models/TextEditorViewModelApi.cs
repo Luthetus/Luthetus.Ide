@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
@@ -19,6 +20,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     private readonly ITextEditorService _textEditorService;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDialogService _dialogService;
+    private readonly IPanelService _panelService;
 
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
@@ -26,12 +28,14 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IPanelService panelService)
     {
         _textEditorService = textEditorService;
         _backgroundTaskService = backgroundTaskService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dialogService = dialogService;
+        _panelService = panelService;
     }
     
     private Task _cursorShouldBlinkTask = Task.CompletedTask;
@@ -91,21 +95,31 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     #region CREATE_METHODS
     public void Register(
+    	TextEditorEditContext editContext,
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         Category category)
     {
-    	_textEditorService.RegisterViewModel(
-    		viewModelKey,
-            resourceUri,
-            category,
-            _textEditorService,
-            _dialogService);
+	    var viewModel = new TextEditorViewModel(
+			viewModelKey,
+			resourceUri,
+			_textEditorService,
+			_panelService,
+			_dialogService,
+			_commonBackgroundTaskApi,
+			VirtualizationGrid.Empty,
+			new TextEditorDimensions(0, 0, 0, 0),
+			new ScrollbarDimensions(0, 0, 0, 0, 0),
+			new CharAndLineMeasurements(0, 0),
+			false,
+			category);
+			
+		_textEditorService.RegisterViewModel(editContext, viewModel);
     }
     
-    public void Register(TextEditorViewModel viewModel)
+    public void Register(TextEditorEditContext editContext, TextEditorViewModel viewModel)
     {
-        _textEditorService.RegisterViewModelExisting(viewModel);
+        _textEditorService.RegisterViewModel(editContext, viewModel);
     }
     #endregion
 
@@ -1134,9 +1148,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     #endregion
 
     #region DELETE_METHODS
-    public void Dispose(Key<TextEditorViewModel> viewModelKey)
+    public void Dispose(TextEditorEditContext editContext, Key<TextEditorViewModel> viewModelKey)
     {
-        _textEditorService.DisposeViewModel(viewModelKey);
+        _textEditorService.DisposeViewModel(editContext, viewModelKey);
     }
     #endregion
 }

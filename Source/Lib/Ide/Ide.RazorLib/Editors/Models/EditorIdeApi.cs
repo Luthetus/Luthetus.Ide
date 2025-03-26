@@ -93,12 +93,17 @@ public class EditorIdeApi : IBackgroundTaskGroup
             "TextEditor",
             absolutePath =>
             {
-                return _textEditorService.OpenInEditorAsync(
-					absolutePath.Value,
-					true,
-					null,
-					new Category("main"),
-					Key<TextEditorViewModel>.NewKey());
+            	_textEditorService.TextEditorWorker.PostUnique(nameof(EditorIdeApi), async editContext =>
+				{
+					await _textEditorService.OpenInEditorAsync(
+						editContext,
+						absolutePath.Value,
+						true,
+						null,
+						new Category("main"),
+						Key<TextEditorViewModel>.NewKey());
+				});
+				return Task.CompletedTask;
             },
             absolutePath =>
             {
@@ -134,168 +139,148 @@ public class EditorIdeApi : IBackgroundTaskGroup
     public async Task RegisterModelFunc(RegisterModelArgs registerModelArgs)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(registerModelArgs.ResourceUri);
+        
+        if (model is not null)
+        {
+        	await CheckIfContentsWereModifiedAsync(
+	                registerModelArgs.ResourceUri.Value,
+	                model)
+	            .ConfigureAwait(false);
+	        return;
+        }
+			
+    	var resourceUri = registerModelArgs.ResourceUri;
+
+        var fileLastWriteTime = await _fileSystemProvider.File
+            .GetLastWriteTimeAsync(resourceUri.Value)
+            .ConfigureAwait(false);
+
+        var content = await _fileSystemProvider.File
+            .ReadAllTextAsync(resourceUri.Value)
+            .ConfigureAwait(false);
+
+        var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+        var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+        var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
+
+        model = new TextEditorModel(
+            resourceUri,
+            fileLastWriteTime,
+            absolutePath.ExtensionNoPeriod,
+            content,
+            decorationMapper,
+            compilerService);
+            
+        var modelModifier = new TextEditorModel(model);
+        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyOutPresentationModel);
+        
+        model = modelModifier;
+
+        _textEditorService.ModelApi.RegisterCustom(registerModelArgs.EditContext, model);
+        
+		model.CompilerService.RegisterResource(
+			model.ResourceUri,
+			shouldTriggerResourceWasModified: false);
+    	
+		modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
+
+		if (modelModifier is null)
+			return;
+
+		await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
+    }
+
+    public async Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
+    {
+    	var viewModelKey = Key<TextEditorViewModel>.NewKey();
+    	
+		var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
 
         if (model is null)
         {
-            var resourceUri = registerModelArgs.ResourceUri;
-
-            var fileLastWriteTime = await _fileSystemProvider.File
-                .GetLastWriteTimeAsync(resourceUri.Value)
-                .ConfigureAwait(false);
-
-            var content = await _fileSystemProvider.File
-                .ReadAllTextAsync(resourceUri.Value)
-                .ConfigureAwait(false);
-
-            var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
-            var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-            var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
-
-            model = new TextEditorModel(
-                resourceUri,
-                fileLastWriteTime,
-                absolutePath.ExtensionNoPeriod,
-                content,
-                decorationMapper,
-                compilerService);
-                
-            var modelModifier = new TextEditorModel(model);
-            modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-            modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
-            modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
-            modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyOutPresentationModel);
-            
-            model = modelModifier;
-
-            _textEditorService.ModelApi.RegisterCustom(model);
-            
-			model.CompilerService.RegisterResource(
-				model.ResourceUri,
-				shouldTriggerResourceWasModified: false);
-				
-			var uniqueTextEditorWork = new UniqueTextEditorWork(
-	            nameof(compilerService.ParseAsync),
-	            _textEditorService,
-	            editContext =>
-	            {
-					var modelModifier = editContext.GetModelModifier(resourceUri);
-	
-					if (modelModifier is null)
-						return ValueTask.CompletedTask;
-	
-					return compilerService.ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: false);
-	            });
-			
-			if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
-			 	await _textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWorkAsync(uniqueTextEditorWork).ConfigureAwait(false);
-			else
-				_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(4));
+            return Key<TextEditorViewModel>.Empty;
         }
 
-        await CheckIfContentsWereModifiedAsync(
-                registerModelArgs.ResourceUri.Value,
-                model)
-            .ConfigureAwait(false);
-    }
+        var viewModel = _textEditorService.ModelApi
+            .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
+            .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
 
-    public Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
-    {
-    	try
-    	{
-	        var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
-	
-	        if (model is null)
-	        {
-	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(4));
-	            return Task.FromResult(Key<TextEditorViewModel>.Empty);
-	        }
-	
-	        var viewModel = _textEditorService.ModelApi
-	            .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
-	            .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
-	
-	        if (viewModel is not null)
-			    return Task.FromResult(viewModel.ViewModelKey);
-	
-	        var viewModelKey = Key<TextEditorViewModel>.NewKey();
-	
-	        viewModel = new TextEditorViewModel(
-                viewModelKey,
-                registerViewModelArgs.ResourceUri,
-                _textEditorService,
-                _panelService,
-                _dialogService,
-                _commonBackgroundTaskApi,
-                VirtualizationGrid.Empty,
-				new TextEditorDimensions(0, 0, 0, 0),
-				new ScrollbarDimensions(0, 0, 0, 0, 0),
-        		new CharAndLineMeasurements(0, 0),
-                false,
-                registerViewModelArgs.Category);
-	
-	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
-	        {
-	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-	            FindOverlayPresentationFacts.PresentationKey,
-	        };
-	
-	        var absolutePath = _environmentProvider.AbsolutePathFactory(
-	            registerViewModelArgs.ResourceUri.Value,
-	            false);
-	            
-	        viewModel.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
-            viewModel.OnSaveRequested = HandleOnSaveRequested;
-            viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
-            viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
-            
-            _textEditorService.ViewModelApi.Register(viewModel);
-	
-	        return Task.FromResult(viewModelKey);
+        if (viewModel is not null)
+		    return viewModel.ViewModelKey;
 
-	        void HandleOnSaveRequested(TextEditorModel innerTextEditor)
-	        {
-	            var innerContent = innerTextEditor.GetAllText();
-	
-	            var cancellationToken = model.TextEditorSaveFileHelper.GetCancellationToken();
-	
-	            _ideBackgroundTaskApi.FileSystem.Enqueue_SaveFile(
-	                absolutePath,
-	                innerContent,
-	                writtenDateTime =>
-	                {
-	                    if (writtenDateTime is not null)
-	                    {
-	                        _textEditorService.TextEditorWorker.PostUnique(
-	                            nameof(HandleOnSaveRequested),
-	                            editContext =>
-	                            {
-	                            	var modelModifier = editContext.GetModelModifier(innerTextEditor.ResourceUri);
-	                            	if (modelModifier is null)
-	                            		return ValueTask.CompletedTask;
-	                            
-	                            	_textEditorService.ModelApi.SetResourceData(
-	                            		editContext,
-		                                modelModifier,
-		                                writtenDateTime.Value);
-	                                return ValueTask.CompletedTask;
-	                            });
-	                    }
-	
-	                    return Task.CompletedTask;
-	                },
-	                cancellationToken);
-	        }
-        }
-        catch (Exception e)
+        viewModel = new TextEditorViewModel(
+            viewModelKey,
+            registerViewModelArgs.ResourceUri,
+            _textEditorService,
+            _panelService,
+            _dialogService,
+            _commonBackgroundTaskApi,
+            VirtualizationGrid.Empty,
+			new TextEditorDimensions(0, 0, 0, 0),
+			new ScrollbarDimensions(0, 0, 0, 0, 0),
+    		new CharAndLineMeasurements(0, 0),
+            false,
+            registerViewModelArgs.Category);
+
+        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
         {
-        	NotificationHelper.DispatchError(
-		        nameof(TryRegisterViewModelFunc),
-		        e.ToString(),
-		        _commonComponentRenderers,
-		        _notificationService,
-		        TimeSpan.FromSeconds(6));
-		    return Task.FromResult(Key<TextEditorViewModel>.Empty);
-        }
+            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+            FindOverlayPresentationFacts.PresentationKey,
+        };
+
+        var absolutePath = _environmentProvider.AbsolutePathFactory(
+            registerViewModelArgs.ResourceUri.Value,
+            false);
+            
+        viewModel.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+        viewModel.OnSaveRequested = HandleOnSaveRequested;
+        viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+        
+        _textEditorService.ViewModelApi.Register(registerViewModelArgs.EditContext, viewModel);
+        return viewModelKey;
+    }
+    
+    private void HandleOnSaveRequested(TextEditorModel innerTextEditor)
+    {
+        var innerContent = innerTextEditor.GetAllText();
+        
+        var absolutePath = _environmentProvider.AbsolutePathFactory(
+            innerTextEditor.ResourceUri.Value,
+            false);
+
+        var cancellationToken = innerTextEditor.TextEditorSaveFileHelper.GetCancellationToken();
+
+        _ideBackgroundTaskApi.FileSystem.Enqueue_SaveFile(
+            absolutePath,
+            innerContent,
+            writtenDateTime =>
+            {
+                if (writtenDateTime is not null)
+                {
+                    _textEditorService.TextEditorWorker.PostUnique(
+                        nameof(HandleOnSaveRequested),
+                        editContext =>
+                        {
+                        	var modelModifier = editContext.GetModelModifier(innerTextEditor.ResourceUri);
+                        	if (modelModifier is null)
+                        		return ValueTask.CompletedTask;
+                        
+                        	_textEditorService.ModelApi.SetResourceData(
+                        		editContext,
+                                modelModifier,
+                                writtenDateTime.Value);
+                            return ValueTask.CompletedTask;
+                        });
+                }
+
+                return Task.CompletedTask;
+            },
+            cancellationToken);
     }
 
     public async Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)

@@ -209,12 +209,17 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 		if (commandArgs.TreeViewContainer.ActiveNode is not TreeViewNamespacePath treeViewNamespacePath)
 			return Task.CompletedTask;
 			
-		return _textEditorService.OpenInEditorAsync(
-			treeViewNamespacePath.Item.AbsolutePath.Value,
-			shouldSetFocusToEditor,
-			null,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+		_textEditorService.TextEditorWorker.PostUnique(nameof(SolutionExplorerTreeViewMouseEventHandler), async editContext =>
+		{
+			await _textEditorService.OpenInEditorAsync(
+				editContext,
+				treeViewNamespacePath.Item.AbsolutePath.Value,
+				shouldSetFocusToEditor,
+				null,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey());
+		});
+	    return Task.CompletedTask;
 	}
 
 	private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)

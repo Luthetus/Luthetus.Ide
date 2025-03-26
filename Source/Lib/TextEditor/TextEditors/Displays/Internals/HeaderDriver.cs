@@ -305,9 +305,9 @@ public class HeaderDriver
 		            nameof(DoReloadOnClick),
 		            editContext =>
 		            {
-		            	editContext.TextEditorService.ViewModelApi.Dispose(renderBatchLocal.ViewModel.ViewModelKey);
+		            	editContext.TextEditorService.ViewModelApi.Dispose(editContext, renderBatchLocal.ViewModel.ViewModelKey);
 		            	_root.DirtyResourceUriService.RemoveDirtyResourceUri(renderBatchLocal.Model.ResourceUri);
-		            	editContext.TextEditorService.ModelApi.Dispose(renderBatchLocal.Model.ResourceUri);
+		            	editContext.TextEditorService.ModelApi.Dispose(editContext, renderBatchLocal.Model.ResourceUri);
 		            	return ValueTask.CompletedTask;
 		            });
 		    	return Task.CompletedTask;

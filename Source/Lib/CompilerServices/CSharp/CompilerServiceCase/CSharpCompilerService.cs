@@ -435,13 +435,17 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return;
 		
-		await _textEditorService.OpenInEditorAsync(
-				resourceUriValue,
-				true,
-				indexInclusiveStart,
-				new Category("main"),
-				Key<TextEditorViewModel>.NewKey())
-			.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
+		_textEditorService.TextEditorWorker.PostUnique(nameof(SyntaxViewModel), async editContext =>
+		{
+			await _textEditorService.OpenInEditorAsync(
+					editContext,
+					resourceUriValue,
+					true,
+					indexInclusiveStart,
+					new Category("main"),
+					Key<TextEditorViewModel>.NewKey())
+				.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
+		});
     }
     
     /// <summary>
