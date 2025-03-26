@@ -101,6 +101,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
 	private double _previousGutterWidthInPixels = 0;
+	private double _previousLineHeightInPixels = 0;
 
     private TextEditorComponentData _componentData = null!;
     
@@ -129,6 +130,10 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private string _gutterPaddingStyleCssString;
     private string _gutterWidthStyleCssString;
+    
+    private string _lineHeightStyleCssString;
+    
+    private string _bodyStyle = $"width: 100%; left: 0;";
     
     /* MeasureCharacterWidthAndRowHeight.razor Open */
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -226,12 +231,13 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 				QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
         }
         
-        // Check if the gutter width changed. If so, re-measure text editor.
-        var viewModel = _activeRenderBatch?.ViewModel;
-        var gutterWidthInPixels = _activeRenderBatch?.GutterWidthInPixels ?? 0;
+        var activeRenderBatchLocal = _activeRenderBatch;
         
-        if (viewModel is not null)
+        // Check if the gutter width changed. If so, re-measure text editor.
+        if (activeRenderBatchLocal?.ViewModel is not null)
 		{
+			var gutterWidthInPixels = activeRenderBatchLocal.GutterWidthInPixels;
+		
 			if (_previousGutterWidthInPixels >= 0 && gutterWidthInPixels >= 0)
 			{
 	        	var absoluteValueDifference = Math.Abs(_previousGutterWidthInPixels - gutterWidthInPixels);
@@ -241,8 +247,28 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	        		_previousGutterWidthInPixels = gutterWidthInPixels;
 	        		var widthInPixelsInvariantCulture = gutterWidthInPixels.ToCssValue();
 	        		_gutterWidthStyleCssString = $"width: {widthInPixelsInvariantCulture}px;";
-	        		viewModel.DisplayTracker.PostScrollAndRemeasure();
+	        		
+					_bodyStyle =
+						$"width: calc(100% - {widthInPixelsInvariantCulture}px); left: {widthInPixelsInvariantCulture}px;";
+	        			        		
+	        		activeRenderBatchLocal.ViewModel.DisplayTracker.PostScrollAndRemeasure();
+	        		return shouldRender;
 	        	}
+			}
+			
+			// NOTE: The 'gutterWidth' version of this will do a re-measure,...
+			// ...and therefore will return if its condition branch was entered.
+			var lineHeightInPixels = activeRenderBatchLocal.ViewModel.CharAndLineMeasurements.LineHeight;
+			
+			// The 'gutterWidth' version of this code was written first,
+			// and this is just more or less copying the template.
+			//
+			// TODO: What was the reason for 'gutterWidth' not just doing an '!='?
+			//
+			if (_previousLineHeightInPixels >= 0 && lineHeightInPixels >= 0)
+			{
+				var heightInPixelsInvariantCulture = lineHeightInPixels.ToCssValue();
+		        _lineHeightStyleCssString = $"height: {heightInPixelsInvariantCulture}px;";
 			}
 		}
 
@@ -821,11 +847,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _uiStringBuilder.Append(topInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
 
-        var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
-        _uiStringBuilder.Append("height: ");
-        _uiStringBuilder.Append(heightInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
-        
+        _uiStringBuilder.Append(_lineHeightStyleCssString);
         _uiStringBuilder.Append(_gutterWidthStyleCssString);
         _uiStringBuilder.Append(_gutterPaddingStyleCssString);
 
@@ -834,14 +856,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     public string GetGutterSectionStyleCss(TextEditorRenderBatch renderBatchLocal)
     {
-    	_uiStringBuilder.Clear();
-    
-        var widthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
-        _uiStringBuilder.Append("width: ");
-        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
-
-        return _uiStringBuilder.ToString();
+        return _gutterWidthStyleCssString;
     }
     
     #endregion GutterDriverClose
@@ -849,27 +864,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     #region BodyDriverOpen
     public bool GlobalShowNewlines => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowNewlines;
     
-    public string GetBodyStyleCss(TextEditorRenderBatch renderBatchLocal)
-    {
-    	_uiStringBuilder.Clear();
-    
-        var gutterWidthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
-
-		// Width
-		_uiStringBuilder.Append("width: calc(100% - ");
-		_uiStringBuilder.Append(gutterWidthInPixelsInvariantCulture);
-		_uiStringBuilder.Append("px);");
-		
-		// Left
-		_uiStringBuilder.Append("left: ");
-		_uiStringBuilder.Append(gutterWidthInPixelsInvariantCulture);
-		_uiStringBuilder.Append("px;");
-
-        return _uiStringBuilder.ToString();
-    }
-    
     /* RowSection.razor Open */
-    public string RowSection_GetRowStyleCss(TextEditorRenderBatch renderBatchLocal, int index, double? virtualizedRowLeftInPixels)
+    public string RowSection_GetRowStyleCss(TextEditorRenderBatch renderBatchLocal, int index, double virtualizedRowLeftInPixels)
     {
     	_uiStringBuilder.Clear();
     
@@ -880,15 +876,15 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _uiStringBuilder.Append(topInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
 
-        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
-        _uiStringBuilder.Append("height: ");
-        _uiStringBuilder.Append(heightInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
+        _uiStringBuilder.Append(_lineHeightStyleCssString);
 
-        var virtualizedRowLeftInPixelsInvariantCulture = virtualizedRowLeftInPixels.GetValueOrDefault().ToCssValue();
-        _uiStringBuilder.Append("left: ");
-        _uiStringBuilder.Append(virtualizedRowLeftInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
+		if (virtualizedRowLeftInPixels > 0)
+		{
+	        var virtualizedRowLeftInPixelsInvariantCulture = virtualizedRowLeftInPixels.ToCssValue();
+	        _uiStringBuilder.Append("left: ");
+	        _uiStringBuilder.Append(virtualizedRowLeftInPixelsInvariantCulture);
+	        _uiStringBuilder.Append("px;");
+        }
 
         return _uiStringBuilder.ToString();
     }
@@ -972,10 +968,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			_uiStringBuilder.Append(topInPixelsInvariantCulture);
 			_uiStringBuilder.Append("px;");
 
-            var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
-            _uiStringBuilder.Append("height: ");
-            _uiStringBuilder.Append(heightInPixelsInvariantCulture);
-            _uiStringBuilder.Append("px;");
+            _uiStringBuilder.Append(_lineHeightStyleCssString);
 
             var widthInPixelsInvariantCulture = renderBatchLocal.Options.CursorWidthInPixels.ToCssValue();
             _uiStringBuilder.Append("width: ");
@@ -1018,10 +1011,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			_uiStringBuilder.Append(topInPixelsInvariantCulture);
 			_uiStringBuilder.Append("px;");
 
-            var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
-            _uiStringBuilder.Append("height: ");
-            _uiStringBuilder.Append(heightInPixelsInvariantCulture);
-            _uiStringBuilder.Append("px;");
+            _uiStringBuilder.Append(_lineHeightStyleCssString);
 
             var widthOfBodyInPixelsInvariantCulture =
                 (renderBatchLocal.Model.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
@@ -1831,10 +1821,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	        _uiStringBuilder.Append(topInPixelsInvariantCulture);
 	        _uiStringBuilder.Append("px;");
 	
-	        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
-	        _uiStringBuilder.Append("height: ");
-	        _uiStringBuilder.Append(heightInPixelsInvariantCulture);
-	        _uiStringBuilder.Append("px;");
+	        _uiStringBuilder.Append(_lineHeightStyleCssString);
 	
 	        var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidth;
 	

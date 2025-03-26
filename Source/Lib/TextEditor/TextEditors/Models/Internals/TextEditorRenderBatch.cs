@@ -27,7 +27,6 @@ public class TextEditorRenderBatch
 	}
 
 	// Don't ??= because it only should be set inside 'Validate()'.
-	private string? _fontFamilyCssStyle;
 	private string? _heightCssStyle;
     private double? _gutterWidthInPixels;
     
