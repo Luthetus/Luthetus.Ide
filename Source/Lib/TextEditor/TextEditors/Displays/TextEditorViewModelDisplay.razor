@@ -409,11 +409,11 @@
 					<textarea id="@GetCursorDisplayId(renderBatchValidated)"
 								tabindex="@GetTabIndex(renderBatchValidated)"
 								class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
-								style="@GetCursorStyleCss(renderBatchValidated) @leftRelativeToParentInPixelsCssStyle">
+								style="@_previousGetCursorStyleCss @leftRelativeToParentInPixelsCssStyle">
 					</textarea>
 									
 					<div class="luth_te_text-editor-caret-row"
-							style="@GetCaretRowStyleCss(renderBatchValidated)">
+							style="@_previousGetCaretRowStyleCss">
 					</div>
 				</div>
 				@* RowSection.razor Close *@
@@ -423,7 +423,7 @@
 				
 					<div class="luth_te_scrollbar luth_te_scrollbar-horizontal"
 					     id="@HORIZONTAL_ScrollbarElementId"
-					     style="@HORIZONTAL_GetScrollbarHorizontalStyleCss(renderBatchValidated)"
+					     style="@_previous_HORIZONTAL_GetScrollbarHorizontalStyleCss_Result"
 					     @onmousedown:stopPropagation="true"
 					     @onmousedown="HORIZONTAL_HandleOnMouseDownAsync"
 					     @onmousemove:stopPropagation="true"
@@ -433,7 +433,7 @@
 					    
 					    <div class="luth_te_scrollbar-slider"
 					         id="@HORIZONTAL_ScrollbarSliderElementId"
-					         style="bottom: 0; height: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @HORIZONTAL_GetSliderHorizontalStyleCss(renderBatchValidated)">
+					         style="bottom: 0; height: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @_previous_HORIZONTAL_GetSliderHorizontalStyleCss_Result">
 					    </div>
 					</div>
 					
@@ -448,7 +448,7 @@
 					         
 					    <div class="luth_te_scrollbar-slider"
 					         id="@VERTICAL_ScrollbarSliderElementId"
-					         style="left: 0; width: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @VERTICAL_GetSliderVerticalStyleCss(renderBatchValidated)">
+					         style="left: 0; width: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @_previous_VERTICAL_GetSliderVerticalStyleCss_Result">
 					    </div>
 					</div>
 				    
