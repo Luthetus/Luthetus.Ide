@@ -125,6 +125,10 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private StringBuilder _uiStringBuilder = new();
     
     private string _wrapperCssClass;
+    private string _wrapperCssStyle;
+    
+    private string _gutterPaddingStyleCssString;
+    private string _gutterWidthStyleCssString;
     
     /* MeasureCharacterWidthAndRowHeight.razor Open */
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -157,7 +161,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     		}
     	};
     	
-    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    	SetWrapperCssAndStyle();
     	
     	MeasureCharacterWidthAndRowHeightElementId = $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
     	ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
@@ -167,6 +171,10 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	    
 	    HORIZONTAL_ScrollbarElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}";
 	    HORIZONTAL_ScrollbarSliderElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}-slider";
+	    
+	    var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
+	    var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
+        _gutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
 
         ConstructRenderBatch();
 
@@ -220,17 +228,19 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         
         // Check if the gutter width changed. If so, re-measure text editor.
         var viewModel = _activeRenderBatch?.ViewModel;
-        var gutterWidthInPixels = _activeRenderBatch?.GutterWidthInPixels;
+        var gutterWidthInPixels = _activeRenderBatch?.GutterWidthInPixels ?? 0;
         
-        if (viewModel is not null && gutterWidthInPixels is not null)
+        if (viewModel is not null)
 		{
 			if (_previousGutterWidthInPixels >= 0 && gutterWidthInPixels >= 0)
 			{
-	        	var absoluteValueDifference = Math.Abs(_previousGutterWidthInPixels - gutterWidthInPixels.Value);
+	        	var absoluteValueDifference = Math.Abs(_previousGutterWidthInPixels - gutterWidthInPixels);
 	        	
 	        	if (absoluteValueDifference >= 0.5)
 	        	{
-	        		_previousGutterWidthInPixels = gutterWidthInPixels.Value;
+	        		_previousGutterWidthInPixels = gutterWidthInPixels;
+	        		var widthInPixelsInvariantCulture = gutterWidthInPixels.ToCssValue();
+	        		_gutterWidthStyleCssString = $"width: {widthInPixelsInvariantCulture}px;";
 	        		viewModel.DisplayTracker.PostScrollAndRemeasure();
 	        	}
 			}
@@ -329,7 +339,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     		SetComponentData();
     	}*/
     	
-    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    	SetWrapperCssAndStyle();
     	
     	await InvokeAsync(StateHasChanged);
     }
@@ -815,23 +825,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _uiStringBuilder.Append("height: ");
         _uiStringBuilder.Append(heightInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
+        
+        _uiStringBuilder.Append(_gutterWidthStyleCssString);
+        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
 
-        var widthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
-        _uiStringBuilder.Append("width: ");
-        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
-
-        var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
-        _uiStringBuilder.Append("padding-left: ");
-        _uiStringBuilder.Append(paddingLeftInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
-
-        var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
-        _uiStringBuilder.Append("padding-right: ");
-        _uiStringBuilder.Append(paddingRightInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
-
-        return _uiStringBuilder.ToString();;
+        return _uiStringBuilder.ToString();
     }
 
     public string GetGutterSectionStyleCss(TextEditorRenderBatch renderBatchLocal)
@@ -1960,5 +1958,24 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
 
         _componentData.MouseStoppedMovingCancellationTokenSource.Cancel();
+    }
+    
+    private void SetWrapperCssAndStyle()
+    {
+    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    	
+    	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    	
+    	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+    	if (options.CommonOptions?.FontSizeInPixels is not null)
+            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
+    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
+    	
+    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+    	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
+        	fontFamily = options!.CommonOptions!.FontFamily;
+    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
+    	
+    	_wrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     }
 }

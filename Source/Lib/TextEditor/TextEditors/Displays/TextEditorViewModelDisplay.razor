@@ -39,13 +39,10 @@
 @{
     var renderBatchUnsafe = _currentRenderBatch;
     var renderBatchValidated = _activeRenderBatch;
-
-    var cssStyle = $"{renderBatchUnsafe.FontSizeInPixelsCssStyle} {renderBatchUnsafe.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
-    
     // var startTime = Stopwatch.GetTimestamp();
 }
 
-<div class="@_wrapperCssClass" style="@cssStyle">
+<div class="@_wrapperCssClass" style="@_wrapperCssStyle">
 
 	@{
 		var headerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.HeaderComponentType;
