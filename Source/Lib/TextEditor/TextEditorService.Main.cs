@@ -29,15 +29,12 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public partial class TextEditorService : ITextEditorService
 {
-    private readonly object _stateModificationLock = new();
-
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
-    // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IServiceProvider _serviceProvider;
@@ -144,10 +141,6 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public Dictionary<ResourceUri, TextEditorModel?> __ModelCache { get; } = new();
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
     public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache { get; } = new();
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
@@ -165,7 +158,7 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public List<TextEditorModel?> __ModelList { get; } = new();   
+	public List<TextEditorModel> __ModelList { get; } = new();   
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -175,11 +168,8 @@ public partial class TextEditorService : ITextEditorService
 
 	public async ValueTask FinalizePost(TextEditorEditContext editContext)
 	{
-        foreach (var modelModifier in __ModelCache.Values)
+        foreach (var modelModifier in __ModelList)
         {
-            if (modelModifier is null || !modelModifier.WasModified)
-                continue;
-
             foreach (var viewModelKey in modelModifier.ViewModelKeyList)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
@@ -334,11 +324,6 @@ public partial class TextEditorService : ITextEditorService
 			}
         }
 	    
-	    __ModelList.Clear();
-	    foreach (var kvp in __ModelCache)
-	    	__ModelList.Add(kvp.Value);
-	    __ModelCache.Clear();
-	    
 	    __ViewModelList.Clear();
 	    foreach (var kvp in __ViewModelCache)
 	    	__ViewModelList.Add(kvp.Value);
@@ -350,10 +335,7 @@ public partial class TextEditorService : ITextEditorService
 	    
 	    __IsAvailableCursorModifier = true;
 	    
-	    SetModelAndViewModelRange(
-	        editContext,
-	        __ModelList,
-			__ViewModelList);
+	    SetModelAndViewModelRange(editContext);
 	}
 	
 	/// <summary>
@@ -646,22 +628,16 @@ public partial class TextEditorService : ITextEditorService
 	    TextEditorEditContext editContext,
 	    TextEditorModel modelModifier)
 	{
-		lock (_stateModificationLock)
-		{
-			var inState = TextEditorState;
+		var inState = TextEditorState;
 
-			var exists = inState._modelMap.TryGetValue(
-				modelModifier.ResourceUri, out var inModel);
+		var exists = inState._modelMap.TryGetValue(
+			modelModifier.ResourceUri, out var inModel);
 
-			if (!exists)
-                goto finalize;
+		if (!exists)
+            return;
 
-			inState._modelMap[inModel.ResourceUri] = modelModifier;
+		inState._modelMap[inModel.ResourceUri] = modelModifier;
 
-            goto finalize;
-        }
-
-        finalize:
         TextEditorStateChanged?.Invoke();
     }
 	
@@ -708,53 +684,38 @@ public partial class TextEditorService : ITextEditorService
 	    TextEditorStateChanged?.Invoke();
 	}
 	
-	public void SetModelAndViewModelRange(
-	    TextEditorEditContext editContext,
-		List<TextEditorModel?>? modelModifierList,
-		List<TextEditorViewModel?>? viewModelModifierList)
+	public void SetModelAndViewModelRange(TextEditorEditContext editContext)
 	{
-		lock (_stateModificationLock)
+		var inState = TextEditorState;
+
+		// Models
+		foreach (var kvpModelModifier in __ModelList)
 		{
-			var inState = TextEditorState;
+			var exists = inState._modelMap.TryGetValue(
+				kvpModelModifier.ResourceUri, out var inModel);
 
-			// Models
-			foreach (var kvpModelModifier in modelModifierList)
-			{
-				if (kvpModelModifier is null || !kvpModelModifier.WasModified)
-					continue;
+			if (!exists)
+				continue;
 
-				// Enumeration was modified shouldn't occur here because only the reducer
-				// should be adding or removing, and the reducer is thread safe.
-				var exists = inState._modelMap.TryGetValue(
-					kvpModelModifier.ResourceUri, out var inModel);
+			inState._modelMap[kvpModelModifier.ResourceUri] = kvpModelModifier;
+		}
 
-				if (!exists)
-					continue;
+		// ViewModels
+		foreach (var kvpViewModelModifier in __ViewModelList)
+		{
+			if (kvpViewModelModifier is null || !kvpViewModelModifier.WasModified)
+				continue;
 
-				inState._modelMap[kvpModelModifier.ResourceUri] = kvpModelModifier;
-			}
+			var exists = inState._viewModelMap.TryGetValue(
+				kvpViewModelModifier.ViewModelKey, out var inViewModel);
 
-			// ViewModels
-			foreach (var kvpViewModelModifier in viewModelModifierList)
-			{
-				if (kvpViewModelModifier is null || !kvpViewModelModifier.WasModified)
-					continue;
+			if (!exists)
+				continue;
 
-				// Enumeration was modified shouldn't occur here because only the reducer
-				// should be adding or removing, and the reducer is thread safe.
-				var exists = inState._viewModelMap.TryGetValue(
-					kvpViewModelModifier.ViewModelKey, out var inViewModel);
+			inState._viewModelMap[kvpViewModelModifier.ViewModelKey] = kvpViewModelModifier;
+		}
 
-				if (!exists)
-					continue;
-
-				inState._viewModelMap[kvpViewModelModifier.ViewModelKey] = kvpViewModelModifier;
-			}
-
-            goto finalize;
-        }
-
-        finalize:
+		__ModelList.Clear();
         TextEditorStateChanged?.Invoke();
     }
 }

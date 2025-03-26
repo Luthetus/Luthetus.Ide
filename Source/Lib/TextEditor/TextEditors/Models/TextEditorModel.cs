@@ -66,7 +66,6 @@ public partial class TextEditorModel
 		OtherEditStack = new();
 	    WasDirty = false;
 	    PartitionSize = partitionSize;
-	    WasModified = false;
 	    ShouldReloadVirtualizationResult = false;
 	    _allText = string.Empty;
 	    _charCount = 0;
@@ -115,7 +114,6 @@ public partial class TextEditorModel
 	    OtherEditStack = other.OtherEditStack;
 	    WasDirty = other.IsDirty;
         PartitionSize = other.PartitionSize;
-        WasModified = false;
 	    ShouldReloadVirtualizationResult = false;
 	    _allText = other._allText;
 	    _charCount = other._charCount;
@@ -256,12 +254,6 @@ public partial class TextEditorModel
     public bool WasDirty { get; }
 
     private int PartitionSize { get; }
-
-	/// <summary>
-	/// This property decides whether or not to replace the existing model in IState<TextEditorState> with
-	/// the instance that comes from this modifier.
-	/// </summary>
-    public bool WasModified { get; set; }
 	
 	/// <summary>
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
