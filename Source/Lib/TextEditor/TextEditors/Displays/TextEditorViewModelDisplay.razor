@@ -44,18 +44,6 @@
 
 <div class="@_wrapperCssClass" style="@_wrapperCssStyle">
 
-	@{
-		var headerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.HeaderComponentType;
-	
-	    if (headerComponentType is not null && renderBatchValidated is not null)
-	    {
-	    	<ShouldRenderBoundary>
-	    		<DynamicComponent Type="headerComponentType"
-	    						  Parameters="DependentComponentParameters"/>
-	    	</ShouldRenderBoundary>
-	    }
-    }
-
     <div @onclick="FocusTextEditorAsync"
          @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"
          @onkeydown:preventDefault="true"
@@ -517,19 +505,4 @@
 	        <div>The @nameof(TextEditorOptions) was null</div>
 	    }
     </div>
-    
-    @{
-    
-    	var footerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.FooterComponentType;
-	
-	    if (footerComponentType is not null && renderBatchValidated is not null)
-	    {
-	    	<ShouldRenderBoundary>
-	    		<DynamicComponent Type="footerComponentType"
-	    						  Parameters="DependentComponentParameters"/>
-	    	</ShouldRenderBoundary>
-	    }
-	    
-	    // LuthetusDebugSomething.SetTextEditorUi(Stopwatch.GetElapsedTime(startTime));
-    }
 </div>
