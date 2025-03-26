@@ -127,11 +127,6 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	// public bool __IsAvailableCursorModifierList { get; set; } = true;
-	
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
 	public TextEditorCursorModifier __CursorModifier { get; } = new(new TextEditorCursor(isPrimaryCursor: true));
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
@@ -142,10 +137,6 @@ public partial class TextEditorService : ITextEditorService
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
     public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache { get; } = new();
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel?> __ViewModelCache { get; } = new();
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -188,11 +179,8 @@ public partial class TextEditorService : ITextEditorService
             }
         }
 		
-        foreach (var viewModelModifier in __ViewModelCache.Values)
+        foreach (var viewModelModifier in __ViewModelList)
         {
-            if (viewModelModifier is null || !viewModelModifier.WasModified)
-                return;
-
 			bool successCursorModifierBag;
 			CursorModifierBagTextEditor cursorModifierBag;
 			
@@ -323,11 +311,6 @@ public partial class TextEditorService : ITextEditorService
 			        CancellationToken.None);
 			}
         }
-	    
-	    __ViewModelList.Clear();
-	    foreach (var kvp in __ViewModelCache)
-	    	__ViewModelList.Add(kvp.Value);
-	    __ViewModelCache.Clear();
 	    
 	    __ViewModelToModelResourceUriCache.Clear();
 	    __CursorModifierBagCache.Clear();
@@ -703,9 +686,6 @@ public partial class TextEditorService : ITextEditorService
 		// ViewModels
 		foreach (var kvpViewModelModifier in __ViewModelList)
 		{
-			if (kvpViewModelModifier is null || !kvpViewModelModifier.WasModified)
-				continue;
-
 			var exists = inState._viewModelMap.TryGetValue(
 				kvpViewModelModifier.ViewModelKey, out var inViewModel);
 
@@ -716,6 +696,7 @@ public partial class TextEditorService : ITextEditorService
 		}
 
 		__ModelList.Clear();
+		__ViewModelList.Clear();
         TextEditorStateChanged?.Invoke();
     }
 }

@@ -71,23 +71,28 @@ public struct TextEditorEditContext
         Key<TextEditorViewModel> viewModelKey,
         bool isReadonly = false)
     {
-        if (viewModelKey != Key<TextEditorViewModel>.Empty)
-        {
-            if (!TextEditorService.__ViewModelCache.TryGetValue(viewModelKey, out var viewModelModifier))
-            {
-                var viewModel = TextEditorService.ViewModelApi.GetOrDefault(viewModelKey);
-                viewModelModifier = viewModel is null ? null : new(viewModel);
+    	if (viewModelKey == Key<TextEditorViewModel>.Empty)
+    		return null;
+    		
+    	TextEditorViewModel? viewModelModifier = null;
+    		
+    	for (int i = 0; i < TextEditorService.__ViewModelList.Count; i++)
+    	{
+    		viewModelModifier = TextEditorService.__ViewModelList[i];
+    	}
+    	
+    	if (viewModelModifier is null)
+    	{
+    		var viewModel = TextEditorService.ViewModelApi.GetOrDefault(viewModelKey);
+    		
+    		if (isReadonly || viewModel is null)
+    			return viewModel;
+    		
+			viewModelModifier = viewModel is null ? null : new(viewModel);
+        	TextEditorService.__ViewModelList.Add(viewModelModifier);
+    	}
 
-                TextEditorService.__ViewModelCache.Add(viewModelKey, viewModelModifier);
-            }
-
-            if (!isReadonly && viewModelModifier is not null)
-                viewModelModifier.WasModified = true;
-
-            return viewModelModifier;
-        }
-
-        return null;
+        return viewModelModifier;
     }
     
     public CursorModifierBagTextEditor GetCursorModifierBag(TextEditorViewModel? viewModel)

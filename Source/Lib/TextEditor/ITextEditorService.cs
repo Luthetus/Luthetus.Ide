@@ -82,10 +82,6 @@ public partial interface ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel?> __ViewModelCache { get; }
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
     public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor> __CursorModifierBagCache { get; }
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
