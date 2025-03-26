@@ -35,7 +35,9 @@ public struct TextEditorEditContext
     	
     	if (modelModifier is null)
     	{
-    		var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
+    		var exists = TextEditorService.TextEditorState._modelMap.TryGetValue(
+				modelResourceUri,
+				out var model);
     		
     		if (isReadonly || model is null)
     			return model;
@@ -83,7 +85,9 @@ public struct TextEditorEditContext
     	
     	if (viewModelModifier is null)
     	{
-    		var viewModel = TextEditorService.ViewModelApi.GetOrDefault(viewModelKey);
+    		var exists = TextEditorService.TextEditorState._viewModelMap.TryGetValue(
+				viewModelKey,
+				out var viewModel);
     		
     		if (isReadonly || viewModel is null)
     			return viewModel;

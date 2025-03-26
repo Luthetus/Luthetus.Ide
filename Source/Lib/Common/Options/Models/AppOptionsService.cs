@@ -35,32 +35,11 @@ public class AppOptionsService : IAppOptionsService
     public string StorageKey => "luthetus-common_theme-storage-key";
 #endif
 
-    public string ThemeCssClassString => ThemeService.GetThemeState().ThemeList.FirstOrDefault(
-        x => x.Key == GetAppOptionsState().Options.ThemeKey)
-        ?.CssClassString
-            ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
+	public string ThemeCssClassString { get; set; } = ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
 
-    public string? FontFamilyCssStyleString
-    {
-        get
-        {
-            if (GetAppOptionsState().Options.FontFamily is null)
-                return null;
+    public string? FontFamilyCssStyleString { get; set; }
 
-            return $"font-family: {GetAppOptionsState().Options.FontFamily};";
-        }
-    }
-
-    public string FontSizeCssStyleString
-    {
-        get
-        {
-            var fontSizeInPixels = GetAppOptionsState().Options.FontSizeInPixels;
-            var fontSizeInPixelsCssValue = fontSizeInPixels.ToCssValue();
-
-            return $"font-size: {fontSizeInPixelsCssValue}px;";
-        }
-    }
+    public string FontSizeCssStyleString { get; set; }
     
     public bool ShowPanelTitles => GetAppOptionsState().Options.ShowPanelTitles;
     
@@ -68,28 +47,7 @@ public class AppOptionsService : IAppOptionsService
     	? string.Empty
     	: "luth_ide_section-no-title";
 
-    public string ColorSchemeCssStyleString
-    {
-        get
-        {
-	        var activeTheme = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
-		        x => x.Key == GetAppOptionsState().Options.ThemeKey)
-		        	?? ThemeFacts.VisualStudioDarkThemeClone;
-		        
-		    var cssStyleStringBuilder = new StringBuilder("color-scheme: ");
-		    
-		    if (activeTheme.ThemeColorKind == ThemeColorKind.Dark)
-		    	cssStyleStringBuilder.Append("dark");
-			else if (activeTheme.ThemeColorKind == ThemeColorKind.Light)
-		    	cssStyleStringBuilder.Append("light");
-			else
-		    	cssStyleStringBuilder.Append("dark");
-		    
-		    cssStyleStringBuilder.Append(';');
-
-            return cssStyleStringBuilder.ToString();
-        }
-    }
+    public string ColorSchemeCssStyleString { get; set; }
 
 	public event Action? AppOptionsStateChanged;
 	
@@ -106,6 +64,8 @@ public class AppOptionsService : IAppOptionsService
                 ThemeKey = themeKey
             }
         };
+        
+        HandleThemeChange();
         
         AppOptionsStateChanged?.Invoke();
 
@@ -125,6 +85,8 @@ public class AppOptionsService : IAppOptionsService
             }
         };
         
+        HandleThemeChange();
+        
         AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
@@ -143,6 +105,17 @@ public class AppOptionsService : IAppOptionsService
             }
         };
         
+        // I'm optimizing all the expression bound properties that construct
+        // a string, and specifically the ones that are rendered in the UI many times.
+        //
+        // Can probably use 'fontFamily' variable here but
+        // I don't want to touch that right now -- incase there are unexpected consequences.
+        var usingFontFamily = GetAppOptionsState().Options.FontFamily;
+        if (usingFontFamily is null)
+        	FontFamilyCssStyleString = null;
+        else
+        	FontFamilyCssStyleString = $"font-family: {usingFontFamily};";
+
         AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
@@ -160,6 +133,15 @@ public class AppOptionsService : IAppOptionsService
                 FontSizeInPixels = fontSizeInPixels
             }
         };
+        
+        // I'm optimizing all the expression bound properties that construct
+        // a string, and specifically the ones that are rendered in the UI many times.
+        //
+        // Can probably use 'fontSizeInPixels' variable here but
+        // I don't want to touch that right now -- incase there are unexpected consequences.
+    	var usingFontSizeInPixels = GetAppOptionsState().Options.FontSizeInPixels;
+        var usingFontSizeInPixelsCssValue = usingFontSizeInPixels.ToCssValue();
+    	FontSizeCssStyleString = $"font-size: {usingFontSizeInPixelsCssValue}px;";
         
         AppOptionsStateChanged?.Invoke();
 
@@ -262,5 +244,24 @@ public class AppOptionsService : IAppOptionsService
         CommonBackgroundTaskApi.Enqueue_WriteToLocalStorage(
             StorageKey,
             new CommonOptionsJsonDto(GetAppOptionsState().Options));
+    }
+    
+    private void HandleThemeChange()
+    {
+        var usingTheme = ThemeService.GetThemeState().ThemeList
+        	.FirstOrDefault(x => x.Key == GetAppOptionsState().Options.ThemeKey)
+        	?? ThemeFacts.VisualStudioDarkThemeClone;
+        
+        ThemeCssClassString = usingTheme.CssClassString;
+	    
+	    var cssStyleStringBuilder = new StringBuilder("color-scheme: ");
+	    if (usingTheme.ThemeColorKind == ThemeColorKind.Dark)
+	    	cssStyleStringBuilder.Append("dark");
+		else if (usingTheme.ThemeColorKind == ThemeColorKind.Light)
+	    	cssStyleStringBuilder.Append("light");
+		else
+	    	cssStyleStringBuilder.Append("dark");
+	    cssStyleStringBuilder.Append(';');
+        ColorSchemeCssStyleString = cssStyleStringBuilder.ToString();
     }
 }
