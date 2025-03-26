@@ -130,10 +130,6 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public List<TextEditorCursorModifier> __CursorModifierList { get; } = new();
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
 	public bool __IsAvailableCursorModifierList { get; set; } = true;
 	
 	/// <summary>
