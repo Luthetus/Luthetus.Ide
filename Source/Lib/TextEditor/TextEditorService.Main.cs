@@ -130,7 +130,7 @@ public partial class TextEditorService : ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public bool __IsAvailableCursorModifierList { get; set; } = true;
+	// public bool __IsAvailableCursorModifierList { get; set; } = true;
 	
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
@@ -348,7 +348,6 @@ public partial class TextEditorService : ITextEditorService
 	    __CursorModifierBagCache.Clear();
 	    __DiffModelCache.Clear();
 	    
-	    __IsAvailableCursorModifierList = true;
 	    __IsAvailableCursorModifier = true;
 	    
 	    SetModelAndViewModelRange(
