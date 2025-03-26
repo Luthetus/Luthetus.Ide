@@ -40,13 +40,12 @@
     var renderBatchUnsafe = _currentRenderBatch;
     var renderBatchValidated = _activeRenderBatch;
 
-    var cssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
     var cssStyle = $"{renderBatchUnsafe.FontSizeInPixelsCssStyle} {renderBatchUnsafe.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     
     // var startTime = Stopwatch.GetTimestamp();
 }
 
-<div class="@cssClass" style="@cssStyle">
+<div class="@_wrapperCssClass" style="@cssStyle">
 
 	@{
 		var headerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.HeaderComponentType;

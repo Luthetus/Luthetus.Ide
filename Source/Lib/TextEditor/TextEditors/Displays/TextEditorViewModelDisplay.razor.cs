@@ -124,14 +124,16 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     /// </summary>
     private StringBuilder _uiStringBuilder = new();
     
+    private string _wrapperCssClass;
+    
     /* MeasureCharacterWidthAndRowHeight.razor Open */
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
     private const int TEST_STRING_REPEAT_COUNT = 6;
     public int COUNT_OF_TEST_CHARACTERS => TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
     /* MeasureCharacterWidthAndRowHeight.razor Close */
 
-    private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
-    private string ContentElementId => $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
+    private string MeasureCharacterWidthAndRowHeightElementId { get; set; }
+    private string ContentElementId { get; set; }
 
 	public TextEditorComponentData ComponentData => _componentData;
 	
@@ -154,6 +156,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     			this
     		}
     	};
+    	
+    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    	
+    	MeasureCharacterWidthAndRowHeightElementId = $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
+    	ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
     	
     	VERTICAL_ScrollbarElementId = $"luth_te_{VERTICAL_scrollbarGuid}";
 	    VERTICAL_ScrollbarSliderElementId = $"luth_te_{VERTICAL_scrollbarGuid}-slider";
@@ -321,6 +328,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     		ConstructRenderBatch();
     		SetComponentData();
     	}*/
+    	
+    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
     	
     	await InvokeAsync(StateHasChanged);
     }
