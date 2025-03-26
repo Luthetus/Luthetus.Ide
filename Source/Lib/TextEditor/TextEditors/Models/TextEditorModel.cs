@@ -73,6 +73,7 @@ public partial class TextEditorModel
         // LineCount => LineEndList.Count;
 
 		SetContent(content);
+		IsDirty = false;
 	}
 	
 	/// <summary>model -> modifier</summary>
@@ -115,7 +116,7 @@ public partial class TextEditorModel
 	    WasDirty = other.IsDirty;
         PartitionSize = other.PartitionSize;
         WasModified = false;
-	    ShouldReloadVirtualizationResult = false;        
+	    ShouldReloadVirtualizationResult = false;
 	    _allText = other._allText;
 	    _charCount = other._charCount;
     }
@@ -128,7 +129,7 @@ public partial class TextEditorModel
 	/// while this is false, and thus double the calculation.
 	/// </summary>
 	private bool _partitionListChanged;
-    private bool _partitionListIsShallowCopy = false;
+    private bool _partitionListIsShallowCopy;
     public List<TextEditorPartition> _partitionList;
     public List<TextEditorPartition> PartitionList
     {
@@ -191,7 +192,7 @@ public partial class TextEditorModel
     /// As such, List<RichCharacter> can probably be lazier but
     /// it isn't at the moment.
     /// </summary>
-    private string? _allText = null;
+    private string? _allText;
     public string? AllText
     {
     	get
@@ -207,7 +208,7 @@ public partial class TextEditorModel
     }
     
     /// <inheritdoc cref="_allText"/>
-    private int _charCount = -1;
+    private int _charCount;
     public int CharCount
     {
     	get

@@ -489,44 +489,31 @@ public partial class TextEditorService : ITextEditorService
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey)
 	{
-		try
-		{
-			var resourceUri = new ResourceUri(absolutePath);
-			var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
-				editContext,
-				resourceUri,
-				shouldSetFocusToEditor,
-				category,
-				preferredViewModelKey);
-				
-			// Move cursor
-			if (cursorPositionIndex is null)
-				return; // Leave the cursor unchanged if the argument is null
-			TextEditorWorker.PostUnique(nameof(OpenInEditorAsync), editContext =>
-			{
-				var modelModifier = editContext.GetModelModifier(resourceUri);
-				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-				var primaryCursorModifier = cursorModifierBag.CursorModifier;
-		
-				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-					return ValueTask.CompletedTask;
+		var resourceUri = new ResourceUri(absolutePath);
+		var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
+			editContext,
+			resourceUri,
+			shouldSetFocusToEditor,
+			category,
+			preferredViewModelKey);
 			
-				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
-					
-				primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
-				primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
-				
-				viewModelModifier.ShouldRevealCursor = true;
-				return ValueTask.CompletedTask;
-			});
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-			// One would never want a failed attempt at opening a text file to cause a fatal exception.
-			// TODO: Perhaps add a notification? Perhaps 'throw' then add handling in the callers? But again, this should never cause a fatal exception.
-		}
+		// Move cursor
+		if (cursorPositionIndex is null)
+			return; // Leave the cursor unchanged if the argument is null
+		var modelModifier = editContext.GetModelModifier(resourceUri);
+		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
+		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+		var primaryCursorModifier = cursorModifierBag.CursorModifier;
+
+		if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+			return;
+	
+		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
+			
+		primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
+		primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+		
+		viewModelModifier.ShouldRevealCursor = true;
 	}
 	
 	public async Task OpenInEditorAsync(
@@ -538,62 +525,48 @@ public partial class TextEditorService : ITextEditorService
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey)
 	{
-		try
-		{
-			// Standardize Resource Uri
-			if (TextEditorConfig.AbsolutePathStandardizeFunc is null)
-				return;
-				
-			var standardizedFilePathString = await TextEditorConfig.AbsolutePathStandardizeFunc
-				.Invoke(absolutePath, _serviceProvider)
-				.ConfigureAwait(false);
-				
-			var resourceUri = new ResourceUri(standardizedFilePathString);
-
-			var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
-				editContext,
-				resourceUri,
-				shouldSetFocusToEditor,
-				category,
-				preferredViewModelKey);
-				
-			// Move cursor
-			if (lineIndex is null && columnIndex is null)
-				return; // Leave the cursor unchanged if the argument is null
-			TextEditorWorker.PostUnique(nameof(OpenInEditorAsync), editContext =>
-			{
-				var modelModifier = editContext.GetModelModifier(resourceUri);
-				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-				var primaryCursorModifier = cursorModifierBag.CursorModifier;
-		
-				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-					return ValueTask.CompletedTask;
+		// Standardize Resource Uri
+		if (TextEditorConfig.AbsolutePathStandardizeFunc is null)
+			return;
 			
-				if (lineIndex is not null)
-					primaryCursorModifier.LineIndex = lineIndex.Value;
-				if (columnIndex is not null)
-					primaryCursorModifier.ColumnIndex = columnIndex.Value;
-				
-				if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
-					primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
-				
-				var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
-				
-				if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-					primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
-					
-				viewModelModifier.ShouldRevealCursor = true;
-				
-				return ValueTask.CompletedTask;
-			});
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-			// One would never want a failed attempt at opening a text file to cause a fatal exception.
-			// TODO: Perhaps add a notification? Perhaps 'throw' then add handling in the callers? But again, this should never cause a fatal exception.
-		}
+		var standardizedFilePathString = await TextEditorConfig.AbsolutePathStandardizeFunc
+			.Invoke(absolutePath, _serviceProvider)
+			.ConfigureAwait(false);
+			
+		var resourceUri = new ResourceUri(standardizedFilePathString);
+
+		var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
+			editContext,
+			resourceUri,
+			shouldSetFocusToEditor,
+			category,
+			preferredViewModelKey);
+			
+		// Move cursor
+		if (lineIndex is null && columnIndex is null)
+			return; // Leave the cursor unchanged if the argument is null
+		var modelModifier = editContext.GetModelModifier(resourceUri);
+		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
+		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+		var primaryCursorModifier = cursorModifierBag.CursorModifier;
+
+		if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+			return;
+	
+		if (lineIndex is not null)
+			primaryCursorModifier.LineIndex = lineIndex.Value;
+		if (columnIndex is not null)
+			primaryCursorModifier.ColumnIndex = columnIndex.Value;
+		
+		if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
+			primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+		
+		var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+		
+		if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+			primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+			
+		viewModelModifier.ShouldRevealCursor = true;
 	}
 	
 	/// <summary>
