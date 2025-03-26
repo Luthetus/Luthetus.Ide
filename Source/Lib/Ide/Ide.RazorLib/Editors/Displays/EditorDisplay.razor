@@ -27,6 +27,8 @@
     
     	@if (textEditorGroup is not null)
     	{
+    		var viewModelDisplayLocal = _viewModelDisplay;
+    		
     		<div class="luth_te_text-editor-group-tabs-list">
 				<TabListDisplay @ref="_tabListDisplay"
 								TabList="@GetTabList(textEditorGroup)"/>
@@ -36,7 +38,6 @@
 			
 				@if (_isLoaded)
 				{
-					var viewModelDisplayLocal = _viewModelDisplay;
 					if (viewModelDisplayLocal is not null)
 					{
 						<TextEditorFileExtensionHeaderDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"/>
@@ -67,6 +68,14 @@
 		                                            ViewModelDisplayOptions="_viewModelDisplayOptions"/>
 		            }
 	            }
+	            
+	            @if (_isLoaded)
+				{
+					if (viewModelDisplayLocal is not null)
+					{
+						<TextEditorDefaultFooterDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"/>
+					}
+				}
             </div>
 	    }
 	    else
