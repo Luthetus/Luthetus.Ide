@@ -30,7 +30,7 @@ public partial interface ITextEditorService
 {
     /// <summary>This is used when interacting with the <see cref="IStorageService"/> to set and get data.</summary>
     public string StorageKey { get; }
-    public string ThemeCssClassString { get; }
+    public string ThemeCssClassString { get; set; }
 
     public ITextEditorModelApi ModelApi { get; }
     public ITextEditorViewModelApi ViewModelApi { get; }

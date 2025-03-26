@@ -108,10 +108,11 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 		//
 		// Can probably use 'theme' variable here but
 		// I don't want to touch that right now -- incase there are unexpected consequences.
-        var usingTheme = _themeService.GetThemeState().ThemeList
+        var usingThemeCssClassString = _themeService.GetThemeState().ThemeList
         	.FirstOrDefault(x => x.Key == GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         	?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
+        _textEditorService.ThemeCssClassString = usingThemeCssClassString;
         
         TextEditorOptionsStateChanged?.Invoke();
 
