@@ -130,6 +130,22 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private string _gutterPaddingStyleCssString;
     private string _gutterWidthStyleCssString;
+    /// <summary>
+    /// Each individual line number is a separate "gutter".
+    /// Therefore, the UI in a loop will use a StringBuilder to .Append(...)
+    /// - _lineHeightStyleCssString
+    /// - _gutterWidthStyleCssString
+    /// - _gutterPaddingStyleCssString
+    ///
+    /// Due to this occuring within a loop, it is presumed that
+    /// pre-calculating all 3 strings together would be best.
+    ///
+    /// Issue with this: anytime any of the variables change that are used
+    /// in this calculation, you need to re-calculate this string field,
+    /// and it is a D.R.Y. code / omnipotent knowledge
+    /// that this needs re-calculated nightmare.
+    /// </summary>
+    private string _gutterHeightWidthPaddingStyleCssString;
     
     private string _lineHeightStyleCssString;
     
@@ -246,10 +262,26 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	        	{
 	        		_previousGutterWidthInPixels = gutterWidthInPixels;
 	        		var widthInPixelsInvariantCulture = gutterWidthInPixels.ToCssValue();
-	        		_gutterWidthStyleCssString = $"width: {widthInPixelsInvariantCulture}px;";
 	        		
-					_bodyStyle =
-						$"width: calc(100% - {widthInPixelsInvariantCulture}px); left: {widthInPixelsInvariantCulture}px;";
+	        		_uiStringBuilder.Clear();
+	        		_uiStringBuilder.Append("width: ");
+	        		_uiStringBuilder.Append(widthInPixelsInvariantCulture);
+	        		_uiStringBuilder.Append("px;");
+	        		_gutterWidthStyleCssString = _uiStringBuilder.ToString();
+	        		
+	        		_uiStringBuilder.Clear();
+	        		_uiStringBuilder.Append(_lineHeightStyleCssString);
+			        _uiStringBuilder.Append(_gutterWidthStyleCssString);
+			        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
+	        		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
+	        		
+	        		_uiStringBuilder.Clear();
+	        		_uiStringBuilder.Append("width: calc(100% - ");
+			        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+			        _uiStringBuilder.Append("px); left: ");
+			        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+			        _uiStringBuilder.Append("px;");
+	        		_bodyStyle = _uiStringBuilder.ToString();
 	        			        		
 	        		activeRenderBatchLocal.ViewModel.DisplayTracker.PostScrollAndRemeasure();
 	        		return shouldRender;
@@ -268,7 +300,18 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			if (_previousLineHeightInPixels >= 0 && lineHeightInPixels >= 0)
 			{
 				var heightInPixelsInvariantCulture = lineHeightInPixels.ToCssValue();
-		        _lineHeightStyleCssString = $"height: {heightInPixelsInvariantCulture}px;";
+				
+				_uiStringBuilder.Clear();
+        		_uiStringBuilder.Append("height: ");
+		        _uiStringBuilder.Append(heightInPixelsInvariantCulture);
+		        _uiStringBuilder.Append("px;");
+		        _lineHeightStyleCssString = _uiStringBuilder.ToString();
+		        
+		        _uiStringBuilder.Clear();
+        		_uiStringBuilder.Append(_lineHeightStyleCssString);
+		        _uiStringBuilder.Append(_gutterWidthStyleCssString);
+		        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
+        		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
 			}
 		}
 
@@ -847,9 +890,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _uiStringBuilder.Append(topInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
 
-        _uiStringBuilder.Append(_lineHeightStyleCssString);
-        _uiStringBuilder.Append(_gutterWidthStyleCssString);
-        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
+        _uiStringBuilder.Append(_gutterHeightWidthPaddingStyleCssString);
 
         return _uiStringBuilder.ToString();
     }
