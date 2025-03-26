@@ -2076,6 +2076,25 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     #endregion PresentationAndSelectionDriverClose
 
+    private void SetWrapperCssAndStyle()
+    {
+    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    	
+    	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    	
+    	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+    	if (options.CommonOptions?.FontSizeInPixels is not null)
+            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
+    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
+    	
+    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+    	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
+        	fontFamily = options!.CommonOptions!.FontFamily;
+    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
+    	
+    	_wrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
+    }
+    
     public void Dispose()
     {
     	// ScrollbarSection.razor.cs
@@ -2096,24 +2115,5 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
 
         _componentData.MouseStoppedMovingCancellationTokenSource.Cancel();
-    }
-    
-    private void SetWrapperCssAndStyle()
-    {
-    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
-    	
-    	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
-    	
-    	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
-    	if (options.CommonOptions?.FontSizeInPixels is not null)
-            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
-    	
-    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
-    	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
-        	fontFamily = options!.CommonOptions!.FontFamily;
-    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
-    	
-    	_wrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     }
 }
