@@ -29,102 +29,97 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
     {
         if (firstRender)
         {
-            // "In" Registrations
-            {
-                TextEditorService.ModelApi.RegisterTemplated(
-                    ExtensionNoPeriodFacts.TXT,
-                    InResourceUri,
-                    DateTime.UtcNow,
-                    "ABCDEFK",
-                    "Before");
+        	TextEditorService.TextEditorWorker.PostUnique(nameof(GitChangesDisplay), editContext =>
+        	{
+        		// "In" Registrations
+	            {
+	                TextEditorService.ModelApi.RegisterTemplated(
+	                	editContext,
+	                    ExtensionNoPeriodFacts.TXT,
+	                    InResourceUri,
+	                    DateTime.UtcNow,
+	                    "ABCDEFK",
+	                    "Before");
+	
+	                TextEditorService.ViewModelApi.Register(
+	                	editContext,
+	                    InViewModelKey,
+	                    InResourceUri,
+	                    new Category(nameof(GitChangesDisplay)));
+	
+	                var modelModifier = editContext.GetModelModifier(InResourceUri);
+	                    
+                    TextEditorService.ModelApi.AddPresentationModel(
+                    	editContext,
+                        modelModifier,
+                        DiffPresentationFacts.EmptyInPresentationModel);
 
-                TextEditorService.ViewModelApi.Register(
-                    InViewModelKey,
-                    InResourceUri,
-                    new Category(nameof(GitChangesDisplay)));
+                    TextEditorService.ModelApi.AddPresentationModel(
+                    	editContext,
+                        modelModifier,
+                        DiffPresentationFacts.EmptyOutPresentationModel);
 
-                TextEditorService.TextEditorWorker.PostUnique(
-                    nameof(TextEditorService.ModelApi.AddPresentationModel),
-                    editContext =>
-                    {
-                    	var modelModifier = editContext.GetModelModifier(InResourceUri);
-                    
-                        TextEditorService.ModelApi.AddPresentationModel(
-                        	editContext,
-                            modelModifier,
-                            DiffPresentationFacts.EmptyInPresentationModel);
+                    var viewModelModifier = editContext.GetViewModelModifier(InViewModelKey);
 
-                        TextEditorService.ModelApi.AddPresentationModel(
-                        	editContext,
-                            modelModifier,
-                            DiffPresentationFacts.EmptyOutPresentationModel);
-
-                        var viewModelModifier = editContext.GetViewModelModifier(InViewModelKey);
-
-                        if (viewModelModifier is null)
-                            return ValueTask.CompletedTask;
-
-                        var presentationKeys = new List<Key<TextEditorPresentationModel>>
-                        {
-                            DiffPresentationFacts.InPresentationKey,
-                        };
-
-                        viewModelModifier.FirstPresentationLayerKeysList = presentationKeys;
-                        
+                    if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
-                    });
-            }
-            
-            // "Out" Registrations
-            {
-                TextEditorService.ModelApi.RegisterTemplated(
-                    ExtensionNoPeriodFacts.TXT,
-                    OutResourceUri,
-                    DateTime.UtcNow,
-                    "BHDEFCK",
-                    "After");
 
-                TextEditorService.ViewModelApi.Register(
-                    OutViewModelKey,
-                    OutResourceUri,
-                    new Category(nameof(GitChangesDisplay)));
-
-                TextEditorService.TextEditorWorker.PostUnique(
-                    nameof(TextEditorService.ModelApi.AddPresentationModel),
-                    editContext =>
+                    var presentationKeys = new List<Key<TextEditorPresentationModel>>
                     {
-                    	var modelModifier = editContext.GetModelModifier(OutResourceUri);
-                    
-                        TextEditorService.ModelApi.AddPresentationModel(
-                    		editContext,
-                            modelModifier,
-                            DiffPresentationFacts.EmptyInPresentationModel);
+                        DiffPresentationFacts.InPresentationKey,
+                    };
 
-                        TextEditorService.ModelApi.AddPresentationModel(
-                    		editContext,
-                            modelModifier,
-                            DiffPresentationFacts.EmptyOutPresentationModel);
+                    viewModelModifier.FirstPresentationLayerKeysList = presentationKeys;
+	            }
+	            
+	            // "Out" Registrations
+	            {
+	                TextEditorService.ModelApi.RegisterTemplated(
+	                	editContext,
+	                    ExtensionNoPeriodFacts.TXT,
+	                    OutResourceUri,
+	                    DateTime.UtcNow,
+	                    "BHDEFCK",
+	                    "After");
+	
+	                TextEditorService.ViewModelApi.Register(
+	                	editContext,
+	                    OutViewModelKey,
+	                    OutResourceUri,
+	                    new Category(nameof(GitChangesDisplay)));
+	
+	                var modelModifier = editContext.GetModelModifier(OutResourceUri);
+	                    
+                    TextEditorService.ModelApi.AddPresentationModel(
+                		editContext,
+                        modelModifier,
+                        DiffPresentationFacts.EmptyInPresentationModel);
 
-                        var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
+                    TextEditorService.ModelApi.AddPresentationModel(
+                		editContext,
+                        modelModifier,
+                        DiffPresentationFacts.EmptyOutPresentationModel);
 
-                        if (viewModelModifier is null)
-                            return ValueTask.CompletedTask;
+                    var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
 
-                        var presentationKeys = new List<Key<TextEditorPresentationModel>>()
-                        {
-                            DiffPresentationFacts.OutPresentationKey,
-                        };
-
-                        viewModelModifier.FirstPresentationLayerKeysList = presentationKeys;
-
+                    if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
-                    });
-            }
 
-            TextEditorService.DiffApi.Register(
-                DiffModelKey,
-                InViewModelKey,
-                OutViewModelKey);
+                    var presentationKeys = new List<Key<TextEditorPresentationModel>>()
+                    {
+                        DiffPresentationFacts.OutPresentationKey,
+                    };
+
+                    viewModelModifier.FirstPresentationLayerKeysList = presentationKeys;
+	            }
+	
+	            TextEditorService.DiffApi.Register(
+	                DiffModelKey,
+	                InViewModelKey,
+	                OutViewModelKey);
+        	
+        		return ValueTask.CompletedTask;
+        	});
         }
 
         await base.OnAfterRenderAsync(firstRender);

@@ -52,11 +52,16 @@ public class FindAllTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 		if (activeNode is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
 			return Task.CompletedTask;
 
-		return _textEditorService.OpenInEditorAsync(
-			treeViewFindAllTextSpan.AbsolutePath.Value,
-			shouldSetFocusToEditor,
-			treeViewFindAllTextSpan.Item.StartingIndexInclusive,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+		_textEditorService.TextEditorWorker.PostUnique(nameof(FindAllTreeViewKeyboardEventHandler), async editContext =>
+    	{
+    		await _textEditorService.OpenInEditorAsync(
+    			editContext,
+				treeViewFindAllTextSpan.AbsolutePath.Value,
+				shouldSetFocusToEditor,
+				treeViewFindAllTextSpan.Item.StartingIndexInclusive,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey());
+    	});
+		return Task.CompletedTask;
 	}
 }

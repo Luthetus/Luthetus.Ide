@@ -152,17 +152,23 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
 		if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)
 		{
-			_textEditorService.ModelApi.RegisterTemplated(
-				ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
-				resourceUri,
-				DateTime.UtcNow,
-				content);
-
-			_compilerServiceRegistry
-				.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-				.RegisterResource(
+			_textEditorService.TextEditorWorker.PostUnique(nameof(DotNetSolutionIdeApi), editContext =>
+			{
+				_textEditorService.ModelApi.RegisterTemplated(
+					editContext,
+					ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
 					resourceUri,
-					shouldTriggerResourceWasModified: true);
+					DateTime.UtcNow,
+					content);
+	
+				_compilerServiceRegistry
+					.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+					.RegisterResource(
+						resourceUri,
+						shouldTriggerResourceWasModified: true);
+			
+				return ValueTask.CompletedTask;
+			});
 		}
 
 		var lexer = new DotNetSolutionLexer(

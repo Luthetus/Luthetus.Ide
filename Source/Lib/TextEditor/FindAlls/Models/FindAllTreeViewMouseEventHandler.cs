@@ -33,11 +33,16 @@ public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
 			return Task.CompletedTask;
 
-		return _textEditorService.OpenInEditorAsync(
-			treeViewFindAllTextSpan.AbsolutePath.Value,
-			true,
-			treeViewFindAllTextSpan.Item.StartingIndexInclusive,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+		_textEditorService.TextEditorWorker.PostUnique(nameof(FindAllTreeViewMouseEventHandler), async editContext =>
+    	{
+    		await _textEditorService.OpenInEditorAsync(
+    			editContext,
+    			treeViewFindAllTextSpan.AbsolutePath.Value,
+				true,
+				treeViewFindAllTextSpan.Item.StartingIndexInclusive,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey());
+    	});
+    	return Task.CompletedTask;
 	}
 }

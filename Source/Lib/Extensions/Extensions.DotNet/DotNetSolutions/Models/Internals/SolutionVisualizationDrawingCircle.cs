@@ -86,12 +86,18 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider)
 	{
-		return serviceProvider.GetRequiredService<ITextEditorService>().OpenInEditorAsync(
-			filePath,
-			true,
-			null,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+		var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+		textEditorService.TextEditorWorker.PostUnique(nameof(SolutionExplorerTreeViewMouseEventHandler), async editContext =>
+		{
+			await textEditorService.OpenInEditorAsync(
+				editContext,
+				filePath,
+				true,
+				null,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey());
+		});
+		return Task.CompletedTask;
 	}
 
 	private async Task LoadProjects(
@@ -99,7 +105,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider)
 	{
-		if (textEditorConfig.RegisterModelFunc is null)
+		/*if (textEditorConfig.RegisterModelFunc is null)
 			return;
 
 		var dotNetBackgroundTaskApi = serviceProvider.GetRequiredService<DotNetBackgroundTaskApi>();
@@ -115,7 +121,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 					resourceUri,
 					serviceProvider))
 				.ConfigureAwait(false);
-		}
+		}*/
 	}
 
 	private async Task LoadClasses(
@@ -124,7 +130,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider)
 	{
-		if (textEditorConfig.RegisterModelFunc is null)
+		/*if (textEditorConfig.RegisterModelFunc is null)
 			return;
 
 		var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
@@ -192,6 +198,6 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 
 				await DiscoverFilesRecursively(directoryPathChild, discoveredFileList).ConfigureAwait(false);
 			}
-		}
+		}*/
 	}
 }

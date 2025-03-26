@@ -23,12 +23,17 @@ public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
 
     private Task OpenInEditorOnClick(string filePath)
     {
-    	return TextEditorService.OpenInEditorAsync(
-			filePath,
-			true,
-			null,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+    	TextEditorService.TextEditorWorker.PostUnique(nameof(DirtyResourceUriViewDisplay), async editContext =>
+    	{
+    		await TextEditorService.OpenInEditorAsync(
+    			editContext,
+                filePath,
+				true,
+				null,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey());
+    	});
+    	return Task.CompletedTask;
     }
     
     public async void OnDirtyResourceUriStateChanged()

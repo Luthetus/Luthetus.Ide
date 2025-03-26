@@ -19,12 +19,16 @@ namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 public struct RegisterModelArgs
 {
     public RegisterModelArgs(
+    	TextEditorEditContext editContext,
         ResourceUri resourceUri,
         IServiceProvider serviceProvider)
     {
+        EditContext = editContext;
         ResourceUri = resourceUri;
         ServiceProvider = serviceProvider;
     }
+
+	public TextEditorEditContext EditContext { get; }
 
     /// <summary>
     /// The unique identifier for the <see cref="TextEditorModel"/> which is

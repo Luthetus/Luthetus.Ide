@@ -125,25 +125,9 @@ public class TextEditorWorker : IBackgroundTaskGroup
 		}
 	}
 	
-	/// <summary>
-	/// TODO: This has to repeat the logic for 'uniqueTextEditorWork.__TaskCompletionSourceWasCreated'
-	/// but do it for 'BackgroundTaskKey' otherwise two async enqueues with this group
-	/// will cause a clobber to the task completion source and it never gets set.
-	/// </summary>
-	public Task EnqueueUniqueTextEditorWorkAsync(UniqueTextEditorWork uniqueTextEditorWork)
+	public Task EnqueueTextEditorWorkAsync(AsyncTextEditorWork asyncTextEditorWork)
 	{
-		uniqueTextEditorWork.__TaskCompletionSourceWasCreated = true;
-	
-		var asyncWork = Task.CompletedTask;
-	
-		lock (_workKindQueueLock)
-		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.UniqueTextEditorWork);
-			UniqueTextEditorWorkQueue.Enqueue(uniqueTextEditorWork);
-			asyncWork = _textEditorService.BackgroundTaskService.EnqueueAsync(this);
-		}
-		
-		return asyncWork;
+		return _textEditorService.BackgroundTaskService.EnqueueAsync(asyncTextEditorWork);
 	}
 	
 	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)

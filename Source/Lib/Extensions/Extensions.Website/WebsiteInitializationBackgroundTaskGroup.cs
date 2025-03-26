@@ -151,12 +151,16 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
             InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
             false);
 
-        await _textEditorService.OpenInEditorAsync(
-            absolutePath.Value,
-            false,
-            null,
-            new Category("main"),
-        Key<TextEditorViewModel>.NewKey());
+		_textEditorService.TextEditorWorker.PostUnique(nameof(WebsiteInitializationBackgroundTaskGroup), async editContext =>
+		{
+			await _textEditorService.OpenInEditorAsync(
+				editContext,
+	            absolutePath.Value,
+	            false,
+	            null,
+	            new Category("main"),
+	        	Key<TextEditorViewModel>.NewKey());
+		});
     }
 
     private async Task ParseSolutionAsync()
@@ -200,12 +204,12 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                 decorationMapper,
                 compilerService);
 
-            _textEditorService.ModelApi.RegisterCustom(textEditorModel);
-
             _textEditorService.TextEditorWorker.PostUnique(
                 nameof(_textEditorService.ModelApi.AddPresentationModel),
                 editContext =>
                 {
+                	_textEditorService.ModelApi.RegisterCustom(editContext, textEditorModel);
+                	
                     var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
 
                     if (modelModifier is null)

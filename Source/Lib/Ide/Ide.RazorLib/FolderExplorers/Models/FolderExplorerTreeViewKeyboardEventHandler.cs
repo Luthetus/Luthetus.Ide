@@ -216,12 +216,17 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-		return _textEditorService.OpenInEditorAsync(
-			treeViewAbsolutePath.Item.Value,
-			shouldSetFocusToEditor,
-			cursorPositionIndex: null,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+		_textEditorService.TextEditorWorker.PostUnique(nameof(FolderExplorerTreeViewMouseEventHandler), async editContext =>
+		{
+			await _textEditorService.OpenInEditorAsync(
+				editContext,
+				treeViewAbsolutePath.Item.Value,
+				shouldSetFocusToEditor,
+				cursorPositionIndex: null,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey());
+		});
+		return Task.CompletedTask;
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)

@@ -7,18 +7,22 @@ namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 public struct TryRegisterViewModelArgs
 {
     public TryRegisterViewModelArgs(
+    	TextEditorEditContext editContext,
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         Category category,
         bool shouldSetFocusToEditor,
         IServiceProvider serviceProvider)
     {
+        EditContext = editContext;
         ViewModelKey = viewModelKey;
         ResourceUri = resourceUri;
         Category = category;
         ShouldSetFocusToEditor = shouldSetFocusToEditor;
         ServiceProvider = serviceProvider;
     }
+
+	public TextEditorEditContext EditContext { get; }
 
     /// <summary>
     /// One can use <see cref="Key{T}.NewKey()"/> if they have no preference for the key value.

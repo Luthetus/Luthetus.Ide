@@ -97,67 +97,68 @@ public partial class GitDiffDisplay : ComponentBase
 
 	private async Task<bool> TryCreateEditorIn(string logFileContent, ResourceUri originalResourceUri)
 	{
-		// Dispose any previously created state for the editor in model
-		if (InResourceUri is not null)
+		TextEditorService.TextEditorWorker.PostUnique(nameof(GitDiffDisplay), editContext =>
 		{
-			TextEditorService.ModelApi.Dispose(InResourceUri.Value);
-			InResourceUri = null;
-		}
-		
-		// Create Model
-        var resourceUri = new ResourceUri(ResourceUriFacts.Diff_ReservedResourceUri_Prefix + originalResourceUri.Value);
- 	   InResourceUri = resourceUri;
- 	   
-        var fileLastWriteTime = DateTime.UtcNow;
-        var content = logFileContent;
-
-        var absolutePath = EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false);
-        var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-        var compilerService = CompilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
-
-        var model = new TextEditorModel(
-            resourceUri,
-            fileLastWriteTime,
-            absolutePath.ExtensionNoPeriod,
-            content,
-            decorationMapper,
-            compilerService);
-            
-        var modelModifier = new TextEditorModel(model);
-        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
-        
-        model = modelModifier;
-
-        TextEditorService.ModelApi.RegisterCustom(model);
-        
-		model.CompilerService.RegisterResource(
-			model.ResourceUri,
-			shouldTriggerResourceWasModified: true);
+			// Dispose any previously created state for the editor in model
+			if (InResourceUri is not null)
+			{
+				TextEditorService.ModelApi.Dispose(editContext, InResourceUri.Value);
+				InResourceUri = null;
+			}
 			
-		// Create ViewModel
-		try
-    	{
-    		// Dispose any previously created state for the editor in view model
-			TextEditorService.ViewModelApi.Dispose(InViewModelKey);
-    	
-    		var viewModelKey = InViewModelKey;
-    		var category = new Category("diff-in");
+			// Create Model
+	        var resourceUri = new ResourceUri(ResourceUriFacts.Diff_ReservedResourceUri_Prefix + originalResourceUri.Value);
+	 	   InResourceUri = resourceUri;
+	 	   
+	        var fileLastWriteTime = DateTime.UtcNow;
+	        var content = logFileContent;
+	
+	        var absolutePath = EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+	        var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+	        var compilerService = CompilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
+	
+	        var model = new TextEditorModel(
+	            resourceUri,
+	            fileLastWriteTime,
+	            absolutePath.ExtensionNoPeriod,
+	            content,
+	            decorationMapper,
+	            compilerService);
+	            
+	        var modelModifier = new TextEditorModel(model);
+	        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+	        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
+	        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
+	        
+	        model = modelModifier;
+	
+	        TextEditorService.ModelApi.RegisterCustom(editContext, model);
+	        
+			model.CompilerService.RegisterResource(
+				model.ResourceUri,
+				shouldTriggerResourceWasModified: true);
+				
+			// Create ViewModel
+			
+			// Dispose any previously created state for the editor in view model
+			TextEditorService.ViewModelApi.Dispose(editContext, InViewModelKey);
+		
+			var viewModelKey = InViewModelKey;
+			var category = new Category("diff-in");
 	        
 	        var viewModel = new TextEditorViewModel(
-                viewModelKey,
-                resourceUri,
-                TextEditorService,
-                PanelService,
-                DialogService,
-                CommonBackgroundTaskApi,
-                VirtualizationGrid.Empty,
+	            viewModelKey,
+	            resourceUri,
+	            TextEditorService,
+	            PanelService,
+	            DialogService,
+	            CommonBackgroundTaskApi,
+	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
-        		new CharAndLineMeasurements(0, 0),
-                false,
-                category);
+	    		new CharAndLineMeasurements(0, 0),
+	            false,
+	            category);
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 	        {
@@ -168,60 +169,51 @@ public partial class GitDiffDisplay : ComponentBase
 	            
 	        viewModel.ShouldSetFocusAfterNextRender = false;
 		
-            viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
-            viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
-            
-            TextEditorService.ViewModelApi.Register(viewModel);
-        }
-        catch (Exception e)
-        {
-        	NotificationHelper.DispatchError(
-		        nameof(TryCreateEditorIn),
-		        e.ToString(),
-		        CommonComponentRenderers,
-		        NotificationService,
-		        TimeSpan.FromSeconds(6));
-		
-			return false;        
-		}
-		
+	        viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+	        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+	        
+	        TextEditorService.ViewModelApi.Register(editContext, viewModel);
+	        
+	        return ValueTask.CompletedTask;
+		});
+
 		return true;
 	}
 	
 	private async Task<bool> TryCreateEditorOut(ResourceUri originalResourceUri, AbsolutePath originalAbsolutePath)
 	{
-		// Create Model
-		var originalModel = TextEditorService.ModelApi.GetOrDefault(originalResourceUri);
-		if (originalModel is null)
+		TextEditorService.TextEditorWorker.PostUnique(nameof(GitDiffDisplay), async editContext =>
 		{
-			var registerModelArgs = new RegisterModelArgs(originalResourceUri, ServiceProvider);
-
-			await TextEditorService.TextEditorConfig.RegisterModelFunc
-				.Invoke(registerModelArgs).ConfigureAwait(false);
-		}
+			// Create Model
+			var originalModel = TextEditorService.ModelApi.GetOrDefault(originalResourceUri);
+			if (originalModel is null)
+			{
+				var registerModelArgs = new RegisterModelArgs(editContext, originalResourceUri, ServiceProvider);
+	
+				await TextEditorService.TextEditorConfig.RegisterModelFunc
+					.Invoke(registerModelArgs).ConfigureAwait(false);
+			}
+			
+			// Create ViewModel
+			// Dispose any previously created state for the editor out view model
+			TextEditorService.ViewModelApi.Dispose(editContext, OutViewModelKey);
 		
-		// Create ViewModel
-		try
-    	{
-    		// Dispose any previously created state for the editor out view model
-			TextEditorService.ViewModelApi.Dispose(OutViewModelKey);
-    	
-    		var viewModelKey = OutViewModelKey;
-    		var category = new Category("diff-out");
+			var viewModelKey = OutViewModelKey;
+			var category = new Category("diff-out");
 	        
 	        var viewModel = new TextEditorViewModel(
-                viewModelKey,
-                originalResourceUri,
-                TextEditorService,
-                PanelService,
-                DialogService,
-                CommonBackgroundTaskApi,
-                VirtualizationGrid.Empty,
+	            viewModelKey,
+	            originalResourceUri,
+	            TextEditorService,
+	            PanelService,
+	            DialogService,
+	            CommonBackgroundTaskApi,
+	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
-        		new CharAndLineMeasurements(0, 0),
-                false,
-                category);
+	    		new CharAndLineMeasurements(0, 0),
+	            false,
+	            category);
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 	        {
@@ -232,22 +224,11 @@ public partial class GitDiffDisplay : ComponentBase
 	            
 	        viewModel.ShouldSetFocusAfterNextRender = false;
 		
-            viewModel.GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension;
-            viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
-            
-            TextEditorService.ViewModelApi.Register(viewModel);
-        }
-        catch (Exception e)
-        {
-        	NotificationHelper.DispatchError(
-		        nameof(TryCreateEditorOut),
-		        e.ToString(),
-		        CommonComponentRenderers,
-		        NotificationService,
-		        TimeSpan.FromSeconds(6));
-		
-			return false;        
-		}
+	        viewModel.GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension;
+	        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+	        
+	        TextEditorService.ViewModelApi.Register(editContext, viewModel);
+		});
 		
 		return true;
 	}

@@ -34,11 +34,16 @@ public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
 			return Task.CompletedTask;
 
-		return _textEditorService.OpenInEditorAsync(
-			treeViewCodeSearchTextSpan.AbsolutePath.Value,
-			true,
-			treeViewCodeSearchTextSpan.Item.StartingIndexInclusive,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+		_textEditorService.TextEditorWorker.PostUnique(nameof(CodeSearchTreeViewMouseEventHandler), async editContext =>
+		{
+			await _textEditorService.OpenInEditorAsync(
+				editContext,
+				treeViewCodeSearchTextSpan.AbsolutePath.Value,
+				true,
+				treeViewCodeSearchTextSpan.Item.StartingIndexInclusive,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey());
+		});
+		return Task.CompletedTask;
 	}
 }

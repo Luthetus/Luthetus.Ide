@@ -10,7 +10,7 @@ public interface ITextEditorModelApi
 {
     #region CREATE_METHODS
     /// <summary>It is recommended to use the <see cref="RegisterTemplated" /> method as it will internally reference the <see cref="ITextEditorLexer" /> and <see cref="IDecorationMapper" /> that correspond to the desired text editor.</summary>
-    public void RegisterCustom(TextEditorModel model);
+    public void RegisterCustom(TextEditorEditContext editContext, TextEditorModel model);
     /// <summary>
     /// (2025-01-25)
     /// TODO: This is extremely confusing. The 'ICompilerService' implementations sometimes require...
@@ -41,6 +41,7 @@ public interface ITextEditorModelApi
     /// NOTE: One must first install the Luthetus.CompilerServices.CSharp NuGet package.<br /><br />
     /// </summary>
     public void RegisterTemplated(
+    	TextEditorEditContext editContext,
         string extensionNoPeriod,
         ResourceUri resourceUri,
         DateTime resourceLastWriteTime,
@@ -233,6 +234,6 @@ public interface ITextEditorModelApi
     #endregion
 
     #region DELETE_METHODS
-    public void Dispose(ResourceUri resourceUri);
+    public void Dispose(TextEditorEditContext editContext, ResourceUri resourceUri);
     #endregion
 }

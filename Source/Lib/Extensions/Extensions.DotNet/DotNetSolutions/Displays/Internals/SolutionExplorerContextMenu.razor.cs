@@ -515,12 +515,17 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 	private Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)
 	{
-		return TextEditorService.OpenInEditorAsync(
-			dotNetSolutionModel.AbsolutePath.Value,
-			true,
-			null,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+		TextEditorService.TextEditorWorker.PostUnique(nameof(SolutionExplorerContextMenu), async editContext =>
+		{
+			await TextEditorService.OpenInEditorAsync(
+				editContext,
+				dotNetSolutionModel.AbsolutePath.Value,
+				true,
+				null,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey());
+		});
+		return Task.CompletedTask;
 	}
 
 	/// <summary>

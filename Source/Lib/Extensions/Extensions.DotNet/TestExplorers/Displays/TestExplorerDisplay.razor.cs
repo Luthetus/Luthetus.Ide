@@ -53,27 +53,31 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 			if (model is null)
 			{
-				var terminalDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
-				var terminalCompilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
-
-				model = new TextEditorModel(
-					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-					DateTime.UtcNow,
-					ExtensionNoPeriodFacts.TERMINAL,
-					"initialContent:TestExplorerDetailsTextEditorResourceUri",
-                    terminalDecorationMapper,
-                    terminalCompilerService);
-
-				TextEditorService.ModelApi.RegisterCustom(model);
-
-				TextEditorService.ViewModelApi.Register(
-					TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey,
-					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-					new Category("terminal"));
-
-				RegisterDetailsTextEditor(model);
-
-				await InvokeAsync(StateHasChanged);
+				TextEditorService.TextEditorWorker.PostUnique(nameof(TestExplorerDisplay), async editContext =>
+				{
+					var terminalDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
+					var terminalCompilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
+	
+					model = new TextEditorModel(
+						ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
+						DateTime.UtcNow,
+						ExtensionNoPeriodFacts.TERMINAL,
+						"initialContent:TestExplorerDetailsTextEditorResourceUri",
+	                    terminalDecorationMapper,
+	                    terminalCompilerService);
+	
+					TextEditorService.ModelApi.RegisterCustom(editContext, model);
+	
+					TextEditorService.ViewModelApi.Register(
+						editContext,
+						TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey,
+						ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
+						new Category("terminal"));
+	
+					RegisterDetailsTextEditor(model);
+	
+					await InvokeAsync(StateHasChanged);
+				});
 			}
 		}
 

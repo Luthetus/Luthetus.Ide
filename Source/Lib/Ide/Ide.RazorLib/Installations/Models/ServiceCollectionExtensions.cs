@@ -69,6 +69,7 @@ public static class ServiceCollectionExtensions
                 	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
                 
                     registerModelArgs = new RegisterModelArgs(
+                    	registerModelArgs.EditContext,
                         standardizedResourceUri,
                         registerModelArgs.ServiceProvider)
                     {
@@ -86,6 +87,7 @@ public static class ServiceCollectionExtensions
                 	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
                 	
                     tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
+                    	tryRegisterViewModelArgs.EditContext,
                         tryRegisterViewModelArgs.ViewModelKey,
                         standardizedResourceUri,
                         tryRegisterViewModelArgs.Category,

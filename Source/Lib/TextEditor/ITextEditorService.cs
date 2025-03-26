@@ -105,6 +105,7 @@ public partial interface ITextEditorService
 	public ValueTask FinalizePost(TextEditorEditContext editContext);
 	
 	public Task OpenInEditorAsync(
+		TextEditorEditContext editContext,
 		string absolutePath,
 		bool shouldSetFocusToEditor,
 		int? cursorPositionIndex,
@@ -112,6 +113,7 @@ public partial interface ITextEditorService
 		Key<TextEditorViewModel> preferredViewModelKey);
 		
 	public Task OpenInEditorAsync(
+		TextEditorEditContext editContext,
 		string absolutePath,
 		bool shouldSetFocusToEditor,
 		int? lineIndex,
@@ -119,25 +121,17 @@ public partial interface ITextEditorService
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey);
 		
-	public void RegisterModel(TextEditorModel model);
-	public void DisposeModel(ResourceUri resourceUri);
+	public void RegisterModel(TextEditorEditContext editContext, TextEditorModel model);
+	public void DisposeModel(TextEditorEditContext editContext, ResourceUri resourceUri);
 	public void SetModel(TextEditorEditContext editContext, TextEditorModel modelModifier);
 	
 	public void RegisterViewModel(
-	    Key<TextEditorViewModel> viewModelKey,
-	    ResourceUri resourceUri,
-	    Category category,
-	    ITextEditorService textEditorService,
-	    IDialogService dialogService);
-	
-	public void RegisterViewModelExisting(TextEditorViewModel viewModel);
-	
-	public void DisposeViewModel(Key<TextEditorViewModel> viewModelKey);
-	
-	public void SetViewModelWith(
 	    TextEditorEditContext editContext,
-	    Key<TextEditorViewModel> viewModelKey,
-	    Func<TextEditorViewModel, TextEditorViewModel> withFunc);
+	    TextEditorViewModel viewModel);
+	
+	public void DisposeViewModel(
+		TextEditorEditContext editContext,
+		Key<TextEditorViewModel> viewModelKey);
 	
 	public void SetModelAndViewModelRange(
 	    TextEditorEditContext editContext,

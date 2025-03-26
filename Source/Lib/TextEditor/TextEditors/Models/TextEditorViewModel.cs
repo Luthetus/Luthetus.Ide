@@ -54,6 +54,12 @@ public sealed class TextEditorViewModel : IDisposable
         CharAndLineMeasurements = charAndLineMeasurements;
         ShowCommandBar = displayCommandBar;
         Category = category;
+        
+        FirstPresentationLayerKeysList = new();
+        LastPresentationLayerKeysList = new();
+        
+        CommandBarValue = string.Empty;
+        FindOverlayValue = string.Empty;
 
         PrimaryCursor = new TextEditorCursor(true);
 
@@ -68,6 +74,11 @@ public sealed class TextEditorViewModel : IDisposable
             panelService,
             dialogService,
             commonBackgroundTaskApi);
+	
+		BodyElementId = $"luth_te_text-editor-content_{ViewModelKey.Guid}";
+	    PrimaryCursorContentId = $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
+	    GutterElementId = $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
+	    FindOverlayId = $"luth_te_find-overlay_{ViewModelKey.Guid}";
 	}
 	
 	public TextEditorViewModel(TextEditorViewModel other)
@@ -97,6 +108,11 @@ public sealed class TextEditorViewModel : IDisposable
 	    ShouldRevealCursor = other.ShouldRevealCursor;
 	    CursorIsIntersecting = other.CursorIsIntersecting;
 	    DynamicViewModelAdapter = other.DynamicViewModelAdapter;
+	    
+	    BodyElementId = other.BodyElementId;
+	    PrimaryCursorContentId = other.PrimaryCursorContentId;
+	    GutterElementId = other.GutterElementId;
+	    FindOverlayId = other.FindOverlayId;
 	    
 	    /*
 	    // Don't copy these properties
@@ -173,25 +189,25 @@ public sealed class TextEditorViewModel : IDisposable
     /// Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysList"/>.<br/><br/>
     /// When using the <see cref="FirstPresentationLayerKeysList"/> one might find their css overriden by for example, text being selected.
     /// </summary>
-    public List<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; set; } = new();
+    public List<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; set; }
     /// <summary>
     /// <see cref="LastPresentationLayerKeysList"/> is painted after any internal workings of the text editor.<br/><br/>
     /// Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysList"/>.<br/><br/>
     /// When using the <see cref="LastPresentationLayerKeysList"/> one might find the selected text background
     /// not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysList"/>.
     /// </summary>
-    public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; set; } = new();
+    public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; set; }
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// In the command line program "Vim" one can hit 'colon' to bring up a command bar.
     /// This property is what the input element binds to
     /// </summary>
-    public string CommandBarValue { get; set; } = string.Empty;
+    public string CommandBarValue { get; set; }
     /// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
     /// This property is what the find overlay input element binds to.
     /// </summary>
-    public string FindOverlayValue { get; set; } = string.Empty;
+    public string FindOverlayValue { get; set; }
     /// <summary>
     /// If the user presses the keybind to show the FindOverlayDisplay while focused on the Text Editor,
     /// check if the user has a text selection.
@@ -234,10 +250,10 @@ public sealed class TextEditorViewModel : IDisposable
 	/// </summary>
     public bool ShouldReloadVirtualizationResult { get; set; }
 
-	public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
-    public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
-    public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
-    public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
+	public string BodyElementId { get; }
+    public string PrimaryCursorContentId { get; }
+    public string GutterElementId { get; }
+    public string FindOverlayId { get; }
 
     public ValueTask FocusAsync()
     {

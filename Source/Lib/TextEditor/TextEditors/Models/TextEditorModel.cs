@@ -23,6 +23,273 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public partial class TextEditorModel
 {
+	#region TextEditorModelMain
+    
+    /// <summary>new model</summary>
+    public TextEditorModel(
+        ResourceUri resourceUri,
+        DateTime resourceLastWriteTime,
+        string fileExtension,
+        string content,
+        IDecorationMapper? decorationMapper,
+        ICompilerService? compilerService,
+		int partitionSize = 4_096)
+    {
+    	if (partitionSize < MINIMUM_PARTITION_SIZE)
+            throw new LuthetusTextEditorException($"{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
+    
+    	// Initialize
+	    _partitionListChanged = false;
+	    _partitionListIsShallowCopy = false;
+	    _partitionList = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
+	    _richCharacterList = Array.Empty<RichCharacter>();
+	    EditBlockList = new();
+	    ViewModelKeyList = new();
+	    LineEndList = new();
+	    LineEndKindCountList = new();
+	    PresentationModelList = new();
+	    TabKeyPositionList = new();
+	    OnlyLineEndKind = LineEndKind.Unset;
+	    LineEndKindPreference = LineEndKind.Unset;
+	    ResourceUri = resourceUri;
+	    ResourceLastWriteTime = resourceLastWriteTime;
+	    FileExtension = fileExtension;
+	    DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
+	    CompilerService = compilerService ?? new CompilerServiceDoNothing();
+	    TextEditorSaveFileHelper = new();
+	    EditBlockIndex = 0;
+	    IsDirty = false;
+	    MostCharactersOnASingleLineTuple = (0, 0);
+	    PreviousMostCharactersOnASingleLineTuple = (0, 0);
+	    RenderStateSequence = 0;
+	    PreviousLineCount = 0;
+		OtherEditStack = new();
+	    WasDirty = false;
+	    PartitionSize = partitionSize;
+	    WasModified = false;
+	    ShouldReloadVirtualizationResult = false;
+	    _allText = string.Empty;
+	    _charCount = 0;
+        // LineCount => LineEndList.Count;
+
+		SetContent(content);
+		IsDirty = false;
+	}
+	
+	/// <summary>model -> modifier</summary>
+	public TextEditorModel(TextEditorModel other)
+    {
+		// There are various lists.
+		// Some are "safe" from causing an enumeration was modified
+		// if copied between the model instances as they get edited
+		// because the UI doesn't use them.
+
+		_partitionListChanged = false;
+	    _partitionListIsShallowCopy = false;
+	    _partitionList = other.PartitionList;
+	    _richCharacterList = other.RichCharacterList;
+	    EditBlockList = other.EditBlockList;
+	    ViewModelKeyList = other.ViewModelKeyList;
+	    LineEndList = other.LineEndList;
+	    LineEndKindCountList = other.LineEndKindCountList;
+	    PresentationModelList = other.PresentationModelList;
+	    TabKeyPositionList = other.TabKeyPositionList;
+        OnlyLineEndKind = other.OnlyLineEndKind;
+	    LineEndKindPreference = other.LineEndKindPreference;
+	    ResourceUri = other.ResourceUri;
+	    ResourceLastWriteTime = other.ResourceLastWriteTime;
+	    FileExtension = other.FileExtension;
+	    DecorationMapper = other.DecorationMapper;
+	    CompilerService = other.CompilerService;
+	    TextEditorSaveFileHelper = other.TextEditorSaveFileHelper;
+	    EditBlockIndex = other.EditBlockIndex;
+	    IsDirty = other.IsDirty;
+	    MostCharactersOnASingleLineTuple = other.MostCharactersOnASingleLineTuple;
+	    PreviousMostCharactersOnASingleLineTuple = other.MostCharactersOnASingleLineTuple;
+	    {
+	    	RenderStateSequence = other.RenderStateSequence == int.MaxValue - 1
+	    		? 0
+	    		: other.RenderStateSequence + 1;
+	    }
+	    PreviousLineCount = other.LineEndList.Count;
+	    OtherEditStack = other.OtherEditStack;
+	    WasDirty = other.IsDirty;
+        PartitionSize = other.PartitionSize;
+        WasModified = false;
+	    ShouldReloadVirtualizationResult = false;
+	    _allText = other._allText;
+	    _charCount = other._charCount;
+    }
+	
+	/// <summary>
+	/// You have to check if the '_partitionListChanged'
+	/// when finalizing an edit to a text editor
+	/// in order to ensure there is no race condition
+	/// where two threads try to read the RichCharacterList
+	/// while this is false, and thus double the calculation.
+	/// </summary>
+	private bool _partitionListChanged;
+    private bool _partitionListIsShallowCopy;
+    public List<TextEditorPartition> _partitionList;
+    public List<TextEditorPartition> PartitionList
+    {
+    	get
+    	{
+    		return _partitionList;
+    	}
+    	set
+    	{
+    		_partitionListChanged = true;
+    		_partitionList = value;
+    	}
+    }
+    
+	public RichCharacter[] _richCharacterList;
+    public RichCharacter[] RichCharacterList
+    {
+    	get
+    	{
+    		if (_partitionListChanged)
+    		{
+    			_partitionListChanged = false;
+    			_allText = null;
+    			_charCount = -1;
+    			_richCharacterList = PartitionList.SelectMany(x => x.RichCharacterList).ToArray();
+    		}
+    		
+    		return _richCharacterList;
+    	}
+    	set
+    	{
+    		_partitionListChanged = false;
+    		_richCharacterList = value;
+    	}
+    }
+    
+    /// <summary>
+    /// Do not solely use '_partitionListChanged'
+    /// to lazily calculate the text.
+    ///
+    /// '_partitionListChanged' is only here
+    /// incase during an edit you try to read your text.
+    ///
+    /// Preferably this would only get triggered by
+    /// the UI reading the text after an edit, and '_allText'
+    /// is null upon trying to read the value.
+    ///
+    /// Reason being that the ListRichCharacter> are needed
+    /// to render the UI.
+    ///
+    /// Whereas a string representation of the text editor
+    /// is not nearly as likely.
+    ///
+    /// Similarly, just because you edit the text editor model,
+    /// that doesn't mean you will render the text editor view model.
+    /// BUT that opens up what is believed to be a far more common case
+    /// where two view models are rendering the same text and they both
+    /// try to calculate the List<RichCharacter> instead of sharing the result.
+    ///
+    /// As such, List<RichCharacter> can probably be lazier but
+    /// it isn't at the moment.
+    /// </summary>
+    private string? _allText;
+    public string? AllText
+    {
+    	get
+    	{
+    		if (_partitionListChanged || _allText is null)
+    		{
+    			// TODO: Difference between 'new string(char[])' and a StringBuilder? Also can this be IEnumerable instead of array?
+    			_allText = new string(RichCharacterList.Select(x => x.Value).ToArray());
+    		}
+    		
+    		return _allText;
+    	}
+    }
+    
+    /// <inheritdoc cref="_allText"/>
+    private int _charCount;
+    public int CharCount
+    {
+    	get
+    	{
+    		if (_partitionListChanged || _charCount == -1)
+    			_charCount = PartitionList.Sum(x => x.Count);
+    		
+    		return _charCount;
+    	}
+    }
+
+    public List<ITextEditorEdit> EditBlockList { get; set; }
+    public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; }
+    public List<LineEnd> LineEndList { get; set; }
+    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; }
+    public List<TextEditorPresentationModel> PresentationModelList { get; set; }
+    public List<int> TabKeyPositionList { get; set; }
+    public LineEndKind OnlyLineEndKind { get; set; }
+    public LineEndKind LineEndKindPreference { get; set; }
+    public ResourceUri ResourceUri { get; set; }
+    public DateTime ResourceLastWriteTime { get; set; }
+    public string FileExtension { get; set; }
+    public IDecorationMapper DecorationMapper { get; set; }
+    public ICompilerService CompilerService { get; set; }
+    public SaveFileHelper TextEditorSaveFileHelper { get; set; }
+    public int EditBlockIndex { get; set; }
+    public bool IsDirty { get; set; }
+    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; set; }
+    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple { get; set; }
+    public int RenderStateSequence { get; set; }
+
+    public int PreviousLineCount { get; set; }
+    
+    public int LineCount => LineEndList.Count;
+
+	/// <summary>
+	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
+	/// </summary>
+	public Stack<TextEditorEditOther> OtherEditStack { get; }
+
+    /// <summary>
+    /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
+    /// This involves writing to dependency injectable state, then triggering a re-render in the <see cref="Edits.Displays.DirtyResourceUriInteractiveIconDisplay"/>
+    /// </summary>
+    public bool WasDirty { get; }
+
+    private int PartitionSize { get; }
+
+	/// <summary>
+	/// This property decides whether or not to replace the existing model in IState<TextEditorState> with
+	/// the instance that comes from this modifier.
+	/// </summary>
+    public bool WasModified { get; set; }
+	
+	/// <summary>
+	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
+	/// </summary>
+    public bool ShouldReloadVirtualizationResult { get; set; }
+
+    public int DocumentLength => RichCharacterList.Length;
+    
+    public const int TAB_WIDTH = 4;
+    public const int GUTTER_PADDING_LEFT_IN_PIXELS = 5;
+    public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 15;
+    public const int MAXIMUM_EDIT_BLOCKS = 10;
+    public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
+    
+    /// <summary>
+    /// <see cref="__SplitIntoTwoPartitions(int)"/> will divide by 2 and give the first split the remainder,
+    /// then add 1 to the first split if there is a multibyte scenario.
+    /// Therefore partition size of 3 would infinitely try to split itself.
+    /// </summary>
+    public const int MINIMUM_PARTITION_SIZE = 4;
+
+    public enum DeleteKind
+    {
+        Backspace,
+        Delete,
+    }
+    #endregion
+
 	#region TextEditorModelBad
 	/// <summary>
 	/// (2024-06-08) I belive there are too many ways to edit a text editor. There should only be 'Insert(...)' and 'Remove(...)' methods.
@@ -727,7 +994,8 @@ public partial class TextEditorModel
     public void SetIsDirtyTrue()
     {
         // Setting _allText to null will clear the 'cache' for the all 'AllText' property.
-        __AllText = null;
+        // ^ is true but what about _partitionListChanged?
+        _allText = null;
         IsDirty = true;
     }
 
@@ -1517,86 +1785,6 @@ public partial class TextEditorModel
             return;
 
         __RemoveRange(positionIndex, count);
-	}
-	#endregion
-	
-	#region TextEditorModelMain
-    public TextEditorModel(
-        ResourceUri resourceUri,
-        DateTime resourceLastWriteTime,
-        string fileExtension,
-        string content,
-        IDecorationMapper? decorationMapper,
-        ICompilerService? compilerService,
-		int partitionSize = 4_096)
-    {
-        ResourceUri = resourceUri;
-        ResourceLastWriteTime = resourceLastWriteTime;
-        FileExtension = fileExtension;
-        DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
-        CompilerService = compilerService ?? new CompilerServiceDoNothing();
-
-		PartitionSize = partitionSize;
-		var modifier = new TextEditorModel(this);
-		modifier.SetContent(content);
-
-		__AllText = modifier.AllText;
-        RichCharacterList = modifier.RichCharacterList;
-        PartitionList = modifier.PartitionList;
-        LineEndKindCountList = modifier.LineEndKindCountList;
-		LineEndList = modifier.LineEndList;
-		TabKeyPositionList = modifier.TabKeyPositionList;
-		OnlyLineEndKind = modifier.OnlyLineEndKind;
-		LineEndKindPreference = modifier.LineEndKindPreference;
-		MostCharactersOnASingleLineTuple = modifier.MostCharactersOnASingleLineTuple;
-		EditBlockList = modifier.EditBlockList;
-		EditBlockIndex = modifier.EditBlockIndex;
-	}
-
-	public TextEditorModel(
-        string allText,
-        RichCharacter[] richCharacterList,
-        int partitionSize,
-        List<TextEditorPartition> partitionList,
-		List<ITextEditorEdit> editBlocksList,
-		List<LineEnd> rowEndingPositionsList,
-		List<(LineEndKind rowEndingKind, int count)> rowEndingKindCountsList,
-		List<TextEditorPresentationModel> presentationModelsList,
-		List<int> tabKeyPositionsList,
-		LineEndKind onlyRowEndingKind,
-		LineEndKind usingRowEndingKind,
-		ResourceUri resourceUri,
-		DateTime resourceLastWriteTime,
-		string fileExtension,
-		IDecorationMapper decorationMapper,
-		ICompilerService compilerService,
-		SaveFileHelper textEditorSaveFileHelper,
-		int editBlockIndex,
-        bool isDirty,
-        (int rowIndex, int rowLength) mostCharactersOnASingleRowTuple,
-		Key<RenderState>  renderStateKey)
-	{
-		__AllText = allText;
-        RichCharacterList = richCharacterList;
-        PartitionSize = partitionSize;
-        PartitionList = partitionList;
-		EditBlockList = editBlocksList;
-		LineEndList = rowEndingPositionsList;
-		LineEndKindCountList = rowEndingKindCountsList;
-		PresentationModelList = presentationModelsList;
-		TabKeyPositionList = tabKeyPositionsList;
-		OnlyLineEndKind = onlyRowEndingKind;
-		LineEndKindPreference = usingRowEndingKind;
-		ResourceUri = resourceUri;
-		ResourceLastWriteTime = resourceLastWriteTime;
-		FileExtension = fileExtension;
-		DecorationMapper = decorationMapper;
-		CompilerService = compilerService;
-		TextEditorSaveFileHelper = textEditorSaveFileHelper;
-		EditBlockIndex = editBlockIndex;
-        IsDirty = isDirty;
-		MostCharactersOnASingleLineTuple = mostCharactersOnASingleRowTuple;
-		RenderStateKey = renderStateKey;
 	}
 	#endregion
 	
@@ -2564,168 +2752,6 @@ public partial class TextEditorModel
     	
     	PartitionList.Insert(index, partition);
     	_partitionListChanged = true;
-    }
-    #endregion
-    
-    #region TextEditorModelVariables
-    public const int TAB_WIDTH = 4;
-    public const int GUTTER_PADDING_LEFT_IN_PIXELS = 5;
-    public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 15;
-    public const int MAXIMUM_EDIT_BLOCKS = 10;
-    public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
-
-    public string? __AllText;
-
-    public int DocumentLength => RichCharacterList.Length;
-    #endregion
-    
-    #region TextEditorModelMain2
-	/// <summary>
-	/// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value
-	///
-	/// When reading state, if the state had been 'null coallesce assigned' then the field will
-	/// be read. Otherwise, the existing TextEditorModel's value will be read.
-	/// <br/><br/>
-	/// <inheritdoc cref="TextEditorModel"/>
-	/// </summary>
-
-    /// <summary>
-    /// <see cref="__SplitIntoTwoPartitions(int)"/> will divide by 2 and give the first split the remainder,
-    /// then add 1 to the first split if there is a multibyte scenario.
-    /// Therefore partition size of 3 would infinitely try to split itself.
-    /// </summary>
-    public const int MINIMUM_PARTITION_SIZE = 4;
-
-	/// <summary>
-	/// The first time a model is constructed it will throw an exception when accessing AllText,
-	/// therefore pass it in as an argument.
-	/// </summary>
-    public TextEditorModel(TextEditorModel model)
-    {
-        if (model.PartitionSize < MINIMUM_PARTITION_SIZE)
-            throw new LuthetusTextEditorException($"{nameof(model)}.{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
-
-        PartitionSize = model.PartitionSize;
-        WasDirty = model.IsDirty;
-
-        IsDirty = model.IsDirty;
-
-        _partitionList = model.PartitionList ?? new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };;
-        _richCharacterList = model.RichCharacterList;
-        
-        EditBlockList = model.EditBlockList;
-	    LineEndList = model.LineEndList;
-	    LineEndKindCountList = model.LineEndKindCountList;
-	    PresentationModelList = model.PresentationModelList;
-	    TabKeyPositionList = model.TabKeyPositionList;
-        
-        OnlyLineEndKind = model.OnlyLineEndKind;
-	    LineEndKindPreference = model.LineEndKindPreference;
-	    ResourceUri = model.ResourceUri;
-	    ResourceLastWriteTime = model.ResourceLastWriteTime;
-	    FileExtension = model.FileExtension;
-	    DecorationMapper = model.DecorationMapper;
-	    CompilerService = model.CompilerService;
-	    TextEditorSaveFileHelper = model.TextEditorSaveFileHelper;
-	    EditBlockIndex = model.EditBlockIndex;
-	    IsDirty = model.IsDirty;
-	    MostCharactersOnASingleLineTuple = model.MostCharactersOnASingleLineTuple;
-	    __AllText = model.__AllText;
-	    
-	    PreviousLineCount = model.LineEndList.Count;
-    }
-
-    public RichCharacter[] _richCharacterList;
-    public RichCharacter[] RichCharacterList
-    {
-    	get
-    	{
-    		if (_partitionListChanged)
-    		{
-    			_partitionListChanged = false;
-    			_richCharacterList = PartitionList.SelectMany(x => x.RichCharacterList).ToArray();
-    		}
-    		
-    		return _richCharacterList;
-    	}
-    	set
-    	{
-    		_partitionListChanged = false;
-    		_richCharacterList = value;
-    	}
-    }
-    
-    private bool _partitionListChanged;
-    private bool _partitionListIsShallowCopy = false;
-    public List<TextEditorPartition> _partitionList;
-    public List<TextEditorPartition> PartitionList
-    {
-    	get
-    	{
-    		return _partitionList;
-    	}
-    	set
-    	{
-    		_partitionListChanged = true;
-    		_partitionList = value;
-    	}
-    }
-
-    public List<ITextEditorEdit> EditBlockList { get; set; } = new();
-    public List<LineEnd> LineEndList { get; set; } = new();
-    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; } = new();
-    public List<TextEditorPresentationModel> PresentationModelList { get; set; } = new();
-    public List<int> TabKeyPositionList { get; set; } = new();
-    public LineEndKind OnlyLineEndKind { get; set; }
-    public LineEndKind LineEndKindPreference { get; set; }
-    public ResourceUri ResourceUri { get; set; }
-    public DateTime ResourceLastWriteTime { get; set; }
-    public string FileExtension { get; set; }
-    public IDecorationMapper DecorationMapper { get; set; }
-    public ICompilerService CompilerService { get; set; }
-    public SaveFileHelper TextEditorSaveFileHelper { get; set; } = new();
-    public int EditBlockIndex { get; set; }
-    public bool IsDirty { get; set; }
-    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; set; }
-    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple { get; set; }
-    public Key<RenderState> RenderStateKey { get; set; } = Key<RenderState>.NewKey();
-
-    public int LineCount => LineEndList.Count;
-    public int PreviousLineCount { get; set; }
-    
-    // TODO: Remove Linq?
-    public int CharCount => PartitionList.Sum(x => x.Count);
-
-	/// <summary>
-	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
-	/// </summary>
-	public Stack<TextEditorEditOther> OtherEditStack { get; } = new();
-
-    /// <summary>
-    /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
-    /// This involves writing to dependency injectable state, then triggering a re-render in the <see cref="Edits.Displays.DirtyResourceUriInteractiveIconDisplay"/>
-    /// </summary>
-    public bool WasDirty { get; }
-
-    private int PartitionSize { get; }
-
-	/// <summary>
-	/// This property decides whether or not to replace the existing model in IState<TextEditorState> with
-	/// the instance that comes from this modifier.
-	/// </summary>
-    public bool WasModified { get; internal set; }
-	
-	/// <summary>
-	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
-	/// </summary>
-    public bool ShouldReloadVirtualizationResult { get; internal set; }
-
-    public string AllText => __AllText ??= new string(RichCharacterList.Select(x => x.Value).ToArray());
-
-    public enum DeleteKind
-    {
-        Backspace,
-        Delete,
     }
     #endregion
 }
