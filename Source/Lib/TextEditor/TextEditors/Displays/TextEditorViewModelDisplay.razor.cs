@@ -132,9 +132,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     /// </summary>
     private StringBuilder _uiStringBuilder = new();
     
-    private string _wrapperCssClass;
-    private string _wrapperCssStyle;
-    
     private string _gutterPaddingStyleCssString;
     private string _gutterWidthStyleCssString;
     /// <summary>
@@ -170,6 +167,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private string MeasureCharacterWidthAndRowHeightElementId { get; set; }
     private string ContentElementId { get; set; }
+    
+    public string WrapperCssClass { get; private set; }
+    public string WrapperCssStyle { get; private set; }
 
 	public TextEditorComponentData ComponentData => _componentData;
 	
@@ -2002,7 +2002,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private void SetWrapperCssAndStyle()
     {
-    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    	WrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
     	
     	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
     	
@@ -2016,7 +2016,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         	fontFamily = options!.CommonOptions!.FontFamily;
     	var fontFamilyCssStyle = $"font-family: {fontFamily};";
     	
-    	_wrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
+    	WrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     }
     
     public void Dispose()
