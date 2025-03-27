@@ -116,7 +116,6 @@ public sealed class TextEditorViewModel : IDisposable
 	    
 	    /*
 	    // Don't copy these properties
-	    WasModified { get; set; }
 	    ScrollWasModified { get; set; }
 	    ShouldReloadVirtualizationResult { get; set; }
 	    */
@@ -243,7 +242,6 @@ public sealed class TextEditorViewModel : IDisposable
     /// </summary>
     public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
     
-    public bool WasModified { get; set; }
     public bool ScrollWasModified { get; set; }
 	/// <summary>
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
