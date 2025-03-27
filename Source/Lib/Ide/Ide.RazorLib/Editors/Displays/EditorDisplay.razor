@@ -36,14 +36,6 @@
 	
 			<div class="luth_te_text-editor-group-active-view-model">
 			
-				@if (_isLoaded)
-				{
-					if (viewModelDisplayLocal is not null)
-					{
-						<TextEditorFileExtensionHeaderDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"/>
-					}
-				}
-				
 				@{
 		            var textEditorModel = TextEditorService.ViewModelApi.GetModelOrDefault(
 		                textEditorGroup.ActiveViewModelKey);
@@ -54,28 +46,22 @@
 		            }
 		            else
 		            {
-		            	// Add a ShouldRenderBoundary here? (2024-08-04)
-		            	// If this group component re-renders, could it cause a double render
-		            	// due to the TextEditorViewModelDisplay re-rendering because:
-		            	// 	- It is a child of this component
-		            	//     - It is subscribed to the state change
-		            	//
-		            	// (2024-09-07)
-		            	// It turns out that this component specifically tells the TabListDisplay to invoke
-		            	// its StateHasChanged when the view model changes.
+		            	if (_isLoaded && viewModelDisplayLocal is not null)
+						{
+							<TextEditorFileExtensionHeaderDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"
+							                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
+						}
+		            	
 		                <TextEditorViewModelDisplay @ref="_viewModelDisplay"
 		                							TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
 		                                            ViewModelDisplayOptions="_viewModelDisplayOptions"/>
+		                                            
+						if (_isLoaded && viewModelDisplayLocal is not null)
+						{
+							<TextEditorDefaultFooterDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"/>
+						}
 		            }
 	            }
-	            
-	            @if (_isLoaded)
-				{
-					if (viewModelDisplayLocal is not null)
-					{
-						<TextEditorDefaultFooterDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"/>
-					}
-				}
             </div>
 	    }
 	    else

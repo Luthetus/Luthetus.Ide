@@ -1,13 +1,18 @@
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, ITextEditorDependentComponent
+public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 {
 	[Inject]
 	private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
+	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
 
+	[Parameter, EditorRequired]
+	public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; }
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 	
@@ -24,29 +29,25 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IText
 				TextEditorViewModelDisplay
 			}
 		};
-		
-        TextEditorViewModelDisplay.TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
-        OnCursorShouldBlinkChanged();
 	}
 	
-	private void OnCursorShouldBlinkChanged()
-    {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+	protected override bool ShouldRender()
+	{
+		var localTextEditorState = TextEditorService.TextEditorState;
+		
+		var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefault(
+			TextEditorViewModelKey);
     	
-    	var fileExtensionLocal = renderBatch is null
+    	var fileExtensionLocal = model_viewmodel_tuple.Model is null
     		? string.Empty
-    		: renderBatch.Model.FileExtension;
-
-    	if (fileExtensionLocal != _fileExtensionCurrent)
+    		: model_viewmodel_tuple.Model.FileExtension;
+    		
+    	if (_fileExtensionCurrent != fileExtensionLocal)
     	{
     		_fileExtensionCurrent = fileExtensionLocal;
-    		// Don't await this;
-    		InvokeAsync(StateHasChanged);
+    		return true;
     	}
-    }
-
-	public void Dispose()
-    {
-    	TextEditorViewModelDisplay.TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
-    }
+    	
+    	return false;
+	}
 }
