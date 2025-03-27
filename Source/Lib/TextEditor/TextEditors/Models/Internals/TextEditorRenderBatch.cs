@@ -27,8 +27,6 @@ public class TextEditorRenderBatch
 	}
 
 	// Don't ??= because it only should be set inside 'Validate()'.
-	private string? _fontFamilyCssStyle;
-	private string? _fontSizeInPixelsCssStyle;
 	private string? _heightCssStyle;
     private double? _gutterWidthInPixels;
     
@@ -40,8 +38,6 @@ public class TextEditorRenderBatch
     public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; }
 	public TextEditorComponentData ComponentData { get; set; }
 
-    public string FontFamilyCssStyle => _fontFamilyCssStyle ?? $"font-family: {FontFamily};";
-    public string FontSizeInPixelsCssStyle => _fontSizeInPixelsCssStyle ?? $"font-size: {FontSizeInPixels.ToCssValue()}px;";
     public string HeightCssStyle => _heightCssStyle ?? GetHeightCssStyle();
     public double GutterWidthInPixels => _gutterWidthInPixels ?? GetGutterWidthInPixels();
 
@@ -55,8 +51,6 @@ public class TextEditorRenderBatch
 	    
 	    if (IsValid)
 	    {
-	    	_fontFamilyCssStyle = FontFamilyCssStyle;
-	    	_fontSizeInPixelsCssStyle = FontSizeInPixelsCssStyle;
 	    	_heightCssStyle = HeightCssStyle;
 	    	_gutterWidthInPixels = GutterWidthInPixels;
 	    }

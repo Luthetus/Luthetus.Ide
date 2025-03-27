@@ -15,28 +15,36 @@ public struct TextEditorEditContext
 
     public ITextEditorService TextEditorService { get; }
 
+	/// <summary>
+	/// 'isReadOnly == true' will not allocate a new TextEditorModel as well,
+	/// nothing will be added to the '__ModelList'.
+	/// </summary>
     public TextEditorModel? GetModelModifier(
         ResourceUri modelResourceUri,
         bool isReadonly = false)
     {
     	if (modelResourceUri == ResourceUri.Empty)
     		return null;
-
-        if (TextEditorService is null)
-            Console.WriteLine("TextEditorService is null");
-        if (TextEditorService.__ModelCache is null)
-            Console.WriteLine("TextEditorService.__ModelCache is null");
-
-        if (!TextEditorService.__ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
-        {
-            var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
-            modelModifier = model is null ? null : new(model);
-
-            TextEditorService.__ModelCache.Add(modelResourceUri, modelModifier);
-        }
-
-        if (!isReadonly && modelModifier is not null)
-            modelModifier.WasModified = true;
+    		
+    	TextEditorModel? modelModifier = null;
+    		
+    	for (int i = 0; i < TextEditorService.__ModelList.Count; i++)
+    	{
+    		modelModifier = TextEditorService.__ModelList[i];
+    	}
+    	
+    	if (modelModifier is null)
+    	{
+    		var exists = TextEditorService.TextEditorState._modelMap.TryGetValue(
+				modelResourceUri,
+				out var model);
+    		
+    		if (isReadonly || model is null)
+    			return model;
+    		
+			modelModifier = model is null ? null : new(model);
+        	TextEditorService.__ModelList.Add(modelModifier);
+    	}
 
         return modelModifier;
     }
@@ -65,23 +73,30 @@ public struct TextEditorEditContext
         Key<TextEditorViewModel> viewModelKey,
         bool isReadonly = false)
     {
-        if (viewModelKey != Key<TextEditorViewModel>.Empty)
-        {
-            if (!TextEditorService.__ViewModelCache.TryGetValue(viewModelKey, out var viewModelModifier))
-            {
-                var viewModel = TextEditorService.ViewModelApi.GetOrDefault(viewModelKey);
-                viewModelModifier = viewModel is null ? null : new(viewModel);
+    	if (viewModelKey == Key<TextEditorViewModel>.Empty)
+    		return null;
+    		
+    	TextEditorViewModel? viewModelModifier = null;
+    		
+    	for (int i = 0; i < TextEditorService.__ViewModelList.Count; i++)
+    	{
+    		viewModelModifier = TextEditorService.__ViewModelList[i];
+    	}
+    	
+    	if (viewModelModifier is null)
+    	{
+    		var exists = TextEditorService.TextEditorState._viewModelMap.TryGetValue(
+				viewModelKey,
+				out var viewModel);
+    		
+    		if (isReadonly || viewModel is null)
+    			return viewModel;
+    		
+			viewModelModifier = viewModel is null ? null : new(viewModel);
+        	TextEditorService.__ViewModelList.Add(viewModelModifier);
+    	}
 
-                TextEditorService.__ViewModelCache.Add(viewModelKey, viewModelModifier);
-            }
-
-            if (!isReadonly && viewModelModifier is not null)
-                viewModelModifier.WasModified = true;
-
-            return viewModelModifier;
-        }
-
-        return null;
+        return viewModelModifier;
     }
     
     public CursorModifierBagTextEditor GetCursorModifierBag(TextEditorViewModel? viewModel)

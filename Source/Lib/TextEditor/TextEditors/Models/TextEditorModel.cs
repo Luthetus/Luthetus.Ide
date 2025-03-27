@@ -39,8 +39,6 @@ public partial class TextEditorModel
             throw new LuthetusTextEditorException($"{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
     
     	// Initialize
-	    _partitionListChanged = false;
-	    _partitionListIsShallowCopy = false;
 	    _partitionList = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
 	    _richCharacterList = Array.Empty<RichCharacter>();
 	    EditBlockList = new();
@@ -58,16 +56,12 @@ public partial class TextEditorModel
 	    CompilerService = compilerService ?? new CompilerServiceDoNothing();
 	    TextEditorSaveFileHelper = new();
 	    EditBlockIndex = 0;
-	    IsDirty = false;
 	    MostCharactersOnASingleLineTuple = (0, 0);
 	    PreviousMostCharactersOnASingleLineTuple = (0, 0);
 	    RenderStateSequence = 0;
 	    PreviousLineCount = 0;
 		OtherEditStack = new();
-	    WasDirty = false;
 	    PartitionSize = partitionSize;
-	    WasModified = false;
-	    ShouldReloadVirtualizationResult = false;
 	    _allText = string.Empty;
 	    _charCount = 0;
         // LineCount => LineEndList.Count;
@@ -84,8 +78,6 @@ public partial class TextEditorModel
 		// if copied between the model instances as they get edited
 		// because the UI doesn't use them.
 
-		_partitionListChanged = false;
-	    _partitionListIsShallowCopy = false;
 	    _partitionList = other.PartitionList;
 	    _richCharacterList = other.RichCharacterList;
 	    EditBlockList = other.EditBlockList;
@@ -115,8 +107,6 @@ public partial class TextEditorModel
 	    OtherEditStack = other.OtherEditStack;
 	    WasDirty = other.IsDirty;
         PartitionSize = other.PartitionSize;
-        WasModified = false;
-	    ShouldReloadVirtualizationResult = false;
 	    _allText = other._allText;
 	    _charCount = other._charCount;
     }
@@ -224,7 +214,10 @@ public partial class TextEditorModel
     public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; }
     public List<LineEnd> LineEndList { get; set; }
     public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; }
+    
+    private bool _presentationModelListIsShallowCopy;
     public List<TextEditorPresentationModel> PresentationModelList { get; set; }
+    
     public List<int> TabKeyPositionList { get; set; }
     public LineEndKind OnlyLineEndKind { get; set; }
     public LineEndKind LineEndKindPreference { get; set; }
@@ -256,12 +249,6 @@ public partial class TextEditorModel
     public bool WasDirty { get; }
 
     private int PartitionSize { get; }
-
-	/// <summary>
-	/// This property decides whether or not to replace the existing model in IState<TextEditorState> with
-	/// the instance that comes from this modifier.
-	/// </summary>
-    public bool WasModified { get; set; }
 	
 	/// <summary>
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
@@ -1005,17 +992,25 @@ public partial class TextEditorModel
     }
 
     public void PerformRegisterPresentationModelAction(
-    TextEditorPresentationModel presentationModel)
+    	TextEditorPresentationModel presentationModel)
     {
-        if (!PresentationModelList.Any(x => x.TextEditorPresentationKey == presentationModel.TextEditorPresentationKey))
+    	if (!PresentationModelList.Any(x => x.TextEditorPresentationKey == presentationModel.TextEditorPresentationKey))
+        {
+        	if (!_presentationModelListIsShallowCopy)
+	    	{
+	        	_presentationModelListIsShallowCopy = true;
+	        	PresentationModelList = new(PresentationModelList);
+	        }
+        
             PresentationModelList.Add(presentationModel);
+        }
     }
 
     public void StartPendingCalculatePresentationModel(
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel)
     {
-        // If the presentation model has not yet been registered, then this will register it.
+    	// If the presentation model has not yet been registered, then this will register it.
         PerformRegisterPresentationModelAction(emptyPresentationModel);
 
         var indexOfPresentationModel = PresentationModelList.FindIndex(
@@ -1023,6 +1018,12 @@ public partial class TextEditorModel
 
         // The presentation model is expected to always be registered at this point.
 
+		if (!_presentationModelListIsShallowCopy)
+    	{
+        	_presentationModelListIsShallowCopy = true;
+        	PresentationModelList = new(PresentationModelList);
+        }
+        
         var presentationModel = PresentationModelList[indexOfPresentationModel];
         PresentationModelList[indexOfPresentationModel] = presentationModel with
         {
@@ -1047,6 +1048,12 @@ public partial class TextEditorModel
 
         if (presentationModel.PendingCalculation is null)
             return;
+
+		if (!_presentationModelListIsShallowCopy)
+    	{
+        	_presentationModelListIsShallowCopy = true;
+        	PresentationModelList = new(PresentationModelList);
+        }
 
         var calculation = presentationModel.PendingCalculation with
         {

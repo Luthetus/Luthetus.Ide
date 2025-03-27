@@ -1,7 +1,10 @@
+@using Luthetus.Common.RazorLib.Tabs.Displays
 @using Luthetus.Common.RazorLib.Contexts.Displays
-@using Luthetus.Common.RazorLib.Contexts.Models;
-@using Luthetus.Ide.RazorLib.Editors.Models
+@using Luthetus.Common.RazorLib.Contexts.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.Groups.Displays
+@using Luthetus.Ide.RazorLib.Editors.Models
 
 <ContextBoundary ContextRecord="_viewModelDisplayOptions.ContextRecord"
                  ClassCssString="luth_ide_editor-display"
@@ -14,8 +17,72 @@
 	    </div>
     }
 
-    <div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
-        <TextEditorGroupDisplay TextEditorGroupKey="EditorIdeApi.EditorTextEditorGroupKey"
-                                ViewModelDisplayOptions="_viewModelDisplayOptions"/>
+    <div class="luth_ide_section-body luth_te_text-editor-group @AppOptionsService.ShowPanelTitlesCssClass"
+         id="@HtmlId">
+    
+    	@{
+	        var textEditorGroup = TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
+	            x => x.GroupKey == EditorIdeApi.EditorTextEditorGroupKey);
+	    }
+    
+    	@if (textEditorGroup is not null)
+    	{
+    		var viewModelDisplayLocal = _viewModelDisplay;
+    		
+    		<div class="luth_te_text-editor-group-tabs-list">
+				<TabListDisplay @ref="_tabListDisplay"
+								TabList="@GetTabList(textEditorGroup)"/>
+			</div>
+	
+			<div class="luth_te_text-editor-group-active-view-model">
+			
+				@if (_isLoaded)
+				{
+					if (viewModelDisplayLocal is not null)
+					{
+						<TextEditorFileExtensionHeaderDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"/>
+					}
+				}
+				
+				@{
+		            var textEditorModel = TextEditorService.ViewModelApi.GetModelOrDefault(
+		                textEditorGroup.ActiveViewModelKey);
+		    
+		            if (textEditorModel is null)
+		            {
+		                <text>No editors are open currently</text>
+		            }
+		            else
+		            {
+		            	// Add a ShouldRenderBoundary here? (2024-08-04)
+		            	// If this group component re-renders, could it cause a double render
+		            	// due to the TextEditorViewModelDisplay re-rendering because:
+		            	// 	- It is a child of this component
+		            	//     - It is subscribed to the state change
+		            	//
+		            	// (2024-09-07)
+		            	// It turns out that this component specifically tells the TabListDisplay to invoke
+		            	// its StateHasChanged when the view model changes.
+		                <TextEditorViewModelDisplay @ref="_viewModelDisplay"
+		                							TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+		                                            ViewModelDisplayOptions="_viewModelDisplayOptions"/>
+		            }
+	            }
+	            
+	            @if (_isLoaded)
+				{
+					if (viewModelDisplayLocal is not null)
+					{
+						<TextEditorDefaultFooterDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"/>
+					}
+				}
+            </div>
+	    }
+	    else
+	    {
+	        <div>
+	            Group not found
+	        </div>
+	    }
     </div>
 </ContextBoundary>

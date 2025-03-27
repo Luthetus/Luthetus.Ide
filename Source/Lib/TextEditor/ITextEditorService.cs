@@ -30,7 +30,7 @@ public partial interface ITextEditorService
 {
     /// <summary>This is used when interacting with the <see cref="IStorageService"/> to set and get data.</summary>
     public string StorageKey { get; }
-    public string ThemeCssClassString { get; }
+    public string ThemeCssClassString { get; set; }
 
     public ITextEditorModelApi ModelApi { get; }
     public ITextEditorViewModelApi ViewModelApi { get; }
@@ -78,15 +78,7 @@ public partial interface ITextEditorService
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public Dictionary<ResourceUri, TextEditorModel?> __ModelCache { get; }
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
     public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache { get; }
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel?> __ViewModelCache { get; }
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -95,6 +87,15 @@ public partial interface ITextEditorService
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
     public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> __DiffModelCache { get; }
+    
+    /// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+	public List<TextEditorModel?> __ModelList { get; }   
+    /// <summary>
+	/// Do not touch this property, it is used for the TextEditorEditContext.
+	/// </summary>
+    public List<TextEditorViewModel?> __ViewModelList { get; }
 	
 	public event Action? TextEditorStateChanged;
         
@@ -133,8 +134,5 @@ public partial interface ITextEditorService
 		TextEditorEditContext editContext,
 		Key<TextEditorViewModel> viewModelKey);
 	
-	public void SetModelAndViewModelRange(
-	    TextEditorEditContext editContext,
-		List<TextEditorModel?> modelModifierList,
-		List<TextEditorViewModel?> viewModelModifierList);
+	public void SetModelAndViewModelRange(TextEditorEditContext editContext);
 }
