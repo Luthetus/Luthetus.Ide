@@ -5,8 +5,6 @@
 
 @if (renderBatch is not null)
 {
-	_headerDriver.GetRenderFragment(renderBatch);
-	    
 	<div class="luth_te_text-editor-header @TextEditorViewModelDisplay.WrapperCssClass @TextEditorService.ThemeCssClassString"
 	     style="@TextEditorViewModelDisplay.WrapperCssStyle">
 	    <div class="luth_te_text-editor-header-listing"
@@ -47,58 +45,58 @@
 	                            case HeaderButtonKind.Cut:
 	                                <button title="@headerButtonKind.ToString()"
 	                                        class="luth_button"
-	                                		@onclick="_headerDriver.DoCutOnClick">
+	                                		@onclick="DoCutOnClick">
 	                                    @IconNoteFragment.Render(iconDriver)
 	                                </button>
 	                                break;
 	                            case HeaderButtonKind.Copy:
 	                                <button title="@headerButtonKind.ToString()"
 	                                        class="luth_button"
-	                                		@onclick="_headerDriver.DoCopyOnClick">
+	                                		@onclick="DoCopyOnClick">
 	                                    @IconCopyFragment.Render(iconDriver)
 	                                </button>
 	                                break;
 	                            case HeaderButtonKind.Paste:
 	                                <button title="@headerButtonKind.ToString()"
 	                                        class="luth_button"
-	                                		@onclick="_headerDriver.DoPasteOnClick">
+	                                		@onclick="DoPasteOnClick">
 	                                    @IconClippyFragment.Render(iconDriver)
 	                                </button>
 	                                break;
 	                            case HeaderButtonKind.Undo:
 	                                <button title="@headerButtonKind.ToString()"
 	                                        class="luth_button"
-	                                        disabled=@_headerDriver.GetUndoDisabledAttribute()
-	                                		@onclick="_headerDriver.DoUndoOnClick">
+	                                        disabled=@GetUndoDisabledAttribute()
+	                                		@onclick="DoUndoOnClick">
 	                                    @IconArrowLeftFragment.Render(iconDriver)
 	                                </button>
 	                                break;
 	                            case HeaderButtonKind.Redo:
 	                                <button title="@headerButtonKind.ToString()"
 	                                        class="luth_button"
-	                                        disabled=@_headerDriver.GetRedoDisabledAttribute()
-	                                		@onclick="_headerDriver.DoRedoOnClick">
+	                                        disabled=@GetRedoDisabledAttribute()
+	                                		@onclick="DoRedoOnClick">
 	                                    @IconArrowRightFragment.Render(iconDriver)
 	                                </button>
 	                                break;
 	                            case HeaderButtonKind.Save:
 	                                <button title="@headerButtonKind.ToString()"
 	                                        class="luth_button"
-	                                		@onclick="_headerDriver.DoSaveOnClick">
+	                                		@onclick="DoSaveOnClick">
 	                                    @IconSaveFragment.Render(iconDriver)
 	                                </button>
 	                                break;
 	                            case HeaderButtonKind.SelectAll:
 	                                <button title="@headerButtonKind.ToString()"
 	                                        class="luth_button"
-	                                		@onclick="_headerDriver.DoSelectAllOnClick">
+	                                		@onclick="DoSelectAllOnClick">
 	                                    @IconListSelectionFragment.Render(iconDriver)
 	                                </button>
 	                                break;
 	                            case HeaderButtonKind.PeekWindowDisplay:
 	                                <button title="@headerButtonKind.ToString()"
 	                                        class="luth_button"
-	                                		@onclick="_headerDriver.ShowWatchWindowDisplayDialogOnClick">
+	                                		@onclick="ShowWatchWindowDisplayDialogOnClick">
 	                                    @IconProjectDependenciesFragment.Render(iconDriver)
 	                                </button>
 	                                break;
@@ -109,7 +107,7 @@
 	                <div class="luth_te_text-editor-header-entry">
 	                    <button title="Measure editor size"
 	                            class="luth_button"
-	                    		@onclick="_headerDriver.DoRemeasureOnClick">
+	                    		@onclick="DoRemeasureOnClick">
 	                        @IconSymbolRulerFragment.Render(iconDriver)
 	                    </button>
 	                </div>
@@ -117,8 +115,8 @@
 	                <div class="luth_te_text-editor-header-entry">
 	                    <button title="Reload"
 	                            class="luth_button"
-	                            id="@_headerDriver._reloadButtonHtmlElementId"
-	                    		@onclick="_headerDriver.DoReloadOnClick">
+	                            id="@_reloadButtonHtmlElementId"
+	                    		@onclick="DoReloadOnClick">
 	                        @IconRefreshFragment.Render(iconDriver)
 	                    </button>
 	                </div>

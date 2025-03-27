@@ -29,6 +29,9 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 				TextEditorViewModelDisplay
 			}
 		};
+
+        // ShouldRender does not invoke on the initial render.
+        _ = ShouldRender();
 	}
 	
 	protected override bool ShouldRender()
@@ -43,11 +46,8 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
     		: model_viewmodel_tuple.Model.FileExtension;
     		
     	if (_fileExtensionCurrent != fileExtensionLocal)
-    	{
     		_fileExtensionCurrent = fileExtensionLocal;
-    		return true;
-    	}
-    	
-    	return false;
+    		
+		return true;
 	}
 }
