@@ -159,6 +159,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private string _bodyStyle = $"width: 100%; left: 0;";
     
+    private string _scrollbarSizeInPixelsCssValue;
+    
     /* MeasureCharacterWidthAndRowHeight.razor Open */
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
     private const int TEST_STRING_REPEAT_COUNT = 6;
@@ -207,6 +209,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	    var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
 	    var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
         _gutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
+        
+        _scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
 
         ConstructRenderBatch();
 
