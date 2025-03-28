@@ -1,5 +1,4 @@
-@using System.Text;
-@using System.Diagnostics;
+@using Luthetus.Common.RazorLib.Installations.Models
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.CustomEvents.Models
@@ -18,29 +17,8 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Models
-
-@* ScrollbarSection.razor *@
-@using Luthetus.Common.RazorLib.Dimensions;
-@using Luthetus.Common.RazorLib.Dimensions.Models;
-@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-
-@* TooltipDisplay.razor *@
-@using Luthetus.Common.RazorLib.Dimensions.Models;
-
-@* PresentationAndSelectionStaticRenderFragments.razor *@
 @using Luthetus.TextEditor.RazorLib.Decorations.Models
 @using Luthetus.TextEditor.RazorLib.Lexers.Models
-@using Luthetus.TextEditor.RazorLib.TextEditors.Models
-@using Luthetus.TextEditor.RazorLib.Cursors.Models
-
-
-@using Luthetus.Common.RazorLib.Installations.Models
-				
-@{
-    var renderBatchUnsafe = _currentRenderBatch;
-    var renderBatchValidated = _activeRenderBatch;
-    // var startTime = Stopwatch.GetTimestamp();
-}
 
 <div @onclick="FocusTextEditorAsync"
      @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"
@@ -58,7 +36,7 @@
      @ontouchcancel="ClearTouch"
      @ontouchleave="ClearTouch"
      id="@ContentElementId"
-     style="@(renderBatchUnsafe.HeightCssStyle) @WrapperCssStyle @ViewModelDisplayOptions.TextEditorStyleCssString"
+     style="@GetHeightCssStyle() @WrapperCssStyle @ViewModelDisplayOptions.TextEditorStyleCssString"
      class="luth_te_text-editor luth_unselectable @WrapperCssClass @ViewModelDisplayOptions.TextEditorClassCssString"
      tabindex="-1">
 
@@ -74,36 +52,54 @@
 	        }
 	    </div>
 	</div>
+	
+	@{
+		string topVirtualizationBoundaryStyleCssString;
+		string bottomVirtualizationBoundaryStyleCssString;
+		
+		if (_activeRenderBatch is not null)
+	    {
+	    	// The gutter and the body share the top and bottom virtualization boundaries.
+	    	// Therefore calculate them once here and share the result.
+	    	topVirtualizationBoundaryStyleCssString = Virtualization_GetStyleCssString(_activeRenderBatch.ViewModel.VirtualizationResult.TopVirtualizationBoundary);
+			bottomVirtualizationBoundaryStyleCssString = Virtualization_GetStyleCssString(_activeRenderBatch.ViewModel.VirtualizationResult.BottomVirtualizationBoundary);
+	    }
+	    else
+	    {
+	    	topVirtualizationBoundaryStyleCssString = string.Empty;
+			bottomVirtualizationBoundaryStyleCssString = string.Empty;
+	    }
+	}
   	
-    @if (ViewModelDisplayOptions.IncludeGutterComponent && renderBatchValidated is not null)
+    @if (ViewModelDisplayOptions.IncludeGutterComponent && _activeRenderBatch is not null)
     {
         <div class="luth_te_gutter-section"
-		      style="@(GetGutterSectionStyleCss(renderBatchValidated))"
-		      id="@renderBatchValidated.ViewModel.GutterElementId">
+		      style="@(GetGutterSectionStyleCss(_activeRenderBatch))"
+		      id="@_activeRenderBatch.ViewModel.GutterElementId">
 		      
             @* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
             
             @* Virtualization Open *@
 			<div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_top"
-				 style="@Virtualization_GetStyleCssString(renderBatchValidated.ViewModel.VirtualizationResult.TopVirtualizationBoundary)">
+				 style="@topVirtualizationBoundaryStyleCssString">
 			</div>
 		
 		    <div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_bottom"
-		    	 style="@Virtualization_GetStyleCssString(renderBatchValidated.ViewModel.VirtualizationResult.BottomVirtualizationBoundary)">
+		    	 style="@bottomVirtualizationBoundaryStyleCssString">
 			</div>
             @* Virtualization Close *@
 		    
-		    @foreach (var virtualizedRow in renderBatchValidated.ViewModel.VirtualizationResult.EntryList)
+		    @foreach (var virtualizedRow in _activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
-		             style="@(GetGutterStyleCss(renderBatchValidated, virtualizedRow.LineIndex))">
+		             style="@(GetGutterStyleCss(_activeRenderBatch, virtualizedRow.LineIndex))">
 		            @(virtualizedRow.LineIndex + 1)
 		        </div>
 		    }
 		    
 		    @{
-		        var heightOfGutter = renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Length *
-		                             renderBatchValidated.ViewModel.CharAndLineMeasurements.LineHeight;
+		        var heightOfGutter = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Length *
+		                             _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
 		
 		        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
 		        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
@@ -120,11 +116,11 @@
 		        
 		        double topOffscreenOverhang;
 		        
-		        if (renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Length > 0)
+		        if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
 		        {
 		        	// TODO: It doesn't seem 'VirtualizationLine' ever will have a null value so it is no longer nullable...
 		        	// ...if any code breaks I think this is the only possible place. It is doing '?? -1' here.
-		        	topOffscreenOverhang = renderBatchValidated.ViewModel.VirtualizationResult.EntryList[0].TopInPixels;
+		        	topOffscreenOverhang = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels;
 		        }
 		        else
 		        {
@@ -139,9 +135,9 @@
 		        }
 		
 		        // '1' is added to the text editor's height in order to avoid rounding errors
-		        if (heightOfGutter < 1 + renderBatchValidated.ViewModel.TextEditorDimensions.Height)
+		        if (heightOfGutter < 1 + _activeRenderBatch.ViewModel.TextEditorDimensions.Height)
 		        {
-		            var remainingHeightToFill = renderBatchValidated.ViewModel.TextEditorDimensions.Height -
+		            var remainingHeightToFill = _activeRenderBatch.ViewModel.TextEditorDimensions.Height -
 		                heightOfGutter +
 		                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 		            
@@ -149,9 +145,9 @@
 		
 					int lastIndex;
 					
-					if (renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Length > 0)
+					if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
 					{
-						lastIndex = renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+						lastIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 					}
 					else
 					{
@@ -161,56 +157,52 @@
 		            var imaginaryNextIndex = lastIndex + 1;
 		            
 		            <div class="luth_te_gutter"
-		                 style="@(GetGutterStyleCss(renderBatchValidated, imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
+		                 style="@(GetGutterStyleCss(_activeRenderBatch, imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
 		            </div>
 		        }
 		    }
 		</div>
     }
 
-    @if (renderBatchValidated is not null)
-    {        
+    @if (_activeRenderBatch is not null)
+    {
     	<div class="luth_te_body-section"
 	 		style="@_bodyStyle">
 	 		
-			@{
-				var primaryCursor = renderBatchValidated.ViewModel!.PrimaryCursor;
-			}
-		        
 			@* RowSection.razor Open *@
 			<div class="luth_te_row-section"
-				id="@renderBatchValidated.ViewModel.BodyElementId">
+				id="@_activeRenderBatch.ViewModel.BodyElementId">
 					    
 				@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
 				@* Virtualization Open *@
 				<div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_left"
-					 style="@Virtualization_GetStyleCssString(renderBatchValidated.ViewModel.VirtualizationResult.LeftVirtualizationBoundary)">
+					 style="@Virtualization_GetStyleCssString(_activeRenderBatch.ViewModel.VirtualizationResult.LeftVirtualizationBoundary)">
 				</div>
 			
 			    <div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_right"
-			    	 style="@Virtualization_GetStyleCssString(renderBatchValidated.ViewModel.VirtualizationResult.RightVirtualizationBoundary)">
+			    	 style="@Virtualization_GetStyleCssString(_activeRenderBatch.ViewModel.VirtualizationResult.RightVirtualizationBoundary)">
 				</div>
 				
 				<div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_top"
-					 style="@Virtualization_GetStyleCssString(renderBatchValidated.ViewModel.VirtualizationResult.TopVirtualizationBoundary)">
+					 style="@topVirtualizationBoundaryStyleCssString)">
 				</div>
 			
 			    <div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_bottom"
-			    	 style="@Virtualization_GetStyleCssString(renderBatchValidated.ViewModel.VirtualizationResult.BottomVirtualizationBoundary)">
+			    	 style="@bottomVirtualizationBoundaryStyleCssString">
 				</div>
                 @* Virtualization Close *@
 							                           
 				@*  PresentationAndSelection Open *@
 				<div class="luth_te_first-render-presentation-layer-group">
 
-				    @{
-				        var FIRST_presentationLayerOrderedByRankAscending =
-				        	GetTextEditorPresentationModels(renderBatchValidated, renderBatchValidated.ViewModel.FirstPresentationLayerKeysList)
-				        	.OrderBy(x => x.Rank).ToList();
-				    }
-				
-				    @foreach (var presentationLayer in FIRST_presentationLayerOrderedByRankAscending)
+				    @foreach (var presentationKey in _activeRenderBatch.ViewModel.FirstPresentationLayerKeysList)
 				    {
+				    	var presentationLayer = _activeRenderBatch.Model.PresentationModelList.FirstOrDefault(x =>
+				            x.TextEditorPresentationKey == presentationKey);
+				            
+				        if (presentationLayer is null)
+				        	continue;
+				    	
 				        var completedCalculation = presentationLayer.CompletedCalculation;
 				
 						var textSpansList = completedCalculation?.TextSpanList
@@ -221,27 +213,25 @@
 				
 				        @if (completedCalculation is not null)
 				        {
-				            textSpansList = PresentationVirtualizeAndShiftTextSpans(renderBatchValidated, textModificationList, completedCalculation.TextSpanList);
+				            textSpansList = PresentationVirtualizeAndShiftTextSpans(_activeRenderBatch, textModificationList, completedCalculation.TextSpanList);
 				
 				            <div class="@presentationLayer.CssClassString">
 				                @foreach (var textSpan in textSpansList)
 				                {
 				                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 				
-				                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(renderBatchValidated, renderBatchValidated.Model, boundsInPositionIndexUnits);
+				                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(_activeRenderBatch, _activeRenderBatch.Model, boundsInPositionIndexUnits);
 				
 				                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
 				                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
 				                         i++)
 				                    {
-				                        var rowIndex = i;
-				
 				                        <div class="@PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
 				                             style="@PresentationGetCssStyleString(
-				                             	   renderBatchValidated,
+				                             	   _activeRenderBatch,
 				                                    boundsInPositionIndexUnits.StartingIndexInclusive,
 				                                    boundsInPositionIndexUnits.EndingIndexExclusive,
-				                                    rowIndex)">
+				                                    i)">
 				                        </div>
 				                    }
 				                }
@@ -251,16 +241,16 @@
 				</div>
 				
 				<div class="luth_te_text-selection-group">
-				    @if (TextEditorSelectionHelper.HasSelectedText(renderBatchValidated.ViewModel.PrimaryCursor.Selection) &&
-				         renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Length > 0)
+				    @if (TextEditorSelectionHelper.HasSelectedText(_activeRenderBatch.ViewModel.PrimaryCursor.Selection) &&
+				         _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
 				    {
 				        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-				            renderBatchValidated.ViewModel.PrimaryCursor.Selection);
+				            _activeRenderBatch.ViewModel.PrimaryCursor.Selection);
 				
-				        var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(renderBatchValidated, selectionBoundsInPositionIndexUnits);
+				        var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(_activeRenderBatch, selectionBoundsInPositionIndexUnits);
 				
-				        var virtualLowerBoundInclusiveRowIndex = renderBatchValidated.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
-				        var virtualUpperBoundExclusiveRowIndex = 1 + renderBatchValidated.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+				        var virtualLowerBoundInclusiveRowIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
+				        var virtualUpperBoundExclusiveRowIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 				
 				        int useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
 				            ? virtualLowerBoundInclusiveRowIndex
@@ -270,22 +260,14 @@
 				            ? virtualUpperBoundExclusiveRowIndex
 				            : selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
 				
-				        for (var badIndex = useLowerBoundInclusiveRowIndex; badIndex < useUpperBoundExclusiveRowIndex; badIndex++)
+				        for (var i = useLowerBoundInclusiveRowIndex; i < useUpperBoundExclusiveRowIndex; i++)
 				        {
-				            var rowIndex = badIndex;
-				            var textSelectionStyleCss = string.Empty;
-				
-				            if (renderBatchValidated.Options.UseMonospaceOptimizations)
-				            {
-				                textSelectionStyleCss = GetTextSelectionStyleCss(
-				                	renderBatchValidated,
-				                    selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
-				                    selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
-				                    rowIndex);
-				            }
-							
 							<div class="luth_te_text-selection"
-							     style="@textSelectionStyleCss">
+							     style="@GetTextSelectionStyleCss(
+							     	   _activeRenderBatch,
+							     	   selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
+							     	   selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
+							     	   i)">
 							</div>
 				        }
 				    }
@@ -293,14 +275,14 @@
 				                        
 				<div class="luth_te_last-render-presentation-layer-group">
 				
-				    @{
-				        var LAST_presentationLayerOrderedByRankAscending = 
-				        	GetTextEditorPresentationModels(renderBatchValidated, renderBatchValidated.ViewModel.LastPresentationLayerKeysList)
-				        	.OrderBy(x => x.Rank).ToList();
-				    }
-				
-				    @foreach (var presentationLayer in LAST_presentationLayerOrderedByRankAscending)
+				    @foreach (var presentationKey in _activeRenderBatch.ViewModel.LastPresentationLayerKeysList)
 				    {
+				    	var presentationLayer = _activeRenderBatch.Model.PresentationModelList.FirstOrDefault(x =>
+				            x.TextEditorPresentationKey == presentationKey);
+				            
+				        if (presentationLayer is null)
+				        	continue;
+				    
 				        var completedCalculation = presentationLayer.CompletedCalculation;
 				        
 				        var textSpansList = completedCalculation?.TextSpanList
@@ -311,27 +293,25 @@
 				
 				        @if (completedCalculation is not null)
 				        {
-				            textSpansList = PresentationVirtualizeAndShiftTextSpans(renderBatchValidated, textModificationList, completedCalculation.TextSpanList);
+				            textSpansList = PresentationVirtualizeAndShiftTextSpans(_activeRenderBatch, textModificationList, completedCalculation.TextSpanList);
 				
 				            <div class="@presentationLayer.CssClassString">
 				                @foreach (var textSpan in textSpansList)
 				                {
 				                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 				
-				                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(renderBatchValidated, renderBatchValidated.Model, boundsInPositionIndexUnits);
+				                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(_activeRenderBatch, _activeRenderBatch.Model, boundsInPositionIndexUnits);
 				
 				                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
 				                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
 				                         i++)
 				                    {
-				                        var rowIndex = i;
-				
 				                        <div class="@PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
 				                             style="@PresentationGetCssStyleString(
-				                                    renderBatchValidated,
+				                                    _activeRenderBatch,
 				                                    boundsInPositionIndexUnits.StartingIndexInclusive,
 				                                    boundsInPositionIndexUnits.EndingIndexExclusive,
-				                                    rowIndex)">
+				                                    i)">
 				                        </div>
 				                    }
 				                }
@@ -341,10 +321,10 @@
 				</div>
 				@*  PresentationAndSelection Close *@
 				
-				@foreach (var virtualizationLine in renderBatchValidated.ViewModel.VirtualizationResult.EntryList)
+				@foreach (var virtualizationLine in _activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 				{
 					<div class="luth_te_row"
-						 style="@RowSection_GetRowStyleCss(renderBatchValidated, virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
+						 style="@RowSection_GetRowStyleCss(_activeRenderBatch, virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
 					
 						@*
 							'!= 0' because the struct's int property will default to '0',
@@ -352,26 +332,23 @@
 						*@
 						@if (virtualizationLine.VirtualizationSpanIndexExclusiveEnd != 0)
 						{
-							for (int badI = virtualizationLine.VirtualizationSpanIndexInclusiveStart; badI < virtualizationLine.VirtualizationSpanIndexExclusiveEnd; badI++)
+							for (int i = virtualizationLine.VirtualizationSpanIndexInclusiveStart; i < virtualizationLine.VirtualizationSpanIndexExclusiveEnd; i++)
 							{
-								var i = badI;
-								var virtualizationSpan = renderBatchValidated.ViewModel.VirtualizationResult.VirtualizationSpanList[i];
-								
-								<span class="@virtualizationSpan.CssClass">
-						            @(virtualizationSpan.MarkupStringText)
+								<span class="@_activeRenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
+						            @(_activeRenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
 						        </span>
 						    }
 						}
 						
-						@if (GlobalShowNewlines && virtualizationLine.LineIndex < renderBatchValidated.Model.LineCount)
+						@if (GlobalShowNewlines && virtualizationLine.LineIndex < _activeRenderBatch.Model.LineCount)
 						{
-							var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / renderBatchValidated.ViewModel.CharAndLineMeasurements.CharacterWidth;
+							var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
 							
-							var lengthOfRow = renderBatchValidated.Model.GetLineLength(virtualizationLine.LineIndex, true);
+							var lengthOfRow = _activeRenderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
 							
 							if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
 							{
-							    var rowEndingTuple = renderBatchValidated.Model.LineEndList[virtualizationLine.LineIndex];
+							    var rowEndingTuple = _activeRenderBatch.Model.LineEndList[virtualizationLine.LineIndex];
 							
 							    <span class="luth_te_newline">
 							        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
@@ -380,22 +357,11 @@
 						}
 					</div>
 				}
-				
-				@{
-					var leftRelativeToParentInPixelsCssStyle = string.Empty;
-					var textEditorKeymap = (ITextEditorKeymap)renderBatchValidated.Options!.Keymap!;
-								    
-					if (!renderBatchValidated.Options!.UseMonospaceOptimizations)
-					{
-						var leftRelativeToParentInPixelsCssValue = _leftRelativeToParentInPixels.ToCssValue();
-						leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
-					}
-				}
 								
-				<textarea id="@GetCursorDisplayId(renderBatchValidated)"
-							tabindex="@GetTabIndex(renderBatchValidated)"
-							class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
-							style="@_previousGetCursorStyleCss @leftRelativeToParentInPixelsCssStyle">
+				<textarea id="@GetCursorDisplayId(_activeRenderBatch)"
+							tabindex="@GetTabIndex(_activeRenderBatch)"
+							class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(_activeRenderBatch.Options.Keymap.GetCursorCssClassString())"
+							style="@_previousGetCursorStyleCss">
 				</textarea>
 								
 				<div class="luth_te_text-editor-caret-row"
@@ -419,7 +385,7 @@
 				    
 				    <div class="luth_te_scrollbar-slider"
 				         id="@HORIZONTAL_ScrollbarSliderElementId"
-				         style="bottom: 0; height: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @_previous_HORIZONTAL_GetSliderHorizontalStyleCss_Result">
+				         style="bottom: 0; height: @(_scrollbarSizeInPixelsCssValue)px; @_previous_HORIZONTAL_GetSliderHorizontalStyleCss_Result">
 				    </div>
 				</div>
 				
@@ -434,7 +400,7 @@
 				         
 				    <div class="luth_te_scrollbar-slider"
 				         id="@VERTICAL_ScrollbarSliderElementId"
-				         style="left: 0; width: @(ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue())px; @_previous_VERTICAL_GetSliderVerticalStyleCss_Result">
+				         style="left: 0; width: @(_scrollbarSizeInPixelsCssValue)px; @_previous_VERTICAL_GetSliderVerticalStyleCss_Result">
 				    </div>
 				</div>
 			    
@@ -450,57 +416,55 @@
 			@* ScrollbarSection.razor Close *@
 		    
 		    @* TooltipDisplay.razor Open *@
-		    @{
-				var localViewModel = renderBatchValidated.ViewModel?.TooltipViewModel;
-			}
-		
-		    @if (localViewModel is not null)
+		    @if (_activeRenderBatch.ViewModel.TooltipViewModel is not null)
 		    {
-		        var relativeX = localViewModel.RelativeCoordinates.RelativeX.ToCssValue();
-		        var relativeY = localViewModel.RelativeCoordinates.RelativeY.ToCssValue();
+		        var relativeX = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeX.ToCssValue();
+		        var relativeY = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
 		
-		        <div class="luth_te_tooltip luth_set-selectable @(localViewModel.CssClassString ?? string.Empty)"
+		        <div class="luth_te_tooltip luth_set-selectable @(_activeRenderBatch.ViewModel.TooltipViewModel.CssClassString ?? string.Empty)"
 		             style="left: @(relativeX)px; top: @(relativeY)px;"
-		             @onmouseover="localViewModel.OnMouseOver"
+		             @onmouseover="_activeRenderBatch.ViewModel.TooltipViewModel.OnMouseOver"
 		             @onmousedown:stopPropagation="true"
 		             @onmousemove:stopPropagation="true"
 		             @ondblclick:stopPropagation="true"
 		             @onclick:stopPropagation="true"
 		             @oncontextmenu:stopPropagation="true">
 		
-		            <DynamicComponent Type="localViewModel.RendererType"
-		                              Parameters="localViewModel.ParameterMap" />
+		            <DynamicComponent Type="_activeRenderBatch.ViewModel.TooltipViewModel.RendererType"
+		                              Parameters="_activeRenderBatch.ViewModel.TooltipViewModel.ParameterMap" />
 		        </div>
 		    }
 		    @* TooltipDisplay.razor Close *@
 		    
 		    
-		    <FindOverlayDisplay RenderBatch="renderBatchValidated"/>
+		    <FindOverlayDisplay RenderBatch="_activeRenderBatch"/>
 		    
 		    @* 
 		    Widgets aren't being used at the moment
 		    
-		    <WidgetLayerDisplay RenderBatch="renderBatchValidated"/>
+		    <WidgetLayerDisplay RenderBatch="_activeRenderBatch"/>
 		    *@
 		</div>
+		
+		if (_activeRenderBatch.ViewModel.ShowCommandBar)
+	    {
+	        <CommandBarDisplay RenderBatch="_activeRenderBatch"/>
+	    }
     }
-
-    @if (renderBatchValidated?.ViewModel?.ShowCommandBar ?? false)
+    else
     {
-        <CommandBarDisplay RenderBatch="renderBatchValidated"/>
-    }
-    
-    @if (renderBatchUnsafe.Model is null)
-    {
-        <div>The @nameof(TextEditorModel) was null</div>
-    }
-    else if (renderBatchUnsafe.ViewModel is null)
-    {
-        <div>The @nameof(TextEditorViewModel) was null</div>
-    }
-    else if (renderBatchUnsafe.Options is null)
-    {
-        <div>The @nameof(TextEditorOptions) was null</div>
+    	if (_currentRenderBatch.Model is null)
+	    {
+	        <div>The @nameof(TextEditorModel) was null</div>
+	    }
+	    else if (_currentRenderBatch.ViewModel is null)
+	    {
+	        <div>The @nameof(TextEditorViewModel) was null</div>
+	    }
+	    else if (_currentRenderBatch.Options is null)
+	    {
+	        <div>The @nameof(TextEditorOptions) was null</div>
+	    }
     }
 </div>
 

@@ -159,6 +159,12 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private string _bodyStyle = $"width: 100%; left: 0;";
     
+    private string _scrollbarSizeInPixelsCssValue;
+    
+    private bool _previousIncludeHeader;
+    private bool _previousIncludeFooter;
+    private string _previousGetHeightCssStyleResult = "height: calc(100%);";
+    
     /* MeasureCharacterWidthAndRowHeight.razor Open */
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
     private const int TEST_STRING_REPEAT_COUNT = 6;
@@ -207,6 +213,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	    var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
 	    var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
         _gutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
+        
+        _scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
 
         ConstructRenderBatch();
 
@@ -1596,24 +1604,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     #endregion ScrollbarSectionClose
     
     #region PresentationAndSelectionDriverOpen
-    
-    public List<TextEditorPresentationModel> GetTextEditorPresentationModels(
-    	TextEditorRenderBatch renderBatchLocal,
-    	IReadOnlyList<Key<TextEditorPresentationModel>> textEditorPresentationKeys)
-    {
-    	var textEditorPresentationModelList = new List<TextEditorPresentationModel>();
-
-        foreach (var presentationKey in textEditorPresentationKeys)
-        {
-            var textEditorPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == presentationKey);
-
-            if (textEditorPresentationModel is not null)
-                textEditorPresentationModelList.Add(textEditorPresentationModel);
-        }
-
-        return textEditorPresentationModelList;
-    }
 
     public string PresentationGetCssStyleString(
     	TextEditorRenderBatch renderBatchLocal,
@@ -2017,6 +2007,31 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     	var fontFamilyCssStyle = $"font-family: {fontFamily};";
     	
     	WrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
+    }
+    
+    private string GetHeightCssStyle()
+    {
+    	if (_previousIncludeHeader != ViewModelDisplayOptions.HeaderComponentType is not null ||
+    	    _previousIncludeFooter != ViewModelDisplayOptions.FooterComponentType is not null)
+    	{
+    		_uiStringBuilder.Clear();
+    
+	        // Start with a calc statement and a value of 100%
+	        _uiStringBuilder.Append("height: calc(100%");
+	
+	        if (ViewModelDisplayOptions.HeaderComponentType is not null)
+	            _uiStringBuilder.Append(" - var(--luth_te_text-editor-header-height)");
+	
+	        if (ViewModelDisplayOptions.FooterComponentType is not null)
+	            _uiStringBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
+	
+	        // Close the calc statement, and the height style attribute
+	        _uiStringBuilder.Append(");");
+	        
+	        _previousGetHeightCssStyleResult = _uiStringBuilder.ToString();
+    	}
+    
+        return _previousGetHeightCssStyleResult;
     }
     
     public void Dispose()

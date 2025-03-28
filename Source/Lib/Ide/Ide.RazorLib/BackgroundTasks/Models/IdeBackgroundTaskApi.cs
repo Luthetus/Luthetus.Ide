@@ -26,6 +26,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
@@ -40,7 +41,6 @@ using Luthetus.Ide.RazorLib.Shareds.Displays;
 using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
@@ -354,7 +354,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _panelService.RegisterPanelTab(bottomPanel.Key, activeContextsPanel, false);
 
         // SetActivePanelTabAction
-        _panelService.SetActivePanelTab(bottomPanel.Key, terminalGroupPanel.Key);
+        //_panelService.SetActivePanelTab(bottomPanel.Key, terminalGroupPanel.Key);
     }
 
     private void AddGeneralTerminal()
