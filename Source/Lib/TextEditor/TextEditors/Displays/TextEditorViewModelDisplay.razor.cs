@@ -2005,6 +2005,25 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     	WrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     }
     
+    private string GetHeightCssStyle()
+    {
+    	_uiStringBuilder.Clear();
+    
+        // Start with a calc statement and a value of 100%
+        _uiStringBuilder.Append("height: calc(100%");
+
+        if (ViewModelDisplayOptions.HeaderComponentType is not null)
+            _uiStringBuilder.Append(" - var(--luth_te_text-editor-header-height)");
+
+        if (ViewModelDisplayOptions.FooterComponentType is not null)
+            _uiStringBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
+
+        // Close the calc statement, and the height style attribute
+        _uiStringBuilder.Append(");");
+
+        return _uiStringBuilder.ToString();
+    }
+    
     public void Dispose()
     {
     	// ScrollbarSection.razor.cs

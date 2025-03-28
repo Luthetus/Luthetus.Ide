@@ -27,7 +27,6 @@ public class TextEditorRenderBatch
 	}
 
 	// Don't ??= because it only should be set inside 'Validate()'.
-	private string? _heightCssStyle;
     private double? _gutterWidthInPixels;
     
     public TextEditorModel? Model { get; set; }
@@ -38,7 +37,6 @@ public class TextEditorRenderBatch
     public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; }
 	public TextEditorComponentData ComponentData { get; set; }
 
-    public string HeightCssStyle => _heightCssStyle ?? GetHeightCssStyle();
     public double GutterWidthInPixels => _gutterWidthInPixels ?? GetGutterWidthInPixels();
 
     public bool IsValid { get; private set; }
@@ -51,28 +49,10 @@ public class TextEditorRenderBatch
 	    
 	    if (IsValid)
 	    {
-	    	_heightCssStyle = HeightCssStyle;
 	    	_gutterWidthInPixels = GutterWidthInPixels;
 	    }
 	    
 	    return IsValid;
-    }
-
-    private string GetHeightCssStyle()
-    {
-        // Start with a calc statement and a value of 100%
-        var heightBuilder = new StringBuilder("height: calc(100%");
-
-        if (ViewModelDisplayOptions.HeaderComponentType is not null)
-            heightBuilder.Append(" - var(--luth_te_text-editor-header-height)");
-
-        if (ViewModelDisplayOptions.FooterComponentType is not null)
-            heightBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
-
-        // Close the calc statement, and the height style attribute
-        heightBuilder.Append(");");
-
-        return heightBuilder.ToString();
     }
 
     private double GetGutterWidthInPixels()
