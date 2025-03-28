@@ -161,6 +161,10 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private string _scrollbarSizeInPixelsCssValue;
     
+    private bool _previousIncludeHeader;
+    private bool _previousIncludeFooter;
+    private string _previousGetHeightCssStyleResult = "height: calc(100%);";
+    
     /* MeasureCharacterWidthAndRowHeight.razor Open */
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
     private const int TEST_STRING_REPEAT_COUNT = 6;
@@ -2007,21 +2011,27 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private string GetHeightCssStyle()
     {
-    	_uiStringBuilder.Clear();
+    	if (_previousIncludeHeader != ViewModelDisplayOptions.HeaderComponentType is not null ||
+    	    _previousIncludeFooter != ViewModelDisplayOptions.FooterComponentType is not null)
+    	{
+    		_uiStringBuilder.Clear();
     
-        // Start with a calc statement and a value of 100%
-        _uiStringBuilder.Append("height: calc(100%");
-
-        if (ViewModelDisplayOptions.HeaderComponentType is not null)
-            _uiStringBuilder.Append(" - var(--luth_te_text-editor-header-height)");
-
-        if (ViewModelDisplayOptions.FooterComponentType is not null)
-            _uiStringBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
-
-        // Close the calc statement, and the height style attribute
-        _uiStringBuilder.Append(");");
-
-        return _uiStringBuilder.ToString();
+	        // Start with a calc statement and a value of 100%
+	        _uiStringBuilder.Append("height: calc(100%");
+	
+	        if (ViewModelDisplayOptions.HeaderComponentType is not null)
+	            _uiStringBuilder.Append(" - var(--luth_te_text-editor-header-height)");
+	
+	        if (ViewModelDisplayOptions.FooterComponentType is not null)
+	            _uiStringBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
+	
+	        // Close the calc statement, and the height style attribute
+	        _uiStringBuilder.Append(");");
+	        
+	        _previousGetHeightCssStyleResult = _uiStringBuilder.ToString();
+    	}
+    
+        return _previousGetHeightCssStyleResult;
     }
     
     public void Dispose()
