@@ -407,6 +407,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _commonBackgroundTaskApi);
         _panelService.RegisterPanel(nuGetPanel);
         _panelService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
+        
+        // SetActivePanelTabAction
+        _panelService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
     }
 
     public void Enqueue_LuthetusExtensionsDotNetInitializerOnAfterRender()
