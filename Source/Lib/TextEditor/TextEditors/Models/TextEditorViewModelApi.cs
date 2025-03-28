@@ -110,7 +110,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
 			new ScrollbarDimensions(0, 0, 0, 0, 0),
-			new CharAndLineMeasurements(0, 0),
 			false,
 			category);
 			
@@ -1119,16 +1118,10 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         var options = _textEditorService.OptionsApi.GetOptions();
 
-		var characterWidthAndLineHeight = await _textEditorService.ViewModelApi.MeasureCharacterWidthAndLineHeightAsync(
-				measureCharacterWidthAndLineHeightElementId,
-				countOfTestCharacters)
-			.ConfigureAwait(false);
-
 		var textEditorMeasurements = await _textEditorService.ViewModelApi
 			.GetTextEditorMeasurementsAsync(viewModel.BodyElementId)
 			.ConfigureAwait(false);
 
-		viewModel.CharAndLineMeasurements = characterWidthAndLineHeight;
 		viewModel.TextEditorDimensions = textEditorMeasurements;
     }
 

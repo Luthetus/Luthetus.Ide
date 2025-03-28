@@ -119,8 +119,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private TextEditorViewModel? _linkedViewModel;
     
-    private Dictionary<string, object?> DependentComponentParameters;
-    
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
     private TouchEventArgs? _previousTouchEventArgs = null;
@@ -164,20 +162,56 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private bool _previousIncludeHeader;
     private bool _previousIncludeFooter;
     private string _previousGetHeightCssStyleResult = "height: calc(100%);";
-    
-    /* MeasureCharacterWidthAndRowHeight.razor Open */
-    private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
-    private const int TEST_STRING_REPEAT_COUNT = 6;
-    public int COUNT_OF_TEST_CHARACTERS => TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
-    /* MeasureCharacterWidthAndRowHeight.razor Close */
 
-    private string MeasureCharacterWidthAndRowHeightElementId { get; set; }
     private string ContentElementId { get; set; }
     
     public string WrapperCssClass { get; private set; }
     public string WrapperCssStyle { get; private set; }
+    
+	/// <summary>
+	/// Unit of measurement is pixels (px).
+	/// </summary>
+	private const int DISTANCE_TO_RESET_SCROLL_POSITION = 300;
+
+	private MouseEventArgs? _mouseDownEventArgs;
+
+    private readonly Guid VERTICAL_scrollbarGuid = Guid.NewGuid();
+	private readonly Guid HORIZONTAL_scrollbarGuid = Guid.NewGuid();
+
+    private bool VERTICAL_thinksLeftMouseButtonIsDown;
+
+	private double VERTICAL_clientXThresholdToResetScrollTopPosition;
+	private double VERTICAL_scrollTopOnMouseDown;
+
+    private string VERTICAL_ScrollbarElementId;
+    private string VERTICAL_ScrollbarSliderElementId;
+
+    private bool HORIZONTAL_thinksLeftMouseButtonIsDown;
+	private double HORIZONTAL_clientYThresholdToResetScrollLeftPosition;
+	private double HORIZONTAL_scrollLeftOnMouseDown;
+
+    private string HORIZONTAL_ScrollbarElementId;
+    private string HORIZONTAL_ScrollbarSliderElementId;
+	
+	private Func<MouseEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
+	
+	public bool GlobalShowNewlines => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowNewlines;
+	
+	/// <summary>This property will need to be used when multi-cursor is added.</summary>
+    public bool IsFocusTarget => true;
+
+    public ElementReference? _cursorDisplayElementReference;
+    public int _menuShouldGetFocusRequestCount;
+    public string _previousGetCursorStyleCss = string.Empty;
+    public string _previousGetCaretRowStyleCss = string.Empty;
+
+    public string _previouslyObservedCursorDisplayId = string.Empty;
 
 	public TextEditorComponentData ComponentData => _componentData;
+	
+	public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
+        ? "luth_te_blink"
+        : string.Empty;
 	
 	/// <summary>
 	/// Any external UI that isn't a child component of this can subscribe to this event,
@@ -191,20 +225,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     protected override void OnInitialized()
     {
-    	DependentComponentParameters = new()
-    	{
-    		{
-    			nameof(TextEditorViewModelDisplay),
-    			this
-    		}
-    	};
-    	
     	SetWrapperCssAndStyle();
     	
-    	MeasureCharacterWidthAndRowHeightElementId = $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
     	ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
-    	
-    	VERTICAL_ScrollbarElementId = $"luth_te_{VERTICAL_scrollbarGuid}";
+	    
+	    VERTICAL_ScrollbarElementId = $"luth_te_{VERTICAL_scrollbarGuid}";
 	    VERTICAL_ScrollbarSliderElementId = $"luth_te_{VERTICAL_scrollbarGuid}-slider";
 	    
 	    HORIZONTAL_ScrollbarElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}";
@@ -221,7 +246,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		SetComponentData();
 
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
-        TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrap_StateChanged;
+        
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         
         // ScrollbarSection.razor.cs
@@ -249,18 +274,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (_currentRenderBatch.ViewModel is not null && _currentRenderBatch.Options is not null)
         {
             var isFirstDisplay = _currentRenderBatch.ViewModel.DisplayTracker.ConsumeIsFirstDisplay();
-
-            var previousOptionsRenderStateKey = _previousRenderBatch.Options?.RenderStateKey ?? Key<RenderState>.Empty;
-            var currentOptionsRenderStateKey = _currentRenderBatch.Options.RenderStateKey;
-
-			if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
-            {
-                QueueRemeasureBackgroundTask(
-                    _currentRenderBatch,
-                    MeasureCharacterWidthAndRowHeightElementId,
-                    COUNT_OF_TEST_CHARACTERS,
-                    CancellationToken.None);
-            }
 
             if (isFirstDisplay)
 				QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
@@ -302,6 +315,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			        _uiStringBuilder.Append("px;");
 	        		_bodyStyle = _uiStringBuilder.ToString();
 	        			        		
+	        		// (2025-03-28)
 	        		activeRenderBatchLocal.ViewModel.DisplayTracker.PostScrollAndRemeasure();
 	        		return shouldRender;
 	        	}
@@ -440,11 +454,12 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
+            /*// (2025-03-28)
             QueueRemeasureBackgroundTask(
                 _currentRenderBatch,
                 MeasureCharacterWidthAndRowHeightElementId,
                 COUNT_OF_TEST_CHARACTERS,
-                CancellationToken.None);
+                CancellationToken.None);*/
 
             QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
         }
@@ -917,44 +932,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
     }
 
-    private void QueueRemeasureBackgroundTask(
-        TextEditorRenderBatch localRefCurrentRenderBatch,
-        string localMeasureCharacterWidthAndRowHeightElementId,
-        int countOfTestCharacters,
-        CancellationToken cancellationToken)
-    {
-        var (model, viewModel) = TextEditorService.TextEditorState.GetModelAndViewModelOrDefault(
-            TextEditorViewModelKey);
-
-        var resourceUri = model?.ResourceUri ?? ResourceUri.Empty;
-        var viewModelKey = viewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
-
-        if (resourceUri == ResourceUri.Empty ||
-            viewModelKey == Key<TextEditorViewModel>.Empty)
-        {
-            return;
-        }
-
-        TextEditorService.TextEditorWorker.PostRedundant(
-            nameof(QueueRemeasureBackgroundTask),
-			resourceUri,
-			viewModelKey,
-            editContext =>
-            {
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-
-				if (viewModelModifier is null)
-					return ValueTask.CompletedTask;
-
-            	return TextEditorService.ViewModelApi.RemeasureAsync(
-            		editContext,
-			        viewModelModifier,
-			        localMeasureCharacterWidthAndRowHeightElementId,
-	                countOfTestCharacters,
-			        CancellationToken.None);
-	        });
-    }
-
     private void QueueCalculateVirtualizationResultBackgroundTask(
 		TextEditorRenderBatch localCurrentRenderBatch)
     {
@@ -991,8 +968,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             });
     }
     
-    #region GutterDriverOpen
-
     public string GetGutterStyleCss(TextEditorRenderBatch renderBatchLocal, int index)
     {
     	_uiStringBuilder.Clear();
@@ -1013,11 +988,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     {
         return _gutterWidthStyleCssString;
     }
-    
-    #endregion GutterDriverClose
-    
-    #region BodyDriverOpen
-    public bool GlobalShowNewlines => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowNewlines;
     
     /* RowSection.razor Open */
     public string RowSection_GetRowStyleCss(TextEditorRenderBatch renderBatchLocal, int index, double virtualizedRowLeftInPixels)
@@ -1044,24 +1014,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         return _uiStringBuilder.ToString();
     }
     
-    #endregion BodyDriverClose
-    
-    #region CursorDriverOpen
-
-    /// <summary>This property will need to be used when multi-cursor is added.</summary>
-    public bool IsFocusTarget => true;
-
-    public readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
-    public readonly Throttle _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
-
-    public ElementReference? _cursorDisplayElementReference;
-    public int _menuShouldGetFocusRequestCount;
-    public string _previousGetCursorStyleCss = string.Empty;
-    public string _previousGetCaretRowStyleCss = string.Empty;
-
-    public string _previouslyObservedCursorDisplayId = string.Empty;
-    public double _leftRelativeToParentInPixels;
-        
     public bool GetIncludeContextMenuHelperComponent(TextEditorRenderBatch renderBatchLocal)
     {
     	return renderBatchLocal.ViewModelDisplayOptions.IncludeContextMenuHelperComponent;
@@ -1078,10 +1030,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	        ? renderBatchLocal?.ViewModel?.PrimaryCursorContentId ?? string.Empty
 	        : string.Empty;
     }
-
-    public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
-        ? "luth_te_blink"
-        : string.Empty;
         
     public void GetCursorAndCaretRowStyleCss(TextEditorRenderBatch renderBatchLocal)
     {
@@ -1229,40 +1177,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         return renderBatchLocal.ViewModelDisplayOptions.TabIndex;;
     }
     
-    #endregion CursorDriverClose
-    
-    #region ScrollbarSectionOpen
-
-    [Parameter, EditorRequired]
-    public TextEditorRenderBatch? RenderBatch { get; set; }
-
-	/// <summary>
-	/// Unit of measurement is pixels (px).
-	/// </summary>
-	private const int DISTANCE_TO_RESET_SCROLL_POSITION = 300;
-
-	private MouseEventArgs? _mouseDownEventArgs;
-
-    private readonly Guid VERTICAL_scrollbarGuid = Guid.NewGuid();
-	private readonly Guid HORIZONTAL_scrollbarGuid = Guid.NewGuid();
-
-    private bool VERTICAL_thinksLeftMouseButtonIsDown;
-
-	private double VERTICAL_clientXThresholdToResetScrollTopPosition;
-	private double VERTICAL_scrollTopOnMouseDown;
-
-    private string VERTICAL_ScrollbarElementId;
-    private string VERTICAL_ScrollbarSliderElementId;
-
-    private bool HORIZONTAL_thinksLeftMouseButtonIsDown;
-	private double HORIZONTAL_clientYThresholdToResetScrollLeftPosition;
-	private double HORIZONTAL_scrollLeftOnMouseDown;
-
-    private string HORIZONTAL_ScrollbarElementId;
-    private string HORIZONTAL_ScrollbarSliderElementId;
-	
-	private Func<MouseEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
-
     private void HORIZONTAL_GetScrollbarHorizontalStyleCss(TextEditorRenderBatch activeRenderBatchLocal)
     {
     	var scrollbarWidthInPixels = activeRenderBatchLocal.ViewModel.TextEditorDimensions.Width -
@@ -1546,10 +1460,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         return Task.CompletedTask;
     }
     
-    #endregion ScrollbarSectionClose
-
-    #region VirtualizationDriverOpen
-
     public string Virtualization_GetStyleCssString(VirtualizationBoundary virtualizationBoundary)
     {
     	_uiStringBuilder.Clear();
@@ -1600,11 +1510,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
         return _uiStringBuilder.ToString();
     }
-
-    #endregion ScrollbarSectionClose
     
-    #region PresentationAndSelectionDriverOpen
-
     public string PresentationGetCssStyleString(
     	TextEditorRenderBatch renderBatchLocal,
         int lowerPositionIndexInclusive,
@@ -1987,8 +1893,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             return (0, 0);
         }
     }
-    
-    #endregion PresentationAndSelectionDriverClose
 
     private void SetWrapperCssAndStyle()
     {
@@ -2041,7 +1945,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     	// TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;
-        TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrap_StateChanged;
 		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         lock (_linkedViewModelLock)

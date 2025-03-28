@@ -142,7 +142,6 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
-	    		new CharAndLineMeasurements(0, 0),
 	            false,
 	            new Category("terminal"));
 	

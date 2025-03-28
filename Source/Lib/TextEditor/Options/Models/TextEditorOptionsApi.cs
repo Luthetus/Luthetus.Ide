@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -45,6 +46,8 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private TextEditorOptionsState _textEditorOptionsState = new();
 
     private IDialog? _findAllDialog;
+    
+    public CharAndLineMeasurements CharAndLineMeasurements { get; private set; }
 
 	public event Action? TextEditorOptionsStateChanged;
 
@@ -291,6 +294,11 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             },
         };
         TextEditorOptionsStateChanged?.Invoke();
+    }
+    
+    public void SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
+    {
+    	CharAndLineMeasurements = charAndLineMeasurements;
     }
 
     public void WriteToStorage()
