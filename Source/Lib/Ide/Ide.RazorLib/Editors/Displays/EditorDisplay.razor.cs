@@ -3,8 +3,10 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -30,6 +32,8 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	private bool _isLoaded = false;
 	
 	private TextEditorViewModelDisplay _viewModelDisplay;
+	
+	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
 
     protected override void OnInitialized()
     {
@@ -56,8 +60,19 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     	base.OnAfterRender(firstRender);
     }
 
-    private async void TextEditorGroupWrapOnStateChanged() =>
+    private async void TextEditorGroupWrapOnStateChanged()
+    {
+    	var textEditorGroup = TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
+	        x => x.GroupKey == EditorIdeApi.EditorTextEditorGroupKey);
+	        
+	    if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
+	    {
+	    	_previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
+	    	TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+	    }
+    
         await InvokeAsync(StateHasChanged);
+    }
 
 	private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
