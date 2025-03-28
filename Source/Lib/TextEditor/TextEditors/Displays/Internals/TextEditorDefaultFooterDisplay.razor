@@ -9,15 +9,13 @@
 
 @if (renderBatch is not null)
 {
-	_footerDriver.GetRenderFragment(renderBatch);
-	    
 	<div class="luth_te_text-editor-footer @TextEditorViewModelDisplay.WrapperCssClass @TextEditorService.ThemeCssClassString"
 		 style="@TextEditorViewModelDisplay.WrapperCssStyle">
 	    <div class="luth_te_text-editor-footer-listing">
 	        @{
-	            var model = _footerDriver._renderBatch.Model;
-	            var viewModel = _footerDriver._renderBatch.ViewModel;
-	            var options = _footerDriver._renderBatch.Options;
+	            var model = renderBatch.Model;
+	            var viewModel = renderBatch.ViewModel;
+	            var options = renderBatch.Options;
 	
 	            if (model is not null && viewModel is not null)
 	            {
@@ -34,7 +32,7 @@
 	                            length:
 	                        </div>
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
+	                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
 	                            @($"{model.DocumentLength}")
 	                        </div>
 	                    </div>
@@ -44,7 +42,7 @@
 	                            lines:
 	                        </div>
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
+	                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
 	                            @($"{model.LineCount}")
 	                        </div>
 	                    </div>
@@ -61,7 +59,7 @@
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
+	                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
 	                            @($"{rowNumber}")
 	                        </div>
 	                    </div>
@@ -76,7 +74,7 @@
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleLineTuple.lineLength)">
+	                             style="@StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleLineTuple.lineLength)">
 	                            @($"{columnNumber}")
 	                        </div>
 	                    </div>
@@ -87,11 +85,11 @@
 	                        </div>
 	
 	                        @{
-	                            var positionNumber = _footerDriver.GetPositionNumber(model, viewModel);
+	                            var positionNumber = GetPositionNumber(model, viewModel);
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
+	                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
 	                            @($"{positionNumber}")
 	                        </div>
 	                    </div>
@@ -108,7 +106,7 @@
 	                    }
 	
 	                    use:
-	                    <select @onchange="_footerDriver.SelectRowEndingKindOnChange">
+	                    <select @onchange="e => SelectRowEndingKindOnChange(renderBatch, e)">
 	                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
 	                        {
 	                            <option value="@rowEndingKind.ToString()"
