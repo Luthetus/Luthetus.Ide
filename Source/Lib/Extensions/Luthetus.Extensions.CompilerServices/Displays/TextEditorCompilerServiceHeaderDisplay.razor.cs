@@ -26,11 +26,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 	
-	// private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(500);
-
-	/// <summary>byte is used as TArgs just as a "throwaway" type. It isn't used.</summary>
-	// private Debounce<byte> _debounceRender;
-	
 	private ResourceUri _resourceUriPrevious = ResourceUri.Empty;
 	
 	private int _lineIndexPrevious = -1;
@@ -45,38 +40,16 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	
 	protected override void OnInitialized()
     {
-    	//_debounceRender = new(ThrottleTimeSpan, _cancellationTokenSource.Token, async (_, _) =>
-    	//{
-    	//	UpdateUi();
-    	//});
-    
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         OnCursorShouldBlinkChanged();
         
         base.OnInitialized();
     }
 
-	private void OnCursorShouldBlinkChanged()
+	private async void OnCursorShouldBlinkChanged()
     {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
-    	
-    	if (renderBatch is null)
-    		return;
-    		
-    	if (_shouldRender)
-    	{
-    		_shouldRender = false;
-    		// Don't await this;
-    		InvokeAsync(StateHasChanged);
-    	}
-    
-    	if (renderBatch.ViewModel.PrimaryCursor.LineIndex == _lineIndexPrevious &&
-        	renderBatch.ViewModel.PrimaryCursor.ColumnIndex == _columnIndexPrevious)
-        {
-			return;
-        }
-        
-    	UpdateUi();
+    	if (TextEditorService.ViewModelApi.CursorShouldBlink)
+    		UpdateUi();
     }
     
     private void ToggleDefaultToolbar()
@@ -86,125 +59,115 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private void UpdateUi()
     {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	if (TextEditorViewModelDisplay._activeRenderBatch is null)
     		return;
     	
-    	TextEditorService.TextEditorWorker.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), editContext =>
+    	TextEditorService.TextEditorWorker.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), async editContext =>
     	{
-    		try
-    		{
-	    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-	            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
-	            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-	            var primaryCursorModifier = cursorModifierBag.CursorModifier;
+    		var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	
+    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+            var primaryCursorModifier = cursorModifierBag.CursorModifier;
+
+            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+                return;
+            
+            _lineIndexPrevious = primaryCursorModifier.LineIndex;
+            _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
+            
+            if (!viewModelModifier.FirstPresentationLayerKeysList.Contains(
+            		TextEditorDevToolsPresentationFacts.PresentationKey))
+            {
+				var copy = new List<Key<TextEditorPresentationModel>>(viewModelModifier.FirstPresentationLayerKeysList);
+				copy.Add(TextEditorDevToolsPresentationFacts.PresentationKey);
+
+				viewModelModifier.FirstPresentationLayerKeysList = copy;
+	        }
+    	
+    		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+				editContext,
+		        modelModifier,
+		        TextEditorDevToolsPresentationFacts.PresentationKey,
+				TextEditorDevToolsPresentationFacts.EmptyPresentationModel);
 	
-	            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-	                return ValueTask.CompletedTask;
-	            
-	            _lineIndexPrevious = primaryCursorModifier.LineIndex;
-	            _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
-	            
-	            if (!viewModelModifier.FirstPresentationLayerKeysList.Contains(
-	            		TextEditorDevToolsPresentationFacts.PresentationKey))
-	            {
-					var copy = new List<Key<TextEditorPresentationModel>>(viewModelModifier.FirstPresentationLayerKeysList);
-					copy.Add(TextEditorDevToolsPresentationFacts.PresentationKey);
-
-					viewModelModifier.FirstPresentationLayerKeysList = copy;
-		        }
-	    	
-	    		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
-					editContext,
-			        modelModifier,
-			        TextEditorDevToolsPresentationFacts.PresentationKey,
-					TextEditorDevToolsPresentationFacts.EmptyPresentationModel);
-		
-				var presentationModel = modelModifier.PresentationModelList.First(
-					x => x.TextEditorPresentationKey == TextEditorDevToolsPresentationFacts.PresentationKey);
-		
-				if (presentationModel.PendingCalculation is null)
-					throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
-		
-		        var resourceUri = modelModifier.ResourceUri;
-		
-				var targetScope = ((IExtendedCompilerService)modelModifier.CompilerService).GetScopeByPositionIndex(
-					resourceUri,
-					modelModifier.GetPositionIndex(primaryCursorModifier));
-				
-				if (!targetScope.ConstructorWasInvoked)
-				{
-					Console.WriteLine("aaa if (targetScope is null)");
-					return ValueTask.CompletedTask;
-				}
-	    
-				TextEditorTextSpan textSpanStart;
-	    		
-	    		if (targetScope.CodeBlockOwner.OpenCodeBlockTextSpan is null)
-	    		{
-	    			textSpanStart = new TextEditorTextSpan(
-			            targetScope.StartingIndexInclusive,
-			            targetScope.StartingIndexInclusive + 1,
-					    (byte)TextEditorDevToolsDecorationKind.Scope,
-					    resourceUri,
-					    sourceText: string.Empty,
-					    getTextPrecalculatedResult: string.Empty);
-	    		}
-	    		else
-	    		{
-	    			textSpanStart = new TextEditorTextSpan(
-			            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive,
-			            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive + 1,
-					    (byte)TextEditorDevToolsDecorationKind.Scope,
-					    resourceUri,
-					    sourceText: string.Empty,
-					    getTextPrecalculatedResult: string.Empty);
-	    		}
-
-				int useStartingIndexInclusive;
-				if (targetScope.EndingIndexExclusive == -1)
-					useStartingIndexInclusive = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
-				else
-					useStartingIndexInclusive = targetScope.EndingIndexExclusive -1;
-
-				if (useStartingIndexInclusive < 0)
-					useStartingIndexInclusive = 0;
-
-				var useEndingIndexExclusive = targetScope.EndingIndexExclusive;
-	    		if (useEndingIndexExclusive == -1)
-	    			useEndingIndexExclusive = presentationModel.PendingCalculation.ContentAtRequest.Length;
-	    			
-				var textSpanEnd = new TextEditorTextSpan(
-		            useStartingIndexInclusive,
-				    useEndingIndexExclusive,
+			var presentationModel = modelModifier.PresentationModelList.First(
+				x => x.TextEditorPresentationKey == TextEditorDevToolsPresentationFacts.PresentationKey);
+	
+			if (presentationModel.PendingCalculation is null)
+				throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+	
+	        var resourceUri = modelModifier.ResourceUri;
+	
+			if (modelModifier.CompilerService is not IExtendedCompilerService extendedCompilerService)
+				return;
+	
+			var targetScope = extendedCompilerService.GetScopeByPositionIndex(
+				resourceUri,
+				modelModifier.GetPositionIndex(primaryCursorModifier));
+			
+			if (!targetScope.ConstructorWasInvoked)
+				return;
+    
+			TextEditorTextSpan textSpanStart;
+    		
+    		if (targetScope.CodeBlockOwner.OpenCodeBlockTextSpan is null)
+    		{
+    			textSpanStart = new TextEditorTextSpan(
+		            targetScope.StartingIndexInclusive,
+		            targetScope.StartingIndexInclusive + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
 				    resourceUri,
 				    sourceText: string.Empty,
 				    getTextPrecalculatedResult: string.Empty);
-		
-				var diagnosticTextSpans = new List<TextEditorTextSpan> { textSpanStart, textSpanEnd };
+    		}
+    		else
+    		{
+    			textSpanStart = new TextEditorTextSpan(
+		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive,
+		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive + 1,
+				    (byte)TextEditorDevToolsDecorationKind.Scope,
+				    resourceUri,
+				    sourceText: string.Empty,
+				    getTextPrecalculatedResult: string.Empty);
+    		}
+
+			int useStartingIndexInclusive;
+			if (targetScope.EndingIndexExclusive == -1)
+				useStartingIndexInclusive = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
+			else
+				useStartingIndexInclusive = targetScope.EndingIndexExclusive -1;
+
+			if (useStartingIndexInclusive < 0)
+				useStartingIndexInclusive = 0;
+
+			var useEndingIndexExclusive = targetScope.EndingIndexExclusive;
+    		if (useEndingIndexExclusive == -1)
+    			useEndingIndexExclusive = presentationModel.PendingCalculation.ContentAtRequest.Length;
+    			
+			var textSpanEnd = new TextEditorTextSpan(
+	            useStartingIndexInclusive,
+			    useEndingIndexExclusive,
+			    (byte)TextEditorDevToolsDecorationKind.Scope,
+			    resourceUri,
+			    sourceText: string.Empty,
+			    getTextPrecalculatedResult: string.Empty);
 	
-				modelModifier.CompletePendingCalculatePresentationModel(
-					TextEditorDevToolsPresentationFacts.PresentationKey,
-					TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
-					diagnosticTextSpans);
-					
-				if (_codeBlockOwner != targetScope.CodeBlockOwner)
-				{
-					_codeBlockOwner = targetScope.CodeBlockOwner;
-					_shouldRender = true;
-				}
+			var diagnosticTextSpans = new List<TextEditorTextSpan> { textSpanStart, textSpanEnd };
+
+			modelModifier.CompletePendingCalculatePresentationModel(
+				TextEditorDevToolsPresentationFacts.PresentationKey,
+				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
+				diagnosticTextSpans);
 				
-				// Don't await this.
-				InvokeAsync(StateHasChanged);
-		
-	    		return ValueTask.CompletedTask;
-	    	}
-	    	catch (Exception e)
-	    	{
-	    		Console.WriteLine(e);
-	    		return ValueTask.CompletedTask;
-	    	}
+			if (_codeBlockOwner != targetScope.CodeBlockOwner)
+			{
+				_codeBlockOwner = targetScope.CodeBlockOwner;
+				_shouldRender = true;
+			}
+			
+			await InvokeAsync(StateHasChanged);
     	});
     }
 
