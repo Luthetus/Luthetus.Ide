@@ -1596,24 +1596,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     #endregion ScrollbarSectionClose
     
     #region PresentationAndSelectionDriverOpen
-    
-    public List<TextEditorPresentationModel> GetTextEditorPresentationModels(
-    	TextEditorRenderBatch renderBatchLocal,
-    	IReadOnlyList<Key<TextEditorPresentationModel>> textEditorPresentationKeys)
-    {
-    	var textEditorPresentationModelList = new List<TextEditorPresentationModel>();
-
-        foreach (var presentationKey in textEditorPresentationKeys)
-        {
-            var textEditorPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == presentationKey);
-
-            if (textEditorPresentationModel is not null)
-                textEditorPresentationModelList.Add(textEditorPresentationModel);
-        }
-
-        return textEditorPresentationModelList;
-    }
 
     public string PresentationGetCssStyleString(
     	TextEditorRenderBatch renderBatchLocal,
