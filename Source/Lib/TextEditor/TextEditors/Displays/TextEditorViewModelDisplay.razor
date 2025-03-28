@@ -234,14 +234,12 @@
 				                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
 				                         i++)
 				                    {
-				                        var rowIndex = i;
-				
 				                        <div class="@PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
 				                             style="@PresentationGetCssStyleString(
 				                             	   renderBatchValidated,
 				                                    boundsInPositionIndexUnits.StartingIndexInclusive,
 				                                    boundsInPositionIndexUnits.EndingIndexExclusive,
-				                                    rowIndex)">
+				                                    i)">
 				                        </div>
 				                    }
 				                }
@@ -270,22 +268,14 @@
 				            ? virtualUpperBoundExclusiveRowIndex
 				            : selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
 				
-				        for (var badIndex = useLowerBoundInclusiveRowIndex; badIndex < useUpperBoundExclusiveRowIndex; badIndex++)
+				        for (var i = useLowerBoundInclusiveRowIndex; i < useUpperBoundExclusiveRowIndex; i++)
 				        {
-				            var rowIndex = badIndex;
-				            var textSelectionStyleCss = string.Empty;
-				
-				            if (renderBatchValidated.Options.UseMonospaceOptimizations)
-				            {
-				                textSelectionStyleCss = GetTextSelectionStyleCss(
-				                	renderBatchValidated,
-				                    selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
-				                    selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
-				                    rowIndex);
-				            }
-							
 							<div class="luth_te_text-selection"
-							     style="@textSelectionStyleCss">
+							     style="@GetTextSelectionStyleCss(
+							     	   renderBatchValidated,
+							     	   selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
+							     	   selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
+							     	   i)">
 							</div>
 				        }
 				    }
@@ -324,14 +314,12 @@
 				                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
 				                         i++)
 				                    {
-				                        var rowIndex = i;
-				
 				                        <div class="@PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
 				                             style="@PresentationGetCssStyleString(
 				                                    renderBatchValidated,
 				                                    boundsInPositionIndexUnits.StartingIndexInclusive,
 				                                    boundsInPositionIndexUnits.EndingIndexExclusive,
-				                                    rowIndex)">
+				                                    i)">
 				                        </div>
 				                    }
 				                }
@@ -352,13 +340,10 @@
 						*@
 						@if (virtualizationLine.VirtualizationSpanIndexExclusiveEnd != 0)
 						{
-							for (int badI = virtualizationLine.VirtualizationSpanIndexInclusiveStart; badI < virtualizationLine.VirtualizationSpanIndexExclusiveEnd; badI++)
+							for (int i = virtualizationLine.VirtualizationSpanIndexInclusiveStart; i < virtualizationLine.VirtualizationSpanIndexExclusiveEnd; i++)
 							{
-								var i = badI;
-								var virtualizationSpan = renderBatchValidated.ViewModel.VirtualizationResult.VirtualizationSpanList[i];
-								
-								<span class="@virtualizationSpan.CssClass">
-						            @(virtualizationSpan.MarkupStringText)
+								<span class="@renderBatchValidated.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
+						            @(renderBatchValidated.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
 						        </span>
 						    }
 						}
