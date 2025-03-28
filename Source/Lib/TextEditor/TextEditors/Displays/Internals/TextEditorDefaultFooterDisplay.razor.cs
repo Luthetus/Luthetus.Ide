@@ -12,21 +12,11 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 
-	private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(200);
-
-	/// <summary>byte is used as TArgs just as a "throwaway" type. It isn't used.</summary>
-	// private ThrottleOptimized<byte> _throttleRender;
-
 	private FooterDriver _footerDriver;
 	
 	protected override void OnInitialized()
     {
     	_footerDriver = new FooterDriver(TextEditorViewModelDisplay);
-    	
-    	/*_throttleRender = new(ThrottleTimeSpan, async (_, _) =>
-    	{
-    		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-    	});*/
     
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         OnCursorShouldBlinkChanged();
@@ -34,10 +24,9 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
         base.OnInitialized();
     }
 
-    private void OnCursorShouldBlinkChanged()
+    private async void OnCursorShouldBlinkChanged()
     {
-    	// Don't await this;
-    	InvokeAsync(StateHasChanged);
+    	await InvokeAsync(StateHasChanged);
     }
 
 	public void Dispose()

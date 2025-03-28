@@ -31,11 +31,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 	
 	public const string HTML_ELEMENT_ID = "luth_te_autocomplete-menu-id";
 	
-	/*public static string GetHtmlElementId(Key<TextEditorViewModel> viewModelKey)
-	{
-		return $"luth_te_autocomplete-menu_{viewModelKey.Guid}";
-	}*/
-
 	private static readonly MenuRecord NoResultsMenuRecord = new(
 		new List<MenuOptionRecord>()
         {
@@ -56,10 +51,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     	if (TextEditorViewModelDisplay.ComponentData.MenuShouldTakeFocus)
     	{
     		TextEditorViewModelDisplay.ComponentData.MenuShouldTakeFocus = false;
-    		
-    		/*await TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
-        		HTML_ELEMENT_ID,
-        		preventScroll: true);*/
         		
         	await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
     	}
@@ -67,9 +58,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     	await base.OnAfterRenderAsync(firstRender);
     }
     
-    private void OnRenderBatchChanged()
+    private async void OnRenderBatchChanged()
     {
-    	InvokeAsync(StateHasChanged);
+    	await InvokeAsync(StateHasChanged);
     }
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
