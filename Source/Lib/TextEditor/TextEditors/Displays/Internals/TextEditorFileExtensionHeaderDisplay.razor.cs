@@ -20,12 +20,16 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 	
 	private string _fileExtensionCurrent = string.Empty;
 	
+	private TextEditorViewModelDisplay? _previousTextEditorViewModelDisplay;
+	
+	private string DictionaryKey => nameof(ITextEditorDependentComponent.TextEditorViewModelDisplay);
+	
 	protected override void OnInitialized()
 	{
 		_componentInnerParameters = new()
 		{
 			{
-				nameof(ITextEditorDependentComponent.TextEditorViewModelDisplay),
+				DictionaryKey,
 				TextEditorViewModelDisplay
 			}
 		};
@@ -36,6 +40,12 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 	
 	protected override bool ShouldRender()
 	{
+		if (_previousTextEditorViewModelDisplay != TextEditorViewModelDisplay)
+		{
+			_previousTextEditorViewModelDisplay = TextEditorViewModelDisplay;
+			_componentInnerParameters[DictionaryKey] = TextEditorViewModelDisplay;
+		}
+	
 		var localTextEditorState = TextEditorService.TextEditorState;
 		
 		var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefault(

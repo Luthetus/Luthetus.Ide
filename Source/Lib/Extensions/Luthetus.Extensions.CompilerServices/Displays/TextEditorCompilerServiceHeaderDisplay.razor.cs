@@ -59,12 +59,13 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private void UpdateUi()
     {
-    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	if (TextEditorViewModelDisplay._activeRenderBatch is null)
     		return;
     	
     	TextEditorService.TextEditorWorker.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), async editContext =>
     	{
+    		var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	
     		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
             var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
