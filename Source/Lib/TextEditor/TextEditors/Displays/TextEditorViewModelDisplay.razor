@@ -169,7 +169,7 @@
     }
 
     @if (renderBatchValidated is not null)
-    {        
+    {
     	<div class="luth_te_body-section"
 	 		style="@_bodyStyle">
 	 		
@@ -468,24 +468,26 @@
 		    <WidgetLayerDisplay RenderBatch="renderBatchValidated"/>
 		    *@
 		</div>
+		
+		if (renderBatchValidated.ViewModel.ShowCommandBar)
+	    {
+	        <CommandBarDisplay RenderBatch="renderBatchValidated"/>
+	    }
     }
-
-    @if (renderBatchValidated?.ViewModel?.ShowCommandBar ?? false)
+    else
     {
-        <CommandBarDisplay RenderBatch="renderBatchValidated"/>
-    }
-    
-    @if (renderBatchUnsafe.Model is null)
-    {
-        <div>The @nameof(TextEditorModel) was null</div>
-    }
-    else if (renderBatchUnsafe.ViewModel is null)
-    {
-        <div>The @nameof(TextEditorViewModel) was null</div>
-    }
-    else if (renderBatchUnsafe.Options is null)
-    {
-        <div>The @nameof(TextEditorOptions) was null</div>
+    	if (renderBatchUnsafe.Model is null)
+	    {
+	        <div>The @nameof(TextEditorModel) was null</div>
+	    }
+	    else if (renderBatchUnsafe.ViewModel is null)
+	    {
+	        <div>The @nameof(TextEditorViewModel) was null</div>
+	    }
+	    else if (renderBatchUnsafe.Options is null)
+	    {
+	        <div>The @nameof(TextEditorOptions) was null</div>
+	    }
     }
 </div>
 
