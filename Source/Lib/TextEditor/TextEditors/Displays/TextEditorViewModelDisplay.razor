@@ -61,7 +61,7 @@
     @if (ViewModelDisplayOptions.IncludeGutterComponent && _activeRenderBatch is not null)
     {
         <div class="luth_te_gutter-section"
-		      style="@(GetGutterSectionStyleCss(_activeRenderBatch))"
+		      style="@(GetGutterSectionStyleCss())"
 		      id="@_activeRenderBatch.ViewModel.GutterElementId">
 		      
             @* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
@@ -79,7 +79,7 @@
 		    @foreach (var virtualizedRow in _activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
-		             style="@(GetGutterStyleCss(_activeRenderBatch, virtualizedRow.LineIndex))">
+		             style="@(GetGutterStyleCss(virtualizedRow.LineIndex))">
 		            @(virtualizedRow.LineIndex + 1)
 		        </div>
 		    }
@@ -144,7 +144,7 @@
 		            var imaginaryNextIndex = lastIndex + 1;
 		            
 		            <div class="luth_te_gutter"
-		                 style="@(GetGutterStyleCss(_activeRenderBatch, imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
+		                 style="@(GetGutterStyleCss(imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
 		            </div>
 		        }
 		    }
@@ -200,14 +200,14 @@
 				
 				        @if (completedCalculation is not null)
 				        {
-				            textSpansList = PresentationVirtualizeAndShiftTextSpans(_activeRenderBatch, textModificationList, completedCalculation.TextSpanList);
+				            textSpansList = PresentationVirtualizeAndShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
 				
 				            <div class="@presentationLayer.CssClassString">
 				                @foreach (var textSpan in textSpansList)
 				                {
 				                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 				
-				                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(_activeRenderBatch, _activeRenderBatch.Model, boundsInPositionIndexUnits);
+				                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(boundsInPositionIndexUnits);
 				
 				                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
 				                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
@@ -215,7 +215,6 @@
 				                    {
 				                        <div class="@PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
 				                             style="@PresentationGetCssStyleString(
-				                             	   _activeRenderBatch,
 				                                    boundsInPositionIndexUnits.StartingIndexInclusive,
 				                                    boundsInPositionIndexUnits.EndingIndexExclusive,
 				                                    i)">
@@ -234,7 +233,7 @@
 				        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
 				            _activeRenderBatch.ViewModel.PrimaryCursor.Selection);
 				
-				        var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(_activeRenderBatch, selectionBoundsInPositionIndexUnits);
+				        var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(selectionBoundsInPositionIndexUnits);
 				
 				        var virtualLowerBoundInclusiveRowIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
 				        var virtualUpperBoundExclusiveRowIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
@@ -251,7 +250,6 @@
 				        {
 							<div class="luth_te_text-selection"
 							     style="@GetTextSelectionStyleCss(
-							     	   _activeRenderBatch,
 							     	   selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
 							     	   selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
 							     	   i)">
@@ -280,14 +278,14 @@
 				
 				        @if (completedCalculation is not null)
 				        {
-				            textSpansList = PresentationVirtualizeAndShiftTextSpans(_activeRenderBatch, textModificationList, completedCalculation.TextSpanList);
+				            textSpansList = PresentationVirtualizeAndShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
 				
 				            <div class="@presentationLayer.CssClassString">
 				                @foreach (var textSpan in textSpansList)
 				                {
 				                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 				
-				                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(_activeRenderBatch, _activeRenderBatch.Model, boundsInPositionIndexUnits);
+				                    var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(boundsInPositionIndexUnits);
 				
 				                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
 				                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
@@ -295,7 +293,6 @@
 				                    {
 				                        <div class="@PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
 				                             style="@PresentationGetCssStyleString(
-				                                    _activeRenderBatch,
 				                                    boundsInPositionIndexUnits.StartingIndexInclusive,
 				                                    boundsInPositionIndexUnits.EndingIndexExclusive,
 				                                    i)">
@@ -311,7 +308,7 @@
 				@foreach (var virtualizationLine in _activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 				{
 					<div class="luth_te_row"
-						 style="@RowSection_GetRowStyleCss(_activeRenderBatch, virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
+						 style="@RowSection_GetRowStyleCss(virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
 					
 						@*
 							'!= 0' because the struct's int property will default to '0',
@@ -345,8 +342,8 @@
 					</div>
 				}
 								
-				<textarea id="@GetCursorDisplayId(_activeRenderBatch)"
-							tabindex="@GetTabIndex(_activeRenderBatch)"
+				<textarea id="@GetCursorDisplayId()"
+							tabindex="@GetTabIndex()"
 							class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(_activeRenderBatch.Options.Keymap.GetCursorCssClassString())"
 							style="@_previousGetCursorStyleCss">
 				</textarea>
@@ -423,14 +420,7 @@
 		    }
 		    @* TooltipDisplay.razor Close *@
 		    
-		    
 		    <FindOverlayDisplay RenderBatch="_activeRenderBatch"/>
-		    
-		    @* 
-		    Widgets aren't being used at the moment
-		    
-		    <WidgetLayerDisplay RenderBatch="_activeRenderBatch"/>
-		    *@
 		</div>
 		
 		if (_activeRenderBatch.ViewModel.ShowCommandBar)
