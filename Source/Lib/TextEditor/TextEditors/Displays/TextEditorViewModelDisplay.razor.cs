@@ -640,98 +640,41 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     }
 
     private void ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
-    {
-        _userMouseIsInside = true;
-
-        if ((mouseEventArgs.Buttons & 1) == 0)
-            _componentData.ThinksLeftMouseButtonIsDown = false;
-
-        var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
-
-        var viewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
-        if (viewModel is null)
-            return;
-
-        // MouseStoppedMovingEvent
-        // Hide the tooltip, if the user moves their cursor out of the tooltips UI.
-        if (viewModel.TooltipViewModel is not null && _componentData.MouseNoLongerOverTooltipTask.IsCompleted)
-        {
-            var mouseNoLongerOverTooltipCancellationToken = _componentData.MouseNoLongerOverTooltipCancellationTokenSource.Token;
-
-            _componentData.MouseNoLongerOverTooltipTask = Task.Run(async () =>
-            {
-                await Task.Delay(TextEditorComponentData.OnMouseOutTooltipDelay, mouseNoLongerOverTooltipCancellationToken).ConfigureAwait(false);
-
-                if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
-                {
-					TextEditorService.TextEditorWorker.PostUnique(
-						nameof(ContextMenu),
-						editContext =>
-						{
-							var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
-
-                            if (viewModelModifier is null)
-                                return ValueTask.CompletedTask;
-
-                            viewModelModifier.TooltipViewModel = null;
-
-							return ValueTask.CompletedTask;
-						});
-                }
-            });
-		}
-		
-		_componentData.OnMouseMoved();
-		
-        /*_componentData.MouseStoppedMovingTask = Task.Run(async () =>
-        {
-            await Task.Delay(TextEditorComponentData.MouseStoppedMovingDelay).ConfigureAwait(false);
-
-            if (!mouseStoppedMovingCancellationToken.IsCancellationRequested && _userMouseIsInside)
-            {
-                await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
-
-                TextEditorService.TextEditorWorker.PostUnique(
-					nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync),
-					editContext =>
-					{
-						var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
-		                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
-		                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		                var primaryCursorModifier = cursorModifierBag.CursorModifier;
-		
-		                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-		                    return ValueTask.CompletedTask;
-					
-						return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(
-							editContext,
-							modelModifier,
-							viewModelModifier,
-							mouseEventArgs,		
-							_componentData,
-							TextEditorComponentRenderers,
-					        viewModel.ResourceUri);
-					});
-            }
-        });*/
-
-        if (!_componentData.ThinksLeftMouseButtonIsDown)
-            return;
-
-        // Buttons is a bit flag '& 1' gets if left mouse button is held
-        if (localThinksLeftMouseButtonIsDown && (mouseEventArgs.Buttons & 1) == 1)
-        {
-            TextEditorService.TextEditorWorker.EnqueueOnMouseMove(
-            	new OnMouseMove(
-	                mouseEventArgs,
-	                _componentData,
-	                viewModel.ViewModelKey));
-        }
-        else
-        {
-            _componentData.ThinksLeftMouseButtonIsDown = false;
-        }
-    }
+	{
+	    _userMouseIsInside = true;
+	
+	    // Buttons is a bit flag '& 1' gets if left mouse button is held
+	    if ((mouseEventArgs.Buttons & 1) == 0)
+	        _componentData.ThinksLeftMouseButtonIsDown = false;
+	
+	    var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
+	
+	    var viewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
+	    if (viewModel is null)
+	        return;
+	
+	    // MouseStoppedMovingEvent
+	    // Hide the tooltip, if the user moves their cursor out of the tooltips UI.
+	    if (viewModel.TooltipViewModel is not null && _componentData.MouseNoLongerOverTooltipTask.IsCompleted)
+	    {
+	        // ...
+	    }
+	
+	    // MouseStoppedMovingTask
+	    // ...
+	
+	    if (!_componentData.ThinksLeftMouseButtonIsDown)
+	        return;
+	    
+	    if (localThinksLeftMouseButtonIsDown)
+	    {
+	        TextEditorService.TextEditorWorker.EnqueueOnMouseMove(
+	            new OnMouseMove(
+	            mouseEventArgs,
+	            _componentData,
+	            viewModel.ViewModelKey));
+	    }
+	}
 
     private void ReceiveContentOnMouseOut(MouseEventArgs mouseEventArgs)
     {
