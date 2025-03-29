@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 
@@ -37,6 +40,10 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     private int _countOfTestCharacters;
     private string _measureCharacterWidthAndRowHeightElementId = "luth_te_measure-character-width-and-row-height";
     
+    private string _wrapperCssClass;
+    private string _wrapperCssStyle;
+    
+    
     protected override void OnInitialized()
     {
     	_countOfTestCharacters = TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
@@ -55,14 +62,38 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     {
     	if (firstRender)
     	{
+    	await Ready();
+		    	
     		QueueRemeasureBackgroundTask();
     	}
     	
     	base.OnAfterRender(firstRender);
     }
     
+    private async Task Ready()
+    {
+    _wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} ";
+    	
+		    	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+		    	
+		    	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+		    	if (options.CommonOptions?.FontSizeInPixels is not null)
+		            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
+		    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
+		    	
+		    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+		    	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
+		        	fontFamily = options!.CommonOptions!.FontFamily;
+		    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
+		    	
+		    	_wrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle}";
+		    	
+		    	await InvokeAsync(StateHasChanged);
+    }
+    
 	private async void HandleTextEditorOptionsStateChanged()
 	{
+	await Ready();
 		QueueRemeasureBackgroundTask();
 	}
 	
@@ -81,7 +112,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
 		            .ConfigureAwait(false);
 		            
 		        TextEditorService.OptionsApi.SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
-		        Console.WriteLine(charAndLineMeasurements);
 	        });
     }
     
