@@ -633,6 +633,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
         _componentData.ThinksLeftMouseButtonIsDown = true;
+        _onMouseMoveMouseEventArgs = null;
 
         TextEditorService.TextEditorWorker.EnqueueOnMouseDown(
         	new OnMouseDown(
@@ -662,7 +663,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown)
+                	var mouseMoveMouseEventArgs = _onMouseMoveMouseEventArgs;
+                	
+                	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown || mouseMoveMouseEventArgs is null)
                 	{
                 		TextEditorService.TextEditorWorker.PostUnique(
 							nameof(ReceiveContentOnMouseMove),
@@ -679,8 +682,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 							});
 						break;
                 	}
-                
-                    var mouseMoveMouseEventArgs = _onMouseMoveMouseEventArgs;
+                	
                     await Task.Delay(400).ConfigureAwait(false);
                     
                     if (mouseMoveMouseEventArgs == _onMouseMoveMouseEventArgs)
