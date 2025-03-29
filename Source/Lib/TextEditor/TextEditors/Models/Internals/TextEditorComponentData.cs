@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -108,6 +109,8 @@ public sealed class TextEditorComponentData
     public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;
     public CancellationTokenSource MouseNoLongerOverTooltipCancellationTokenSource { get; set; } = new();
     public CancellationTokenSource MouseStoppedMovingCancellationTokenSource { get; set; } = new();
+    
+    public long MouseMovedTimestamp { get; private set; }
 
     /// <summary>
 	/// This accounts for one who might hold down Left Mouse Button from outside the TextEditorDisplay's content div
@@ -132,5 +135,10 @@ public sealed class TextEditorComponentData
         MouseNoLongerOverTooltipCancellationTokenSource = new();
 
         return Task.CompletedTask;
+    }
+    
+    public void OnMouseMoved()
+    {
+    	MouseMovedTimestamp = Stopwatch.GetTimestamp();
     }
 }

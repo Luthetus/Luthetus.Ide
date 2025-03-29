@@ -60,16 +60,22 @@ public partial class Index : ComponentBase
 	        genericDecorationMapper,
 	        cSharpCompilerService);
 	
-		TextEditorService.ModelApi.RegisterCustom(model);
+		TextEditorService.TextEditorWorker.PostUnique(nameof(Index), editContext =>
+		{
+			TextEditorService.ModelApi.RegisterCustom(editContext, model);
 		
-		cSharpCompilerService.RegisterResource(
-			model.ResourceUri,
-			shouldTriggerResourceWasModified: true);
-		
-		TextEditorService.ViewModelApi.Register(
-			ViewModelKey,
-			ResourceUri,
-			new Category("main"));
+			cSharpCompilerService.RegisterResource(
+				model.ResourceUri,
+				shouldTriggerResourceWasModified: true);
+			
+			TextEditorService.ViewModelApi.Register(
+				editContext,
+				ViewModelKey,
+				ResourceUri,
+				new Category("main"));
+				
+			return ValueTask.CompletedTask;
+		});
 			
 		base.OnInitialized();
 	}

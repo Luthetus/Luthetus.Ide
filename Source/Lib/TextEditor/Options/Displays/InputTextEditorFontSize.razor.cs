@@ -39,7 +39,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.OptionsApi.TextEditorOptionsStateChanged += OptionsWrapOnStateChanged;
+        TextEditorService.OptionsApi.StaticStateChanged += OptionsWrapOnStateChanged;
         ReadActualFontSizeInPixels();
 
         base.OnInitialized();
@@ -84,6 +84,6 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= OptionsWrapOnStateChanged;
+        TextEditorService.OptionsApi.StaticStateChanged -= OptionsWrapOnStateChanged;
     }
 }

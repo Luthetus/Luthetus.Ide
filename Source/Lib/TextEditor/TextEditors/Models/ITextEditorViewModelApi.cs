@@ -30,10 +30,6 @@ public interface ITextEditorViewModelApi
     public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey);
     public ValueTask<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId);
 
-    public ValueTask<CharAndLineMeasurements> MeasureCharacterWidthAndLineHeightAsync(
-        string measureCharacterWidthAndLineHeightElementId,
-        int countOfTestCharacters);
-
     public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey);
     public string? GetAllText(Key<TextEditorViewModel> viewModelKey);
 
@@ -160,8 +156,6 @@ public interface ITextEditorViewModelApi
     public ValueTask RemeasureAsync(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModelModifier,
-        string measureCharacterWidthAndLineHeightElementId,
-        int countOfTestCharacters,
         CancellationToken cancellationToken);
 
     public void ForceRender(
