@@ -662,7 +662,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                	if (!_userMouseIsInside)
+                	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown)
                 	{
                 		TextEditorService.TextEditorWorker.PostUnique(
 							nameof(ReceiveContentOnMouseMove),
