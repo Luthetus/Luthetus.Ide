@@ -279,8 +279,12 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             var previousOptionsRenderStateKey = _previousRenderBatch.Options?.RenderStateKey ?? Key<RenderState>.Empty;
             var currentOptionsRenderStateKey = _currentRenderBatch.Options.RenderStateKey;
             
-            //if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
-            //    QueueRemeasureBackgroundTask(_currentRenderBatch, CancellationToken.None);
+            /*if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
+            {
+            	Console.WriteLine("if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)");
+            	Console.WriteLine($"\t{_currentRenderBatch.ViewModel.}");
+                QueueRemeasureBackgroundTask(_currentRenderBatch, CancellationToken.None);
+            }*/
 
             if (isFirstDisplay)
 				QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
@@ -323,6 +327,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	        		_bodyStyle = _uiStringBuilder.ToString();
 	        			        		
 	        		// (2025-03-28)
+	        		// Console.WriteLine("activeRenderBatchLocal.ViewModel.DisplayTracker.PostScrollAndRemeasure();");
 	        		activeRenderBatchLocal.ViewModel.DisplayTracker.PostScrollAndRemeasure();
 	        		return shouldRender;
 	        	}
@@ -461,6 +466,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
+			// Console.WriteLine("OnAfterRenderAsync");
             // QueueRemeasureBackgroundTask(_currentRenderBatch, CancellationToken.None);
 
             QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
@@ -981,6 +987,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
 				if (modelModifier is null || viewModelModifier is null)
 					return ValueTask.CompletedTask;
+            	
+            	viewModelModifier.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
             	
             	TextEditorService.ViewModelApi.CalculateVirtualizationResult(
             		editContext,
@@ -1964,7 +1972,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private async void OnOptionMeasuredStateChanged()
     {
     	SetWrapperCssAndStyle();
-    	await InvokeAsync(StateHasChanged);
+    	QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
     }
     
     private async void OnOptionStaticStateChanged()

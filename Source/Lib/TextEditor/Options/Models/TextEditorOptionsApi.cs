@@ -46,8 +46,6 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private TextEditorOptionsState _textEditorOptionsState = new();
 
     private IDialog? _findAllDialog;
-    
-    public CharAndLineMeasurements CharAndLineMeasurements { get; private set; }
 
 	public event Action? StaticStateChanged;
 	public event Action? NeedsMeasured;
@@ -300,7 +298,17 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     
     public void SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
     {
-    	CharAndLineMeasurements = charAndLineMeasurements;
+    	var inState = GetTextEditorOptionsState();
+
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CharAndLineMeasurements = charAndLineMeasurements,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        
     	MeasuredStateChanged?.Invoke();
     }
 

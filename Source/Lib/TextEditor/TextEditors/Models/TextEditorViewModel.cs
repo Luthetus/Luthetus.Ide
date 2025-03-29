@@ -50,7 +50,7 @@ public sealed class TextEditorViewModel : IDisposable
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;
 		ScrollbarDimensions = scrollbarDimensions;
-        CharAndLineMeasurements = textEditorService.OptionsApi.CharAndLineMeasurements;
+        CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         ShowCommandBar = displayCommandBar;
         Category = category;
         

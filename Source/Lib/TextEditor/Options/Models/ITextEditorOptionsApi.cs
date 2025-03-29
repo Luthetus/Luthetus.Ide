@@ -9,8 +9,6 @@ namespace Luthetus.TextEditor.RazorLib.Options.Models;
 
 public interface ITextEditorOptionsApi
 {
-	public CharAndLineMeasurements CharAndLineMeasurements { get; }
-	
     public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null);
     public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null);
     public void SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true);
