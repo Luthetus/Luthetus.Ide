@@ -205,7 +205,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public string _previousGetCursorStyleCss = string.Empty;
     public string _previousGetCaretRowStyleCss = string.Empty;
 
-    public string _previouslyObservedCursorDisplayId = string.Empty;
+    private readonly CancellationTokenSource _onMouseMoveCancellationTokenSource = new();
+    private MouseEventArgs? _onMouseMoveMouseEventArgs;
+    private Task _onMouseMoveTask = Task.CompletedTask;
 
 	public TextEditorComponentData ComponentData => _componentData;
 	
@@ -661,7 +663,50 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	    }
 	
 	    // MouseStoppedMovingTask
-	    // ...
+	    _onMouseMoveMouseEventArgs = mouseEventArgs;
+            
+        if (_onMouseMoveTask.IsCompleted)
+        {
+            var cancellationToken = _onMouseMoveCancellationTokenSource.Token;
+
+            _onMouseMoveTask = Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested && _userMouseIsInside)
+                {
+                    var mouseMoveMouseEventArgs = _onMouseMoveMouseEventArgs;
+                    await Task.Delay(400).ConfigureAwait(false);
+                    
+                    if (mouseMoveMouseEventArgs == _onMouseMoveMouseEventArgs)
+                    {
+                        await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
+
+				        TextEditorService.TextEditorWorker.PostUnique(
+				            nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync),
+				            editContext =>
+				            {
+				                var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+				                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+				                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+				                var primaryCursorModifier = cursorModifierBag.CursorModifier;
+				                
+				                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+				                    return ValueTask.CompletedTask;
+				    
+				                return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(
+				                    editContext,
+				                    modelModifier,
+				                    viewModelModifier,
+				                    mouseMoveMouseEventArgs,
+				                    _componentData,
+				                    TextEditorComponentRenderers,
+				                    viewModel.ResourceUri);
+				            });
+
+                        break;
+                    }
+                }
+            });
+        }
 	
 	    if (!_componentData.ThinksLeftMouseButtonIsDown)
 	        return;
@@ -1813,6 +1858,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             }
         }
 
-        _componentData.MouseStoppedMovingCancellationTokenSource.Cancel();
+        _onMouseMoveCancellationTokenSource.Cancel();
+        _onMouseMoveCancellationTokenSource.Dispose();
     }
 }
