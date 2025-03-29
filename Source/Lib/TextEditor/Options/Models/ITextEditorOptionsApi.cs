@@ -35,7 +35,21 @@ public interface ITextEditorOptionsApi
     /// </summary>
     public TextEditorOptions GetOptions();
     
-    public event Action? TextEditorOptionsStateChanged;
+    /// <summary>
+	/// All-EXCEPT: { SetFontSize(...) and SetFontFamily(...) }
+	/// will trigger this event.
+	/// </summary>
+	public event Action? StaticStateChanged;
+	/// <summary>
+	/// ONLY: { SetFontSize(...) and SetFontFamily(...) }
+	/// will trigger this event.
+	/// </summary>
+    public event Action? NeedsMeasured;
+    /// <summary>
+	/// After LuthetusTextEditorInitializer has measured a 'NeedsMeasured' change,
+	/// then this event will trigger.
+	/// </summary>
+    public event Action? MeasuredStateChanged;
 
 	public TextEditorOptionsState GetTextEditorOptionsState();
 }

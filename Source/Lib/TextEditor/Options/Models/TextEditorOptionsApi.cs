@@ -49,7 +49,9 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     
     public CharAndLineMeasurements CharAndLineMeasurements { get; private set; }
 
-	public event Action? TextEditorOptionsStateChanged;
+	public event Action? StaticStateChanged;
+	public event Action? NeedsMeasured;
+    public event Action? MeasuredStateChanged;
 
 	public TextEditorOptionsState GetTextEditorOptionsState() => _textEditorOptionsState;
 
@@ -117,7 +119,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
         _textEditorService.ThemeCssClassString = usingThemeCssClassString;
         
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -135,7 +137,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -153,7 +155,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
@@ -171,7 +173,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
@@ -189,7 +191,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         /*var activeKeymap = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
 
@@ -216,7 +218,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -237,7 +239,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        NeedsMeasured?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -258,7 +260,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        NeedsMeasured?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -276,7 +278,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -293,12 +295,13 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = renderStateKey
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
     }
     
     public void SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
     {
     	CharAndLineMeasurements = charAndLineMeasurements;
+    	MeasuredStateChanged?.Invoke();
     }
 
     public void WriteToStorage()

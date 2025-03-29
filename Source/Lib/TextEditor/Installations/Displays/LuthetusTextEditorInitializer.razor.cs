@@ -51,7 +51,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     	TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
     	TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
     	
-    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged += HandleTextEditorOptionsStateChanged;
+    	TextEditorService.OptionsApi.NeedsMeasured += OnNeedsMeasured;
 
         TextEditorInitializationBackgroundTaskGroup.Enqueue_LuthetusTextEditorInitializerOnInit();
             
@@ -62,8 +62,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     {
     	if (firstRender)
     	{
-    	await Ready();
-		    	
+    		await Ready();
     		QueueRemeasureBackgroundTask();
     	}
     	
@@ -72,28 +71,28 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     
     private async Task Ready()
     {
-    _wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} ";
+    	_wrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} ";
     	
-		    	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
-		    	
-		    	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
-		    	if (options.CommonOptions?.FontSizeInPixels is not null)
-		            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-		    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
-		    	
-		    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
-		    	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
-		        	fontFamily = options!.CommonOptions!.FontFamily;
-		    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
-		    	
-		    	_wrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle}";
-		    	
-		    	await InvokeAsync(StateHasChanged);
+    	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    	
+    	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+    	if (options.CommonOptions?.FontSizeInPixels is not null)
+            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
+    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
+    	
+    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+    	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
+        	fontFamily = options!.CommonOptions!.FontFamily;
+    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
+    	
+    	_wrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle}";
+    	
+    	await InvokeAsync(StateHasChanged);
     }
     
-	private async void HandleTextEditorOptionsStateChanged()
+	private async void OnNeedsMeasured()
 	{
-	await Ready();
+		await Ready();
 		QueueRemeasureBackgroundTask();
 	}
 	
@@ -117,6 +116,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= HandleTextEditorOptionsStateChanged;
+    	TextEditorService.OptionsApi.NeedsMeasured -= OnNeedsMeasured;
     }
 }

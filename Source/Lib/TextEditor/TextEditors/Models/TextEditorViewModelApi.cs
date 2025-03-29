@@ -160,17 +160,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
             .GetTextEditorMeasurementsInPixelsById(elementId)
             .ConfigureAwait(false);
     }
-
-    public async ValueTask<CharAndLineMeasurements> MeasureCharacterWidthAndLineHeightAsync(
-        string measureCharacterWidthAndLineHeightElementId,
-        int countOfTestCharacters)
-    {
-        return await _textEditorService.JsRuntimeTextEditorApi
-            .GetCharAndLineMeasurementsInPixelsById(
-                measureCharacterWidthAndLineHeightElementId,
-                countOfTestCharacters)
-            .ConfigureAwait(false);
-    }
     #endregion
 
     #region UPDATE_METHODS
@@ -1112,16 +1101,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public async ValueTask RemeasureAsync(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
-        string measureCharacterWidthAndLineHeightElementId,
-        int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
         var options = _textEditorService.OptionsApi.GetOptions();
-
+		
 		var textEditorMeasurements = await _textEditorService.ViewModelApi
 			.GetTextEditorMeasurementsAsync(viewModel.BodyElementId)
 			.ConfigureAwait(false);
 
+		viewModel.CharAndLineMeasurements = options.CharAndLineMeasurements;
 		viewModel.TextEditorDimensions = textEditorMeasurements;
     }
 

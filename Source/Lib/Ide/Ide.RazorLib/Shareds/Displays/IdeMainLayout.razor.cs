@@ -33,7 +33,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         IdeMainLayoutService.IdeMainLayoutStateChanged += OnIdeMainLayoutStateChanged;
-        TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrap_StateChanged;
+        TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
         _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -98,6 +98,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         DragService.DragStateChanged -= DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         IdeMainLayoutService.IdeMainLayoutStateChanged -= OnIdeMainLayoutStateChanged;
-        TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrap_StateChanged;
+        TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }

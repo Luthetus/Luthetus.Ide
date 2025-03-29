@@ -246,7 +246,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		SetComponentData();
 
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
-        
+        TextEditorService.OptionsApi.StaticStateChanged += OnOptionStaticStateChanged;
+        TextEditorService.OptionsApi.MeasuredStateChanged += OnOptionMeasuredStateChanged;
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         
         // ScrollbarSection.razor.cs
@@ -274,6 +275,12 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (_currentRenderBatch.ViewModel is not null && _currentRenderBatch.Options is not null)
         {
             var isFirstDisplay = _currentRenderBatch.ViewModel.DisplayTracker.ConsumeIsFirstDisplay();
+            
+            var previousOptionsRenderStateKey = _previousRenderBatch.Options?.RenderStateKey ?? Key<RenderState>.Empty;
+            var currentOptionsRenderStateKey = _currentRenderBatch.Options.RenderStateKey;
+            
+            //if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
+            //    QueueRemeasureBackgroundTask(_currentRenderBatch, CancellationToken.None);
 
             if (isFirstDisplay)
 				QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
@@ -454,12 +461,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
-            /*// (2025-03-28)
-            QueueRemeasureBackgroundTask(
-                _currentRenderBatch,
-                MeasureCharacterWidthAndRowHeightElementId,
-                COUNT_OF_TEST_CHARACTERS,
-                CancellationToken.None);*/
+            // QueueRemeasureBackgroundTask(_currentRenderBatch, CancellationToken.None);
 
             QueueCalculateVirtualizationResultBackgroundTask(_currentRenderBatch);
         }
@@ -528,19 +530,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private async void GeneralOnStateChangedEventHandler() =>
         await InvokeAsync(StateHasChanged);
-        
-    private async void TextEditorOptionsStateWrap_StateChanged()
-    {
-    	/*if (TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap.Key != _componentData.Options.Keymap.Key)
-    	{
-    		ConstructRenderBatch();
-    		SetComponentData();
-    	}*/
-    	
-    	SetWrapperCssAndStyle();
-    	
-    	await InvokeAsync(StateHasChanged);
-    }
         
     private async void ViewModel_CursorShouldBlinkChanged() =>
         await InvokeAsync(StateHasChanged);
@@ -930,6 +919,40 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 ClientY = startTouchPoint.ClientY,
             });
         }
+    }
+
+	private void QueueRemeasureBackgroundTask(
+        TextEditorRenderBatch localRefCurrentRenderBatch,
+        CancellationToken cancellationToken)
+    {
+        var (model, viewModel) = TextEditorService.TextEditorState.GetModelAndViewModelOrDefault(
+            TextEditorViewModelKey);
+
+        var resourceUri = model?.ResourceUri ?? ResourceUri.Empty;
+        var viewModelKey = viewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
+
+        if (resourceUri == ResourceUri.Empty ||
+            viewModelKey == Key<TextEditorViewModel>.Empty)
+        {
+            return;
+        }
+
+        TextEditorService.TextEditorWorker.PostRedundant(
+            nameof(QueueRemeasureBackgroundTask),
+			resourceUri,
+			viewModelKey,
+            editContext =>
+            {
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+
+				if (viewModelModifier is null)
+					return ValueTask.CompletedTask;
+
+            	return TextEditorService.ViewModelApi.RemeasureAsync(
+            		editContext,
+			        viewModelModifier,
+			        CancellationToken.None);
+	        });
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
@@ -1938,6 +1961,18 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         return _previousGetHeightCssStyleResult;
     }
     
+    private async void OnOptionMeasuredStateChanged()
+    {
+    	SetWrapperCssAndStyle();
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnOptionStaticStateChanged()
+    {
+    	SetWrapperCssAndStyle();
+    	await InvokeAsync(StateHasChanged);
+    }
+    
     public void Dispose()
     {
     	// ScrollbarSection.razor.cs
@@ -1945,6 +1980,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     	// TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;
+        TextEditorService.OptionsApi.StaticStateChanged -= OnOptionStaticStateChanged;
+        TextEditorService.OptionsApi.MeasuredStateChanged -= OnOptionMeasuredStateChanged;
 		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         lock (_linkedViewModelLock)
