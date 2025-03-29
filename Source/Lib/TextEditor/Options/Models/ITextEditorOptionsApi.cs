@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Models;
 
@@ -21,6 +22,7 @@ public interface ITextEditorOptionsApi
     /// <summary>This is setting the TextEditor's theme specifically. This is not to be confused with the AppOptions Themes which get applied at an application level. <br /><br /> This allows for a "DarkTheme-Application" that has a "LightTheme-TextEditor"</summary>
     public void SetTheme(ThemeRecord theme, bool updateStorage = true);
     public void SetRenderStateKey(Key<RenderState> renderStateKey);
+    public void SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements);
     public Task SetFromLocalStorageAsync();
     public void WriteToStorage();
 
@@ -31,7 +33,21 @@ public interface ITextEditorOptionsApi
     /// </summary>
     public TextEditorOptions GetOptions();
     
-    public event Action? TextEditorOptionsStateChanged;
+    /// <summary>
+	/// All-EXCEPT: { SetFontSize(...) and SetFontFamily(...) }
+	/// will trigger this event.
+	/// </summary>
+	public event Action? StaticStateChanged;
+	/// <summary>
+	/// ONLY: { SetFontSize(...) and SetFontFamily(...) }
+	/// will trigger this event.
+	/// </summary>
+    public event Action? NeedsMeasured;
+    /// <summary>
+	/// After LuthetusTextEditorInitializer has measured a 'NeedsMeasured' change,
+	/// then this event will trigger.
+	/// </summary>
+    public event Action? MeasuredStateChanged;
 
 	public TextEditorOptionsState GetTextEditorOptionsState();
 }

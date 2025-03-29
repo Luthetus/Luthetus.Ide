@@ -17,7 +17,7 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     	base.OnInitialized();
     }
     
@@ -49,6 +49,6 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

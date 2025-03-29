@@ -46,8 +46,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
     {
     	var editContext = new TextEditorEditContext(onKeyDown.ComponentData.TextEditorViewModelDisplay.TextEditorService);
 
-        var modelModifier = editContext.GetModelModifier(onKeyDown.ResourceUri);
+		// An NRE will be caught by the IBackgroundTaskService so don't bother checking 'viewModel is null'.
         var viewModel = editContext.GetViewModelModifier(onKeyDown.ViewModelKey);
+        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = cursorModifierBag.CursorModifier;
 

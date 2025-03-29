@@ -12,18 +12,14 @@ public struct OnDoubleClick
     public OnDoubleClick(
         MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
-        ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
+    	MouseEventArgs = mouseEventArgs;
 		ComponentData = componentData;
-
-        MouseEventArgs = mouseEventArgs;
-        ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
     }
 
     public MouseEventArgs MouseEventArgs { get; }
-    public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
@@ -31,8 +27,8 @@ public struct OnDoubleClick
     {
     	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
     
-        var modelModifier = editContext.GetModelModifier(ResourceUri, true);
         var viewModel = editContext.GetViewModelModifier(ViewModelKey);
+        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, true);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
@@ -50,7 +46,7 @@ public struct OnDoubleClick
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 		// Reason being, these are likely to be huge optimizations (2024-05-29).
         var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
-				ResourceUri,
+				viewModel.ResourceUri,
 				ViewModelKey,
 				MouseEventArgs,
 				ComponentData,

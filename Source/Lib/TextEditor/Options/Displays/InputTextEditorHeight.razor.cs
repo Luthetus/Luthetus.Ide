@@ -35,7 +35,7 @@ public partial class InputTextEditorHeight : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     	base.OnInitialized();
     }
 
@@ -61,6 +61,6 @@ public partial class InputTextEditorHeight : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

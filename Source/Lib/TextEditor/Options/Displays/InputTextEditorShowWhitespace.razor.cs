@@ -19,7 +19,7 @@ public partial class InputTextEditorShowWhitespace : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     	base.OnInitialized();
     }
     
@@ -30,6 +30,6 @@ public partial class InputTextEditorShowWhitespace : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

@@ -25,7 +25,7 @@ public partial class InputTextEditorFontFamily : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.OptionsApi.TextEditorOptionsStateChanged += OptionsWrapOnStateChanged;
+        TextEditorService.OptionsApi.StaticStateChanged += OptionsWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -37,6 +37,6 @@ public partial class InputTextEditorFontFamily : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= OptionsWrapOnStateChanged;
+        TextEditorService.OptionsApi.StaticStateChanged -= OptionsWrapOnStateChanged;
     }
 }

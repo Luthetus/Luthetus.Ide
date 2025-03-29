@@ -41,7 +41,6 @@ public sealed class TextEditorViewModel : IDisposable
         VirtualizationGrid virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		ScrollbarDimensions scrollbarDimensions,
-        CharAndLineMeasurements charAndLineMeasurements,
         bool displayCommandBar,
         Category category)
     {
@@ -51,7 +50,7 @@ public sealed class TextEditorViewModel : IDisposable
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;
 		ScrollbarDimensions = scrollbarDimensions;
-        CharAndLineMeasurements = charAndLineMeasurements;
+        CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         ShowCommandBar = displayCommandBar;
         Category = category;
         

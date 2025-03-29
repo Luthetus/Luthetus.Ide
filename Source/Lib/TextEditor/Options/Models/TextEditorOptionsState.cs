@@ -21,7 +21,8 @@ public record struct TextEditorOptionsState
             false,
             null,
             DEFAULT_CURSOR_WIDTH_IN_PIXELS,
-            true)
+            true,
+            CharAndLineMeasurements: new(0, 0))
         {
         	Keymap = TextEditorKeymapFacts.DefaultKeymap,
         };
