@@ -651,17 +651,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	
 	    var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
 	
-	    var viewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
-	    if (viewModel is null)
-	        return;
-	
-	    // MouseStoppedMovingEvent
-	    // Hide the tooltip, if the user moves their cursor out of the tooltips UI.
-	    if (viewModel.TooltipViewModel is not null && _componentData.MouseNoLongerOverTooltipTask.IsCompleted)
-	    {
-	        // ...
-	    }
-	
 	    // MouseStoppedMovingTask
 	    _onMouseMoveMouseEventArgs = mouseEventArgs;
             
@@ -671,8 +660,26 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
             _onMouseMoveTask = Task.Run(async () =>
             {
-                while (!cancellationToken.IsCancellationRequested && _userMouseIsInside)
+                while (!cancellationToken.IsCancellationRequested)
                 {
+                	if (!_userMouseIsInside)
+                	{
+                		TextEditorService.TextEditorWorker.PostUnique(
+							nameof(ReceiveContentOnMouseMove),
+							editContext =>
+							{
+								var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+
+                                if (viewModelModifier is null)
+                                    return ValueTask.CompletedTask;
+
+                                viewModelModifier.TooltipViewModel = null;
+
+								return ValueTask.CompletedTask;
+							});
+						break;
+                	}
+                
                     var mouseMoveMouseEventArgs = _onMouseMoveMouseEventArgs;
                     await Task.Delay(400).ConfigureAwait(false);
                     
@@ -684,8 +691,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 				            nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync),
 				            editContext =>
 				            {
-				                var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
-				                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+				            	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+				                var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
 				                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 				                var primaryCursorModifier = cursorModifierBag.CursorModifier;
 				                
@@ -699,7 +706,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 				                    mouseMoveMouseEventArgs,
 				                    _componentData,
 				                    TextEditorComponentRenderers,
-				                    viewModel.ResourceUri);
+				                    viewModelModifier.ResourceUri);
 				            });
 
                         break;
@@ -717,7 +724,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	            new OnMouseMove(
 	            mouseEventArgs,
 	            _componentData,
-	            viewModel.ViewModelKey));
+	            TextEditorViewModelKey));
 	    }
 	}
 
