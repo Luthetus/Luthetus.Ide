@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -46,7 +47,9 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     private IDialog? _findAllDialog;
 
-	public event Action? TextEditorOptionsStateChanged;
+	public event Action? StaticStateChanged;
+	public event Action? NeedsMeasured;
+    public event Action? MeasuredStateChanged;
 
 	public TextEditorOptionsState GetTextEditorOptionsState() => _textEditorOptionsState;
 
@@ -114,7 +117,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
         _textEditorService.ThemeCssClassString = usingThemeCssClassString;
         
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -132,7 +135,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -150,7 +153,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
@@ -168,7 +171,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
@@ -186,7 +189,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         /*var activeKeymap = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
 
@@ -213,7 +216,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -234,7 +237,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        NeedsMeasured?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -255,7 +258,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        NeedsMeasured?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -273,7 +276,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -290,7 +293,23 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
                 RenderStateKey = renderStateKey
             },
         };
-        TextEditorOptionsStateChanged?.Invoke();
+        StaticStateChanged?.Invoke();
+    }
+    
+    public void SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
+    {
+    	var inState = GetTextEditorOptionsState();
+
+        _textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CharAndLineMeasurements = charAndLineMeasurements,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        
+    	MeasuredStateChanged?.Invoke();
     }
 
     public void WriteToStorage()

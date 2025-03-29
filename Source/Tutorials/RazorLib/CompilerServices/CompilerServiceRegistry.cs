@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -14,9 +15,9 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public IReadOnlyDictionary<string, ICompilerService> Map => _map;
     public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToImmutableList();
 
-    public CompilerServiceRegistry(ITextEditorService textEditorService)
+    public CompilerServiceRegistry(ITextEditorService textEditorService, IClipboardService clipboardService)
     {
-        CSharpCompilerService = new CSharpCompilerService(textEditorService);
+        CSharpCompilerService = new CSharpCompilerService(textEditorService, clipboardService);
         DefaultCompilerService = new CompilerServiceDoNothing();
         
         _map.Add(ExtensionNoPeriodFacts.C_SHARP_CLASS, CSharpCompilerService);

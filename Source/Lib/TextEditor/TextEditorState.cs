@@ -124,18 +124,20 @@ public record TextEditorState
     
     public TextEditorViewModel? ViewModelGetOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-    	var inViewModel = (TextEditorViewModel?)null;
-    
     	try
     	{
-    		var exists = _viewModelMap.TryGetValue(viewModelKey, out inViewModel);
+    		return _viewModelMap[viewModelKey];
     	}
     	catch (Exception e)
 		{
-			Console.WriteLine(e);
+			// Eat this exception for now.
+			// This is being done due to "race condition" like scenarios
+			// and a performant solution to this needs to be decided on.
+			//
+			// Console.WriteLine(e);
+			
+			return null;
 		}
-		
-    	return inViewModel;
     }
 
 	/// <summary>

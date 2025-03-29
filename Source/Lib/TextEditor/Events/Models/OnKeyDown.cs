@@ -21,36 +21,19 @@ public struct OnKeyDown
 	public OnKeyDown(
 		TextEditorComponentData componentData,
 	    KeymapArgs keymapArgs,
-	    ResourceUri resourceUri,
 	    Key<TextEditorViewModel> viewModelKey)
     {
         ComponentData = componentData;
-
 		KeymapArgs = keymapArgs;
-
-        ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
     }
 
-    public KeymapArgs KeymapArgs { get; set; }
-	public ResourceUri ResourceUri { get; }
-    public Key<TextEditorViewModel> ViewModelKey { get; }
 	public TextEditorComponentData ComponentData { get; set; }
+    public KeymapArgs KeymapArgs { get; set; }
+    public Key<TextEditorViewModel> ViewModelKey { get; }
 
-	/// <summary>
-	/// CONFUSING: '0 == 0' used to be 'BatchLength == 0'. The batching code is being removed but is a bit of a mess at the moment.
-	/// </summary>
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	return ComponentData.Options.Keymap.HandleEvent(this);	
-    }
-
-    private bool KeyAndModifiersAreEqual(KeymapArgs x, KeymapArgs y)
-    {
-        return
-            x.Key == y.Key &&
-            x.ShiftKey == y.ShiftKey &&
-            x.CtrlKey == y.CtrlKey &&
-            x.AltKey == y.AltKey;
     }
 }
