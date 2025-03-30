@@ -211,12 +211,16 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private readonly CancellationTokenSource _onMouseMoveCancellationTokenSource = new();
     private MouseEventArgs? _onMouseMoveMouseEventArgs;
     private Task _onMouseMoveTask = Task.CompletedTask;
+    
+    private string _blinkAnimationCssClassOn;
+    private string _blinkAnimationCssClassOff;
 
 	public TextEditorComponentData ComponentData => _componentData;
 	
+	// _ = "luth_te_text-editor-cursor " + BlinkAnimationCssClass + " " + _activeRenderBatch.Options.Keymap.GetCursorCssClassString();
 	public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
-        ? "luth_te_blink"
-        : string.Empty;
+        ? _blinkAnimationCssClassOn
+        : _blinkAnimationCssClassOff;
 	
 	/// <summary>
 	/// Any external UI that isn't a child component of this can subscribe to this event,
@@ -247,6 +251,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
 
         ConstructRenderBatch();
+        
+        _blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink {_activeRenderBatch.Options.Keymap.GetCursorCssClassString()}";
+	    _blinkAnimationCssClassOff = $"luth_te_text-editor-cursor {_activeRenderBatch.Options.Keymap.GetCursorCssClassString()}";
 
 		SetComponentData();
 
