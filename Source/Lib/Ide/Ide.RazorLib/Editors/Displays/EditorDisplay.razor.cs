@@ -39,7 +39,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     {
     	_viewModelDisplayOptions = new()
         {
-            WrapperClassCssString = "luth_te_demo-text-editor",
             TabIndex = 0,
             HeaderButtonKinds = TextEditorHeaderButtonKindsList,
             HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),

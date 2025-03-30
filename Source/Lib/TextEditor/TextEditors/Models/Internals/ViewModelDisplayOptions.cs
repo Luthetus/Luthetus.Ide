@@ -8,8 +8,6 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 public sealed class ViewModelDisplayOptions
 {
-    public string WrapperStyleCssString { get; set; } = string.Empty;
-    public string WrapperClassCssString { get; set; } = string.Empty;
     public string TextEditorStyleCssString { get; set; } = string.Empty;
     public string TextEditorClassCssString { get; set; } = string.Empty;
     

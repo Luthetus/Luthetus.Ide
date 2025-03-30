@@ -162,6 +162,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private bool _previousIncludeHeader;
     private bool _previousIncludeFooter;
     private string _previousGetHeightCssStyleResult = "height: calc(100%);";
+    
+    private string _personalWrapperCssClass { get; set; }
+    private string _personalWrapperCssStyle { get; set; }
 
     private string ContentElementId { get; set; }
     
@@ -1791,23 +1794,51 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
     }
 
+	/// <summary>
+	/// WARNING: Do not use '_uiStringBuilder' in this method. This method can be invoked from outside the UI thread via events.
+	/// </summary>
     private void SetWrapperCssAndStyle()
     {
-    	WrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    	var stringBuilder = new StringBuilder();
+    	
+    	WrapperCssClass = TextEditorService.ThemeCssClassString;
+    	
+    	stringBuilder.Append("luth_te_text-editor luth_unselectable luth_te_text-editor-css-wrapper ");
+    	stringBuilder.Append(WrapperCssClass);
+    	stringBuilder.Append(" ");
+    	stringBuilder.Append(ViewModelDisplayOptions.TextEditorClassCssString);
+    	_personalWrapperCssClass = stringBuilder.ToString();
+    	
+    	stringBuilder.Clear();
     	
     	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
     	
     	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
     	if (options.CommonOptions?.FontSizeInPixels is not null)
             fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
+            
+        stringBuilder.Append("font-size: ");
+        stringBuilder.Append(fontSizeInPixels.ToCssValue());
+        stringBuilder.Append("px;");
     	
     	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
     	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
         	fontFamily = options!.CommonOptions!.FontFamily;
-    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
     	
-    	WrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
+    	stringBuilder.Append("font-family: ");
+    	stringBuilder.Append(fontFamily);
+    	stringBuilder.Append(";");
+    	
+    	WrapperCssStyle = stringBuilder.ToString();
+    	
+    	stringBuilder.Append(WrapperCssStyle);
+    	stringBuilder.Append(" ");
+    	stringBuilder.Append(GetGlobalHeightInPixelsStyling());
+    	stringBuilder.Append(" ");
+    	stringBuilder.Append(ViewModelDisplayOptions.TextEditorStyleCssString);
+    	stringBuilder.Append(" ");
+    	stringBuilder.Append(GetHeightCssStyle());
+    	_personalWrapperCssStyle = stringBuilder.ToString();
     }
     
     private string GetHeightCssStyle()

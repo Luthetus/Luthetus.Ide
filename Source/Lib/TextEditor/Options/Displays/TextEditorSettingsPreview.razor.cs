@@ -24,8 +24,6 @@ public partial class TextEditorSettingsPreview : ComponentBase
 
     private readonly ViewModelDisplayOptions _viewModelDisplayOptions = new()
     {
-        WrapperStyleCssString = "height: var(--luth_te_text-editor-content-min-height);",
-        TextEditorStyleCssString = "height: 100%;",
         HeaderComponentType = null,
         FooterComponentType = null,
         AfterOnKeyDownAsync = (_, _, _, _, _, _) => Task.CompletedTask,
