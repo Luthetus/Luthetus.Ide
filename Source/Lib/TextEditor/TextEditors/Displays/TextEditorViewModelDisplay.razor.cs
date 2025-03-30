@@ -1094,7 +1094,13 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		var sliderProportionalLeftInPixelsInvariantCulture = sliderProportionalLeftInPixels.ToCssValue();
 
 		_uiStringBuilder.Clear();
-        _uiStringBuilder.Append("left: ");
+		
+        _uiStringBuilder.Append("bottom: 0; height: ");
+        _uiStringBuilder.Append(_scrollbarSizeInPixelsCssValue);
+        _uiStringBuilder.Append("px; ");
+        _uiStringBuilder.Append(_previous_HORIZONTAL_GetSliderHorizontalStyleCss_Result);
+        
+        _uiStringBuilder.Append(" left: ");
         _uiStringBuilder.Append(sliderProportionalLeftInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
         
@@ -1129,6 +1135,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         var sliderProportionalTopInPixelsInvariantCulture = sliderProportionalTopInPixels.ToCssValue();
 
 		_uiStringBuilder.Clear();
+		
+		_uiStringBuilder.Append("left: 0; width: ");
+		_uiStringBuilder.Append(_scrollbarSizeInPixelsCssValue);
+		_uiStringBuilder.Append("px; ");
+		_uiStringBuilder.Append(_previous_VERTICAL_GetSliderVerticalStyleCss_Result);
 		
 		_uiStringBuilder.Append("top: ");
 		_uiStringBuilder.Append(sliderProportionalTopInPixelsInvariantCulture);
