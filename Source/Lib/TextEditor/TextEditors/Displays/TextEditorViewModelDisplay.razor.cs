@@ -559,23 +559,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
       if (nextViewModel is not null)
       	await nextViewModel.FocusAsync();
   }
-
-    private string GetGlobalHeightInPixelsStyling()
-    {
-        var heightInPixels = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
-
-        if (heightInPixels is null)
-            return string.Empty;
-
-        var heightInPixelsInvariantCulture = heightInPixels.Value.ToCssValue();
-        
-        _uiStringBuilder.Clear();
-        _uiStringBuilder.Append("height: ");
-        _uiStringBuilder.Append(heightInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
-
-        return _uiStringBuilder.ToString();
-    }
     
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
@@ -1833,37 +1816,43 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     	
     	stringBuilder.Append(WrapperCssStyle);
     	stringBuilder.Append(" ");
-    	stringBuilder.Append(GetGlobalHeightInPixelsStyling());
+    	// string GetGlobalHeightInPixelsStyling()
+	    {
+	        var heightInPixels = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
+	
+	        if (heightInPixels is not null)
+	        {
+	        	var heightInPixelsInvariantCulture = heightInPixels.Value.ToCssValue();
+	        
+		        stringBuilder.Append("height: ");
+		        stringBuilder.Append(heightInPixelsInvariantCulture);
+		        stringBuilder.Append("px;");
+	        }
+	    }
     	stringBuilder.Append(" ");
     	stringBuilder.Append(ViewModelDisplayOptions.TextEditorStyleCssString);
     	stringBuilder.Append(" ");
-    	stringBuilder.Append(GetHeightCssStyle());
+    	// string GetHeightCssStyle()
+	    {
+	    	if (_previousIncludeHeader != ViewModelDisplayOptions.HeaderComponentType is not null ||
+	    	    _previousIncludeFooter != ViewModelDisplayOptions.FooterComponentType is not null)
+	    	{
+	    		// Start with a calc statement and a value of 100%
+		        stringBuilder.Append("height: calc(100%");
+		
+		        if (ViewModelDisplayOptions.HeaderComponentType is not null)
+		            stringBuilder.Append(" - var(--luth_te_text-editor-header-height)");
+		
+		        if (ViewModelDisplayOptions.FooterComponentType is not null)
+		            stringBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
+		
+		        // Close the calc statement, and the height style attribute
+		        stringBuilder.Append(");");
+		        
+		        _previousGetHeightCssStyleResult = stringBuilder.ToString();
+	    	}
+	    }
     	_personalWrapperCssStyle = stringBuilder.ToString();
-    }
-    
-    private string GetHeightCssStyle()
-    {
-    	if (_previousIncludeHeader != ViewModelDisplayOptions.HeaderComponentType is not null ||
-    	    _previousIncludeFooter != ViewModelDisplayOptions.FooterComponentType is not null)
-    	{
-    		_uiStringBuilder.Clear();
-    
-	        // Start with a calc statement and a value of 100%
-	        _uiStringBuilder.Append("height: calc(100%");
-	
-	        if (ViewModelDisplayOptions.HeaderComponentType is not null)
-	            _uiStringBuilder.Append(" - var(--luth_te_text-editor-header-height)");
-	
-	        if (ViewModelDisplayOptions.FooterComponentType is not null)
-	            _uiStringBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
-	
-	        // Close the calc statement, and the height style attribute
-	        _uiStringBuilder.Append(");");
-	        
-	        _previousGetHeightCssStyleResult = _uiStringBuilder.ToString();
-    	}
-    
-        return _previousGetHeightCssStyleResult;
     }
     
     private async void OnOptionMeasuredStateChanged()
