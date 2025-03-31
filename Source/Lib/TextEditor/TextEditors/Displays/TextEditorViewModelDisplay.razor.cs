@@ -251,9 +251,16 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
 
         ConstructRenderBatch();
-        
-        _blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink {_activeRenderBatch.Options.Keymap.GetCursorCssClassString()}";
-	    _blinkAnimationCssClassOff = $"luth_te_text-editor-cursor {_activeRenderBatch.Options.Keymap.GetCursorCssClassString()}";
+
+        _blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink ";
+	    _blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";   
+	    
+	    var cursorCssClassString = _activeRenderBatch?.Options?.Keymap?.GetCursorCssClassString();
+        if (cursorCssClassString is not null)
+        {
+        	_blinkAnimationCssClassOn += cursorCssClassString;
+        	_blinkAnimationCssClassOff += cursorCssClassString;
+        }
 
 		SetComponentData();
 
