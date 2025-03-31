@@ -39,25 +39,11 @@
      style="@_personalWrapperCssStyle"
      class="@_personalWrapperCssClass"
      tabindex="-1">
-	
-	@{
-		string topVirtualizationBoundaryStyleCssString;
-		string bottomVirtualizationBoundaryStyleCssString;
-		
-		if (_activeRenderBatch is not null)
-	    {
-	    	// The gutter and the body share the top and bottom virtualization boundaries.
-	    	// Therefore calculate them once here and share the result.
-	    	topVirtualizationBoundaryStyleCssString = Virtualization_GetStyleCssString(_activeRenderBatch.ViewModel.VirtualizationResult.TopVirtualizationBoundary);
-			bottomVirtualizationBoundaryStyleCssString = Virtualization_GetStyleCssString(_activeRenderBatch.ViewModel.VirtualizationResult.BottomVirtualizationBoundary);
-	    }
-	    else
-	    {
-	    	topVirtualizationBoundaryStyleCssString = string.Empty;
-			bottomVirtualizationBoundaryStyleCssString = string.Empty;
-	    }
-	}
-  	
+    
+    @{
+    	ConstructVirtualizationStyleCssStrings();
+    }
+    
     @if (ViewModelDisplayOptions.IncludeGutterComponent && _activeRenderBatch is not null)
     {
         <div class="luth_te_gutter-section"
@@ -67,12 +53,8 @@
             @* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
             
             @* Virtualization Open *@
-			<div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_top"
-				 style="@topVirtualizationBoundaryStyleCssString">
-			</div>
-		
-		    <div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_bottom"
-		    	 style="@bottomVirtualizationBoundaryStyleCssString">
+            <div class="luth_te_virtualization-boundary-display"
+				 style="@_verticalVirtualizationBoundaryStyleCssString">
 			</div>
             @* Virtualization Close *@
 		    
@@ -162,20 +144,12 @@
 					    
 				@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
 				@* Virtualization Open *@
-				<div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_left"
-					 style="@Virtualization_GetStyleCssString(_activeRenderBatch.ViewModel.VirtualizationResult.LeftVirtualizationBoundary)">
-				</div>
-			
-			    <div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_right"
-			    	 style="@Virtualization_GetStyleCssString(_activeRenderBatch.ViewModel.VirtualizationResult.RightVirtualizationBoundary)">
+				<div class="luth_te_virtualization-boundary-display"
+					 style="@_horizontalVirtualizationBoundaryStyleCssString">
 				</div>
 				
-				<div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_top"
-					 style="@topVirtualizationBoundaryStyleCssString)">
-				</div>
-			
-			    <div class="luth_te_virtualization-boundary-display luth_te_virtualization-boundary-display_bottom"
-			    	 style="@bottomVirtualizationBoundaryStyleCssString">
+				<div class="luth_te_virtualization-boundary-display"
+					 style="@_verticalVirtualizationBoundaryStyleCssString">
 				</div>
                 @* Virtualization Close *@
 							                           

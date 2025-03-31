@@ -163,9 +163,15 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private bool _previousIncludeFooter;
     private string _previousGetHeightCssStyleResult = "height: calc(100%);";
     
-    private string _personalWrapperCssClass { get; set; }
-    private string _personalWrapperCssStyle { get; set; }
-
+    private string _verticalVirtualizationBoundaryStyleCssString = "height: 0px;";
+	private string _horizontalVirtualizationBoundaryStyleCssString = "width: 0px;";
+	
+	private double _previousTotalWidth;
+	private double _previousTotalHeight;
+    
+    private string _personalWrapperCssClass;
+    private string _personalWrapperCssStyle;
+    
     private string ContentElementId { get; set; }
     
     public string WrapperCssClass { get; private set; }
@@ -1374,57 +1380,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         return Task.CompletedTask;
     }
     
-    public string Virtualization_GetStyleCssString(VirtualizationBoundary virtualizationBoundary)
-    {
-    	_uiStringBuilder.Clear();
-    
-        // Width
-        if (virtualizationBoundary.WidthInPixels == -1)
-        {
-            _uiStringBuilder.Append(" width: 100%;");
-        }
-        else
-        {
-            var widthInPixelsInvariantCulture = virtualizationBoundary.WidthInPixels.ToCssValue();
-            _uiStringBuilder.Append($" width: {widthInPixelsInvariantCulture}px;");
-        }
-
-        // Height
-        if (virtualizationBoundary.HeightInPixels == -1)
-        {
-            _uiStringBuilder.Append(" height: 100%;");
-        }
-        else
-        {
-            var heightInPixelsInvariantCulture = virtualizationBoundary.HeightInPixels.ToCssValue();
-            _uiStringBuilder.Append($" height: {heightInPixelsInvariantCulture}px;");
-        }
-
-        // Left
-        if (virtualizationBoundary.LeftInPixels == -1)
-        {
-            _uiStringBuilder.Append(" left: 100%;");
-        }
-        else
-        {
-            var leftInPixelsInvariantCulture = virtualizationBoundary.LeftInPixels.ToCssValue();
-            _uiStringBuilder.Append($" left: {leftInPixelsInvariantCulture}px;");
-        }
-
-        // Top
-        if (virtualizationBoundary.TopInPixels == -1)
-        {
-            _uiStringBuilder.Append(" top: 100%;");
-        }
-        else
-        {
-            var topInPixelsInvariantCulture = virtualizationBoundary.TopInPixels.ToCssValue();
-            _uiStringBuilder.Append($" top: {topInPixelsInvariantCulture}px;");
-        }
-
-        return _uiStringBuilder.ToString();
-    }
-    
     public string PresentationGetCssStyleString(
         int lowerPositionIndexInclusive,
         int upperPositionIndexExclusive,
@@ -1878,6 +1833,30 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	    	}
 	    }
     	_personalWrapperCssStyle = stringBuilder.ToString();
+    }
+    
+    private void ConstructVirtualizationStyleCssStrings()
+    {
+    	if (_activeRenderBatch is null)
+    		return;
+    	
+    	if (_activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth != _previousTotalWidth)
+    	{
+    		_uiStringBuilder.Clear();
+	    	_uiStringBuilder.Append("width: ");
+	    	_uiStringBuilder.Append(_activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth);
+	    	_uiStringBuilder.Append("px;");
+	        _horizontalVirtualizationBoundaryStyleCssString = _uiStringBuilder.ToString();
+    	}
+	    	
+    	if (_activeRenderBatch.ViewModel.VirtualizationResult.TotalHeight != _previousTotalHeight)
+    	{
+    		_uiStringBuilder.Clear();
+	    	_uiStringBuilder.Append("height: ");
+	    	_uiStringBuilder.Append(_activeRenderBatch.ViewModel.VirtualizationResult.TotalHeight);
+	    	_uiStringBuilder.Append("px;");
+	    	_verticalVirtualizationBoundaryStyleCssString = _uiStringBuilder.ToString();
+    	}
     }
     
     private async void OnOptionMeasuredStateChanged()

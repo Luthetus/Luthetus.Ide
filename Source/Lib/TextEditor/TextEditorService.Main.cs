@@ -277,20 +277,17 @@ public partial class TextEditorService : ITextEditorService
             	if (!viewModelModifier.ShouldReloadVirtualizationResult)
             	{
             		// low end plus width of it
-            	
-            		var leftBoundary = viewModelModifier.VirtualizationResult.LeftVirtualizationBoundary;
             		var scrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
             		
-            		if (scrollLeft < (leftBoundary.LeftInPixels + leftBoundary.WidthInPixels))
+            		if (scrollLeft < (viewModelModifier.VirtualizationResult.VirtualLeft))
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
             		else
             		{
-            			var rightBoundary = viewModelModifier.VirtualizationResult.RightVirtualizationBoundary;
 						var bigLeft = scrollLeft + viewModelModifier.TextEditorDimensions.Width;
             			
-            			if (bigLeft > rightBoundary.LeftInPixels)
+            			if (bigLeft > viewModelModifier.VirtualizationResult.VirtualLeft + viewModelModifier.VirtualizationResult.VirtualWidth)
             			{
             				viewModelModifier.ShouldReloadVirtualizationResult = true;
             			}
