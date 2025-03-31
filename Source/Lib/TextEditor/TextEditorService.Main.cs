@@ -250,10 +250,7 @@ public partial class TextEditorService : ITextEditorService
             	
             	if (viewModelModifier.VirtualizationResult.EntryList.Length > 0)
             	{
-            		var firstEntry = viewModelModifier.VirtualizationResult.EntryList.First();
-            		var firstEntryTop = firstEntry.LineIndex * viewModelModifier.CharAndLineMeasurements.LineHeight;
-            		
-            		if (viewModelModifier.ScrollbarDimensions.ScrollTop < firstEntryTop)
+            		if (viewModelModifier.ScrollbarDimensions.ScrollTop < viewModelModifier.VirtualizationResult.VirtualTop)
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
@@ -262,10 +259,9 @@ public partial class TextEditorService : ITextEditorService
             			var bigTop = viewModelModifier.ScrollbarDimensions.ScrollTop +
             				viewModelModifier.TextEditorDimensions.Height;
             				
-            			var imaginaryLastEntry = viewModelModifier.VirtualizationResult.EntryList.Last();
-            			var imaginaryLastEntryTop = (imaginaryLastEntry.LineIndex + 1) * viewModelModifier.CharAndLineMeasurements.LineHeight;
+            			var virtualEnd = viewModelModifier.VirtualizationResult.VirtualTop + viewModelModifier.VirtualizationResult.VirtualHeight;
             				
-            			if (bigTop > imaginaryLastEntryTop)
+            			if (bigTop > virtualEnd)
             				viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
             	}
@@ -277,20 +273,17 @@ public partial class TextEditorService : ITextEditorService
             	if (!viewModelModifier.ShouldReloadVirtualizationResult)
             	{
             		// low end plus width of it
-            	
-            		var leftBoundary = viewModelModifier.VirtualizationResult.LeftVirtualizationBoundary;
             		var scrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
             		
-            		if (scrollLeft < (leftBoundary.LeftInPixels + leftBoundary.WidthInPixels))
+            		if (scrollLeft < (viewModelModifier.VirtualizationResult.VirtualLeft))
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
             		else
             		{
-            			var rightBoundary = viewModelModifier.VirtualizationResult.RightVirtualizationBoundary;
 						var bigLeft = scrollLeft + viewModelModifier.TextEditorDimensions.Width;
             			
-            			if (bigLeft > rightBoundary.LeftInPixels)
+            			if (bigLeft > viewModelModifier.VirtualizationResult.VirtualLeft + viewModelModifier.VirtualizationResult.VirtualWidth)
             			{
             				viewModelModifier.ShouldReloadVirtualizationResult = true;
             			}

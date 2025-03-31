@@ -993,55 +993,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				totalHeight += marginScrollHeight;
 			}
 
-			var leftBoundaryWidthInPixels = horizontalStartingIndex *
-				viewModel.CharAndLineMeasurements.CharacterWidth;
-
-			var leftBoundary = new VirtualizationBoundary(
-				leftBoundaryWidthInPixels,
-				totalHeight,
-				0,
-				0);
-
-			var rightBoundaryLeftInPixels = leftBoundary.WidthInPixels +
-				viewModel.CharAndLineMeasurements.CharacterWidth *
-				horizontalTake;
-
-			var rightBoundaryWidthInPixels = totalWidth - rightBoundaryLeftInPixels;
-
-			var rightBoundary = new VirtualizationBoundary(
-				rightBoundaryWidthInPixels,
-				totalHeight,
-				rightBoundaryLeftInPixels,
-				0);
-
-			var topBoundaryHeightInPixels = verticalStartingIndex *
-				viewModel.CharAndLineMeasurements.LineHeight;
-
-			var topBoundary = new VirtualizationBoundary(
-				totalWidth,
-				topBoundaryHeightInPixels,
-				0,
-				0);
-
-			var bottomBoundaryTopInPixels = topBoundary.HeightInPixels +
-				viewModel.CharAndLineMeasurements.LineHeight *
-				verticalTake;
-
-			var bottomBoundaryHeightInPixels = totalHeight - bottomBoundaryTopInPixels;
-
-			var bottomBoundary = new VirtualizationBoundary(
-				totalWidth,
-				bottomBoundaryHeightInPixels,
-				0,
-				bottomBoundaryTopInPixels);
-
 			virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
         		new List<VirtualizationSpan>(),
-				leftBoundary,
-				rightBoundary,
-				topBoundary,
-				bottomBoundary);
+				totalWidth: totalWidth,
+		        totalHeight: totalHeight,
+		        resultWidth: horizontalTake * viewModel.CharAndLineMeasurements.CharacterWidth,
+		        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
+		        left: horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth,
+		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
 			

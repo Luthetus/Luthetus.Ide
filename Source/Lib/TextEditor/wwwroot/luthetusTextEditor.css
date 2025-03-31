@@ -344,6 +344,8 @@
 
 .luth_te_virtualization-boundary-display {
     position: absolute;
+    width: 1px;
+    height: 1px;
 }
 
 .luth_te_text-editor-footer {
