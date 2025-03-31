@@ -260,7 +260,7 @@ public static class EventUtils
         var modelModifier = editContext.GetModelModifier(resourceUri);
         var viewModel = editContext.GetViewModelModifier(viewModelKey);
         var globalTextEditorOptions = editContext.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
-    
+
         if (modelModifier is null || viewModel is null)
             return (0, 0);
     
@@ -286,12 +286,8 @@ public static class EventUtils
         
         var lineLength = modelModifier.GetLineLength(rowIndex);
         
-        
-        
         rowIndex = Math.Max(rowIndex, 0);
         columnIndexInt = Math.Max(columnIndexInt, 0);
-            
-        
         
         var lineInformation = modelModifier.GetLineInformation(rowIndex);
         
@@ -310,7 +306,6 @@ public static class EventUtils
 		    		
 		    		if (columnIndexDouble - prevVis > visualLength - columnIndexDouble)
 		    		{
-		    			literalLength = literalLength;
 		    			break;
 		    		}
 		    		else
@@ -331,12 +326,7 @@ public static class EventUtils
 		    	.Value);
 		    
 		    visualLength += previousCharacterWidth;
-		    	
-		    
 		}
-		
-		Console.WriteLine($"literalLength: {literalLength}");
-		Console.WriteLine($"visualLength: {visualLength}");
 		
 		int GetCharacterWidth(char character)
 		{
@@ -345,10 +335,6 @@ public static class EventUtils
 		
 		    return 1;
 		}
-        
-        
-        
-        // ...
         
         columnIndexInt = columnIndexInt > lineLength
             ? lineLength
