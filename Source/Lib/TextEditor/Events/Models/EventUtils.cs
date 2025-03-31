@@ -298,18 +298,39 @@ public static class EventUtils
         int literalLength = 0;
 		int visualLength = 0;
 		
+		var previousCharacterWidth = 1;
+		
 		for (int position = 0; position < lineLength; position++)
 		{
 			if (visualLength >= columnIndexInt)
 		    {
+		    	if (previousCharacterWidth > 1)
+		    	{
+		    		var prevVis = visualLength - previousCharacterWidth;
+		    		
+		    		if (columnIndexDouble - prevVis > visualLength - columnIndexDouble)
+		    		{
+		    			literalLength = literalLength;
+		    			break;
+		    		}
+		    		else
+		    		{
+		    			literalLength = literalLength - 1;
+		    			break;
+		    		}
+		    	}
+		    
 		    	break;
 		    }
 		
 		    literalLength += 1;
-		    visualLength += GetCharacterWidth(
+		    
+		    previousCharacterWidth = GetCharacterWidth(
 		    	modelModifier.RichCharacterList[
 		    		lineInformation.StartPositionIndexInclusive + position]
 		    	.Value);
+		    
+		    visualLength += previousCharacterWidth;
 		    	
 		    
 		}
