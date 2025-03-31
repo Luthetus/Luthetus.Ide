@@ -50,34 +50,73 @@ public record VirtualizationGrid
 	public static VirtualizationGrid Empty { get; } = new(
         Array.Empty<VirtualizationLine>(),
         new List<VirtualizationSpan>(),
-        new VirtualizationBoundary(0, 0, 0, 0),
-        new VirtualizationBoundary(0, 0, 0, 0),
-        new VirtualizationBoundary(0, 0, 0, 0),
-        new VirtualizationBoundary(0, 0, 0, 0));
+        totalWidth: 0,
+        totalHeight: 0,
+        resultWidth: 0,
+        resultHeight: 0,
+        left: 0,
+        top: 0);
 
+	/// <summary>Measurements are in pixels</summary>
     public VirtualizationGrid(
         VirtualizationLine[] entries,
         List<VirtualizationSpan> virtualizationSpanList,
-        VirtualizationBoundary leftVirtualizationBoundary,
-        VirtualizationBoundary rightVirtualizationBoundary,
-        VirtualizationBoundary topVirtualizationBoundary,
-        VirtualizationBoundary bottomVirtualizationBoundary)
+        double totalWidth,
+        double totalHeight,
+        double resultWidth,
+        double resultHeight,
+        double left,
+        double top)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
-        LeftVirtualizationBoundary = leftVirtualizationBoundary;
-        RightVirtualizationBoundary = rightVirtualizationBoundary;
-        TopVirtualizationBoundary = topVirtualizationBoundary;
-        BottomVirtualizationBoundary = bottomVirtualizationBoundary;
+        TotalWidth = totalWidth;
+        TotalHeight = totalHeight;
+        VirtualWidth = resultWidth;
+        VirtualHeight = resultHeight;
+        VirtualLeft = left;
+        VirtualTop = top;
     }
 
     public VirtualizationLine[] EntryList { get; init; }
     public List<VirtualizationSpan> VirtualizationSpanList { get; init; }
     
-    public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
-    public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
-    public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
-    public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
+    /// <summary>
+    /// Measurements are in pixels.
+    ///
+    /// Width (including non-rendered elements).
+    /// </summary>
+    public double TotalWidth { get; init; }
+    /// <summary>
+    /// Measurements are in pixels
+    ///
+    /// Height (including non-rendered elements).
+    /// </summary>
+    public double TotalHeight { get; init; }
+    /// <summary>
+    /// Measurements are in pixels
+    ///
+    /// Width (only rendered elements).
+    /// </summary>
+    public double VirtualWidth { get; init; }
+    /// <summary>
+    /// Measurements are in pixels
+    ///
+    /// Height (only rendered elements).
+    /// </summary>
+    public double VirtualHeight { get; init; }
+    /// <summary>
+    /// Measurements are in pixels
+    ///
+    /// Lowest 'left' point where a rendered element is displayed.
+    /// </summary>
+    public double VirtualLeft { get; init; }
+    /// <summary>
+    /// Measurements are in pixels
+    ///
+    /// Lowest 'top' point where a rendered element is displayed.
+    /// </summary>
+    public double VirtualTop { get; init; }
 
     /// <summary>
     ///

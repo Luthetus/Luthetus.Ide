@@ -162,7 +162,16 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private bool _previousIncludeHeader;
     private bool _previousIncludeFooter;
     private string _previousGetHeightCssStyleResult = "height: calc(100%);";
-
+    
+    private string _verticalVirtualizationBoundaryStyleCssString = "height: 0px;";
+	private string _horizontalVirtualizationBoundaryStyleCssString = "width: 0px;";
+	
+	private double _previousTotalWidth;
+	private double _previousTotalHeight;
+    
+    private string _personalWrapperCssClass;
+    private string _personalWrapperCssStyle;
+    
     private string ContentElementId { get; set; }
     
     public string WrapperCssClass { get; private set; }
@@ -208,12 +217,16 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private readonly CancellationTokenSource _onMouseMoveCancellationTokenSource = new();
     private MouseEventArgs? _onMouseMoveMouseEventArgs;
     private Task _onMouseMoveTask = Task.CompletedTask;
+    
+    private string _blinkAnimationCssClassOn;
+    private string _blinkAnimationCssClassOff;
 
 	public TextEditorComponentData ComponentData => _componentData;
 	
+	// _ = "luth_te_text-editor-cursor " + BlinkAnimationCssClass + " " + _activeRenderBatch.Options.Keymap.GetCursorCssClassString();
 	public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
-        ? "luth_te_blink"
-        : string.Empty;
+        ? _blinkAnimationCssClassOn
+        : _blinkAnimationCssClassOff;
 	
 	/// <summary>
 	/// Any external UI that isn't a child component of this can subscribe to this event,
@@ -244,6 +257,16 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
 
         ConstructRenderBatch();
+
+        _blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink ";
+	    _blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";
+	    
+	    var cursorCssClassString = _activeRenderBatch?.Options?.Keymap?.GetCursorCssClassString();
+        if (cursorCssClassString is not null)
+        {
+        	_blinkAnimationCssClassOn += cursorCssClassString;
+        	_blinkAnimationCssClassOff += cursorCssClassString;
+        }
 
 		SetComponentData();
 
@@ -556,23 +579,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
       if (nextViewModel is not null)
       	await nextViewModel.FocusAsync();
   }
-
-    private string GetGlobalHeightInPixelsStyling()
-    {
-        var heightInPixels = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
-
-        if (heightInPixels is null)
-            return string.Empty;
-
-        var heightInPixelsInvariantCulture = heightInPixels.Value.ToCssValue();
-        
-        _uiStringBuilder.Clear();
-        _uiStringBuilder.Append("height: ");
-        _uiStringBuilder.Append(heightInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
-
-        return _uiStringBuilder.ToString();
-    }
     
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
@@ -1108,7 +1114,13 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		var sliderProportionalLeftInPixelsInvariantCulture = sliderProportionalLeftInPixels.ToCssValue();
 
 		_uiStringBuilder.Clear();
-        _uiStringBuilder.Append("left: ");
+		
+        _uiStringBuilder.Append("bottom: 0; height: ");
+        _uiStringBuilder.Append(_scrollbarSizeInPixelsCssValue);
+        _uiStringBuilder.Append("px; ");
+        _uiStringBuilder.Append(_previous_HORIZONTAL_GetSliderHorizontalStyleCss_Result);
+        
+        _uiStringBuilder.Append(" left: ");
         _uiStringBuilder.Append(sliderProportionalLeftInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
         
@@ -1143,6 +1155,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         var sliderProportionalTopInPixelsInvariantCulture = sliderProportionalTopInPixels.ToCssValue();
 
 		_uiStringBuilder.Clear();
+		
+		_uiStringBuilder.Append("left: 0; width: ");
+		_uiStringBuilder.Append(_scrollbarSizeInPixelsCssValue);
+		_uiStringBuilder.Append("px; ");
+		_uiStringBuilder.Append(_previous_VERTICAL_GetSliderVerticalStyleCss_Result);
 		
 		_uiStringBuilder.Append("top: ");
 		_uiStringBuilder.Append(sliderProportionalTopInPixelsInvariantCulture);
@@ -1361,57 +1378,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
 
         return Task.CompletedTask;
-    }
-    
-    public string Virtualization_GetStyleCssString(VirtualizationBoundary virtualizationBoundary)
-    {
-    	_uiStringBuilder.Clear();
-    
-        // Width
-        if (virtualizationBoundary.WidthInPixels == -1)
-        {
-            _uiStringBuilder.Append(" width: 100%;");
-        }
-        else
-        {
-            var widthInPixelsInvariantCulture = virtualizationBoundary.WidthInPixels.ToCssValue();
-            _uiStringBuilder.Append($" width: {widthInPixelsInvariantCulture}px;");
-        }
-
-        // Height
-        if (virtualizationBoundary.HeightInPixels == -1)
-        {
-            _uiStringBuilder.Append(" height: 100%;");
-        }
-        else
-        {
-            var heightInPixelsInvariantCulture = virtualizationBoundary.HeightInPixels.ToCssValue();
-            _uiStringBuilder.Append($" height: {heightInPixelsInvariantCulture}px;");
-        }
-
-        // Left
-        if (virtualizationBoundary.LeftInPixels == -1)
-        {
-            _uiStringBuilder.Append(" left: 100%;");
-        }
-        else
-        {
-            var leftInPixelsInvariantCulture = virtualizationBoundary.LeftInPixels.ToCssValue();
-            _uiStringBuilder.Append($" left: {leftInPixelsInvariantCulture}px;");
-        }
-
-        // Top
-        if (virtualizationBoundary.TopInPixels == -1)
-        {
-            _uiStringBuilder.Append(" top: 100%;");
-        }
-        else
-        {
-            var topInPixelsInvariantCulture = virtualizationBoundary.TopInPixels.ToCssValue();
-            _uiStringBuilder.Append($" top: {topInPixelsInvariantCulture}px;");
-        }
-
-        return _uiStringBuilder.ToString();
     }
     
     public string PresentationGetCssStyleString(
@@ -1791,48 +1757,112 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
     }
 
+	/// <summary>
+	/// WARNING: Do not use '_uiStringBuilder' in this method. This method can be invoked from outside the UI thread via events.
+	/// </summary>
     private void SetWrapperCssAndStyle()
     {
-    	WrapperCssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    	var stringBuilder = new StringBuilder();
+    	
+    	WrapperCssClass = TextEditorService.ThemeCssClassString;
+    	
+    	stringBuilder.Append("luth_te_text-editor luth_unselectable luth_te_text-editor-css-wrapper ");
+    	stringBuilder.Append(WrapperCssClass);
+    	stringBuilder.Append(" ");
+    	stringBuilder.Append(ViewModelDisplayOptions.TextEditorClassCssString);
+    	_personalWrapperCssClass = stringBuilder.ToString();
+    	
+    	stringBuilder.Clear();
     	
     	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
     	
     	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
     	if (options.CommonOptions?.FontSizeInPixels is not null)
             fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
+            
+        stringBuilder.Append("font-size: ");
+        stringBuilder.Append(fontSizeInPixels.ToCssValue());
+        stringBuilder.Append("px;");
     	
     	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
     	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
         	fontFamily = options!.CommonOptions!.FontFamily;
-    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
     	
-    	WrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
+    	stringBuilder.Append("font-family: ");
+    	stringBuilder.Append(fontFamily);
+    	stringBuilder.Append(";");
+    	
+    	WrapperCssStyle = stringBuilder.ToString();
+    	
+    	stringBuilder.Append(WrapperCssStyle);
+    	stringBuilder.Append(" ");
+    	// string GetGlobalHeightInPixelsStyling()
+	    {
+	        var heightInPixels = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
+	
+	        if (heightInPixels is not null)
+	        {
+	        	var heightInPixelsInvariantCulture = heightInPixels.Value.ToCssValue();
+	        
+		        stringBuilder.Append("height: ");
+		        stringBuilder.Append(heightInPixelsInvariantCulture);
+		        stringBuilder.Append("px;");
+	        }
+	    }
+    	stringBuilder.Append(" ");
+    	stringBuilder.Append(ViewModelDisplayOptions.TextEditorStyleCssString);
+    	stringBuilder.Append(" ");
+    	// string GetHeightCssStyle()
+	    {
+	    	if (_previousIncludeHeader != ViewModelDisplayOptions.HeaderComponentType is not null ||
+	    	    _previousIncludeFooter != ViewModelDisplayOptions.FooterComponentType is not null)
+	    	{
+	    		// Start with a calc statement and a value of 100%
+		        stringBuilder.Append("height: calc(100%");
+		
+		        if (ViewModelDisplayOptions.HeaderComponentType is not null)
+		            stringBuilder.Append(" - var(--luth_te_text-editor-header-height)");
+		
+		        if (ViewModelDisplayOptions.FooterComponentType is not null)
+		            stringBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
+		
+		        // Close the calc statement, and the height style attribute
+		        stringBuilder.Append(");");
+		        
+		        _previousGetHeightCssStyleResult = stringBuilder.ToString();
+	    	}
+	    }
+    	_personalWrapperCssStyle = stringBuilder.ToString();
     }
     
-    private string GetHeightCssStyle()
+    private void ConstructVirtualizationStyleCssStrings()
     {
-    	if (_previousIncludeHeader != ViewModelDisplayOptions.HeaderComponentType is not null ||
-    	    _previousIncludeFooter != ViewModelDisplayOptions.FooterComponentType is not null)
+    	if (_activeRenderBatch is null)
+    		return;
+    	
+    	if (_activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth != _previousTotalWidth)
     	{
+    		
+    		_previousTotalWidth = _activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth;
+    		
     		_uiStringBuilder.Clear();
-    
-	        // Start with a calc statement and a value of 100%
-	        _uiStringBuilder.Append("height: calc(100%");
-	
-	        if (ViewModelDisplayOptions.HeaderComponentType is not null)
-	            _uiStringBuilder.Append(" - var(--luth_te_text-editor-header-height)");
-	
-	        if (ViewModelDisplayOptions.FooterComponentType is not null)
-	            _uiStringBuilder.Append(" - var(--luth_te_text-editor-footer-height)");
-	
-	        // Close the calc statement, and the height style attribute
-	        _uiStringBuilder.Append(");");
-	        
-	        _previousGetHeightCssStyleResult = _uiStringBuilder.ToString();
+	    	_uiStringBuilder.Append("width: ");
+	    	_uiStringBuilder.Append(_activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth);
+	    	_uiStringBuilder.Append("px;");
+	        _horizontalVirtualizationBoundaryStyleCssString = _uiStringBuilder.ToString();
     	}
-    
-        return _previousGetHeightCssStyleResult;
+	    	
+    	if (_activeRenderBatch.ViewModel.VirtualizationResult.TotalHeight != _previousTotalHeight)
+    	{
+    		
+    		_previousTotalHeight = _activeRenderBatch.ViewModel.VirtualizationResult.TotalHeight;
+    	
+    		_uiStringBuilder.Clear();
+	    	_uiStringBuilder.Append("height: ");
+	    	_uiStringBuilder.Append(_activeRenderBatch.ViewModel.VirtualizationResult.TotalHeight);
+	    	_uiStringBuilder.Append("px;");
+	    	_verticalVirtualizationBoundaryStyleCssString = _uiStringBuilder.ToString();
+    	}
     }
     
     private async void OnOptionMeasuredStateChanged()

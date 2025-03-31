@@ -65,9 +65,13 @@ private ITextEditorService TextEditorService { get; set; } = null!;
 
 - The `ITextEditorService` has public properties that encapsulate the API for a given datatype in the `Luthetus.TextEditor` namespace. For example, `TextEditorService.ModelApi` accesses the `ModelApi` property, which has all of the API related to the `TextEditorModel` datatype.
 
-- By invoking `TextEditorService.ModelApi.RegisterCustom(...);`, we can create register a TextEditorModel. The `RegisterCustom(...)` method takes as a parameter an instance of `TextEditorModel`. So we need to make that instance.
+- By invoking `TextEditorService.ModelApi.RegisterCustom(...);`, we can create register a TextEditorModel. The `RegisterCustom(...)` method takes as parameters: an instance of `TextEditorModel`, and a [TextEditorEditContext](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditorEditContext.cs#L9). So we need to make the `TextEditorModel` instance.
 
-- In the override for `OnInitialized()`, create an instance of a `TextEditorModel`. Then, pass it in to the `TextEditorService.Model.RegisterCustom(...)` invocation.
+- In the override for `OnInitialized()`, create an instance of a `TextEditorModel`.
+
+- Now, we need the `TextEditorEditContext`. Invoke `TextEditorService.TextEditorWorker.PostUnique(...)`. The first argument is a "name" for the work item. The second argument is a Func that will provide you a `TextEditorEditContext` instance, and excepts you to return a `ValueTask`.
+
+- Inside the `TextEditorService.TextEditorWorker.PostUnique(...)` Func argument, go on to in the body of the Func, invoke `TextEditorService.Model.RegisterCustom(...)`. Pass the `TextEditorEditContext` that the Func provided, and the instance of the `TextEditorModel`.
 
 ```csharp
 protected override void OnInitialized()
@@ -100,7 +104,10 @@ protected override void OnInitialized()
 	    decorationMapper: null,
         compilerService: null);
 
-    TextEditorService.ModelApi.RegisterCustom(model);
+	TextEditorService.TextEditorWorker.PostUnique(nameof(Index), editContext =>
+	{
+    	TextEditorService.ModelApi.RegisterCustom(editContext, model);
+	});
 
     base.OnInitialized();
 }
@@ -181,13 +188,17 @@ public partial class Index : ComponentBase
 }",
 	    decorationMapper: null,
         compilerService: null);
-	
-		TextEditorService.ModelApi.RegisterCustom(model);
+
+		TextEditorService.TextEditorWorker.PostUnique(nameof(Index), editContext =>
+		{
+			TextEditorService.ModelApi.RegisterCustom(editContext, model);
 		
-		TextEditorService.ViewModelApi.Register(
-			ViewModelKey,
-			ResourceUri,
-			new Category("main"));
+			TextEditorService.ViewModelApi.Register(
+				editContext,
+				ViewModelKey,
+				ResourceUri,
+				new Category("main"));
+		});
 			
 		base.OnInitialized();
 	}
