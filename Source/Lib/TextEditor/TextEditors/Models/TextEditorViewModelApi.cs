@@ -993,23 +993,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				totalHeight += marginScrollHeight;
 			}
 
-			var horizontalBoundary = new VirtualizationBoundary(
-				totalWidth,
-				totalHeight);
-
-			var verticalBoundary = new VirtualizationBoundary(
-				totalWidth,
-				totalHeight);
-
 			virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
         		new List<VirtualizationSpan>(),
-				totalWidth: 0,
-		        totalHeight: 0,
-		        resultWidth: 0,
-		        resultHeight: 0,
-		        left: 0,
-		        top: 0);
+				totalWidth: totalWidth,
+		        totalHeight: totalHeight,
+		        resultWidth: horizontalTake * viewModel.CharAndLineMeasurements.CharacterWidth,
+		        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
+		        left: horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth,
+		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
 			

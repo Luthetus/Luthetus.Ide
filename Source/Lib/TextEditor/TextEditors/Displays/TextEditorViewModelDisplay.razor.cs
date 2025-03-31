@@ -1842,6 +1842,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     	
     	if (_activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth != _previousTotalWidth)
     	{
+    		
+    		_previousTotalWidth = _activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth;
+    		
     		_uiStringBuilder.Clear();
 	    	_uiStringBuilder.Append("width: ");
 	    	_uiStringBuilder.Append(_activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth);
@@ -1851,6 +1854,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	    	
     	if (_activeRenderBatch.ViewModel.VirtualizationResult.TotalHeight != _previousTotalHeight)
     	{
+    		
+    		_previousTotalHeight = _activeRenderBatch.ViewModel.VirtualizationResult.TotalHeight;
+    	
     		_uiStringBuilder.Clear();
 	    	_uiStringBuilder.Append("height: ");
 	    	_uiStringBuilder.Append(_activeRenderBatch.ViewModel.VirtualizationResult.TotalHeight);

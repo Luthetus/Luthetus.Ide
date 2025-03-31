@@ -250,10 +250,7 @@ public partial class TextEditorService : ITextEditorService
             	
             	if (viewModelModifier.VirtualizationResult.EntryList.Length > 0)
             	{
-            		var firstEntry = viewModelModifier.VirtualizationResult.EntryList.First();
-            		var firstEntryTop = firstEntry.LineIndex * viewModelModifier.CharAndLineMeasurements.LineHeight;
-            		
-            		if (viewModelModifier.ScrollbarDimensions.ScrollTop < firstEntryTop)
+            		if (viewModelModifier.ScrollbarDimensions.ScrollTop < viewModelModifier.VirtualizationResult.VirtualTop)
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
@@ -262,10 +259,9 @@ public partial class TextEditorService : ITextEditorService
             			var bigTop = viewModelModifier.ScrollbarDimensions.ScrollTop +
             				viewModelModifier.TextEditorDimensions.Height;
             				
-            			var imaginaryLastEntry = viewModelModifier.VirtualizationResult.EntryList.Last();
-            			var imaginaryLastEntryTop = (imaginaryLastEntry.LineIndex + 1) * viewModelModifier.CharAndLineMeasurements.LineHeight;
+            			var virtualEnd = viewModelModifier.VirtualizationResult.VirtualTop + viewModelModifier.VirtualizationResult.VirtualHeight;
             				
-            			if (bigTop > imaginaryLastEntryTop)
+            			if (bigTop > virtualEnd)
             				viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
             	}
