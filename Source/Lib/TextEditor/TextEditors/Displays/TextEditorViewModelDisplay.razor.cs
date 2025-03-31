@@ -253,7 +253,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         ConstructRenderBatch();
 
         _blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink ";
-	    _blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";   
+	    _blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";
 	    
 	    var cursorCssClassString = _activeRenderBatch?.Options?.Keymap?.GetCursorCssClassString();
         if (cursorCssClassString is not null)

@@ -260,72 +260,79 @@ public static class EventUtils
         var modelModifier = editContext.GetModelModifier(resourceUri);
         var viewModel = editContext.GetViewModelModifier(viewModelKey);
         var globalTextEditorOptions = editContext.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
-
+    
         if (modelModifier is null || viewModel is null)
             return (0, 0);
-
+    
         var charMeasurements = viewModel.CharAndLineMeasurements;
-		var textEditorDimensions = viewModel.TextEditorDimensions;
-		var scrollbarDimensions = viewModel.ScrollbarDimensions;
-
-		var relativeX = mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft;
-        var relativeY = mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop;
-
-        var positionX = relativeX;
-        var positionY = relativeY;
-
+        var textEditorDimensions = viewModel.TextEditorDimensions;
+        var scrollbarDimensions = viewModel.ScrollbarDimensions;
+    
+        var positionX = mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft;
+        var positionY = mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop;
+    
         // Scroll position offset
-        {
-            positionX += scrollbarDimensions.ScrollLeft;
-            positionY += scrollbarDimensions.ScrollTop;
-        }
-
+        positionX += scrollbarDimensions.ScrollLeft;
+        positionY += scrollbarDimensions.ScrollTop;
+        
         var rowIndex = (int)(positionY / charMeasurements.LineHeight);
-
+        
         rowIndex = rowIndex > modelModifier.LineCount - 1
             ? modelModifier.LineCount - 1
             : rowIndex;
-
-        int columnIndexInt;
-
-
+            
         var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-        columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-
-        var lengthOfRow = modelModifier.GetLineLength(rowIndex);
-
-        // Tab key column offset
-        {
-            var parameterForGetTabsCountOnSameRowBeforeCursor = columnIndexInt > lengthOfRow
-                ? lengthOfRow
-                : columnIndexInt;
-
-            int tabsOnSameRowBeforeCursor;
-
-            try
-            {
-                tabsOnSameRowBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
-                    rowIndex,
-                    parameterForGetTabsCountOnSameRowBeforeCursor);
-            }
-            catch (LuthetusTextEditorException)
-            {
-                tabsOnSameRowBeforeCursor = 0;
-            }
-
-            // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-
-            columnIndexInt -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
-        }
-
-        columnIndexInt = columnIndexInt > lengthOfRow
-            ? lengthOfRow
-            : columnIndexInt;
-
+        int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
+        
+        var lineLength = modelModifier.GetLineLength(rowIndex);
+        
+        
+        
         rowIndex = Math.Max(rowIndex, 0);
         columnIndexInt = Math.Max(columnIndexInt, 0);
-
-        return (rowIndex, columnIndexInt);
+            
+        
+        
+        var lineInformation = modelModifier.GetLineInformation(rowIndex);
+        
+        int literalLength = 0;
+		int visualLength = 0;
+		
+		for (int position = 0; position < lineLength; position++)
+		{
+			if (visualLength >= columnIndexInt)
+		    {
+		    	break;
+		    }
+		
+		    literalLength += 1;
+		    visualLength += GetCharacterWidth(
+		    	modelModifier.RichCharacterList[
+		    		lineInformation.StartPositionIndexInclusive + position]
+		    	.Value);
+		    	
+		    
+		}
+		
+		Console.WriteLine($"literalLength: {literalLength}");
+		Console.WriteLine($"visualLength: {visualLength}");
+		
+		int GetCharacterWidth(char character)
+		{
+		    if (character == '\t')
+		        return 4;
+		
+		    return 1;
+		}
+        
+        
+        
+        // ...
+        
+        columnIndexInt = columnIndexInt > lineLength
+            ? lineLength
+            : columnIndexInt;
+        
+        return (rowIndex, literalLength);
     }
 }
