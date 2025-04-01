@@ -97,7 +97,7 @@ public partial class GitDiffDisplay : ComponentBase
 
 	private async Task<bool> TryCreateEditorIn(string logFileContent, ResourceUri originalResourceUri)
 	{
-		TextEditorService.TextEditorWorker.PostUnique(nameof(GitDiffDisplay), editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(nameof(GitDiffDisplay), editContext =>
 		{
 			// Dispose any previously created state for the editor in model
 			if (InResourceUri is not null)
@@ -181,7 +181,7 @@ public partial class GitDiffDisplay : ComponentBase
 	
 	private async Task<bool> TryCreateEditorOut(ResourceUri originalResourceUri, AbsolutePath originalAbsolutePath)
 	{
-		TextEditorService.TextEditorWorker.PostUnique(nameof(GitDiffDisplay), async editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(nameof(GitDiffDisplay), async editContext =>
 		{
 			// Create Model
 			var originalModel = TextEditorService.ModelApi.GetOrDefault(originalResourceUri);
@@ -284,7 +284,7 @@ public partial class GitDiffDisplay : ComponentBase
             {
             	Console.WriteLine("DiffFileEnqueue");
             	
-            	TextEditorService.TextEditorWorker.PostUnique(
+            	TextEditorService.WorkerArbitrary.PostUnique(
             		nameof(plusMarkedLineIndexList),
             		editContext =>
             		{

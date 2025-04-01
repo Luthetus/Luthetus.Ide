@@ -49,7 +49,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
 		var modelText = model.GetAllText();
 
-		TextEditorService.TextEditorWorker.PostUnique(
+		TextEditorService.WorkerArbitrary.PostUnique(
 			nameof(SyntaxTextSpanDisplay),
 			editContext =>
 			{

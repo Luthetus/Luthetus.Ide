@@ -152,7 +152,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
 		if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)
 		{
-			_textEditorService.TextEditorWorker.PostUnique(nameof(DotNetSolutionIdeApi), editContext =>
+			_textEditorService.WorkerArbitrary.PostUnique(nameof(DotNetSolutionIdeApi), editContext =>
 			{
 				_textEditorService.ModelApi.RegisterTemplated(
 					editContext,
@@ -322,7 +322,7 @@ Execution Terminal"));
 			}
 		});
 		
-		_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(
+		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(
 			new UniqueTextEditorWork(
 	            nameof(ParseSolution),
 	            _textEditorService,
@@ -775,7 +775,7 @@ Execution Terminal"));
 
 		if (solutionTextEditorModel is not null)
 		{
-			_textEditorService.TextEditorWorker.PostUnique(
+			_textEditorService.WorkerArbitrary.PostUnique(
 				nameof(Do_Website_AddExistingProjectToSolution),
 				editContext =>
 				{

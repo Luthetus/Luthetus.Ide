@@ -23,7 +23,7 @@ public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
 
     private Task OpenInEditorOnClick(string filePath)
     {
-    	TextEditorService.TextEditorWorker.PostUnique(nameof(DirtyResourceUriViewDisplay), async editContext =>
+    	TextEditorService.WorkerArbitrary.PostUnique(nameof(DirtyResourceUriViewDisplay), async editContext =>
     	{
     		await TextEditorService.OpenInEditorAsync(
     			editContext,

@@ -93,7 +93,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             "TextEditor",
             absolutePath =>
             {
-            	_textEditorService.TextEditorWorker.PostUnique(nameof(EditorIdeApi), async editContext =>
+            	_textEditorService.WorkerArbitrary.PostUnique(nameof(EditorIdeApi), async editContext =>
 				{
 					await _textEditorService.OpenInEditorAsync(
 						editContext,
@@ -133,7 +133,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             _textEditorService,
             editContext => compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
 		
-		_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
     }
     
     public async Task RegisterModelFunc(RegisterModelArgs registerModelArgs)
@@ -261,7 +261,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             {
                 if (writtenDateTime is not null)
                 {
-                    _textEditorService.TextEditorWorker.PostUnique(
+                    _textEditorService.WorkerArbitrary.PostUnique(
                         nameof(HandleOnSaveRequested),
                         editContext =>
                         {
@@ -317,7 +317,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             
         if (showViewModelArgs.ShouldSetFocusToEditor)
         {
-        	_textEditorService.TextEditorWorker.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+        	_textEditorService.WorkerArbitrary.PostUnique(nameof(TryShowViewModelFunc), editContext =>
 	        {
 	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
 	        	
@@ -399,7 +399,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             .ReadAllTextAsync(inputFileAbsolutePathString)
             .ConfigureAwait(false);
 
-        _textEditorService.TextEditorWorker.PostUnique(
+        _textEditorService.WorkerArbitrary.PostUnique(
             nameof(CheckIfContentsWereModifiedAsync),
             editContext =>
             {

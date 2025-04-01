@@ -99,7 +99,7 @@ public sealed class TerminalCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_textEditorService.TextEditorWorker.PostUnique(nameof(ICompilerService), editContext =>
+    	_textEditorService.WorkerArbitrary.PostUnique(nameof(ICompilerService), editContext =>
         {
 			var modelModifier = editContext.GetModelModifier(resourceUri);
 

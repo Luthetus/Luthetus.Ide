@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
@@ -171,6 +172,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private string _personalWrapperCssClass;
     private string _personalWrapperCssStyle;
+    
+    private int _renderCount;
+    private long _mouseDownStopwatch;
     
     private string ContentElementId { get; set; }
     
@@ -580,6 +584,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
       	await nextViewModel.FocusAsync();
   }
     
+    bool keyDownTest = false;
+    
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
     	// Inlining: 'EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs)'
@@ -591,7 +597,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             return;
         }
         
-        TextEditorService.TextEditorWorker.EnqueueOnKeyDown(
+        if (!keyDownTest)
+        {
+        	keyDownTest = true;
+	        _mouseDownStopwatch = Stopwatch.GetTimestamp();
+	    	_renderCount = 0;
+	    }
+        
+        TextEditorService.WorkerUi.EnqueueOnKeyDown(
         	new OnKeyDown(
 				_componentData,
 	            new KeymapArgs(keyboardEventArgs),
@@ -602,7 +615,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     {
 		var localViewModelKey = TextEditorViewModelKey;
 
-		TextEditorService.TextEditorWorker.PostUnique(
+		TextEditorService.WorkerArbitrary.PostUnique(
 			nameof(ReceiveOnContextMenu),
 			editContext =>
 			{
@@ -629,7 +642,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
-        TextEditorService.TextEditorWorker.EnqueueOnDoubleClick(
+        TextEditorService.WorkerUi.EnqueueOnDoubleClick(
         	new OnDoubleClick(
 	            mouseEventArgs,
 				_componentData,
@@ -638,10 +651,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
+    	_mouseDownStopwatch = Stopwatch.GetTimestamp();
+    	_renderCount = 0;
+    	keyDownTest = false;
+    
         _componentData.ThinksLeftMouseButtonIsDown = true;
         _onMouseMoveMouseEventArgs = null;
 
-        TextEditorService.TextEditorWorker.EnqueueOnMouseDown(
+        TextEditorService.WorkerUi.EnqueueOnMouseDown(
         	new OnMouseDown(
 	            mouseEventArgs,
 				_componentData,
@@ -673,7 +690,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 	
                 	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown || mouseMoveMouseEventArgs is null)
                 	{
-                		TextEditorService.TextEditorWorker.PostUnique(
+                		TextEditorService.WorkerArbitrary.PostUnique(
 							nameof(ReceiveContentOnMouseMove),
 							editContext =>
 							{
@@ -695,7 +712,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                     {
                         await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-				        TextEditorService.TextEditorWorker.PostUnique(
+				        TextEditorService.WorkerArbitrary.PostUnique(
 				            nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync),
 				            editContext =>
 				            {
@@ -728,7 +745,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 	    
 	    if (localThinksLeftMouseButtonIsDown)
 	    {
-	        TextEditorService.TextEditorWorker.EnqueueOnMouseMove(
+	        TextEditorService.WorkerUi.EnqueueOnMouseMove(
 	            new OnMouseMove(
 	            mouseEventArgs,
 	            _componentData,
@@ -743,7 +760,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
-    	TextEditorService.TextEditorWorker.EnqueueOnWheel(
+    	TextEditorService.WorkerUi.EnqueueOnWheel(
         	new OnWheel(
 	            wheelEventArgs,
 	            _componentData,
@@ -775,7 +792,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(ReceiveOnTouchMove),
             editContext =>
 			{
@@ -837,7 +854,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (viewModel is null)
             return;
 
-        TextEditorService.TextEditorWorker.PostRedundant(
+        TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(QueueRemeasureBackgroundTask),
 			viewModel.ResourceUri,
 			viewModel.ViewModelKey,
@@ -862,7 +879,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (viewModel is null)
             return;
 
-        TextEditorService.TextEditorWorker.PostRedundant(
+        TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
 			viewModel.ResourceUri,
 			viewModel.ViewModelKey,
@@ -1310,7 +1327,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 
-			TextEditorService.TextEditorWorker.EnqueueOnScrollHorizontal(onScrollHorizontal);
+			TextEditorService.WorkerUi.EnqueueOnScrollHorizontal(onScrollHorizontal);
         }
         else
         {
@@ -1370,7 +1387,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 
-			TextEditorService.TextEditorWorker.EnqueueOnScrollVertical(onScrollVertical);
+			TextEditorService.WorkerUi.EnqueueOnScrollVertical(onScrollVertical);
         }
         else
         {

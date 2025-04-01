@@ -62,7 +62,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	if (TextEditorViewModelDisplay._activeRenderBatch is null)
     		return;
     	
-    	TextEditorService.TextEditorWorker.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), async editContext =>
+    	TextEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), async editContext =>
     	{
     		var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
     	

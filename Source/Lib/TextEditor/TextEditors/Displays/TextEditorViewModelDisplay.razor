@@ -1,3 +1,4 @@
+@using System.Diagnostics
 @using Luthetus.Common.RazorLib.Installations.Models
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
@@ -19,6 +20,20 @@
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Models
 @using Luthetus.TextEditor.RazorLib.Decorations.Models
 @using Luthetus.TextEditor.RazorLib.Lexers.Models
+
+<div style="position: fixed; right: 500px; top: 0; padding: 10px; background-color: orange; color: black; width: 200px; height: 200px;">
+	<div>
+		_render: @(++_renderCount)
+	</div>
+	
+	<div>
+		elapsed: @($"{Stopwatch.GetElapsedTime(_mouseDownStopwatch).TotalMilliseconds:N0}")
+	</div>
+	
+	<div>
+		render-per-sec: @($"{_renderCount / (Stopwatch.GetElapsedTime(_mouseDownStopwatch).TotalSeconds):N0}")
+	</div>
+</div>
 
 <div @onclick="FocusTextEditorAsync"
      @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"

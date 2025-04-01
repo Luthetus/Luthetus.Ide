@@ -109,7 +109,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	private void CreateTextEditor()
     {
-    	_textEditorService.TextEditorWorker.PostUnique(nameof(TerminalOutputFormatterExpand), editContext =>
+    	_textEditorService.WorkerArbitrary.PostUnique(nameof(TerminalOutputFormatterExpand), editContext =>
     	{
     		var model = new TextEditorModel(
 	            TextEditorModelResourceUri,

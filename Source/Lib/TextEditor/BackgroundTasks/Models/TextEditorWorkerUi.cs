@@ -41,18 +41,19 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// then one queue that every event queues to that says that something happened
 /// and where the event data can be dequeued from.
 /// </summary>
-public class TextEditorWorker : IBackgroundTaskGroup
+public class TextEditorWorkerUi : IBackgroundTaskGroup
 {
 	private readonly object _workKindQueueLock = new();
 	private readonly ITextEditorService _textEditorService;
 	
-	public TextEditorWorker(ITextEditorService textEditorService)
+	public TextEditorWorkerUi(ITextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}
 	
-	private bool _taskCompletionSourceWasCreated;
-
+	/*private TextEditorWorkUiKind _previousTextEditorWorkUiKind = TextEditorWorkUiKind.None;
+	private OnMouseMove _previousOnMouseMove = default;*/
+	
 	public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     
@@ -61,14 +62,8 @@ public class TextEditorWorker : IBackgroundTaskGroup
     
     public bool EarlyBatchEnabled { get; } = false;
     
-    public bool __TaskCompletionSourceWasCreated
-    {
-    	get => _taskCompletionSourceWasCreated;
-    	set => _ = value;
-    }
+    public bool __TaskCompletionSourceWasCreated { get; set; }
     
-    public Queue<RedundantTextEditorWork> RedundantTextEditorWorkQueue { get; } = new();
-    public Queue<UniqueTextEditorWork> UniqueTextEditorWorkQueue { get; } = new();
     public Queue<OnDoubleClick> OnDoubleClickQueue { get; } = new();
     public Queue<OnKeyDown> OnKeyDownQueue { get; } = new();
 	public Queue<OnMouseDown> OnMouseDownQueue { get; } = new();
@@ -82,69 +77,19 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	/// If multiple EventKind of the same are enqueued one after another then
 	/// better to have this Queue be a struct that has the count of contiguous work kind enqueues?
 	/// </summary>
-	public Queue<TextEditorWorkKind> WorkKindQueue { get; } = new();
+	public Queue<TextEditorWorkUiKind> WorkKindQueue { get; } = new();
 	
 	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
 	{
 		return null;
 	}
 	
-	public void PostRedundant(
-        string name,
-		ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        Func<TextEditorEditContext, ValueTask> textEditorFunc)
-    {
-    	EnqueueRedundantTextEditorWork(
-    		new RedundantTextEditorWork(
-	            name,
-				resourceUri,
-	            viewModelKey,
-	            _textEditorService,
-	            textEditorFunc));
-    }
-	
-	public void PostUnique(
-        string name,
-        Func<TextEditorEditContext, ValueTask> textEditorFunc)
-    {
-    	EnqueueUniqueTextEditorWork(
-    		new UniqueTextEditorWork(
-	            name,
-	            _textEditorService,
-	            textEditorFunc));
-    }
-	
-	public void EnqueueRedundantTextEditorWork(RedundantTextEditorWork redundantTextEditorWork)
-	{
-		lock (_workKindQueueLock)
-		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.RedundantTextEditorWork);
-			RedundantTextEditorWorkQueue.Enqueue(redundantTextEditorWork);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
-	}
-	
-	public Task EnqueueTextEditorWorkAsync(AsyncTextEditorWork asyncTextEditorWork)
-	{
-		return _textEditorService.BackgroundTaskService.EnqueueAsync(asyncTextEditorWork);
-	}
-	
-	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)
-	{
-		lock (_workKindQueueLock)
-		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.UniqueTextEditorWork);
-			UniqueTextEditorWorkQueue.Enqueue(uniqueTextEditorWork);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
-	}
-	
 	public void EnqueueOnDoubleClick(OnDoubleClick onDoubleClick)
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnDoubleClick);
+			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnDoubleClick;
+			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnDoubleClick);
 			OnDoubleClickQueue.Enqueue(onDoubleClick);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
@@ -154,7 +99,8 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnKeyDown);
+			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnKeyDown;
+			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnKeyDown);
 			OnKeyDownQueue.Enqueue(onKeyDown);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
@@ -164,7 +110,8 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnMouseDown);
+			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnMouseDown;
+			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnMouseDown);
 			OnMouseDownQueue.Enqueue(onMouseDown);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
@@ -174,7 +121,15 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnMouseMove);
+			/*if (_previousTextEditorWorkUiKind == TextEditorWorkUiKind.OnMouseMove)
+			{
+				_previousOnMouseMove = onMouseMove;
+				Console.WriteLine("Skip");
+				return;
+			}*/
+		
+			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnMouseMove;
+			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnMouseMove);
 			OnMouseMoveQueue.Enqueue(onMouseMove);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
@@ -184,7 +139,8 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnScrollHorizontal);
+			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnScrollHorizontal;
+			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnScrollHorizontal);
 			OnScrollHorizontalQueue.Enqueue(onScrollHorizontal);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
@@ -194,7 +150,8 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnScrollVertical);
+			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnScrollVertical;
+			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnScrollVertical);
 			OnScrollVerticalQueue.Enqueue(onScrollVertical);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
@@ -204,7 +161,8 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnWheel);
+			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnWheel;
+			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnWheel);
 			OnWheelQueue.Enqueue(onWheel);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
@@ -214,7 +172,8 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	{
 		lock (_workKindQueueLock)
 		{
-			WorkKindQueue.Enqueue(TextEditorWorkKind.OnWheelBatch);
+			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnWheelBatch;
+			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnWheelBatch);
 			OnWheelBatchQueue.Enqueue(onWheelBatch);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
@@ -222,7 +181,7 @@ public class TextEditorWorker : IBackgroundTaskGroup
 	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)
 	{
-		TextEditorWorkKind workKind;
+		TextEditorWorkUiKind workKind;
 	
 		// avoid UI infinite loop enqueue dequeue single work item
 		// by getting the count prior to starting the yield return deqeue
@@ -232,52 +191,31 @@ public class TextEditorWorker : IBackgroundTaskGroup
 		{
 			if (!WorkKindQueue.TryDequeue(out workKind))
 				return ValueTask.CompletedTask;
+			
+			// if (WorkKindQueue.Count == 0)
+			// 	_previousTextEditorWorkUiKind = TextEditorWorkUiKind.None;
 		}
 			
 		switch (workKind)
 		{
-			case TextEditorWorkKind.RedundantTextEditorWork:
-				var redundantTextEditorWork = RedundantTextEditorWorkQueue.Dequeue();
-				_taskCompletionSourceWasCreated = redundantTextEditorWork.__TaskCompletionSourceWasCreated;
-				return redundantTextEditorWork.HandleEvent(cancellationToken);
-			case TextEditorWorkKind.UniqueTextEditorWork:
-				var uniqueTextEditorWork = UniqueTextEditorWorkQueue.Dequeue();
-				_taskCompletionSourceWasCreated = uniqueTextEditorWork.__TaskCompletionSourceWasCreated;
-				return uniqueTextEditorWork.HandleEvent(cancellationToken);
-			case TextEditorWorkKind.OnDoubleClick:
-				var onDoubleClick = OnDoubleClickQueue.Dequeue();
-				_taskCompletionSourceWasCreated = false;
-				return onDoubleClick.HandleEvent(cancellationToken);
-		    case TextEditorWorkKind.OnKeyDown:
-		    	var onKeyDown = OnKeyDownQueue.Dequeue();
-				_taskCompletionSourceWasCreated = false;
-				return onKeyDown.HandleEvent(cancellationToken);
-			case TextEditorWorkKind.OnMouseDown:
-				var onMouseDown = OnMouseDownQueue.Dequeue();
-				_taskCompletionSourceWasCreated = false;
-				return onMouseDown.HandleEvent(cancellationToken);
-		    case TextEditorWorkKind.OnMouseMove:
-		    	var onMouseMove = OnMouseMoveQueue.Dequeue();
-				_taskCompletionSourceWasCreated = false;
-				return onMouseMove.HandleEvent(cancellationToken);
-		    case TextEditorWorkKind.OnScrollHorizontal:
-		    	var onScrollHorizontal = OnScrollHorizontalQueue.Dequeue();
-				_taskCompletionSourceWasCreated = false;
-				return onScrollHorizontal.HandleEvent(cancellationToken);
-			case TextEditorWorkKind.OnScrollVertical:
-		    	var onScrollVertical = OnScrollVerticalQueue.Dequeue();
-				_taskCompletionSourceWasCreated = false;
-				return onScrollVertical.HandleEvent(cancellationToken);
-			case TextEditorWorkKind.OnWheel:
-		    	var onWheel = OnWheelQueue.Dequeue();
-				_taskCompletionSourceWasCreated = false;
-				return onWheel.HandleEvent(cancellationToken);
-			case TextEditorWorkKind.OnWheelBatch:
-		    	var onWheelBatch = OnWheelBatchQueue.Dequeue();
-				_taskCompletionSourceWasCreated = false;
-				return onWheelBatch.HandleEvent(cancellationToken);
+			case TextEditorWorkUiKind.OnDoubleClick:
+				return OnDoubleClickQueue.Dequeue().HandleEvent(cancellationToken);
+		    case TextEditorWorkUiKind.OnKeyDown:
+				return OnKeyDownQueue.Dequeue().HandleEvent(cancellationToken);
+			case TextEditorWorkUiKind.OnMouseDown:
+				return OnMouseDownQueue.Dequeue().HandleEvent(cancellationToken);
+		    case TextEditorWorkUiKind.OnMouseMove:
+				return OnMouseMoveQueue.Dequeue().HandleEvent(cancellationToken);
+		    case TextEditorWorkUiKind.OnScrollHorizontal:
+				return OnScrollHorizontalQueue.Dequeue().HandleEvent(cancellationToken);
+			case TextEditorWorkUiKind.OnScrollVertical:
+				return OnScrollVerticalQueue.Dequeue().HandleEvent(cancellationToken);
+			case TextEditorWorkUiKind.OnWheel:
+				return OnWheelQueue.Dequeue().HandleEvent(cancellationToken);
+			case TextEditorWorkUiKind.OnWheelBatch:
+				return OnWheelBatchQueue.Dequeue().HandleEvent(cancellationToken);
 			default:
-				Console.WriteLine($"{nameof(TextEditorWorker)} {nameof(HandleEvent)} default case");
+				Console.WriteLine($"{nameof(TextEditorWorkerUi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
 		}
 	}
