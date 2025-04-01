@@ -171,6 +171,9 @@ public partial class TextEditorService : ITextEditorService
 
             if (modelModifier.WasDirty != modelModifier.IsDirty)
             {
+            	var model = ModelApi.GetOrDefault(modelModifier.ResourceUri);
+            	model.IsDirty = modelModifier.IsDirty;
+            
                 if (modelModifier.IsDirty)
                     _dirtyResourceUriService.AddDirtyResourceUri(modelModifier.ResourceUri);
                 else
