@@ -151,7 +151,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
             InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
             false);
 
-		_textEditorService.TextEditorWorker.PostUnique(nameof(WebsiteInitializationBackgroundTaskGroup), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(WebsiteInitializationBackgroundTaskGroup), async editContext =>
 		{
 			await _textEditorService.OpenInEditorAsync(
 				editContext,
@@ -204,7 +204,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                 decorationMapper,
                 compilerService);
 
-            _textEditorService.TextEditorWorker.PostUnique(
+            _textEditorService.WorkerArbitrary.PostUnique(
                 nameof(_textEditorService.ModelApi.AddPresentationModel),
                 editContext =>
                 {

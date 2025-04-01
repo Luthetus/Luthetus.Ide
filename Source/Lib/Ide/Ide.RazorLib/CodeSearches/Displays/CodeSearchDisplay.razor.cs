@@ -129,7 +129,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	
 	private async Task UpdateContent()
 	{
-		TextEditorService.TextEditorWorker.PostUnique(nameof(CodeSearchDisplay), async editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), async editContext =>
 		{
 			Console.WriteLine(nameof(UpdateContent));
 		

@@ -87,7 +87,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		IServiceProvider serviceProvider)
 	{
 		var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
-		textEditorService.TextEditorWorker.PostUnique(nameof(SolutionExplorerTreeViewMouseEventHandler), async editContext =>
+		textEditorService.WorkerArbitrary.PostUnique(nameof(SolutionExplorerTreeViewMouseEventHandler), async editContext =>
 		{
 			await textEditorService.OpenInEditorAsync(
 				editContext,

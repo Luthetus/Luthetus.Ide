@@ -57,7 +57,8 @@ public partial class TextEditorService : ITextEditorService
 		IAppDimensionService appDimensionService,
 		IServiceProvider serviceProvider)
     {
-    	TextEditorWorker = new(this);
+    	WorkerUi = new(this);
+    	WorkerArbitrary = new(this);
     
 		AppDimensionService = appDimensionService;
 		_serviceProvider = serviceProvider;
@@ -112,7 +113,8 @@ public partial class TextEditorService : ITextEditorService
     
     public TextEditorState TextEditorState { get; }
     
-    public TextEditorWorker TextEditorWorker { get; }
+    public TextEditorWorkerUi WorkerUi { get; }
+	public TextEditorWorkerArbitrary WorkerArbitrary { get; }
     
     public IBackgroundTaskService BackgroundTaskService => _backgroundTaskService;
     
@@ -169,6 +171,9 @@ public partial class TextEditorService : ITextEditorService
 
             if (modelModifier.WasDirty != modelModifier.IsDirty)
             {
+            	var model = ModelApi.GetOrDefault(modelModifier.ResourceUri);
+            	model.IsDirty = modelModifier.IsDirty;
+            
                 if (modelModifier.IsDirty)
                     _dirtyResourceUriService.AddDirtyResourceUri(modelModifier.ResourceUri);
                 else

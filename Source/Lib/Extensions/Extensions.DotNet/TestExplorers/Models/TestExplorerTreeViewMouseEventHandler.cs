@@ -79,7 +79,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			_notificationService,
 			TimeSpan.FromSeconds(5));
 
-		_textEditorService.TextEditorWorker.PostUnique(
+		_textEditorService.WorkerArbitrary.PostUnique(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			TestExplorerHelper.ShowTestInEditorFactory(
 				className,

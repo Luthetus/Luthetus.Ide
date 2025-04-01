@@ -128,7 +128,7 @@ public struct SyntaxViewModel
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return Task.CompletedTask;
 		
-		textEditorService.TextEditorWorker.PostUnique(nameof(SyntaxViewModel), async editContext =>
+		textEditorService.WorkerArbitrary.PostUnique(nameof(SyntaxViewModel), async editContext =>
 		{
 			await textEditorService.OpenInEditorAsync(
 					editContext,

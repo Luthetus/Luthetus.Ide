@@ -1,9 +1,8 @@
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public enum TextEditorWorkKind
+public enum TextEditorWorkUiKind
 {
-	RedundantTextEditorWork,
-    UniqueTextEditorWork,
+	None,
 	OnDoubleClick,
     OnKeyDown,
 	OnMouseDown,

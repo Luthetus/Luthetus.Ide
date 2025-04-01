@@ -71,7 +71,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
 
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.TriggerSave),
             editContext =>
             {
@@ -132,7 +132,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.CopyAsync),
             editContext =>
             {
@@ -156,7 +156,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.CutAsync),
             editContext =>
             {
@@ -180,7 +180,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.PasteAsync),
             editContext =>
             {
@@ -204,7 +204,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
 
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.Redo),
             editContext =>
             {
@@ -229,7 +229,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.Undo),
             editContext =>
             {
@@ -253,7 +253,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.SelectAll),
             editContext =>
             {
@@ -278,7 +278,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.TriggerRemeasure),
             editContext =>
             {
@@ -325,7 +325,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 		    MenuOptionKind.Delete,
 		    onClickFunc: () =>
 		    {
-			    TextEditorService.TextEditorWorker.PostUnique(
+			    TextEditorService.WorkerArbitrary.PostUnique(
 		            nameof(DoReloadOnClick),
 		            editContext =>
 		            {
@@ -362,7 +362,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.TriggerRemeasure),
             editContext =>
             {

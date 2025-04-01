@@ -321,7 +321,7 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 		Key<TextEditorGroup> groupKey,
     	Key<TextEditorViewModel> viewModelKey)
 	{
-		_textEditorService.TextEditorWorker.PostRedundant(
+		_textEditorService.WorkerArbitrary.PostRedundant(
 			nameof(PostScroll),
 			ResourceUri.Empty,
 			viewModelKey,

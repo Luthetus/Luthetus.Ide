@@ -29,7 +29,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
     {
         if (firstRender)
         {
-        	TextEditorService.TextEditorWorker.PostUnique(nameof(GitChangesDisplay), editContext =>
+        	TextEditorService.WorkerArbitrary.PostUnique(nameof(GitChangesDisplay), editContext =>
         	{
         		// "In" Registrations
 	            {

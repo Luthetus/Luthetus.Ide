@@ -32,7 +32,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-		_textEditorService.TextEditorWorker.PostUnique(nameof(FolderExplorerTreeViewMouseEventHandler), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(FolderExplorerTreeViewMouseEventHandler), async editContext =>
 		{
 			await _textEditorService.OpenInEditorAsync(
 				editContext,

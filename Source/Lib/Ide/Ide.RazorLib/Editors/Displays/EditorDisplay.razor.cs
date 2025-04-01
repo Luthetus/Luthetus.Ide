@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -18,6 +19,8 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 {
 	[Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 
@@ -45,6 +48,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
         };
     
         TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
+        DirtyResourceUriService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
 
         base.OnInitialized();
     }
@@ -71,6 +75,16 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	    }
     
         await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void DirtyResourceUriServiceOnStateChanged()
+    {
+		var localTabListDisplay = _tabListDisplay;
+		
+		if (localTabListDisplay is not null)
+		{
+			await localTabListDisplay.NotifyStateChangedAsync();
+		}
     }
 
 	private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
@@ -102,5 +116,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         TextEditorService.GroupApi.TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
+        DirtyResourceUriService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
     }
 }

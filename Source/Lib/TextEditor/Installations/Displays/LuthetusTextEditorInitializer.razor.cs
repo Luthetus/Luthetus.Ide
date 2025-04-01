@@ -98,7 +98,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
 	
     private void QueueRemeasureBackgroundTask()
     {
-        TextEditorService.TextEditorWorker.PostRedundant(
+        TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(QueueRemeasureBackgroundTask),
 			ResourceUri.Empty,
 			Key<TextEditorViewModel>.Empty,

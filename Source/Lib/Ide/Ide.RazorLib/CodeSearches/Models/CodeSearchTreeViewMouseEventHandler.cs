@@ -34,7 +34,7 @@ public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
 			return Task.CompletedTask;
 
-		_textEditorService.TextEditorWorker.PostUnique(nameof(CodeSearchTreeViewMouseEventHandler), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchTreeViewMouseEventHandler), async editContext =>
 		{
 			await _textEditorService.OpenInEditorAsync(
 				editContext,
