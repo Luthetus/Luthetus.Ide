@@ -117,7 +117,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_textEditorService.TextEditorWorker.PostUnique(nameof(CSharpCompilerService), editContext =>
+    	_textEditorService.WorkerArbitrary.PostUnique(nameof(CSharpCompilerService), editContext =>
         {
 			var modelModifier = editContext.GetModelModifier(resourceUri);
 
@@ -435,7 +435,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return;
 		
-		_textEditorService.TextEditorWorker.PostUnique(nameof(SyntaxViewModel), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(SyntaxViewModel), async editContext =>
 		{
 			await _textEditorService.OpenInEditorAsync(
 					editContext,
@@ -839,7 +839,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     private Task PropSnippet(string word, TextEditorTextSpan textSpan, string textToInsert)
     {
-        _textEditorService.TextEditorWorker.PostUnique(
+        _textEditorService.WorkerArbitrary.PostUnique(
 	        nameof(PropSnippet),
 	        (Func<TextEditorEditContext, ValueTask>)(	        editContext =>
 	        {

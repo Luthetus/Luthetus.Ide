@@ -50,7 +50,7 @@ public partial class CommandBarDisplay : ComponentBase
         {
             // await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
 
-            TextEditorService.TextEditorWorker.PostUnique(
+            TextEditorService.WorkerArbitrary.PostUnique(
                 nameof(HandleOnKeyDown),
                 editContext =>
                 {
@@ -70,7 +70,7 @@ public partial class CommandBarDisplay : ComponentBase
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
-        	TextEditorService.TextEditorWorker.PostUnique(
+        	TextEditorService.WorkerArbitrary.PostUnique(
                 nameof(HandleOnKeyDown),
                 editContext =>
                 {

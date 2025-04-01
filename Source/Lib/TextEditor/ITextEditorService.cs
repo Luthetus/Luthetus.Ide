@@ -56,7 +56,8 @@ public partial interface ITextEditorService
 	/// </summary>
 	public TextEditorState TextEditorState { get; }
 	
-	public TextEditorWorker TextEditorWorker { get; }
+	public TextEditorWorkerUi WorkerUi { get; }
+	public TextEditorWorkerArbitrary WorkerArbitrary { get; }
 	
 	/// <summary>TODO: Delete this, this is a hack so I have it in scope for the new TextEditorWorker code.</summary>
 	public IBackgroundTaskService BackgroundTaskService { get; }

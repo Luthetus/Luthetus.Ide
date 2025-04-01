@@ -53,7 +53,7 @@ public class CodeSearchTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandl
 		if (activeNode is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
 			return Task.CompletedTask;
 
-		_textEditorService.TextEditorWorker.PostUnique(nameof(CodeSearchTreeViewKeyboardEventHandler), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchTreeViewKeyboardEventHandler), async editContext =>
 		{
 			await _textEditorService.OpenInEditorAsync(
 				editContext,

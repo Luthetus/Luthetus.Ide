@@ -194,7 +194,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	{
 		_throttle.Run(_ =>
         {
-        	TextEditorService.TextEditorWorker.PostUnique(
+        	TextEditorService.WorkerArbitrary.PostUnique(
 				nameof(TerminalOutput),
 				editContext =>
 				{

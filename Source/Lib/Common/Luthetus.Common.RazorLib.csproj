@@ -7,7 +7,7 @@
         <Product>Luthetus Common</Product>
         <Description>A repository containing Blazor Components I've made which I commonly use in other projects.</Description>
         <PackageId>Luthetus.Common</PackageId>
-        <Version>4.7.0</Version>
+        <Version>4.8.0</Version>
         <Authors>Hunter Freeman</Authors>
         <Company />
         <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>

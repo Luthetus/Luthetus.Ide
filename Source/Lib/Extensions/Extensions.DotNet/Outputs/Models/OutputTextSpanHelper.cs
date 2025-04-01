@@ -60,7 +60,7 @@ public static class OutputTextSpanHelper
 		if (columnIndex < 0)
 			columnIndex = null;
 		
-		textEditorService.TextEditorWorker.PostUnique(nameof(OutputTextSpanHelper), async editContext =>
+		textEditorService.WorkerArbitrary.PostUnique(nameof(OutputTextSpanHelper), async editContext =>
 		{
 			await textEditorService.OpenInEditorAsync(
 				editContext,

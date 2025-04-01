@@ -53,7 +53,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 			if (model is null)
 			{
-				TextEditorService.TextEditorWorker.PostUnique(nameof(TestExplorerDisplay), async editContext =>
+				TextEditorService.WorkerArbitrary.PostUnique(nameof(TestExplorerDisplay), async editContext =>
 				{
 					var terminalDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
 					var terminalCompilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
@@ -86,7 +86,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 	private void RegisterDetailsTextEditor(TextEditorModel model)
 	{
-		TextEditorService.TextEditorWorker.PostUnique(
+		TextEditorService.WorkerArbitrary.PostUnique(
 			nameof(TextEditorService.ModelApi.AddPresentationModel),
 			editContext =>
 			{

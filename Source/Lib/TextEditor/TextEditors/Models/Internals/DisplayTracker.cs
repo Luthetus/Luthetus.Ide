@@ -153,7 +153,7 @@ public sealed class DisplayTracker : IDisposable
 						return ValueTask.CompletedTask;
 		            });
 				
-				_textEditorService.TextEditorWorker.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+				_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
 			}
 		}
     }
@@ -211,7 +211,7 @@ public sealed class DisplayTracker : IDisposable
         if (model is null || viewModel is null)
             return;
 
-		_textEditorService.TextEditorWorker.PostRedundant(
+		_textEditorService.WorkerArbitrary.PostRedundant(
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,
             viewModel.ViewModelKey,

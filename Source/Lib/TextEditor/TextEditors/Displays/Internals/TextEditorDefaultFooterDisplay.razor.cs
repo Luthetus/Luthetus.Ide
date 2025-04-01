@@ -49,7 +49,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            TextEditorService.TextEditorWorker.PostRedundant(
+            TextEditorService.WorkerArbitrary.PostRedundant(
                 nameof(TextEditorService.ModelApi.SetUsingLineEndKind),
                 viewModel.ResourceUri,
 				viewModel.ViewModelKey,

@@ -33,7 +33,7 @@ public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
 			return Task.CompletedTask;
 
-		_textEditorService.TextEditorWorker.PostUnique(nameof(FindAllTreeViewMouseEventHandler), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(FindAllTreeViewMouseEventHandler), async editContext =>
     	{
     		await _textEditorService.OpenInEditorAsync(
     			editContext,

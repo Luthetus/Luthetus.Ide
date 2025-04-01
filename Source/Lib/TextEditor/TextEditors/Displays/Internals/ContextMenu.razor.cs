@@ -72,7 +72,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
-            TextEditorService.TextEditorWorker.PostUnique(
+            TextEditorService.WorkerArbitrary.PostUnique(
 				nameof(ContextMenu),
 				editContext =>
 				{
@@ -99,7 +99,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     		
         try
         {
-            TextEditorService.TextEditorWorker.PostUnique(
+            TextEditorService.WorkerArbitrary.PostUnique(
 				nameof(ContextMenu),
 				editContext =>
 				{
@@ -174,7 +174,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         {
             try
             {
-				TextEditorService.TextEditorWorker.PostUnique(
+				TextEditorService.WorkerArbitrary.PostUnique(
 					nameof(ContextMenu),
 					editContext =>
 					{
@@ -210,7 +210,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.CutAsync),
             editContext =>
             {
@@ -234,7 +234,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.CopyAsync),
             editContext =>
             {
@@ -258,7 +258,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
 
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.PasteAsync),
             editContext =>
             {
@@ -282,7 +282,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     		
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.GoToDefinition),
             editContext =>
             {
@@ -311,7 +311,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor),
             editContext =>
             {
@@ -337,7 +337,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.ShowFindOverlay),
             editContext =>
             {
@@ -363,7 +363,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(TextEditorCommandDefaultFunctions.RelatedFilesQuickPick),
             editContext =>
             {

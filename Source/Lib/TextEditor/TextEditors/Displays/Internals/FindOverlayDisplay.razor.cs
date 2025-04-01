@@ -49,7 +49,7 @@ public partial class FindOverlayDisplay : ComponentBase
             
             _throttleInputValueChange.Run(_ =>
             {
-            	TextEditorService.TextEditorWorker.PostUnique(
+            	TextEditorService.WorkerArbitrary.PostUnique(
                     nameof(FindOverlayDisplay),
                     editContext =>
                     {
@@ -145,7 +145,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 .FocusHtmlElementById(renderBatchLocal.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
-            TextEditorService.TextEditorWorker.PostRedundant(
+            TextEditorService.WorkerArbitrary.PostRedundant(
                 nameof(FindOverlayDisplay),
 				renderBatchLocal.ViewModel.ResourceUri,
                 renderBatchLocal.ViewModel.ViewModelKey,
@@ -266,7 +266,7 @@ public partial class FindOverlayDisplay : ComponentBase
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
-        TextEditorService.TextEditorWorker.PostUnique(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
             editContext =>
             {
