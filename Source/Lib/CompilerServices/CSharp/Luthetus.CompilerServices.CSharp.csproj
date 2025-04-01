@@ -7,7 +7,7 @@
     <Product>Luthetus Compiler Service C#</Product>
     <Description>A C# implementation of the ICompilerService interface, which comes from the "Luthetus.TextEditor" repository.</Description>
     <PackageId>Luthetus.CompilerServices.CSharp</PackageId>
-    <Version>4.7.0</Version>
+    <Version>4.8.0</Version>
     <Authors>Hunter Freeman</Authors>
     <Company />
     <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>
