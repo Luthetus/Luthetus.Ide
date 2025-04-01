@@ -173,9 +173,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private string _personalWrapperCssClass;
     private string _personalWrapperCssStyle;
     
-    private int _renderCount;
-    private long _mouseDownStopwatch;
-    
     private string ContentElementId { get; set; }
     
     public string WrapperCssClass { get; private set; }
@@ -584,8 +581,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
       	await nextViewModel.FocusAsync();
   }
     
-    bool keyDownTest = false;
-    
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
     	// Inlining: 'EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs)'
@@ -596,13 +591,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         {
             return;
         }
-        
-        if (!keyDownTest)
-        {
-        	keyDownTest = true;
-	        _mouseDownStopwatch = Stopwatch.GetTimestamp();
-	    	_renderCount = 0;
-	    }
         
         TextEditorService.WorkerUi.EnqueueOnKeyDown(
         	new OnKeyDown(
@@ -651,10 +639,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
-    	_mouseDownStopwatch = Stopwatch.GetTimestamp();
-    	_renderCount = 0;
-    	keyDownTest = false;
-    
         _componentData.ThinksLeftMouseButtonIsDown = true;
         _onMouseMoveMouseEventArgs = null;
 
