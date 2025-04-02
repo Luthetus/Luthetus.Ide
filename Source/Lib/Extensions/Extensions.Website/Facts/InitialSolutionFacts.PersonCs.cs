@@ -331,6 +331,50 @@ Console.WriteLine(pointMessage);
 // Output is:
 // {The point {2, 3} is 3.606 from the origin}
 
+var asdf;
+(Apple?)asdf;
+
+var inModel = (TextEditorModel?)null;
+
+
+((int zzz, int asd) a, (int yyy, int dsa) b) zzz;
+
+
+try
+{
+	return;
+}
+catch (Exception e) when (e is LuthetusTextEditorException || e is InvalidOperationException)
+{
+    return;
+}
+
+
+Hello(nameof(InsertAutocompleteMenuOption));
+
+
+var TextEditorViewModelDisplay = 2;
+public bool OnRenderBatchChanged() => true;
+TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
+TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
+
+
+var viewModelModifier = viewModel is null ? null : new(viewModel);
+
+
+public (Ddd? TextEditorModel, Fff? TextEditorViewModel)
+	Aaa(ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
+{
+	
+	var inViewModel = (TextEditorViewModel?)null;
+}
+
+
+public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefault(
+	Key<TextEditorViewModel> viewModelKey)
+{
+}
+
 /*
 Not everything in this file works perfectly yet.
 I am laying it all out so I see what is and isn't working.

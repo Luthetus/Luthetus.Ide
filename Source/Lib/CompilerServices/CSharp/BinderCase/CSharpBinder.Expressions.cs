@@ -536,6 +536,12 @@ public partial class CSharpBinder
 				if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
 					return ambiguousIdentifierExpressionNode;
 				
+				if (token.SyntaxKind == SyntaxKind.QuestionMarkToken)
+				{
+					ambiguousIdentifierExpressionNode.HasQuestionMark = true;
+					return ambiguousIdentifierExpressionNode;
+				}
+				
 				goto default;
 			}
 			case SyntaxKind.IdentifierToken:
@@ -596,8 +602,6 @@ public partial class CSharpBinder
 		bool forceVariableReferenceNode = false,
 		bool allowFabricatedUndefinedNode = true)
 	{
-		ambiguousIdentifierExpressionNode._wasDecided = true;
-	
 		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
 			parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -643,6 +647,7 @@ public partial class CSharpBinder
 	        {
 	        	var token = ambiguousIdentifierExpressionNode.Token;
 	            var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
 			    return typeClauseNode;
 	        }
@@ -672,6 +677,7 @@ public partial class CSharpBinder
 			{
 				var token = ambiguousIdentifierExpressionNode.Token;
 	            var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
 			    return typeClauseNode;
 			}
