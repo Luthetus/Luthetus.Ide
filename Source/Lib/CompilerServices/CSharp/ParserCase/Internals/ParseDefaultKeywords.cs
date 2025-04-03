@@ -47,29 +47,12 @@ public class ParseDefaultKeywords
     	var catchKeywordToken = parserModel.TokenWalker.Consume();
     	var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
-    	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-    	
-    	var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
-    
-    	TryStatementNode? tryStatementNode = null;
-    	
     	var catchNode = new TryStatementCatchNode(
-        	tryStatementNode,
+        	parent: null,
 	        catchKeywordToken,
 	        openParenthesisToken,
-	        closeParenthesisToken,
+	        closeParenthesisToken: default,
 	        codeBlockNode: null);
-	    
-	    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-	    {
-	    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-			parserModel.Binder.RemoveVariableDeclarationNodeFromActiveCompilationUnit(parserModel.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserModel);
-	    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
-	    }
-    
-    	// This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
-    	// tryStatementNode.SetTryStatementCatchNode(catchNode);
     	
     	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	catchNode,
@@ -77,7 +60,29 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-	        
+    	
+    	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+    	
+    	var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+    
+    	TryStatementNode? tryStatementNode = null;
+	    
+	    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	    {
+	    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
+	    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
+	    }
+	    
+	    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhenTokenContextualKeyword)
+	    {
+	    	_ = parserModel.TokenWalker.Consume(); // WhenTokenContextualKeyword
+	    	
+	    	parserModel.ExpressionList.Add((SyntaxKind.OpenBraceToken, null));
+			_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+	    }
+	    
+	    // Not valid C# -- catch requires brace deliminated code block --, but here for parser recovery.
 	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
     		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
