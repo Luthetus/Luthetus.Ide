@@ -668,6 +668,37 @@ public partial class CSharpBinder
 	    		return ambiguousIdentifierExpressionNode;
 			}
     	}
+    	
+    	if (!forceVariableReferenceNode &&
+    	    parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
+    	    UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+		{
+			if (TryGetFunctionHierarchically(
+			    	compilationUnit,
+			        compilationUnit.ResourceUri,
+			    	parserModel.CurrentScopeIndexKey,
+			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
+			        out var functionDefinitionNode))
+	        {
+	        	var token = ambiguousIdentifierExpressionNode.Token;
+				var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
+				
+				var functionInvocationNode = new FunctionInvocationNode(
+					ambiguousIdentifierExpressionNode.Token,
+			        functionDefinitionNode: null,
+			        genericParameterListing: default,
+			        functionParameterListing: default,
+			        CSharpFacts.Types.Void.ToTypeClause());
+				
+				// TODO: Method groups
+				BindFunctionInvocationNode(
+			        functionInvocationNode,
+			        compilationUnit,
+			        ref parserModel);
+    			
+    			return functionInvocationNode;
+	        }
+		}
 		
 		if (allowFabricatedUndefinedNode)
 		{
