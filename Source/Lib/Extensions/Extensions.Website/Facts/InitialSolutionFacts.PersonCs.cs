@@ -11,6 +11,15 @@ namespace Luthetus.CompilerServices.CSharp;
 public class PersonRepository
 {
 	private readonly List<Person> _people = new();
+	// -------------------^
+	// Right Click, then QuickActions/Refactors on 'Person', and
+	// the namespace it exists in will appear as a menu option.
+	//
+	// Pick this menu option to copy the using
+	// statement for its namespace.
+	//
+	// You can do this when viewing the 'PersonDisplay.razor.cs' file too.
+	// By interacting with the 'Person' property's TypeClauseNode in the same way.
 	
 	public PersonRepository()
 	{
@@ -38,16 +47,8 @@ public class PersonRepository
 		person.FirstName;
 		//     ^ hover mouse here for member access tooltip.
 		//
-		// Multiple classes in the same file are inconsistently doing this now.
 		// If you move this type below 'Person' it will stop working.
-		// Reason being the order that things are parsed.
-		// 
-		// When running the IDE natively,
-		// any cross file referencing is still working as expected.
-		//
-		// Cross file referencing in the demo is iffy because
-		// I had made the demo's filesystem quickly
-		// just to have something for the demo (since web sandboxing). (2025-03-01)
+		// Reason being the order that things are parsed (this is TODO for fixing).
 		
 		FirstName;
 		// ^ contrast the 'member access tooltip' with what happens if the identifier is alone;
@@ -69,6 +70,10 @@ public class PersonRepository
 	
 	public Person CreatePerson_ObjectInitialization(string firstName, string lastName)
 	{
+		// In the various object initialization syntax uses below,
+		// you can hover the property name on the left-hand-side,
+		// to get a tooltip, as well you can goto-definition.
+		
 		var person = new Person()
 		{
 			FirstName = firstName,
@@ -94,6 +99,9 @@ public class PersonRepository
 	{
 		PersonRecord person = new PersonRecord(firstName, lastName);
 		
+		// In this 'record with' syntax usage,
+		// you can hover the property name on the left-hand-side,
+		// to get a tooltip, as well you can goto-definition.
 		person = person with
 		{
 			FirstName = "Asdfg",
@@ -353,6 +361,7 @@ catch (Exception e) when (e is LuthetusTextEditorException || e is InvalidOperat
 Hello(nameof(InsertAutocompleteMenuOption));
 
 
+// Event subscription
 var TextEditorViewModelDisplay = 2;
 public bool OnRenderBatchChanged() => true;
 TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
@@ -361,8 +370,7 @@ TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
 
 var viewModelModifier = viewModel is null ? null : new(viewModel);
 
-
-public (Ddd? TextEditorModel, Fff? TextEditorViewModel)
+/*public (Ddd? TextEditorModel, Fff? TextEditorViewModel)
 	Aaa(ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
 {
 	
@@ -373,7 +381,7 @@ public (Ddd? TextEditorModel, Fff? TextEditorViewModel)
 public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefault(
 	Key<TextEditorViewModel> viewModelKey)
 {
-}
+}*/
 
 /*
 Not everything in this file works perfectly yet.
