@@ -22,7 +22,7 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		#if DEBUG
+		/*#if DEBUG
 		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 		{
 			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
@@ -31,7 +31,7 @@ public partial class CSharpBinder
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		#else
 		Console.WriteLine($"{nameof(AnyMergeToken)} has debug 'Console.Write...' that needs commented out.");
-		#endif
+		#endif*/
 		
 		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
 			UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
@@ -96,11 +96,11 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeExpression(
 		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		#if DEBUG
+		/*#if DEBUG
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {expressionSecondary.SyntaxKind}");
 		#else
 		Console.WriteLine($"{nameof(AnyMergeExpression)} has debug 'Console.Write...' that needs commented out.");
-		#endif
+		#endif*/
 	
 		switch (expressionPrimary.SyntaxKind)
 		{

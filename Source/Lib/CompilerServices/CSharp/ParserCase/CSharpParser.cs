@@ -71,11 +71,11 @@ public static class CSharpParser
         	// Knowing this to be the case is extremely important.
             var token = parserModel.TokenWalker.Current;
            
-			#if DEBUG
+			/*#if DEBUG
 			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.GetText() + "___" + parserModel.TokenWalker.Index);
 			#else
 			Console.WriteLine($"{nameof(CSharpParser)}.{nameof(Parse)} has debug 'Console.Write...' that needs commented out.");
-			#endif
+			#endif*/
 
             switch (token.SyntaxKind)
             {

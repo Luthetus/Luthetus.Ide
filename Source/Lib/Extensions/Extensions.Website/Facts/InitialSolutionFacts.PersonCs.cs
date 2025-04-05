@@ -187,14 +187,18 @@ public partial class Counter : ComponentBase
 	
 	public string AaaMethod1() => _aaa;
 
+	// TODO: Method 'where' is clobbering
+	//
+	/*
 	public string AaaMethod2<T>() where T : class => _aaa;
 	
-	public string AaaMethod3()
+	public string AaaMethod4<T>() where T : class
 	{
 		return _aaa;
 	}
+	*/
 	
-	public string AaaMethod4<T>() where T : class
+	public string AaaMethod3()
 	{
 		return _aaa;
 	}
