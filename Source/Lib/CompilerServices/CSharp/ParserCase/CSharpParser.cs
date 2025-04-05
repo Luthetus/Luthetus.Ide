@@ -71,11 +71,11 @@ public static class CSharpParser
         	// Knowing this to be the case is extremely important.
             var token = parserModel.TokenWalker.Current;
            
-			/*#if DEBUG
+			#if DEBUG
 			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.GetText() + "___" + parserModel.TokenWalker.Index);
 			#else
 			Console.WriteLine($"{nameof(CSharpParser)}.{nameof(Parse)} has debug 'Console.Write...' that needs commented out.");
-			#endif*/
+			#endif
 
             switch (token.SyntaxKind)
             {
@@ -186,13 +186,19 @@ public static class CSharpParser
                 case SyntaxKind.EqualsToken:
                     ParseTokens.ParseEqualsToken(compilationUnit, ref parserModel);
                     break;
-                // TODO: SyntaxKind.EqualsCloseAngleBracketToken
+                case SyntaxKind.EqualsCloseAngleBracketToken:
+                {
+                	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
+                	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+	        		parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+                	break;
+            	}
                 case SyntaxKind.StatementDelimiterToken:
                 {
                 	// TODO: This is being inlined within ParseTokens.ParseGetterOrSetter(...)...
                 	// just to check whether this code running is a valid solution.
                 	// If this is found to work, the inlined code should not stay there long term.
-                
+
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;

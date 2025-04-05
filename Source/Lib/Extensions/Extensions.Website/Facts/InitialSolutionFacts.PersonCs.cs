@@ -186,10 +186,17 @@ public partial class Counter : ComponentBase
 	public string Aaa3 => _aaa;
 	
 	public string AaaMethod1() => _aaa;
+
+	public string AaaMethod2<T>() where T : class => _aaa;
 	
-	public string AaaMethod2()
+	public string AaaMethod3()
 	{
-		_aaa;
+		return _aaa;
+	}
+	
+	public string AaaMethod4<T>() where T : class
+	{
+		return _aaa;
 	}
 	
 	private string _aaa;

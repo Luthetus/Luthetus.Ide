@@ -350,10 +350,8 @@ public static class ParseTokens
     
     public static void ParsePropertyDefinition_ExpressionBound(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-		var equalsCloseAngleBracketToken = parserModel.TokenWalker.Consume();
-		
-		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-		var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+		_ = parserModel.TokenWalker.Backtrack();
+		ParseGetterOrSetter(compilationUnit, variableDeclarationNode: null, ref parserModel);
     }
 
 	/// <summary>
