@@ -302,31 +302,30 @@ public static class ParseTokens
         {
         	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
         
+        	// Code Duplication: this is also in 'ParseFunctions.HandleFunctionDefinition(...)'
+        
         	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
-        	_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
         	
-        	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-        	{
-        		// TODO: Not including the 'FinishStatement' invocation will cause a bug if the expression bound property...
-        		// ...is returning a lambda expression.
-        		// The bug will relate to the lambda expression having variables in scope that it shouldn't.
-        		//
-	        	// var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
-				// if (deferredParsingOccurred)
-				// 	break;
-				
-				#if DEBUG
-				parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-				#endif
-				
-				var statementDelimiterToken = parserModel.TokenWalker.Consume();
-				
-				#if DEBUG
-				parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-				#endif
-				
-	            ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, compilationUnit, ref parserModel);
-            }
+        	// Global scope has a null parent.
+			var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+			
+			if (parentScopeDirection == ScopeDirectionKind.Both)
+			{
+				if (!parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing)
+				{
+					parserModel.TokenWalker.DeferParsingOfChildScope(compilationUnit, ref parserModel);
+					return;
+				}
+	
+				parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = false;
+			}
+			else
+			{
+	        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+	        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+			}
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {

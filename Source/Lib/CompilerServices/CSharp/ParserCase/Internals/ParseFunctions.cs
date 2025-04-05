@@ -69,6 +69,8 @@ public class ParseFunctions
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
+        	// Code Duplication: this is also in 'ParseTokens.ParseGetterOrSetter(...)'
+        
         	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
         
         	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
