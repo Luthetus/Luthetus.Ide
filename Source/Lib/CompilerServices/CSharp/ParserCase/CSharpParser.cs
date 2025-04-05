@@ -104,6 +104,10 @@ public static class CSharpParser
                     break;
                 case SyntaxKind.OpenBraceToken:
                 {
+                	// TODO: This is being inlined within ParseTokens.ParseGetterOrSetter(...)...
+                	// just to check whether this code running is a valid solution.
+                	// If this is found to work, the inlined code should not stay there long term.
+                
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
@@ -185,6 +189,10 @@ public static class CSharpParser
                 // TODO: SyntaxKind.EqualsCloseAngleBracketToken
                 case SyntaxKind.StatementDelimiterToken:
                 {
+                	// TODO: This is being inlined within ParseTokens.ParseGetterOrSetter(...)...
+                	// just to check whether this code running is a valid solution.
+                	// If this is found to work, the inlined code should not stay there long term.
+                
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;

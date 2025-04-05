@@ -225,9 +225,13 @@ public static class ParseTokens
 		var openBraceToken = parserModel.TokenWalker.Consume();
     	
     	var openBraceCounter = 1;
+    	
+    	bool consumed;
 		
 		while (true)
 		{
+			consumed = false;
+		
 			if (parserModel.TokenWalker.IsEof)
 				break;
 
@@ -243,13 +247,26 @@ public static class ParseTokens
 			else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.GetTokenContextualKeyword)
 			{
 				variableDeclarationNode.HasGetter = true;
+				
+				if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+				{
+					consumed = true;
+                	ParseGetterOrSetter(compilationUnit, variableDeclarationNode, ref parserModel);
+                }
 			}
 			else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.SetTokenContextualKeyword)
 			{
 				variableDeclarationNode.HasSetter = true;
+				
+				if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+				{
+					consumed = true;
+                	ParseGetterOrSetter(compilationUnit, variableDeclarationNode, ref parserModel);
+                }
 			}
 
-			_ = parserModel.TokenWalker.Consume();
+			if (!consumed)
+			    _ = parserModel.TokenWalker.Consume();
 		}
 
 		var closeTokenIndex = parserModel.TokenWalker.Index;
@@ -258,6 +275,77 @@ public static class ParseTokens
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
+    }
+    
+    /// <summary>
+    /// This method must consume at least once or an infinite loop in 'ParsePropertyDefinition(...)'
+    /// will occur due to the 'bool consumed' variable.
+    /// </summary>
+    public static void ParseGetterOrSetter(CSharpCompilationUnit compilationUnit, VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
+    {
+    	parserModel.TokenWalker.Consume(); // Consume the 'get' or 'set' contextual keyword.
+    
+    	var getterOrSetterNode = new GetterOrSetterNode();
+    
+    	parserModel.Binder.NewScopeAndBuilderFromOwner(
+        	getterOrSetterNode,
+	        getterOrSetterNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+        {
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        }
+        else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+        {
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        
+        	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
+        	_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        	
+        	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+        	{
+        		// TODO: Not including the 'FinishStatement' invocation will cause a bug if the expression bound property...
+        		// ...is returning a lambda expression.
+        		// The bug will relate to the lambda expression having variables in scope that it shouldn't.
+        		//
+	        	// var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+				// if (deferredParsingOccurred)
+				// 	break;
+				
+				#if DEBUG
+				parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+				#endif
+				
+				var statementDelimiterToken = parserModel.TokenWalker.Consume();
+				
+				#if DEBUG
+				parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+				#endif
+				
+	            ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, compilationUnit, ref parserModel);
+            }
+        }
+        else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+        {
+        	//var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+			//if (deferredParsingOccurred)
+			//	break;
+				
+			#if DEBUG
+			parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+			#endif
+			
+			var openBraceToken = parserModel.TokenWalker.Consume();
+			
+			#if DEBUG
+			parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+			#endif
+			
+            ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
+        }
     }
     
     public static void ParsePropertyDefinition_ExpressionBound(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
