@@ -165,6 +165,35 @@ public partial class Counter : ComponentBase
 	// TODO: multi dimensional arrays. The parser does recover however even though it cannot parse this correctly.
 	private int[,] multiDimensionalArray1 = new int[2, 3];
 	
+	public string Aaa1
+	{
+		get
+		{
+			return _aaa;
+		}
+		set
+		{
+			_aaa = value;
+		}
+	}
+	
+	public string Aaa2
+	{
+		get => _aaa;
+		set => _aaa = value;
+	}
+	
+	public string Aaa3 => _aaa;
+	
+	public string AaaMethod1() => _aaa;
+	
+	public string AaaMethod2()
+	{
+		_aaa;
+	}
+	
+	private string _aaa;
+	
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
