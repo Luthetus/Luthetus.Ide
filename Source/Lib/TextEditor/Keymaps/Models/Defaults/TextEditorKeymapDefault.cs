@@ -338,6 +338,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		{
 			switch (onKeyDown.KeymapArgs.Code)
 			{
+				case "F12":
+		        	TextEditorCommandDefaultFunctions.GoToDefinition(
+		        		editContext,
+				        modelModifier,
+				        viewModel,
+				        cursorModifierBag,
+        				new Category("main"));
+			        break;
 				default:
 			    	break;
 	    	}
@@ -403,7 +411,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        		editContext,
 				        modelModifier,
 				        viewModel,
-				        cursorModifierBag);
+				        cursorModifierBag,
+        				new Category("main"));
 			        break;
 		        case "F10":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)

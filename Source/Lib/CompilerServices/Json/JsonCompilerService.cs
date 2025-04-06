@@ -160,7 +160,8 @@ public sealed class JsonCompilerService : ICompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        CursorModifierBagTextEditor cursorModifierBag,
+        Category category)
     {
     	return ValueTask.CompletedTask;
     }

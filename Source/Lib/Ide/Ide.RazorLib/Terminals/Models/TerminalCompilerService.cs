@@ -161,7 +161,8 @@ public sealed class TerminalCompilerService : ICompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        CursorModifierBagTextEditor cursorModifierBag,
+        Category category)
     {
     	return ValueTask.CompletedTask;
     }

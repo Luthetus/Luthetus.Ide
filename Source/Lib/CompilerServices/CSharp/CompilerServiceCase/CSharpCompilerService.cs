@@ -362,7 +362,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        CursorModifierBagTextEditor cursorModifierBag,
+        Category category)
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	

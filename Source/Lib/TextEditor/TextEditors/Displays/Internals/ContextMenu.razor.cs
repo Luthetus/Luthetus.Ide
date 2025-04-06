@@ -299,7 +299,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
                 	editContext,
                 	modelModifier,
                 	viewModelModifier,
-                	cursorModifierBag);
+                	cursorModifierBag,
+                	new Category("main"));
             	return ValueTask.CompletedTask;
             });
         return Task.CompletedTask;
