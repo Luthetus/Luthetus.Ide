@@ -574,8 +574,6 @@ public static class ParseTokens
     
     public static void MoveToExpressionBody(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	// Code Duplication: this is also in 'ParseTokens.ParseGetterOrSetter(...)'
-        
     	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
     
     	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
