@@ -38,9 +38,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	
 	private CodeSearchTreeViewKeyboardEventHandler _treeViewKeymap = null!;
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
-	
-	private Key<TextEditorViewModel> _previousTextEditorViewModelKey = Key<TextEditorViewModel>.Empty;
-	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
 		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
@@ -91,7 +88,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	
 	protected override void OnAfterRender(bool firstRender)
 	{
-		_updateContentThrottle.Run(_ => UpdateContent());
+		CodeSearchService._updateContentThrottle.Run(_ => UpdateContent());
 		base.OnAfterRender(firstRender);
 	}
 	

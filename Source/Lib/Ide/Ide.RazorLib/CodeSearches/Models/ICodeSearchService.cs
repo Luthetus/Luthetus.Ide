@@ -1,9 +1,12 @@
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Models;
 
 public interface ICodeSearchService
 {
+	public Throttle _updateContentThrottle { get; }
+
 	public event Action? CodeSearchStateChanged;
     
     public CodeSearchState GetCodeSearchState();

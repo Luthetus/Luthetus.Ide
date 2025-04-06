@@ -2,9 +2,11 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 
@@ -14,10 +16,14 @@ public class CodeSearchService : ICodeSearchService
 {
     private readonly object _stateModificationLock = new();
 
-    private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
+	private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ITreeViewService _treeViewService;
+    
+    // Moving things from 'CodeSearchDisplay.razor.cs'
+    private Key<TextEditorViewModel> _previousTextEditorViewModelKey = Key<TextEditorViewModel>.Empty;
+	public Throttle _updateContentThrottle { get; } = new Throttle(TimeSpan.FromMilliseconds(333));
 
     public CodeSearchService(
         IFileSystemProvider fileSystemProvider,
