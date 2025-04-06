@@ -27,4 +27,6 @@ public interface ICodeSearchService
     /// <param name="dispatcher"></param>
     /// <returns></returns>
     public Task HandleSearchEffect(CancellationToken CancellationToken = default);
+    
+    public Task UpdateContent();
 }

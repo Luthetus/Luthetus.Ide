@@ -3,6 +3,8 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -20,6 +22,9 @@ public class CodeSearchService : ICodeSearchService
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ITreeViewService _treeViewService;
+    private readonly ITextEditorService _textEditorService;
+    private readonly LuthetusTextEditorConfig _textEditorConfig;
+    private readonly IServiceProvider _serviceProvider;
     
     // Moving things from 'CodeSearchDisplay.razor.cs'
     private Key<TextEditorViewModel> _previousTextEditorViewModelKey = Key<TextEditorViewModel>.Empty;
@@ -28,11 +33,17 @@ public class CodeSearchService : ICodeSearchService
     public CodeSearchService(
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        ITreeViewService treeViewService)
+        ITreeViewService treeViewService,
+        ITextEditorService textEditorService,
+        LuthetusTextEditorConfig textEditorConfig,
+        IServiceProvider serviceProvider)
     {
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
         _treeViewService = treeViewService;
+        _textEditorService = textEditorService;
+        _textEditorConfig = textEditorConfig;
+        _serviceProvider = serviceProvider;
     }
     
     private CodeSearchState _codeSearchState = new();
@@ -274,4 +285,75 @@ public class CodeSearchService : ICodeSearchService
 	            false);
 	    }
 	}
+	
+	public async Task UpdateContent()
+	{
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchService), async editContext =>
+		{
+			Console.WriteLine(nameof(UpdateContent));
+		
+			if (!_treeViewService.TryGetTreeViewContainer(
+					CodeSearchState.TreeViewCodeSearchContainerKey,
+					out var treeViewContainer))
+			{
+				Console.WriteLine("TryGetTreeViewContainer");
+				return;
+			}
+			
+			if (treeViewContainer.SelectedNodeList.Count > 1)
+			{
+				Console.WriteLine("treeViewContainer.SelectedNodeList.Count > 1");
+				return;
+			}
+				
+			var activeNode = treeViewContainer.ActiveNode;
+			
+			if (activeNode is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
+			{
+				Console.WriteLine("activeNode is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan");
+				return;
+			}
+		
+			var inPreviewViewModelKey = GetCodeSearchState().PreviewViewModelKey;
+			var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
+	
+			var filePath = treeViewCodeSearchTextSpan.Item.ResourceUri.Value;
+			var resourceUri = treeViewCodeSearchTextSpan.Item.ResourceUri;
+	
+	        if (_textEditorConfig.RegisterModelFunc is null)
+	            return;
+	
+	        await _textEditorConfig.RegisterModelFunc.Invoke(
+	                new RegisterModelArgs(editContext, resourceUri, _serviceProvider))
+	            .ConfigureAwait(false);
+	
+	        if (_textEditorConfig.TryRegisterViewModelFunc is not null)
+	        {
+	            var viewModelKey = await _textEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+	            		editContext,
+	                    outPreviewViewModelKey,
+	                    resourceUri,
+	                    new Category(nameof(CodeSearchService)),
+	                    false,
+	                    _serviceProvider))
+	                .ConfigureAwait(false);
+	
+	            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+	                _textEditorConfig.TryShowViewModelFunc is not null)
+	            {
+	                With(inState => inState with
+	                {
+	                    PreviewFilePath = filePath,
+	                    PreviewViewModelKey = viewModelKey,
+	                });
+	
+	                if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty &&
+	                    inPreviewViewModelKey != viewModelKey)
+					{
+						_textEditorService.ViewModelApi.Dispose(editContext, inPreviewViewModelKey);
+					}
+	            }
+	        }
+		});
+    }
 }
