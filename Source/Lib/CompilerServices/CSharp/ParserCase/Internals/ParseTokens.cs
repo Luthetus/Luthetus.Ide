@@ -300,32 +300,7 @@ public static class ParseTokens
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
-        
-        	// Code Duplication: this is also in 'ParseFunctions.HandleFunctionDefinition(...)'
-        
-        	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
-        
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
-        	
-        	// Global scope has a null parent.
-			var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner.ScopeDirectionKind ?? ScopeDirectionKind.Both;
-			
-			if (parentScopeDirection == ScopeDirectionKind.Both)
-			{
-				if (!parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing)
-				{
-					parserModel.TokenWalker.DeferParsingOfChildScope(compilationUnit, ref parserModel);
-					return;
-				}
-	
-				parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = false;
-			}
-			else
-			{
-	        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-	        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
-			}
+        	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
@@ -595,6 +570,34 @@ public static class ParseTokens
 	        	parserModel.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
         	}
         }
+    }
+    
+    public static void MoveToExpressionBody(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+    	// Code Duplication: this is also in 'ParseTokens.ParseGetterOrSetter(...)'
+        
+    	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
+    
+    	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+    	
+    	// Global scope has a null parent.
+		var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+		
+		if (parentScopeDirection == ScopeDirectionKind.Both)
+		{
+			if (!parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing)
+			{
+				parserModel.TokenWalker.DeferParsingOfChildScope(compilationUnit, ref parserModel);
+				return;
+			}
+
+			parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = false;
+		}
+		else
+		{
+        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+		}
     }
 
     public static void ParseKeywordToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
