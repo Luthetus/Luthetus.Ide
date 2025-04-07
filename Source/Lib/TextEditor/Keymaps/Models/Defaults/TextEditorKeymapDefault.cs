@@ -21,6 +21,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	private readonly StringBuilder _indentationBuilder = new();
 
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
+    
+    public Func<ValueTask> AltF12Func { get; set; } = () => ValueTask.CompletedTask;
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {
@@ -339,12 +341,15 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				case "F12":
+					
+					await AltF12Func.Invoke();
+					
 		        	TextEditorCommandDefaultFunctions.GoToDefinition(
 		        		editContext,
 				        modelModifier,
 				        viewModel,
 				        cursorModifierBag,
-        				new Category("main"));
+        				new Category("CodeSearchService"));
 			        break;
 				default:
 			    	break;

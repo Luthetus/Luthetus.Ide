@@ -443,7 +443,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					resourceUriValue,
 					true,
 					indexInclusiveStart,
-					new Category("main"),
+					category,
 					Key<TextEditorViewModel>.NewKey())
 				.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
 		});

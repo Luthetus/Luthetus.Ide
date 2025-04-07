@@ -286,7 +286,7 @@ public class CodeSearchService : ICodeSearchService
 	    }
 	}
 	
-	public async Task UpdateContent()
+	public async Task UpdateContent(ResourceUri providedResourceUri)
 	{
 		_textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchService), async editContext =>
 		{
@@ -319,6 +319,9 @@ public class CodeSearchService : ICodeSearchService
 	
 			var filePath = treeViewCodeSearchTextSpan.Item.ResourceUri.Value;
 			var resourceUri = treeViewCodeSearchTextSpan.Item.ResourceUri;
+			
+			if (providedResourceUri != ResourceUri.Empty)
+				resourceUri = providedResourceUri;
 	
 	        if (_textEditorConfig.RegisterModelFunc is null)
 	            return;

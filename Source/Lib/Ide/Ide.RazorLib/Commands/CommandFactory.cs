@@ -19,6 +19,8 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Displays;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
@@ -66,6 +68,8 @@ public class CommandFactory : ICommandFactory
 
 	public void Initialize()
     {
+    	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = OpenCodeSearchDialog;
+    
         // ActiveContextsContext
         {
             _ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -357,56 +361,7 @@ public class CommandFactory : ICommandFactory
 	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
 				{
-                    CodeSearchDialog ??= new DialogViewModel(
-                        Key<IDynamicViewModel>.NewKey(),
-						"Code Search",
-                        typeof(CodeSearchDisplay),
-                        null,
-                        null,
-						true,
-						null);
-
-                    _dialogService.ReduceRegisterAction(CodeSearchDialog);
-                    
-                    _textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), editContext =>
-                    {
-                    	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
-	                    if (group is null)
-	                        return ValueTask.CompletedTask;
-	
-	                    var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
-	                    if (activeViewModel is null)
-	                        return ValueTask.CompletedTask;
-                    
-			            var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.ViewModelKey);
-			            if (viewModelModifier is null)
-			                return ValueTask.CompletedTask;
-			
-						// If the user has an active text selection,
-						// then populate the code search with their selection.
-						
-						var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
-			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-			            var primaryCursorModifier = cursorModifierBag.CursorModifier;
-			
-			            if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-			                return ValueTask.CompletedTask;
-			
-			            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
-						if (selectedText is null)
-							return ValueTask.CompletedTask;
-						
-						_codeSearchService.With(inState => inState with
-						{
-							Query = selectedText,
-						});
-			
-						_codeSearchService.HandleSearchEffect();
-						
-						return  ValueTask.CompletedTask;
-                    });
-                    
-                    return ValueTask.CompletedTask;
+                    return OpenCodeSearchDialog();
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -532,5 +487,59 @@ public class CommandFactory : ICommandFactory
 					},
 					openCommandBarCommand);
 		}
+    }
+    
+    public ValueTask OpenCodeSearchDialog()
+    {
+    	CodeSearchDialog ??= new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+			"Code Search",
+            typeof(CodeSearchDisplay),
+            null,
+            null,
+			true,
+			null);
+
+        _dialogService.ReduceRegisterAction(CodeSearchDialog);
+        
+        _textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), editContext =>
+        {
+        	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
+            if (group is null)
+                return ValueTask.CompletedTask;
+
+            var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+            if (activeViewModel is null)
+                return ValueTask.CompletedTask;
+        
+            var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.ViewModelKey);
+            if (viewModelModifier is null)
+                return ValueTask.CompletedTask;
+
+			// If the user has an active text selection,
+			// then populate the code search with their selection.
+			
+			var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+            var primaryCursorModifier = cursorModifierBag.CursorModifier;
+
+            if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+                return ValueTask.CompletedTask;
+
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+			if (selectedText is null)
+				return ValueTask.CompletedTask;
+			
+			_codeSearchService.With(inState => inState with
+			{
+				Query = selectedText,
+			});
+
+			_codeSearchService.HandleSearchEffect();
+			
+			return  ValueTask.CompletedTask;
+        });
+        
+        return ValueTask.CompletedTask;
     }
 }

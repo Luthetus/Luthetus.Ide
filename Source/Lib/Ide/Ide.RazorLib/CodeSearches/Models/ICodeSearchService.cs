@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Models;
 
@@ -28,5 +29,5 @@ public interface ICodeSearchService
     /// <returns></returns>
     public Task HandleSearchEffect(CancellationToken CancellationToken = default);
     
-    public Task UpdateContent();
+    public Task UpdateContent(ResourceUri providedResourceUri);
 }

@@ -7,10 +7,11 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
@@ -88,7 +89,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	
 	protected override void OnAfterRender(bool firstRender)
 	{
-		CodeSearchService._updateContentThrottle.Run(_ => CodeSearchService.UpdateContent());
+		CodeSearchService._updateContentThrottle.Run(_ => CodeSearchService.UpdateContent(ResourceUri.Empty));
 		base.OnAfterRender(firstRender);
 	}
 	
