@@ -503,19 +503,19 @@ public class CommandFactory : ICommandFactory
 
         _dialogService.ReduceRegisterAction(CodeSearchDialog);
         
-        _textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), editContext =>
+        _textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), async editContext =>
         {
         	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
             if (group is null)
-                return ValueTask.CompletedTask;
+                return;
 
             var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
             if (activeViewModel is null)
-                return ValueTask.CompletedTask;
+                return;
         
             var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.ViewModelKey);
             if (viewModelModifier is null)
-                return ValueTask.CompletedTask;
+                return;
 
 			// If the user has an active text selection,
 			// then populate the code search with their selection.
@@ -525,11 +525,11 @@ public class CommandFactory : ICommandFactory
             var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
             if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-                return ValueTask.CompletedTask;
+                return;
 
             var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
 			if (selectedText is null)
-				return ValueTask.CompletedTask;
+				return;
 			
 			_codeSearchService.With(inState => inState with
 			{
@@ -537,14 +537,23 @@ public class CommandFactory : ICommandFactory
 			});
 
 			_codeSearchService.HandleSearchEffect();
+ 	
+	 	   // I tried without the Yield and it works fine without it.
+	 	   // I'm gonna keep it though so I can sleep at night.
+	 	   //
+	 	   await Task.Yield();
+			await Task.Delay(100).ConfigureAwait(false);
 			
-			return  ValueTask.CompletedTask;
+			_treeViewService.ReduceMoveHomeAction(
+				CodeSearchState.TreeViewCodeSearchContainerKey,
+				false,
+				false);
         });
         
         return ValueTask.CompletedTask;
     }
     
-    public ValueTask PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
+    public async ValueTask PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
     	var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false);
     
@@ -565,8 +574,17 @@ public class CommandFactory : ICommandFactory
 			Query = absolutePath.NameWithExtension,
 		});
 
-		_codeSearchService.HandleSearchEffect();
-        
-        return ValueTask.CompletedTask;
+		await _codeSearchService.HandleSearchEffect().ConfigureAwait(false);
+ 	
+ 	   // I tried without the Yield and it works fine without it.
+ 	   // I'm gonna keep it though so I can sleep at night.
+ 	   //
+ 	   await Task.Yield();
+		await Task.Delay(100).ConfigureAwait(false);
+		
+		_treeViewService.ReduceMoveHomeAction(
+			CodeSearchState.TreeViewCodeSearchContainerKey,
+			false,
+			false);
     }
 }
