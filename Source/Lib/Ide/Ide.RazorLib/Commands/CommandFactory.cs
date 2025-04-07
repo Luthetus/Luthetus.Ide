@@ -491,6 +491,7 @@ public class CommandFactory : ICommandFactory
     
     public ValueTask OpenCodeSearchDialog()
     {
+    	// Duplicated Code: 'PeekCodeSearchDialog(...)'
     	CodeSearchDialog ??= new DialogViewModel(
             Key<IDynamicViewModel>.NewKey(),
 			"Code Search",
@@ -543,8 +544,29 @@ public class CommandFactory : ICommandFactory
         return ValueTask.CompletedTask;
     }
     
-    public ValueTask PeekCodeSearchDialog(TextEditorEditContext editContext)
+    public ValueTask PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
-    	return OpenCodeSearchDialog();
+    	var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false);
+    
+    	// Duplicated Code: 'OpenCodeSearchDialog(...)'
+    	CodeSearchDialog ??= new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+			"Code Search",
+            typeof(CodeSearchDisplay),
+            null,
+            null,
+			true,
+			null);
+
+        _dialogService.ReduceRegisterAction(CodeSearchDialog);
+        
+        _codeSearchService.With(inState => inState with
+		{
+			Query = absolutePath.NameWithExtension,
+		});
+
+		_codeSearchService.HandleSearchEffect();
+        
+        return ValueTask.CompletedTask;
     }
 }

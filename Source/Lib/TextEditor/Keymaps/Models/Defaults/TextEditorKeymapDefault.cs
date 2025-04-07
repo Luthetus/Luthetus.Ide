@@ -22,7 +22,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
     
-    public Func<TextEditorEditContext, ValueTask> AltF12Func { get; set; } = _ => ValueTask.CompletedTask;
+    public Func<TextEditorEditContext, string?, int?, ValueTask> AltF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {

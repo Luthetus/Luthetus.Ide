@@ -442,7 +442,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		{
 			if (category.Value == "CodeSearchService")
 			{
-				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(editContext);
+				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
+					editContext,
+					resourceUriValue,
+					indexInclusiveStart);
 			}
 			else
 			{

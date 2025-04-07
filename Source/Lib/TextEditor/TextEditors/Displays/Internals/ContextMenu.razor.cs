@@ -152,6 +152,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         var relatedFilesQuickPick = new MenuOptionRecord("Related Files (F7)", MenuOptionKind.Other, () => SelectMenuOption(RelatedFilesQuickPick));
         menuOptionRecordsList.Add(relatedFilesQuickPick);
         
+        var peekDefinition = new MenuOptionRecord("Peek definition (Alt F12)", MenuOptionKind.Other, () => SelectMenuOption(PeekDefinitionOption));
+        menuOptionRecordsList.Add(peekDefinition);
+        
         var goToDefinition = new MenuOptionRecord("Go to definition (F12)", MenuOptionKind.Other, () => SelectMenuOption(GoToDefinitionOption));
         menuOptionRecordsList.Add(goToDefinition);
         
@@ -301,6 +304,36 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
                 	viewModelModifier,
                 	cursorModifierBag,
                 	new Category("main"));
+            	return ValueTask.CompletedTask;
+            });
+        return Task.CompletedTask;
+    }
+    
+    public Task PeekDefinitionOption()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    		
+        TextEditorService.WorkerArbitrary.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.GoToDefinition),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+        		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+
+        		if (viewModelModifier is null)
+        			return ValueTask.CompletedTask;
+                
+                viewModelModifier.ShouldRevealCursor = true;
+                
+                TextEditorCommandDefaultFunctions.GoToDefinition(
+                	editContext,
+                	modelModifier,
+                	viewModelModifier,
+                	cursorModifierBag,
+                	new Category("CodeSearchService"));
             	return ValueTask.CompletedTask;
             });
         return Task.CompletedTask;
