@@ -591,6 +591,18 @@ public class CommandFactory : ICommandFactory
     
     public async ValueTask ShowAllReferences(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
-    	Console.WriteLine("ShowAllReferences");
+        var findAllReferencesPanel = new Panel(
+            "Find All References",
+            Luthetus.Ide.RazorLib.FindAllReferences.FindAllReferencesDisplay.FindAllReferencesPanelKey,
+            Luthetus.Ide.RazorLib.FindAllReferences.FindAllReferencesDisplay.FindAllReferencesDynamicViewModelKey,
+            ContextFacts.FindAllReferencesContext.ContextKey,
+            typeof(Luthetus.Ide.RazorLib.FindAllReferences.FindAllReferencesDisplay),
+            null,
+            _panelService,
+            _dialogService,
+            _commonBackgroundTaskApi);
+        _panelService.RegisterPanelTab(PanelFacts.BottomPanelGroupKey, findAllReferencesPanel, false);
+
+        _panelService.SetActivePanelTab(PanelFacts.BottomPanelGroupKey, findAllReferencesPanel.Key);
     }
 }

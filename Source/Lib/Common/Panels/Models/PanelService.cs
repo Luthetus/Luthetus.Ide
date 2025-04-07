@@ -124,6 +124,9 @@ public class PanelService : IPanelService
                 goto finalize;
 
             var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
+            
+            if (inPanelGroup.TabList.Any(x => x.Key == panelTab.Key))
+            	goto finalize;
 
             var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
 
