@@ -69,6 +69,7 @@ public class CommandFactory : ICommandFactory
 	public void Initialize()
     {
     	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = PeekCodeSearchDialog;
+    	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func = ShowAllReferences;
     
         // ActiveContextsContext
         {
@@ -586,5 +587,10 @@ public class CommandFactory : ICommandFactory
 			CodeSearchState.TreeViewCodeSearchContainerKey,
 			false,
 			false);
+    }
+    
+    public async ValueTask ShowAllReferences(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
+    {
+    	Console.WriteLine("ShowAllReferences");
     }
 }

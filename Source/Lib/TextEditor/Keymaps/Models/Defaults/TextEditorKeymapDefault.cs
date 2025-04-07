@@ -23,6 +23,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
     
     public Func<TextEditorEditContext, string?, int?, ValueTask> AltF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
+    public Func<TextEditorEditContext, string?, int?, ValueTask> ShiftF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {
@@ -423,12 +424,22 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					    break;
 		            }
 		        case "F12":
-		        	TextEditorCommandDefaultFunctions.GoToDefinition(
-		        		editContext,
-				        modelModifier,
-				        viewModel,
-				        cursorModifierBag,
-        				new Category("main"));
+		        	if (onKeyDown.KeymapArgs.ShiftKey)
+		        	{
+		        		await ShiftF12Func.Invoke(
+		        			editContext,
+		        			modelModifier.ResourceUri.Value,
+		        			modelModifier.GetPositionIndex(primaryCursorModifier));
+		        	}
+		        	else
+		        	{
+			        	TextEditorCommandDefaultFunctions.GoToDefinition(
+			        		editContext,
+					        modelModifier,
+					        viewModel,
+			        		cursorModifierBag,
+	        				new Category("main"));
+			        }
 			        break;
 		        case "F10":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
