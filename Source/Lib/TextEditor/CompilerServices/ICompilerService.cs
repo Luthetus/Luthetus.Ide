@@ -95,6 +95,15 @@ public interface ICompilerService
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri);
+    
+    public ValueTask ShowCallingSignature(
+		TextEditorEditContext editContext,
+		TextEditorModel modelModifier,
+		TextEditorViewModel viewModelModifier,
+		int positionIndex,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri);
         
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,

@@ -314,13 +314,27 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            	shouldRevealCursor = true;
 	            	break;
 	            case "Space":
-	            	shouldRevealCursor = true;
-	            	shouldClearTooltip = true;
-	            	menuKind = MenuKind.AutoCompleteMenu;
-		            
-		            // TODO: Fix 'shouldApplySyntaxHighlighting = true' for "Space"...
-		            // ...It is causing the autocomplete menu to lose focus.
-		            // shouldApplySyntaxHighlighting = true;
+	            	if (onKeyDown.KeymapArgs.ShiftKey)
+	            	{
+	            		await modelModifier.CompilerService.ShowCallingSignature(
+							editContext,
+							modelModifier,
+							viewModel,
+							modelModifier.GetPositionIndex(primaryCursorModifier),
+							onKeyDown.ComponentData,
+							onKeyDown.ComponentData.TextEditorComponentRenderers,
+					        modelModifier.ResourceUri);
+	            	}
+	            	else
+	            	{
+		            	shouldRevealCursor = true;
+		            	shouldClearTooltip = true;
+		            	menuKind = MenuKind.AutoCompleteMenu;
+			            
+			            // TODO: Fix 'shouldApplySyntaxHighlighting = true' for "Space"...
+			            // ...It is causing the autocomplete menu to lose focus.
+			            // shouldApplySyntaxHighlighting = true;
+		            }
 	            	break;
 	            case "Period":
 	            	await TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(

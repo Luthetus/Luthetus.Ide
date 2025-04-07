@@ -156,6 +156,18 @@ public sealed class CSharpProjectCompilerService : ICompilerService
     	return ValueTask.CompletedTask;
     }
     
+    public ValueTask ShowCallingSignature(
+		TextEditorEditContext editContext,
+		TextEditorModel modelModifier,
+		TextEditorViewModel viewModelModifier,
+		int positionIndex,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri)
+    {
+    	return ValueTask.CompletedTask;
+    }
+    
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,

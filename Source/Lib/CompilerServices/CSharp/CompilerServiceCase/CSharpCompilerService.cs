@@ -360,6 +360,92 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
     
+    public ValueTask ShowCallingSignature(
+		TextEditorEditContext editContext,
+		TextEditorModel modelModifier,
+		TextEditorViewModel viewModelModifier,
+		int positionIndex,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri)
+    {
+    	var success = __CSharpBinder.TryGetCompilationUnit(
+    		cSharpCompilationUnit: null,
+    		resourceUri,
+    		out CSharpCompilationUnit compilationUnit);
+    		
+    	if (!success)
+    		return ValueTask.CompletedTask;
+    	
+    	var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, resourceUri, positionIndex);
+    	
+    	if (!scope.ConstructorWasInvoked)
+    	{
+    		Console.WriteLine("!scope.ConstructorWasInvoked");
+			return ValueTask.CompletedTask;
+		}
+		
+		if (scope.CodeBlockOwner is null)
+		{
+			Console.WriteLine("scope.CodeBlockOwner is null");
+			return ValueTask.CompletedTask;
+		}
+		
+		if (scope.CodeBlockOwner.CodeBlockNode is null)
+		{
+			Console.WriteLine("scope.CodeBlockOwner.CodeBlockNode is null");
+			return ValueTask.CompletedTask;
+		}
+    	
+    	FunctionInvocationNode? functionInvocationNode = null;
+    	
+    	foreach (var childSyntax in scope.CodeBlockOwner.CodeBlockNode.GetChildList())
+    	{
+    		Console.WriteLine(childSyntax.SyntaxKind);
+    	
+    		if (childSyntax.SyntaxKind == SyntaxKind.ReturnStatementNode)
+    		{
+    			var returnStatementNode = (ReturnStatementNode)childSyntax;
+    			
+    			// if (returnStatementNode.CodeBlockNode is not null)
+    			// {
+    				foreach (var innerChildSyntax in returnStatementNode.GetChildList())
+			    	{
+			    		Console.WriteLine("\t " + innerChildSyntax.SyntaxKind);
+			    	
+			    		if (innerChildSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+			    		{
+			    			Console.WriteLine("\t if (innerChildSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)");
+			    			
+			    			functionInvocationNode = (FunctionInvocationNode)innerChildSyntax;
+			    			break;
+			    		}
+			    	}
+    			// }
+    		}
+    	
+    		if (functionInvocationNode is not null)
+    			break;
+    	
+    		if (childSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+    		{
+    			Console.WriteLine("if (childSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)");
+    			
+    			functionInvocationNode = (FunctionInvocationNode)childSyntax;
+    			break;
+    		}
+    	}
+    	
+    	if (functionInvocationNode is not null)
+    	{
+    		Console.WriteLine("functionInvocationNode is not null");
+    	}
+    	
+    	Console.WriteLine("ShowCallingSignature");
+    	
+    	return ValueTask.CompletedTask;
+    }
+    
     public async ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
