@@ -436,12 +436,82 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     		}
     	}
     	
-    	if (functionInvocationNode is not null)
+    	if (functionInvocationNode is null)
     	{
-    		Console.WriteLine("functionInvocationNode is not null");
+    		Console.WriteLine("functionInvocationNode is null");
+    		return ValueTask.CompletedTask;
     	}
     	
     	Console.WriteLine("ShowCallingSignature");
+    	
+    	var foundMatch = false;
+        
+        var resource = modelModifier.ResourceUri;
+        var compilationUnitLocal = compilationUnit;
+        
+        var symbols = compilationUnitLocal.SymbolList;
+        
+        var cursorPositionIndex = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartingIndexInclusive;
+        
+        var lineAndColumnIndices = GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex);
+        
+        var elementPositionInPixels = await _textEditorService.JsRuntimeTextEditorApi
+            .GetBoundingClientRect(viewModelModifier.PrimaryCursorContentId)
+            .ConfigureAwait(false);
+
+        elementPositionInPixels = elementPositionInPixels with
+        {
+            Top = elementPositionInPixels.Top +
+                (.9 * viewModelModifier.CharAndLineMeasurements.LineHeight)
+        };
+        
+        var mouseEventArgs = new MouseEventArgs
+        {
+            ClientX = elementPositionInPixels.Left,
+            ClientY = elementPositionInPixels.Top
+        };
+		    
+		var relativeCoordinatesOnClick = new RelativeCoordinates(
+		    mouseEventArgs.ClientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
+		    mouseEventArgs.ClientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
+		    viewModelModifier.ScrollbarDimensions.ScrollLeft,
+		    viewModelModifier.ScrollbarDimensions.ScrollTop);
+
+        if (!foundMatch && symbols.Count != 0)
+        {
+            foreach (var symbol in symbols)
+            {
+                /*if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)*/
+                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                    symbol.SyntaxKind == SyntaxKind.FunctionSymbol)
+                {
+                    foundMatch = true;
+
+                    var parameters = new Dictionary<string, object?>
+                    {
+                        {
+                            "Symbol",
+                            symbol
+                        }
+                    };
+
+                    viewModelModifier.TooltipViewModel = new(
+                        typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
+                        parameters,
+                        relativeCoordinatesOnClick,
+                        null,
+                        componentData.ContinueRenderingTooltipAsync);
+                        
+                    break;
+                }
+            }
+        }
+
+        if (!foundMatch)
+        {
+			viewModelModifier.TooltipViewModel = null;
+        }
     	
     	return ValueTask.CompletedTask;
     }
