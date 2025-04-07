@@ -481,9 +481,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             foreach (var symbol in symbols)
             {
-                /*if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)*/
                 if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive &&
                     symbol.SyntaxKind == SyntaxKind.FunctionSymbol)
                 {
                     foundMatch = true;
