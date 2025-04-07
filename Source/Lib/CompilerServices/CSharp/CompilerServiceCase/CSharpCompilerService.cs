@@ -380,29 +380,18 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, resourceUri, positionIndex);
     	
     	if (!scope.ConstructorWasInvoked)
-    	{
-    		Console.WriteLine("!scope.ConstructorWasInvoked");
 			return;
-		}
 		
 		if (scope.CodeBlockOwner is null)
-		{
-			Console.WriteLine("scope.CodeBlockOwner is null");
 			return;
-		}
 		
 		if (scope.CodeBlockOwner.CodeBlockNode is null)
-		{
-			Console.WriteLine("scope.CodeBlockOwner.CodeBlockNode is null");
 			return;
-		}
     	
     	FunctionInvocationNode? functionInvocationNode = null;
     	
     	foreach (var childSyntax in scope.CodeBlockOwner.CodeBlockNode.GetChildList())
     	{
-    		Console.WriteLine(childSyntax.SyntaxKind);
-    	
     		if (childSyntax.SyntaxKind == SyntaxKind.ReturnStatementNode)
     		{
     			var returnStatementNode = (ReturnStatementNode)childSyntax;
@@ -411,12 +400,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     			// {
     				foreach (var innerChildSyntax in returnStatementNode.GetChildList())
 			    	{
-			    		Console.WriteLine("\t " + innerChildSyntax.SyntaxKind);
-			    	
 			    		if (innerChildSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)
 			    		{
-			    			Console.WriteLine("\t if (innerChildSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)");
-			    			
 			    			functionInvocationNode = (FunctionInvocationNode)innerChildSyntax;
 			    			break;
 			    		}
@@ -429,20 +414,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	
     		if (childSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)
     		{
-    			Console.WriteLine("if (childSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)");
-    			
     			functionInvocationNode = (FunctionInvocationNode)childSyntax;
     			break;
     		}
     	}
     	
     	if (functionInvocationNode is null)
-    	{
-    		Console.WriteLine("functionInvocationNode is null");
     		return;
-    	}
-    	
-    	Console.WriteLine("ShowCallingSignature");
     	
     	var foundMatch = false;
         
