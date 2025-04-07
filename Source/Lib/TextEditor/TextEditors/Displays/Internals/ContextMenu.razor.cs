@@ -9,9 +9,11 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -148,6 +150,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         
         var findInTextEditor = new MenuOptionRecord("Find (Ctrl f)", MenuOptionKind.Other, () => SelectMenuOption(FindInTextEditor));
         menuOptionRecordsList.Add(findInTextEditor);
+        
+        var findAllReferences = new MenuOptionRecord("Find All References (Shift F12)", MenuOptionKind.Other, () => SelectMenuOption(FindAllReferences));
+        menuOptionRecordsList.Add(findAllReferences);
         
         var relatedFilesQuickPick = new MenuOptionRecord("Related Files (F7)", MenuOptionKind.Other, () => SelectMenuOption(RelatedFilesQuickPick));
         menuOptionRecordsList.Add(relatedFilesQuickPick);
@@ -387,6 +392,29 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
                 	cursorModifierBag,
 			        primaryCursor,
 			        CommonBackgroundTaskApi.JsRuntimeCommonApi);
+            });
+        return Task.CompletedTask;
+    }
+    
+    public Task FindAllReferences()
+    {
+    	var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    	if (renderBatch is null)
+    		return Task.CompletedTask;
+    	
+        TextEditorService.WorkerArbitrary.PostUnique(
+            nameof(FindAllReferences),
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+            	var primaryCursor = cursorModifierBag.CursorModifier;
+            
+                return ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func.Invoke(
+                	editContext,
+                	renderBatch.Model.ResourceUri.Value,
+                	modelModifier.GetPositionIndex(primaryCursor));
             });
         return Task.CompletedTask;
     }
