@@ -68,7 +68,7 @@ public class CommandFactory : ICommandFactory
 
 	public void Initialize()
     {
-    	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = OpenCodeSearchDialog;
+    	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = PeekCodeSearchDialog;
     
         // ActiveContextsContext
         {
@@ -541,5 +541,10 @@ public class CommandFactory : ICommandFactory
         });
         
         return ValueTask.CompletedTask;
+    }
+    
+    public ValueTask PeekCodeSearchDialog(TextEditorEditContext editContext)
+    {
+    	return OpenCodeSearchDialog();
     }
 }

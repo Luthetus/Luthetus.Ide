@@ -22,7 +22,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
     
-    public Func<ValueTask> AltF12Func { get; set; } = () => ValueTask.CompletedTask;
+    public Func<TextEditorEditContext, ValueTask> AltF12Func { get; set; } = _ => ValueTask.CompletedTask;
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {
@@ -341,9 +341,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				case "F12":
-					
-					await AltF12Func.Invoke();
-					
 		        	TextEditorCommandDefaultFunctions.GoToDefinition(
 		        		editContext,
 				        modelModifier,

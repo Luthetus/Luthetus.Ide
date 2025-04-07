@@ -18,6 +18,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
@@ -438,14 +440,21 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		_textEditorService.WorkerArbitrary.PostUnique(nameof(SyntaxViewModel), async editContext =>
 		{
-			await _textEditorService.OpenInEditorAsync(
-					editContext,
-					resourceUriValue,
-					true,
-					indexInclusiveStart,
-					category,
-					Key<TextEditorViewModel>.NewKey())
-				.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
+			if (category.Value == "CodeSearchService")
+			{
+				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(editContext);
+			}
+			else
+			{
+				await _textEditorService.OpenInEditorAsync(
+						editContext,
+						resourceUriValue,
+						true,
+						indexInclusiveStart,
+						category,
+						Key<TextEditorViewModel>.NewKey())
+					.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
+			}
 		});
     }
     
