@@ -360,7 +360,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
     
-    public ValueTask ShowCallingSignature(
+    public async ValueTask ShowCallingSignature(
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModelModifier,
@@ -375,26 +375,26 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     		out CSharpCompilationUnit compilationUnit);
     		
     	if (!success)
-    		return ValueTask.CompletedTask;
+    		return;
     	
     	var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, resourceUri, positionIndex);
     	
     	if (!scope.ConstructorWasInvoked)
     	{
     		Console.WriteLine("!scope.ConstructorWasInvoked");
-			return ValueTask.CompletedTask;
+			return;
 		}
 		
 		if (scope.CodeBlockOwner is null)
 		{
 			Console.WriteLine("scope.CodeBlockOwner is null");
-			return ValueTask.CompletedTask;
+			return;
 		}
 		
 		if (scope.CodeBlockOwner.CodeBlockNode is null)
 		{
 			Console.WriteLine("scope.CodeBlockOwner.CodeBlockNode is null");
-			return ValueTask.CompletedTask;
+			return;
 		}
     	
     	FunctionInvocationNode? functionInvocationNode = null;
@@ -439,7 +439,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	if (functionInvocationNode is null)
     	{
     		Console.WriteLine("functionInvocationNode is null");
-    		return ValueTask.CompletedTask;
+    		return;
     	}
     	
     	Console.WriteLine("ShowCallingSignature");
@@ -453,7 +453,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         var cursorPositionIndex = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartingIndexInclusive;
         
-        var lineAndColumnIndices = GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex);
+        var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex);
         
         var elementPositionInPixels = await _textEditorService.JsRuntimeTextEditorApi
             .GetBoundingClientRect(viewModelModifier.PrimaryCursorContentId)
@@ -512,8 +512,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
 			viewModelModifier.TooltipViewModel = null;
         }
-    	
-    	return ValueTask.CompletedTask;
     }
     
     public async ValueTask GoToDefinition(
