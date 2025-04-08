@@ -593,10 +593,10 @@ public class CommandFactory : ICommandFactory
     {
         var findAllReferencesPanel = new Panel(
             "Find All References",
-            Luthetus.Ide.RazorLib.FindAllReferences.FindAllReferencesDisplay.FindAllReferencesPanelKey,
-            Luthetus.Ide.RazorLib.FindAllReferences.FindAllReferencesDisplay.FindAllReferencesDynamicViewModelKey,
+            Luthetus.Ide.RazorLib.FindAllReferences.Displays.FindAllReferencesDisplay.FindAllReferencesPanelKey,
+            Luthetus.Ide.RazorLib.FindAllReferences.Displays.FindAllReferencesDisplay.FindAllReferencesDynamicViewModelKey,
             ContextFacts.FindAllReferencesContext.ContextKey,
-            typeof(Luthetus.Ide.RazorLib.FindAllReferences.FindAllReferencesDisplay),
+            typeof(Luthetus.Ide.RazorLib.FindAllReferences.Displays.FindAllReferencesDisplay),
             null,
             _panelService,
             _dialogService,
