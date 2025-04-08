@@ -57,6 +57,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
     
+    public IReadOnlyDictionary<string, List<ResourceUri>> ReferenceMap => __CSharpBinder.ReferenceMap;
+    
     /// <summary>
     /// This overrides the default Blazor component: <see cref="Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.SymbolDisplay"/>.
     /// It is shown when hovering with the cursor over a <see cref="Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols.ISymbol"/>

@@ -22,10 +22,15 @@ public partial class CSharpBinder
 
     private readonly Dictionary<string, NamespaceGroup> _namespaceGroupMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     private readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
+    /// <summary>
+    /// 'string' is the fully qualified name.
+    /// </summary>
+    private readonly Dictionary<string, List<ResourceUri>> _referenceMap = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
     public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
+    public IReadOnlyDictionary<string, List<ResourceUri>> ReferenceMap => _referenceMap;
     
     public NamespaceStatementNode TopLevelNamespaceStatementNode => _topLevelNamespaceStatementNode;
     
@@ -426,6 +431,20 @@ public partial class CSharpBinder
 	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	        }
         }*/
+    }
+    
+    public void BindTypeClauseNodeSuccessfully(
+        TypeClauseNode typeClauseNode,
+        TypeDefinitionNode typeDefinitionNode,
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
+    {
+    	var key = $"{typeDefinitionNode.NamespaceName} + {typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}";
+    	
+    	if (!_referenceMap.ContainsKey(key))
+    		_referenceMap.Add(key, new List<ResourceUri>());
+    		
+    	_referenceMap[key].Add(compilationUnit.ResourceUri);
     }
 
     public void BindTypeIdentifier(

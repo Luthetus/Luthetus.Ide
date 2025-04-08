@@ -1,7 +1,20 @@
 <h3>FindAllReferencesDisplay</h3>
 
-@{ var findAllReferencesState = FindAllReferencesService.GetFindAllReferencesState(); }
+@* @{ var findAllReferencesState = FindAllReferencesService.GetFindAllReferencesState(); } *@
 
-@code {
-	
+@_cSharpCompilerService.ReferenceMap.Count
+
+@foreach (var entry in _cSharpCompilerService.ReferenceMap)
+{
+	<div>
+	    @entry.Key
+	    
+	    <ul>
+	        @foreach (var resourceUri in entry.Value)
+	        {
+	            <li>@resourceUri.Value</li>
+	        }
+	    </ul>
+	</div>
 }
+
