@@ -4,7 +4,7 @@ public class FindAllReferencesService : IFindAllReferencesService
 {
 	private readonly object _stateModificationLock = new();
 
-	private FindAllReferencesState _findAllReferencesState = new(Array.Empty<string>());
+	private FindAllReferencesState _findAllReferencesState = new();
 
 	public event Action? FindAllReferencesStateChanged;
 	
@@ -15,7 +15,26 @@ public class FindAllReferencesService : IFindAllReferencesService
 		lock (_stateModificationLock)
         {
     	    var inState = GetFindAllReferencesState();
-            _findAllReferencesState = new FindAllReferencesState(referenceList);
+    	    
+            _findAllReferencesState = inState with 
+            {
+            	ReferenceList = referenceList
+            };
+        }
+
+        FindAllReferencesStateChanged?.Invoke();
+	}
+	
+	public void SetFullyQualifiedName(string fullyQualifiedName)
+	{
+		lock (_stateModificationLock)
+        {
+    	    var inState = GetFindAllReferencesState();
+            
+            _findAllReferencesState = inState with 
+            {
+            	FullyQualifiedName = fullyQualifiedName
+            };
         }
 
         FindAllReferencesStateChanged?.Invoke();

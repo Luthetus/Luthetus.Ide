@@ -21,6 +21,18 @@ public partial class FindAllReferencesDisplay : ComponentBase, IDisposable
     
     private IExtendedCompilerService _cSharpCompilerService = null!;
     
+    private string _fullyQualifiedName;
+    
+    public string FullyQualifiedName
+    {
+	    get => _fullyQualifiedName;
+	    set
+	    {
+	    	_fullyQualifiedName = value;
+	    	FindAllReferencesService.SetFullyQualifiedName(_fullyQualifiedName);
+	    }
+    }
+    
     protected override void OnInitialized()
     {
     	FindAllReferencesService.FindAllReferencesStateChanged += OnFindAllReferencesStateChanged;

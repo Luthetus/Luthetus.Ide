@@ -1,11 +1,11 @@
 namespace Luthetus.Ide.RazorLib.FindAllReferences.Models;
 
-public struct FindAllReferencesState
+public record struct FindAllReferencesState
 {
-	public FindAllReferencesState(IReadOnlyList<string> referenceList)
+	public FindAllReferencesState()
 	{
-		ReferenceList = referenceList;
 	}
 
-	public IReadOnlyList<string> ReferenceList { get; }
+	public IReadOnlyList<string> ReferenceList { get; init; } = Array.Empty<string>();
+	public string FullyQualifiedName { get; init; }
 }

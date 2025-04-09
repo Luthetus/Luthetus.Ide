@@ -1,9 +1,38 @@
 <h3>FindAllReferencesDisplay</h3>
 
-@* @{ var findAllReferencesState = FindAllReferencesService.GetFindAllReferencesState(); } *@
+@{ var findAllReferencesState = FindAllReferencesService.GetFindAllReferencesState(); }
 
-@_cSharpCompilerService.ReferenceMap.Count
+<input class="luth_input" @bind="FullyQualifiedName"/>
 
+<div>
+	@findAllReferencesState.FullyQualifiedName
+</div>
+
+<div>
+	@_cSharpCompilerService.ReferenceMap.Count
+</div>
+
+@if (!string.IsNullOrWhiteSpace(findAllReferencesState.FullyQualifiedName))
+{
+	if (_cSharpCompilerService.ReferenceMap.TryGetValue(
+			findAllReferencesState.FullyQualifiedName,
+			out var resourceUriList))
+	{
+		<div>success?</div>
+		<ul>
+	        @foreach (var resourceUri in resourceUriList)
+	        {
+	            <li>@resourceUri.Value</li>
+	        }
+	    </ul>
+	}
+	else
+	{
+		<div>fail?</div>
+	}
+}
+
+@*
 @foreach (var entry in _cSharpCompilerService.ReferenceMap)
 {
 	<div>
@@ -17,4 +46,4 @@
 	    </ul>
 	</div>
 }
-
+*@

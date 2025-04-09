@@ -6,4 +6,5 @@ public interface IFindAllReferencesService
 	
 	public FindAllReferencesState GetFindAllReferencesState();
 	public void SetReferenceList(IReadOnlyList<string> referenceList);
+	public void SetFullyQualifiedName(string fullyQualifiedName);
 }
