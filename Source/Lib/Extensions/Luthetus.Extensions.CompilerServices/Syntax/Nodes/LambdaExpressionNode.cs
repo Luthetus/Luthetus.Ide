@@ -60,7 +60,7 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
-	public int? ScopeIndexKey { get; set; }
+	public int ScopeIndexKey { get; set; } = -1;
 
 	#region ICodeBlockOwner_Methods
 	public TypeClauseNode? GetReturnTypeClauseNode()

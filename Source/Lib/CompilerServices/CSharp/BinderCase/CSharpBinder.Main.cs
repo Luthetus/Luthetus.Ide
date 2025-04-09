@@ -560,12 +560,12 @@ public partial class CSharpBinder
     	Console.WriteLine($"-------NewSBin: has console.write... that needs commented out");
     	#endif*/
     
-    	if (codeBlockOwner.ScopeIndexKey is not null)
+    	if (codeBlockOwner.ScopeIndexKey != -1)
     	{
     		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
     		//       ...When the token walker sets the token index for deferred parsing,
     		//       a new instance of the node ends up being parsed.
-    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT null; an infinite loop? _{codeBlockOwner.SyntaxKind}");
+    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT '-1'; an infinite loop? _{codeBlockOwner.SyntaxKind}");
     	}
     
     	var scope = new Scope(
@@ -605,12 +605,12 @@ public partial class CSharpBinder
         TextEditorTextSpan textSpan,
         CSharpCompilationUnit compilationUnit)
     {
-    	if (codeBlockOwner.ScopeIndexKey is not null)
+    	if (codeBlockOwner.ScopeIndexKey != -1)
     	{
     		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
     		//       ...When the token walker sets the token index for deferred parsing,
     		//       a new instance of the node ends up being parsed.
-    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT null; an infinite loop?");
+    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT '-1'; an infinite loop?");
 		}    
     	
     	var scope = new Scope(
@@ -639,10 +639,10 @@ public partial class CSharpBinder
     	Console.WriteLine($"-------SetSBin: has console.write... that needs commented out");
     	#endif*/
     
-    	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
-    		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is null. Invoke {NewScopeAndBuilderFromOwner}?");
+    	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey == -1)
+    		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is '-1'. Invoke {NewScopeAndBuilderFromOwner}?");
     
-		parserModel.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
+		parserModel.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey;
 		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
 		
 		/*#if DEBUG

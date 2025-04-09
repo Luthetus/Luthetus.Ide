@@ -45,7 +45,7 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
-	public int? ScopeIndexKey { get; set; }
+	public int ScopeIndexKey { get; set; } = -1;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ForeachStatementNode;
