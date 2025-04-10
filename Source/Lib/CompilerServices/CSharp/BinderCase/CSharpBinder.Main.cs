@@ -439,7 +439,40 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	var key = $"{typeDefinitionNode.NamespaceName} + {typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}";
+    	// TODO: This interpolated string is very expensive.
+    	var key = $"{typeDefinitionNode.NamespaceName}.{typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}";
+    	
+    	// (2025-04-10)
+    	// ============
+    	//
+    	//
+    	// Main Goal:
+    	// ----------
+    	// - Populate the Find All References search when using:
+    	//     - Keybind
+    	//     - ContextMenu
+    	//
+    	// 
+    	// Ideas:
+    	// ------
+    	// - 'BindTypeClauseNodeSuccessfully(...)' string interpolation to make the 'key' is extremely expensive for object allocations.
+    	// - You might be able to make TypeClauseNode a struct since it doesn't have any child syntax nodes?
+    	// - Could this referencing logic, permit a single 'TypeClauseNode' / 'VariableReferenceNode' instance, that is shared?.
+    	//     - Then you just have a struct that wraps the single instance?
+    	//     - This might fix the 'tooltip issue', where the TypeClauseNode was inferred.
+    	//           Since you then can just swap out the TextEditorTextSpan for the struct that wraps the instance.
+    	// - The idea where the definitions were objects, and references were structs is becoming more and more tempting.
+    	//     - I don't think that any of the "reference" nodes have child nodes associated with them?
+    	//     - The main reason for nodes being classes is due to some of them having children that are also 'ISyntaxNode'.
+    	//     - And, now that I'm thinking about it, you only need the node to be a class when it has children that
+    	//           are not concretely typed, unless that concrete type happens to cause a recursive struct.
+    	//     - But, this mixture of ISyntaxNode implementations being reference or value types, this could result
+    	//           in a lot of boxing.
+    	//     - If this were to be a good idea, you'd need to have the reference "nodes", no longer implement 'ISyntaxNode',
+    	//           and furthermore, no longer call them "nodes", but something else (in order to avoid the boxing).
+    	// 
+    	//     
+    	// 
     	
     	if (!_referenceMap.ContainsKey(key))
     		_referenceMap.Add(key, new List<ResourceUri>());
