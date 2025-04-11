@@ -21,6 +21,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Displays;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Luthetus.Ide.RazorLib.FindAllReferences.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
@@ -35,6 +36,7 @@ public class CommandFactory : ICommandFactory
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
     private readonly IWidgetService _widgetService;
+    private readonly IFindAllReferencesService _findAllReferencesService;
     private readonly ICodeSearchService _codeSearchService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
@@ -46,6 +48,7 @@ public class CommandFactory : ICommandFactory
 		IDialogService dialogService,
 		IPanelService panelService,
 		IWidgetService widgetService,
+		IFindAllReferencesService findAllReferencesService,
 		ICodeSearchService codeSearchService,
 		IEnvironmentProvider environmentProvider,
 		CommonBackgroundTaskApi commonBackgroundTaskApi)
@@ -56,6 +59,7 @@ public class CommandFactory : ICommandFactory
 		_dialogService = dialogService;
 		_panelService = panelService;
 		_widgetService = widgetService;
+		_findAllReferencesService = findAllReferencesService;
 		_codeSearchService = codeSearchService;
 		_environmentProvider = environmentProvider;
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
@@ -591,6 +595,12 @@ public class CommandFactory : ICommandFactory
     
     public async ValueTask ShowAllReferences(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
+    	var modelModifier = editContext.GetModelModifier(new(resourceUriValue));
+    
+    	var wordTextSpan = modelModifier.GetWordTextSpan(indexInclusiveStart.Value);
+    	
+    	_findAllReferencesService.SetFullyQualifiedName(wordTextSpan.Value.GetText());
+    
         var findAllReferencesPanel = new Panel(
             "Find All References",
             Luthetus.Ide.RazorLib.FindAllReferences.Displays.FindAllReferencesDisplay.FindAllReferencesPanelKey,
