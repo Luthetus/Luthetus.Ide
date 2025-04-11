@@ -471,8 +471,38 @@ public partial class CSharpBinder
     	//     - If this were to be a good idea, you'd need to have the reference "nodes", no longer implement 'ISyntaxNode',
     	//           and furthermore, no longer call them "nodes", but something else (in order to avoid the boxing).
     	// 
-    	//     
     	// 
+    	// Conclusion:
+    	// -----------
+    	// Today I felt sick. It was hard to bring myself to write any code.
+    	// It began getting later and later in the day. So, I told myself
+    	// that it would be beneficial to get even just 1 small thing accomplished,
+    	// rather than nothing at all.
+    	//
+    	// My 1 small thing was to populate the 'FindAllReferences' UI
+    	// with the word my cursor is at when I hit { 'Shift' + 'F12' },
+    	// or use the context menu to run the 'FindAllReferences' command.
+    	// 
+    	// 
+    	// For tomorrow:
+    	// -------------
+    	// It is not sufficient to use the word at the cursor position.
+    	// If a TypeDefinitionNode: 'Kidney'
+    	// exists in the namespace 'Humans',
+    	// then populating the 'FindAllReferences' UI with 'Kidney'
+    	// provides no results.
+    	//
+    	// You need to instead populate the 'FindAllReferences' UI with 'Humans.Kidney'.
+    	// 
+    	// You can do this by getting the TypeDefinitionNode for 'Kidney',
+    	// and then its 'NamespaceName' will be "Humans",
+    	// thus you can do:
+    	//     $"{typeDefinitionNode.NamespaceName}.{typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}".
+    	//
+    	// That being said, a different approach than the string concatenation would be
+    	// preferable, so you don't do so much string concatenation.
+    	//
+    	//
     	
     	if (!_referenceMap.ContainsKey(key))
     		_referenceMap.Add(key, new List<ResourceUri>());
