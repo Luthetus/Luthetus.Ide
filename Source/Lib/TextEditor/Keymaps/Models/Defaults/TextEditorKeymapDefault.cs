@@ -23,7 +23,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
     
     public Func<TextEditorEditContext, string?, int?, ValueTask> AltF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
-    public Func<TextEditorEditContext, string?, int?, ValueTask> ShiftF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
+    public Func<TextEditorEditContext, TextEditorModel, TextEditorViewModel, CursorModifierBagTextEditor, ValueTask> ShiftF12Func { get; set; } = (_, _, _, _) => ValueTask.CompletedTask;
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {
@@ -428,8 +428,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	{
 		        		await ShiftF12Func.Invoke(
 		        			editContext,
-		        			modelModifier.ResourceUri.Value,
-		        			modelModifier.GetPositionIndex(primaryCursorModifier));
+		        			modelModifier,
+		        			viewModel,
+		        			cursorModifierBag);
 		        	}
 		        	else
 		        	{

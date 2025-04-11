@@ -21,6 +21,11 @@ using Luthetus.TextEditor.RazorLib.Installations.Displays;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Displays;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.Ide.RazorLib.FindAllReferences.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
@@ -593,13 +598,63 @@ public class CommandFactory : ICommandFactory
 			false);
     }
     
-    public async ValueTask ShowAllReferences(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
+    public async ValueTask ShowAllReferences(
+    	TextEditorEditContext editContext,
+    	TextEditorModel modelModifier,
+    	TextEditorViewModel viewModelModifier,
+    	CursorModifierBagTextEditor cursorModifierBag)
     {
-    	var modelModifier = editContext.GetModelModifier(new(resourceUriValue));
-    
-    	var wordTextSpan = modelModifier.GetWordTextSpan(indexInclusiveStart.Value);
+    	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	
-    	_findAllReferencesService.SetFullyQualifiedName(wordTextSpan.Value.GetText());
+        var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+    
+        var foundMatch = false;
+        
+        var resource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
+        var compilationUnitLocal = resource.CompilationUnit;
+        
+        if (compilationUnitLocal is not IExtendedCompilationUnit extendedCompilationUnit)
+        	return;
+        
+        var symbolList = extendedCompilationUnit.SymbolList;
+        var foundSymbol = default(Symbol);
+        
+        foreach (var symbol in symbolList)
+        {
+            if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+            {
+                foundMatch = true;
+				foundSymbol = symbol;
+            }
+        }
+        
+        if (!foundMatch)
+        	return;
+    
+    	var symbolLocal = foundSymbol;
+		var targetNode = SymbolDisplay.GetTargetNode(_textEditorService, symbolLocal);
+		var definitionNode = SymbolDisplay.GetDefinitionNode(_textEditorService, symbolLocal, targetNode);
+		
+		if (definitionNode is null || definitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+			return;
+			
+		// TODO: Do not duplicate this code from SyntaxViewModel.HandleOnClick(...)
+		
+		string? resourceUriValue = null;
+		var indexInclusiveStart = -1;
+		
+		var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
+		resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
+		indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+		
+		if (resourceUriValue is null || indexInclusiveStart == -1)
+			return;
+		
+    	_findAllReferencesService.SetFullyQualifiedName(
+    		typeDefinitionNode.NamespaceName,
+    		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
+    		typeDefinitionNode);
     
         var findAllReferencesPanel = new Panel(
             "Find All References",

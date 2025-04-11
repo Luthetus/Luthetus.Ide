@@ -22,15 +22,10 @@ public partial class CSharpBinder
 
     private readonly Dictionary<string, NamespaceGroup> _namespaceGroupMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     private readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
-    /// <summary>
-    /// 'string' is the fully qualified name.
-    /// </summary>
-    private readonly Dictionary<string, List<ResourceUri>> _referenceMap = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
     public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
-    public IReadOnlyDictionary<string, List<ResourceUri>> ReferenceMap => _referenceMap;
     
     public NamespaceStatementNode TopLevelNamespaceStatementNode => _topLevelNamespaceStatementNode;
     
@@ -439,75 +434,7 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	// TODO: This interpolated string is very expensive.
-    	var key = $"{typeDefinitionNode.NamespaceName}.{typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}";
-    	
-    	// (2025-04-10)
-    	// ============
-    	//
-    	//
-    	// Main Goal:
-    	// ----------
-    	// - Populate the Find All References search when using:
-    	//     - Keybind
-    	//     - ContextMenu
-    	//
-    	// 
-    	// Ideas:
-    	// ------
-    	// - 'BindTypeClauseNodeSuccessfully(...)' string interpolation to make the 'key' is extremely expensive for object allocations.
-    	// - You might be able to make TypeClauseNode a struct since it doesn't have any child syntax nodes?
-    	// - Could this referencing logic, permit a single 'TypeClauseNode' / 'VariableReferenceNode' instance, that is shared?.
-    	//     - Then you just have a struct that wraps the single instance?
-    	//     - This might fix the 'tooltip issue', where the TypeClauseNode was inferred.
-    	//           Since you then can just swap out the TextEditorTextSpan for the struct that wraps the instance.
-    	// - The idea where the definitions were objects, and references were structs is becoming more and more tempting.
-    	//     - I don't think that any of the "reference" nodes have child nodes associated with them?
-    	//     - The main reason for nodes being classes is due to some of them having children that are also 'ISyntaxNode'.
-    	//     - And, now that I'm thinking about it, you only need the node to be a class when it has children that
-    	//           are not concretely typed, unless that concrete type happens to cause a recursive struct.
-    	//     - But, this mixture of ISyntaxNode implementations being reference or value types, this could result
-    	//           in a lot of boxing.
-    	//     - If this were to be a good idea, you'd need to have the reference "nodes", no longer implement 'ISyntaxNode',
-    	//           and furthermore, no longer call them "nodes", but something else (in order to avoid the boxing).
-    	// 
-    	// 
-    	// Conclusion:
-    	// -----------
-    	// Today I felt sick. It was hard to bring myself to write any code.
-    	// It began getting later and later in the day. So, I told myself
-    	// that it would be beneficial to get even just 1 small thing accomplished,
-    	// rather than nothing at all.
-    	//
-    	// My 1 small thing was to populate the 'FindAllReferences' UI
-    	// with the word my cursor is at when I hit { 'Shift' + 'F12' },
-    	// or use the context menu to run the 'FindAllReferences' command.
-    	// 
-    	// 
-    	// For tomorrow:
-    	// -------------
-    	// It is not sufficient to use the word at the cursor position.
-    	// If a TypeDefinitionNode: 'Kidney'
-    	// exists in the namespace 'Humans',
-    	// then populating the 'FindAllReferences' UI with 'Kidney'
-    	// provides no results.
-    	//
-    	// You need to instead populate the 'FindAllReferences' UI with 'Humans.Kidney'.
-    	// 
-    	// You can do this by getting the TypeDefinitionNode for 'Kidney',
-    	// and then its 'NamespaceName' will be "Humans",
-    	// thus you can do:
-    	//     $"{typeDefinitionNode.NamespaceName}.{typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}".
-    	//
-    	// That being said, a different approach than the string concatenation would be
-    	// preferable, so you don't do so much string concatenation.
-    	//
-    	//
-    	
-    	if (!_referenceMap.ContainsKey(key))
-    		_referenceMap.Add(key, new List<ResourceUri>());
-    		
-    	_referenceMap[key].Add(compilationUnit.ResourceUri);
+    	typeDefinitionNode.ReferenceHashSet.Add(compilationUnit.ResourceUri);
     }
 
     public void BindTypeIdentifier(
@@ -1807,7 +1734,8 @@ public partial class CSharpBinder
 								entry.TypeClauseNode.GenericParameterListing,
 								primaryConstructorFunctionArgumentListing: default,
 								null,
-								string.Empty),
+								string.Empty,
+								referenceHashSet: new()),
 					        cSharpCompilationUnit,
 					        ref parserModel);
 		    		}

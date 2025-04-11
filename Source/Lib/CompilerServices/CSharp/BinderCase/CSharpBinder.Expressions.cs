@@ -193,7 +193,7 @@ public partial class CSharpBinder
 		
 		var expressionAntecedent = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
 		if (expressionAntecedent.SyntaxKind == SyntaxKind.BinaryExpressionNode)
-		{			
+		{
 			var binaryExpressionAntecedent = (BinaryExpressionNode)expressionAntecedent;
 			
 			var precedenceAntecedent = UtilityApi.GetOperatorPrecedence(binaryExpressionAntecedent.OperatorToken.SyntaxKind);

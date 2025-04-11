@@ -21,7 +21,8 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             null,
-            string.Empty)
+            string.Empty,
+			referenceHashSet: new())
             {
             	IsKeywordType = true
             };
@@ -35,7 +36,8 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             null,
-            string.Empty)
+            string.Empty,
+			referenceHashSet: new())
             {
             	IsKeywordType = true
             };
@@ -49,7 +51,8 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             null,
-            string.Empty)
+            string.Empty,
+			referenceHashSet: new())
             {
             	IsKeywordType = true
             };
@@ -63,7 +66,8 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             null,
-            string.Empty)
+            string.Empty,
+			referenceHashSet: new())
             {
             	IsKeywordType = true
             };
@@ -77,7 +81,8 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             null,
-            string.Empty)
+            string.Empty,
+			referenceHashSet: new())
             {
             	IsKeywordType = true
             };
@@ -91,7 +96,8 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             null,
-            string.Empty)
+            string.Empty,
+			referenceHashSet: new())
             {
             	IsKeywordType = true
             };

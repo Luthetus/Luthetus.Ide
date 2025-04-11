@@ -1,3 +1,5 @@
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+
 namespace Luthetus.Ide.RazorLib.FindAllReferences.Models;
 
 public record struct FindAllReferencesState
@@ -6,6 +8,7 @@ public record struct FindAllReferencesState
 	{
 	}
 
-	public IReadOnlyList<string> ReferenceList { get; init; } = Array.Empty<string>();
-	public string FullyQualifiedName { get; init; }
+	public TypeDefinitionNode? TypeDefinitionNode { get; init; }
+	public string? NamespaceName { get; init; }
+	public string? SyntaxName { get; init; }
 }

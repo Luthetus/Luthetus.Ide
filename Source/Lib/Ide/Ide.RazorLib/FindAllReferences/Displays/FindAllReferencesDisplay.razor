@@ -2,13 +2,46 @@
 
 @{ var findAllReferencesState = FindAllReferencesService.GetFindAllReferencesState(); }
 
-<input class="luth_input" @bind="FullyQualifiedName"/>
-
 <div>
-	@findAllReferencesState.FullyQualifiedName
+	@if (findAllReferencesState.TypeDefinitionNode is null)
+	{
+		<div>findAllReferencesState.TypeDefinitionNode is null</div>
+	}
+	else
+	{
+		<div>findAllReferencesState.TypeDefinitionNode is NOT null</div>
+	}
+	
+	<div>
+		<span class="luth_te_type"
+		      title="type">
+			@if (string.IsNullOrWhiteSpace(findAllReferencesState.NamespaceName))
+			{
+				<text>string.IsNullOrWhiteSpace(findAllReferencesState.NamespaceName)</text>
+			}
+			else
+			{
+				<text>@findAllReferencesState.NamespaceName</text>
+			}
+		</span>
+		
+		<span class="luth_te_comment"
+		      title="namespace">
+			(<!--
+			-->@if (string.IsNullOrWhiteSpace(findAllReferencesState.SyntaxName))
+			{
+				<text>string.IsNullOrWhiteSpace(findAllReferencesState.SyntaxName)</text>
+			}
+			else
+			{
+				<text>@findAllReferencesState.SyntaxName</text>
+			}<!--
+			-->)
+		</span>
+	</div>
 </div>
 
-<div>
+@*<div>
 	@_cSharpCompilerService.ReferenceMap.Count
 </div>
 
@@ -30,7 +63,7 @@
 	{
 		<div>fail?</div>
 	}
-}
+}*@
 
 @*
 @foreach (var entry in _cSharpCompilerService.ReferenceMap)

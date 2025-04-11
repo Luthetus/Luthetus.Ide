@@ -20,7 +20,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing primaryConstructorFunctionArgumentListing,
 		TypeClauseNode? inheritedTypeClauseNode,
-		string namespaceName)
+		string namespaceName,
+		HashSet<ResourceUri>? referenceHashSet)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeDefinitionNode++;
@@ -35,6 +36,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
 		InheritedTypeClauseNode = inheritedTypeClauseNode;
 		NamespaceName = namespaceName;
+		ReferenceHashSet = referenceHashSet;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -76,7 +78,16 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	
 	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
+	/// <summary>
+	/// TODO: Where is this used? ('NamespaceName' already exists and seems to be the one to keep).
+	/// </summary>
 	public string EncompassingNamespaceIdentifierString { get; set; }
+	
+	/// <summary>
+	/// Any files that contain a reference to this TypeDefinitionNode should
+	/// have their ResourceUri in this.
+	/// </summary>
+	public HashSet<ResourceUri>? ReferenceHashSet { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;

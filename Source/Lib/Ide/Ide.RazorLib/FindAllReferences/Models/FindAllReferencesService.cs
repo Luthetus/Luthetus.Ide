@@ -1,3 +1,5 @@
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+
 namespace Luthetus.Ide.RazorLib.FindAllReferences.Models;
 
 public class FindAllReferencesService : IFindAllReferencesService
@@ -10,22 +12,7 @@ public class FindAllReferencesService : IFindAllReferencesService
 	
 	public FindAllReferencesState GetFindAllReferencesState() => _findAllReferencesState;
 	
-	public void SetReferenceList(IReadOnlyList<string> referenceList)
-	{
-		lock (_stateModificationLock)
-        {
-    	    var inState = GetFindAllReferencesState();
-    	    
-            _findAllReferencesState = inState with 
-            {
-            	ReferenceList = referenceList
-            };
-        }
-
-        FindAllReferencesStateChanged?.Invoke();
-	}
-	
-	public void SetFullyQualifiedName(string fullyQualifiedName)
+	public void SetFullyQualifiedName(string namespaceName, string syntaxName, TypeDefinitionNode typeDefinitionNode)
 	{
 		lock (_stateModificationLock)
         {
@@ -33,7 +20,9 @@ public class FindAllReferencesService : IFindAllReferencesService
             
             _findAllReferencesState = inState with 
             {
-            	FullyQualifiedName = fullyQualifiedName
+            	NamespaceName = namespaceName,
+            	SyntaxName = syntaxName,
+            	TypeDefinitionNode = typeDefinitionNode,
             };
         }
 

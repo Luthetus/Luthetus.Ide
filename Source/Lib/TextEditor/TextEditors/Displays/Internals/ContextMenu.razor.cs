@@ -413,8 +413,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             
                 return ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func.Invoke(
                 	editContext,
-                	renderBatch.Model.ResourceUri.Value,
-                	modelModifier.GetPositionIndex(primaryCursor));
+        			modelModifier,
+        			viewModelModifier,
+        			cursorModifierBag);
             });
         return Task.CompletedTask;
     }
