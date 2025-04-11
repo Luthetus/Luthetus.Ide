@@ -24,7 +24,8 @@ public static class TypeFacts
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		null,
-		string.Empty);
+		string.Empty,
+		referenceHashSet: new());
 
 	/// <summary>
 	/// When parsing an expression, there may be a <see cref="FunctionInvocationNode"/>
@@ -58,5 +59,6 @@ public static class TypeFacts
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		null,
-		string.Empty);
+		string.Empty,
+		referenceHashSet: new());
 }

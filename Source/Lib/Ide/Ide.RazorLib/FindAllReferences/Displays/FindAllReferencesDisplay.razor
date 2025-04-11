@@ -1,0 +1,82 @@
+<h3>FindAllReferencesDisplay</h3>
+
+@{ var findAllReferencesState = FindAllReferencesService.GetFindAllReferencesState(); }
+
+<div>
+	@if (findAllReferencesState.TypeDefinitionNode is null)
+	{
+		<div>findAllReferencesState.TypeDefinitionNode is null</div>
+	}
+	else
+	{
+		<div>findAllReferencesState.TypeDefinitionNode is NOT null</div>
+	}
+	
+	<div>
+		<span class="luth_te_type"
+		      title="type">
+			@if (string.IsNullOrWhiteSpace(findAllReferencesState.NamespaceName))
+			{
+				<text>string.IsNullOrWhiteSpace(findAllReferencesState.NamespaceName)</text>
+			}
+			else
+			{
+				<text>@findAllReferencesState.NamespaceName</text>
+			}
+		</span>
+		
+		<span class="luth_te_comment"
+		      title="namespace">
+			(<!--
+			-->@if (string.IsNullOrWhiteSpace(findAllReferencesState.SyntaxName))
+			{
+				<text>string.IsNullOrWhiteSpace(findAllReferencesState.SyntaxName)</text>
+			}
+			else
+			{
+				<text>@findAllReferencesState.SyntaxName</text>
+			}<!--
+			-->)
+		</span>
+	</div>
+</div>
+
+@*<div>
+	@_cSharpCompilerService.ReferenceMap.Count
+</div>
+
+@if (!string.IsNullOrWhiteSpace(findAllReferencesState.FullyQualifiedName))
+{
+	if (_cSharpCompilerService.ReferenceMap.TryGetValue(
+			findAllReferencesState.FullyQualifiedName,
+			out var resourceUriList))
+	{
+		<div>success?</div>
+		<ul>
+	        @foreach (var resourceUri in resourceUriList)
+	        {
+	            <li>@resourceUri.Value</li>
+	        }
+	    </ul>
+	}
+	else
+	{
+		<div>fail?</div>
+	}
+}*@
+
+@*
+@foreach (var entry in _cSharpCompilerService.ReferenceMap)
+{
+	<div>
+	    @entry.Key
+	    
+	    <ul>
+	        @foreach (var resourceUri in entry.Value)
+	        {
+	            <li>@resourceUri.Value</li>
+	        }
+	    </ul>
+	</div>
+}
+*@

@@ -7,10 +7,11 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
@@ -38,9 +39,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	
 	private CodeSearchTreeViewKeyboardEventHandler _treeViewKeymap = null!;
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
-	
-	private Key<TextEditorViewModel> _previousTextEditorViewModelKey = Key<TextEditorViewModel>.Empty;
-	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
 		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
@@ -91,7 +89,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	
 	protected override void OnAfterRender(bool firstRender)
 	{
-		_updateContentThrottle.Run(_ => UpdateContent());
+		CodeSearchService._updateContentThrottle.Run(_ => CodeSearchService.UpdateContent(ResourceUri.Empty));
 		base.OnAfterRender(firstRender);
 	}
 	
@@ -126,77 +124,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	{
 		await InvokeAsync(StateHasChanged);
 	}
-	
-	private async Task UpdateContent()
-	{
-		TextEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), async editContext =>
-		{
-			Console.WriteLine(nameof(UpdateContent));
-		
-			if (!TreeViewService.TryGetTreeViewContainer(
-					CodeSearchState.TreeViewCodeSearchContainerKey,
-					out var treeViewContainer))
-			{
-				Console.WriteLine("TryGetTreeViewContainer");
-				return;
-			}
-			
-			if (treeViewContainer.SelectedNodeList.Count > 1)
-			{
-				Console.WriteLine("treeViewContainer.SelectedNodeList.Count > 1");
-				return;
-			}
-				
-			var activeNode = treeViewContainer.ActiveNode;
-			
-			if (activeNode is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
-			{
-				Console.WriteLine("activeNode is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan");
-				return;
-			}
-		
-			var inPreviewViewModelKey = CodeSearchService.GetCodeSearchState().PreviewViewModelKey;
-			var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
-	
-			var filePath = treeViewCodeSearchTextSpan.Item.ResourceUri.Value;
-			var resourceUri = treeViewCodeSearchTextSpan.Item.ResourceUri;
-	
-	        if (TextEditorConfig.RegisterModelFunc is null)
-	            return;
-	
-	        await TextEditorConfig.RegisterModelFunc.Invoke(
-	                new RegisterModelArgs(editContext, resourceUri, ServiceProvider))
-	            .ConfigureAwait(false);
-	
-	        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
-	        {
-	            var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-	            		editContext,
-	                    outPreviewViewModelKey,
-	                    resourceUri,
-	                    new Category(nameof(CodeSearchDisplay)),
-	                    false,
-	                    ServiceProvider))
-	                .ConfigureAwait(false);
-	
-	            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-	                TextEditorConfig.TryShowViewModelFunc is not null)
-	            {
-	                CodeSearchService.With(inState => inState with
-	                {
-	                    PreviewFilePath = filePath,
-	                    PreviewViewModelKey = viewModelKey,
-	                });
-	
-	                if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty &&
-	                    inPreviewViewModelKey != viewModelKey)
-					{
-						TextEditorService.ViewModelApi.Dispose(editContext, inPreviewViewModelKey);
-					}
-	            }
-	        }
-		});
-    }
     
     public async void OnTreeViewStateChanged()
     {

@@ -18,6 +18,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
@@ -358,11 +360,143 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
     
+    public async ValueTask ShowCallingSignature(
+		TextEditorEditContext editContext,
+		TextEditorModel modelModifier,
+		TextEditorViewModel viewModelModifier,
+		int positionIndex,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri)
+    {
+    	var success = __CSharpBinder.TryGetCompilationUnit(
+    		cSharpCompilationUnit: null,
+    		resourceUri,
+    		out CSharpCompilationUnit compilationUnit);
+    		
+    	if (!success)
+    		return;
+    	
+    	var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit, resourceUri, positionIndex);
+    	
+    	if (!scope.ConstructorWasInvoked)
+			return;
+		
+		if (scope.CodeBlockOwner is null)
+			return;
+		
+		if (scope.CodeBlockOwner.CodeBlockNode is null)
+			return;
+    	
+    	FunctionInvocationNode? functionInvocationNode = null;
+    	
+    	foreach (var childSyntax in scope.CodeBlockOwner.CodeBlockNode.GetChildList())
+    	{
+    		if (childSyntax.SyntaxKind == SyntaxKind.ReturnStatementNode)
+    		{
+    			var returnStatementNode = (ReturnStatementNode)childSyntax;
+    			
+    			// if (returnStatementNode.CodeBlockNode is not null)
+    			// {
+    				foreach (var innerChildSyntax in returnStatementNode.GetChildList())
+			    	{
+			    		if (innerChildSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+			    		{
+			    			functionInvocationNode = (FunctionInvocationNode)innerChildSyntax;
+			    			break;
+			    		}
+			    	}
+    			// }
+    		}
+    	
+    		if (functionInvocationNode is not null)
+    			break;
+    	
+    		if (childSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+    		{
+    			functionInvocationNode = (FunctionInvocationNode)childSyntax;
+    			break;
+    		}
+    	}
+    	
+    	if (functionInvocationNode is null)
+    		return;
+    	
+    	var foundMatch = false;
+        
+        var resource = modelModifier.ResourceUri;
+        var compilationUnitLocal = compilationUnit;
+        
+        var symbols = compilationUnitLocal.SymbolList;
+        
+        var cursorPositionIndex = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartingIndexInclusive;
+        
+        var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex);
+        
+        var elementPositionInPixels = await _textEditorService.JsRuntimeTextEditorApi
+            .GetBoundingClientRect(viewModelModifier.PrimaryCursorContentId)
+            .ConfigureAwait(false);
+
+        elementPositionInPixels = elementPositionInPixels with
+        {
+            Top = elementPositionInPixels.Top +
+                (.9 * viewModelModifier.CharAndLineMeasurements.LineHeight)
+        };
+        
+        var mouseEventArgs = new MouseEventArgs
+        {
+            ClientX = elementPositionInPixels.Left,
+            ClientY = elementPositionInPixels.Top
+        };
+		    
+		var relativeCoordinatesOnClick = new RelativeCoordinates(
+		    mouseEventArgs.ClientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
+		    mouseEventArgs.ClientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
+		    viewModelModifier.ScrollbarDimensions.ScrollLeft,
+		    viewModelModifier.ScrollbarDimensions.ScrollTop);
+
+        if (!foundMatch && symbols.Count != 0)
+        {
+            foreach (var symbol in symbols)
+            {
+                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive &&
+                    symbol.SyntaxKind == SyntaxKind.FunctionSymbol)
+                {
+                    foundMatch = true;
+
+                    var parameters = new Dictionary<string, object?>
+                    {
+                        {
+                            "Symbol",
+                            symbol
+                        }
+                    };
+
+                    viewModelModifier.TooltipViewModel = new(
+                        typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
+                        parameters,
+                        relativeCoordinatesOnClick,
+                        null,
+                        componentData.ContinueRenderingTooltipAsync);
+                        
+                    break;
+                }
+            }
+        }
+
+        if (!foundMatch)
+        {
+			viewModelModifier.TooltipViewModel = null;
+        }
+    }
+    
     public async ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        CursorModifierBagTextEditor cursorModifierBag,
+        Category category)
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	
@@ -437,14 +571,24 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		_textEditorService.WorkerArbitrary.PostUnique(nameof(SyntaxViewModel), async editContext =>
 		{
-			await _textEditorService.OpenInEditorAsync(
+			if (category.Value == "CodeSearchService")
+			{
+				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
 					editContext,
 					resourceUriValue,
-					true,
-					indexInclusiveStart,
-					new Category("main"),
-					Key<TextEditorViewModel>.NewKey())
-				.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
+					indexInclusiveStart);
+			}
+			else
+			{
+				await _textEditorService.OpenInEditorAsync(
+						editContext,
+						resourceUriValue,
+						true,
+						indexInclusiveStart,
+						category,
+						Key<TextEditorViewModel>.NewKey())
+					.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
+			}
 		});
     }
     

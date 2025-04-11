@@ -17,6 +17,12 @@ public static class ContextFacts
         "active-contexts",
         IKeymap.Empty);
 
+	public static readonly ContextRecord FindAllReferencesContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Find All References",
+        "find-all-references",
+        IKeymap.Empty);
+
     public static readonly ContextRecord FolderExplorerContext = new(
         Key<ContextRecord>.NewKey(),
         "Folder Explorer",

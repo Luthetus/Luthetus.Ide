@@ -14,7 +14,24 @@ public interface ICodeBlockOwner : ISyntaxNode
 	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; }
 	public CodeBlockNode? CodeBlockNode { get; }
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; }
-	public int? ScopeIndexKey { get; set; }
+	
+	/// <summary>
+	/// The initializer for this should set it to '-1'
+	/// to signify that the scope was not yet assigned.
+	///
+	/// This is unfortunate, since the default value of 'int' is '0',
+	/// then this is sort of "omnipotent information" that absolutely would
+	/// cause a bug if someone were to miss this step when
+	/// creating a new implementation of the 'ICodeBlockOwner'.
+	/// 
+	/// Initially this was a nullable int, in order to ensure the implementations
+	/// of 'ICodeBlockOwner', didn't have to initialize the int to '-1'.
+	///
+	/// The issue with the nullable approach, is that whenever you are parsing
+	/// and want to change scope, you're then reading a nullable int,
+	/// which results in the int being boxed.
+	/// </summary>
+	public int ScopeIndexKey { get; set; }
 
 	public TypeClauseNode? GetReturnTypeClauseNode();
 

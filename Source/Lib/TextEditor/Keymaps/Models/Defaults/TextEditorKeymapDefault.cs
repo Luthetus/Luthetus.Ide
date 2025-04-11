@@ -21,6 +21,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	private readonly StringBuilder _indentationBuilder = new();
 
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
+    
+    public Func<TextEditorEditContext, string?, int?, ValueTask> AltF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
+    public Func<TextEditorEditContext, TextEditorModel, TextEditorViewModel, CursorModifierBagTextEditor, ValueTask> ShiftF12Func { get; set; } = (_, _, _, _) => ValueTask.CompletedTask;
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {
@@ -312,13 +315,27 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            	shouldRevealCursor = true;
 	            	break;
 	            case "Space":
-	            	shouldRevealCursor = true;
-	            	shouldClearTooltip = true;
-	            	menuKind = MenuKind.AutoCompleteMenu;
-		            
-		            // TODO: Fix 'shouldApplySyntaxHighlighting = true' for "Space"...
-		            // ...It is causing the autocomplete menu to lose focus.
-		            // shouldApplySyntaxHighlighting = true;
+	            	if (onKeyDown.KeymapArgs.ShiftKey)
+	            	{
+	            		await modelModifier.CompilerService.ShowCallingSignature(
+							editContext,
+							modelModifier,
+							viewModel,
+							modelModifier.GetPositionIndex(primaryCursorModifier),
+							onKeyDown.ComponentData,
+							onKeyDown.ComponentData.TextEditorComponentRenderers,
+					        modelModifier.ResourceUri);
+	            	}
+	            	else
+	            	{
+		            	shouldRevealCursor = true;
+		            	shouldClearTooltip = true;
+		            	menuKind = MenuKind.AutoCompleteMenu;
+			            
+			            // TODO: Fix 'shouldApplySyntaxHighlighting = true' for "Space"...
+			            // ...It is causing the autocomplete menu to lose focus.
+			            // shouldApplySyntaxHighlighting = true;
+		            }
 	            	break;
 	            case "Period":
 	            	await TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
@@ -338,6 +355,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		{
 			switch (onKeyDown.KeymapArgs.Code)
 			{
+				case "F12":
+		        	TextEditorCommandDefaultFunctions.GoToDefinition(
+		        		editContext,
+				        modelModifier,
+				        viewModel,
+				        cursorModifierBag,
+        				new Category("CodeSearchService"));
+			        break;
 				default:
 			    	break;
 	    	}
@@ -399,11 +424,23 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					    break;
 		            }
 		        case "F12":
-		        	TextEditorCommandDefaultFunctions.GoToDefinition(
-		        		editContext,
-				        modelModifier,
-				        viewModel,
-				        cursorModifierBag);
+		        	if (onKeyDown.KeymapArgs.ShiftKey)
+		        	{
+		        		await ShiftF12Func.Invoke(
+		        			editContext,
+		        			modelModifier,
+		        			viewModel,
+		        			cursorModifierBag);
+		        	}
+		        	else
+		        	{
+			        	TextEditorCommandDefaultFunctions.GoToDefinition(
+			        		editContext,
+					        modelModifier,
+					        viewModel,
+			        		cursorModifierBag,
+	        				new Category("main"));
+			        }
 			        break;
 		        case "F10":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)

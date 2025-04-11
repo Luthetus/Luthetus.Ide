@@ -69,30 +69,7 @@ public class ParseFunctions
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
-        	// Code Duplication: this is also in 'ParseTokens.ParseGetterOrSetter(...)'
-        
-        	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
-        
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
-        	
-        	// Global scope has a null parent.
-			var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner.ScopeDirectionKind ?? ScopeDirectionKind.Both;
-			
-			if (parentScopeDirection == ScopeDirectionKind.Both)
-			{
-				if (!parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing)
-				{
-					parserModel.TokenWalker.DeferParsingOfChildScope(compilationUnit, ref parserModel);
-					return;
-				}
-	
-				parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = false;
-			}
-			else
-			{
-	        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-	        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
-			}
+        	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
         }
     }
 
@@ -206,11 +183,7 @@ public class ParseFunctions
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
-        
-        	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
-        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-        	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+        	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
         }
     }
 

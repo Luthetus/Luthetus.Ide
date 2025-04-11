@@ -40,7 +40,7 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
-	public int? ScopeIndexKey { get; set; }
+	public int ScopeIndexKey { get; set; } = -1;
 
 	public ISyntaxNode? Parent { get; }
 

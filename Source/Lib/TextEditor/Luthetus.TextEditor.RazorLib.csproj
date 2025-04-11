@@ -7,7 +7,7 @@
         <Product>Luthetus TextEditor</Product>
         <Description>A text editor written using Blazor. Contains API for syntax highlighting, and ICompilerService integration.</Description>
         <PackageId>Luthetus.TextEditor</PackageId>
-        <Version>4.8.0</Version>
+        <Version>4.9.0</Version>
         <Authors>Hunter Freeman</Authors>
         <Company />
         <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>

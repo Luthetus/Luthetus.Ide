@@ -7,4 +7,5 @@ public interface ICommandFactory
 	public IDialog? CodeSearchDialog { get; set; }
 
     public void Initialize();
+    public ValueTask OpenCodeSearchDialog();
 }
