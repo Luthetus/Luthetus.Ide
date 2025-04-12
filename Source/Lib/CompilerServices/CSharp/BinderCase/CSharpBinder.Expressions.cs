@@ -1040,7 +1040,7 @@ public partial class CSharpBinder
 					IsFabricated = true
 				};
 		
-			return ParseMemberAccessToken(constructorInvocationExpressionNode.ResultTypeReference, ref memberAccessToken, compilationUnit, ref parserModel);
+			return ParseMemberAccessToken(new TypeClauseNode(constructorInvocationExpressionNode.ResultTypeReference), ref memberAccessToken, compilationUnit, ref parserModel);
 		}
 	
 		return EmptyExpressionNode.Empty;
@@ -1096,7 +1096,7 @@ public partial class CSharpBinder
 					IsFabricated = true
 				};
 		
-			return ParseMemberAccessToken(withExpressionNode.ResultTypeReference, ref memberAccessToken, compilationUnit, ref parserModel);
+			return ParseMemberAccessToken(new TypeClauseNode(withExpressionNode.ResultTypeReference), ref memberAccessToken, compilationUnit, ref parserModel);
 		}
 	
 		return EmptyExpressionNode.Empty;

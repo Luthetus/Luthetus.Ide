@@ -803,10 +803,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				typeReference = ((ConstructorDefinitionNode)targetNode).ReturnTypeReference;
 			}
 			
-			if (typeClauseNode is null)
+			if (typeReference == default)
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
 			
-			var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode((CSharpCompilationUnit)compilerServiceResource.CompilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+			var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode((CSharpCompilationUnit)compilerServiceResource.CompilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
 			

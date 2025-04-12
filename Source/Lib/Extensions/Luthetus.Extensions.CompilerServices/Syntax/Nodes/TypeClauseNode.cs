@@ -23,6 +23,30 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		ValueType = valueType;
 		GenericParameterListing = genericParameterListing;
 	}
+	
+	/// <summary>
+	/// Various UI events can result in a 'TypeReference' needing to be shown on the UI.
+	///
+	/// In order to do this however, you'd have to cast 'TypeReference' as 'ISyntax',
+	/// and this would cause boxing.
+	///
+	/// It is presumably preferred to just eat an "object-y" cost just once by creating a 'TypeClauseNode'.
+	/// Lest it get boxed, unboxed, and boxed again -- over and over.
+	///
+	/// I'm going to use this constructor in the CSharpBinder expression logic temporarily so I can get it build.
+	/// But any usage of this kind should probably be removed.
+	/// </summary>
+	public TypeClauseNode(TypeReference typeReference)
+	{
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeClauseNode++;
+		#endif
+	
+		IsKeywordType = typeReference.IsKeywordType;
+		TypeIdentifierToken = typeReference.TypeIdentifierToken;
+		ValueType = typeReference.ValueType;
+		GenericParameterListing = typeReference.GenericParameterListing;
+	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;

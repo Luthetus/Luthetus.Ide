@@ -1480,7 +1480,7 @@ public partial class CSharpBinder
         				variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
     			    	variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
         			{
-        				return variableDeclarationNode.TypeReference;
+        				return new TypeClauseNode(variableDeclarationNode.TypeReference);
         			}
         			else if (variableDeclarationNode.TypeReference.GenericParameterListing.ConstructorWasInvoked)
         			{
@@ -1490,7 +1490,7 @@ public partial class CSharpBinder
 		        				entry.TypeReference.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
 		    			    	entry.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
 		        			{
-		        				return entry.TypeReference;
+		        				return new TypeClauseNode(entry.TypeReference);
 		        			}
         				}
         			}
@@ -1633,11 +1633,11 @@ public partial class CSharpBinder
     			int? startingIndexInclusive = null;
     			int? endingIndexExclusive = null;
     			
-    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked &&
-    			    variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+    			if (variableDeclarationNode.TypeReference.TypeIdentifierToken.ConstructorWasInvoked &&
+    			    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
     			{
-    				startingIndexInclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
-    				endingIndexExclusive = variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive;
+    				startingIndexInclusive = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+    				endingIndexExclusive = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndingIndexExclusive;
     			}
     			
     			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked &&
@@ -1727,9 +1727,9 @@ public partial class CSharpBinder
 								AccessModifierKind.Public,
 								hasPartialModifier: false,
 								StorageModifierKind.Class,
-								entry.TypeClauseNode.TypeIdentifierToken,
-								entry.TypeClauseNode.ValueType,
-								entry.TypeClauseNode.GenericParameterListing,
+								entry.TypeReference.TypeIdentifierToken,
+								entry.TypeReference.ValueType,
+								entry.TypeReference.GenericParameterListing,
 								primaryConstructorFunctionArgumentListing: default,
 								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
 								string.Empty,
