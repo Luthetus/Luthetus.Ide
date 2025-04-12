@@ -1021,7 +1021,7 @@ public partial class CSharpBinder
 		// Consume either 'OpenBraceToken', or 'CommaToken'
 		_ = parserModel.TokenWalker.Consume();
 		
-		if (constructorInvocationExpressionNode.ResultTypeReference is null)
+		if (constructorInvocationExpressionNode.ResultTypeReference == default)
 			constructorInvocationExpressionNode.SetTypeReference(parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode);
 		
 		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&
@@ -1155,7 +1155,7 @@ public partial class CSharpBinder
 						token,
 				    	stringInterpolatedEndToken: default,
 				    	toBeExpressionPrimary: null,
-				    	resultTypeClauseNode: CSharpFacts.Types.String.ToTypeReference());
+				    	resultTypeReference: CSharpFacts.Types.String.ToTypeReference());
 					
 					return ParseInterpolatedStringNode(interpolatedStringNode, compilationUnit, ref parserModel);
 				}
@@ -1942,7 +1942,6 @@ public partial class CSharpBinder
 	{
 		parserModel.Binder.NewScopeAndBuilderFromOwner(
         	lambdaExpressionNode,
-        	lambdaExpressionNode.GetReturnTypeReference(),
         	openBraceToken.TextSpan,
         	compilationUnit,
 	        ref parserModel);
@@ -2112,22 +2111,30 @@ public partial class CSharpBinder
 				}
 			}
 		
-			TypeClauseNode? typeClauseNode = null;
+			TypeReference typeReference = default;
 		
 			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-				typeClauseNode = ((VariableReferenceNode)expressionPrimary).VariableDeclarationNode?.TypeClauseNode;
+			{
+				var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
+				if (variableReferenceNode.VariableDeclarationNode is not null)
+					typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
+			}
 			else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
-				typeClauseNode = ((FunctionInvocationNode)expressionPrimary).ResultTypeClauseNode;
+			{
+				typeReference = ((FunctionInvocationNode)expressionPrimary).ResultTypeReference;
+			}
 			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-				typeClauseNode = (TypeClauseNode)expressionPrimary;
+			{
+				typeReference = new TypeReference((TypeClauseNode)expressionPrimary);
+			}
 				
-			if (typeClauseNode is null)
+			if (typeReference == default)
 			{
 				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
 			
-			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
 				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
@@ -2697,7 +2704,7 @@ public partial class CSharpBinder
 		        ref parserModel);
 			
 			genericParameterNode.GenericParameterListing.GenericParameterEntryList.Add(
-				new GenericParameterEntry(typeClauseNode));
+				new GenericParameterEntry(new TypeReference(typeClauseNode)));
 			
 			return genericParameterNode;
 		}
@@ -2706,7 +2713,7 @@ public partial class CSharpBinder
 			var typeClauseNode = (TypeClauseNode)expressionSecondary;
 		
 			genericParameterNode.GenericParameterListing.GenericParameterEntryList.Add(
-				new GenericParameterEntry(typeClauseNode));
+				new GenericParameterEntry(new TypeReference(typeClauseNode)));
 			
 			return genericParameterNode;
 		}

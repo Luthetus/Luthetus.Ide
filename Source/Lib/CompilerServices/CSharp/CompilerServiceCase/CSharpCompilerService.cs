@@ -775,18 +775,33 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	    	if (targetNode is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
         
-        	TypeClauseNode? typeClauseNode = null;
+        	TypeReference typeReference = default;
 	
 			if (targetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-				typeClauseNode = ((VariableReferenceNode)targetNode).VariableDeclarationNode?.TypeClauseNode;
+			{
+				var variableReferenceNode = (VariableReferenceNode)targetNode;
+			
+				if (variableReferenceNode.VariableDeclarationNode is not null)
+				{
+					typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
+				}
+			}
 			else if (targetNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-				typeClauseNode = ((VariableDeclarationNode)targetNode).TypeClauseNode;
+			{
+				typeReference = ((VariableDeclarationNode)targetNode).TypeReference;
+			}
 			else if (targetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
-				typeClauseNode = (TypeClauseNode)targetNode;
+			{
+				typeReference = new TypeReference((TypeClauseNode)targetNode);
+			}
 			else if (targetNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-				typeClauseNode = ((TypeDefinitionNode)targetNode).ToTypeClause();
+			{
+				typeReference = ((TypeDefinitionNode)targetNode).ToTypeReference();
+			}
 			else if (targetNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
-				typeClauseNode = ((ConstructorDefinitionNode)targetNode).ReturnTypeClauseNode;
+			{
+				typeReference = ((ConstructorDefinitionNode)targetNode).ReturnTypeReference;
+			}
 			
 			if (typeClauseNode is null)
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();

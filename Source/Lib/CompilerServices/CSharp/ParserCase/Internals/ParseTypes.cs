@@ -35,7 +35,7 @@ public static class ParseTypes
             if (typeClauseNode.IsFabricated)
                 break;
 
-            var genericArgumentEntryNode = new GenericParameterEntry(typeClauseNode);
+            var genericArgumentEntryNode = new GenericParameterEntry(new TypeReference(typeClauseNode));
             genericParameterList.Add(genericArgumentEntryNode);
 
             if (SyntaxKind.CommaToken == parserModel.TokenWalker.Current.SyntaxKind)
