@@ -29,7 +29,7 @@ public struct TypeReference
 	public TypeReference(TypeClauseNode typeClauseNode)
 	{
 		IsKeywordType = typeClauseNode.IsKeywordType;
-		TypeIdentifierToken = typeClauseNode.TypeIdentifier;
+		TypeIdentifierToken = typeClauseNode.TypeIdentifierToken;
 		ValueType = typeClauseNode.ValueType;
 		GenericParameterListing = typeClauseNode.GenericParameterListing;
 		IsTuple = typeClauseNode.IsTuple;

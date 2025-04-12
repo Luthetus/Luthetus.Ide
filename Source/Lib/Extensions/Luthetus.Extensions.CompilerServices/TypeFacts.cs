@@ -9,6 +9,37 @@ namespace Luthetus.Extensions.CompilerServices;
 
 public static class TypeFacts
 {
+	private static readonly TypeReference _notApplicableTypeReference = new TypeReference(
+		typeIdentifier: new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
+		valueType: typeof(void),
+		genericParameterListing: default,
+		isKeywordType: false,
+		isTuple: false,
+		hasQuestionMark: false,
+		arrayRank: 0,
+		isFabricated: false);
+
+	/// <summary>
+	/// When a type definition node does NOT inherit some other TypeReference,
+	/// then this type is used.
+	///
+	/// Note: this specifically implies that there was no ':'/'colon' in the text...
+	/// ...contrast this with if there were a ':' but it immediately was followed by the type's
+	/// code block body, them you ought to use 'Empty', because they wrote the syntax,
+	/// but some part of it was quite literally "empty".
+	/// </summary>
+	public static readonly TypeDefinitionNode NotApplicable = new(
+		AccessModifierKind.Public,
+		false,
+		StorageModifierKind.Class,
+		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
+		typeof(void),
+		default,
+		primaryConstructorFunctionArgumentListing: default,
+		inheritedTypeReference: _notApplicableTypeReference,
+		string.Empty,
+		referenceHashSet: new());
+
 	/// <summary>
 	/// If a <see cref="ISyntaxNode"/> has a <see cref="TypeClauseNode"/>,
 	/// but is constructed during parsing process, prior to having found the
@@ -23,7 +54,7 @@ public static class TypeFacts
 		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
-		null,
+		inheritedTypeReference: _notApplicableTypeReference,
 		string.Empty,
 		referenceHashSet: new());
 
@@ -58,7 +89,7 @@ public static class TypeFacts
 		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
-		null,
+		inheritedTypeReference: _notApplicableTypeReference,
 		string.Empty,
 		referenceHashSet: new());
 }
