@@ -56,8 +56,6 @@ public class FindAllReferencesService : IFindAllReferencesService
 				
 				foreach (var pathGroup in PathGroupList)
 				{
-					Console.WriteLine(pathGroup.Path);
-				
 					groupedTreeViewNodeMap.Add(pathGroup.Name, (pathGroup.Path, new()));
 				}
 				
