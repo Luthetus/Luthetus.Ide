@@ -10,12 +10,32 @@ public struct TypeReference
 		SyntaxToken typeIdentifier,
 		Type? valueType,
 		GenericParameterListing genericParameterListing,
-		bool isKeywordType)
+		bool isKeywordType,
+		bool isTuple,
+		bool hasQuestionMark,
+		int arrayRank,
+		bool isFabricated)
 	{
 		IsKeywordType = isKeywordType;
 		TypeIdentifierToken = typeIdentifier;
 		ValueType = valueType;
 		GenericParameterListing = genericParameterListing;
+		IsTuple = isTuple;
+		HasQuestionMark = hasQuestionMark;
+		ArrayRank = arrayRank;
+		IsFabricated = isFabricated;
+	}
+	
+	public TypeReference(TypeClauseNode typeClauseNode)
+	{
+		IsKeywordType = typeClauseNode.IsKeywordType;
+		TypeIdentifierToken = typeClauseNode.TypeIdentifier;
+		ValueType = typeClauseNode.ValueType;
+		GenericParameterListing = typeClauseNode.GenericParameterListing;
+		IsTuple = typeClauseNode.IsTuple;
+		HasQuestionMark = typeClauseNode.HasQuestionMark;
+		ArrayRank = typeClauseNode.ArrayRank;
+		IsFabricated = typeClauseNode.IsFabricated;
 	}
 
 	public SyntaxToken TypeIdentifierToken { get; }
