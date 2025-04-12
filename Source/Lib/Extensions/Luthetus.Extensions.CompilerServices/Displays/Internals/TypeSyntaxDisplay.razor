@@ -70,13 +70,18 @@
 	}
 	else if (TypeReference != default(TypeReference))
 	{
-		prefixText = "TypeReference != default";
+		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
-		syntaxHighlightingClassCssString = "luth_te_type";
-		genericParameterListing = null;
-		hasQuestionMark = null;
-		arrayRank = 0;
+		text = TypeReference.TypeIdentifierToken.TextSpan.GetText();
+		
+		if (TypeReference.IsKeywordType)
+			syntaxHighlightingClassCssString = "luth_te_keyword";
+		else
+			syntaxHighlightingClassCssString = "luth_te_type";
+		
+		genericParameterListing = TypeReference.GenericParameterListing;
+		hasQuestionMark = TypeReference.HasQuestionMark;
+		arrayRank = TypeReference.ArrayRank;
 	}
 	else
 	{
