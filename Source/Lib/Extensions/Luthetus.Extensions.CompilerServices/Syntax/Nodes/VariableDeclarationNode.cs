@@ -49,7 +49,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
 	/// </summary>
 	public bool SetterIsAutoImplemented { get; set; }
 
-	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeClause();
+	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;

@@ -24,7 +24,7 @@ public sealed class GetterOrSetterNode : ICodeBlockOwner
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{
-		return TypeFacts.Empty.ToTypeClause();
+		return TypeFacts.Empty.ToTypeReference();
 	}
 
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)

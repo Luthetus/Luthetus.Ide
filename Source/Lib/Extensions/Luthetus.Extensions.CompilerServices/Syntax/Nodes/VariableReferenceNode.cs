@@ -25,7 +25,16 @@ public sealed class VariableReferenceNode : IExpressionNode
 	/// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
 	/// </summary>
 	public VariableDeclarationNode VariableDeclarationNode { get; }
-	public TypeReference ResultTypeReference => VariableDeclarationNode?.TypeReference ?? TypeFacts.Empty.ToTypeClause();
+	public TypeReference ResultTypeReference
+	{
+		get
+		{
+			if (VariableDeclarationNode is null)
+				return TypeFacts.Empty.ToTypeReference();
+			
+			return VariableDeclarationNode.TypeReference;
+		}
+	}
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;

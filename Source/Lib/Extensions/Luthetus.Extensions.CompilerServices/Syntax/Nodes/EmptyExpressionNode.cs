@@ -18,10 +18,10 @@ public sealed class EmptyExpressionNode : IExpressionNode
 	/// If this is used justs temporarily when instantiating a node, and never added to the
 	/// IParserModel.ExpressionList then there should not be an issue.
 	/// </summary>
-	public static readonly EmptyExpressionNode Empty = new EmptyExpressionNode(TypeFacts.Empty.ToTypeClause());
+	public static readonly EmptyExpressionNode Empty = new EmptyExpressionNode(TypeFacts.Empty.ToTypeReference());
 
 	/// <inheritdoc cref="Empty"/>
-	public static readonly EmptyExpressionNode EmptyFollowsMemberAccessToken = new EmptyExpressionNode(TypeFacts.Empty.ToTypeClause())
+	public static readonly EmptyExpressionNode EmptyFollowsMemberAccessToken = new EmptyExpressionNode(TypeFacts.Empty.ToTypeReference())
 	{
 		FollowsMemberAccessToken = true
 	};

@@ -47,7 +47,7 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{
-		return null;
+		return TypeFacts.NotApplicable.ToTypeReference();
 	}
 
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)

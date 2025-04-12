@@ -50,7 +50,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
 	
-	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeClause();
+	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 	
 	public bool IsParsingGenericParameters { get; set; }
 	

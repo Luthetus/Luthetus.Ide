@@ -35,7 +35,10 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{
-		return ParentCodeBlockOwner?.GetReturnTypeReference();
+		if (ParentCodeBlockOwner is null)
+			return TypeFacts.Empty.ToTypeReference();
+		
+		return ParentCodeBlockOwner.GetReturnTypeReference();
 	}
 
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)

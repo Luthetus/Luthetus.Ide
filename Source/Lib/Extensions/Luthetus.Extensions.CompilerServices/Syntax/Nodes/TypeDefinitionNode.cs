@@ -44,6 +44,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	private bool _childListIsDirty = true;
 	private bool _memberListIsDirty = true;
 
+	private TypeClauseNode? _toTypeClauseResult;
+	
+	private bool _hasCalculatedToTypeReference = false;
 	private TypeReference _toTypeReferenceResult;
 
 	public AccessModifierKind AccessModifierKind { get; }
@@ -76,7 +79,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
 	
-	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeClause();
+	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
 	/// <summary>
 	/// TODO: Where is this used? ('NamespaceName' already exists and seems to be the one to keep).
@@ -151,19 +154,27 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 			.ToArray();
 	}
 
-	public TypeReference ToTypeClause()
+	public TypeClauseNode ToTypeClause()
 	{
-		return _toTypeReferenceResult ??= new TypeClauseNode(
+		return _toTypeClauseResult ??= new TypeClauseNode(
 			TypeIdentifierToken,
 			ValueType,
 			genericParameterListing: default,
 			isKeywordType: IsKeywordType);
 	}
+	
+	public TypeReference ToTypeReference()
+	{
+		if (!_hasCalculatedToTypeReference)
+			_toTypeReferenceResult = new TypeReference(ToTypeClause());
+		
+		return _toTypeReferenceResult;
+	}
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{
-		return null;
+		return TypeFacts.Empty.ToTypeReference();
 	}
 
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
