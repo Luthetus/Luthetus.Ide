@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharp.LexerCase;
@@ -232,10 +233,10 @@ public class RazorSyntaxTree
         {
         	var typeDefinitionNode = kvp.Value;
         	
-            if (typeDefinitionNode?.InheritedTypeClauseNode is not null)
+            if (typeDefinitionNode is not null && typeDefinitionNode.InheritedTypeReference != TypeFacts.NotApplicable.ToTypeReference())
             {
                 var inheritanceIdentifierText = typeDefinitionNode
-                    .InheritedTypeClauseNode.TypeIdentifierToken.TextSpan.GetText();
+                    .InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText();
 
                 if (inheritanceIdentifierText != "ComponentBase")
                     continue;

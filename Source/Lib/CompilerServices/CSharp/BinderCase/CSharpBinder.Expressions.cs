@@ -949,9 +949,7 @@ public partial class CSharpBinder
 					goto default;
 				}
 			case SyntaxKind.CloseAngleBracketToken:
-				constructorInvocationExpressionNode.SetTypeReference(new TypeReference(typeClauseNode));
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
-				constructorInvocationExpressionNode.ResultTypeReference.SetGenericParameterListingCloseAngleBracketToken(token);
 				return constructorInvocationExpressionNode;
 			case SyntaxKind.OpenBraceToken:				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.ObjectInitializationParameters;
@@ -999,7 +997,18 @@ public partial class CSharpBinder
 		{
 			case ConstructorInvocationStageKind.GenericParameters:
 				if (constructorInvocationExpressionNode.ResultTypeReference.GenericParameterListing.ConstructorWasInvoked)
+				{
+					if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+					{
+						if (expressionSecondary is TypeClauseNode typeClauseNode)
+						{
+							typeClauseNode.SetGenericParameterListingCloseAngleBracketToken(parserModel.TokenWalker.Current);
+							constructorInvocationExpressionNode.SetTypeReference(new TypeReference(typeClauseNode));
+						}
+					}
+				
 					return constructorInvocationExpressionNode;
+				}
 				goto default;
 			case ConstructorInvocationStageKind.FunctionParameters:
 				if (constructorInvocationExpressionNode.FunctionParameterListing.ConstructorWasInvoked)
