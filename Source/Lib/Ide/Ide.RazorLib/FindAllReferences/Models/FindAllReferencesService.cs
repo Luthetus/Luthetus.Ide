@@ -56,12 +56,20 @@ public class FindAllReferencesService : IFindAllReferencesService
 				
 				foreach (var pathGroup in PathGroupList)
 				{
-					groupedTreeViewNodeMap.Add(pathGroup.Name, (pathGroup.Path, new()));
+					if (!groupedTreeViewNodeMap.ContainsKey(pathGroup.Name))
+						groupedTreeViewNodeMap.Add(pathGroup.Name, (pathGroup.Path, new()));
 				}
 				
-				var miscellaneousGroupName = "Miscellaneous";
+				string miscellaneousGroupName;
 				
-				groupedTreeViewNodeMap.Add("Miscellaneous", (string.Empty, new()));
+				if (!groupedTreeViewNodeMap.ContainsKey("Miscellaneous"))
+					miscellaneousGroupName = "Miscellaneous";
+				else if (!groupedTreeViewNodeMap.ContainsKey("Misc."))
+					miscellaneousGroupName = "Misc.";
+				else
+					miscellaneousGroupName = groupedTreeViewNodeMap.Keys.First();
+				
+				groupedTreeViewNodeMap.Add(miscellaneousGroupName, (string.Empty, new()));
 			
 				foreach (var treeViewNode in treeViewNodeList)
 				{
@@ -92,7 +100,7 @@ public class FindAllReferencesService : IFindAllReferencesService
 						
 					treeViewGroup.ChildList = x.Value.List;
 					return treeViewGroup;
-				}).ToArray();
+				}).OrderByDescending(x => x.ChildList.Count > 0).ThenBy(x => x.Item).ToArray();
 				
 				adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(groupedTreeViewNodeList);
 		        firstNode = groupedTreeViewNodeList.FirstOrDefault();
