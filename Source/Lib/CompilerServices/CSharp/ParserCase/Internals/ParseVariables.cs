@@ -20,7 +20,7 @@ public static class ParseVariables
     	VariableDeclarationNode variableDeclarationNode;
 
 		variableDeclarationNode = new VariableDeclarationNode(
-	        consumedTypeClauseNode,
+	        new TypeReference(consumedTypeClauseNode),
 	        consumedIdentifierToken,
 	        variableKind,
 	        false);

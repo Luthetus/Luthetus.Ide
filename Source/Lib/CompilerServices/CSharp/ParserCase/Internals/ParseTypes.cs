@@ -212,7 +212,7 @@ public static class ParseTypes
 					var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
 					
 					var variableDeclarationNode = new VariableDeclarationNode(
-				        typeDefinitionNode.ToTypeClause(),
+				        typeDefinitionNode.ToTypeReference(),
 				        identifierToken,
 				        VariableKind.EnumMember,
 				        false);

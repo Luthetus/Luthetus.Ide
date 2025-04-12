@@ -30,7 +30,6 @@ public static class CSharpParser
     	
 		var globalCodeBlockBuilder = binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
 	    	globalCodeBlockNode,
-	        globalCodeBlockNode.GetReturnTypeClauseNode(),
 	        globalOpenCodeBlockTextSpan,
 	        compilationUnit);
         

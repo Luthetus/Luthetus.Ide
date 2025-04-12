@@ -93,7 +93,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		{
 			childCount +=
 				1 +                                                       // GenericParameterListing.OpenAngleBracketToken
-				GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
+				// GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
 				1;                                                        // GenericParameterListing.CloseAngleBracketToken
 		}
 
@@ -104,10 +104,10 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		if (GenericParameterListing.ConstructorWasInvoked)
 		{
 			childList[i++] = GenericParameterListing.OpenAngleBracketToken;
-			foreach (var entry in GenericParameterListing.GenericParameterEntryList)
+			/*foreach (var entry in GenericParameterListing.GenericParameterEntryList)
 			{
 				childList[i++] = entry.TypeClauseNode;
-			}
+			}*/
 			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
 		}
 

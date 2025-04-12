@@ -38,7 +38,7 @@ public partial class CSharpBinder
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
 		default,
         genericParameterListing: default,
-        CSharpFacts.Types.Void.ToTypeClause());
+        CSharpFacts.Types.Void.ToTypeReference());
     
     public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseChildScopeStack { get; } = new();
@@ -249,7 +249,7 @@ public partial class CSharpBinder
         else
         {
             variableDeclarationNode = new VariableDeclarationNode(
-                CSharpFacts.Types.Var.ToTypeClause(),
+                CSharpFacts.Types.Var.ToTypeReference(),
                 variableIdentifierToken,
                 VariableKind.Local,
                 false)
@@ -353,7 +353,7 @@ public partial class CSharpBinder
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
         {
-            functionInvocationNode.SetResultTypeClauseNode(functionDefinitionNode.ReturnTypeClauseNode);
+            functionInvocationNode.SetResultTypeReference(functionDefinitionNode.ReturnTypeReference);
         }
         else
         {
@@ -539,7 +539,6 @@ public partial class CSharpBinder
 	/// </summary>
     public void NewScopeAndBuilderFromOwner(
     	ICodeBlockOwner codeBlockOwner,
-        TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
@@ -591,7 +590,6 @@ public partial class CSharpBinder
     /// </summary>
     public CSharpCodeBlockBuilder NewScopeAndBuilderFromOwner_GlobalScope_Hack(
     	ICodeBlockOwner codeBlockOwner,
-        TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
         CSharpCompilationUnit compilationUnit)
     {
@@ -1476,23 +1474,23 @@ public partial class CSharpBinder
     		
     			var variableDeclarationNode = (VariableDeclarationNode)node;
     		
-    			if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.ConstructorWasInvoked)
+    			if (variableDeclarationNode.TypeReference.TypeIdentifierToken.ConstructorWasInvoked)
     			{
-    				if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
-        				variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
-    			    	variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+    				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
+        				variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
+    			    	variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
         			{
-        				return variableDeclarationNode.TypeClauseNode;
+        				return variableDeclarationNode.TypeReference;
         			}
-        			else if (variableDeclarationNode.TypeClauseNode.GenericParameterListing.ConstructorWasInvoked)
+        			else if (variableDeclarationNode.TypeReference.GenericParameterListing.ConstructorWasInvoked)
         			{
-        				foreach (var entry in variableDeclarationNode.TypeClauseNode.GenericParameterListing.GenericParameterEntryList)
+        				foreach (var entry in variableDeclarationNode.TypeReference.GenericParameterListing.GenericParameterEntryList)
         				{
-        					if (entry.TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
-		        				entry.TypeClauseNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
-		    			    	entry.TypeClauseNode.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+        					if (entry.TypeReference.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
+		        				entry.TypeReference.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
+		    			    	entry.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
 		        			{
-		        				return entry.TypeClauseNode;
+		        				return entry.TypeReference;
 		        			}
         				}
         			}
@@ -1733,7 +1731,7 @@ public partial class CSharpBinder
 								entry.TypeClauseNode.ValueType,
 								entry.TypeClauseNode.GenericParameterListing,
 								primaryConstructorFunctionArgumentListing: default,
-								null,
+								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
 								string.Empty,
 								referenceHashSet: new()),
 					        cSharpCompilationUnit,

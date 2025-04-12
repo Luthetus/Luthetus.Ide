@@ -1,4 +1,5 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Enums;
@@ -56,7 +57,6 @@ public class ParseDefaultKeywords
     	
     	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	catchNode,
-	        catchNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -139,7 +139,6 @@ public class ParseDefaultKeywords
 		
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	doWhileStatementNode,
-	        doWhileStatementNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -204,7 +203,6 @@ public class ParseDefaultKeywords
     	
     	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	finallyNode,
-	        finallyNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -241,7 +239,6 @@ public class ParseDefaultKeywords
 	        
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	forStatementNode,
-	        forStatementNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -275,7 +272,7 @@ public class ParseDefaultKeywords
     	var variableIdentifierToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
     	
     	var variableDeclarationStatementNode = new VariableDeclarationNode(
-            typeClauseNode,
+            new TypeReference(typeClauseNode),
             variableIdentifierToken,
             VariableKind.Local,
             false);
@@ -297,7 +294,6 @@ public class ParseDefaultKeywords
 	        
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	foreachStatementNode,
-	        foreachStatementNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -351,7 +347,6 @@ public class ParseDefaultKeywords
 	        
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	lockStatementNode,
-	        lockStatementNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -456,7 +451,6 @@ public class ParseDefaultKeywords
 	        
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	switchStatementNode,
-	        switchStatementNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -498,7 +492,6 @@ public class ParseDefaultKeywords
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	tryStatementTryNode,
-	        tryStatementTryNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -578,7 +571,6 @@ public class ParseDefaultKeywords
 	        
     	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	whileStatementNode,
-	        whileStatementNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -683,7 +675,6 @@ public class ParseDefaultKeywords
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	ifStatementNode,
-	        ifStatementNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -830,7 +821,7 @@ public class ParseDefaultKeywords
             valueType: null,
             genericParameterListing,
             primaryConstructorFunctionArgumentListing: default,
-            inheritedTypeClauseNode: null,
+            inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
             namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(),
 			referenceHashSet: new());
 
@@ -841,7 +832,6 @@ public class ParseDefaultKeywords
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	typeDefinitionNode,
-	        typeDefinitionNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -867,7 +857,7 @@ public class ParseDefaultKeywords
     		_ = parserModel.TokenWalker.Consume(); // Consume the ColonToken
             var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel);
             parserModel.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit, ref parserModel);
-			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
+			typeDefinitionNode.SetInheritedTypeReference(new TypeReference(inheritedTypeClauseNode));
 			
 			while (!parserModel.TokenWalker.IsEof)
 			{
@@ -928,7 +918,6 @@ public class ParseDefaultKeywords
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	namespaceStatementNode,
-	        namespaceStatementNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);

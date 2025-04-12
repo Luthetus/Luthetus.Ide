@@ -20,7 +20,7 @@ public partial class CSharpFacts
             typeof(void),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
+            TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
 			referenceHashSet: new())
             {
@@ -35,7 +35,7 @@ public partial class CSharpFacts
             typeof(int),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
+            TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
 			referenceHashSet: new())
             {
@@ -50,7 +50,7 @@ public partial class CSharpFacts
             typeof(char),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
+            TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
 			referenceHashSet: new())
             {
@@ -65,7 +65,7 @@ public partial class CSharpFacts
             typeof(string),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
+            TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
 			referenceHashSet: new())
             {
@@ -80,7 +80,7 @@ public partial class CSharpFacts
             typeof(bool),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
+            TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
 			referenceHashSet: new())
             {
@@ -95,7 +95,7 @@ public partial class CSharpFacts
             typeof(void),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
+            TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
 			referenceHashSet: new())
             {

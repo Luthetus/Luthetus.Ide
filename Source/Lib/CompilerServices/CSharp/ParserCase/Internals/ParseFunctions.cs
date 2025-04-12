@@ -13,7 +13,7 @@ public class ParseFunctions
 {
     public static void HandleFunctionDefinition(
         SyntaxToken consumedIdentifierToken,
-        TypeClauseNode consumedTypeClauseNode,
+        TypeReference consumedTypeReference,
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
@@ -37,7 +37,7 @@ public class ParseFunctions
 
 		var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,
-            consumedTypeClauseNode,
+            consumedTypeReference,
             consumedIdentifierToken,
             genericParameterListing,
             functionArgumentListing: default,
@@ -49,7 +49,6 @@ public class ParseFunctions
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	functionDefinitionNode,
-	        functionDefinitionNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -86,7 +85,7 @@ public class ParseFunctions
             isKeywordType: false);
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
-            typeClauseNode,
+            new TypeReference(typeClauseNode),
             consumedIdentifierToken,
             default,
             functionArgumentListing: default,
@@ -98,7 +97,6 @@ public class ParseFunctions
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	constructorDefinitionNode,
-	        constructorDefinitionNode.GetReturnTypeClauseNode(),
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
@@ -151,7 +149,7 @@ public class ParseFunctions
 						openParenthesisToken,
 				        new List<FunctionParameterEntry>(),
 				        closeParenthesisToken: default),
-			        CSharpFacts.Types.Void.ToTypeClause());
+			        CSharpFacts.Types.Void.ToTypeReference());
 			        
 			    functionInvocationNode.IsParsingFunctionParameters = true;
 			        
@@ -258,7 +256,7 @@ public class ParseFunctions
 		    			}
 					        
 					    var variableDeclarationNode = new VariableDeclarationNode(
-					        (TypeClauseNode)typeClauseNode,
+					        new TypeReference((TypeClauseNode)typeClauseNode),
 					        identifierToken,
 					        VariableKind.Local,
 					        false);

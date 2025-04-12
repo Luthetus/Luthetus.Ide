@@ -17,10 +17,10 @@
 		
     	var syntaxViewModel = new SyntaxViewModel(
     		targetSymbol: null,
-    		targetNode: genericParameter.TypeClauseNode,
+    		targetNode: null,
     		definitionNode: null,
 			depth: syntaxViewModelLocal.Depth + 1);
-        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="genericParameter.TypeReference"/>
 		
 		if (index < genericParameterNode.GenericParameterListing.GenericParameterEntryList.Count - 1)
 		{

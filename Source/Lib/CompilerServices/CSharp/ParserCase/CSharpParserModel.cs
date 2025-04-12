@@ -59,7 +59,7 @@ public struct CSharpParserModel
         AmbiguousIdentifierExpressionNode.SetSharedInstance(
         	default,
 	        genericParameterListing: default,
-	        CSharpFacts.Types.Void.ToTypeClause(),
+	        CSharpFacts.Types.Void.ToTypeReference(),
 	        followsMemberAccessToken: false);
     }
 
@@ -109,7 +109,7 @@ public struct CSharpParserModel
 
     public int CurrentScopeIndexKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
-    public TypeClauseNode MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeClause();
+    public TypeReference MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeReference();
     
     public UsingStatementListingNode? UsingStatementListingNode { get; set; }
     
