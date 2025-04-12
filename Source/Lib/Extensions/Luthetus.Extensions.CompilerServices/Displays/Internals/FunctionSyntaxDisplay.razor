@@ -8,7 +8,7 @@
 	string? prefixText;
 	
 	// Hacky addition of 'string? returnTypeClauseNodeText' due to a ConstructorSymbol just being the identifier, not a node.
-	TypeClauseNode? returnTypeClauseNode;
+	TypeReference returnTypeClauseNode;
 	string? returnTypeClauseNodeText;
 	
 	string? methodName;
@@ -19,7 +19,7 @@
 	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
 	{
 		prefixText = "(null)";
-		returnTypeClauseNode = null;
+		returnTypeClauseNode = default;
 		returnTypeClauseNodeText = null;
 		methodName = null;
 		genericParameterListing = null;
@@ -34,7 +34,7 @@
 		if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = (FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode;
-			returnTypeClauseNode = functionDefinitionNode.ReturnTypeClauseNode;
+			returnTypeClauseNode = functionDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
 			genericParameterListing = functionDefinitionNode.GenericParameterListing;
@@ -43,7 +43,7 @@
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = (ConstructorDefinitionNode)syntaxViewModelLocal.DefinitionNode;
-			returnTypeClauseNode = constructorDefinitionNode.ReturnTypeClauseNode;
+			returnTypeClauseNode = constructorDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			genericParameterListing = null;
@@ -51,7 +51,7 @@
 		}
 		else
 		{
-			returnTypeClauseNode = null;
+			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
 			genericParameterListing = null;
@@ -67,7 +67,7 @@
 		if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
 		{
 			var functionInvocationNode = (FunctionInvocationNode)syntaxViewModelLocal.TargetNode;
-			returnTypeClauseNode = functionInvocationNode.ResultTypeClauseNode;
+			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText();
 			genericParameterListing = functionInvocationNode.GenericParameterListing;
@@ -76,7 +76,7 @@
 		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
 		{
 			var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntaxViewModelLocal.TargetNode;
-			returnTypeClauseNode = constructorInvocationNode.ResultTypeClauseNode;
+			returnTypeClauseNode = constructorInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			genericParameterListing = null;
@@ -84,7 +84,7 @@
 		}
 		else
 		{
-			returnTypeClauseNode = null;
+			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
 			genericParameterListing = null;
@@ -99,7 +99,7 @@
 	
 		if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.FunctionSymbol)
 		{
-			returnTypeClauseNode = null;
+			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 			genericParameterListing = null;
@@ -107,7 +107,7 @@
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
-			returnTypeClauseNode = null;
+			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
 			methodName = null;
 			genericParameterListing = null;
@@ -115,7 +115,7 @@
 		}
 		else
 		{
-			returnTypeClauseNode = null;
+			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			genericParameterListing = null;
@@ -125,7 +125,7 @@
 	else
 	{
 		prefixText = "(unrecognizable-state)";
-		returnTypeClauseNode = null;
+		returnTypeClauseNode = default;
 		returnTypeClauseNodeText = null;
 		methodName = null;
 		genericParameterListing = null;
@@ -142,14 +142,14 @@
 		</span>
 	}
 	
-	@if (returnTypeClauseNode is not null)
+	@if (returnTypeClauseNode != default(TypeReference))
 	{
 		var syntaxViewModel = new SyntaxViewModel(
 			targetSymbol: null,
-			targetNode: returnTypeClauseNode,
+			targetNode: null,
 			definitionNode: null,
 			depth: syntaxViewModelLocal.Depth + 1);
-		<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="returnTypeClauseNode"/>
 		<text>&nbsp;</text>
 	}
 	else if (!string.IsNullOrWhiteSpace(returnTypeClauseNodeText))

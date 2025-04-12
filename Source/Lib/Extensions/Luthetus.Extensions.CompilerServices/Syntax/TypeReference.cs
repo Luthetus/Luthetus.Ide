@@ -4,7 +4,7 @@ using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.Extensions.CompilerServices.Syntax;
 
-public struct TypeReference
+public record struct TypeReference
 {
 	public TypeReference(
 		SyntaxToken typeIdentifier,
