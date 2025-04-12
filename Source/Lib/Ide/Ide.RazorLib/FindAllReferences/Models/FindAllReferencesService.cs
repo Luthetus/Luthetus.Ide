@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 namespace Luthetus.Ide.RazorLib.FindAllReferences.Models;
@@ -17,6 +18,8 @@ public class FindAllReferencesService : IFindAllReferencesService
 	private FindAllReferencesState _findAllReferencesState = new();
 
 	public event Action? FindAllReferencesStateChanged;
+	
+	public List<(string Name, string Path)> PathGroupList { get; set; }
 	
 	public FindAllReferencesState GetFindAllReferencesState() => _findAllReferencesState;
 	
@@ -42,14 +45,74 @@ public class FindAllReferencesService : IFindAllReferencesService
 					false,
 					false))
 				.ToArray();
+			
+			TreeViewAdhoc adhocRoot;
+			TreeViewNoType firstNode;
+			List<TreeViewNoType> activeNodes;
+			
+			if (PathGroupList.Count > 0)
+			{
+				var groupedTreeViewNodeMap = new Dictionary<string, (string Path, List<TreeViewNoType> List)>();
 				
-			var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewNodeList);
-	        var firstNode = treeViewNodeList.FirstOrDefault();
-	
-	        var activeNodes = firstNode is null
-	            ? new List<TreeViewNoType>()
-	            : new() { firstNode };
-	
+				foreach (var pathGroup in PathGroupList)
+				{
+					Console.WriteLine(pathGroup.Path);
+				
+					groupedTreeViewNodeMap.Add(pathGroup.Name, (pathGroup.Path, new()));
+				}
+				
+				var miscellaneousGroupName = "Miscellaneous";
+				
+				groupedTreeViewNodeMap.Add("Miscellaneous", (string.Empty, new()));
+			
+				foreach (var treeViewNode in treeViewNodeList)
+				{
+					var foundMatch = false;
+					
+					foreach (var pathGroup in PathGroupList)
+					{
+						if (((TreeViewFindAllReferences)treeViewNode).Item.Value.StartsWith(pathGroup.Path))
+						{
+							groupedTreeViewNodeMap[pathGroup.Name].List.Add(treeViewNode);
+							foundMatch = true;
+						}
+					}
+					
+					if (!foundMatch)
+						groupedTreeViewNodeMap[miscellaneousGroupName].List.Add(treeViewNode);
+				}
+				
+				var groupedTreeViewNodeList = groupedTreeViewNodeMap.Select(x =>
+				{
+					var treeViewGroup = new TreeViewGroup(
+						displayText: x.Key,
+						isExpandable: true,
+						isExpanded: false)
+					{
+						TitleText = x.Value.Path,
+					};
+						
+					treeViewGroup.ChildList = x.Value.List;
+					return treeViewGroup;
+				}).ToArray();
+				
+				adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(groupedTreeViewNodeList);
+		        firstNode = groupedTreeViewNodeList.FirstOrDefault();
+		
+		        activeNodes = firstNode is null
+		            ? new List<TreeViewNoType>()
+		            : new() { firstNode };
+			}
+			else
+			{
+				adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewNodeList);
+		        firstNode = treeViewNodeList.FirstOrDefault();
+		
+		        activeNodes = firstNode is null
+		            ? new List<TreeViewNoType>()
+		            : new() { firstNode };
+			}
+			
 	        if (!_treeViewService.TryGetTreeViewContainer(FindAllReferencesState.TreeViewContainerKey, out _))
 	        {
 	            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
