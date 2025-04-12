@@ -20,7 +20,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 		SyntaxToken stringInterpolatedStartToken,
 		SyntaxToken stringInterpolatedEndToken,
 		IExpressionNode? toBeExpressionPrimary,
-		TypeClauseNode resultTypeClauseNode)
+		TypeReference resultTypeReference)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.InterpolatedStringNode++;
@@ -29,7 +29,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 		StringInterpolatedStartToken = stringInterpolatedStartToken;
 		StringInterpolatedEndToken = stringInterpolatedEndToken;
 		ToBeExpressionPrimary = toBeExpressionPrimary;
-		ResultTypeClauseNode = resultTypeClauseNode;
+		ResultTypeReference = resultTypeReference;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -43,7 +43,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	/// </summary>
 	public IExpressionNode? ToBeExpressionPrimary { get; }
 
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeReference ResultTypeReference { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InterpolatedStringNode;
@@ -60,7 +60,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		var childCount = 3; // StringInterpolatedStartToken, StringInterpolatedEndToken, ResultTypeClauseNode,
+		var childCount = 2; // StringInterpolatedStartToken, StringInterpolatedEndToken,
 
 		if (ToBeExpressionPrimary is not null)
 			childCount++;
@@ -73,9 +73,6 @@ public sealed class InterpolatedStringNode : IExpressionNode
 
 		if (ToBeExpressionPrimary is not null)
 			childList[i++] = ToBeExpressionPrimary;
-
-
-		childList[i++] = ResultTypeClauseNode;
 
 		_childList = childList;
 

@@ -14,7 +14,7 @@ public sealed class TupleExpressionNode : IExpressionNode
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-	public TypeClauseNode ResultTypeClauseNode { get; } = TypeFacts.Empty.ToTypeClause();
+	public TypeReference ResultTypeReference { get; } = TypeFacts.Empty.ToTypeClause();
 
 	public List<IExpressionNode> InnerExpressionList { get; } = new();
 

@@ -11,7 +11,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	/// </summary>
 	public ConstructorInvocationExpressionNode(
 		SyntaxToken newKeywordToken,
-		TypeClauseNode typeClauseNode,
+		TypeReference typeReference,
 		FunctionParameterListing functionParameterListing)
 	{
 		#if DEBUG
@@ -19,7 +19,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 		#endif
 	
 		NewKeywordToken = newKeywordToken;
-		ResultTypeClauseNode = typeClauseNode;
+		ResultTypeReference = typeReference;
 		FunctionParameterListing = functionParameterListing;
 	}
 
@@ -27,7 +27,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken NewKeywordToken { get; }
-	public TypeClauseNode ResultTypeClauseNode { get; private set; }
+	public TypeReference ResultTypeReference { get; private set; }
 	public FunctionParameterListing FunctionParameterListing { get; private set; }
 
 	public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
@@ -37,9 +37,9 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	
 	public bool IsParsingFunctionParameters { get; set; }
 
-	public ConstructorInvocationExpressionNode SetTypeClauseNode(TypeClauseNode? resultTypeClauseNode)
+	public ConstructorInvocationExpressionNode SetTypeReference(TypeReference resultTypeReference)
 	{
-		ResultTypeClauseNode = resultTypeClauseNode;
+		ResultTypeReference = resultTypeReference;
 
 		_childListIsDirty = true;
 		return this;
@@ -62,7 +62,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		var childCount = 2; // NewKeywordToken, ResultTypeClauseNode
+		var childCount = 1; // NewKeywordToken,
 		
 		if (FunctionParameterListing.ConstructorWasInvoked)
 		{
@@ -76,7 +76,6 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 		var i = 0;
 
 		childList[i++] = NewKeywordToken;
-		childList[i++] = ResultTypeClauseNode;
 		
 		if (FunctionParameterListing.ConstructorWasInvoked)
 		{

@@ -33,7 +33,7 @@ public interface ICodeBlockOwner : ISyntaxNode
 	/// </summary>
 	public int ScopeIndexKey { get; set; }
 
-	public TypeClauseNode? GetReturnTypeClauseNode();
+	public TypeReference GetReturnTypeReference();
 
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker);
 	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker);

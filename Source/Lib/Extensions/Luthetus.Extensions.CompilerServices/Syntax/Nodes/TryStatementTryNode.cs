@@ -40,7 +40,7 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementTryNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

@@ -51,7 +51,7 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.ForeachStatementNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

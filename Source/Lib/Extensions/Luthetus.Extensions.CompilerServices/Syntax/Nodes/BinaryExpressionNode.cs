@@ -6,10 +6,10 @@ public sealed class BinaryExpressionNode : IExpressionNode
 {
 	public BinaryExpressionNode(
 		IExpressionNode leftExpressionNode,
-		TypeClauseNode leftOperandTypeClauseNode,
+		TypeReference leftOperandTypeReference,
 		SyntaxToken operatorToken,
-		TypeClauseNode rightOperandTypeClauseNode,
-		TypeClauseNode resultTypeClauseNode,
+		TypeReference rightOperandTypeReference,
+		TypeReference resultTypeReference,
 		IExpressionNode rightExpressionNode)
 	{
 		#if DEBUG
@@ -17,25 +17,25 @@ public sealed class BinaryExpressionNode : IExpressionNode
 		#endif
 	
 		LeftExpressionNode = leftExpressionNode;
-		LeftOperandTypeClauseNode = leftOperandTypeClauseNode;
+		LeftOperandTypeReference = leftOperandTypeReference;
 		OperatorToken = operatorToken;
-		RightOperandTypeClauseNode = rightOperandTypeClauseNode;
-		ResultTypeClauseNode = resultTypeClauseNode;
+		RightOperandTypeReference = rightOperandTypeReference;
+		ResultTypeReference = resultTypeReference;
 		RightExpressionNode = rightExpressionNode;
 	}
 
 	public BinaryExpressionNode(
 			IExpressionNode leftExpressionNode,
-			TypeClauseNode leftOperandTypeClauseNode,
+			TypeReference leftOperandTypeReference,
 			SyntaxToken operatorToken,
-			TypeClauseNode rightOperandTypeClauseNode,
-			TypeClauseNode resultTypeClauseNode)
+			TypeReference rightOperandTypeReference,
+			TypeReference resultTypeReference)
 		: this(
 			leftExpressionNode,
-			leftOperandTypeClauseNode,
+			leftOperandTypeReference,
 			operatorToken,
-			rightOperandTypeClauseNode,
-			resultTypeClauseNode,
+			rightOperandTypeReference,
+			resultTypeReference,
 			EmptyExpressionNode.Empty)
 	{
 	}
@@ -44,10 +44,10 @@ public sealed class BinaryExpressionNode : IExpressionNode
 	private bool _childListIsDirty = true;
 
 	public IExpressionNode LeftExpressionNode { get; }
-	public TypeClauseNode LeftOperandTypeClauseNode { get; }
+	public TypeReference LeftOperandTypeReference { get; }
 	public SyntaxToken OperatorToken { get; }
-	public TypeClauseNode RightOperandTypeClauseNode { get; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeReference RightOperandTypeReference { get; }
+	public TypeReference ResultTypeReference { get; }
 	public IExpressionNode RightExpressionNode { get; private set; }
 
 	public bool IsFabricated { get; init; }

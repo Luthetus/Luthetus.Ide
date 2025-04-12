@@ -47,7 +47,7 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.SwitchStatementNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

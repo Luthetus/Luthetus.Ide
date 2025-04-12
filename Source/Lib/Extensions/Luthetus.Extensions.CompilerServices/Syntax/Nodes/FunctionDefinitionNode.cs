@@ -13,7 +13,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 {
 	public FunctionDefinitionNode(
 		AccessModifierKind accessModifierKind,
-		TypeClauseNode returnTypeClauseNode,
+		TypeReference returnTypeReference,
 		SyntaxToken functionIdentifierToken,
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing functionArgumentListing,
@@ -24,7 +24,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 		#endif
 	
 		AccessModifierKind = accessModifierKind;
-		ReturnTypeClauseNode = returnTypeClauseNode;
+		ReturnTypeReference = returnTypeReference;
 		FunctionIdentifierToken = functionIdentifierToken;
 		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = functionArgumentListing;
@@ -35,7 +35,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	private bool _childListIsDirty = true;
 
 	public AccessModifierKind AccessModifierKind { get; }
-	public TypeClauseNode ReturnTypeClauseNode { get; }
+	public TypeReference ReturnTypeReference { get; }
 	public SyntaxToken FunctionIdentifierToken { get; }
 	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
@@ -50,7 +50,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
 	
-	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeClause();
 	
 	public bool IsParsingGenericParameters { get; set; }
 	
@@ -81,9 +81,9 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	}
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
-		return ReturnTypeClauseNode;
+		return ReturnTypeReference;
 	}
 
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
@@ -125,7 +125,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 		if (!_childListIsDirty)
 			return _childList;
 
-		var childCount = 2 +                                          // ReturnTypeClauseNode, FunctionIdentifierToken
+		var childCount = 1 +                                          // FunctionIdentifierToken
 			1 +                                                       // FunctionArgumentListing.OpenParenthesisToken
 			FunctionArgumentListing.FunctionArgumentEntryList.Count + // FunctionArgumentListing.FunctionArgumentEntryList.Count
 			1;                                                        // FunctionArgumentListing.CloseParenthesisToken
@@ -142,7 +142,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
-		childList[i++] = ReturnTypeClauseNode;
 		childList[i++] = FunctionIdentifierToken;
 		if (GenericParameterListing.ConstructorWasInvoked)
 		{

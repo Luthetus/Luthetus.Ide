@@ -53,7 +53,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 
 	public bool IsTuple { get; }
 
-	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeClause();
 
 	public bool HasQuestionMark { get; set; }
 	public int ArrayRank { get; set; }

@@ -45,7 +45,7 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.WhileStatementNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

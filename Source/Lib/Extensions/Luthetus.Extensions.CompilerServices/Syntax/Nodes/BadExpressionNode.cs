@@ -14,18 +14,18 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class BadExpressionNode : IExpressionNode
 {
-	public BadExpressionNode(TypeClauseNode resultTypeClauseNode, List<ISyntax> syntaxList)
+	public BadExpressionNode(TypeReference resultTypeReference, List<ISyntax> syntaxList)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BadExpressionNode++;
 		#endif
 	
-		ResultTypeClauseNode = resultTypeClauseNode;
+		ResultTypeReference = resultTypeReference;
 		SyntaxList = syntaxList;
 	}
 
-	public BadExpressionNode(TypeClauseNode resultTypeClauseNode, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
-		: this(resultTypeClauseNode, new List<ISyntax> { syntaxPrimary, syntaxSecondary })
+	public BadExpressionNode(TypeReference resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
+		: this(resultTypeReference, new List<ISyntax> { syntaxPrimary, syntaxSecondary })
 	{
 	}
 
@@ -33,7 +33,7 @@ public sealed class BadExpressionNode : IExpressionNode
 	private bool _childListIsDirty = true;
 
 	public List<ISyntax> SyntaxList { get; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeReference ResultTypeReference { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;

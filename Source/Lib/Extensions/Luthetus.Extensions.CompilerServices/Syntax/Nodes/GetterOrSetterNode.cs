@@ -22,7 +22,7 @@ public sealed class GetterOrSetterNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.GetterOrSetterNode;
 	
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return TypeFacts.Empty.ToTypeClause();
 	}

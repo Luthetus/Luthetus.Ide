@@ -11,14 +11,14 @@ public sealed class WithExpressionNode : IExpressionNode
 		#endif
 	
 		VariableReferenceNode = variableReferenceNode;
-		ResultTypeClauseNode = variableReferenceNode.ResultTypeClauseNode;
+		ResultTypeReference = variableReferenceNode.ResultTypeReference;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public VariableReferenceNode VariableReferenceNode { get; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeReference ResultTypeReference { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.WithExpressionNode;
@@ -31,7 +31,6 @@ public sealed class WithExpressionNode : IExpressionNode
 		_childList = new ISyntax[]
 		{
 			VariableReferenceNode,
-			ResultTypeClauseNode,
 		};
 
 		_childListIsDirty = false;

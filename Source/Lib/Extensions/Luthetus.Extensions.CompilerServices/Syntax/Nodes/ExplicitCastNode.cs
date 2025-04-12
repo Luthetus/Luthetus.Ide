@@ -6,7 +6,7 @@ public sealed class ExplicitCastNode : IExpressionNode
 {
 	public ExplicitCastNode(
 		SyntaxToken openParenthesisToken,
-		TypeClauseNode resultTypeClauseNode,
+		TypeReference resultTypeReference,
 		SyntaxToken closeParenthesisToken)
 	{
 		#if DEBUG
@@ -14,20 +14,20 @@ public sealed class ExplicitCastNode : IExpressionNode
 		#endif
 	
 		OpenParenthesisToken = openParenthesisToken;
-		ResultTypeClauseNode = resultTypeClauseNode;
+		ResultTypeReference = resultTypeReference;
 		CloseParenthesisToken = closeParenthesisToken;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-	public ExplicitCastNode(SyntaxToken openParenthesisToken, TypeClauseNode resultTypeClauseNode)
-		: this(openParenthesisToken, resultTypeClauseNode, default)
+	public ExplicitCastNode(SyntaxToken openParenthesisToken, TypeReference resultTypeReference)
+		: this(openParenthesisToken, resultTypeReference, default)
 	{
 	}
 
 	public SyntaxToken OpenParenthesisToken { get; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeReference ResultTypeReference { get; }
 	public SyntaxToken CloseParenthesisToken { get; private set; }
 
 	public bool IsFabricated { get; init; }
@@ -46,13 +46,12 @@ public sealed class ExplicitCastNode : IExpressionNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		var childCount = 3; // OpenParenthesisToken, ResultTypeClauseNode, CloseParenthesisToken,
+		var childCount = 2; // OpenParenthesisToken, ResultTypeReference, CloseParenthesisToken,
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenParenthesisToken;
-		childList[i++] = ResultTypeClauseNode;
 		childList[i++] = CloseParenthesisToken;
 
 		_childList = childList;

@@ -9,7 +9,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 		FunctionDefinitionNode? functionDefinitionNode,
 		GenericParameterListing genericParameterListing,
 		FunctionParameterListing functionParameterListing,
-		TypeClauseNode resultTypeClauseNode)
+		TypeReference resultTypeReference)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionInvocationNode++;
@@ -19,7 +19,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 		FunctionDefinitionNode = functionDefinitionNode;
 		GenericParameterListing = genericParameterListing;
 		FunctionParameterListing = functionParameterListing;
-		ResultTypeClauseNode = resultTypeClauseNode;
+		ResultTypeReference = resultTypeReference;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -29,7 +29,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	public FunctionDefinitionNode? FunctionDefinitionNode { get; }
 	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionParameterListing FunctionParameterListing { get; private set; }
-	public TypeClauseNode ResultTypeClauseNode { get; private set; }
+	public TypeReference ResultTypeReference { get; private set; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
@@ -66,9 +66,9 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	/// but in order to know the result type clause node we need to invoke
 	/// 'BindFunctionInvocationNode', this is odd?
 	/// </summary>
-	public void SetResultTypeClauseNode(TypeClauseNode typeClauseNode)
+	public void SetResultTypeReference(TypeReference typeReference)
 	{
-		ResultTypeClauseNode = typeClauseNode;;
+		ResultTypeReference = typeReference;
 		_childListIsDirty = true;
 	}
 
@@ -77,7 +77,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 		if (!_childListIsDirty)
 			return _childList;
 
-		var childCount = 3; // FunctionInvocationIdentifierToken, ...FunctionParametersListingNode, ResultTypeClauseNode,
+		var childCount = 2; // FunctionInvocationIdentifierToken, ...FunctionParametersListingNode,
 		
 		if (FunctionParameterListing.ConstructorWasInvoked)
 		{
@@ -122,8 +122,6 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 			
 			childList[i++] = FunctionParameterListing.CloseParenthesisToken;
 		}
-		
-		childList[i++] = ResultTypeClauseNode;
 
 		_childList = childList;
 

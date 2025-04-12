@@ -19,7 +19,7 @@ public sealed class ReturnStatementNode : IExpressionNode
 
 	public SyntaxToken KeywordToken { get; }
 	public IExpressionNode ExpressionNode { get; }
-	public TypeClauseNode ResultTypeClauseNode => ExpressionNode.ResultTypeClauseNode;
+	public TypeReference ResultTypeReference => ExpressionNode.ResultTypeReference;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;

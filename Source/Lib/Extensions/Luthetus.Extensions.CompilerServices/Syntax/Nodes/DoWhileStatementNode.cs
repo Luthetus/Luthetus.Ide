@@ -46,7 +46,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.DoWhileStatementNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

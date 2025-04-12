@@ -10,7 +10,7 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode
 {
 	public ConstructorDefinitionNode(
-		TypeClauseNode returnTypeClauseNode,
+		TypeReference returnTypeReference,
 		SyntaxToken functionIdentifier,
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing functionArgumentListing,
@@ -20,7 +20,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorDefinitionNode++;
 		#endif
 	
-		ReturnTypeClauseNode = returnTypeClauseNode;
+		ReturnTypeReference = returnTypeReference;
 		FunctionIdentifier = functionIdentifier;
 		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = functionArgumentListing;
@@ -30,7 +30,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-	public TypeClauseNode ReturnTypeClauseNode { get; }
+	public TypeReference ReturnTypeReference { get; }
 	public SyntaxToken FunctionIdentifier { get; }
 	public GenericParameterListing GenericParameterListing { get; }
 	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
@@ -45,7 +45,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
 	
-	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeClause();
 	
 	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
 	{
@@ -55,9 +55,9 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	}
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
-		return ReturnTypeClauseNode;
+		return ReturnTypeReference;
 	}
 
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
@@ -100,7 +100,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 			return _childList;
 
 		
-		var childCount = 2 +                                          // ReturnTypeClauseNode, FunctionIdentifier
+		var childCount = 1 +                                          // FunctionIdentifier
 			1 +                                                       // FunctionArgumentListing.OpenParenthesisToken
 			FunctionArgumentListing.FunctionArgumentEntryList.Count + // FunctionArgumentListing.FunctionArgumentEntryList.Count
 			1;                                                        // FunctionArgumentListing.CloseParenthesisToken
@@ -117,7 +117,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
-		childList[i++] = ReturnTypeClauseNode;
 		childList[i++] = FunctionIdentifier;
 		if (GenericParameterListing.ConstructorWasInvoked)
 		{

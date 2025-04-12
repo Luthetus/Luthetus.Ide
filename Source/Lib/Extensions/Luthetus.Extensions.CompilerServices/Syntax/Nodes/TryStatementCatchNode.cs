@@ -55,7 +55,7 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 	}
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

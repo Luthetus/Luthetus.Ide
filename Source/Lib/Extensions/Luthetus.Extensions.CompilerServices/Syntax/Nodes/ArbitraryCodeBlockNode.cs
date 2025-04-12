@@ -33,9 +33,9 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.ArbitraryCodeBlockNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
-		return ParentCodeBlockOwner?.GetReturnTypeClauseNode();
+		return ParentCodeBlockOwner?.GetReturnTypeReference();
 	}
 
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)

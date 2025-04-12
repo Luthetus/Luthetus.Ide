@@ -39,7 +39,7 @@ public sealed class IfStatementNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.IfStatementNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

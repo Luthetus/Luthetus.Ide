@@ -19,7 +19,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		Type? valueType,
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing primaryConstructorFunctionArgumentListing,
-		TypeClauseNode? inheritedTypeClauseNode,
+		TypeReference inheritedTypeReference,
 		string namespaceName,
 		HashSet<ResourceUri>? referenceHashSet)
 	{
@@ -34,7 +34,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		ValueType = valueType;
 		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
-		InheritedTypeClauseNode = inheritedTypeClauseNode;
+		InheritedTypeReference = inheritedTypeReference;
 		NamespaceName = namespaceName;
 		ReferenceHashSet = referenceHashSet;
 	}
@@ -44,7 +44,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	private bool _childListIsDirty = true;
 	private bool _memberListIsDirty = true;
 
-	private TypeClauseNode? _toTypeClauseNodeResult;
+	private TypeReference _toTypeReferenceResult;
 
 	public AccessModifierKind AccessModifierKind { get; }
 	public bool HasPartialModifier { get; }
@@ -69,14 +69,14 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// public class Person : IPerson { ... }<br/><br/>
 	/// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
 	/// </summary>
-	public TypeClauseNode? InheritedTypeClauseNode { get; private set; }
+	public TypeReference InheritedTypeReference { get; private set; }
 	public string NamespaceName { get; }
 	public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
 	
-	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeClause();
 
 	/// <summary>
 	/// TODO: Where is this used? ('NamespaceName' already exists and seems to be the one to keep).
@@ -151,9 +151,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 			.ToArray();
 	}
 
-	public TypeClauseNode ToTypeClause()
+	public TypeReference ToTypeClause()
 	{
-		return _toTypeClauseNodeResult ??= new TypeClauseNode(
+		return _toTypeReferenceResult ??= new TypeClauseNode(
 			TypeIdentifierToken,
 			ValueType,
 			genericParameterListing: default,
@@ -161,7 +161,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	}
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}
@@ -200,9 +200,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	}
 	#endregion
 
-	public ICodeBlockOwner SetInheritedTypeClauseNode(TypeClauseNode typeClauseNode)
+	public ICodeBlockOwner SetInheritedTypeReference(TypeReference typeReference)
 	{
-		InheritedTypeClauseNode = typeClauseNode;
+		InheritedTypeReference = typeReference;
 
 		_childListIsDirty = true;
 		_memberListIsDirty = true;
@@ -222,8 +222,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 				GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
 				1;                                                        // GenericParameterListing.CloseAngleBracketToken
 		}
-		if (InheritedTypeClauseNode is not null)
-			childCount++;
+
 		if (CodeBlockNode is not null)
 			childCount++;
 
@@ -240,8 +239,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 			}
 			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
 		}
-		if (InheritedTypeClauseNode is not null)
-			childList[i++] = InheritedTypeClauseNode;
 		if (CodeBlockNode is not null)
 			childList[i++] = CodeBlockNode;
 

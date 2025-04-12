@@ -45,7 +45,7 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.GlobalCodeBlockNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

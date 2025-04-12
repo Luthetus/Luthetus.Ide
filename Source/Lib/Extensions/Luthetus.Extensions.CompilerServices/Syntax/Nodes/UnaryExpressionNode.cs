@@ -21,7 +21,7 @@ public sealed class UnaryExpressionNode : IExpressionNode
 
 	public IExpressionNode Expression { get; }
 	public UnaryOperatorNode UnaryOperatorNode { get; }
-	public TypeClauseNode ResultTypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
+	public TypeReference ResultTypeReference => UnaryOperatorNode.ResultTypeReference;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;

@@ -26,19 +26,19 @@ public sealed class EmptyExpressionNode : IExpressionNode
 		FollowsMemberAccessToken = true
 	};
 
-	public EmptyExpressionNode(TypeClauseNode typeClauseNode)
+	public EmptyExpressionNode(TypeReference typeReference)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.EmptyExpressionNode++;
 		#endif
 	
-		ResultTypeClauseNode = typeClauseNode;
+		ResultTypeReference = typeReference;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeReference ResultTypeReference { get; }
 	public bool FollowsMemberAccessToken { get; init; }
 
 	public bool IsFabricated { get; init; }
@@ -49,12 +49,10 @@ public sealed class EmptyExpressionNode : IExpressionNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		var childCount = 1; // ResultTypeClauseNode,
+		var childCount = 0; // ResultTypeClauseNode,
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
-
-		childList[i++] = ResultTypeClauseNode;
 
 		_childList = childList;
 

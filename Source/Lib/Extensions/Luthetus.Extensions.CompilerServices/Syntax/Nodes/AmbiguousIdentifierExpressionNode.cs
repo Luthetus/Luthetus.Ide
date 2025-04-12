@@ -7,7 +7,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	public AmbiguousIdentifierExpressionNode(
 		SyntaxToken token,
 		GenericParameterListing genericParameterListing,
-		TypeClauseNode resultTypeClauseNode)
+		TypeReference resultTypeReference)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.AmbiguousIdentifierExpressionNode++;
@@ -15,7 +15,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	
 		Token = token;
 		GenericParameterListing = genericParameterListing;
-		ResultTypeClauseNode = resultTypeClauseNode;
+		ResultTypeReference = resultTypeReference;
 	}
 	
 	public int SuccessCount { get; set; }
@@ -28,7 +28,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 
 	public SyntaxToken Token { get; set; }
 	public GenericParameterListing GenericParameterListing { get; set; }
-	public TypeClauseNode ResultTypeClauseNode { get; set; }
+	public TypeReference ResultTypeReference { get; set; }
 	public bool FollowsMemberAccessToken { get; set; }
 	public bool HasQuestionMark { get; set; }
 
@@ -38,14 +38,14 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	public void SetSharedInstance(
 		SyntaxToken token,
 		GenericParameterListing genericParameterListing,
-		TypeClauseNode resultTypeClauseNode,
+		TypeReference resultTypeReference,
 		bool followsMemberAccessToken)
 	{
 		_childListIsDirty = true;
 		
 		Token = token;
 		GenericParameterListing = genericParameterListing;
-		ResultTypeClauseNode = resultTypeClauseNode;
+		ResultTypeReference = resultTypeReference;
 		FollowsMemberAccessToken = followsMemberAccessToken;
 		HasQuestionMark = false;
 	}

@@ -39,7 +39,7 @@ public sealed class SwitchExpressionNode : ICodeBlockOwner
 	public SyntaxKind SyntaxKind => SyntaxKind.SwitchExpressionNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
 		return null;
 	}

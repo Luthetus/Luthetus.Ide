@@ -18,7 +18,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 		CloseParenthesisToken = closeParenthesisToken;
 	}
 
-	public ParenthesizedExpressionNode(SyntaxToken openParenthesisToken, TypeClauseNode typeClauseNode)
+	public ParenthesizedExpressionNode(SyntaxToken openParenthesisToken, TypeReference typeReference)
 		: this(openParenthesisToken, EmptyExpressionNode.Empty, default)
 	{
 	}
@@ -29,7 +29,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 	public SyntaxToken OpenParenthesisToken { get; }
 	public IExpressionNode InnerExpression { get; private set; }
 	public SyntaxToken CloseParenthesisToken { get; private set; }
-	public TypeClauseNode ResultTypeClauseNode => InnerExpression.ResultTypeClauseNode;
+	public TypeReference ResultTypeReference => InnerExpression.ResultTypeReference;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
@@ -55,7 +55,7 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		var childCount = 4; // OpenParenthesisToken, InnerExpression, CloseParenthesisToken, ResultTypeClauseNode,
+		var childCount = 3; // OpenParenthesisToken, InnerExpression, CloseParenthesisToken,
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
@@ -63,7 +63,6 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 		childList[i++] = OpenParenthesisToken;
 		childList[i++] = InnerExpression;
 		childList[i++] = CloseParenthesisToken;
-		childList[i++] = ResultTypeClauseNode;
 
 		_childList = childList;
 
