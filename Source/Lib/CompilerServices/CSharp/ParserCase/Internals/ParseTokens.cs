@@ -264,6 +264,16 @@ public static class ParseTokens
                 	ParseGetterOrSetter(compilationUnit, variableDeclarationNode, ref parserModel);
                 }
 			}
+			else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.InitTokenContextualKeyword)
+			{
+				variableDeclarationNode.HasSetter = true;
+				
+				if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+				{
+					consumed = true;
+                	ParseGetterOrSetter(compilationUnit, variableDeclarationNode, ref parserModel);
+                }
+			}
 
 			if (!consumed)
 			    _ = parserModel.TokenWalker.Consume();
