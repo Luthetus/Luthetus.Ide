@@ -83,6 +83,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
 
 	public bool HasQuestionMark { get; set; }
 	public int ArrayRank { get; set; }
+	
+	public bool IsBeingUsed { get; set; } = false;
 
 	public bool IsFabricated
 	{
@@ -106,6 +108,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		GenericParameterListing genericParameterListing,
 		bool isKeywordType)
 	{
+		IsBeingUsed = true;
+	
 		_childList = Array.Empty<ISyntax>();
 		_childListIsDirty = true;
 	

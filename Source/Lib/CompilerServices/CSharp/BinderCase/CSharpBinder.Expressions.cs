@@ -1534,7 +1534,7 @@ public partial class CSharpBinder
 			 
 			 if (variableReferenceNode.IsFabricated)
 			 {
-			 	var typeClauseNode = new TypeClauseNode(
+			 	var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
 			 		variableReferenceNode.VariableIdentifierToken, valueType: null, genericParameterListing: default, isKeywordType: false);
 				
 				BindTypeClauseNode(
@@ -2400,7 +2400,7 @@ public partial class CSharpBinder
 			    token.TextSpan.ResourceUri,
 			    token.TextSpan.SourceText));
 		
-		return new TypeClauseNode(
+		return parserModel.ConstructOrRecycleTypeClauseNode(
 			identifierToken,
 	        valueType: null,
 	        genericParameterListing: default,

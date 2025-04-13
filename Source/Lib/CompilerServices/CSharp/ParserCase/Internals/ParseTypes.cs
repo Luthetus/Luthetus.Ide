@@ -70,7 +70,7 @@ public static class ParseTypes
     	{
     		var syntaxToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
     		
-    		return new TypeClauseNode(
+    		return parserModel.ConstructOrRecycleTypeClauseNode(
 	            syntaxToken,
 	            valueType: null,
 	            genericParameterListing: default,

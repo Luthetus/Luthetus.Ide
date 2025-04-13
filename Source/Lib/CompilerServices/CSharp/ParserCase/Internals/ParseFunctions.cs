@@ -78,7 +78,7 @@ public class ParseFunctions
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	var typeClauseNode = new TypeClauseNode(
+    	var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
             valueType: null,
             genericParameterListing: default,

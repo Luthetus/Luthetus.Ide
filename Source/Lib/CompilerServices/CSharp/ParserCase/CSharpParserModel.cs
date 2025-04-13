@@ -68,6 +68,7 @@ public struct CSharpParserModel
 			valueType: null,
 			genericParameterListing: default,
 			isKeywordType: false);
+		TypeClauseNode.IsBeingUsed = false;
 			
 		VariableReferenceNode = Binder.CSharpParserModel_VariableReferenceNode;
 	    VariableReferenceNode.SetSharedInstance(
@@ -136,8 +137,33 @@ public struct CSharpParserModel
     /// </summary>
     public TypeClauseNode TypeClauseNode { get; }
     
-    public bool SafeToUseSharedTypeClauseNode { get; set; } = true;
+    public TypeClauseNode ConstructOrRecycleTypeClauseNode(
+    	SyntaxToken typeIdentifier,
+		Type? valueType,
+		GenericParameterListing genericParameterListing,
+		bool isKeywordType)
+    {
+    	if (TypeClauseNode.IsBeingUsed)
+    	{
+    		return new TypeClauseNode(
+    			typeIdentifier,
+				valueType,
+				genericParameterListing,
+				isKeywordType);
+		}    
+    	
+    	TypeClauseNode.SetSharedInstance(
+    		typeIdentifier,
+			valueType,
+			genericParameterListing,
+			isKeywordType);
+			
+    	return TypeClauseNode;
+    }
     
+    /// <summary>
+    /// TODO: Consider the case where you have just a VariableReferenceNode then StatementDelimiterToken.
+    /// </summary>
     public VariableReferenceNode VariableReferenceNode { get; }
     
     public VariableReferenceNode ConstructOrRecycleVariableReferenceNode(
