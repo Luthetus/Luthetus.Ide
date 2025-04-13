@@ -100,7 +100,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -134,10 +134,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 
 	public FunctionDefinitionNode[] GetFunctionDefinitionNodes()
 	{
-		if (CodeBlockNode is null)
+		if (!CodeBlock.ConstructorWasInvoked)
 			return Array.Empty<FunctionDefinitionNode>();
 
-		return CodeBlockNode.GetChildList()
+		return CodeBlock.ChildList
 			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 			.Select(fd => (FunctionDefinitionNode)fd)
 			.ToArray();
@@ -145,13 +145,13 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 
 	public ISyntaxNode[] GetMemberList()
 	{
-		if (CodeBlockNode is null)
+		if (!CodeBlock.ConstructorWasInvoked)
 			return Array.Empty<ISyntaxNode>();
 
 		if (!_memberListIsDirty)
 			return _memberList;
 
-		return _memberList = CodeBlockNode.GetChildList()
+		return _memberList = CodeBlock.ChildList
 			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
 							child.SyntaxKind == SyntaxKind.VariableDeclarationNode ||
 							child.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -211,8 +211,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 				1;                                                        // GenericParameterListing.CloseAngleBracketToken
 		}
 
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
@@ -227,8 +227,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 			}*/
 			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
 		}
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

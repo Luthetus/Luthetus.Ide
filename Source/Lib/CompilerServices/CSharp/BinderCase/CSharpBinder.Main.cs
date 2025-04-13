@@ -1356,21 +1356,20 @@ public partial class CSharpBinder
         if (!scope.ConstructorWasInvoked)
         	return null;
         
-        ISyntaxNode parentNode;
+        IReadOnlyList<ISyntax> childList;
         	
         var codeBlockOwner = scope.CodeBlockOwner;
         
         if (codeBlockOwner is not null)
-        	parentNode = (ISyntaxNode)codeBlockOwner.CodeBlockNode;
+        	childList = codeBlockOwner.CodeBlock.ChildList;
         else if (compilerServiceResource.CompilationUnit is not null)
-        	parentNode = compilerServiceResource.CompilationUnit.RootCodeBlockNode;
+        	childList = compilerServiceResource.CompilationUnit.RootCodeBlockNode.GetChildList();
         else
+        	childList = null;
+        
+        if (childList is null)
         	return null;
         
-        if (parentNode is null)
-        	return null;
-        
-        var childList = parentNode.GetChildList();
         var possibleNodeList = new List<ISyntaxNode>();
         
         ISyntaxNode? fallbackDefinitionNode = null;
@@ -1741,12 +1740,12 @@ public partial class CSharpBinder
 		return codeBlockOwner;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(ICodeBlockOwner codeBlockOwner, CodeBlockNode codeBlockNode, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+    public ICodeBlockOwner SetCodeBlockNode(ICodeBlockOwner codeBlockOwner, CodeBlock codeBlock, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
     {
-		if (codeBlockOwner.CodeBlockNode is not null)
+		if (codeBlockOwner.CodeBlock.ConstructorWasInvoked)
 			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
 
-		codeBlockOwner.CodeBlockNode = codeBlockNode;
+		codeBlockOwner.CodeBlock = codeBlock;
 
 		codeBlockOwner.SetChildListIsDirty(true);
 		return codeBlockOwner;

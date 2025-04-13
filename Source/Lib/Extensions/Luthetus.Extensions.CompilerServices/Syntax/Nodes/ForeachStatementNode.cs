@@ -15,7 +15,7 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 		SyntaxToken inKeywordToken,
 		IExpressionNode expressionNode,
 		SyntaxToken closeParenthesisToken,
-		CodeBlockNode? codeBlockNode)
+		CodeBlock codeBlock)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ForeachStatementNode++;
@@ -27,7 +27,7 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 		InKeywordToken = inKeywordToken;
 		ExpressionNode = expressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
-		CodeBlockNode = codeBlockNode;
+		CodeBlock = codeBlock;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -43,7 +43,7 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -70,8 +70,8 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 		var childCount = 6; // ForeachKeywordToken, OpenParenthesisToken, VariableDeclarationNode, InKeywordToken, ExpressionNode, CloseParenthesisToken,
 		if (OpenParenthesisToken.ConstructorWasInvoked)
 			childCount++;
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
@@ -84,8 +84,8 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 		childList[i++] = CloseParenthesisToken;
 		if (OpenParenthesisToken.ConstructorWasInvoked)
 			childList[i++] = OpenParenthesisToken;
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

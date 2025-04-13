@@ -15,7 +15,7 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 		SyntaxToken openParenthesisToken,
 		IExpressionNode expressionNode,
 		SyntaxToken closeParenthesisToken,
-		CodeBlockNode? codeBlockNode)
+		CodeBlock codeBlock)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.SwitchStatementNode++;
@@ -25,7 +25,7 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 		OpenParenthesisToken = openParenthesisToken;
 		ExpressionNode = expressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
-		CodeBlockNode = codeBlockNode;
+		CodeBlock = codeBlock;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -39,7 +39,7 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -64,8 +64,8 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 			return _childList;
 
 		var childCount = 4; //KeywordToken, OpenParenthesisToken, ExpressionNode, CloseParenthesisToken,
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
@@ -74,8 +74,8 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 		childList[i++] = OpenParenthesisToken;
 		childList[i++] = ExpressionNode;
 		childList[i++] = CloseParenthesisToken;
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

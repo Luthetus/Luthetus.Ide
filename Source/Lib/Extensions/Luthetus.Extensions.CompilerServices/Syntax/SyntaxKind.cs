@@ -193,7 +193,6 @@ public enum SyntaxKind
 
 	// Stitching
 	CompilationUnit,
-	CodeBlockNode,
 
 	// Nodes
 	LiteralExpressionNode,

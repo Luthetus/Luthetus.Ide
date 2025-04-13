@@ -385,12 +385,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (scope.CodeBlockOwner is null)
 			return;
 		
-		if (scope.CodeBlockOwner.CodeBlockNode is null)
+		if (!scope.CodeBlockOwner.CodeBlock.ConstructorWasInvoked)
 			return;
     	
     	FunctionInvocationNode? functionInvocationNode = null;
     	
-    	foreach (var childSyntax in scope.CodeBlockOwner.CodeBlockNode.GetChildList())
+    	foreach (var childSyntax in scope.CodeBlockOwner.CodeBlock.ChildList)
     	{
     		if (childSyntax.SyntaxKind == SyntaxKind.ReturnStatementNode)
     		{

@@ -13,7 +13,7 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 		SyntaxToken keywordToken,
 		SyntaxToken openParenthesisToken,
 		SyntaxToken closeParenthesisToken,
-		CodeBlockNode? codeBlockNode)
+		CodeBlock codeBlock)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementCatchNode++;
@@ -21,10 +21,10 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 	
 		Parent = parent;
 		KeywordToken = keywordToken;
-		CodeBlockNode = codeBlockNode;
+		CodeBlock = codeBlock;
 		OpenParenthesisToken = openParenthesisToken;
 		CloseParenthesisToken = closeParenthesisToken;
-		CodeBlockNode = codeBlockNode;
+		CodeBlock = codeBlock;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -38,7 +38,7 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -74,28 +74,28 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 		var childCount = 0;
 		if (KeywordToken.ConstructorWasInvoked)
 			childCount++;
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		//	childCount++;
 		if (OpenParenthesisToken.ConstructorWasInvoked)
 			childCount++;
 		if (CloseParenthesisToken.ConstructorWasInvoked)
 			childCount++;
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		if (KeywordToken.ConstructorWasInvoked)
 			childList[i++] = KeywordToken;
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 		if (OpenParenthesisToken.ConstructorWasInvoked)
 			childList[i++] = OpenParenthesisToken;
 		if (CloseParenthesisToken.ConstructorWasInvoked)
 			childList[i++] = CloseParenthesisToken;
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

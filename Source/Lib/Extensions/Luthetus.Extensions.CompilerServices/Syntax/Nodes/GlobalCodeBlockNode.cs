@@ -37,7 +37,7 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -58,21 +58,21 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 
 	public IReadOnlyList<ISyntax> GetChildList()
 	{
-		if (CodeBlockNode is not null)
-			return CodeBlockNode.GetChildList();
+		// if (CodeBlockNode is not null)
+		// 	return CodeBlockNode.GetChildList();
 
 		if (!_childListIsDirty)
 			return _childList;
 
 		var childCount = 0;
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

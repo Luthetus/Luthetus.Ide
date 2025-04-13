@@ -11,7 +11,7 @@ public sealed class IfStatementNode : ICodeBlockOwner
 	public IfStatementNode(
 		SyntaxToken keywordToken,
 		IExpressionNode expressionNode,
-		CodeBlockNode? codeBlockNode)
+		CodeBlock codeBlock)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.IfStatementNode++;
@@ -19,7 +19,7 @@ public sealed class IfStatementNode : ICodeBlockOwner
 	
 		KeywordToken = keywordToken;
 		ExpressionNode = expressionNode;
-		CodeBlockNode = codeBlockNode;
+		CodeBlock = codeBlock;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -31,7 +31,7 @@ public sealed class IfStatementNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -56,16 +56,16 @@ public sealed class IfStatementNode : ICodeBlockOwner
 			return _childList;
 
 		var childCount = 2; // KeywordToken, ExpressionNode,
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = KeywordToken;
 		childList[i++] = ExpressionNode;
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

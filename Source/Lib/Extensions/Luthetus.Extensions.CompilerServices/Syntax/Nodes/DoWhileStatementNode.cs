@@ -38,7 +38,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -63,8 +63,8 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 			return _childList;
 
 		var childCount = 1; // DoKeywordToken,
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 		if (WhileKeywordToken.ConstructorWasInvoked)
 			childCount++;
 		if (OpenParenthesisToken.ConstructorWasInvoked)
@@ -78,8 +78,8 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		var i = 0;
 
 		childList[i++] = DoKeywordToken;
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 		if (WhileKeywordToken.ConstructorWasInvoked)
 			childList[i++] = WhileKeywordToken;
 		if (OpenParenthesisToken.ConstructorWasInvoked)

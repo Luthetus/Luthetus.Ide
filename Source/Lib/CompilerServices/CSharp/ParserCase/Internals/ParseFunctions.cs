@@ -41,7 +41,7 @@ public class ParseFunctions
             consumedIdentifierToken,
             genericParameterListing,
             functionArgumentListing: default,
-            null);
+            default);
 
         HandleFunctionArguments(functionDefinitionNode, compilationUnit, ref parserModel);
 
@@ -89,7 +89,7 @@ public class ParseFunctions
             consumedIdentifierToken,
             default,
             functionArgumentListing: default,
-            null);
+            default);
     
     	HandleFunctionArguments(constructorDefinitionNode, compilationUnit, ref parserModel);
 

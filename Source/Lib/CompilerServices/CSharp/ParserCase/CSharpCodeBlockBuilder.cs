@@ -184,8 +184,8 @@ public class CSharpCodeBlockBuilder
 		return syntax;
 	}
 
-    public CodeBlockNode Build()
+    public CodeBlock Build()
     {
-        return new CodeBlockNode(ChildList);
+        return new CodeBlock(ChildList);
     }
 }

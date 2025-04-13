@@ -13,7 +13,7 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 		SyntaxToken openParenthesisToken,
 		IExpressionNode expressionNode,
 		SyntaxToken closeParenthesisToken,
-		CodeBlockNode? codeBlockNode)
+		CodeBlock codeBlock)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.WhileStatementNode++;
@@ -23,7 +23,7 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 		OpenParenthesisToken = openParenthesisToken;
 		ExpressionNode = expressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
-		CodeBlockNode = codeBlockNode;
+		CodeBlock = codeBlock;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -37,7 +37,7 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -65,8 +65,8 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 		// ExpressionNode
 		var childCount = 2;
 
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 
@@ -74,8 +74,8 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 		childList[i++] = KeywordToken;
 		childList[i++] = ExpressionNode;
 
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

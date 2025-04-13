@@ -11,7 +11,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	public NamespaceStatementNode(
 		SyntaxToken keywordToken,
 		SyntaxToken identifierToken,
-		CodeBlockNode codeBlockNode)
+		CodeBlock codeBlock)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.NamespaceStatementNode++;
@@ -19,7 +19,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	
 		KeywordToken = keywordToken;
 		IdentifierToken = identifierToken;
-		CodeBlockNode = codeBlockNode;
+		CodeBlock = codeBlock;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -31,7 +31,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -44,12 +44,12 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	/// </summary>
 	public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
 	{
-		var localCodeBlockNode = CodeBlockNode;
+		var localCodeBlockNode = CodeBlock;
 
-		if (localCodeBlockNode is null)
+		if (!localCodeBlockNode.ConstructorWasInvoked)
 			return Array.Empty<TypeDefinitionNode>();
 
-		return localCodeBlockNode.GetChildList()
+		return localCodeBlockNode.ChildList
 			.Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 			.Select(td => (TypeDefinitionNode)td);
 	}
@@ -72,16 +72,16 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 			return _childList;
 
 		var childCount = 2; // KeywordToken, IdentifierToken,
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = KeywordToken;
 		childList[i++] = IdentifierToken;
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

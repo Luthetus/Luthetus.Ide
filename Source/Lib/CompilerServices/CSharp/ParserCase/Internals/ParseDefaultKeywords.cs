@@ -53,7 +53,7 @@ public class ParseDefaultKeywords
 	        catchKeywordToken,
 	        openParenthesisToken,
 	        closeParenthesisToken: default,
-	        codeBlockNode: null);
+	        codeBlock: default);
     	
     	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	catchNode,
@@ -196,7 +196,7 @@ public class ParseDefaultKeywords
 		var finallyNode = new TryStatementFinallyNode(
 			tryStatementNode,
         	finallyKeywordToken,
-        	codeBlockNode: null);
+        	codeBlock: default);
     
     	// This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
 		// tryStatementNode.SetTryStatementFinallyNode(finallyNode);
@@ -235,7 +235,7 @@ public class ParseDefaultKeywords
 	        conditionStatementDelimiterToken: default,
 	        updationExpressionNode: null,
 	        closeParenthesisToken: default,
-	        codeBlockNode: null);
+	        codeBlock: default);
 	        
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	forStatementNode,
@@ -290,7 +290,7 @@ public class ParseDefaultKeywords
 	        inKeywordToken,
 	        expressionNode,
 	        closeParenthesisToken,
-	        codeBlockNode: null);
+	        codeBlock: default);
 	        
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	foreachStatementNode,
@@ -343,7 +343,7 @@ public class ParseDefaultKeywords
 	        openParenthesisToken,
 	        expressionNode,
 	        closeParenthesisToken,
-	        codeBlockNode: null);
+	        codeBlock: default);
 	        
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	lockStatementNode,
@@ -447,7 +447,7 @@ public class ParseDefaultKeywords
 	        openParenthesisToken,
 	        expressionNode,
 	        closeParenthesisToken,
-	        codeBlockNode: null);
+	        codeBlock: default);
 	        
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	switchStatementNode,
@@ -484,7 +484,7 @@ public class ParseDefaultKeywords
 	    var tryStatementTryNode = new TryStatementTryNode(
 	    	tryStatementNode,
         	tryKeywordToken,
-        	codeBlockNode: null);
+        	codeBlock: default);
         	
 		tryStatementNode.SetTryStatementTryNode(tryStatementTryNode);
 	        
@@ -567,7 +567,7 @@ public class ParseDefaultKeywords
 	        openParenthesisToken,
 	        expressionNode,
 	        closeParenthesisToken,
-	        codeBlockNode: null);
+	        codeBlock: default);
 	        
     	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	whileStatementNode,
@@ -671,7 +671,7 @@ public class ParseDefaultKeywords
         var ifStatementNode = new IfStatementNode(
             ifTokenKeyword,
             expression,
-            null);
+            default);
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	ifStatementNode,
@@ -914,7 +914,7 @@ public class ParseDefaultKeywords
         var namespaceStatementNode = new NamespaceStatementNode(
             namespaceKeywordToken,
             (SyntaxToken)namespaceIdentifier,
-            null);
+            default);
 
         parserModel.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit, ref parserModel);
         

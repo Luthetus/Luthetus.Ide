@@ -11,7 +11,7 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 	public TryStatementFinallyNode(
 		TryStatementNode? parent,
 		SyntaxToken keywordToken,
-		CodeBlockNode? codeBlockNode)
+		CodeBlock codeBlock)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementFinallyNode++;
@@ -19,7 +19,7 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 	
 		Parent = parent;
 		KeywordToken = keywordToken;
-		CodeBlockNode = codeBlockNode;
+		CodeBlock = codeBlock;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -30,7 +30,7 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -59,16 +59,16 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 		var childCount = 0;
 		if (KeywordToken.ConstructorWasInvoked)
 			childCount++;
-		if (CodeBlockNode is not null)
-			childCount++;
+		// if (CodeBlockNode is not null)
+		// 	childCount++;
 
 		var childList = new ISyntax[childCount];
 		var i = 0;
 
 		if (KeywordToken.ConstructorWasInvoked)
 			childList[i++] = KeywordToken;
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
+		// if (CodeBlockNode is not null)
+		// 	childList[i++] = CodeBlockNode;
 
 		_childList = childList;
 

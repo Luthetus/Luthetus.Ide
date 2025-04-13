@@ -25,7 +25,7 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ParentCodeBlockOwner.ScopeDirectionKind;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; set; }
+	public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -47,5 +47,5 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 	}
 	#endregion
 
-	public IReadOnlyList<ISyntax> GetChildList() => CodeBlockNode.GetChildList();
+	public IReadOnlyList<ISyntax> GetChildList() => CodeBlock.ChildList;
 }
