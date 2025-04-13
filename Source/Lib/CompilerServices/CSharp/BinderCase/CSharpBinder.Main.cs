@@ -1403,9 +1403,9 @@ public partial class CSharpBinder
         			var fallbackCodeBlockOwner = ((ICodeBlockOwner)fallbackDefinitionNode);
         			TextEditorTextSpan? fallbackTextSpan = null;
         			
-        			if (fallbackCodeBlockOwner.OpenCodeBlockTextSpan is not null)
+        			if (fallbackCodeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
         				fallbackTextSpan = fallbackCodeBlockOwner.OpenCodeBlockTextSpan;
-        			else if (fallbackCodeBlockOwner.CloseCodeBlockTextSpan is not null)
+        			else if (fallbackCodeBlockOwner.CloseCodeBlockTextSpan.ConstructorWasInvoked)
         				fallbackTextSpan = fallbackCodeBlockOwner.CloseCodeBlockTextSpan;
         				
         			if (fallbackTextSpan is not null && compilerServiceResource is not null)

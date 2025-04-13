@@ -1391,7 +1391,7 @@ public partial class CSharpBinder
 		switch (expressionSecondary.SyntaxKind)
 		{
 			default:
-				if (lambdaExpressionNode.CloseCodeBlockTextSpan is null)
+				if (!lambdaExpressionNode.CloseCodeBlockTextSpan.ConstructorWasInvoked)
 					CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
 				
 				return lambdaExpressionNode;

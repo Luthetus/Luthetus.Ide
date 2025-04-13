@@ -92,8 +92,6 @@ public struct CSharpStatementBuilder
 			ChildList.Clear();
 		}
 		
-		// Recur
-		
 		if (ParseChildScopeStack.Count > 0)
 		{
 			var tuple = ParseChildScopeStack.Peek();
@@ -108,23 +106,6 @@ public struct CSharpStatementBuilder
 		
 		return false;
 	}
-	
-	/*private void Recur()
-	{
-		if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode &&
-		    binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-		{
-			return new BinaryExpressionLeftAndRightVariableReference(binaryExpressionNode);
-		}
-		else if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-		{
-			return new BinaryExpressionLeftVariableReference(binaryExpressionNode);
-		}
-		else if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-		{
-			return new BinaryExpressionRightVariableReference(binaryExpressionNode);
-		}
-	}*/
 	
 	public void WriteToConsole()
 	{

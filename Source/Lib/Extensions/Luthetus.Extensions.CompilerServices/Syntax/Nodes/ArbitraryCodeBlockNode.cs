@@ -24,9 +24,9 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ParentCodeBlockOwner.ScopeDirectionKind;
-	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
+	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
-	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
+	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
 	public bool IsFabricated { get; init; }
@@ -41,9 +41,9 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 		return ParentCodeBlockOwner.GetReturnTypeReference();
 	}
 
-	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
-		if (OpenCodeBlockTextSpan is not null)
+		if (OpenCodeBlockTextSpan.ConstructorWasInvoked)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
 
 		OpenCodeBlockTextSpan = openCodeBlockTextSpan;
@@ -52,9 +52,9 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 		return this;
 	}
 
-	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
-		if (CloseCodeBlockTextSpan is not null)
+		if (CloseCodeBlockTextSpan.ConstructorWasInvoked)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
 
 		CloseCodeBlockTextSpan = closeCodeBlockTextSpan;

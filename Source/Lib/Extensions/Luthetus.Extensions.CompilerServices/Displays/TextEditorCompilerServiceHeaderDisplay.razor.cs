@@ -112,7 +112,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
 			TextEditorTextSpan textSpanStart;
     		
-    		if (targetScope.CodeBlockOwner.OpenCodeBlockTextSpan is null)
+    		if (!targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
     		{
     			textSpanStart = new TextEditorTextSpan(
 		            targetScope.StartingIndexInclusive,
@@ -125,8 +125,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		else
     		{
     			textSpanStart = new TextEditorTextSpan(
-		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive,
-		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive + 1,
+		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartingIndexInclusive,
+		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartingIndexInclusive + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
 				    resourceUri,
 				    sourceText: string.Empty,
