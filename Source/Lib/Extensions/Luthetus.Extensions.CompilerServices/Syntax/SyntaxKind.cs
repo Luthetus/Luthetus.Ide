@@ -208,7 +208,6 @@ public enum SyntaxKind
 	ExplicitCastNode,
 	VariableDeclarationNode,
 	VariableReferenceNode,
-	VariableAssignmentExpressionNode,
 	VariableExpressionNode,
 	WithExpressionNode,
 	PropertyDefinitionNode,

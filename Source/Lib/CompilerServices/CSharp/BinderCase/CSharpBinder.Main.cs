@@ -280,47 +280,6 @@ public partial class CSharpBinder
         return variableReferenceNode;
     }
 
-    public void BindVariableAssignmentExpressionNode(
-        VariableAssignmentExpressionNode variableAssignmentExpressionNode,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-        var text = variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText();
-        VariableKind variableKind = VariableKind.Local;
-
-        if (TryGetVariableDeclarationHierarchically(
-        		compilationUnit,
-                compilationUnit.ResourceUri,
-                parserModel.CurrentScopeIndexKey,
-                text,
-                out var variableDeclarationNode)
-            && variableDeclarationNode is not null)
-        {
-            variableKind = variableDeclarationNode.VariableKind;
-
-            // TODO: Remove the setter from 'VariableDeclarationNode'...
-            // ...and set IsInitialized to true by overwriting the VariableDeclarationMap.
-            variableDeclarationNode.IsInitialized = true;
-        }
-        /*else
-        {
-            if (UtilityApi.IsContextualKeywordSyntaxKind())
-            {
-                /*compilationUnit.__DiagnosticList.TheNameDoesNotExistInTheCurrentContext(
-                    variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                    text);*//*
-            }
-            else
-            {
-                /*compilationUnit.__DiagnosticList.ReportUndefinedVariable(
-                    variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
-                    text);*//*
-            }
-        }*/
-
-        CreateVariableSymbol(variableAssignmentExpressionNode.VariableIdentifierToken, variableKind, compilationUnit, ref parserModel);
-    }
-
     public void BindConstructorDefinitionIdentifierToken(
         SyntaxToken identifierToken,
         CSharpCompilationUnit compilationUnit,
@@ -1303,7 +1262,6 @@ public partial class CSharpBinder
         
         switch (syntaxKind)
         {
-        	case SyntaxKind.VariableAssignmentExpressionNode:
         	case SyntaxKind.VariableDeclarationNode:
         	case SyntaxKind.VariableReferenceNode:
         	case SyntaxKind.VariableSymbol:
@@ -1546,7 +1504,6 @@ public partial class CSharpBinder
         
         switch (currentSyntaxKind)
         {
-        	case SyntaxKind.VariableAssignmentExpressionNode:
         	case SyntaxKind.VariableDeclarationNode:
         	case SyntaxKind.VariableReferenceNode:
         	case SyntaxKind.VariableSymbol:
