@@ -151,8 +151,11 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         var findInTextEditor = new MenuOptionRecord("Find (Ctrl f)", MenuOptionKind.Other, () => SelectMenuOption(FindInTextEditor));
         menuOptionRecordsList.Add(findInTextEditor);
         
+        /*
+        // FindAllReferences
         var findAllReferences = new MenuOptionRecord("Find All References (Shift F12)", MenuOptionKind.Other, () => SelectMenuOption(FindAllReferences));
         menuOptionRecordsList.Add(findAllReferences);
+        */
         
         var relatedFilesQuickPick = new MenuOptionRecord("Related Files (F7)", MenuOptionKind.Other, () => SelectMenuOption(RelatedFilesQuickPick));
         menuOptionRecordsList.Add(relatedFilesQuickPick);
