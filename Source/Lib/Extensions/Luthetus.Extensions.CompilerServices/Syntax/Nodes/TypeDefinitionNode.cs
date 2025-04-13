@@ -67,7 +67,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
 	/// </summary>
 	public GenericParameterListing GenericParameterListing { get; set; }
-	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
+	public FunctionArgumentListing FunctionArgumentListing { get; set; }
 	public FunctionArgumentListing PrimaryConstructorFunctionArgumentListing => FunctionArgumentListing;
 	/// <summary>
 	/// Given:<br/>
@@ -110,16 +110,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// </summary>
 	public bool IsParsingGenericParameters { get; set; }
 
-	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
-	{
-		GenericParameterListing = genericParameterListing;
-	}
-	
-	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
-	{
-		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
-	}
-	
 	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
 	{
 		FunctionArgumentListing = functionArgumentListing;

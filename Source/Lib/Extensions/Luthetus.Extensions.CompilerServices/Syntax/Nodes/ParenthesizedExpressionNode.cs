@@ -24,22 +24,10 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 	}
 
 	public SyntaxToken OpenParenthesisToken { get; }
-	public IExpressionNode InnerExpression { get; private set; }
-	public SyntaxToken CloseParenthesisToken { get; private set; }
+	public IExpressionNode InnerExpression { get; set; }
+	public SyntaxToken CloseParenthesisToken { get; set; }
 	public TypeReference ResultTypeReference => InnerExpression.ResultTypeReference;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
-
-	public ParenthesizedExpressionNode SetCloseParenthesisToken(SyntaxToken closeParenthesisToken)
-	{
-		CloseParenthesisToken = closeParenthesisToken;
-		return this;
-	}
-
-	public ParenthesizedExpressionNode SetInnerExpression(IExpressionNode innerExpression)
-	{
-		InnerExpression = innerExpression;
-		return this;
-	}
 }

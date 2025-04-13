@@ -65,9 +65,4 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 		return ReturnTypeReference;
 	}
 	#endregion
-
-	public void AddVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode)
-	{
-		VariableDeclarationNodeList.Add(variableDeclarationNode);
-	}
 }

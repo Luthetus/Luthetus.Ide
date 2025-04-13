@@ -24,8 +24,8 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	}
 
 	public SyntaxToken NewKeywordToken { get; }
-	public TypeReference ResultTypeReference { get; private set; }
-	public FunctionParameterListing FunctionParameterListing { get; private set; }
+	public TypeReference ResultTypeReference { get; set; }
+	public FunctionParameterListing FunctionParameterListing { get; set; }
 
 	public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
 
@@ -33,20 +33,4 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
 	
 	public bool IsParsingFunctionParameters { get; set; }
-
-	public ConstructorInvocationExpressionNode SetTypeReference(TypeReference resultTypeReference)
-	{
-		ResultTypeReference = resultTypeReference;
-		return this;
-	}
-	
-	public void SetFunctionParameterListing(FunctionParameterListing functionParameterListing)
-	{
-		FunctionParameterListing = functionParameterListing;
-	}
-	
-	public void SetFunctionParameterListingCloseParenthesisToken(SyntaxToken closeParenthesisToken)
-	{
-		FunctionParameterListing.SetCloseParenthesisToken(closeParenthesisToken);
-	}
 }

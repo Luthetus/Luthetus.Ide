@@ -322,7 +322,7 @@ public partial class CSharpBinder
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
         {
-            functionInvocationNode.SetResultTypeReference(functionDefinitionNode.ReturnTypeReference);
+            functionInvocationNode.ResultTypeReference = functionDefinitionNode.ReturnTypeReference;
         }
         else
         {
@@ -440,7 +440,7 @@ public partial class CSharpBinder
         		parserModel.GetNextSymbolId(),
         		namespaceIdentifierToken.TextSpan));
         		
-        parserModel.UsingStatementListingNode.AddUsingStatementTuple((usingKeywordToken, namespaceIdentifierToken));
+        parserModel.UsingStatementListingNode.UsingStatementTupleList.Add((usingKeywordToken, namespaceIdentifierToken));
 
         AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(), compilationUnit, ref parserModel);
     }

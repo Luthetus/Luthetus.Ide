@@ -29,7 +29,7 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
-	public VariableDeclarationNode? VariableDeclarationNode { get; private set; }
+	public VariableDeclarationNode? VariableDeclarationNode { get; set; }
 	public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.
@@ -43,12 +43,6 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementCatchNode;
-
-	public TryStatementCatchNode SetVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode)
-	{
-		VariableDeclarationNode = variableDeclarationNode;
-		return this;
-	}
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

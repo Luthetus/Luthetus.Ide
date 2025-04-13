@@ -41,15 +41,5 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	}
 	
 	public bool IsParsingGenericParameters { get; set; }
-
-	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
-	{
-		GenericParameterListing = genericParameterListing;
-	}
-	
-	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
-	{
-		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
-	}
 }
 

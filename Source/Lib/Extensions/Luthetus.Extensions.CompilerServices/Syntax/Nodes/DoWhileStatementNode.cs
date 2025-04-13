@@ -27,10 +27,10 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 	}
 
 	public SyntaxToken DoKeywordToken { get; }
-	public SyntaxToken WhileKeywordToken { get; private set; }
-	public SyntaxToken OpenParenthesisToken { get; private set; }
+	public SyntaxToken WhileKeywordToken { get; set; }
+	public SyntaxToken OpenParenthesisToken { get; set; }
 	public IExpressionNode? ExpressionNode { get; set; }
-	public SyntaxToken CloseParenthesisToken { get; private set; }
+	public SyntaxToken CloseParenthesisToken { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -48,16 +48,4 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
-
-	public void SetWhileProperties(
-		SyntaxToken whileKeywordToken,
-		SyntaxToken openParenthesisToken,
-		IExpressionNode expressionNode,
-		SyntaxToken closeParenthesisToken)
-	{
-		WhileKeywordToken = whileKeywordToken;
-		OpenParenthesisToken = openParenthesisToken;
-		ExpressionNode = expressionNode;
-		CloseParenthesisToken = closeParenthesisToken;
-	}
 }

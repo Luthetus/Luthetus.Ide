@@ -30,7 +30,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	public TypeReference ReturnTypeReference { get; }
 	public SyntaxToken FunctionIdentifier { get; }
 	public GenericParameterListing GenericParameterListing { get; }
-	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
+	public FunctionArgumentListing FunctionArgumentListing { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -44,11 +44,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 	
-	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
-	{
-		FunctionArgumentListing = functionArgumentListing;
-	}
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

@@ -33,7 +33,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	}
 
 	public SyntaxToken StringInterpolatedStartToken { get; }
-	public SyntaxToken StringInterpolatedEndToken { get; private set; }
+	public SyntaxToken StringInterpolatedEndToken { get; set; }
 
 	/// <summary>
 	/// If 'ToBeExpressionPrimary' is null then the 'InterpolatedStringNode' itself is the to be expression primary.
@@ -44,10 +44,4 @@ public sealed class InterpolatedStringNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InterpolatedStringNode;
-
-	public InterpolatedStringNode SetStringInterpolatedEndToken(SyntaxToken stringInterpolatedEndToken)
-	{
-		StringInterpolatedEndToken = stringInterpolatedEndToken;
-		return this;
-	}
 }

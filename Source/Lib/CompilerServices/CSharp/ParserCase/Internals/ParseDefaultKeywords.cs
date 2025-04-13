@@ -71,7 +71,7 @@ public class ParseDefaultKeywords
 	    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	    {
 	    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-	    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
+	    	catchNode.VariableDeclarationNode = variableDeclarationNode;
 	    }
 	    
 	    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhenTokenContextualKeyword)
@@ -486,7 +486,7 @@ public class ParseDefaultKeywords
         	tryKeywordToken,
         	codeBlock: default);
         	
-		tryStatementNode.SetTryStatementTryNode(tryStatementTryNode);
+		tryStatementNode.TryNode = tryStatementTryNode;
 	        
 	    parserModel.CurrentCodeBlockBuilder.AddChild(tryStatementNode);
         

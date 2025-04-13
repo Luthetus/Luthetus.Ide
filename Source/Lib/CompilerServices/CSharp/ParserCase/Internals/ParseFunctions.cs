@@ -295,10 +295,10 @@ public class ParseFunctions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
         	closeParenthesisToken = parserModel.TokenWalker.Consume();
         
-        functionDefinitionNode.SetFunctionArgumentListing(
+        functionDefinitionNode.FunctionArgumentListing =
         	new FunctionArgumentListing(
 	        	openParenthesisToken,
 		        functionArgumentEntryList,
-		        closeParenthesisToken));
+		        closeParenthesisToken);
     }
 }

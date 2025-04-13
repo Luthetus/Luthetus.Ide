@@ -18,27 +18,12 @@ public sealed class TryStatementNode : ISyntaxNode
 		FinallyNode = finallyNode;
 	}
 
-	public TryStatementTryNode? TryNode { get; private set; }
-	public TryStatementCatchNode? CatchNode { get; private set; }
-	public TryStatementFinallyNode? FinallyNode { get; private set; }
+	public TryStatementTryNode? TryNode { get; set; }
+	public TryStatementCatchNode? CatchNode { get; set; }
+	public TryStatementFinallyNode? FinallyNode { get; set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
-
-	public void SetTryStatementTryNode(TryStatementTryNode tryStatementTryNode)
-	{
-		TryNode = tryStatementTryNode;
-	}
-
-	public void SetTryStatementCatchNode(TryStatementCatchNode tryStatementCatchNode)
-	{
-		CatchNode = tryStatementCatchNode;
-	}
-
-	public void SetTryStatementFinallyNode(TryStatementFinallyNode tryStatementFinallyNode)
-	{
-		FinallyNode = tryStatementFinallyNode;
-	}
 }

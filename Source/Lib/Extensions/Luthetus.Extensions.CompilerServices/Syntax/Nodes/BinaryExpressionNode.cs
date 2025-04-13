@@ -45,14 +45,8 @@ public sealed class BinaryExpressionNode : IExpressionNode
 	public SyntaxToken OperatorToken { get; }
 	public TypeReference RightOperandTypeReference { get; }
 	public TypeReference ResultTypeReference { get; }
-	public IExpressionNode RightExpressionNode { get; private set; }
+	public IExpressionNode RightExpressionNode { get; set; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
-
-	public BinaryExpressionNode SetRightExpressionNode(IExpressionNode rightExpressionNode)
-	{
-		RightExpressionNode = rightExpressionNode;
-		return this;
-	}
 }

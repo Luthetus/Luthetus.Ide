@@ -35,7 +35,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	public TypeReference ReturnTypeReference { get; }
 	public SyntaxToken FunctionIdentifierToken { get; }
 	public GenericParameterListing GenericParameterListing { get; set; }
-	public FunctionArgumentListing FunctionArgumentListing { get; private set; }
+	public FunctionArgumentListing FunctionArgumentListing { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -51,27 +51,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	
 	public bool IsParsingGenericParameters { get; set; }
 	
-	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
-	{
-		FunctionArgumentListing = functionArgumentListing;
-	}
-	
-	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
-	{
-		GenericParameterListing = genericParameterListing;
-	}
-	
-	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
-	{
-		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
-	}
-
-	public ICodeBlockOwner SetExpressionBody(CodeBlock codeBlock)
-	{
-		CodeBlock = codeBlock;
-		return this;
-	}
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

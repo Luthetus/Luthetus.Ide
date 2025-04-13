@@ -118,16 +118,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		IsParsingGenericParameters = false;
 	}
 
-	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
-	{
-		GenericParameterListing = genericParameterListing;
-	}
-	
-	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
-	{
-		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
-	}
-
 	public TypeClauseNode SetValueType(Type? valueType)
 	{
 		ValueType = valueType;

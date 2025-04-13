@@ -17,9 +17,4 @@ public sealed class TupleExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
-
-	public void AddInnerExpressionNode(IExpressionNode expressionNode)
-	{
-		InnerExpressionList.Add(expressionNode);
-	}
 }
