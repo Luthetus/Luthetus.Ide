@@ -676,7 +676,11 @@ public partial class CSharpBinder
     	// Update CodeBlockOwner
     	if (inOwner is not null)
     	{
-	        inOwner.SetCodeBlockNode(inBuilder.Build(), compilationUnit.__DiagnosticList, parserModel.TokenWalker);
+	        SetCodeBlockNode(
+	        	inOwner,
+	        	inBuilder.Build(),
+	        	compilationUnit.__DiagnosticList,
+	        	parserModel.TokenWalker);
 			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 				parserModel.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit, ref parserModel);
@@ -1714,4 +1718,37 @@ public partial class CSharpBinder
 		    	return;
     	}
     }
+    
+    public ICodeBlockOwner SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+    {
+		if (codeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
+
+		codeBlockOwner.OpenCodeBlockTextSpan = openCodeBlockTextSpan;
+
+		codeBlockOwner.SetChildListIsDirty(true);
+		return codeBlockOwner;
+    }
+    
+    public ICodeBlockOwner SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+    {
+		if (codeBlockOwner.CloseCodeBlockTextSpan.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
+
+		codeBlockOwner.CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
+
+		codeBlockOwner.SetChildListIsDirty(true);
+		return codeBlockOwner;
+    }
+    
+    public ICodeBlockOwner SetCodeBlockNode(ICodeBlockOwner codeBlockOwner, CodeBlockNode codeBlockNode, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+    {
+		if (codeBlockOwner.CodeBlockNode is not null)
+			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
+
+		codeBlockOwner.CodeBlockNode = codeBlockNode;
+
+		codeBlockOwner.SetChildListIsDirty(true);
+		return codeBlockOwner;
+	}
 }

@@ -11,9 +11,9 @@ public interface ICodeBlockOwner : ISyntaxNode
 {
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind { get; }
-	public TextEditorTextSpan OpenCodeBlockTextSpan { get; }
-	public CodeBlockNode? CodeBlockNode { get; }
-	public TextEditorTextSpan CloseCodeBlockTextSpan { get; }
+	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
+	public CodeBlockNode? CodeBlockNode { get; set; }
+	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	
 	/// <summary>
 	/// The initializer for this should set it to '-1'
@@ -34,10 +34,8 @@ public interface ICodeBlockOwner : ISyntaxNode
 	public int ScopeIndexKey { get; set; }
 
 	public TypeReference GetReturnTypeReference();
-
-	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker);
-	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker);
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker);
+	
+	public void SetChildListIsDirty(bool childListIsDirty);
 
 	public static void ThrowMultipleScopeDelimiterException(List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{

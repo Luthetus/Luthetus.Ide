@@ -280,7 +280,8 @@ public static class CSharpParser
 		
         var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build();
                 
-        globalCodeBlockNode.SetCodeBlockNode(
+        parserModel.Binder.SetCodeBlockNode(
+        	globalCodeBlockNode,
         	topLevelStatementsCodeBlock,
         	compilationUnit.__DiagnosticList,
         	parserModel.TokenWalker);
