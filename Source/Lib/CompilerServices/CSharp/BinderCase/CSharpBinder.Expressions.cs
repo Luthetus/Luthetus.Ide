@@ -244,7 +244,17 @@ public partial class CSharpBinder
 				// for the sake of parser recovery.
 				ClearFromExpressionList(expressionPrimary, compilationUnit, ref parserModel);
 				ClearFromExpressionList(binaryExpressionAntecedent, compilationUnit, ref parserModel);
-				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), new List<ISyntax> { binaryExpressionAntecedent, expressionPrimary, token });
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), binaryExpressionAntecedent, expressionPrimary)
+				{
+					ClobberCount = 1
+				};
+				
+				// TODO: The new constructor for 'BadExpressionNode' doesn't take a List, I can only choose 2 syntax to provide now...
+				// ...and yet this previous constructor was giving the List 3 syntax.
+				// I'm going to take the first two for now, but if it ever feels like information is missing here.
+				// It might be due to the token having disappeared from existence.
+				//
+				// return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), new List<ISyntax> { binaryExpressionAntecedent, expressionPrimary, token });
 			}
 		}
 		else
@@ -779,14 +789,14 @@ public partial class CSharpBinder
 		if (token.SyntaxKind == SyntaxKind.OpenParenthesisToken)
 			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, badExpressionNode));
 		
-		badExpressionNode.SyntaxList.Add(token);
+		badExpressionNode.ClobberCount++;
 		return badExpressionNode;
 	}
 
 	public IExpressionNode BadMergeExpression(
 		BadExpressionNode badExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		badExpressionNode.SyntaxList.Add(expressionSecondary);
+		badExpressionNode.ClobberCount++;
 		return badExpressionNode;
 	}
 

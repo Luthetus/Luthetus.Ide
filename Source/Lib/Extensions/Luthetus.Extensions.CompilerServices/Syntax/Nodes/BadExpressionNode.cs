@@ -14,25 +14,38 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class BadExpressionNode : IExpressionNode
 {
-	public BadExpressionNode(TypeReference resultTypeReference, List<ISyntax> syntaxList)
+	public BadExpressionNode(TypeReference resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BadExpressionNode++;
 		#endif
 	
 		ResultTypeReference = resultTypeReference;
-		SyntaxList = syntaxList;
+		SyntaxPrimary = syntaxPrimary;
+		SyntaxSecondary = syntaxSecondary;
 	}
+	
+	public ISyntax SyntaxPrimary { get; }
+	public ISyntax SyntaxSecondary { get; }
 
-	public BadExpressionNode(TypeReference resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
-		: this(resultTypeReference, new List<ISyntax> { syntaxPrimary, syntaxSecondary })
-	{
-	}
+	/// <summary>
+	/// This type tracks the cause of the BadExpressionNode in the form of 'SyntaxPrimary', and 'SyntaxSecondary'.
+	///
+	/// But, once a 'BadExpressionNode' is made, it might go on to clobber the expression loop
+	/// until the end of file is reached.
+	///
+	/// So, this ClobberCount is the amount of times this 'BadExpressionNode' was merged with some other syntax,
+	/// and in the process resulted in this 'BadExpressionNode' being the primaryExpression.
+	///
+	/// (this doesn't count the initial failure to merge 'SyntaxPrimary', and 'SyntaxSecondary').
+	///
+	/// TODO: Don't forget to actually increment this...
+	/// </summary>
+	public int ClobberCount { get; set; }
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-	public List<ISyntax> SyntaxList { get; }
 	public TypeReference ResultTypeReference { get; }
 
 	public bool IsFabricated { get; init; }
@@ -43,7 +56,7 @@ public sealed class BadExpressionNode : IExpressionNode
 		if (!_childListIsDirty)
 			return _childList;
 
-		_childList = SyntaxList.ToArray();
+		// _childList = SyntaxList.ToArray();
 
 		_childListIsDirty = false;
 		return _childList;

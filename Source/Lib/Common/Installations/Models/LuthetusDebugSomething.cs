@@ -32,7 +32,6 @@ public static class LuthetusDebugSomething
 	public static int BinaryExpressionLeftVariableReference { get; set; }
 	public static int BinaryExpressionRightVariableReference { get; set; }
 	public static int BinaryExpressionLeftAndRightVariableReference { get; set; }
-	public static int CodeBlockNode { get; set; }
 	public static int ConstructorDefinitionNode { get; set; }
 	public static int ConstructorInvocationExpressionNode { get; set; }
 	public static int DoWhileStatementNode { get; set; }
@@ -106,7 +105,6 @@ public static class LuthetusDebugSomething
 			("BinaryExpressionLeftVariableReference", BinaryExpressionLeftVariableReference),
 			("BinaryExpressionRightVariableReference", BinaryExpressionRightVariableReference),
 			("BinaryExpressionLeftAndRightVariableReference", BinaryExpressionLeftAndRightVariableReference),
-			("CodeBlockNode", CodeBlockNode),
 			("ConstructorDefinitionNode", ConstructorDefinitionNode),
 			("ConstructorInvocationExpressionNode", ConstructorInvocationExpressionNode),
 			("DoWhileStatementNode", DoWhileStatementNode),
@@ -164,7 +162,6 @@ public static class LuthetusDebugSomething
 			BinaryExpressionLeftVariableReference +
 			BinaryExpressionRightVariableReference +
 			BinaryExpressionLeftAndRightVariableReference +
-			CodeBlockNode +
 			ConstructorDefinitionNode +
 			ConstructorInvocationExpressionNode +
 			DoWhileStatementNode +
