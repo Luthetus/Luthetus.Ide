@@ -72,26 +72,52 @@ public class CSharpCodeBlockBuilder
 	
 	public void AddChild(ISyntax syntax)
 	{
+		if (syntax.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+			syntax = TryOptimizeStorage((BinaryExpressionNode)syntax);
+		
 		ChildList.Add(syntax);
-		// Recur();
 	}
 	
-	/*private void Recur()
+	private IExpressionNode TryOptimizeStorage(IExpressionNode syntax)
 	{
-		if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode &&
-		    binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+		switch (syntax.SyntaxKind)
 		{
-			return new BinaryExpressionLeftAndRightVariableReference(binaryExpressionNode);
+			case SyntaxKind.BinaryExpressionNode:
+			{
+				var binaryExpressionNode = (BinaryExpressionNode)syntax;
+		
+				if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode &&
+				    binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				{
+					syntax = new BinaryExpressionLeftAndRightVariableReference(binaryExpressionNode);
+				}
+				else if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				{
+					var binaryExpressionLeftVariableReference = new BinaryExpressionLeftVariableReference(binaryExpressionNode);
+					syntax = binaryExpressionLeftVariableReference;
+					
+					binaryExpressionLeftVariableReference.SetRightExpressionNode(
+						TryOptimizeStorage(binaryExpressionLeftVariableReference.RightExpressionNode));
+				}
+				else if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				{
+					var binaryExpressionRightVariableReference = new BinaryExpressionRightVariableReference(binaryExpressionNode);
+					syntax = binaryExpressionRightVariableReference;
+					
+					binaryExpressionRightVariableReference.SetLeftExpressionNode(
+						TryOptimizeStorage(binaryExpressionRightVariableReference.LeftExpressionNode));
+				}
+				
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
-		else if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-		{
-			return new BinaryExpressionLeftVariableReference(binaryExpressionNode);
-		}
-		else if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-		{
-			return new BinaryExpressionRightVariableReference(binaryExpressionNode);
-		}
-	}*/
+		
+		return syntax;
+	}
 
     public CodeBlockNode Build()
     {

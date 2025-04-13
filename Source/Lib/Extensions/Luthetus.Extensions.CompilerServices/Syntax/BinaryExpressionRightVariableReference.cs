@@ -22,12 +22,12 @@ public sealed class BinaryExpressionRightVariableReference : IExpressionNode
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-	public IExpressionNode LeftExpressionNode { get; }
+	public IExpressionNode LeftExpressionNode { get; private set; }
 	public TypeReference LeftOperandTypeReference { get; }
 	public SyntaxToken OperatorToken { get; }
 	public TypeReference RightOperandTypeReference { get; }
 	public TypeReference ResultTypeReference { get; }
-	public VariableReference RightVariableReference { get; private set; }
+	public VariableReference RightVariableReference { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionRightVariableReference;
@@ -51,9 +51,9 @@ public sealed class BinaryExpressionRightVariableReference : IExpressionNode
 		return _childList;
 	}
 
-	public BinaryExpressionRightVariableReference SetRightVariableReference(VariableReference rightVariableReference)
+	public BinaryExpressionRightVariableReference SetLeftExpressionNode(IExpressionNode expressionNode)
 	{
-		RightVariableReference = rightVariableReference;
+		LeftExpressionNode = expressionNode;
 
 		_childListIsDirty = true;
 		return this;
