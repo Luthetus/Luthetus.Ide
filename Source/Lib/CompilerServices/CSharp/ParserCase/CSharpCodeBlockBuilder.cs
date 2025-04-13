@@ -69,6 +69,28 @@ public class CSharpCodeBlockBuilder
 	/// this decision is only being made to create consistency.
 	/// </summary>
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+	
+	/*public void AddChild_Experimental()
+	{
+		Recur();
+	}*/
+	
+	/*private void Recur()
+	{
+		if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode &&
+		    binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+		{
+			return new BinaryExpressionLeftAndRightVariableReference(binaryExpressionNode);
+		}
+		else if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+		{
+			return new BinaryExpressionLeftVariableReference(binaryExpressionNode);
+		}
+		else if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+		{
+			return new BinaryExpressionRightVariableReference(binaryExpressionNode);
+		}
+	}*/
 
     public CodeBlockNode Build()
     {
