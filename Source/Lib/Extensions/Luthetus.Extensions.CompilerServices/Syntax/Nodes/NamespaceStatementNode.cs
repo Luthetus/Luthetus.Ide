@@ -22,7 +22,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 		CodeBlock = codeBlock;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken KeywordToken { get; }
@@ -66,7 +66,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	}
 	#endregion
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -87,5 +87,5 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

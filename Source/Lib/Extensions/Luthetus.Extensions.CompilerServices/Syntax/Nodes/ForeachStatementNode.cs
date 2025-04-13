@@ -30,7 +30,7 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 		CodeBlock = codeBlock;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken ForeachKeywordToken { get; }
@@ -62,7 +62,7 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 	}
 	#endregion
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -91,5 +91,5 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

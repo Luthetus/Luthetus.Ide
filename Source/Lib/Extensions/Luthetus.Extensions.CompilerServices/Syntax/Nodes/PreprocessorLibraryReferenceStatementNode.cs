@@ -16,7 +16,7 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
 		LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken IncludeDirectiveSyntaxToken { get; }
@@ -25,7 +25,7 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -42,5 +42,5 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

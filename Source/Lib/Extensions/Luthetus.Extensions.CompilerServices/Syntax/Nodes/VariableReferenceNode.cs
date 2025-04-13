@@ -28,7 +28,7 @@ public sealed class VariableReferenceNode : IExpressionNode
 		IsFabricated = variableReference.IsFabricated;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 	
 	private bool _isFabricated;
@@ -70,7 +70,7 @@ public sealed class VariableReferenceNode : IExpressionNode
 	{
 		IsBeingUsed = true;
 	
-		_childList = Array.Empty<ISyntax>();
+		// _childList = Array.Empty<ISyntax>();
 		_childListIsDirty = true;
 	
 		VariableIdentifierToken = variableIdentifierToken;
@@ -78,7 +78,7 @@ public sealed class VariableReferenceNode : IExpressionNode
 		_isFabricated = false;
 	}
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -91,5 +91,5 @@ public sealed class VariableReferenceNode : IExpressionNode
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

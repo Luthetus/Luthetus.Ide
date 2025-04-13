@@ -2,5 +2,5 @@ namespace Luthetus.Extensions.CompilerServices.Syntax;
 
 public interface ISyntaxNode : ISyntax
 {
-	public IReadOnlyList<ISyntax> GetChildList();
+	// public IReadOnlyList<ISyntax> GetChildList();
 }

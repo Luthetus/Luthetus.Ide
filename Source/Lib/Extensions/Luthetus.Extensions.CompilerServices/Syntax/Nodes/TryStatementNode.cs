@@ -18,7 +18,7 @@ public sealed class TryStatementNode : ISyntaxNode
 		FinallyNode = finallyNode;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public TryStatementTryNode? TryNode { get; private set; }
@@ -30,7 +30,7 @@ public sealed class TryStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -57,7 +57,7 @@ public sealed class TryStatementNode : ISyntaxNode
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 
 	public void SetTryStatementTryNode(TryStatementTryNode tryStatementTryNode)
 	{

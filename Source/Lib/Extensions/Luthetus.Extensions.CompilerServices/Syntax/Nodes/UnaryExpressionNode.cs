@@ -16,7 +16,7 @@ public sealed class UnaryExpressionNode : IExpressionNode
 		UnaryOperatorNode = unaryOperatorNode;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public IExpressionNode Expression { get; }
@@ -26,7 +26,7 @@ public sealed class UnaryExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -39,5 +39,5 @@ public sealed class UnaryExpressionNode : IExpressionNode
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

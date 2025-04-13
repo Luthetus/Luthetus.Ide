@@ -11,7 +11,7 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 		ParentTypeClauseNode = parentTypeClauseNode;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public TypeClauseNode ParentTypeClauseNode { get; }
@@ -19,7 +19,7 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -35,5 +35,5 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

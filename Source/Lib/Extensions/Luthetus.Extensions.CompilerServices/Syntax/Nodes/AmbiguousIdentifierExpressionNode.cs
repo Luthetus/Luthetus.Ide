@@ -18,10 +18,10 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 		ResultTypeReference = resultTypeReference;
 	}
 	
-	public int SuccessCount { get; set; }
-	public int FailCount { get; set; }
+	// public int SuccessCount { get; set; }
+	// public int FailCount { get; set; }
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	
 	/// <summary>Be wary that this is public. Something is being tested.</summary>
 	public bool _childListIsDirty = true;
@@ -64,7 +64,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 		_childListIsDirty = true;
 	}
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -74,6 +74,6 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }
 

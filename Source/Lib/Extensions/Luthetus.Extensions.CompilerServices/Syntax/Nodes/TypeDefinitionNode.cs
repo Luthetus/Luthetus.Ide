@@ -43,7 +43,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		// ReferenceHashSet = referenceHashSet;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private ISyntaxNode[] _memberList = Array.Empty<ISyntaxNode>();
 	private bool _childListIsDirty = true;
 	private bool _memberListIsDirty = true;
@@ -197,7 +197,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		return this;
 	}
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -224,7 +224,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 			/*foreach (var entry in GenericParameterListing.GenericParameterEntryList)
 			{
 				childList[i++] = entry.TypeClauseNode;
-			}*/
+			}*//*
 			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
 		}
 		// if (CodeBlockNode is not null)
@@ -234,5 +234,5 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

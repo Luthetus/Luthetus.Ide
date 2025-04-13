@@ -32,7 +32,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 		ResultTypeReference = resultTypeReference;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken StringInterpolatedStartToken { get; }
@@ -55,7 +55,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 		return this;
 	}
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -78,5 +78,5 @@ public sealed class InterpolatedStringNode : IExpressionNode
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

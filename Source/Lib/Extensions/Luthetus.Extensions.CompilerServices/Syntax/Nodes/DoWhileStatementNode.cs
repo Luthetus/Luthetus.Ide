@@ -26,7 +26,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		CloseParenthesisToken = closeParenthesisToken;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken DoKeywordToken { get; }
@@ -57,7 +57,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 	}
 	#endregion
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -93,7 +93,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 
 	public void SetWhileProperties(
 		SyntaxToken whileKeywordToken,

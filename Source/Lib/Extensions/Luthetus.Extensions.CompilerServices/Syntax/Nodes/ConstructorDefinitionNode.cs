@@ -27,7 +27,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 		CodeBlock = codeBlock;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public TypeReference ReturnTypeReference { get; }
@@ -66,7 +66,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	}
 	#endregion
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -96,7 +96,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 			/*foreach (var entry in GenericParameterListing.GenericParameterEntryList)
 			{
 				childList[i++] = entry.TypeClauseNode;
-			}*/
+			}*//*
 			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
 		}
 		
@@ -114,5 +114,5 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

@@ -22,7 +22,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 		ResultTypeReference = resultTypeReference;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken FunctionInvocationIdentifierToken { get; }
@@ -72,7 +72,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 		_childListIsDirty = true;
 	}
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -107,7 +107,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 			/*foreach (var entry in GenericParameterListing.GenericParameterEntryList)
 			{
 				childList[i++] = entry.TypeClauseNode;
-			}*/
+			}*//*
 			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
 		}
 		
@@ -127,5 +127,5 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

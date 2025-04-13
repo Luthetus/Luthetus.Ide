@@ -31,7 +31,7 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 		#endif
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	// ICodeBlockOwner properties.
@@ -56,7 +56,7 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 	}
 	#endregion
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		// if (CodeBlockNode is not null)
 		// 	return CodeBlockNode.GetChildList();
@@ -78,5 +78,5 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

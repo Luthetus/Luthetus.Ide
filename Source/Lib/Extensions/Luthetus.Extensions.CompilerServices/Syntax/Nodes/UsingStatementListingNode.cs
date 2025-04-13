@@ -9,7 +9,7 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 		#endif
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	/// <summary>
@@ -28,7 +28,7 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 		_childListIsDirty = true;
 	}
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
@@ -37,5 +37,5 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 
 		_childListIsDirty = false;
 		return _childList;
-	}
+	}*/
 }

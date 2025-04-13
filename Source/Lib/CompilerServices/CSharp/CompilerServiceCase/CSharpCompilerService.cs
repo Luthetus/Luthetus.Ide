@@ -396,17 +396,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     		{
     			var returnStatementNode = (ReturnStatementNode)childSyntax;
     			
-    			// if (returnStatementNode.CodeBlockNode is not null)
-    			// {
-    				foreach (var innerChildSyntax in returnStatementNode.GetChildList())
-			    	{
-			    		if (innerChildSyntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)
-			    		{
-			    			functionInvocationNode = (FunctionInvocationNode)innerChildSyntax;
-			    			break;
-			    		}
-			    	}
-    			// }
+    			if (returnStatementNode.ExpressionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+	    		{
+	    			functionInvocationNode = (FunctionInvocationNode)returnStatementNode.ExpressionNode;
+	    			break;
+	    		}
     		}
     	
     		if (functionInvocationNode is not null)

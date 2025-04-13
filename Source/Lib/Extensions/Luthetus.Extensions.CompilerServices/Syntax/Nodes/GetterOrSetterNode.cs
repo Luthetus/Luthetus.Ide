@@ -8,7 +8,7 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class GetterOrSetterNode : ICodeBlockOwner
 {
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
+	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
 	// ICodeBlockOwner properties.
@@ -33,12 +33,12 @@ public sealed class GetterOrSetterNode : ICodeBlockOwner
 	}
 	#endregion
 
-	public IReadOnlyList<ISyntax> GetChildList()
+	/*public IReadOnlyList<ISyntax> GetChildList()
 	{
 		if (!_childListIsDirty)
 			return _childList;
 
 		return _childList;
-	}
+	}*/
 }
 
