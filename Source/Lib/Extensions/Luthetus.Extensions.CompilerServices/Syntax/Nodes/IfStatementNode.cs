@@ -26,7 +26,7 @@ public sealed class IfStatementNode : ICodeBlockOwner
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken KeywordToken { get; }
-	public IExpressionNode ExpressionNode { get; }
+	public IExpressionNode ExpressionNode { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

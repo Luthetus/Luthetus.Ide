@@ -72,8 +72,16 @@ public class CSharpCodeBlockBuilder
 	
 	public void AddChild(ISyntax syntax)
 	{
-		if (syntax.SyntaxKind == SyntaxKind.BinaryExpressionNode)
-			syntax = TryOptimizeStorage((BinaryExpressionNode)syntax);
+		switch (syntax.SyntaxKind)
+		{
+			case SyntaxKind.BinaryExpressionNode:
+				syntax = TryOptimizeStorage((BinaryExpressionNode)syntax);
+				break;
+			case SyntaxKind.IfStatementNode:
+				var ifStatementNode = (IfStatementNode)syntax;
+				ifStatementNode.ExpressionNode = TryOptimizeStorage(ifStatementNode.ExpressionNode);
+				break;
+		}
 		
 		ChildList.Add(syntax);
 	}
