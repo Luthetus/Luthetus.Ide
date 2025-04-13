@@ -243,6 +243,9 @@ public enum SyntaxKind
 	UnaryOperatorNode,
 	UnaryExpressionNode,
 	BinaryExpressionNode,
+	BinaryExpressionLeftVariableReference,
+	BinaryExpressionRightVariableReference,
+	BinaryExpressionLeftAndRightVariableReference,
 
 	// Symbols
 	TypeSymbol,

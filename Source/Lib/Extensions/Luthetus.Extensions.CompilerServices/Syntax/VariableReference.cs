@@ -6,6 +6,8 @@ namespace Luthetus.Extensions.CompilerServices.Syntax;
 
 public record struct VariableReference
 {
+	public static VariableReference Empty { get; } = default;
+
 	public VariableReference(
 		SyntaxToken variableIdentifierToken,
 		VariableDeclarationNode variableDeclarationNode,
