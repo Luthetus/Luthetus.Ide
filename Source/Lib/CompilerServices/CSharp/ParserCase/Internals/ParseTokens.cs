@@ -26,7 +26,7 @@ public static class ParseTokens
 				parserModel.Binder.BindDiscard(parserModel.TokenWalker.Current, compilationUnit, ref parserModel);
 	    		var identifierToken = parserModel.TokenWalker.Consume();
 	    		
-	    		var variableReferenceNode = new VariableReferenceNode(
+	    		var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
 	    			identifierToken,
         			null);
         			

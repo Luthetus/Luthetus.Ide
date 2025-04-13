@@ -508,7 +508,7 @@ public partial class CSharpBinder
 					goto default;
 				
 				return new WithExpressionNode(
-					(VariableReferenceNode)decidedNode);
+					new VariableReference((VariableReferenceNode)decidedNode));
 			}
 			case SyntaxKind.PlusPlusToken:
 			{
@@ -2210,7 +2210,7 @@ public partial class CSharpBinder
 			{
 				var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
 				
-				var variableReferenceNode = new VariableReferenceNode(
+				var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
 		            memberIdentifierToken,
 		            variableDeclarationNode);
 		        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
@@ -2289,7 +2289,7 @@ public partial class CSharpBinder
 		}
 		else
 		{
-			var variableReferenceNode = new VariableReferenceNode(
+			var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
 	            memberIdentifierToken,
 	            variableDeclarationNode: null);
 	        _ = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property, compilationUnit, ref parserModel);

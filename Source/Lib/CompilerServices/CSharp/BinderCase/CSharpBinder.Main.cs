@@ -45,6 +45,10 @@ public partial class CSharpBinder
 		valueType: null,
 		genericParameterListing: default,
 		isKeywordType: false);
+		
+	public VariableReferenceNode CSharpParserModel_VariableReferenceNode { get; } = new VariableReferenceNode(
+		variableIdentifierToken: default,
+		variableDeclarationNode: null);
     
     public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseChildScopeStack { get; } = new();
@@ -248,7 +252,7 @@ public partial class CSharpBinder
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
         {
-            variableReferenceNode = new VariableReferenceNode(
+            variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
                 variableIdentifierToken,
                 variableDeclarationNode);
         }
@@ -263,7 +267,7 @@ public partial class CSharpBinder
                 IsFabricated = true,
             };
 
-            variableReferenceNode = new VariableReferenceNode(
+            variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
                 variableIdentifierToken,
                 variableDeclarationNode);
 

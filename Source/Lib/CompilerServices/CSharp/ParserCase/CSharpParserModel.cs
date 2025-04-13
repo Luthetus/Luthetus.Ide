@@ -68,6 +68,12 @@ public struct CSharpParserModel
 			valueType: null,
 			genericParameterListing: default,
 			isKeywordType: false);
+			
+		VariableReferenceNode = Binder.CSharpParserModel_VariableReferenceNode;
+	    VariableReferenceNode.SetSharedInstance(
+	    	variableIdentifierToken: default,
+			variableDeclarationNode: null);
+		VariableReferenceNode.IsBeingUsed = false;
     }
 
     public TokenWalker TokenWalker { get; }
@@ -131,6 +137,19 @@ public struct CSharpParserModel
     public TypeClauseNode TypeClauseNode { get; }
     
     public bool SafeToUseSharedTypeClauseNode { get; set; } = true;
+    
+    public VariableReferenceNode VariableReferenceNode { get; }
+    
+    public VariableReferenceNode ConstructOrRecycleVariableReferenceNode(
+    	SyntaxToken variableIdentifierToken,
+		VariableDeclarationNode variableDeclarationNode)
+    {
+    	if (VariableReferenceNode.IsBeingUsed)
+    		return new VariableReferenceNode(variableIdentifierToken, variableDeclarationNode);
+    
+    	VariableReferenceNode.SetSharedInstance(variableIdentifierToken, variableDeclarationNode);
+    	return VariableReferenceNode;
+    }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();

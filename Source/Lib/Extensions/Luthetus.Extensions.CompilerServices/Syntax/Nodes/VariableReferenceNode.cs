@@ -30,12 +30,16 @@ public sealed class VariableReferenceNode : IExpressionNode
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
+	
+	private bool _isFabricated;
+	
+	public bool IsBeingUsed { get; set; } = false;
 
-	public SyntaxToken VariableIdentifierToken { get; }
+	public SyntaxToken VariableIdentifierToken { get; private set; }
 	/// <summary>
 	/// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
 	/// </summary>
-	public VariableDeclarationNode VariableDeclarationNode { get; }
+	public VariableDeclarationNode VariableDeclarationNode { get; private set; }
 	public TypeReference ResultTypeReference
 	{
 		get
@@ -47,8 +51,32 @@ public sealed class VariableReferenceNode : IExpressionNode
 		}
 	}
 
-	public bool IsFabricated { get; init; }
+	public bool IsFabricated
+	{
+		get
+		{
+			return _isFabricated;
+		}
+		init
+		{
+			_isFabricated = value;
+		}
+	}
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
+	
+	public void SetSharedInstance(
+		SyntaxToken variableIdentifierToken,
+		VariableDeclarationNode variableDeclarationNode)
+	{
+		IsBeingUsed = true;
+	
+		_childList = Array.Empty<ISyntax>();
+		_childListIsDirty = true;
+	
+		VariableIdentifierToken = variableIdentifierToken;
+		VariableDeclarationNode = variableDeclarationNode;
+		_isFabricated = false;
+	}
 
 	public IReadOnlyList<ISyntax> GetChildList()
 	{

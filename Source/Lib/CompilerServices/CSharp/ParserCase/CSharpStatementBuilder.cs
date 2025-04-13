@@ -70,6 +70,7 @@ public struct CSharpStatementBuilder
 	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		parserModel.SafeToUseSharedTypeClauseNode = true;
+		parserModel.VariableReferenceNode.IsBeingUsed = false;
 		
 		if (ChildList.Count != 0)
 		{
