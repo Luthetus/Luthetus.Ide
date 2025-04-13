@@ -43,9 +43,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		// ReferenceHashSet = referenceHashSet;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private ISyntaxNode[] _memberList = Array.Empty<ISyntaxNode>();
-	private bool _childListIsDirty = true;
 	private bool _memberListIsDirty = true;
 
 	private TypeClauseNode? _toTypeClauseResult;
@@ -115,20 +113,16 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
 	{
 		GenericParameterListing = genericParameterListing;
-		_childListIsDirty = true;
 	}
 	
 	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
 	{
 		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
-		_childListIsDirty = true;
 	}
 	
 	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
 	{
 		FunctionArgumentListing = functionArgumentListing;
-		
-		_childListIsDirty = true;
 		_memberListIsDirty = true;
 	}
 
@@ -181,58 +175,13 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	{
 		return TypeFacts.Empty.ToTypeReference();
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
 
 	public ICodeBlockOwner SetInheritedTypeReference(TypeReference typeReference)
 	{
 		InheritedTypeReference = typeReference;
 
-		_childListIsDirty = true;
 		_memberListIsDirty = true;
 		return this;
 	}
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 1; // TypeIdentifierToken
-		if (GenericParameterListing.ConstructorWasInvoked)
-		{
-			childCount +=
-				1 +                                                       // GenericParameterListing.OpenAngleBracketToken
-				// GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
-				1;                                                        // GenericParameterListing.CloseAngleBracketToken
-		}
-
-		// if (CodeBlockNode is not null)
-		// 	childCount++;
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = TypeIdentifierToken;
-		if (GenericParameterListing.ConstructorWasInvoked)
-		{
-			childList[i++] = GenericParameterListing.OpenAngleBracketToken;
-			/*foreach (var entry in GenericParameterListing.GenericParameterEntryList)
-			{
-				childList[i++] = entry.TypeClauseNode;
-			}*//*
-			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
-		}
-		// if (CodeBlockNode is not null)
-		// 	childList[i++] = CodeBlockNode;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

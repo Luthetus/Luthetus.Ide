@@ -34,9 +34,6 @@ public sealed class ForStatementNode : ICodeBlockOwner
 		CodeBlock = codeBlock;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
 	public IReadOnlyList<ISyntax> InitializationSyntaxList { get; }
@@ -61,53 +58,5 @@ public sealed class ForStatementNode : ICodeBlockOwner
 	{
 		return TypeFacts.Empty.ToTypeReference();
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		// KeywordToken, OpenParenthesisToken, InitializationSyntaxList.Length, InitializationStatementDelimiterToken,
-		// ConditionExpressionNode, ConditionStatementDelimiterToken, UpdationExpressionNode, CloseParenthesisToken,
-		var childCount =
-			1 +                               // KeywordToken,
-			1 +                               // OpenParenthesisToken,
-			InitializationSyntaxList.Count +  // InitializationSyntaxList.Length
-			1 +                               // InitializationStatementDelimiterToken,
-			1 +                               // ConditionExpressionNode,
-			1 +                               // ConditionStatementDelimiterToken,
-			1 +                               // UpdationExpressionNode,
-			1;                                // CloseParenthesisToken,
-
-		// if (CodeBlockNode is not null)
-		// 	childCount++;
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = KeywordToken;
-		childList[i++] = OpenParenthesisToken;
-		foreach (var item in InitializationSyntaxList)
-		{
-			childList[i++] = item;
-		}
-		childList[i++] = InitializationStatementDelimiterToken;
-		childList[i++] = ConditionExpressionNode;
-		childList[i++] = ConditionStatementDelimiterToken;
-		childList[i++] = UpdationExpressionNode;
-		childList[i++] = CloseParenthesisToken;
-		// if (CodeBlockNode is not null)
-		// 	childList[i++] = CodeBlockNode;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

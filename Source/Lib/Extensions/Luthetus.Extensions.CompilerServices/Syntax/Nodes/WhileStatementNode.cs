@@ -26,9 +26,6 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 		CodeBlock = codeBlock;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
 	public IExpressionNode ExpressionNode { get; set; }
@@ -49,37 +46,5 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 	{
 		return TypeFacts.NotApplicable.ToTypeReference();
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		// KeywordToken
-		// ExpressionNode
-		var childCount = 2;
-
-		// if (CodeBlockNode is not null)
-		// 	childCount++;
-
-		var childList = new ISyntax[childCount];
-
-		var i = 0;
-		childList[i++] = KeywordToken;
-		childList[i++] = ExpressionNode;
-
-		// if (CodeBlockNode is not null)
-		// 	childList[i++] = CodeBlockNode;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

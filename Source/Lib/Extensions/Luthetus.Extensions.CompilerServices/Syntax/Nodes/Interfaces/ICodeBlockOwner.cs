@@ -35,8 +35,6 @@ public interface ICodeBlockOwner : ISyntaxNode
 
 	public TypeReference GetReturnTypeReference();
 	
-	public void SetChildListIsDirty(bool childListIsDirty);
-
 	public static void ThrowMultipleScopeDelimiterException(List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.

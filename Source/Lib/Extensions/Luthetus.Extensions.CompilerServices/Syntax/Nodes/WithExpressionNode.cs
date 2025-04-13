@@ -14,21 +14,9 @@ public sealed class WithExpressionNode : IExpressionNode
 		ResultTypeReference = variableReference.ResultTypeReference;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public VariableReference VariableReference { get; }
 	public TypeReference ResultTypeReference { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.WithExpressionNode;
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

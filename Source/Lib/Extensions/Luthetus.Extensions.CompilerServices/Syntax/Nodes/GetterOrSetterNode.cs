@@ -8,9 +8,6 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class GetterOrSetterNode : ICodeBlockOwner
 {
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
@@ -26,19 +23,6 @@ public sealed class GetterOrSetterNode : ICodeBlockOwner
 	{
 		return TypeFacts.Empty.ToTypeReference();
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		return _childList;
-	}*/
 }
 

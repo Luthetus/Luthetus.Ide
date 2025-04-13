@@ -28,9 +28,6 @@ public sealed class VariableReferenceNode : IExpressionNode
 		IsFabricated = variableReference.IsFabricated;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-	
 	private bool _isFabricated;
 	
 	public bool IsBeingUsed { get; set; } = false;
@@ -70,26 +67,8 @@ public sealed class VariableReferenceNode : IExpressionNode
 	{
 		IsBeingUsed = true;
 	
-		// _childList = Array.Empty<ISyntax>();
-		_childListIsDirty = true;
-	
 		VariableIdentifierToken = variableIdentifierToken;
 		VariableDeclarationNode = variableDeclarationNode;
 		_isFabricated = false;
 	}
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		_childList = new ISyntax[]
-		{
-			VariableIdentifierToken,
-			VariableDeclarationNode,
-		};
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

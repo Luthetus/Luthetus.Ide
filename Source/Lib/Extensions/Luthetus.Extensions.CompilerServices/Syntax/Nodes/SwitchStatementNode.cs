@@ -28,9 +28,6 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 		CodeBlock = codeBlock;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
 	public IExpressionNode ExpressionNode { get; }
@@ -51,35 +48,5 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 	{
 		return TypeFacts.Empty.ToTypeReference();
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 4; //KeywordToken, OpenParenthesisToken, ExpressionNode, CloseParenthesisToken,
-		// if (CodeBlockNode is not null)
-		// 	childCount++;
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = KeywordToken;
-		childList[i++] = OpenParenthesisToken;
-		childList[i++] = ExpressionNode;
-		childList[i++] = CloseParenthesisToken;
-		// if (CodeBlockNode is not null)
-		// 	childList[i++] = CodeBlockNode;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

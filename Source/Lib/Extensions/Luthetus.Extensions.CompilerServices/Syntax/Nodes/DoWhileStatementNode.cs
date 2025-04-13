@@ -26,9 +26,6 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		CloseParenthesisToken = closeParenthesisToken;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public SyntaxToken DoKeywordToken { get; }
 	public SyntaxToken WhileKeywordToken { get; private set; }
 	public SyntaxToken OpenParenthesisToken { get; private set; }
@@ -50,50 +47,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 	{
 		return TypeFacts.Empty.ToTypeReference();
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 1; // DoKeywordToken,
-		// if (CodeBlockNode is not null)
-		// 	childCount++;
-		if (WhileKeywordToken.ConstructorWasInvoked)
-			childCount++;
-		if (OpenParenthesisToken.ConstructorWasInvoked)
-			childCount++;
-		if (ExpressionNode is not null)
-			childCount++;
-		if (CloseParenthesisToken.ConstructorWasInvoked)
-			childCount++;
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = DoKeywordToken;
-		// if (CodeBlockNode is not null)
-		// 	childList[i++] = CodeBlockNode;
-		if (WhileKeywordToken.ConstructorWasInvoked)
-			childList[i++] = WhileKeywordToken;
-		if (OpenParenthesisToken.ConstructorWasInvoked)
-			childList[i++] = OpenParenthesisToken;
-		if (ExpressionNode is not null)
-			childList[i++] = ExpressionNode;
-		if (CloseParenthesisToken.ConstructorWasInvoked)
-			childList[i++] = CloseParenthesisToken;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 
 	public void SetWhileProperties(
 		SyntaxToken whileKeywordToken,
@@ -105,7 +59,5 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		OpenParenthesisToken = openParenthesisToken;
 		ExpressionNode = expressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
-
-		_childListIsDirty = true;
 	}
 }

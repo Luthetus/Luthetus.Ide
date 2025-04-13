@@ -43,22 +43,8 @@ public sealed class BadExpressionNode : IExpressionNode
 	/// </summary>
 	public int ClobberCount { get; set; }
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public TypeReference ResultTypeReference { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		// _childList = SyntaxList.ToArray();
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

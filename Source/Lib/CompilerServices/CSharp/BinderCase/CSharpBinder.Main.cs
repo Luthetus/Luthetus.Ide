@@ -1724,8 +1724,6 @@ public partial class CSharpBinder
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
 
 		codeBlockOwner.OpenCodeBlockTextSpan = openCodeBlockTextSpan;
-
-		codeBlockOwner.SetChildListIsDirty(true);
 		return codeBlockOwner;
     }
     
@@ -1735,8 +1733,6 @@ public partial class CSharpBinder
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
 
 		codeBlockOwner.CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
-
-		codeBlockOwner.SetChildListIsDirty(true);
 		return codeBlockOwner;
     }
     
@@ -1746,8 +1742,6 @@ public partial class CSharpBinder
 			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
 
 		codeBlockOwner.CodeBlock = codeBlock;
-
-		codeBlockOwner.SetChildListIsDirty(true);
 		return codeBlockOwner;
 	}
 }

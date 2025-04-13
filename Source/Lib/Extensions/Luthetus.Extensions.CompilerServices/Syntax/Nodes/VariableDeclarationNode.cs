@@ -21,9 +21,6 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		IsInitialized = isInitialized;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public TypeReference TypeReference { get; private set; }
 
 	public SyntaxToken IdentifierToken { get; }
@@ -59,18 +56,4 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		TypeReference = typeReference;
 		return this;
 	}
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		_childList = new ISyntax[]
-		{
-			IdentifierToken,
-		};
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

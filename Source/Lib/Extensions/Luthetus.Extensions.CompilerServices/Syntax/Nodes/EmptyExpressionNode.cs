@@ -35,28 +35,9 @@ public sealed class EmptyExpressionNode : IExpressionNode
 		ResultTypeReference = typeReference;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public TypeReference ResultTypeReference { get; }
 	public bool FollowsMemberAccessToken { get; init; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 0; // ResultTypeClauseNode,
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

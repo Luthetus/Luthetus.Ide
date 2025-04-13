@@ -18,14 +18,6 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 		ResultTypeReference = resultTypeReference;
 	}
 	
-	// public int SuccessCount { get; set; }
-	// public int FailCount { get; set; }
-
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	
-	/// <summary>Be wary that this is public. Something is being tested.</summary>
-	public bool _childListIsDirty = true;
-
 	public SyntaxToken Token { get; set; }
 	public GenericParameterListing GenericParameterListing { get; set; }
 	public TypeReference ResultTypeReference { get; set; }
@@ -41,8 +33,6 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 		TypeReference resultTypeReference,
 		bool followsMemberAccessToken)
 	{
-		_childListIsDirty = true;
-		
 		Token = token;
 		GenericParameterListing = genericParameterListing;
 		ResultTypeReference = resultTypeReference;
@@ -55,25 +45,11 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
 	{
 		GenericParameterListing = genericParameterListing;
-		_childListIsDirty = true;
 	}
 	
 	public void SetGenericParameterListingCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
 	{
 		GenericParameterListing.SetCloseAngleBracketToken(closeAngleBracketToken);
-		_childListIsDirty = true;
 	}
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		// TODO: This method.
-		_childList = Array.Empty<ISyntax>();
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }
 

@@ -18,9 +18,6 @@ public sealed class ExplicitCastNode : IExpressionNode
 		CloseParenthesisToken = closeParenthesisToken;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public ExplicitCastNode(SyntaxToken openParenthesisToken, TypeReference resultTypeReference)
 		: this(openParenthesisToken, resultTypeReference, default)
 	{
@@ -36,27 +33,6 @@ public sealed class ExplicitCastNode : IExpressionNode
 	public ExplicitCastNode SetCloseParenthesisToken(SyntaxToken closeParenthesisToken)
 	{
 		CloseParenthesisToken = closeParenthesisToken;
-
-		_childListIsDirty = true;
 		return this;
 	}
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 2; // OpenParenthesisToken, ResultTypeReference, CloseParenthesisToken,
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = OpenParenthesisToken;
-		childList[i++] = CloseParenthesisToken;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

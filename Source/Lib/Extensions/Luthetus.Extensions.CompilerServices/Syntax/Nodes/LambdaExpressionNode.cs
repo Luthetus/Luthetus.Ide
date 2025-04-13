@@ -34,9 +34,6 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 		ResultTypeReference = resultTypeReference;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public TypeReference ResultTypeReference { get; }
 
 	/// <summary>
@@ -67,39 +64,10 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 	{
 		return ReturnTypeReference;
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
 
 	public void AddVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode)
 	{
 		VariableDeclarationNodeList.Add(variableDeclarationNode);
-		_childListIsDirty = true;
 	}
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		// VariableDeclarationNodeList.Count
-		var childCount =
-			VariableDeclarationNodeList.Count; // VariableDeclarationNodeList.Count
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		foreach (var item in VariableDeclarationNodeList)
-		{
-			childList[i++] = item;
-		}
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

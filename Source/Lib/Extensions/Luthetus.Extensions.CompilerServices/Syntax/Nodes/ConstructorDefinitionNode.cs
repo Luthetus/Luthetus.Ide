@@ -27,9 +27,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 		CodeBlock = codeBlock;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public TypeReference ReturnTypeReference { get; }
 	public SyntaxToken FunctionIdentifier { get; }
 	public GenericParameterListing GenericParameterListing { get; }
@@ -50,8 +47,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
 	{
 		FunctionArgumentListing = functionArgumentListing;
-		
-		_childListIsDirty = true;
 	}
 
 	#region ICodeBlockOwner_Methods
@@ -59,60 +54,5 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	{
 		return ReturnTypeReference;
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		
-		var childCount = 1 +                                          // FunctionIdentifier
-			1 +                                                       // FunctionArgumentListing.OpenParenthesisToken
-			FunctionArgumentListing.FunctionArgumentEntryList.Count + // FunctionArgumentListing.FunctionArgumentEntryList.Count
-			1;                                                        // FunctionArgumentListing.CloseParenthesisToken
-		if (GenericParameterListing.ConstructorWasInvoked)
-		{
-			childCount +=
-				1 +                                                       // GenericParameterListing.OpenAngleBracketToken
-				// GenericParameterListing.GenericParameterEntryList.Count + // GenericParameterListing.GenericParameterEntryList.Count
-				1;                                                        // GenericParameterListing.CloseAngleBracketToken
-		}
-		// if (CodeBlockNode is not null)
-		// 	childCount++;
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = FunctionIdentifier;
-		if (GenericParameterListing.ConstructorWasInvoked)
-		{
-			childList[i++] = GenericParameterListing.OpenAngleBracketToken;
-			/*foreach (var entry in GenericParameterListing.GenericParameterEntryList)
-			{
-				childList[i++] = entry.TypeClauseNode;
-			}*//*
-			childList[i++] = GenericParameterListing.CloseAngleBracketToken;
-		}
-		
-		childList[i++] = FunctionArgumentListing.OpenParenthesisToken;
-		foreach (var entry in FunctionArgumentListing.FunctionArgumentEntryList)
-		{
-			childList[i++] = entry.VariableDeclarationNode;
-		}
-		childList[i++] = FunctionArgumentListing.CloseParenthesisToken;
-		
-		// if (CodeBlockNode is not null)
-		// 	childList[i++] = CodeBlockNode;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }

@@ -17,9 +17,6 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 		ParentCodeBlockOwner = parentCodeBlockOwner;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public ICodeBlockOwner ParentCodeBlockOwner { get; }
 
 	// ICodeBlockOwner properties.
@@ -40,12 +37,5 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 		
 		return ParentCodeBlockOwner.GetReturnTypeReference();
 	}
-
-	public void SetChildListIsDirty(bool childListIsDirty)
-	{
-		_childListIsDirty = childListIsDirty;
-	}
 	#endregion
-
-	// public IReadOnlyList<ISyntax> GetChildList() => CodeBlock.ChildList;
 }

@@ -17,9 +17,6 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 		IsParserContextKindForceStatementExpression = isParserContextKindForceStatementExpression;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	/// <summary>
 	/// The expression parsing code will "merge" an instance of this type
 	/// with whatever 'ISyntaxToken' is next.
@@ -141,23 +138,5 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 1; // OpenParenthesisToken
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = OpenParenthesisToken;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }
 

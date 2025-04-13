@@ -40,9 +40,6 @@ public sealed class BinaryExpressionNode : IExpressionNode
 	{
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public IExpressionNode LeftExpressionNode { get; }
 	public TypeReference LeftOperandTypeReference { get; }
 	public SyntaxToken OperatorToken { get; }
@@ -53,31 +50,9 @@ public sealed class BinaryExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
 
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 3; // LeftExpressionNode, OperatorToken, RightExpressionNode
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = LeftExpressionNode;
-		childList[i++] = OperatorToken;
-		childList[i++] = RightExpressionNode;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
-
 	public BinaryExpressionNode SetRightExpressionNode(IExpressionNode rightExpressionNode)
 	{
 		RightExpressionNode = rightExpressionNode;
-
-		_childListIsDirty = true;
 		return this;
 	}
 }

@@ -32,9 +32,6 @@ public sealed class InterpolatedStringNode : IExpressionNode
 		ResultTypeReference = resultTypeReference;
 	}
 
-	// private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public SyntaxToken StringInterpolatedStartToken { get; }
 	public SyntaxToken StringInterpolatedEndToken { get; private set; }
 
@@ -51,32 +48,6 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	public InterpolatedStringNode SetStringInterpolatedEndToken(SyntaxToken stringInterpolatedEndToken)
 	{
 		StringInterpolatedEndToken = stringInterpolatedEndToken;
-		_childListIsDirty = true;
 		return this;
 	}
-
-	/*public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 2; // StringInterpolatedStartToken, StringInterpolatedEndToken,
-
-		if (ToBeExpressionPrimary is not null)
-			childCount++;
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = StringInterpolatedStartToken;
-		childList[i++] = StringInterpolatedEndToken;
-
-		if (ToBeExpressionPrimary is not null)
-			childList[i++] = ToBeExpressionPrimary;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}*/
 }
