@@ -38,8 +38,6 @@ public sealed class BadExpressionNode : IExpressionNode
 	/// and in the process resulted in this 'BadExpressionNode' being the primaryExpression.
 	///
 	/// (this doesn't count the initial failure to merge 'SyntaxPrimary', and 'SyntaxSecondary').
-	///
-	/// TODO: Don't forget to actually increment this...
 	/// </summary>
 	public int ClobberCount { get; set; }
 
