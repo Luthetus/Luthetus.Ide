@@ -552,7 +552,7 @@ public class CommandFactory : ICommandFactory
 	 	   // I'm gonna keep it though so I can sleep at night.
 	 	   //
 	 	   await Task.Yield();
-			await Task.Delay(100).ConfigureAwait(false);
+			await Task.Delay(200).ConfigureAwait(false);
 			
 			_treeViewService.ReduceMoveHomeAction(
 				CodeSearchState.TreeViewCodeSearchContainerKey,
@@ -590,7 +590,7 @@ public class CommandFactory : ICommandFactory
  	   // I'm gonna keep it though so I can sleep at night.
  	   //
  	   await Task.Yield();
-		await Task.Delay(100).ConfigureAwait(false);
+		await Task.Delay(200).ConfigureAwait(false);
 		
 		_treeViewService.ReduceMoveHomeAction(
 			CodeSearchState.TreeViewCodeSearchContainerKey,

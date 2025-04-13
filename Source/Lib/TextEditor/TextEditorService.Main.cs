@@ -474,6 +474,17 @@ public partial class TextEditorService : ITextEditorService
 		primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
 		
 		viewModelModifier.ShouldRevealCursor = true;
+		
+		_ = Task.Run(async () =>
+		{
+			await Task.Delay(200).ConfigureAwait(false);
+			WorkerArbitrary.PostUnique(nameof(OpenInEditorAsync), editContext =>
+			{
+				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
+				viewModelModifier.ShouldRevealCursor = true;
+				return ValueTask.CompletedTask;
+			});
+		});
 	}
 	
 	public async Task OpenInEditorAsync(
@@ -527,6 +538,17 @@ public partial class TextEditorService : ITextEditorService
 			primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 			
 		viewModelModifier.ShouldRevealCursor = true;
+		
+		_ = Task.Run(async () =>
+		{
+			await Task.Delay(200).ConfigureAwait(false);
+			WorkerArbitrary.PostUnique(nameof(OpenInEditorAsync), editContext =>
+			{
+				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
+				viewModelModifier.ShouldRevealCursor = true;
+				return ValueTask.CompletedTask;
+			});
+		});
 	}
 	
 	/// <summary>
