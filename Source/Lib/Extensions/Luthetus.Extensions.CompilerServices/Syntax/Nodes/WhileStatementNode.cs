@@ -31,7 +31,7 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
-	public IExpressionNode ExpressionNode { get; }
+	public IExpressionNode ExpressionNode { get; set; }
 	public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.

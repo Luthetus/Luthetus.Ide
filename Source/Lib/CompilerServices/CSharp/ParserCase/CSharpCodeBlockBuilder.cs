@@ -75,12 +75,38 @@ public class CSharpCodeBlockBuilder
 		switch (syntax.SyntaxKind)
 		{
 			case SyntaxKind.BinaryExpressionNode:
+			{
 				syntax = TryOptimizeStorage((BinaryExpressionNode)syntax);
 				break;
+			}
 			case SyntaxKind.IfStatementNode:
+			{
 				var ifStatementNode = (IfStatementNode)syntax;
 				ifStatementNode.ExpressionNode = TryOptimizeStorage(ifStatementNode.ExpressionNode);
 				break;
+			}
+			case SyntaxKind.WhileStatementNode:
+			{
+				var whileStatementNode = (WhileStatementNode)syntax;
+				whileStatementNode.ExpressionNode = TryOptimizeStorage(whileStatementNode.ExpressionNode);
+				break;
+			}
+			case SyntaxKind.ConstructorInvocationExpressionNode:
+			{
+				var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntax;
+				
+				if (constructorInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
+				{
+					for (int i = 0; i < constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList.Count; i++)
+					{
+						var item = constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i];
+						item.ExpressionNode = TryOptimizeStorage(item.ExpressionNode);
+						constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i] = item;
+					}
+				}
+				
+				break;
+			}
 		}
 		
 		ChildList.Add(syntax);
