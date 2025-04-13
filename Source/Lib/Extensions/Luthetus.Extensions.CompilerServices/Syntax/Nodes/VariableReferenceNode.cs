@@ -16,6 +16,17 @@ public sealed class VariableReferenceNode : IExpressionNode
 		VariableIdentifierToken = variableIdentifierToken;
 		VariableDeclarationNode = variableDeclarationNode;
 	}
+	
+	public VariableReferenceNode(VariableReference variableReference)
+	{
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableReferenceNode++;
+		#endif
+	
+		VariableIdentifierToken = variableReference.VariableIdentifierToken;
+		VariableDeclarationNode = variableReference.VariableDeclarationNode;
+		IsFabricated = variableReference.IsFabricated;
+	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
