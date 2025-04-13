@@ -32,7 +32,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 	public SyntaxToken DoKeywordToken { get; }
 	public SyntaxToken WhileKeywordToken { get; private set; }
 	public SyntaxToken OpenParenthesisToken { get; private set; }
-	public IExpressionNode? ExpressionNode { get; private set; }
+	public IExpressionNode? ExpressionNode { get; set; }
 	public SyntaxToken CloseParenthesisToken { get; private set; }
 
 	// ICodeBlockOwner properties.

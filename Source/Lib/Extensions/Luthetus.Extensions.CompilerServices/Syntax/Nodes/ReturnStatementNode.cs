@@ -18,7 +18,7 @@ public sealed class ReturnStatementNode : IExpressionNode
 	private bool _childListIsDirty = true;
 
 	public SyntaxToken KeywordToken { get; }
-	public IExpressionNode ExpressionNode { get; }
+	public IExpressionNode ExpressionNode { get; set; }
 	public TypeReference ResultTypeReference => ExpressionNode.ResultTypeReference;
 
 	public bool IsFabricated { get; init; }

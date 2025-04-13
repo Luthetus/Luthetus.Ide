@@ -107,6 +107,37 @@ public class CSharpCodeBlockBuilder
 				
 				break;
 			}
+			case SyntaxKind.FunctionInvocationNode:
+			{
+				var functionInvocationNode = (FunctionInvocationNode)syntax;
+				
+				if (functionInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
+				{
+					for (int i = 0; i < functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList.Count; i++)
+					{
+						var item = functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i];
+						item.ExpressionNode = TryOptimizeStorage(item.ExpressionNode);
+						functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i] = item;
+					}
+				}
+				
+				break;
+			}
+			case SyntaxKind.DoWhileStatementNode:
+			{
+				var doWhileStatementNode = (DoWhileStatementNode)syntax;
+				
+				if (doWhileStatementNode.ExpressionNode is not null)
+					doWhileStatementNode.ExpressionNode = TryOptimizeStorage(doWhileStatementNode.ExpressionNode);
+				
+				break;
+			}
+			case SyntaxKind.ReturnStatementNode:
+			{
+				var returnStatementNode = (ReturnStatementNode)syntax;
+				returnStatementNode.ExpressionNode = TryOptimizeStorage(returnStatementNode.ExpressionNode);
+				break;
+			}
 		}
 		
 		ChildList.Add(syntax);
