@@ -5,40 +5,19 @@ namespace Luthetus.Extensions.CompilerServices.Syntax;
 
 public sealed class BinaryExpressionLeftAndRightVariableReference : IExpressionNode
 {
-	public BinaryExpressionLeftAndRightVariableReference(
-		VariableReference leftVariableReference,
-		TypeReference leftOperandTypeReference,
-		SyntaxToken operatorToken,
-		TypeReference rightOperandTypeReference,
-		TypeReference resultTypeReference,
-		VariableReference rightVariableReference)
+	public BinaryExpressionLeftAndRightVariableReference(BinaryExpressionNode binaryExpressionNode)
 	{
 		#if DEBUG
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BinaryExpressionNode++;
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BinaryExpressionLeftAndRightVariableReference++;
 		#endif
-	
-		LeftVariableReference = leftVariableReference;
-		LeftOperandTypeReference = leftOperandTypeReference;
-		OperatorToken = operatorToken;
-		RightOperandTypeReference = rightOperandTypeReference;
-		ResultTypeReference = resultTypeReference;
-		RightVariableReference = rightVariableReference;
-	}
-
-	public BinaryExpressionLeftAndRightVariableReference(
-			VariableReference leftVariableReference,
-			TypeReference leftOperandTypeReference,
-			SyntaxToken operatorToken,
-			TypeReference rightOperandTypeReference,
-			TypeReference resultTypeReference)
-		: this(
-			leftVariableReference,
-			leftOperandTypeReference,
-			operatorToken,
-			rightOperandTypeReference,
-			resultTypeReference,
-			VariableReference.Empty)
-	{
+		
+		LeftVariableReference = new VariableReference((VariableReferenceNode)binaryExpressionNode.LeftExpressionNode);
+		LeftOperandTypeReference = binaryExpressionNode.LeftOperandTypeReference;
+		OperatorToken = binaryExpressionNode.OperatorToken;
+		RightOperandTypeReference = binaryExpressionNode.RightOperandTypeReference;
+		ResultTypeReference = binaryExpressionNode.ResultTypeReference;
+		RightVariableReference = new VariableReference((VariableReferenceNode)binaryExpressionNode.RightExpressionNode);
+		IsFabricated = binaryExpressionNode.IsFabricated;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();

@@ -899,6 +899,7 @@ public partial class CSharpBinder
 			}
 				
 			binaryExpressionNode.SetRightExpressionNode(expressionSecondary);
+			
 			return binaryExpressionNode;
 		}
 	

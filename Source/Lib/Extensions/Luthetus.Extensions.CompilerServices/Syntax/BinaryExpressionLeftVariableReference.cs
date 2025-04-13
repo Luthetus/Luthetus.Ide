@@ -5,40 +5,18 @@ namespace Luthetus.Extensions.CompilerServices.Syntax;
 
 public sealed class BinaryExpressionLeftVariableReference : IExpressionNode
 {
-	public BinaryExpressionLeftVariableReference(
-		VariableReference leftVariableReference,
-		TypeReference leftOperandTypeReference,
-		SyntaxToken operatorToken,
-		TypeReference rightOperandTypeReference,
-		TypeReference resultTypeReference,
-		IExpressionNode rightExpressionNode)
+	public BinaryExpressionLeftVariableReference(BinaryExpressionNode binaryExpressionNode)
 	{
 		#if DEBUG
-		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BinaryExpressionNode++;
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BinaryExpressionLeftVariableReference++;
 		#endif
 	
-		LeftVariableReference = leftVariableReference;
-		LeftOperandTypeReference = leftOperandTypeReference;
-		OperatorToken = operatorToken;
-		RightOperandTypeReference = rightOperandTypeReference;
-		ResultTypeReference = resultTypeReference;
-		RightExpressionNode = rightExpressionNode;
-	}
-
-	public BinaryExpressionLeftVariableReference(
-			VariableReference leftVariableReference,
-			TypeReference leftOperandTypeReference,
-			SyntaxToken operatorToken,
-			TypeReference rightOperandTypeReference,
-			TypeReference resultTypeReference)
-		: this(
-			leftVariableReference,
-			leftOperandTypeReference,
-			operatorToken,
-			rightOperandTypeReference,
-			resultTypeReference,
-			EmptyExpressionNode.Empty)
-	{
+		LeftVariableReference = new VariableReference((VariableReferenceNode)binaryExpressionNode.LeftExpressionNode);
+		LeftOperandTypeReference = binaryExpressionNode.LeftOperandTypeReference;
+		OperatorToken = binaryExpressionNode.OperatorToken;
+		RightOperandTypeReference = binaryExpressionNode.RightOperandTypeReference;
+		ResultTypeReference = binaryExpressionNode.ResultTypeReference;
+		RightExpressionNode = binaryExpressionNode.RightExpressionNode;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
