@@ -339,7 +339,7 @@ public static class UtilityApi
     	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		return new TypeClauseNode(
-	    		(SyntaxToken)token,
+	    		token,
 		        valueType: null,
 		        genericParameterListing: default,
 		        isKeywordType: false);
@@ -347,7 +347,7 @@ public static class UtilityApi
 	    else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(SyntaxToken)token,
+	    		token,
 		        valueType: null,
 		        genericParameterListing: default,
 		        isKeywordType: true);
@@ -355,10 +355,53 @@ public static class UtilityApi
 	    else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(SyntaxToken)token,
+	    		token,
 		        valueType: null,
 		        genericParameterListing: default,
 		        isKeywordType: true);
+	    }
+	    else
+	    {
+	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+	    	//
+	    	/*compilationUnit.DiagnosticBag.ReportTodoException(
+	    		parserModel.TokenWalker.Current.TextSpan,
+	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");*/
+	    	
+	    	// TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
+	    	return null;
+	    }
+    }
+    
+    public static TypeClauseNode ConvertTokenToTypeClauseNodeViaSharedInstance(ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+    	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
+    	{
+    		parserModel.TypeClauseNode.SetSharedInstance(
+	    		token,
+		        valueType: null,
+		        genericParameterListing: default,
+		        isKeywordType: false);
+		    return parserModel.TypeClauseNode;
+    	}
+	    else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
+	    {
+	    	parserModel.TypeClauseNode.SetSharedInstance(
+	    		token,
+		        valueType: null,
+		        genericParameterListing: default,
+		        isKeywordType: true);
+		    return parserModel.TypeClauseNode;
+	    }
+	    else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
+	    {
+	    	parserModel.TypeClauseNode.SetSharedInstance(
+	    		token,
+		        valueType: null,
+		        genericParameterListing: default,
+		        isKeywordType: true);
+		    return parserModel.TypeClauseNode;
 	    }
 	    else
 	    {

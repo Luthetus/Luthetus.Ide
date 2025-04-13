@@ -61,6 +61,13 @@ public struct CSharpParserModel
 	        genericParameterListing: default,
 	        CSharpFacts.Types.Void.ToTypeReference(),
 	        followsMemberAccessToken: false);
+	        
+	    TypeClauseNode = Binder.CSharpParserModel_TypeClauseNode;
+	    TypeClauseNode.SetSharedInstance(
+	    	typeIdentifier: default,
+			valueType: null,
+			genericParameterListing: default,
+			isKeywordType: false);
     }
 
     public TokenWalker TokenWalker { get; }
@@ -114,6 +121,7 @@ public struct CSharpParserModel
     public UsingStatementListingNode? UsingStatementListingNode { get; set; }
     
     public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; }
+    public TypeClauseNode TypeClauseNode { get; }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();

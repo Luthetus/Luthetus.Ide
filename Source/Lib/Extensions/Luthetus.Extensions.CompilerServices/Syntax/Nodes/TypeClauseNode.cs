@@ -50,13 +50,15 @@ public sealed class TypeClauseNode : IGenericParameterNode
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
+	
+	private bool _isFabricated;
 
 	/// <summary>
 	/// Given: 'int x = 2;'<br/>
 	/// Then: 'int' is the <see cref="TypeIdentifierToken"/>
 	/// And: <see cref="GenericParametersListingNode"/> would be null
 	/// </summary>
-	public SyntaxToken TypeIdentifierToken { get; }
+	public SyntaxToken TypeIdentifierToken { get; set; }
 	/// <summary>
 	/// Given: 'int x = 2;'<br/>
 	/// Then: 'typeof(int)' is the <see cref="ValueType"/>
@@ -65,7 +67,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	/// In short, <see cref="ValueType"/> is non-null when the
 	/// <see cref="TypeIdentifierToken"/> maps to a C# primitive type.
 	/// </summary>
-	public Type? ValueType { get; private set; }
+	public Type? ValueType { get; set; }
 	/// <summary>
 	/// Given: 'int[] x = 2;'<br/>
 	/// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
@@ -73,19 +75,50 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	/// </summary>
 	public GenericParameterListing GenericParameterListing { get; set; }
 
-	public bool IsKeywordType { get; init; }
+	public bool IsKeywordType { get; set; }
 
-	public bool IsTuple { get; }
+	public bool IsTuple { get; set; }
 
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
 	public bool HasQuestionMark { get; set; }
 	public int ArrayRank { get; set; }
 
-	public bool IsFabricated { get; init; }
+	public bool IsFabricated
+	{
+		get
+		{
+			return _isFabricated;
+		}
+		init
+		{
+			_isFabricated = value;
+		}
+	}
+	
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
 	
 	public bool IsParsingGenericParameters { get; set; }
+
+	public void SetSharedInstance(
+		SyntaxToken typeIdentifier,
+		Type? valueType,
+		GenericParameterListing genericParameterListing,
+		bool isKeywordType)
+	{
+		_childList = Array.Empty<ISyntax>();
+		_childListIsDirty = true;
+	
+		TypeIdentifierToken = typeIdentifier;
+		ValueType = valueType;
+		GenericParameterListing = genericParameterListing;
+		IsKeywordType = isKeywordType;
+		IsTuple = false;
+		HasQuestionMark = false;
+		ArrayRank = 0;
+		_isFabricated = false;
+		IsParsingGenericParameters = false;
+	}
 
 	public void SetGenericParameterListing(GenericParameterListing genericParameterListing)
 	{

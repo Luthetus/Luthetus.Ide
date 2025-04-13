@@ -39,6 +39,12 @@ public partial class CSharpBinder
 		default,
         genericParameterListing: default,
         CSharpFacts.Types.Void.ToTypeReference());
+        
+    public TypeClauseNode CSharpParserModel_TypeClauseNode { get; } = new TypeClauseNode(
+		typeIdentifier: default,
+		valueType: null,
+		genericParameterListing: default,
+		isKeywordType: false);
     
     public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseChildScopeStack { get; } = new();

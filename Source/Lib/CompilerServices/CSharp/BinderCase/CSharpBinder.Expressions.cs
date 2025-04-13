@@ -646,7 +646,15 @@ public partial class CSharpBinder
 	                out var typeDefinitionNode))
 	        {
 	        	var token = ambiguousIdentifierExpressionNode.Token;
-	            var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+	        	
+	        	TypeClauseNode typeClauseNode;
+	        	
+	        	if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+	        		typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+	        	else
+	        		typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNodeViaSharedInstance(ref token, compilationUnit, ref parserModel);
+	        	
+	            
 	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
 				
@@ -710,7 +718,14 @@ public partial class CSharpBinder
 				UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 			{
 				var token = ambiguousIdentifierExpressionNode.Token;
-	            var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+	            
+	            TypeClauseNode typeClauseNode;
+	            
+	            if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+	        		typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+	        	else
+	        		typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNodeViaSharedInstance(ref token, compilationUnit, ref parserModel);
+	            
 	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
 			    return typeClauseNode;
