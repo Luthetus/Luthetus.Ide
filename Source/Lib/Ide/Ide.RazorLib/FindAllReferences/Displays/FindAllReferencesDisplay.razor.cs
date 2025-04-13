@@ -1,3 +1,5 @@
+/*
+// FindAllReferences
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -44,10 +46,14 @@ public partial class FindAllReferencesDisplay : ComponentBase, IDisposable
     
     private FindAllReferencesTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
 	private FindAllReferencesTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+	*/
 
-	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+	// FindAllReferences
+	// private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+	// 	AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
     
+    /*
+    // FindAllReferences
     protected override void OnInitialized()
     {
     	FindAllReferencesService.FindAllReferencesStateChanged += OnFindAllReferencesStateChanged;
@@ -101,3 +107,4 @@ public partial class FindAllReferencesDisplay : ComponentBase, IDisposable
     	FindAllReferencesService.FindAllReferencesStateChanged -= OnFindAllReferencesStateChanged;
     }
 }
+*/

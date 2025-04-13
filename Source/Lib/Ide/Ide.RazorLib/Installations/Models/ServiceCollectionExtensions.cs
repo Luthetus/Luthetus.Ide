@@ -15,7 +15,8 @@ using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.CommandBars.Models;
-using Luthetus.Ide.RazorLib.FindAllReferences.Models;
+// FindAllReferences
+// using Luthetus.Ide.RazorLib.FindAllReferences.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -126,8 +127,9 @@ public static class ServiceCollectionExtensions
             .AddScoped<IFolderExplorerService, FolderExplorerService>()
             .AddScoped<IIdeMainLayoutService, IdeMainLayoutService>()
             .AddScoped<IIdeHeaderService, IdeHeaderService>()
-            .AddScoped<ICommandBarService, CommandBarService>()
-            .AddScoped<IFindAllReferencesService, FindAllReferencesService>();
+            .AddScoped<ICommandBarService, CommandBarService>();
+            // FindAllReferences
+            // .AddScoped<IFindAllReferencesService, FindAllReferencesService>();
 
         return services;
     }

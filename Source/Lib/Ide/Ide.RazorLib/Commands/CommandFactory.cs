@@ -26,7 +26,8 @@ using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Displays;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
-using Luthetus.Ide.RazorLib.FindAllReferences.Models;
+// FindAllReferences
+// using Luthetus.Ide.RazorLib.FindAllReferences.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
@@ -41,7 +42,8 @@ public class CommandFactory : ICommandFactory
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
     private readonly IWidgetService _widgetService;
-    private readonly IFindAllReferencesService _findAllReferencesService;
+    // FindAllReferences
+    // private readonly IFindAllReferencesService _findAllReferencesService;
     private readonly ICodeSearchService _codeSearchService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
@@ -53,7 +55,8 @@ public class CommandFactory : ICommandFactory
 		IDialogService dialogService,
 		IPanelService panelService,
 		IWidgetService widgetService,
-		IFindAllReferencesService findAllReferencesService,
+		// FindAllReferences
+		// IFindAllReferencesService findAllReferencesService,
 		ICodeSearchService codeSearchService,
 		IEnvironmentProvider environmentProvider,
 		CommonBackgroundTaskApi commonBackgroundTaskApi)
@@ -64,7 +67,8 @@ public class CommandFactory : ICommandFactory
 		_dialogService = dialogService;
 		_panelService = panelService;
 		_widgetService = widgetService;
-		_findAllReferencesService = findAllReferencesService;
+		// FindAllReferences
+		// _findAllReferencesService = findAllReferencesService;
 		_codeSearchService = codeSearchService;
 		_environmentProvider = environmentProvider;
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
@@ -78,7 +82,9 @@ public class CommandFactory : ICommandFactory
 	public void Initialize()
     {
     	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = PeekCodeSearchDialog;
-    	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func = ShowAllReferences;
+    	
+    	// FindAllReferences
+    	// ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func = ShowAllReferences;
     
         // ActiveContextsContext
         {
@@ -598,6 +604,8 @@ public class CommandFactory : ICommandFactory
 			false);
     }
     
+    /*
+    // FindAllReferences
     public async ValueTask ShowAllReferences(
     	TextEditorEditContext editContext,
     	TextEditorModel modelModifier,
@@ -670,4 +678,5 @@ public class CommandFactory : ICommandFactory
 
         _panelService.SetActivePanelTab(PanelFacts.BottomPanelGroupKey, findAllReferencesPanel.Key);
     }
+    */
 }

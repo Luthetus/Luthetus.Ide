@@ -37,8 +37,10 @@ public static class TypeFacts
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty,
-		referenceHashSet: new());
+		string.Empty
+		// FindAllReferences
+		// , referenceHashSet: new()
+		);
 
 	/// <summary>
 	/// If a <see cref="ISyntaxNode"/> has a <see cref="TypeClauseNode"/>,
@@ -55,8 +57,10 @@ public static class TypeFacts
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty,
-		referenceHashSet: new());
+		string.Empty
+		// FindAllReferences
+		// , referenceHashSet: new()
+		);
 
 	/// <summary>
 	/// When parsing an expression, there may be a <see cref="FunctionInvocationNode"/>
@@ -90,6 +94,8 @@ public static class TypeFacts
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty,
-		referenceHashSet: new());
+		string.Empty
+		// FindAllReferences
+		// , referenceHashSet: new()
+		);
 }

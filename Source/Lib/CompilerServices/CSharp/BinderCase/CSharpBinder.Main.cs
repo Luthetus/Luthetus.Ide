@@ -434,6 +434,8 @@ public partial class CSharpBinder
         }*/
     }
     
+    /*
+    // FindAllReferences
     public void BindTypeClauseNodeSuccessfully(
         TypeClauseNode typeClauseNode,
         TypeDefinitionNode typeDefinitionNode,
@@ -442,6 +444,7 @@ public partial class CSharpBinder
     {
     	typeDefinitionNode.ReferenceHashSet.Add(compilationUnit.ResourceUri);
     }
+    */
 
     public void BindTypeIdentifier(
         SyntaxToken identifierToken,
@@ -1738,8 +1741,10 @@ public partial class CSharpBinder
 								entry.TypeReference.GenericParameterListing,
 								primaryConstructorFunctionArgumentListing: default,
 								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-								string.Empty,
-								referenceHashSet: new()),
+								string.Empty
+								// FindAllReferences
+								// ,referenceHashSet: new()
+								),
 					        cSharpCompilationUnit,
 					        ref parserModel);
 		    		}

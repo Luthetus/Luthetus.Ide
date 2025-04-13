@@ -20,8 +20,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing primaryConstructorFunctionArgumentListing,
 		TypeReference inheritedTypeReference,
-		string namespaceName,
-		HashSet<ResourceUri>? referenceHashSet)
+		string namespaceName
+		// FindAllReferences
+		// , HashSet<ResourceUri>? referenceHashSet
+		)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeDefinitionNode++;
@@ -36,7 +38,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
 		InheritedTypeReference = inheritedTypeReference;
 		NamespaceName = namespaceName;
-		ReferenceHashSet = referenceHashSet;
+		
+		// FindAllReferences
+		// ReferenceHashSet = referenceHashSet;
 	}
 
 	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
@@ -90,7 +94,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// Any files that contain a reference to this TypeDefinitionNode should
 	/// have their ResourceUri in this.
 	/// </summary>
-	public HashSet<ResourceUri>? ReferenceHashSet { get; set; }
+	// FindAllReferences
+	// public HashSet<ResourceUri>? ReferenceHashSet { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;

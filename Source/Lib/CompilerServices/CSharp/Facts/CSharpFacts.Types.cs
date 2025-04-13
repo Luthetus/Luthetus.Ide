@@ -21,8 +21,10 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
-			referenceHashSet: new())
+            string.Empty
+            // FindAllReferences
+            // , referenceHashSet: new()
+            )
             {
             	IsKeywordType = true
             };
@@ -36,8 +38,10 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
-			referenceHashSet: new())
+            string.Empty
+            // FindAllReferences
+            // , referenceHashSet: new()
+            )
             {
             	IsKeywordType = true
             };
@@ -51,8 +55,10 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
-			referenceHashSet: new())
+            string.Empty
+            // FindAllReferences
+            // , referenceHashSet: new()
+			)
             {
             	IsKeywordType = true
             };
@@ -66,8 +72,10 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
-			referenceHashSet: new())
+            string.Empty
+			// FindAllReferences
+			// ,referenceHashSet: new()
+			)
             {
             	IsKeywordType = true
             };
@@ -81,8 +89,10 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
-			referenceHashSet: new())
+            string.Empty
+			// FindAllReferences
+			// ,referenceHashSet: new()
+			)
             {
             	IsKeywordType = true
             };
@@ -96,8 +106,10 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty,
-			referenceHashSet: new())
+            string.Empty
+            // FindAllReferences
+            // ,referenceHashSet: new()
+            )
             {
             	IsKeywordType = true
             };

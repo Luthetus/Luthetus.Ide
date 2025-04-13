@@ -822,8 +822,10 @@ public class ParseDefaultKeywords
             genericParameterListing,
             primaryConstructorFunctionArgumentListing: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-            namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(),
-			referenceHashSet: new());
+            namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText()
+			// FindAllReferences
+			// ,referenceHashSet: new()
+			);
 
         parserModel.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit, ref parserModel);
         parserModel.Binder.BindTypeIdentifier(identifierToken, compilationUnit, ref parserModel);
