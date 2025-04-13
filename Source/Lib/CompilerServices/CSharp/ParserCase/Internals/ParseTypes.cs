@@ -162,7 +162,7 @@ public static class ParseTypes
 	    		parserModel.Binder.CreateVariableSymbol(argument.VariableDeclarationNode.IdentifierToken, argument.VariableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
 	    		argument.VariableDeclarationNode.VariableKind = VariableKind.Property;
 	    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);
-	    		parserModel.CurrentCodeBlockBuilder.ChildList.Add(argument.VariableDeclarationNode);
+	    		parserModel.CurrentCodeBlockBuilder.AddChild(argument.VariableDeclarationNode);
 	    	}
     	}
     }
@@ -217,7 +217,7 @@ public static class ParseTypes
 				        VariableKind.EnumMember,
 				        false);
 				        
-				    parserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+				    parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
 				        
 				    parserModel.Binder.BindEnumMember(variableDeclarationNode, compilationUnit, ref parserModel);
 					

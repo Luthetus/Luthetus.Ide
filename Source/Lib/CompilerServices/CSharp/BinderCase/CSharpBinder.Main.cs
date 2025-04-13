@@ -727,7 +727,7 @@ public partial class CSharpBinder
 					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode &&
 					inOwner.SyntaxKind != SyntaxKind.LambdaExpressionNode)
 				{
-					outBuilder.ChildList.Add(inOwner);
+					outBuilder.AddChild(inOwner);
 				}
 			}
 		}

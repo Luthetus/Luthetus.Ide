@@ -85,7 +85,7 @@ public struct CSharpStatementBuilder
 			if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax) &&
 				!Object.ReferenceEquals(statementSyntax, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
 			{
-				parserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+				parserModel.CurrentCodeBlockBuilder.AddChild(statementSyntax);
 			}
 			
 			ChildList.Clear();

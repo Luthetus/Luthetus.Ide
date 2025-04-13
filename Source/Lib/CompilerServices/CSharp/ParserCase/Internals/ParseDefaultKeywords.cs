@@ -488,7 +488,7 @@ public class ParseDefaultKeywords
         	
 		tryStatementNode.SetTryStatementTryNode(tryStatementTryNode);
 	        
-	    parserModel.CurrentCodeBlockBuilder.ChildList.Add(tryStatementNode);
+	    parserModel.CurrentCodeBlockBuilder.AddChild(tryStatementNode);
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	tryStatementTryNode,

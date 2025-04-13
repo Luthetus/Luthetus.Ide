@@ -70,10 +70,11 @@ public class CSharpCodeBlockBuilder
 	/// </summary>
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 	
-	/*public void AddChild_Experimental()
+	public void AddChild(ISyntax syntax)
 	{
-		Recur();
-	}*/
+		ChildList.Add(syntax);
+		// Recur();
+	}
 	
 	/*private void Recur()
 	{

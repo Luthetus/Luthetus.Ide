@@ -189,7 +189,7 @@ public static class CSharpParser
                 {
                 	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
                 	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-	        		parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+	        		parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
                 	break;
             	}
                 case SyntaxKind.StatementDelimiterToken:
