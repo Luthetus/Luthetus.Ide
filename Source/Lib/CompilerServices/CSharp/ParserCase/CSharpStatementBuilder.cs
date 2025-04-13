@@ -69,6 +69,8 @@ public struct CSharpStatementBuilder
 	/// </summary>
 	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		parserModel.SafeToUseSharedTypeClauseNode = true;
+		
 		if (ChildList.Count != 0)
 		{
 			var statementSyntax = ChildList[^1];

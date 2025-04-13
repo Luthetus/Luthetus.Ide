@@ -120,8 +120,17 @@ public struct CSharpParserModel
     
     public UsingStatementListingNode? UsingStatementListingNode { get; set; }
     
+    /// <summary>
+    /// TODO: Consider the case where you have just an AmbiguousIdentifierExpressionNode then StatementDelimiterToken.
+    /// </summary>
     public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; }
+    
+    /// <summary>
+    /// TODO: Consider the case where you have just a TypeClauseNode then StatementDelimiterToken.
+    /// </summary>
     public TypeClauseNode TypeClauseNode { get; }
+    
+    public bool SafeToUseSharedTypeClauseNode { get; set; } = true;
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();

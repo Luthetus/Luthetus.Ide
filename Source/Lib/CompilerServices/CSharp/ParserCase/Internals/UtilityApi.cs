@@ -336,6 +336,9 @@ public static class UtilityApi
     
     public static TypeClauseNode ConvertTokenToTypeClauseNode(ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	if (parserModel.SafeToUseSharedTypeClauseNode)
+    		return ConvertTokenToTypeClauseNodeViaSharedInstance(ref token, compilationUnit, ref parserModel);
+
     	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		return new TypeClauseNode(
@@ -376,6 +379,8 @@ public static class UtilityApi
     
     public static TypeClauseNode ConvertTokenToTypeClauseNodeViaSharedInstance(ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	parserModel.SafeToUseSharedTypeClauseNode = false;
+    
     	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		parserModel.TypeClauseNode.SetSharedInstance(
