@@ -76,7 +76,7 @@ public static class ParseOthers
     public static void StartStatement_Expression(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-    	parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+    	parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
     }
     
     /// <summary>

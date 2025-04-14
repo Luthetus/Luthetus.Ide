@@ -25,6 +25,8 @@ using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.Shareds.Models;
+// FindAllReferences
+// using Luthetus.Ide.RazorLib.FindAllReferences.Models;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -61,6 +63,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
+	// FindAllReferences
+	// private readonly IFindAllReferencesService _findAllReferencesService;
 	private readonly IStartupControlService _startupControlService;
 	private readonly INotificationService _notificationService;
 	private readonly ITerminalService _terminalService;
@@ -89,6 +93,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
+		// FindAllReferences
+		// IFindAllReferencesService findAllReferencesService,
 		IStartupControlService startupControlService,
 		INotificationService notificationService,
 		ITerminalService terminalService,
@@ -116,6 +122,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
 		_codeSearchService = codeSearchService;
+		// FindAllReferences
+		// _findAllReferencesService = findAllReferencesService;
 		_startupControlService = startupControlService;
 		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
@@ -188,6 +196,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			_textEditorService,
 			_findAllService,
 			_codeSearchService,
+			// FindAllReferences
+			// _findAllReferencesService,
 			_startupControlService,
 			_compilerServiceRegistry,
 			_terminalService,

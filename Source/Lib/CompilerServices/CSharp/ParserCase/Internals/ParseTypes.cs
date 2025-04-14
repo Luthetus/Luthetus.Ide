@@ -35,7 +35,7 @@ public static class ParseTypes
             if (typeClauseNode.IsFabricated)
                 break;
 
-            var genericArgumentEntryNode = new GenericParameterEntry(typeClauseNode);
+            var genericArgumentEntryNode = new GenericParameterEntry(new TypeReference(typeClauseNode));
             genericParameterList.Add(genericArgumentEntryNode);
 
             if (SyntaxKind.CommaToken == parserModel.TokenWalker.Current.SyntaxKind)
@@ -70,7 +70,7 @@ public static class ParseTypes
     	{
     		var syntaxToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
     		
-    		return new TypeClauseNode(
+    		return parserModel.ConstructOrRecycleTypeClauseNode(
 	            syntaxToken,
 	            valueType: null,
 	            genericParameterListing: default,
@@ -162,7 +162,7 @@ public static class ParseTypes
 	    		parserModel.Binder.CreateVariableSymbol(argument.VariableDeclarationNode.IdentifierToken, argument.VariableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
 	    		argument.VariableDeclarationNode.VariableKind = VariableKind.Property;
 	    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);
-	    		parserModel.CurrentCodeBlockBuilder.ChildList.Add(argument.VariableDeclarationNode);
+	    		parserModel.CurrentCodeBlockBuilder.AddChild(argument.VariableDeclarationNode);
 	    	}
     	}
     }
@@ -212,12 +212,12 @@ public static class ParseTypes
 					var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
 					
 					var variableDeclarationNode = new VariableDeclarationNode(
-				        typeDefinitionNode.ToTypeClause(),
+				        typeDefinitionNode.ToTypeReference(),
 				        identifierToken,
 				        VariableKind.EnumMember,
 				        false);
 				        
-				    parserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+				    parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
 				        
 				    parserModel.Binder.BindEnumMember(variableDeclarationNode, compilationUnit, ref parserModel);
 					

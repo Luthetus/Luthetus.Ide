@@ -59,8 +59,22 @@ public struct CSharpParserModel
         AmbiguousIdentifierExpressionNode.SetSharedInstance(
         	default,
 	        genericParameterListing: default,
-	        CSharpFacts.Types.Void.ToTypeClause(),
+	        CSharpFacts.Types.Void.ToTypeReference(),
 	        followsMemberAccessToken: false);
+	        
+	    TypeClauseNode = Binder.CSharpParserModel_TypeClauseNode;
+	    TypeClauseNode.SetSharedInstance(
+	    	typeIdentifier: default,
+			valueType: null,
+			genericParameterListing: default,
+			isKeywordType: false);
+		TypeClauseNode.IsBeingUsed = false;
+			
+		VariableReferenceNode = Binder.CSharpParserModel_VariableReferenceNode;
+	    VariableReferenceNode.SetSharedInstance(
+	    	variableIdentifierToken: default,
+			variableDeclarationNode: null);
+		VariableReferenceNode.IsBeingUsed = false;
     }
 
     public TokenWalker TokenWalker { get; }
@@ -109,11 +123,59 @@ public struct CSharpParserModel
 
     public int CurrentScopeIndexKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
-    public TypeClauseNode MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeClause();
+    public TypeReference MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeReference();
     
     public UsingStatementListingNode? UsingStatementListingNode { get; set; }
     
+    /// <summary>
+    /// TODO: Consider the case where you have just an AmbiguousIdentifierExpressionNode then StatementDelimiterToken.
+    /// </summary>
     public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; }
+    
+    /// <summary>
+    /// TODO: Consider the case where you have just a TypeClauseNode then StatementDelimiterToken.
+    /// </summary>
+    public TypeClauseNode TypeClauseNode { get; }
+    
+    public TypeClauseNode ConstructOrRecycleTypeClauseNode(
+    	SyntaxToken typeIdentifier,
+		Type? valueType,
+		GenericParameterListing genericParameterListing,
+		bool isKeywordType)
+    {
+    	if (TypeClauseNode.IsBeingUsed)
+    	{
+    		return new TypeClauseNode(
+    			typeIdentifier,
+				valueType,
+				genericParameterListing,
+				isKeywordType);
+		}    
+    	
+    	TypeClauseNode.SetSharedInstance(
+    		typeIdentifier,
+			valueType,
+			genericParameterListing,
+			isKeywordType);
+			
+    	return TypeClauseNode;
+    }
+    
+    /// <summary>
+    /// TODO: Consider the case where you have just a VariableReferenceNode then StatementDelimiterToken.
+    /// </summary>
+    public VariableReferenceNode VariableReferenceNode { get; }
+    
+    public VariableReferenceNode ConstructOrRecycleVariableReferenceNode(
+    	SyntaxToken variableIdentifierToken,
+		VariableDeclarationNode variableDeclarationNode)
+    {
+    	if (VariableReferenceNode.IsBeingUsed)
+    		return new VariableReferenceNode(variableIdentifierToken, variableDeclarationNode);
+    
+    	VariableReferenceNode.SetSharedInstance(variableIdentifierToken, variableDeclarationNode);
+    	return VariableReferenceNode;
+    }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
     // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();

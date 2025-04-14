@@ -100,11 +100,24 @@ public class CompilerServiceDoNothing : ICompilerService
     	return ValueTask.CompletedTask;
     }
     
+    public ValueTask ShowCallingSignature(
+		TextEditorEditContext editContext,
+		TextEditorModel modelModifier,
+		TextEditorViewModel viewModelModifier,
+		int positionIndex,
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
+        ResourceUri resourceUri)
+    {
+    	return ValueTask.CompletedTask;
+    }
+    
     public ValueTask GoToDefinition(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        CursorModifierBagTextEditor cursorModifierBag,
+        Category category)
     {
     	return ValueTask.CompletedTask;
     }

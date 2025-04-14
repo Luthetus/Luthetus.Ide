@@ -19,6 +19,15 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Displays;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Extensions.CompilerServices;
+using Luthetus.Extensions.CompilerServices.Displays;
+using Luthetus.Extensions.CompilerServices.Syntax;
+using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+// FindAllReferences
+// using Luthetus.Ide.RazorLib.FindAllReferences.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
@@ -33,6 +42,8 @@ public class CommandFactory : ICommandFactory
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
     private readonly IWidgetService _widgetService;
+    // FindAllReferences
+    // private readonly IFindAllReferencesService _findAllReferencesService;
     private readonly ICodeSearchService _codeSearchService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
@@ -44,6 +55,8 @@ public class CommandFactory : ICommandFactory
 		IDialogService dialogService,
 		IPanelService panelService,
 		IWidgetService widgetService,
+		// FindAllReferences
+		// IFindAllReferencesService findAllReferencesService,
 		ICodeSearchService codeSearchService,
 		IEnvironmentProvider environmentProvider,
 		CommonBackgroundTaskApi commonBackgroundTaskApi)
@@ -54,6 +67,8 @@ public class CommandFactory : ICommandFactory
 		_dialogService = dialogService;
 		_panelService = panelService;
 		_widgetService = widgetService;
+		// FindAllReferences
+		// _findAllReferencesService = findAllReferencesService;
 		_codeSearchService = codeSearchService;
 		_environmentProvider = environmentProvider;
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
@@ -66,6 +81,11 @@ public class CommandFactory : ICommandFactory
 
 	public void Initialize()
     {
+    	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = PeekCodeSearchDialog;
+    	
+    	// FindAllReferences
+    	// ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func = ShowAllReferences;
+    
         // ActiveContextsContext
         {
             _ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -357,56 +377,7 @@ public class CommandFactory : ICommandFactory
 	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
 				{
-                    CodeSearchDialog ??= new DialogViewModel(
-                        Key<IDynamicViewModel>.NewKey(),
-						"Code Search",
-                        typeof(CodeSearchDisplay),
-                        null,
-                        null,
-						true,
-						null);
-
-                    _dialogService.ReduceRegisterAction(CodeSearchDialog);
-                    
-                    _textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), editContext =>
-                    {
-                    	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
-	                    if (group is null)
-	                        return ValueTask.CompletedTask;
-	
-	                    var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
-	                    if (activeViewModel is null)
-	                        return ValueTask.CompletedTask;
-                    
-			            var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.ViewModelKey);
-			            if (viewModelModifier is null)
-			                return ValueTask.CompletedTask;
-			
-						// If the user has an active text selection,
-						// then populate the code search with their selection.
-						
-						var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
-			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-			            var primaryCursorModifier = cursorModifierBag.CursorModifier;
-			
-			            if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-			                return ValueTask.CompletedTask;
-			
-			            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
-						if (selectedText is null)
-							return ValueTask.CompletedTask;
-						
-						_codeSearchService.With(inState => inState with
-						{
-							Query = selectedText,
-						});
-			
-						_codeSearchService.HandleSearchEffect();
-						
-						return  ValueTask.CompletedTask;
-                    });
-                    
-                    return ValueTask.CompletedTask;
+                    return OpenCodeSearchDialog();
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -533,4 +504,179 @@ public class CommandFactory : ICommandFactory
 					openCommandBarCommand);
 		}
     }
+    
+    public ValueTask OpenCodeSearchDialog()
+    {
+    	// Duplicated Code: 'PeekCodeSearchDialog(...)'
+    	CodeSearchDialog ??= new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+			"Code Search",
+            typeof(CodeSearchDisplay),
+            null,
+            null,
+			true,
+			null);
+
+        _dialogService.ReduceRegisterAction(CodeSearchDialog);
+        
+        _textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), async editContext =>
+        {
+        	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
+            if (group is null)
+                return;
+
+            var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+            if (activeViewModel is null)
+                return;
+        
+            var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.ViewModelKey);
+            if (viewModelModifier is null)
+                return;
+
+			// If the user has an active text selection,
+			// then populate the code search with their selection.
+			
+			var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+            var primaryCursorModifier = cursorModifierBag.CursorModifier;
+
+            if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+                return;
+
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+			if (selectedText is null)
+				return;
+			
+			_codeSearchService.With(inState => inState with
+			{
+				Query = selectedText,
+			});
+
+			_codeSearchService.HandleSearchEffect();
+ 	
+	 	   // I tried without the Yield and it works fine without it.
+	 	   // I'm gonna keep it though so I can sleep at night.
+	 	   //
+	 	   await Task.Yield();
+			await Task.Delay(200).ConfigureAwait(false);
+			
+			_treeViewService.ReduceMoveHomeAction(
+				CodeSearchState.TreeViewCodeSearchContainerKey,
+				false,
+				false);
+        });
+        
+        return ValueTask.CompletedTask;
+    }
+    
+    public async ValueTask PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
+    {
+    	var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false);
+    
+    	// Duplicated Code: 'OpenCodeSearchDialog(...)'
+    	CodeSearchDialog ??= new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+			"Code Search",
+            typeof(CodeSearchDisplay),
+            null,
+            null,
+			true,
+			null);
+
+        _dialogService.ReduceRegisterAction(CodeSearchDialog);
+        
+        _codeSearchService.With(inState => inState with
+		{
+			Query = absolutePath.NameWithExtension,
+		});
+
+		await _codeSearchService.HandleSearchEffect().ConfigureAwait(false);
+ 	
+ 	   // I tried without the Yield and it works fine without it.
+ 	   // I'm gonna keep it though so I can sleep at night.
+ 	   //
+ 	   await Task.Yield();
+		await Task.Delay(200).ConfigureAwait(false);
+		
+		_treeViewService.ReduceMoveHomeAction(
+			CodeSearchState.TreeViewCodeSearchContainerKey,
+			false,
+			false);
+    }
+    
+    /*
+    // FindAllReferences
+    public async ValueTask ShowAllReferences(
+    	TextEditorEditContext editContext,
+    	TextEditorModel modelModifier,
+    	TextEditorViewModel viewModelModifier,
+    	CursorModifierBagTextEditor cursorModifierBag)
+    {
+    	var primaryCursorModifier = cursorModifierBag.CursorModifier;
+    	
+        var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+    
+        var foundMatch = false;
+        
+        var resource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
+        var compilationUnitLocal = resource.CompilationUnit;
+        
+        if (compilationUnitLocal is not IExtendedCompilationUnit extendedCompilationUnit)
+        	return;
+        
+        var symbolList = extendedCompilationUnit.SymbolList;
+        var foundSymbol = default(Symbol);
+        
+        foreach (var symbol in symbolList)
+        {
+            if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+            {
+                foundMatch = true;
+				foundSymbol = symbol;
+            }
+        }
+        
+        if (!foundMatch)
+        	return;
+    
+    	var symbolLocal = foundSymbol;
+		var targetNode = SymbolDisplay.GetTargetNode(_textEditorService, symbolLocal);
+		var definitionNode = SymbolDisplay.GetDefinitionNode(_textEditorService, symbolLocal, targetNode);
+		
+		if (definitionNode is null || definitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+			return;
+			
+		// TODO: Do not duplicate this code from SyntaxViewModel.HandleOnClick(...)
+		
+		string? resourceUriValue = null;
+		var indexInclusiveStart = -1;
+		
+		var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
+		resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
+		indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+		
+		if (resourceUriValue is null || indexInclusiveStart == -1)
+			return;
+		
+    	_findAllReferencesService.SetFullyQualifiedName(
+    		typeDefinitionNode.NamespaceName,
+    		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
+    		typeDefinitionNode);
+    
+        var findAllReferencesPanel = new Panel(
+            "Find All References",
+            Luthetus.Ide.RazorLib.FindAllReferences.Displays.FindAllReferencesDisplay.FindAllReferencesPanelKey,
+            Luthetus.Ide.RazorLib.FindAllReferences.Displays.FindAllReferencesDisplay.FindAllReferencesDynamicViewModelKey,
+            ContextFacts.FindAllReferencesContext.ContextKey,
+            typeof(Luthetus.Ide.RazorLib.FindAllReferences.Displays.FindAllReferencesDisplay),
+            null,
+            _panelService,
+            _dialogService,
+            _commonBackgroundTaskApi);
+        _panelService.RegisterPanelTab(PanelFacts.BottomPanelGroupKey, findAllReferencesPanel, false);
+
+        _panelService.SetActivePanelTab(PanelFacts.BottomPanelGroupKey, findAllReferencesPanel.Key);
+    }
+    */
 }

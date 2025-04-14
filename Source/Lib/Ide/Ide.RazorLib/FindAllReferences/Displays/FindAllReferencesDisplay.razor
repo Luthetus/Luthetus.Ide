@@ -1,0 +1,67 @@
+@*
+// FindAllReferences
+
+@using Luthetus.Common.RazorLib.TreeViews.Displays
+@using Luthetus.Ide.RazorLib.FindAllReferences.Models
+
+@{
+	var findAllReferencesState = FindAllReferencesService.GetFindAllReferencesState();
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
+}
+
+<div class="luth_find-all-references" style="height: 100%;">
+	<div class="luth_find-all-references-top-row" style="height: 1.8em;">
+		<span class="luth_te_type"
+		      title="type">
+			@if (string.IsNullOrWhiteSpace(findAllReferencesState.SyntaxName))
+			{
+				<text>string.IsNullOrWhiteSpace(findAllReferencesState.SyntaxName)</text>
+			}
+			else
+			{
+				<text>@findAllReferencesState.SyntaxName</text>
+			}
+		</span>
+		
+		<span class="luth_te_namespace"
+		      title="namespace">
+			(<!--
+			-->@if (string.IsNullOrWhiteSpace(findAllReferencesState.NamespaceName))
+			{
+				<text>string.IsNullOrWhiteSpace(findAllReferencesState.NamespaceName)</text>
+			}
+			else
+			{
+				<text>@findAllReferencesState.NamespaceName</text>
+			}<!--
+			-->)
+		</span>
+	</div>
+	
+	<div class="luth_find-all-references-body" style="height: calc(100% - 1.8em);">
+	
+		<CascadingValue Name="LuthetusTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+			<CascadingValue Name="LuthetusTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
+	            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+	                <TreeViewContainerDisplay TreeViewContainerKey="FindAllReferencesState.TreeViewContainerKey"
+	                                          CssStyleString="height: 100%;"
+	                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
+	                                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+	                                          TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+	            </CascadingValue>
+	        </CascadingValue>
+		</CascadingValue>
+	</div>
+	
+	<div>
+		@{ var referenceList = findAllReferencesState.TypeDefinitionNode.ReferenceHashSet.ToList(); }
+		
+		<ul>
+			@foreach (var resourceUri in referenceList)
+			{
+				<li>@resourceUri.Value</li>
+			}
+		</ul>
+	</div>
+</div>
+*@

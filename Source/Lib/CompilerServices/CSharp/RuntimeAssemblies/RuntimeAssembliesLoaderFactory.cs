@@ -256,7 +256,7 @@ public static class RuntimeAssembliesLoaderFactory
             }*/
         }
 
-        private TypeClauseNode GetTypeClauseNode(
+        /*private TypeClauseNode GetTypeClauseNode(
             string name,
             Type[] genericParameters)
         {
@@ -300,6 +300,6 @@ public static class RuntimeAssembliesLoaderFactory
                 null,
                 genericParameterListing.Value,
                 isKeywordType: false);
-        }
+        }*/
     }
 }

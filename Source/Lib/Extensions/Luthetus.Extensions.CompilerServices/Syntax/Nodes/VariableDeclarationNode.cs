@@ -6,7 +6,7 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class VariableDeclarationNode : IExpressionNode
 {
 	public VariableDeclarationNode(
-		TypeClauseNode typeClauseNode,
+		TypeReference typeReference,
 		SyntaxToken identifierToken,
 		VariableKind variableKind,
 		bool isInitialized)
@@ -15,16 +15,13 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableDeclarationNode++;
 		#endif
 	
-		TypeClauseNode = typeClauseNode;
+		TypeReference = typeReference;
 		IdentifierToken = identifierToken;
 		VariableKind = variableKind;
 		IsInitialized = isInitialized;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
-	public TypeClauseNode TypeClauseNode { get; private set; }
+	public TypeReference TypeReference { get; private set; }
 
 	public SyntaxToken IdentifierToken { get; }
 	/// <summary>
@@ -49,29 +46,14 @@ public sealed class VariableDeclarationNode : IExpressionNode
 	/// </summary>
 	public bool SetterIsAutoImplemented { get; set; }
 
-	TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
 
-	public VariableDeclarationNode SetTypeClauseNode(TypeClauseNode typeClauseNode)
+	public VariableDeclarationNode SetTypeReference(TypeReference typeReference)
 	{
-		TypeClauseNode = typeClauseNode;
+		TypeReference = typeReference;
 		return this;
-	}
-
-	public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		_childList = new ISyntax[]
-		{
-			TypeClauseNode,
-			IdentifierToken,
-		};
-
-		_childListIsDirty = false;
-		return _childList;
 	}
 }

@@ -30,7 +30,6 @@ public static class CSharpParser
     	
 		var globalCodeBlockBuilder = binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
 	    	globalCodeBlockNode,
-	        globalCodeBlockNode.GetReturnTypeClauseNode(),
 	        globalOpenCodeBlockTextSpan,
 	        compilationUnit);
         
@@ -190,7 +189,7 @@ public static class CSharpParser
                 {
                 	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
                 	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-	        		parserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+	        		parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
                 	break;
             	}
                 case SyntaxKind.StatementDelimiterToken:
@@ -281,7 +280,8 @@ public static class CSharpParser
 		
         var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build();
                 
-        globalCodeBlockNode.SetCodeBlockNode(
+        parserModel.Binder.SetCodeBlockNode(
+        	globalCodeBlockNode,
         	topLevelStatementsCodeBlock,
         	compilationUnit.__DiagnosticList,
         	parserModel.TokenWalker);

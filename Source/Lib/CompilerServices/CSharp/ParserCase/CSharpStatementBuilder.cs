@@ -69,6 +69,9 @@ public struct CSharpStatementBuilder
 	/// </summary>
 	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		parserModel.TypeClauseNode.IsBeingUsed = false;
+		parserModel.VariableReferenceNode.IsBeingUsed = false;
+		
 		if (ChildList.Count != 0)
 		{
 			var statementSyntax = ChildList[^1];
@@ -83,7 +86,7 @@ public struct CSharpStatementBuilder
 			if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax) &&
 				!Object.ReferenceEquals(statementSyntax, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
 			{
-				parserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+				parserModel.CurrentCodeBlockBuilder.AddChild(statementSyntax);
 			}
 			
 			ChildList.Clear();

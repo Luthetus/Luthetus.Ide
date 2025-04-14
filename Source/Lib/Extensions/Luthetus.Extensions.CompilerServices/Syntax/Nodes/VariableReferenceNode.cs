@@ -16,32 +16,59 @@ public sealed class VariableReferenceNode : IExpressionNode
 		VariableIdentifierToken = variableIdentifierToken;
 		VariableDeclarationNode = variableDeclarationNode;
 	}
+	
+	public VariableReferenceNode(VariableReference variableReference)
+	{
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableReferenceNode++;
+		#endif
+	
+		VariableIdentifierToken = variableReference.VariableIdentifierToken;
+		VariableDeclarationNode = variableReference.VariableDeclarationNode;
+		IsFabricated = variableReference.IsFabricated;
+	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
+	private bool _isFabricated;
+	
+	public bool IsBeingUsed { get; set; } = false;
 
-	public SyntaxToken VariableIdentifierToken { get; }
+	public SyntaxToken VariableIdentifierToken { get; private set; }
 	/// <summary>
 	/// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
 	/// </summary>
-	public VariableDeclarationNode VariableDeclarationNode { get; }
-	public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode?.TypeClauseNode ?? TypeFacts.Empty.ToTypeClause();
-
-	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
-
-	public IReadOnlyList<ISyntax> GetChildList()
+	public VariableDeclarationNode VariableDeclarationNode { get; private set; }
+	public TypeReference ResultTypeReference
 	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		_childList = new ISyntax[]
+		get
 		{
-			VariableIdentifierToken,
-			VariableDeclarationNode,
-		};
+			if (VariableDeclarationNode is null)
+				return TypeFacts.Empty.ToTypeReference();
+			
+			return VariableDeclarationNode.TypeReference;
+		}
+	}
 
-		_childListIsDirty = false;
-		return _childList;
+	public bool IsFabricated
+	{
+		get
+		{
+			return _isFabricated;
+		}
+		init
+		{
+			_isFabricated = value;
+		}
+	}
+	public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
+	
+	public void SetSharedInstance(
+		SyntaxToken variableIdentifierToken,
+		VariableDeclarationNode variableDeclarationNode)
+	{
+		IsBeingUsed = true;
+	
+		VariableIdentifierToken = variableIdentifierToken;
+		VariableDeclarationNode = variableDeclarationNode;
+		_isFabricated = false;
 	}
 }

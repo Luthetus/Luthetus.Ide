@@ -20,7 +20,7 @@ public struct FunctionParameterEntry
 		HasRefKeyword = hasRefKeyword;
 	}
 
-	public IExpressionNode ExpressionNode { get; }
+	public IExpressionNode ExpressionNode { get; set; }
 	public bool HasOutKeyword { get; }
 	public bool HasInKeyword { get; }
 	public bool HasRefKeyword { get; }

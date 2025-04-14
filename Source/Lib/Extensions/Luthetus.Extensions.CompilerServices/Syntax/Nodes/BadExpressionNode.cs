@@ -14,38 +14,35 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class BadExpressionNode : IExpressionNode
 {
-	public BadExpressionNode(TypeClauseNode resultTypeClauseNode, List<ISyntax> syntaxList)
+	public BadExpressionNode(TypeReference resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BadExpressionNode++;
 		#endif
 	
-		ResultTypeClauseNode = resultTypeClauseNode;
-		SyntaxList = syntaxList;
+		ResultTypeReference = resultTypeReference;
+		SyntaxPrimary = syntaxPrimary;
+		SyntaxSecondary = syntaxSecondary;
 	}
+	
+	public ISyntax SyntaxPrimary { get; }
+	public ISyntax SyntaxSecondary { get; }
 
-	public BadExpressionNode(TypeClauseNode resultTypeClauseNode, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
-		: this(resultTypeClauseNode, new List<ISyntax> { syntaxPrimary, syntaxSecondary })
-	{
-	}
+	/// <summary>
+	/// This type tracks the cause of the BadExpressionNode in the form of 'SyntaxPrimary', and 'SyntaxSecondary'.
+	///
+	/// But, once a 'BadExpressionNode' is made, it might go on to clobber the expression loop
+	/// until the end of file is reached.
+	///
+	/// So, this ClobberCount is the amount of times this 'BadExpressionNode' was merged with some other syntax,
+	/// and in the process resulted in this 'BadExpressionNode' being the primaryExpression.
+	///
+	/// (this doesn't count the initial failure to merge 'SyntaxPrimary', and 'SyntaxSecondary').
+	/// </summary>
+	public int ClobberCount { get; set; }
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
-	public List<ISyntax> SyntaxList { get; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeReference ResultTypeReference { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
-
-	public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		_childList = SyntaxList.ToArray();
-
-		_childListIsDirty = false;
-		return _childList;
-	}
 }

@@ -25,19 +25,16 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 {
-	public LambdaExpressionNode(TypeClauseNode resultTypeClauseNode)
+	public LambdaExpressionNode(TypeReference resultTypeReference)
 	{
 		#if DEBUG
 		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LambdaExpressionNode++;
 		#endif
 	
-		ResultTypeClauseNode = resultTypeClauseNode;
+		ResultTypeReference = resultTypeReference;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
-	public TypeClauseNode ResultTypeClauseNode { get; }
+	public TypeReference ResultTypeReference { get; }
 
 	/// <summary>
 	/// () => "Abc";
@@ -53,83 +50,19 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
 
-	public TypeClauseNode ReturnTypeClauseNode { get; }
+	public TypeReference ReturnTypeReference { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; private set; }
-	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
-	public int? ScopeIndexKey { get; set; }
+	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
+	public CodeBlock CodeBlock { get; set; }
+	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
+	public int ScopeIndexKey { get; set; } = -1;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
-		return ReturnTypeClauseNode;
-	}
-
-	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-	{
-		if (OpenCodeBlockTextSpan is not null)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-
-		OpenCodeBlockTextSpan = openCodeBlockTextSpan;
-
-		_childListIsDirty = true;
-		return this;
-	}
-
-	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-	{
-		if (CloseCodeBlockTextSpan is not null)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-
-		CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
-
-		_childListIsDirty = true;
-		return this;
-	}
-
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-	{
-		if (CodeBlockNode is not null)
-			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
-
-		CodeBlockNode = codeBlockNode;
-
-		_childListIsDirty = true;
-		return this;
+		return ReturnTypeReference;
 	}
 	#endregion
-
-	public void AddVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode)
-	{
-		VariableDeclarationNodeList.Add(variableDeclarationNode);
-		_childListIsDirty = true;
-	}
-
-	public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		// ResultTypeClauseNode, VariableDeclarationNodeList.Count
-		var childCount =
-			1 +                                // ResultTypeClauseNode
-			VariableDeclarationNodeList.Count; // VariableDeclarationNodeList.Count
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = ResultTypeClauseNode;
-		foreach (var item in VariableDeclarationNodeList)
-		{
-			childList[i++] = item;
-		}
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}
 }

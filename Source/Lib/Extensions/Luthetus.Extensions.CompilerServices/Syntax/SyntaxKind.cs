@@ -193,7 +193,6 @@ public enum SyntaxKind
 
 	// Stitching
 	CompilationUnit,
-	CodeBlockNode,
 
 	// Nodes
 	LiteralExpressionNode,
@@ -208,7 +207,6 @@ public enum SyntaxKind
 	ExplicitCastNode,
 	VariableDeclarationNode,
 	VariableReferenceNode,
-	VariableAssignmentExpressionNode,
 	VariableExpressionNode,
 	WithExpressionNode,
 	PropertyDefinitionNode,
@@ -243,6 +241,9 @@ public enum SyntaxKind
 	UnaryOperatorNode,
 	UnaryExpressionNode,
 	BinaryExpressionNode,
+	BinaryExpressionLeftVariableReference,
+	BinaryExpressionRightVariableReference,
+	BinaryExpressionLeftAndRightVariableReference,
 
 	// Symbols
 	TypeSymbol,
