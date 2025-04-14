@@ -921,11 +921,12 @@ public partial class CSharpBinder
 					        typeClauseNode,
 					        compilationUnit,
 					        ref parserModel);
-					        
-					    constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
 						
 						if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
+						{
+							constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
 							return constructorInvocationExpressionNode;
+						}
 						
 						constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
 						var openAngleBracketToken = parserModel.TokenWalker.Consume();
@@ -1003,19 +1004,14 @@ public partial class CSharpBinder
 		switch (constructorInvocationExpressionNode.ConstructorInvocationStageKind)
 		{
 			case ConstructorInvocationStageKind.GenericParameters:
-				if (constructorInvocationExpressionNode.ResultTypeReference.GenericParameterListing.ConstructorWasInvoked)
+				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken &&
+					expressionSecondary is TypeClauseNode typeClauseNode)
 				{
-					if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-					{
-						if (expressionSecondary is TypeClauseNode typeClauseNode)
-						{
-							typeClauseNode.GenericParameterListing.SetCloseAngleBracketToken(parserModel.TokenWalker.Current);
-							constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
-						}
-					}
-				
+					typeClauseNode.GenericParameterListing.SetCloseAngleBracketToken(parserModel.TokenWalker.Current);
+					constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
 					return constructorInvocationExpressionNode;
 				}
+				
 				goto default;
 			case ConstructorInvocationStageKind.FunctionParameters:
 				if (constructorInvocationExpressionNode.FunctionParameterListing.ConstructorWasInvoked)
