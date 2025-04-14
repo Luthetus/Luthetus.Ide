@@ -11,6 +11,7 @@ public partial class TypeSyntaxDisplay : ComponentBase
 	
 	[Parameter, EditorRequired]
 	public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
-	[Parameter, EditorRequired]
+	
+	[Parameter]
 	public TypeReference TypeReference { get; set; } = default;
 }

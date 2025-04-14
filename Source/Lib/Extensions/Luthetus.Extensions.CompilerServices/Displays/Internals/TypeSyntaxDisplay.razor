@@ -118,12 +118,24 @@
 	
 	@if (genericParameterListing is not null)
 	{
-		var syntaxViewModel = new SyntaxViewModel(
-			targetSymbol: null,
-			targetNode: syntaxViewModelLocal.TargetNode,
-			definitionNode: syntaxViewModelLocal.DefinitionNode,
-			depth: syntaxViewModelLocal.Depth + 1);
-		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
+		if (TypeReference != default)
+		{
+			var syntaxViewModel = new SyntaxViewModel(
+				targetSymbol: null,
+				targetNode: null,
+				definitionNode: null,
+				depth: syntaxViewModelLocal.Depth + 1);
+			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="TypeReference" />
+		}
+		else
+		{
+			var syntaxViewModel = new SyntaxViewModel(
+				targetSymbol: null,
+				targetNode: syntaxViewModelLocal.TargetNode,
+				definitionNode: syntaxViewModelLocal.DefinitionNode,
+				depth: syntaxViewModelLocal.Depth + 1);
+			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
+		}
 	}
 	
 	@if (hasQuestionMark is not null && hasQuestionMark.Value)
