@@ -25,6 +25,8 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
+// FindAllReferences
+// using Luthetus.Ide.RazorLib.FindAllReferences.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
@@ -52,6 +54,8 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 	private readonly ITextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
+	// FindAllReferences
+	// private readonly IFindAllReferencesService _findAllReferencesService;
 	private readonly IStartupControlService _startupControlService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly ITerminalService _terminalService;
@@ -78,6 +82,8 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		ITextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
+		// FindAllReferences
+		// IFindAllReferencesService findAllReferencesService,
 		IStartupControlService startupControlService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		ITerminalService terminalService,
@@ -101,6 +107,8 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
 		_codeSearchService = codeSearchService;
+		// FindAllReferences
+		// _findAllReferencesService = findAllReferencesService;
 		_startupControlService = startupControlService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
@@ -225,6 +233,19 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 			parser.NestedProjectEntryList,
 			parser.DotNetSolutionGlobal,
 			content);
+		
+		/*	
+		// FindAllReferences
+		var pathGroupList = new List<(string Name, string Path)>();
+		foreach (var project in parser.DotNetProjectList)
+		{
+			if (project.AbsolutePath.ParentDirectory is not null)
+			{
+				pathGroupList.Add((project.DisplayName, project.AbsolutePath.ParentDirectory));
+			}
+		}
+		_findAllReferencesService.PathGroupList = pathGroupList;
+		*/
 
 		// TODO: If somehow model was registered already this won't write the state
 		_dotNetSolutionService.ReduceRegisterAction(dotNetSolutionModel, this);

@@ -20,13 +20,13 @@ public static class ParseVariables
     	VariableDeclarationNode variableDeclarationNode;
 
 		variableDeclarationNode = new VariableDeclarationNode(
-	        consumedTypeClauseNode,
+	        new TypeReference(consumedTypeClauseNode),
 	        consumedIdentifierToken,
 	        variableKind,
 	        false);
 
         parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
-        parserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+        parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
         return variableDeclarationNode;
     }
 }

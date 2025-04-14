@@ -20,8 +20,11 @@ public partial class CSharpFacts
             typeof(void),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
-            string.Empty)
+            TypeFacts.NotApplicable.ToTypeReference(),
+            string.Empty
+            // FindAllReferences
+            // , referenceHashSet: new()
+            )
             {
             	IsKeywordType = true
             };
@@ -34,8 +37,11 @@ public partial class CSharpFacts
             typeof(int),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
-            string.Empty)
+            TypeFacts.NotApplicable.ToTypeReference(),
+            string.Empty
+            // FindAllReferences
+            // , referenceHashSet: new()
+            )
             {
             	IsKeywordType = true
             };
@@ -48,8 +54,11 @@ public partial class CSharpFacts
             typeof(char),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
-            string.Empty)
+            TypeFacts.NotApplicable.ToTypeReference(),
+            string.Empty
+            // FindAllReferences
+            // , referenceHashSet: new()
+			)
             {
             	IsKeywordType = true
             };
@@ -62,8 +71,11 @@ public partial class CSharpFacts
             typeof(string),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
-            string.Empty)
+            TypeFacts.NotApplicable.ToTypeReference(),
+            string.Empty
+			// FindAllReferences
+			// ,referenceHashSet: new()
+			)
             {
             	IsKeywordType = true
             };
@@ -76,8 +88,11 @@ public partial class CSharpFacts
             typeof(bool),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
-            string.Empty)
+            TypeFacts.NotApplicable.ToTypeReference(),
+            string.Empty
+			// FindAllReferences
+			// ,referenceHashSet: new()
+			)
             {
             	IsKeywordType = true
             };
@@ -90,8 +105,11 @@ public partial class CSharpFacts
             typeof(void),
             default,
             primaryConstructorFunctionArgumentListing: default,
-            null,
-            string.Empty)
+            TypeFacts.NotApplicable.ToTypeReference(),
+            string.Empty
+            // FindAllReferences
+            // ,referenceHashSet: new()
+            )
             {
             	IsKeywordType = true
             };

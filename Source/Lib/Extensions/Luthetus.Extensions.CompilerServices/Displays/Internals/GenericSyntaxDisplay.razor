@@ -3,26 +3,42 @@
 @using Luthetus.Extensions.CompilerServices.Syntax.Nodes
 @using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces
 
-@{ var syntaxViewModelLocal = SyntaxViewModel; }
+@{
+	var syntaxViewModelLocal = SyntaxViewModel;
+	List<GenericParameterEntry>? genericParameterEntryList = null;
 
-@if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
-     genericParameterNode.GenericParameterListing.GenericParameterEntryList is not null)
+	if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
+        genericParameterNode.GenericParameterListing.GenericParameterEntryList is not null)
+    {
+    	genericParameterEntryList = genericParameterNode.GenericParameterListing.GenericParameterEntryList;
+    }
+    else
+    {
+    	if (TypeReference != default &&
+    		TypeReference.GenericParameterListing.ConstructorWasInvoked)
+    	{
+    		genericParameterEntryList = TypeReference.GenericParameterListing.GenericParameterEntryList;
+    	}
+    }
+}
+
+@if (genericParameterEntryList is not null)
 {
 	<text>&lt;</text>
 		
-	@for (int badIndex = 0; badIndex < genericParameterNode.GenericParameterListing.GenericParameterEntryList.Count; badIndex++)
+	@for (int badIndex = 0; badIndex < genericParameterEntryList.Count; badIndex++)
 	{
 		var index = badIndex;
-		var genericParameter = genericParameterNode.GenericParameterListing.GenericParameterEntryList[index];
+		var genericParameter = genericParameterEntryList[index];
 		
     	var syntaxViewModel = new SyntaxViewModel(
     		targetSymbol: null,
-    		targetNode: genericParameter.TypeClauseNode,
+    		targetNode: null,
     		definitionNode: null,
 			depth: syntaxViewModelLocal.Depth + 1);
-        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="genericParameter.TypeReference"/>
 		
-		if (index < genericParameterNode.GenericParameterListing.GenericParameterEntryList.Count - 1)
+		if (index < genericParameterEntryList.Count - 1)
 		{
 			<text>,</text>
 		}

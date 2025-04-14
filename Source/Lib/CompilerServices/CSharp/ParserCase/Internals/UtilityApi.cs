@@ -338,24 +338,24 @@ public static class UtilityApi
     {
     	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
-    		return new TypeClauseNode(
-	    		(SyntaxToken)token,
+    		return parserModel.ConstructOrRecycleTypeClauseNode(
+	    		token,
 		        valueType: null,
 		        genericParameterListing: default,
 		        isKeywordType: false);
     	}
 	    else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
 	    {
-	    	return new TypeClauseNode(
-	    		(SyntaxToken)token,
+	    	return parserModel.ConstructOrRecycleTypeClauseNode(
+	    		token,
 		        valueType: null,
 		        genericParameterListing: default,
 		        isKeywordType: true);
 	    }
 	    else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
 	    {
-	    	return new TypeClauseNode(
-	    		(SyntaxToken)token,
+	    	return parserModel.ConstructOrRecycleTypeClauseNode(
+	    		token,
 		        valueType: null,
 		        genericParameterListing: default,
 		        isKeywordType: true);

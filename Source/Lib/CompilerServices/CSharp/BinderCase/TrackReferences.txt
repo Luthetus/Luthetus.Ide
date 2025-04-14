@@ -1,0 +1,31 @@
+Goal: Track all references
+==========================
+
+// References (0)
+// - line 10
+public class Apple
+{
+    // References (1)
+	// - line 14
+	public Banana Bbb { get; set; }
+	
+	public void Asd()
+	{
+		var description = Bbb.Description;
+	}
+}
+
+// References (1)
+// - line 10
+public class Banana
+{
+	// References (1)
+    // - line 14
+	public string Description { get; set; }
+}
+
+
+
+
+
+

@@ -76,10 +76,10 @@
 	{
 		var syntaxViewModel = new SyntaxViewModel(
 			targetSymbol: null,
-			targetNode: variableDeclarationNode.TypeClauseNode,
+			targetNode: null,
 			definitionNode: null,
 			depth: syntaxViewModelLocal.Depth + 1);
-    	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+    	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="variableDeclarationNode.TypeReference"/>
     	<text>&nbsp;</text>
     }
     else

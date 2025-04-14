@@ -933,13 +933,15 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        CursorModifierBagTextEditor cursorModifierBag)
+        CursorModifierBagTextEditor cursorModifierBag,
+        Category category)
     {
     	modelModifier.CompilerService.GoToDefinition(
 			editContext,
 	        modelModifier,
 	        viewModel,
-	        cursorModifierBag);
+	        cursorModifierBag,
+	        category);
     }
 
     public static void ShowFindAllDialog(

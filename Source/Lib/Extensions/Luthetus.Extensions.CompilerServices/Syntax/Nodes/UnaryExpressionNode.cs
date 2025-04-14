@@ -16,28 +16,10 @@ public sealed class UnaryExpressionNode : IExpressionNode
 		UnaryOperatorNode = unaryOperatorNode;
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public IExpressionNode Expression { get; }
 	public UnaryOperatorNode UnaryOperatorNode { get; }
-	public TypeClauseNode ResultTypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
+	public TypeReference ResultTypeReference => UnaryOperatorNode.ResultTypeReference;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
-
-	public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		_childList = new ISyntax[]
-		{
-			Expression,
-			UnaryOperatorNode,
-		};
-
-		_childListIsDirty = false;
-		return _childList;
-	}
 }

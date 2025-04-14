@@ -69,9 +69,123 @@ public class CSharpCodeBlockBuilder
 	/// this decision is only being made to create consistency.
 	/// </summary>
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+	
+	public void AddChild(ISyntax syntax)
+	{
+		switch (syntax.SyntaxKind)
+		{
+			case SyntaxKind.BinaryExpressionNode:
+			{
+				syntax = TryOptimizeStorage((BinaryExpressionNode)syntax);
+				break;
+			}
+			case SyntaxKind.IfStatementNode:
+			{
+				var ifStatementNode = (IfStatementNode)syntax;
+				ifStatementNode.ExpressionNode = TryOptimizeStorage(ifStatementNode.ExpressionNode);
+				break;
+			}
+			case SyntaxKind.WhileStatementNode:
+			{
+				var whileStatementNode = (WhileStatementNode)syntax;
+				whileStatementNode.ExpressionNode = TryOptimizeStorage(whileStatementNode.ExpressionNode);
+				break;
+			}
+			case SyntaxKind.ConstructorInvocationExpressionNode:
+			{
+				var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntax;
+				
+				if (constructorInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
+				{
+					for (int i = 0; i < constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList.Count; i++)
+					{
+						var item = constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i];
+						item.ExpressionNode = TryOptimizeStorage(item.ExpressionNode);
+						constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i] = item;
+					}
+				}
+				
+				break;
+			}
+			case SyntaxKind.FunctionInvocationNode:
+			{
+				var functionInvocationNode = (FunctionInvocationNode)syntax;
+				
+				if (functionInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
+				{
+					for (int i = 0; i < functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList.Count; i++)
+					{
+						var item = functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i];
+						item.ExpressionNode = TryOptimizeStorage(item.ExpressionNode);
+						functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i] = item;
+					}
+				}
+				
+				break;
+			}
+			case SyntaxKind.DoWhileStatementNode:
+			{
+				var doWhileStatementNode = (DoWhileStatementNode)syntax;
+				
+				if (doWhileStatementNode.ExpressionNode is not null)
+					doWhileStatementNode.ExpressionNode = TryOptimizeStorage(doWhileStatementNode.ExpressionNode);
+				
+				break;
+			}
+			case SyntaxKind.ReturnStatementNode:
+			{
+				var returnStatementNode = (ReturnStatementNode)syntax;
+				returnStatementNode.ExpressionNode = TryOptimizeStorage(returnStatementNode.ExpressionNode);
+				break;
+			}
+		}
+		
+		ChildList.Add(syntax);
+	}
+	
+	private IExpressionNode TryOptimizeStorage(IExpressionNode syntax)
+	{
+		switch (syntax.SyntaxKind)
+		{
+			case SyntaxKind.BinaryExpressionNode:
+			{
+				var binaryExpressionNode = (BinaryExpressionNode)syntax;
+		
+				if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode &&
+				    binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				{
+					syntax = new BinaryExpressionLeftAndRightVariableReference(binaryExpressionNode);
+				}
+				else if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				{
+					var binaryExpressionLeftVariableReference = new BinaryExpressionLeftVariableReference(binaryExpressionNode);
+					syntax = binaryExpressionLeftVariableReference;
+					
+					binaryExpressionLeftVariableReference.SetRightExpressionNode(
+						TryOptimizeStorage(binaryExpressionLeftVariableReference.RightExpressionNode));
+				}
+				else if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				{
+					var binaryExpressionRightVariableReference = new BinaryExpressionRightVariableReference(binaryExpressionNode);
+					syntax = binaryExpressionRightVariableReference;
+					
+					binaryExpressionRightVariableReference.SetLeftExpressionNode(
+						TryOptimizeStorage(binaryExpressionRightVariableReference.LeftExpressionNode));
+				}
+				
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}
+		
+		return syntax;
+	}
 
-    public CodeBlockNode Build()
+    public CodeBlock Build()
     {
-        return new CodeBlockNode(ChildList);
+        return new CodeBlock(ChildList);
     }
 }

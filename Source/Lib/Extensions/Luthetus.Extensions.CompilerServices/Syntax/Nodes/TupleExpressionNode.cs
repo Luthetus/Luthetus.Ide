@@ -11,30 +11,10 @@ public sealed class TupleExpressionNode : IExpressionNode
 		#endif
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
-	public TypeClauseNode ResultTypeClauseNode { get; } = TypeFacts.Empty.ToTypeClause();
+	public TypeReference ResultTypeReference { get; } = TypeFacts.Empty.ToTypeReference();
 
 	public List<IExpressionNode> InnerExpressionList { get; } = new();
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
-
-	public void AddInnerExpressionNode(IExpressionNode expressionNode)
-	{
-		InnerExpressionList.Add(expressionNode);
-		_childListIsDirty = true;
-	}
-
-	public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		_childList = InnerExpressionList.ToArray();
-
-		_childListIsDirty = false;
-		return _childList;
-	}
 }

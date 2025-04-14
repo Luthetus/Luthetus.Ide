@@ -6,10 +6,10 @@ public sealed class BinaryExpressionNode : IExpressionNode
 {
 	public BinaryExpressionNode(
 		IExpressionNode leftExpressionNode,
-		TypeClauseNode leftOperandTypeClauseNode,
+		TypeReference leftOperandTypeReference,
 		SyntaxToken operatorToken,
-		TypeClauseNode rightOperandTypeClauseNode,
-		TypeClauseNode resultTypeClauseNode,
+		TypeReference rightOperandTypeReference,
+		TypeReference resultTypeReference,
 		IExpressionNode rightExpressionNode)
 	{
 		#if DEBUG
@@ -17,67 +17,36 @@ public sealed class BinaryExpressionNode : IExpressionNode
 		#endif
 	
 		LeftExpressionNode = leftExpressionNode;
-		LeftOperandTypeClauseNode = leftOperandTypeClauseNode;
+		LeftOperandTypeReference = leftOperandTypeReference;
 		OperatorToken = operatorToken;
-		RightOperandTypeClauseNode = rightOperandTypeClauseNode;
-		ResultTypeClauseNode = resultTypeClauseNode;
+		RightOperandTypeReference = rightOperandTypeReference;
+		ResultTypeReference = resultTypeReference;
 		RightExpressionNode = rightExpressionNode;
 	}
 
 	public BinaryExpressionNode(
 			IExpressionNode leftExpressionNode,
-			TypeClauseNode leftOperandTypeClauseNode,
+			TypeReference leftOperandTypeReference,
 			SyntaxToken operatorToken,
-			TypeClauseNode rightOperandTypeClauseNode,
-			TypeClauseNode resultTypeClauseNode)
+			TypeReference rightOperandTypeReference,
+			TypeReference resultTypeReference)
 		: this(
 			leftExpressionNode,
-			leftOperandTypeClauseNode,
+			leftOperandTypeReference,
 			operatorToken,
-			rightOperandTypeClauseNode,
-			resultTypeClauseNode,
+			rightOperandTypeReference,
+			resultTypeReference,
 			EmptyExpressionNode.Empty)
 	{
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	public IExpressionNode LeftExpressionNode { get; }
-	public TypeClauseNode LeftOperandTypeClauseNode { get; }
+	public TypeReference LeftOperandTypeReference { get; }
 	public SyntaxToken OperatorToken { get; }
-	public TypeClauseNode RightOperandTypeClauseNode { get; }
-	public TypeClauseNode ResultTypeClauseNode { get; }
-	public IExpressionNode RightExpressionNode { get; private set; }
+	public TypeReference RightOperandTypeReference { get; }
+	public TypeReference ResultTypeReference { get; }
+	public IExpressionNode RightExpressionNode { get; set; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
-
-	public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 3; // LeftExpressionNode, OperatorToken, RightExpressionNode
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		childList[i++] = LeftExpressionNode;
-		childList[i++] = OperatorToken;
-		childList[i++] = RightExpressionNode;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}
-
-	public BinaryExpressionNode SetRightExpressionNode(IExpressionNode rightExpressionNode)
-	{
-		RightExpressionNode = rightExpressionNode;
-
-		_childListIsDirty = true;
-		return this;
-	}
 }

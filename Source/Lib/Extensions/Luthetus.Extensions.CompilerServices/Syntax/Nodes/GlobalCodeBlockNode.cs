@@ -31,80 +31,20 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 		#endif
 	}
 
-	private IReadOnlyList<ISyntax> _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
-	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
-	public CodeBlockNode? CodeBlockNode { get; private set; }
-	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
-	public int? ScopeIndexKey { get; set; }
+	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
+	public CodeBlock CodeBlock { get; set; }
+	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
+	public int ScopeIndexKey { get; set; } = -1;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.GlobalCodeBlockNode;
 
 	#region ICodeBlockOwner_Methods
-	public TypeClauseNode? GetReturnTypeClauseNode()
+	public TypeReference GetReturnTypeReference()
 	{
-		return null;
-	}
-
-	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-	{
-		if (OpenCodeBlockTextSpan is not null)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-
-		OpenCodeBlockTextSpan = openCodeBlockTextSpan;
-
-		_childListIsDirty = true;
-		return this;
-	}
-
-	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-	{
-		if (CloseCodeBlockTextSpan is not null)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-
-		CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
-
-		_childListIsDirty = true;
-		return this;
-	}
-
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-	{
-		if (CodeBlockNode is not null)
-			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
-
-		CodeBlockNode = codeBlockNode;
-
-		_childListIsDirty = true;
-		return this;
+		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
-
-	public IReadOnlyList<ISyntax> GetChildList()
-	{
-		if (CodeBlockNode is not null)
-			return CodeBlockNode.GetChildList();
-
-		if (!_childListIsDirty)
-			return _childList;
-
-		var childCount = 0;
-		if (CodeBlockNode is not null)
-			childCount++;
-
-		var childList = new ISyntax[childCount];
-		var i = 0;
-
-		if (CodeBlockNode is not null)
-			childList[i++] = CodeBlockNode;
-
-		_childList = childList;
-
-		_childListIsDirty = false;
-		return _childList;
-	}
 }

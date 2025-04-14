@@ -8,12 +8,12 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public struct GenericParameterEntry
 {
-	public GenericParameterEntry(TypeClauseNode typeClauseNode)
+	public GenericParameterEntry(TypeReference typeReference)
 	{
-		TypeClauseNode = typeClauseNode;
+		TypeReference = typeReference;
 	}
 
-	public TypeClauseNode TypeClauseNode { get; }
+	public TypeReference TypeReference { get; }
 	
-	public bool ConstructorWasInvoked => TypeClauseNode is not null;
+	public bool ConstructorWasInvoked => TypeReference != default;
 }

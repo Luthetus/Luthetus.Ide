@@ -1,9 +1,13 @@
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Models;
 
 public interface ICodeSearchService
 {
+	public Throttle _updateContentThrottle { get; }
+
 	public event Action? CodeSearchStateChanged;
     
     public CodeSearchState GetCodeSearchState();
@@ -24,4 +28,6 @@ public interface ICodeSearchService
     /// <param name="dispatcher"></param>
     /// <returns></returns>
     public Task HandleSearchEffect(CancellationToken CancellationToken = default);
+    
+    public Task UpdateContent(ResourceUri providedResourceUri);
 }
