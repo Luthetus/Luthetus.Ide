@@ -2697,6 +2697,8 @@ public partial class CSharpBinder
 			var token = expressionSecondaryTyped.Token;
 			var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
 			
+			// TODO: Is this running everytime a parameter is added???...
+			// ...only do this at the end?
 			BindTypeClauseNode(
 		        typeClauseNode,
 		        compilationUnit,
@@ -2730,6 +2732,7 @@ public partial class CSharpBinder
 			genericParameterNode.GenericParameterListing =
 				new GenericParameterListing(
 					openAngleBracketToken,
+					// Idea: 1 listing for the entire file and store the indices at which your parameters lie?
 			        new List<GenericParameterEntry>(),
 			        closeAngleBracketToken: default);
 
