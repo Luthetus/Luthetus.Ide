@@ -387,7 +387,7 @@ public partial class TextEditorModel
 		
 		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
 		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = null;
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 		
 		Insert(content, cursorModifierBag, false, CancellationToken.None, shouldCreateEditHistory: false);
 	}
@@ -398,7 +398,7 @@ public partial class TextEditorModel
 		
 		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
 		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = null;
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 
 		Delete(
 			cursorModifierBag,
@@ -415,7 +415,7 @@ public partial class TextEditorModel
 		
 		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
 		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = null;
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 
 		Delete(
 			cursorModifierBag,
@@ -1463,7 +1463,7 @@ public partial class TextEditorModel
         var initialLineIndex = cursorModifier.LineIndex;
         var positionIndex = this.GetPositionIndex(cursorModifier);
 
-        if (initiallyHadSelection && cursorModifier.SelectionAnchorPositionIndex is not null)
+        if (initiallyHadSelection && cursorModifier.SelectionAnchorPositionIndex != -1)
         {
             // If user's cursor has a selection, then set the variables so the positionIndex is the
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
@@ -1483,7 +1483,7 @@ public partial class TextEditorModel
             columnCount = upperPositionIndexExclusive - lowerPositionIndexInclusive;
             deleteKind = DeleteKind.Delete;
 
-            cursorModifier.SelectionAnchorPositionIndex = null;
+            cursorModifier.SelectionAnchorPositionIndex = -1;
             cursorModifier.SelectionEndingPositionIndex = 0;
 		}
 

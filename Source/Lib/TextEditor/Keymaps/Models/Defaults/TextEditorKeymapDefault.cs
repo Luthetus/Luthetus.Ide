@@ -287,7 +287,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					var indentationLength = _indentationBuilder.Length;
 					valueToInsert = _indentationBuilder.ToString() + valueToInsert;
 					
-					primaryCursorModifier.SelectionAnchorPositionIndex = null;
+					primaryCursorModifier.SelectionAnchorPositionIndex = -1;
 					primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
         			primaryCursorModifier.ColumnIndex = 0;
 					
@@ -532,7 +532,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					
 					if (onKeyDown.KeymapArgs.ShiftKey)
 					{
-						primaryCursorModifier.SelectionAnchorPositionIndex = null;
+						primaryCursorModifier.SelectionAnchorPositionIndex = -1;
 						primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
     					primaryCursorModifier.ColumnIndex = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
 					}
