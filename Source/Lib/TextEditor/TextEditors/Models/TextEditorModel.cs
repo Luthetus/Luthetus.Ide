@@ -60,7 +60,6 @@ public partial class TextEditorModel
 	    PreviousMostCharactersOnASingleLineTuple = (0, 0);
 	    RenderStateSequence = 0;
 	    PreviousLineCount = 0;
-		OtherEditStack = new();
 	    PartitionSize = partitionSize;
 	    _allText = string.Empty;
 	    _charCount = 0;
@@ -104,7 +103,6 @@ public partial class TextEditorModel
 	    		: other.RenderStateSequence + 1;
 	    }
 	    PreviousLineCount = other.LineEndList.Count;
-	    OtherEditStack = other.OtherEditStack;
 	    WasDirty = other.IsDirty;
         PartitionSize = other.PartitionSize;
 	    _allText = other._allText;
@@ -224,7 +222,7 @@ public partial class TextEditorModel
     	}
     }
 
-    public List<ITextEditorEdit> EditBlockList { get; set; }
+    public List<TextEditorEdit> EditBlockList { get; set; }
     public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; }
     public List<LineEnd> LineEndList { get; set; }
     public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; }
@@ -250,11 +248,6 @@ public partial class TextEditorModel
     public int PreviousLineCount { get; set; }
     
     public int LineCount => LineEndList.Count;
-
-	/// <summary>
-	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
-	/// </summary>
-	public Stack<TextEditorEditOther> OtherEditStack { get; }
 
     /// <summary>
     /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
@@ -475,8 +468,14 @@ public partial class TextEditorModel
         ClearAllStatesButKeepEditHistory();
 
 		if (EditBlockList.Count == 0 && EditBlockIndex == 0)
-			EditBlockList.Add(new TextEditorEditConstructor());
-
+		{
+			EditBlockList.Add(new TextEditorEdit(
+				TextEditorEditKind.Constructor,
+				tag: string.Empty,
+				0,
+				new StringBuilder()));
+		}
+		
         var rowIndex = 0;
         var previousCharacter = '\0';
 
@@ -582,7 +581,7 @@ public partial class TextEditorModel
         EditBlockList.Clear();
     }
 
-	private void EnsureUndoPoint(ITextEditorEdit newEdit)
+	private void EnsureUndoPoint(TextEditorEditKind editKind, string tag, int positionIndex, StringBuilder contentBuilder)
 	{
 		if (EditBlockIndex < EditBlockList.Count - 1)
 		{
@@ -595,63 +594,66 @@ public partial class TextEditorModel
 
 		var mostRecentEdit = EditBlockList[EditBlockIndex];
 
-		if (newEdit.EditKind == TextEditorEditKind.Insert)
+		if (editKind == TextEditorEditKind.Insert)
 		{
-			var newEditInsert = (TextEditorEditInsert)newEdit;
-			
 			// Only batch if consecutive, and contiguous.
 			if (mostRecentEdit.EditKind == TextEditorEditKind.Insert)
 			{
-				var mostRecentEditInsert = (TextEditorEditInsert)mostRecentEdit;
-				
-				if (newEditInsert.PositionIndex == mostRecentEditInsert.PositionIndex + mostRecentEditInsert.ContentBuilder.Length)
+				if (positionIndex == mostRecentEdit.PositionIndex + mostRecentEdit.ContentBuilder.Length)
 				{
-					mostRecentEditInsert.ContentBuilder.Append(newEditInsert.ContentBuilder.ToString());
+					mostRecentEdit.ContentBuilder.Append(contentBuilder.ToString());
 					return;
 				}
 			}
 			
-			EditBlockList.Add(newEditInsert);
+			EditBlockList.Add(new TextEditorEdit(
+				editKind,
+				tag,
+				positionIndex,
+				contentBuilder));
+				
 			EditBlockIndex++;
 			return;
 		}
-		else if (newEdit.EditKind == TextEditorEditKind.Backspace)
+		else if (editKind == TextEditorEditKind.Backspace)
 		{
-			var newEditBackspace = (TextEditorEditBackspace)newEdit;
-
 			// Only batch if consecutive, and contiguous.
 			if (mostRecentEdit.EditKind == TextEditorEditKind.Backspace)
 			{
-				var mostRecentEditBackspace = (TextEditorEditBackspace)mostRecentEdit;
-	
-				if (newEditBackspace.PositionIndex == mostRecentEditBackspace.PositionIndex - mostRecentEditBackspace.TextRemovedBuilder.Length)
+				if (positionIndex == mostRecentEdit.PositionIndex - mostRecentEdit.ContentBuilder.Length)
 				{
-					mostRecentEditBackspace.Add(newEditBackspace.Count, newEditBackspace.TextRemovedBuilder.ToString());
+					mostRecentEdit.Add(contentBuilder.ToString());
 					return;
 				}
 			}
 			
-			EditBlockList.Add(newEditBackspace);
+			EditBlockList.Add(new TextEditorEdit(
+				editKind,
+				tag,
+				positionIndex,
+				contentBuilder));
+				
 			EditBlockIndex++;
 			return;
 		}
-		else if (newEdit.EditKind == TextEditorEditKind.Delete)
+		else if (editKind == TextEditorEditKind.Delete)
 		{
-			var newEditDelete = (TextEditorEditDelete)newEdit;
-
 			// Only batch if consecutive, and contiguous.
 			if (mostRecentEdit.EditKind == TextEditorEditKind.Delete)
 			{
-				var mostRecentEditDelete = (TextEditorEditDelete)mostRecentEdit;
-
-				if (newEditDelete.PositionIndex == mostRecentEditDelete.PositionIndex)
+				if (positionIndex == mostRecentEdit.PositionIndex)
 				{
-					mostRecentEditDelete.Add(newEditDelete.Count, newEditDelete.TextRemovedBuilder.ToString());
+					mostRecentEdit.Add(contentBuilder.ToString());
 					return;
 				}
 			}
 			
-			EditBlockList.Add(newEditDelete);
+			EditBlockList.Add(new TextEditorEdit(
+				editKind,
+				tag,
+				positionIndex,
+				contentBuilder));
+				
 			EditBlockIndex++;
 			return;
 		}
@@ -686,28 +688,6 @@ public partial class TextEditorModel
 	*/
 	}
 
-	public void OpenOtherEdit(TextEditorEditOther editOther)
-	{
-		OtherEditStack.Push(editOther);
-		EditBlockList.Add(editOther);
-		EditBlockIndex++;
-	}
-
-	public void CloseOtherEdit(string predictedTag)
-	{
-		var peek = OtherEditStack.Peek();
-		if (peek.Tag != predictedTag)
-		{
-			throw new LuthetusTextEditorException(
-				$"Attempted to close other edit with {nameof(TextEditorEditOther.Tag)}: '{peek.Tag}'." + 
-				$" but, the {nameof(predictedTag)} was: '{predictedTag}'");
-		}
-
-		var pop = OtherEditStack.Pop();
-		EditBlockList.Add(pop);
-		EditBlockIndex++;
-	}
-
 	public void UndoEdit()
 	{
 		if (EditBlockIndex <= 0)
@@ -723,16 +703,13 @@ public partial class TextEditorModel
 		switch (undoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				var insertEdit = (TextEditorEditInsert)undoEdit;
-				PerformInsert(insertEdit.PositionIndex, insertEdit.ContentBuilder.ToString());
+				PerformInsert(undoEdit.PositionIndex, undoEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
-				var backspaceEdit = (TextEditorEditBackspace)undoEdit;
-				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
+				PerformBackspace(undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Delete: 
-				var deleteEdit = (TextEditorEditDelete)undoEdit;
-				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
+				PerformDelete(undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Other:
 				while (true)
@@ -757,8 +734,6 @@ public partial class TextEditorModel
 
 					if (mostRecentEdit.EditKind == TextEditorEditKind.Other)
 					{
-						var mostRecentEditOther = (TextEditorEditOther)mostRecentEdit;
-	
 						// Nothing needs to be done when the tags don't match
 						// other than continuing the while loop.
 						//
@@ -767,7 +742,7 @@ public partial class TextEditorModel
 						//
 						// Finding the opening to the child 'other edit' is irrelevant since it is encompassed
 						// within the parent.
-						if (mostRecentEditOther.Tag == (((TextEditorEditOther)undoEdit).Tag))
+						if (mostRecentEdit.Tag == undoEdit.Tag)
 						{
 							// Need to go one further than the opening,
 							EditBlockIndex--;
@@ -797,16 +772,13 @@ public partial class TextEditorModel
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				var insertEdit = (TextEditorEditInsert)redoEdit;
-				PerformInsert(insertEdit.PositionIndex, insertEdit.ContentBuilder.ToString());
+				PerformInsert(redoEdit.PositionIndex, redoEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
-				var backspaceEdit = (TextEditorEditBackspace)redoEdit;
-				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
+				PerformBackspace(redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Delete: 
-				var deleteEdit = (TextEditorEditDelete)redoEdit;
-				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
+				PerformDelete(redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Other:
 				while (true)
@@ -824,12 +796,10 @@ public partial class TextEditorModel
 
 					if (nextEdit.EditKind == TextEditorEditKind.Other)
 					{
-						var nextEditOther = (TextEditorEditOther)nextEdit;
-
 						// Regardless of the tag of the next edit. One will need to increment EditIndex.
 						EditBlockIndex++;
 
-						if (nextEditOther.Tag == (((TextEditorEditOther)redoEdit).Tag))
+						if (nextEdit.Tag == redoEdit.Tag)
 							break;
 					}
 					else
@@ -1084,7 +1054,13 @@ public partial class TextEditorModel
         InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
 
 		if (shouldCreateEditHistory)
-			EnsureUndoPoint(new TextEditorEditInsert(initialCursorPositionIndex, new StringBuilder(value)));
+		{
+			EnsureUndoPoint(
+				TextEditorEditKind.Insert,
+				tag: string.Empty,
+				initialCursorPositionIndex,
+				new StringBuilder(value));
+		}
 
         // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'InsertMetadata(...)'
         //       method because this specific metadata is being calculated by counting the characters, which
@@ -1375,11 +1351,25 @@ public partial class TextEditorModel
 		if (shouldCreateEditHistory)
 		{
 			if (deleteKind == DeleteKind.Delete)
-				EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount, new StringBuilder(textRemoved)));
+			{
+				EnsureUndoPoint(
+					TextEditorEditKind.Delete,
+					tag: string.Empty,
+					positionIndex,
+					new StringBuilder(textRemoved));
+			}
 			else if (deleteKind == DeleteKind.Backspace)
-				EnsureUndoPoint(new TextEditorEditBackspace(initialPositionIndex, charCount, new StringBuilder(textRemoved)));
+			{
+				EnsureUndoPoint(
+					TextEditorEditKind.Backspace,
+					tag: string.Empty,
+					initialPositionIndex,
+					new StringBuilder(textRemoved));
+			}
 			else
+			{
 				throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
+			}
 		}
 
         // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'DeleteMetadata(...)'
