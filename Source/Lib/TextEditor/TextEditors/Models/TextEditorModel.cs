@@ -108,20 +108,20 @@ public partial class TextEditorModel
 	    _allText = other._allText;
 	    _charCount = other._charCount;
 	    
-	    if (other.ShouldReloadVirtualizationResult)
+	    /*if (other.ShouldReloadVirtualizationResult)
 	    {
 	    	WriteEditBlockListToConsole();
-	    }
+	    }*/
     }
     
-    private void WriteEditBlockListToConsole()
+    /*private void WriteEditBlockListToConsole()
     {
     	Console.WriteLine($"EditBlockList.Count: {EditBlockList.Count}: ({ResourceUri.Value})");
     	foreach (var entry in EditBlockList)
     	{
     		Console.WriteLine($"\tentry.EditKind: {entry.EditKind}");
     	}
-    }
+    }*/
 	
 	/// <summary>
 	/// You have to check if the '_partitionListChanged'

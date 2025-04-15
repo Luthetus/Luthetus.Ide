@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -19,9 +19,9 @@ public static class TextEditorSelectionHelper
             cursorModifier.SelectionEndingPositionIndex);
     }
 
-    public static bool HasSelectedText(int? anchorPositionIndex, int endingPositionIndex)
+    public static bool HasSelectedText(int anchorPositionIndex, int endingPositionIndex)
     {
-        if (anchorPositionIndex.HasValue && anchorPositionIndex.Value != endingPositionIndex)
+        if (anchorPositionIndex != -1 && anchorPositionIndex != endingPositionIndex)
             return true;
 
         return false;
@@ -48,7 +48,7 @@ public static class TextEditorSelectionHelper
     }
 
     public static string? GetSelectedText(
-        int? anchorPositionIndex,
+        int anchorPositionIndex,
         int endingPositionIndex,
         TextEditorModel textEditorModel)
     {
@@ -91,16 +91,16 @@ public static class TextEditorSelectionHelper
     }
 
     public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
-        int? anchorPositionIndex,
+        int anchorPositionIndex,
         int endingPositionIndex)
     {
-        if (anchorPositionIndex is null)
+        if (anchorPositionIndex == -1)
         {
             throw new LuthetusTextEditorException(
                 $"{nameof(anchorPositionIndex)} was null.");
         }
 
-        var lowerPositionIndexInclusive = anchorPositionIndex.Value;
+        var lowerPositionIndexInclusive = anchorPositionIndex;
         var upperPositionIndexExclusive = endingPositionIndex;
 
         if (lowerPositionIndexInclusive > upperPositionIndexExclusive) // Swap the values around
