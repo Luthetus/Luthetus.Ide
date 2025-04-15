@@ -381,23 +381,23 @@ public partial class TextEditorModel
         }
     }
 
-	private void PerformInsert(int positionIndex, string content)
+	private void PerformInsert(Key<TextEditorViewModel> viewModelKey, int positionIndex, string content)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
 		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
 		var cursorModifierBag = new CursorModifierBagTextEditor(
-			Key<TextEditorViewModel>.Empty,
+			viewModelKey,
 			new(cursor));
 	
 		Insert(content, cursorModifierBag, false, CancellationToken.None, shouldCreateEditHistory: false);
 	}
 
-	private void PerformBackspace(int positionIndex, int count)
+	private void PerformBackspace(Key<TextEditorViewModel> viewModelKey, int positionIndex, int count)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
 		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
 		var cursorModifierBag = new CursorModifierBagTextEditor(
-			Key<TextEditorViewModel>.Empty,
+			viewModelKey,
 			new(cursor));
 
 		Delete(
@@ -409,12 +409,12 @@ public partial class TextEditorModel
 			shouldCreateEditHistory: false);
 	}
 
-	private void PerformDelete(int positionIndex, int count)
+	private void PerformDelete(Key<TextEditorViewModel> viewModelKey, int positionIndex, int count)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
 		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
 		var cursorModifierBag = new CursorModifierBagTextEditor(
-			Key<TextEditorViewModel>.Empty,
+			viewModelKey,
 			new(cursor));
 
 		Delete(
@@ -691,8 +691,13 @@ public partial class TextEditorModel
 	    }
 	*/
 	}
-
+	
 	public void UndoEdit()
+	{
+		UndoEditWithUserCursor(Key<TextEditorViewModel>.Empty);
+	}
+
+	public void UndoEditWithUserCursor(Key<TextEditorViewModel> viewModelKey)
 	{
 		if (EditBlockIndex <= 0)
 			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
@@ -707,13 +712,13 @@ public partial class TextEditorModel
 		switch (undoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				PerformInsert(undoEdit.PositionIndex, undoEdit.ContentBuilder.ToString());
+				PerformInsert(viewModelKey, undoEdit.PositionIndex, undoEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
-				PerformBackspace(undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
+				PerformBackspace(viewModelKey, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Delete: 
-				PerformDelete(undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
+				PerformDelete(viewModelKey, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Other:
 				while (true)
@@ -755,7 +760,7 @@ public partial class TextEditorModel
 					}
 					else
 					{
-						UndoEdit();
+						UndoEditWithUserCursor(viewModelKey);
 					}
 				}
 				break;
@@ -763,8 +768,13 @@ public partial class TextEditorModel
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {undoEdit.EditKind} was not recognized.");
 		}
 	}
-
+	
 	public void RedoEdit()
+	{
+		RedoEditWithUserCursor(Key<TextEditorViewModel>.Empty);
+	}
+
+	public void RedoEditWithUserCursor(Key<TextEditorViewModel> viewModelKey)
 	{
 		// If there is no next then throw exception
 		if (EditBlockIndex >= EditBlockList.Count - 1)
@@ -776,13 +786,13 @@ public partial class TextEditorModel
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				PerformInsert(redoEdit.PositionIndex, redoEdit.ContentBuilder.ToString());
+				PerformInsert(viewModelKey, redoEdit.PositionIndex, redoEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
-				PerformBackspace(redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
+				PerformBackspace(viewModelKey, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Delete: 
-				PerformDelete(redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
+				PerformDelete(viewModelKey, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Other:
 				while (true)
@@ -808,7 +818,7 @@ public partial class TextEditorModel
 					}
 					else
 					{
-						RedoEdit();
+						RedoEditWithUserCursor(viewModelKey);
 					}
 				}
 				break;

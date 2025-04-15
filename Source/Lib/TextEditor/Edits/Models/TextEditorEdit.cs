@@ -13,7 +13,6 @@ public struct TextEditorEdit
 		Cursor = cursor;
 		PositionIndex = positionIndex;
 		ContentBuilder = contentBuilder;
-		
 	}
 
 	public TextEditorEditKind EditKind { get; }
