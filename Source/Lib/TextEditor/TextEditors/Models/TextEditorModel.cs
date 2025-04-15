@@ -109,6 +109,20 @@ public partial class TextEditorModel
         PartitionSize = other.PartitionSize;
 	    _allText = other._allText;
 	    _charCount = other._charCount;
+	    
+	    if (other.ShouldReloadVirtualizationResult)
+	    {
+	    	WriteEditBlockListToConsole();
+	    }
+    }
+    
+    private void WriteEditBlockListToConsole()
+    {
+    	Console.WriteLine($"EditBlockList.Count: {EditBlockList.Count}: ({ResourceUri.Value})");
+    	foreach (var entry in EditBlockList)
+    	{
+    		Console.WriteLine($"\tentry.EditKind: {entry.EditKind}");
+    	}
     }
 	
 	/// <summary>
@@ -579,155 +593,67 @@ public partial class TextEditorModel
 			}
 		}
 
+		var mostRecentEdit = EditBlockList[EditBlockIndex];
+
 		if (newEdit.EditKind == TextEditorEditKind.Insert)
 		{
-			var mostRecentEdit = EditBlockList[EditBlockIndex];
-
 			var newEditInsert = (TextEditorEditInsert)newEdit;
-			var positionIndex = newEditInsert.PositionIndex;
-			var content = newEditInsert.Content;
-
+			
+			// Only batch if consecutive, and contiguous.
 			if (mostRecentEdit.EditKind == TextEditorEditKind.Insert)
 			{
 				var mostRecentEditInsert = (TextEditorEditInsert)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditInsert.PositionIndex + mostRecentEditInsert.Content.Length)
+				
+				if (newEditInsert.PositionIndex == mostRecentEditInsert.PositionIndex + mostRecentEditInsert.ContentBuilder.Length)
 				{
-					var contentBuilder = new StringBuilder();
-					contentBuilder.Append(mostRecentEditInsert.Content);
-					contentBuilder.Append(content);
-		
-					var insertBatch = new TextEditorEditInsertBatch(
-						mostRecentEditInsert.PositionIndex,
-						contentBuilder);
-		
-					EditBlockList[EditBlockIndex] = insertBatch;
+					mostRecentEditInsert.ContentBuilder.Append(newEditInsert.ContentBuilder.ToString());
 					return;
 				}
 			}
 			
-			if (mostRecentEdit.EditKind == TextEditorEditKind.InsertBatch)
-			{
-				var mostRecentEditInsertBatch = (TextEditorEditInsertBatch)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditInsertBatch.PositionIndex + mostRecentEditInsertBatch.ContentBuilder.Length)
-				{
-					mostRecentEditInsertBatch.ContentBuilder.Append(content);
-					return;
-				}
-			}
-			
-			// Default case
-			{
-				EditBlockList.Add(new TextEditorEditInsert(positionIndex, content));
-				EditBlockIndex++;
-				return;
-			}
+			EditBlockList.Add(newEditInsert);
+			EditBlockIndex++;
+			return;
 		}
 		else if (newEdit.EditKind == TextEditorEditKind.Backspace)
 		{
-			var mostRecentEdit = EditBlockList[EditBlockIndex];
-
 			var newEditBackspace = (TextEditorEditBackspace)newEdit;
-			var positionIndex = newEditBackspace.PositionIndex;
-			var count = newEditBackspace.Count;
-			var textRemoved = newEditBackspace.TextRemoved;
 
+			// Only batch if consecutive, and contiguous.
 			if (mostRecentEdit.EditKind == TextEditorEditKind.Backspace)
 			{
 				var mostRecentEditBackspace = (TextEditorEditBackspace)mostRecentEdit;
 	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditBackspace.PositionIndex - mostRecentEditBackspace.TextRemoved.Length)
+				if (newEditBackspace.PositionIndex == mostRecentEditBackspace.PositionIndex - mostRecentEditBackspace.TextRemovedBuilder.Length)
 				{
-					// NOTE: The most recently removed text should go first, this is contrary to the Delete(...) method.
-					var textRemovedBuilder = new StringBuilder();
-					textRemovedBuilder.Append(textRemoved);
-					textRemovedBuilder.Append(mostRecentEditBackspace.TextRemoved);
-	
-					var editBackspaceBatch = new TextEditorEditBackspaceBatch(
-						mostRecentEditBackspace.PositionIndex,
-						count + mostRecentEditBackspace.Count,
-						textRemovedBuilder);
-	
-					EditBlockList[EditBlockIndex] = editBackspaceBatch;
-					return;
-				}
-			}
-	
-			if (mostRecentEdit.EditKind == TextEditorEditKind.BackspaceBatch)
-			{
-				var mostRecentEditBackspaceBatch = (TextEditorEditBackspaceBatch)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditBackspaceBatch.PositionIndex - mostRecentEditBackspaceBatch.TextRemovedBuilder.Length)
-				{
-					mostRecentEditBackspaceBatch.Add(count, textRemoved);
+					mostRecentEditBackspace.Add(newEditBackspace.Count, newEditBackspace.TextRemovedBuilder.ToString());
 					return;
 				}
 			}
 			
-			// Default case
-			{
-				var editBackspace = new TextEditorEditBackspace(positionIndex, count);
-				editBackspace.TextRemoved = textRemoved;
-				EditBlockList.Add(editBackspace);
-				EditBlockIndex++;
-				return;
-			}
+			EditBlockList.Add(newEditBackspace);
+			EditBlockIndex++;
+			return;
 		}
 		else if (newEdit.EditKind == TextEditorEditKind.Delete)
 		{
-			var mostRecentEdit = EditBlockList[EditBlockIndex];
-
 			var newEditDelete = (TextEditorEditDelete)newEdit;
-			var positionIndex = newEditDelete.PositionIndex;
-			var count = newEditDelete.Count;
-			var textRemoved = newEditDelete.TextRemoved;
 
+			// Only batch if consecutive, and contiguous.
 			if (mostRecentEdit.EditKind == TextEditorEditKind.Delete)
 			{
 				var mostRecentEditDelete = (TextEditorEditDelete)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditDelete.PositionIndex)
+
+				if (newEditDelete.PositionIndex == mostRecentEditDelete.PositionIndex)
 				{
-					var textRemovedBuilder = new StringBuilder();
-					textRemovedBuilder.Append(mostRecentEditDelete.TextRemoved);
-					textRemovedBuilder.Append(textRemoved);
-	
-					var editDeleteBatch = new TextEditorEditDeleteBatch(
-						positionIndex,
-						count + mostRecentEditDelete.Count,
-						textRemovedBuilder);
-	
-					EditBlockList[EditBlockIndex] = editDeleteBatch;
-					return;
-				}
-			}
-	
-			if (mostRecentEdit.EditKind == TextEditorEditKind.DeleteBatch)
-			{
-				var mostRecentEditDeleteBatch = (TextEditorEditDeleteBatch)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditDeleteBatch.PositionIndex)
-				{
-					mostRecentEditDeleteBatch.Add(count, textRemoved);
+					mostRecentEditDelete.Add(newEditDelete.Count, newEditDelete.TextRemovedBuilder.ToString());
 					return;
 				}
 			}
 			
-			// Default case
-			{
-				var editDelete = new TextEditorEditDelete(positionIndex, count);
-				editDelete.TextRemoved = textRemoved;
-				EditBlockList.Add(editDelete);
-				EditBlockIndex++;
-				return;
-			}
+			EditBlockList.Add(newEditDelete);
+			EditBlockIndex++;
+			return;
 		}
 
 	// TODO: the following multi line comment contains code from the original implementation...
@@ -798,7 +724,7 @@ public partial class TextEditorModel
 		{
 			case TextEditorEditKind.Insert:
 				var insertEdit = (TextEditorEditInsert)undoEdit;
-				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
+				PerformInsert(insertEdit.PositionIndex, insertEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
 				var backspaceEdit = (TextEditorEditBackspace)undoEdit;
@@ -872,27 +798,15 @@ public partial class TextEditorModel
 		{
 			case TextEditorEditKind.Insert:
 				var insertEdit = (TextEditorEditInsert)redoEdit;
-				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
-				break;
-			case TextEditorEditKind.InsertBatch:
-				var insertBatchEdit = (TextEditorEditInsertBatch)redoEdit;
-				PerformInsert(insertBatchEdit.PositionIndex, insertBatchEdit.ContentBuilder.ToString());
+				PerformInsert(insertEdit.PositionIndex, insertEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
 				var backspaceEdit = (TextEditorEditBackspace)redoEdit;
 				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
 				break;
-			case TextEditorEditKind.BackspaceBatch:
-				var backspaceBatchEdit = (TextEditorEditBackspaceBatch)redoEdit;
-				PerformBackspace(backspaceBatchEdit.PositionIndex, backspaceBatchEdit.Count);
-				break;
 			case TextEditorEditKind.Delete: 
 				var deleteEdit = (TextEditorEditDelete)redoEdit;
 				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
-				break;
-			case TextEditorEditKind.DeleteBatch: 
-				var deleteBatchEdit = (TextEditorEditDeleteBatch)redoEdit;
-				PerformDelete(deleteBatchEdit.PositionIndex, deleteBatchEdit.Count);
 				break;
 			case TextEditorEditKind.Other:
 				while (true)
@@ -1170,7 +1084,7 @@ public partial class TextEditorModel
         InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
 
 		if (shouldCreateEditHistory)
-			EnsureUndoPoint(new TextEditorEditInsert(initialCursorPositionIndex, value));
+			EnsureUndoPoint(new TextEditorEditInsert(initialCursorPositionIndex, new StringBuilder(value)));
 
         // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'InsertMetadata(...)'
         //       method because this specific metadata is being calculated by counting the characters, which
@@ -1461,9 +1375,9 @@ public partial class TextEditorModel
 		if (shouldCreateEditHistory)
 		{
 			if (deleteKind == DeleteKind.Delete)
-				EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount) { TextRemoved = textRemoved });
+				EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount, new StringBuilder(textRemoved)));
 			else if (deleteKind == DeleteKind.Backspace)
-				EnsureUndoPoint(new TextEditorEditBackspace(initialPositionIndex, charCount) { TextRemoved = textRemoved });
+				EnsureUndoPoint(new TextEditorEditBackspace(initialPositionIndex, charCount, new StringBuilder(textRemoved)));
 			else
 				throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
 		}
