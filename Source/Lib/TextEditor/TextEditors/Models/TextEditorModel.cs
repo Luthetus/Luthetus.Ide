@@ -472,6 +472,7 @@ public partial class TextEditorModel
 			EditBlockList.Add(new TextEditorEdit(
 				TextEditorEditKind.Constructor,
 				tag: string.Empty,
+				TextEditorCursor.Empty,
 				0,
 				new StringBuilder()));
 		}
@@ -609,6 +610,7 @@ public partial class TextEditorModel
 			EditBlockList.Add(new TextEditorEdit(
 				editKind,
 				tag,
+				TextEditorCursor.Empty,
 				positionIndex,
 				contentBuilder));
 				
@@ -630,6 +632,7 @@ public partial class TextEditorModel
 			EditBlockList.Add(new TextEditorEdit(
 				editKind,
 				tag,
+				TextEditorCursor.Empty,
 				positionIndex,
 				contentBuilder));
 				
@@ -651,6 +654,7 @@ public partial class TextEditorModel
 			EditBlockList.Add(new TextEditorEdit(
 				editKind,
 				tag,
+				TextEditorCursor.Empty,
 				positionIndex,
 				contentBuilder));
 				
