@@ -582,7 +582,7 @@ public partial class TextEditorModel
         EditBlockList.Clear();
     }
 
-	private void EnsureUndoPoint(TextEditorEditKind editKind, string tag, int positionIndex, StringBuilder contentBuilder)
+	private void EnsureUndoPoint(TextEditorEditKind editKind, string tag, TextEditorCursor originalCursor, int positionIndex, StringBuilder contentBuilder)
 	{
 		if (EditBlockIndex < EditBlockList.Count - 1)
 		{
@@ -610,7 +610,7 @@ public partial class TextEditorModel
 			EditBlockList.Add(new TextEditorEdit(
 				editKind,
 				tag,
-				TextEditorCursor.Empty,
+				originalCursor,
 				positionIndex,
 				contentBuilder));
 				
@@ -632,7 +632,7 @@ public partial class TextEditorModel
 			EditBlockList.Add(new TextEditorEdit(
 				editKind,
 				tag,
-				TextEditorCursor.Empty,
+				originalCursor,
 				positionIndex,
 				contentBuilder));
 				
@@ -654,7 +654,7 @@ public partial class TextEditorModel
 			EditBlockList.Add(new TextEditorEdit(
 				editKind,
 				tag,
-				TextEditorCursor.Empty,
+				originalCursor,
 				positionIndex,
 				contentBuilder));
 				
@@ -717,12 +717,15 @@ public partial class TextEditorModel
 		{
 			case TextEditorEditKind.Insert:
 				PerformInsert(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.ToString());
+				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
 				PerformBackspace(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
+				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Delete: 
 				PerformDelete(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
+				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Other:
 				while (true)
@@ -765,12 +768,22 @@ public partial class TextEditorModel
 					else
 					{
 						UndoEditWithUserCursor(cursorModifierBag);
+						RestoreCursor(cursorModifierBag, undoEdit);
 					}
 				}
 				break;
 			default:
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {undoEdit.EditKind} was not recognized.");
 		}
+	}
+	
+	private void RestoreCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit undoEdit)
+	{
+		cursorModifierBag.CursorModifier.LineIndex = undoEdit.Cursor.LineIndex;
+		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(undoEdit.Cursor.ColumnIndex);
+		
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = undoEdit.Cursor.Selection.AnchorPositionIndex;
+		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = undoEdit.Cursor.Selection.EndingPositionIndex;
 	}
 	
 	public void RedoEdit()
@@ -1034,11 +1047,12 @@ public partial class TextEditorModel
 		bool shouldCreateEditHistory = true)
     {
         var cursorModifier = cursorModifierBag.CursorModifier;
+        var originalCursor = cursorModifier.ToCursor();
 
         if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
         {
             Delete(
-				// TODO: 'cursorModifierBag' is not the correcy parameter here...
+				// TODO: 'cursorModifierBag' is not the correct parameter here...
 				//       ...one needs to create a new cursor modifier bag which contains the single cursor that is being looked at. 
                 cursorModifierBag,
                 1,
@@ -1080,6 +1094,7 @@ public partial class TextEditorModel
 			EnsureUndoPoint(
 				TextEditorEditKind.Insert,
 				tag: string.Empty,
+				originalCursor,
 				initialCursorPositionIndex,
 				new StringBuilder(value));
 		}
@@ -1353,6 +1368,7 @@ public partial class TextEditorModel
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
 
         var cursorModifier = cursorModifierBag.CursorModifier;
+        var originalCursor = cursorModifier.ToCursor();
 
 		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
 
@@ -1377,6 +1393,7 @@ public partial class TextEditorModel
 				EnsureUndoPoint(
 					TextEditorEditKind.Delete,
 					tag: string.Empty,
+					originalCursor,
 					positionIndex,
 					new StringBuilder(textRemoved));
 			}
@@ -1385,6 +1402,7 @@ public partial class TextEditorModel
 				EnsureUndoPoint(
 					TextEditorEditKind.Backspace,
 					tag: string.Empty,
+					originalCursor,
 					initialPositionIndex,
 					new StringBuilder(textRemoved));
 			}
