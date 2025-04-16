@@ -439,8 +439,11 @@ public partial class FindOverlayDisplay : ComponentBase
 			        cursorModifierBag,
 			        columnCount: targetTextSpan.Length,
 			        expandWord: false,
-			        TextEditorModel.DeleteKind.Delete,
-			        cancellationToken: CancellationToken.None);
+			        TextEditorModel.DeleteKind.Delete);
+			        
+			    modelModifier.Insert(
+			        viewModelModifier.ReplaceValueInFindOverlay,
+			        cursorModifierBag);
 
                 return ValueTask.CompletedTask;
             });
