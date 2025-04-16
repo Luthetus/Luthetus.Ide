@@ -225,6 +225,31 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        }
 		            
 		            break;
+	            case "KeyH":
+		        	if (onKeyDown.KeymapArgs.ShiftKey)
+		        	{
+		        		/*TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
+			                editContext,
+			                modelModifier,
+			                viewModel,
+			                cursorModifierBag,
+			                primaryCursorModifier,
+			                onKeyDown.ComponentData.FindAllService);*/
+		        	}
+		        	else
+		        	{
+		        		viewModel.ShowReplaceButtonInFindOverlay = true;
+		        	
+						await TextEditorCommandDefaultFunctions.ShowFindOverlay(
+			                editContext,
+			                modelModifier,
+			                viewModel,
+			                cursorModifierBag,
+			                primaryCursorModifier,
+			                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
+			        }
+		            
+		            break;
 		        case "ArrowLeft":
 	            case "ArrowRight":
 	            case "Home":
