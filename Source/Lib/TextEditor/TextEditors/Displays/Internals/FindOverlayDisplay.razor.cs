@@ -448,4 +448,55 @@ public partial class FindOverlayDisplay : ComponentBase
                 return ValueTask.CompletedTask;
             });
     }
+    
+    private void ReplaceAll()
+    {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    
+    	TextEditorService.WorkerArbitrary.PostRedundant(
+            nameof(FindOverlayDisplay),
+			renderBatchLocal.ViewModel.ResourceUri,
+            renderBatchLocal.ViewModel.ViewModelKey,
+            (TextEditorEditContext editContext) =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+                var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
+
+                if (modelModifier is null || viewModelModifier is null || localActiveIndexMatchedTextSpan is null)
+                    return ValueTask.CompletedTask;
+
+                var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+                if (presentationModel?.CompletedCalculation is null)
+                	return ValueTask.CompletedTask;
+                	
+                for (int i = presentationModel.CompletedCalculation.TextSpanList.Count - 1; i >= 0; i--)
+                {
+                	var targetTextSpan = presentationModel.CompletedCalculation.TextSpanList[i];
+                	
+	                var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+	                	targetTextSpan.StartingIndexInclusive);
+	                	
+	                cursorModifierBag.CursorModifier.LineIndex = lineIndex;
+	                cursorModifierBag.CursorModifier.ColumnIndex = columnIndex;
+	                
+	                modelModifier.Delete(
+				        cursorModifierBag,
+				        columnCount: targetTextSpan.Length,
+				        expandWord: false,
+				        TextEditorModel.DeleteKind.Delete);
+				        
+				    modelModifier.Insert(
+				        viewModelModifier.ReplaceValueInFindOverlay,
+				        cursorModifierBag);
+                }
+
+                return ValueTask.CompletedTask;
+            });
+    }
 }
