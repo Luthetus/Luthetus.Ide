@@ -20,13 +20,56 @@
          @onkeydown="HandleOnKeyDownAsync"
          @onkeydown:stopPropagation="true">
 
-        <div class="luth_te_find-overlay-top-row">
+        <div class="luth_te_find-overlay-top-row"
+             style="display: flex;">
+             
+        	<button class="luth_button"
+                    style="margin-left: 5px;"
+                    @onclick="ToggleShowReplace"
+                    @onclick:stopPropagation="true"
+                    @onmousedown:stopPropagation="true"
+                    @onmousemove:stopPropagation="true"
+                    @ondblclick:stopPropagation="true"
+                    @oncontextmenu:stopPropagation="true"
+                    @onkeydown:stopPropagation="true">
+                @if (renderBatchLocal.ViewModel.ShowReplaceButtonInFindOverlay)
+                {
+                	@IconChevronDownFragment.Render(iconDriver)
+                }
+                else
+                {
+                	@IconChevronRightFragment.Render(iconDriver)
+                }
+            </button>
+        
             <input @bind="InputValue"
                    @bind:event="oninput"
                    id="@renderBatchLocal.ViewModel.FindOverlayId"
                    class="luth_ide_input luth_ide_input-text"
                    placeholder="Find..." />
          </div>
+         
+        @if (renderBatchLocal.ViewModel.ShowReplaceButtonInFindOverlay)
+        {
+	        <div class="luth_te_find-overlay-replace-row">
+	        	<input @bind="InputReplace"
+                       @bind:event="oninput"
+                       class="luth_ide_input luth_ide_input-text"
+                       placeholder="Replace..." />
+
+	        	<button class="luth_button"
+                        style="margin-left: 5px;"
+                        @onclick="ReplaceCurrent"
+                        @onclick:stopPropagation="true"
+                        @onmousedown:stopPropagation="true"
+                        @onmousemove:stopPropagation="true"
+                        @ondblclick:stopPropagation="true"
+                        @oncontextmenu:stopPropagation="true"
+                        @onkeydown:stopPropagation="true">
+                    @IconUnlockFragment.Render(iconDriver)
+                </button>
+	        </div>
+        }
 
         <div class="luth_te_find-overlay-bottom-row">
             @{

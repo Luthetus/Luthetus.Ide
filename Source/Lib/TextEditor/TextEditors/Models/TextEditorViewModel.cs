@@ -96,6 +96,8 @@ public sealed class TextEditorViewModel : IDisposable
 	    TooltipViewModel = other.TooltipViewModel;
 	    Category = other.Category;
 	    ShowFindOverlay = other.ShowFindOverlay;
+	    ReplaceValueInFindOverlay = other.ReplaceValueInFindOverlay;
+	    ShowReplaceButtonInFindOverlay = other.ShowReplaceButtonInFindOverlay;
 	    OnSaveRequested = other.OnSaveRequested;
 	    GetTabDisplayNameFunc = other.GetTabDisplayNameFunc;
 	    FirstPresentationLayerKeysList = other.FirstPresentationLayerKeysList;
@@ -174,6 +176,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
     /// </summary>
     public bool ShowFindOverlay { get; set; }
+    public bool ShowReplaceButtonInFindOverlay { get; set; }
     /// <summary>
     /// If one hits the keymap { Ctrl + s } when browser focus is within a text editor.
     /// </summary>
@@ -224,6 +227,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// because a 'background action' modified the value.
     /// </summary>
     public bool FindOverlayValueExternallyChangedMarker { get; set; }
+    public string ReplaceValueInFindOverlay { get; set; }
 	/// <summary>
     /// If one opens a file with the 'Enter' key, they might want focus to then be set on that
     /// newly opened file. However, perhaps one wants the 'Space' key to also open the file,
