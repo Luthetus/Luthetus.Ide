@@ -136,7 +136,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                viewModel,
 		                cursorModifierBag);
 		            break;
-		        case "Keyz":
+		        case "KeyZ":
 		            TextEditorCommandDefaultFunctions.Undo(
 		                editContext,
 		                modelModifier,

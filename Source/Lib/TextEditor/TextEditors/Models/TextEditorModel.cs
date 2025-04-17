@@ -581,6 +581,22 @@ public partial class TextEditorModel
         EditBlockIndex = 0;
         EditBlockList.Clear();
     }
+    
+    public void EditAddOther(TextEditorEdit textEditorEdit)
+    {
+    	// TODO: Don't duplicate this code, it also exists in 'EnsureUndoPoint'.
+    	if (EditBlockIndex < EditBlockList.Count - 1)
+		{
+			// Clear redo history
+			for (int i = EditBlockIndex + 1; i < EditBlockList.Count; i++)
+			{
+				EditBlockList.RemoveAt(i);
+			}
+		}
+		
+		EditBlockList.Add(textEditorEdit);
+		EditBlockIndex++;
+    }
 
 	private void EnsureUndoPoint(TextEditorEditKind editKind, string tag, TextEditorCursor originalCursor, int positionIndex, StringBuilder contentBuilder)
 	{

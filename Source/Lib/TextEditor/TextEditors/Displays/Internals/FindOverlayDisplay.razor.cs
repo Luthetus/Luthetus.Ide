@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -11,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -474,7 +476,16 @@ public partial class FindOverlayDisplay : ComponentBase
 
                 if (presentationModel?.CompletedCalculation is null)
                 	return ValueTask.CompletedTask;
-                	
+                
+                var otherEdit = new TextEditorEdit(
+                	TextEditorEditKind.Other,
+                	"ReplaceAll",
+                	cursorModifierBag.CursorModifier.ToCursor(),
+                	modelModifier.GetPositionIndex(cursorModifierBag.CursorModifier),
+                	new StringBuilder());
+                
+                modelModifier.EditAddOther(otherEdit);
+                
                 for (int i = presentationModel.CompletedCalculation.TextSpanList.Count - 1; i >= 0; i--)
                 {
                 	var targetTextSpan = presentationModel.CompletedCalculation.TextSpanList[i];
@@ -495,6 +506,8 @@ public partial class FindOverlayDisplay : ComponentBase
 				        viewModelModifier.ReplaceValueInFindOverlay,
 				        cursorModifierBag);
                 }
+                
+                modelModifier.EditAddOther(otherEdit);
 
                 return ValueTask.CompletedTask;
             });
