@@ -482,9 +482,9 @@ public partial class FindOverlayDisplay : ComponentBase
                 	"ReplaceAll",
                 	cursorModifierBag.CursorModifier.ToCursor(),
                 	modelModifier.GetPositionIndex(cursorModifierBag.CursorModifier),
-                	new StringBuilder());
+                	contentBuilder: null);
                 
-                modelModifier.EditAddOther(otherEdit);
+                modelModifier.EnsureUndoPoint(otherEdit);
                 
                 for (int i = presentationModel.CompletedCalculation.TextSpanList.Count - 1; i >= 0; i--)
                 {
@@ -507,7 +507,7 @@ public partial class FindOverlayDisplay : ComponentBase
 				        cursorModifierBag);
                 }
                 
-                modelModifier.EditAddOther(otherEdit);
+                modelModifier.EnsureUndoPoint(otherEdit);
 
                 return ValueTask.CompletedTask;
             });

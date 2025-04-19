@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.Edits.Models;
 
 public struct TextEditorEdit
 {
-	public TextEditorEdit(TextEditorEditKind editKind, string tag, TextEditorCursor cursor, int positionIndex, StringBuilder contentBuilder)
+	public TextEditorEdit(TextEditorEditKind editKind, string tag, TextEditorCursor cursor, int positionIndex, StringBuilder? contentBuilder)
 	{
 		EditKind = editKind;
 		Tag = tag;
@@ -26,23 +26,27 @@ public struct TextEditorEdit
 	public TextEditorCursor Cursor { get; }
 	
 	/// <summary>
-	/// Consider storing the text that was inserted/deleted in a shared List,...
+	/// The TextEditorEditKind(s) { Constructor, Other } will have a null ContentBuilder.
+	///
+	/// All other TextEditorEditKind(s) are presumed to NOT be null.
+	///
+	/// TODO: (optimization) Consider storing the text that was inserted/deleted in a shared List,...
 	/// ...and each edit stores the indices at which the text it altered exists.
 	/// </summary>
-	public StringBuilder ContentBuilder { get; }
+	public StringBuilder? ContentBuilder { get; }
 	
 	public void Add(string text)
 	{
 		switch (EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				ContentBuilder.Append(text);
+				ContentBuilder!.Append(text);
 				break;
 			case TextEditorEditKind.Delete:
-				ContentBuilder.Append(text);
+				ContentBuilder!.Append(text);
 				break;
 			case TextEditorEditKind.Backspace:
-				ContentBuilder.Insert(0, text);
+				ContentBuilder!.Insert(0, text);
 				break;
 			case TextEditorEditKind.Constructor:
 				throw new LuthetusTextEditorException($"The {nameof(TextEditorEditKind)}: {EditKind}, cannot be un-done. This edit represents the initial state.");
