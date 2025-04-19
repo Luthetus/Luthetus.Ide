@@ -76,7 +76,7 @@ public struct TextEditorEdit
 					TextEditorEditKind.Insert,
 					tag: string.Empty,
 					Cursor,
-					PositionIndex - ContentBuilder.Length,
+					PositionIndex,
 					ContentBuilder);
 			case TextEditorEditKind.Constructor:
 				throw new LuthetusTextEditorException($"The {nameof(TextEditorEditKind)}: {EditKind}, cannot be un-done. This edit represents the initial state.");

@@ -119,7 +119,12 @@ public partial class TextEditorModel
     	Console.WriteLine($"EditBlockList.Count: {EditBlockList.Count}: ({ResourceUri.Value})");
     	foreach (var entry in EditBlockList)
     	{
-    		Console.WriteLine($"\tentry.EditKind: {entry.EditKind}");
+    		Console.WriteLine($"\tentry.EditKind:");
+    		Console.WriteLine($"\t\tEditKind:       {entry.EditKind}");
+    		Console.WriteLine($"\t\tTag:            {entry.Tag}");
+    		Console.WriteLine($"\t\tCursor:         {entry.Cursor}");
+    		Console.WriteLine($"\t\tPositionIndex:  {entry.PositionIndex}");
+    		Console.WriteLine($"\t\tContentBuilder: {entry.ContentBuilder}");
     	}
     }*/
 	
