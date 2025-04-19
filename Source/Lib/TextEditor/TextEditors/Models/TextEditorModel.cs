@@ -116,17 +116,20 @@ public partial class TextEditorModel
     
     /*private void WriteEditBlockListToConsole()
     {
-    	Console.WriteLine($"EditBlockList.Count: {EditBlockList.Count}: ({ResourceUri.Value})");
-    	foreach (var entry in EditBlockList)
+    	Console.WriteLine($"EditBlockIndex: {EditBlockIndex} EditBlockList.Count: {EditBlockList.Count}: ({ResourceUri.Value})");
+    	
+    	for (int i = 0; i < EditBlockList.Count; i++)
     	{
-    		Console.WriteLine($"\tentry.EditKind:");
+    		var entry = EditBlockList[i];
+    	
+    		Console.WriteLine($"\tIndex: {i}:");
     		Console.WriteLine($"\t\tEditKind:       {entry.EditKind}");
     		Console.WriteLine($"\t\tTag:            {entry.Tag}");
     		Console.WriteLine($"\t\tCursor:         {entry.Cursor}");
     		Console.WriteLine($"\t\tPositionIndex:  {entry.PositionIndex}");
     		Console.WriteLine($"\t\tContentBuilder: {entry.ContentBuilder}");
     	}
-    }*/
+    }*
 	
 	/// <summary>
 	/// You have to check if the '_partitionListChanged'
@@ -272,7 +275,7 @@ public partial class TextEditorModel
     public const int TAB_WIDTH = 4;
     public const int GUTTER_PADDING_LEFT_IN_PIXELS = 5;
     public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 15;
-    public const int MAXIMUM_EDIT_BLOCKS = 10;
+    public const int MAXIMUM_EDIT_BLOCKS = 5;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
     
     /// <summary>
@@ -616,72 +619,81 @@ public partial class TextEditorModel
 
 		var mostRecentEdit = EditBlockList[EditBlockIndex];
 
-		if (editKind == TextEditorEditKind.Insert)
+		switch (editKind)
 		{
-			// Only batch if consecutive, and contiguous.
-			if (mostRecentEdit.EditKind == TextEditorEditKind.Insert)
+			case TextEditorEditKind.Insert:
 			{
-				if (positionIndex == mostRecentEdit.PositionIndex + mostRecentEdit.ContentBuilder.Length)
+				// Only batch if consecutive, and contiguous.
+				if (mostRecentEdit.EditKind == TextEditorEditKind.Insert)
 				{
-					mostRecentEdit.ContentBuilder.Append(contentBuilder.ToString());
-					return;
+					if (positionIndex == mostRecentEdit.PositionIndex + mostRecentEdit.ContentBuilder.Length)
+					{
+						mostRecentEdit.ContentBuilder.Append(contentBuilder.ToString());
+						break;
+					}
 				}
-			}
-			
-			EditBlockList.Add(new TextEditorEdit(
-				editKind,
-				tag,
-				originalCursor,
-				positionIndex,
-				contentBuilder));
 				
-			EditBlockIndex++;
-			return;
-		}
-		else if (editKind == TextEditorEditKind.Backspace)
-		{
-			// Only batch if consecutive, and contiguous.
-			if (mostRecentEdit.EditKind == TextEditorEditKind.Backspace)
+				EditBlockList.Add(new TextEditorEdit(
+					editKind,
+					tag,
+					originalCursor,
+					positionIndex,
+					contentBuilder));
+					
+				EditBlockIndex++;
+				break;
+			}
+			case TextEditorEditKind.Backspace:
 			{
-				if (positionIndex == mostRecentEdit.PositionIndex - mostRecentEdit.ContentBuilder.Length)
+				// Only batch if consecutive, and contiguous.
+				if (mostRecentEdit.EditKind == TextEditorEditKind.Backspace)
 				{
-					mostRecentEdit.Add(contentBuilder.ToString());
-					return;
+					if (positionIndex == mostRecentEdit.PositionIndex - mostRecentEdit.ContentBuilder.Length)
+					{
+						mostRecentEdit.Add(contentBuilder.ToString());
+						break;
+					}
 				}
-			}
-			
-			EditBlockList.Add(new TextEditorEdit(
-				editKind,
-				tag,
-				originalCursor,
-				positionIndex,
-				contentBuilder));
 				
-			EditBlockIndex++;
-			return;
-		}
-		else if (editKind == TextEditorEditKind.Delete)
-		{
-			// Only batch if consecutive, and contiguous.
-			if (mostRecentEdit.EditKind == TextEditorEditKind.Delete)
+				EditBlockList.Add(new TextEditorEdit(
+					editKind,
+					tag,
+					originalCursor,
+					positionIndex,
+					contentBuilder));
+					
+				EditBlockIndex++;
+				break;
+			}
+			case TextEditorEditKind.Delete:
 			{
-				if (positionIndex == mostRecentEdit.PositionIndex)
+				// Only batch if consecutive, and contiguous.
+				if (mostRecentEdit.EditKind == TextEditorEditKind.Delete)
 				{
-					mostRecentEdit.Add(contentBuilder.ToString());
-					return;
+					if (positionIndex == mostRecentEdit.PositionIndex)
+					{
+						mostRecentEdit.Add(contentBuilder.ToString());
+						break;
+					}
 				}
-			}
-			
-			EditBlockList.Add(new TextEditorEdit(
-				editKind,
-				tag,
-				originalCursor,
-				positionIndex,
-				contentBuilder));
 				
-			EditBlockIndex++;
-			return;
+				EditBlockList.Add(new TextEditorEdit(
+					editKind,
+					tag,
+					originalCursor,
+					positionIndex,
+					contentBuilder));
+					
+				EditBlockIndex++;
+				break;
+			}
 		}
+		
+		while (EditBlockList.Count > MAXIMUM_EDIT_BLOCKS)
+	    {
+	        EditBlockIndex--;
+	        EditBlockList.RemoveAt(0);
+	    }
 
 	// TODO: the following multi line comment contains code from the original implementation...
 	//       ...which deleted outdated history. This logic needs to be re-added in some way.
@@ -703,12 +715,6 @@ public partial class TextEditorModel
 	        _editBlocksList.RemoveRange(removeBlocksStartingAt, EditBlockList.Count - removeBlocksStartingAt);
 	
 	        _editBlockIndex++;
-	    }
-	
-	    while (EditBlockList.Count > TextEditorModel.MAXIMUM_EDIT_BLOCKS && EditBlockList.Count != 0)
-	    {
-	        _editBlockIndex--;
-	        EditBlockList.RemoveAt(0);
 	    }
 	*/
 	}
