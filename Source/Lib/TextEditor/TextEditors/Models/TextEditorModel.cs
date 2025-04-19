@@ -602,50 +602,58 @@ public partial class TextEditorModel
 		}
 
 		var previousEdit = EditBlockList[EditBlockIndex];
-		var shouldAdd = true;
+		var shouldAddNewEdit = false;
 
 		switch (newEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
 			{
-				// Only batch if consecutive, and contiguous.
-				if (previousEdit.EditKind == TextEditorEditKind.Insert)
+				// Batch if consecutive && contiguous.
+				if ((previousEdit.EditKind == TextEditorEditKind.Insert) &&
+				    (newEdit.PositionIndex == previousEdit.PositionIndex + previousEdit.ContentBuilder.Length))
 				{
-					if (newEdit.PositionIndex == previousEdit.PositionIndex + previousEdit.ContentBuilder.Length)
-						previousEdit.ContentBuilder!.Append(newEdit.ContentBuilder!.ToString());
+					previousEdit.ContentBuilder!.Append(newEdit.ContentBuilder!.ToString());
+					break;
 				}
 				
+				shouldAddNewEdit = true;
 				break;
 			}
 			case TextEditorEditKind.Backspace:
 			{
-				// Only batch if consecutive, and contiguous.
-				if (previousEdit.EditKind == TextEditorEditKind.Backspace)
+				// Batch if consecutive && contiguous.
+				if ((previousEdit.EditKind == TextEditorEditKind.Backspace) &&
+				    (newEdit.PositionIndex == previousEdit.PositionIndex - previousEdit.ContentBuilder!.Length))
 				{
-					if (newEdit.PositionIndex == previousEdit.PositionIndex - previousEdit.ContentBuilder!.Length)
-						previousEdit.Add(newEdit.ContentBuilder!.ToString());
+					previousEdit.Add(newEdit.ContentBuilder!.ToString());
+					break;
 				}
 				
+				shouldAddNewEdit = true;
 				break;
 			}
 			case TextEditorEditKind.Delete:
 			{
-				// Only batch if consecutive, and contiguous.
-				if (previousEdit.EditKind == TextEditorEditKind.Delete)
+				// Batch if consecutive && contiguous.
+				if ((previousEdit.EditKind == TextEditorEditKind.Delete) &&
+				    (newEdit.PositionIndex == previousEdit.PositionIndex))
 				{
-					if (newEdit.PositionIndex == previousEdit.PositionIndex)
-						previousEdit.Add(newEdit.ContentBuilder!.ToString());
+					previousEdit.Add(newEdit.ContentBuilder!.ToString());
+					break;
 				}
 				
+				shouldAddNewEdit = true;
 				break;
 			}
-			//
-			// TextEditorEditKind.Other is expected to skip over the switch.
-			//
-			// TextEditorEditKind.Constructor is expected to NOT invoke this method, but instead add to 'EditBlockList' on its own.
+			case TextEditorEditKind.Other:
+			{
+				shouldAddNewEdit = true;
+				break;
+			}
+			// 'TextEditorEditKind.Constructor' is expected to NOT invoke this method, but instead add to 'EditBlockList' on its own.
 		}
 		
-		if (shouldAdd)
+		if (shouldAddNewEdit)
 		{
 			EditBlockList.Add(newEdit);
 			EditBlockIndex++;
