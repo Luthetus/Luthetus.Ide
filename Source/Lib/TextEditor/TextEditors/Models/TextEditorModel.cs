@@ -60,7 +60,6 @@ public partial class TextEditorModel
 	    PreviousMostCharactersOnASingleLineTuple = (0, 0);
 	    RenderStateSequence = 0;
 	    PreviousLineCount = 0;
-		OtherEditStack = new();
 	    PartitionSize = partitionSize;
 	    _allText = string.Empty;
 	    _charCount = 0;
@@ -104,12 +103,33 @@ public partial class TextEditorModel
 	    		: other.RenderStateSequence + 1;
 	    }
 	    PreviousLineCount = other.LineEndList.Count;
-	    OtherEditStack = other.OtherEditStack;
 	    WasDirty = other.IsDirty;
         PartitionSize = other.PartitionSize;
 	    _allText = other._allText;
 	    _charCount = other._charCount;
+	    
+	    /*if (other.ShouldReloadVirtualizationResult)
+	    {
+	    	WriteEditBlockListToConsole();
+	    }*/
     }
+    
+    /*private void WriteEditBlockListToConsole()
+    {
+    	Console.WriteLine($"EditBlockIndex: {EditBlockIndex} EditBlockList.Count: {EditBlockList.Count}: ({ResourceUri.Value})");
+    	
+    	for (int i = 0; i < EditBlockList.Count; i++)
+    	{
+    		var entry = EditBlockList[i];
+    	
+    		Console.WriteLine($"\tIndex: {i}:");
+    		Console.WriteLine($"\t\tEditKind:       {entry.EditKind}");
+    		Console.WriteLine($"\t\tTag:            {entry.Tag}");
+    		Console.WriteLine($"\t\tCursor:         {entry.Cursor}");
+    		Console.WriteLine($"\t\tPositionIndex:  {entry.PositionIndex}");
+    		Console.WriteLine($"\t\tContentBuilder: {entry.ContentBuilder}");
+    	}
+    }*/
 	
 	/// <summary>
 	/// You have to check if the '_partitionListChanged'
@@ -210,7 +230,7 @@ public partial class TextEditorModel
     	}
     }
 
-    public List<ITextEditorEdit> EditBlockList { get; set; }
+    public List<TextEditorEdit> EditBlockList { get; set; }
     public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; }
     public List<LineEnd> LineEndList { get; set; }
     public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; }
@@ -237,11 +257,6 @@ public partial class TextEditorModel
     
     public int LineCount => LineEndList.Count;
 
-	/// <summary>
-	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
-	/// </summary>
-	public Stack<TextEditorEditOther> OtherEditStack { get; }
-
     /// <summary>
     /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
     /// This involves writing to dependency injectable state, then triggering a re-render in the <see cref="Edits.Displays.DirtyResourceUriInteractiveIconDisplay"/>
@@ -260,7 +275,7 @@ public partial class TextEditorModel
     public const int TAB_WIDTH = 4;
     public const int GUTTER_PADDING_LEFT_IN_PIXELS = 5;
     public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 15;
-    public const int MAXIMUM_EDIT_BLOCKS = 10;
+    public const int MAXIMUM_EDIT_BLOCKS = 6;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
     
     /// <summary>
@@ -374,24 +389,24 @@ public partial class TextEditorModel
         }
     }
 
-	private void PerformInsert(int positionIndex, string content)
+	private void PerformInsert(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, string content)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
-		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
-		var cursorModifierBag = new CursorModifierBagTextEditor(
-			Key<TextEditorViewModel>.Empty,
-			new(cursor));
-	
+		
+		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
+		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
+		
 		Insert(content, cursorModifierBag, false, CancellationToken.None, shouldCreateEditHistory: false);
 	}
 
-	private void PerformBackspace(int positionIndex, int count)
+	private void PerformBackspace(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
-		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
-		var cursorModifierBag = new CursorModifierBagTextEditor(
-			Key<TextEditorViewModel>.Empty,
-			new(cursor));
+		
+		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
+		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 
 		Delete(
 			cursorModifierBag,
@@ -402,13 +417,13 @@ public partial class TextEditorModel
 			shouldCreateEditHistory: false);
 	}
 
-	private void PerformDelete(int positionIndex, int count)
+	private void PerformDelete(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
-		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
-		var cursorModifierBag = new CursorModifierBagTextEditor(
-			Key<TextEditorViewModel>.Empty,
-			new(cursor));
+		
+		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
+		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 
 		Delete(
 			cursorModifierBag,
@@ -461,8 +476,15 @@ public partial class TextEditorModel
         ClearAllStatesButKeepEditHistory();
 
 		if (EditBlockList.Count == 0 && EditBlockIndex == 0)
-			EditBlockList.Add(new TextEditorEditConstructor());
-
+		{
+			EditBlockList.Add(new TextEditorEdit(
+				TextEditorEditKind.Constructor,
+				tag: string.Empty,
+				TextEditorCursor.Empty,
+				0,
+				contentBuilder: null));
+		}
+		
         var rowIndex = 0;
         var previousCharacter = '\0';
 
@@ -567,8 +589,8 @@ public partial class TextEditorModel
         EditBlockIndex = 0;
         EditBlockList.Clear();
     }
-
-	private void EnsureUndoPoint(ITextEditorEdit newEdit)
+    
+	public void EnsureUndoPoint(TextEditorEdit newEdit)
 	{
 		if (EditBlockIndex < EditBlockList.Count - 1)
 		{
@@ -579,156 +601,69 @@ public partial class TextEditorModel
 			}
 		}
 
-		if (newEdit.EditKind == TextEditorEditKind.Insert)
+		var previousEdit = EditBlockList[EditBlockIndex];
+		var shouldAddNewEdit = false;
+
+		switch (newEdit.EditKind)
 		{
-			var mostRecentEdit = EditBlockList[EditBlockIndex];
-
-			var newEditInsert = (TextEditorEditInsert)newEdit;
-			var positionIndex = newEditInsert.PositionIndex;
-			var content = newEditInsert.Content;
-
-			if (mostRecentEdit.EditKind == TextEditorEditKind.Insert)
+			case TextEditorEditKind.Insert:
 			{
-				var mostRecentEditInsert = (TextEditorEditInsert)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditInsert.PositionIndex + mostRecentEditInsert.Content.Length)
+				// Batch if consecutive && contiguous.
+				if ((previousEdit.EditKind == TextEditorEditKind.Insert) &&
+				    (newEdit.PositionIndex == previousEdit.PositionIndex + previousEdit.ContentBuilder.Length))
 				{
-					var contentBuilder = new StringBuilder();
-					contentBuilder.Append(mostRecentEditInsert.Content);
-					contentBuilder.Append(content);
+					previousEdit.ContentBuilder!.Append(newEdit.ContentBuilder!.ToString());
+					break;
+				}
+				
+				shouldAddNewEdit = true;
+				break;
+			}
+			case TextEditorEditKind.Backspace:
+			{
+				// Batch if consecutive && contiguous.
+				if ((previousEdit.EditKind == TextEditorEditKind.Backspace) &&
+				    (newEdit.PositionIndex == previousEdit.PositionIndex - previousEdit.ContentBuilder!.Length))
+				{
+					previousEdit.Add(newEdit.ContentBuilder!.ToString());
+					break;
+				}
+				
+				shouldAddNewEdit = true;
+				break;
+			}
+			case TextEditorEditKind.Delete:
+			{
+				// Batch if consecutive && contiguous.
+				if ((previousEdit.EditKind == TextEditorEditKind.Delete) &&
+				    (newEdit.PositionIndex == previousEdit.PositionIndex))
+				{
+					previousEdit.Add(newEdit.ContentBuilder!.ToString());
+					break;
+				}
+				
+				shouldAddNewEdit = true;
+				break;
+			}
+			case TextEditorEditKind.Other:
+			{
+				shouldAddNewEdit = true;
+				break;
+			}
+			// 'TextEditorEditKind.Constructor' is expected to NOT invoke this method, but instead add to 'EditBlockList' on its own.
+		}
 		
-					var insertBatch = new TextEditorEditInsertBatch(
-						mostRecentEditInsert.PositionIndex,
-						contentBuilder);
+		if (shouldAddNewEdit)
+		{
+			EditBlockList.Add(newEdit);
+			EditBlockIndex++;
+		}
 		
-					EditBlockList[EditBlockIndex] = insertBatch;
-					return;
-				}
-			}
-			
-			if (mostRecentEdit.EditKind == TextEditorEditKind.InsertBatch)
-			{
-				var mostRecentEditInsertBatch = (TextEditorEditInsertBatch)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditInsertBatch.PositionIndex + mostRecentEditInsertBatch.ContentBuilder.Length)
-				{
-					mostRecentEditInsertBatch.ContentBuilder.Append(content);
-					return;
-				}
-			}
-			
-			// Default case
-			{
-				EditBlockList.Add(new TextEditorEditInsert(positionIndex, content));
-				EditBlockIndex++;
-				return;
-			}
-		}
-		else if (newEdit.EditKind == TextEditorEditKind.Backspace)
-		{
-			var mostRecentEdit = EditBlockList[EditBlockIndex];
-
-			var newEditBackspace = (TextEditorEditBackspace)newEdit;
-			var positionIndex = newEditBackspace.PositionIndex;
-			var count = newEditBackspace.Count;
-			var textRemoved = newEditBackspace.TextRemoved;
-
-			if (mostRecentEdit.EditKind == TextEditorEditKind.Backspace)
-			{
-				var mostRecentEditBackspace = (TextEditorEditBackspace)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditBackspace.PositionIndex - mostRecentEditBackspace.TextRemoved.Length)
-				{
-					// NOTE: The most recently removed text should go first, this is contrary to the Delete(...) method.
-					var textRemovedBuilder = new StringBuilder();
-					textRemovedBuilder.Append(textRemoved);
-					textRemovedBuilder.Append(mostRecentEditBackspace.TextRemoved);
-	
-					var editBackspaceBatch = new TextEditorEditBackspaceBatch(
-						mostRecentEditBackspace.PositionIndex,
-						count + mostRecentEditBackspace.Count,
-						textRemovedBuilder);
-	
-					EditBlockList[EditBlockIndex] = editBackspaceBatch;
-					return;
-				}
-			}
-	
-			if (mostRecentEdit.EditKind == TextEditorEditKind.BackspaceBatch)
-			{
-				var mostRecentEditBackspaceBatch = (TextEditorEditBackspaceBatch)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditBackspaceBatch.PositionIndex - mostRecentEditBackspaceBatch.TextRemovedBuilder.Length)
-				{
-					mostRecentEditBackspaceBatch.Add(count, textRemoved);
-					return;
-				}
-			}
-			
-			// Default case
-			{
-				var editBackspace = new TextEditorEditBackspace(positionIndex, count);
-				editBackspace.TextRemoved = textRemoved;
-				EditBlockList.Add(editBackspace);
-				EditBlockIndex++;
-				return;
-			}
-		}
-		else if (newEdit.EditKind == TextEditorEditKind.Delete)
-		{
-			var mostRecentEdit = EditBlockList[EditBlockIndex];
-
-			var newEditDelete = (TextEditorEditDelete)newEdit;
-			var positionIndex = newEditDelete.PositionIndex;
-			var count = newEditDelete.Count;
-			var textRemoved = newEditDelete.TextRemoved;
-
-			if (mostRecentEdit.EditKind == TextEditorEditKind.Delete)
-			{
-				var mostRecentEditDelete = (TextEditorEditDelete)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditDelete.PositionIndex)
-				{
-					var textRemovedBuilder = new StringBuilder();
-					textRemovedBuilder.Append(mostRecentEditDelete.TextRemoved);
-					textRemovedBuilder.Append(textRemoved);
-	
-					var editDeleteBatch = new TextEditorEditDeleteBatch(
-						positionIndex,
-						count + mostRecentEditDelete.Count,
-						textRemovedBuilder);
-	
-					EditBlockList[EditBlockIndex] = editDeleteBatch;
-					return;
-				}
-			}
-	
-			if (mostRecentEdit.EditKind == TextEditorEditKind.DeleteBatch)
-			{
-				var mostRecentEditDeleteBatch = (TextEditorEditDeleteBatch)mostRecentEdit;
-	
-				// Only batch if consecutive, and contiguous.
-				if (positionIndex == mostRecentEditDeleteBatch.PositionIndex)
-				{
-					mostRecentEditDeleteBatch.Add(count, textRemoved);
-					return;
-				}
-			}
-			
-			// Default case
-			{
-				var editDelete = new TextEditorEditDelete(positionIndex, count);
-				editDelete.TextRemoved = textRemoved;
-				EditBlockList.Add(editDelete);
-				EditBlockIndex++;
-				return;
-			}
-		}
+		while (EditBlockList.Count > MAXIMUM_EDIT_BLOCKS)
+	    {
+	        EditBlockIndex--;
+	        EditBlockList.RemoveAt(0);
+	    }
 
 	// TODO: the following multi line comment contains code from the original implementation...
 	//       ...which deleted outdated history. This logic needs to be re-added in some way.
@@ -751,38 +686,19 @@ public partial class TextEditorModel
 	
 	        _editBlockIndex++;
 	    }
-	
-	    while (EditBlockList.Count > TextEditorModel.MAXIMUM_EDIT_BLOCKS && EditBlockList.Count != 0)
-	    {
-	        _editBlockIndex--;
-	        EditBlockList.RemoveAt(0);
-	    }
 	*/
 	}
-
-	public void OpenOtherEdit(TextEditorEditOther editOther)
-	{
-		OtherEditStack.Push(editOther);
-		EditBlockList.Add(editOther);
-		EditBlockIndex++;
-	}
-
-	public void CloseOtherEdit(string predictedTag)
-	{
-		var peek = OtherEditStack.Peek();
-		if (peek.Tag != predictedTag)
-		{
-			throw new LuthetusTextEditorException(
-				$"Attempted to close other edit with {nameof(TextEditorEditOther.Tag)}: '{peek.Tag}'." + 
-				$" but, the {nameof(predictedTag)} was: '{predictedTag}'");
-		}
-
-		var pop = OtherEditStack.Pop();
-		EditBlockList.Add(pop);
-		EditBlockIndex++;
-	}
-
+	
 	public void UndoEdit()
+	{
+		var cursorModifierBag = new CursorModifierBagTextEditor(
+			Key<TextEditorViewModel>.Empty,
+			new(TextEditorCursor.Empty));
+			
+		UndoEditWithUserCursor(cursorModifierBag);
+	}
+
+	public void UndoEditWithUserCursor(CursorModifierBagTextEditor cursorModifierBag)
 	{
 		if (EditBlockIndex <= 0)
 			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
@@ -797,16 +713,16 @@ public partial class TextEditorModel
 		switch (undoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				var insertEdit = (TextEditorEditInsert)undoEdit;
-				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
+				PerformInsert(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.ToString());
+				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
-				var backspaceEdit = (TextEditorEditBackspace)undoEdit;
-				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
+				PerformBackspace(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
+				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Delete: 
-				var deleteEdit = (TextEditorEditDelete)undoEdit;
-				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
+				PerformDelete(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
+				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Other:
 				while (true)
@@ -831,8 +747,6 @@ public partial class TextEditorModel
 
 					if (mostRecentEdit.EditKind == TextEditorEditKind.Other)
 					{
-						var mostRecentEditOther = (TextEditorEditOther)mostRecentEdit;
-	
 						// Nothing needs to be done when the tags don't match
 						// other than continuing the while loop.
 						//
@@ -841,7 +755,7 @@ public partial class TextEditorModel
 						//
 						// Finding the opening to the child 'other edit' is irrelevant since it is encompassed
 						// within the parent.
-						if (mostRecentEditOther.Tag == (((TextEditorEditOther)undoEdit).Tag))
+						if (mostRecentEdit.Tag == undoEdit.Tag)
 						{
 							// Need to go one further than the opening,
 							EditBlockIndex--;
@@ -850,7 +764,8 @@ public partial class TextEditorModel
 					}
 					else
 					{
-						UndoEdit();
+						UndoEditWithUserCursor(cursorModifierBag);
+						RestoreCursor(cursorModifierBag, undoEdit);
 					}
 				}
 				break;
@@ -858,8 +773,26 @@ public partial class TextEditorModel
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {undoEdit.EditKind} was not recognized.");
 		}
 	}
-
+	
+	private void RestoreCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit undoEdit)
+	{
+		cursorModifierBag.CursorModifier.LineIndex = undoEdit.Cursor.LineIndex;
+		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(undoEdit.Cursor.ColumnIndex);
+		
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = undoEdit.Cursor.Selection.AnchorPositionIndex;
+		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = undoEdit.Cursor.Selection.EndingPositionIndex;
+	}
+	
 	public void RedoEdit()
+	{
+		var cursorModifierBag = new CursorModifierBagTextEditor(
+			Key<TextEditorViewModel>.Empty,
+			new(TextEditorCursor.Empty));
+	
+		RedoEditWithUserCursor(cursorModifierBag);
+	}
+
+	public void RedoEditWithUserCursor(CursorModifierBagTextEditor cursorModifierBag)
 	{
 		// If there is no next then throw exception
 		if (EditBlockIndex >= EditBlockList.Count - 1)
@@ -871,28 +804,13 @@ public partial class TextEditorModel
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				var insertEdit = (TextEditorEditInsert)redoEdit;
-				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
-				break;
-			case TextEditorEditKind.InsertBatch:
-				var insertBatchEdit = (TextEditorEditInsertBatch)redoEdit;
-				PerformInsert(insertBatchEdit.PositionIndex, insertBatchEdit.ContentBuilder.ToString());
+				PerformInsert(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
-				var backspaceEdit = (TextEditorEditBackspace)redoEdit;
-				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
-				break;
-			case TextEditorEditKind.BackspaceBatch:
-				var backspaceBatchEdit = (TextEditorEditBackspaceBatch)redoEdit;
-				PerformBackspace(backspaceBatchEdit.PositionIndex, backspaceBatchEdit.Count);
+				PerformBackspace(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Delete: 
-				var deleteEdit = (TextEditorEditDelete)redoEdit;
-				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
-				break;
-			case TextEditorEditKind.DeleteBatch: 
-				var deleteBatchEdit = (TextEditorEditDeleteBatch)redoEdit;
-				PerformDelete(deleteBatchEdit.PositionIndex, deleteBatchEdit.Count);
+				PerformDelete(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Other:
 				while (true)
@@ -910,17 +828,15 @@ public partial class TextEditorModel
 
 					if (nextEdit.EditKind == TextEditorEditKind.Other)
 					{
-						var nextEditOther = (TextEditorEditOther)nextEdit;
-
 						// Regardless of the tag of the next edit. One will need to increment EditIndex.
 						EditBlockIndex++;
 
-						if (nextEditOther.Tag == (((TextEditorEditOther)redoEdit).Tag))
+						if (nextEdit.Tag == redoEdit.Tag)
 							break;
 					}
 					else
 					{
-						RedoEdit();
+						RedoEditWithUserCursor(cursorModifierBag);
 					}
 				}
 				break;
@@ -1128,11 +1044,12 @@ public partial class TextEditorModel
 		bool shouldCreateEditHistory = true)
     {
         var cursorModifier = cursorModifierBag.CursorModifier;
+        var originalCursor = cursorModifier.ToCursor();
 
         if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
         {
             Delete(
-				// TODO: 'cursorModifierBag' is not the correcy parameter here...
+				// TODO: 'cursorModifierBag' is not the correct parameter here...
 				//       ...one needs to create a new cursor modifier bag which contains the single cursor that is being looked at. 
                 cursorModifierBag,
                 1,
@@ -1170,7 +1087,14 @@ public partial class TextEditorModel
         InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
 
 		if (shouldCreateEditHistory)
-			EnsureUndoPoint(new TextEditorEditInsert(initialCursorPositionIndex, value));
+		{
+			EnsureUndoPoint(new TextEditorEdit(
+				TextEditorEditKind.Insert,
+				tag: string.Empty,
+				originalCursor,
+				initialCursorPositionIndex,
+				new StringBuilder(value)));
+		}
 
         // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'InsertMetadata(...)'
         //       method because this specific metadata is being calculated by counting the characters, which
@@ -1441,6 +1365,7 @@ public partial class TextEditorModel
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
 
         var cursorModifier = cursorModifierBag.CursorModifier;
+        var originalCursor = cursorModifier.ToCursor();
 
 		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
 
@@ -1461,11 +1386,27 @@ public partial class TextEditorModel
 		if (shouldCreateEditHistory)
 		{
 			if (deleteKind == DeleteKind.Delete)
-				EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount) { TextRemoved = textRemoved });
+			{
+				EnsureUndoPoint(new TextEditorEdit(
+					TextEditorEditKind.Delete,
+					tag: string.Empty,
+					originalCursor,
+					positionIndex,
+					new StringBuilder(textRemoved)));
+			}
 			else if (deleteKind == DeleteKind.Backspace)
-				EnsureUndoPoint(new TextEditorEditBackspace(initialPositionIndex, charCount) { TextRemoved = textRemoved });
+			{
+				EnsureUndoPoint(new TextEditorEdit(
+					TextEditorEditKind.Backspace,
+					tag: string.Empty,
+					originalCursor,
+					initialPositionIndex,
+					new StringBuilder(textRemoved)));
+			}
 			else
+			{
 				throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
+			}
 		}
 
         // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'DeleteMetadata(...)'
@@ -1519,7 +1460,7 @@ public partial class TextEditorModel
         var initialLineIndex = cursorModifier.LineIndex;
         var positionIndex = this.GetPositionIndex(cursorModifier);
 
-        if (initiallyHadSelection && cursorModifier.SelectionAnchorPositionIndex is not null)
+        if (initiallyHadSelection && cursorModifier.SelectionAnchorPositionIndex != -1)
         {
             // If user's cursor has a selection, then set the variables so the positionIndex is the
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
@@ -1539,7 +1480,7 @@ public partial class TextEditorModel
             columnCount = upperPositionIndexExclusive - lowerPositionIndexInclusive;
             deleteKind = DeleteKind.Delete;
 
-            cursorModifier.SelectionAnchorPositionIndex = null;
+            cursorModifier.SelectionAnchorPositionIndex = -1;
             cursorModifier.SelectionEndingPositionIndex = 0;
 		}
 

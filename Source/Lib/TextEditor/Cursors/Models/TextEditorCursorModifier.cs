@@ -19,7 +19,7 @@ public class TextEditorCursorModifier
     public int ColumnIndex {get; set; }
     public int PreferredColumnIndex {get; set; }
     public bool IsPrimaryCursor {get; set; }
-    public int? SelectionAnchorPositionIndex { get; set; }
+    public int SelectionAnchorPositionIndex { get; set; }
     public int SelectionEndingPositionIndex { get; set; }
     public Key<TextEditorCursor> Key { get; set; }
 
