@@ -95,6 +95,7 @@ public partial class TextEditorModel
 	    TextEditorSaveFileHelper = other.TextEditorSaveFileHelper;
 	    EditBlockIndex = other.EditBlockIndex;
 	    IsDirty = other.IsDirty;
+	    TagDoNotRemove = other.TagDoNotRemove;
 	    MostCharactersOnASingleLineTuple = other.MostCharactersOnASingleLineTuple;
 	    PreviousMostCharactersOnASingleLineTuple = other.MostCharactersOnASingleLineTuple;
 	    {
@@ -116,7 +117,7 @@ public partial class TextEditorModel
     
     /*private void WriteEditBlockListToConsole()
     {
-    	Console.WriteLine($"EditBlockIndex: {EditBlockIndex} EditBlockList.Count: {EditBlockList.Count}: ({ResourceUri.Value})");
+    	Console.WriteLine($"Index:{EditBlockIndex}, Count:{EditBlockList.Count}, TagDoNotRemove:{(TagDoNotRemove is null ? "null" : TagDoNotRemove)} MAXIMUM_EDIT_BLOCKS:{MAXIMUM_EDIT_BLOCKS} ResourceUri:{ResourceUri.Value}");
     	
     	for (int i = 0; i < EditBlockList.Count; i++)
     	{
@@ -249,6 +250,11 @@ public partial class TextEditorModel
     public SaveFileHelper TextEditorSaveFileHelper { get; set; }
     public int EditBlockIndex { get; set; }
     public bool IsDirty { get; set; }
+    /// <summary>
+    /// Used to allow edits of 'TextEditorEditKind.Other' to span
+    /// a count of edits which is greater than the MAXIMUM_EDIT_BLOCKS.
+    /// </summary>
+    public string TagDoNotRemove { get; set; }
     public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; set; }
     public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple { get; set; }
     public int RenderStateSequence { get; set; }
@@ -592,9 +598,9 @@ public partial class TextEditorModel
     
 	public void EnsureUndoPoint(TextEditorEdit newEdit)
 	{
+		// Clear redo history
 		if (EditBlockIndex < EditBlockList.Count - 1)
 		{
-			// Clear redo history
 			for (int i = EditBlockIndex + 1; i < EditBlockList.Count; i++)
 			{
 				EditBlockList.RemoveAt(i);
@@ -645,8 +651,17 @@ public partial class TextEditorModel
 				shouldAddNewEdit = true;
 				break;
 			}
-			case TextEditorEditKind.Other:
+			case TextEditorEditKind.OtherOpen:
 			{
+				TagDoNotRemove = newEdit.Tag;
+				shouldAddNewEdit = true;
+				break;
+			}
+			case TextEditorEditKind.OtherClose:
+			{
+				// You cannot set 'TagDoNotRemove' to 'null' here.
+				// The TagDoNotRemove logic relies on the set occurring
+				// after the while loop that runs if 'EditBlockList.Count > MAXIMUM_EDIT_BLOCKS'.
 				shouldAddNewEdit = true;
 				break;
 			}
@@ -661,32 +676,18 @@ public partial class TextEditorModel
 		
 		while (EditBlockList.Count > MAXIMUM_EDIT_BLOCKS)
 	    {
-	        EditBlockIndex--;
+	    	if ((EditBlockList[0].EditKind == TextEditorEditKind.OtherOpen || EditBlockList[0].EditKind == TextEditorEditKind.OtherClose) &&
+	    	    EditBlockList[0].Tag == TagDoNotRemove)
+	    	{
+	    		break;
+	    	}
+	    	
+	    	EditBlockIndex--;
 	        EditBlockList.RemoveAt(0);
 	    }
-
-	// TODO: the following multi line comment contains code from the original implementation...
-	//       ...which deleted outdated history. This logic needs to be re-added in some way.
-	/*
-		var mostRecentEditBlock = EditBlockList.LastOrDefault();
-	
-	    if (mostRecentEditBlock is null || mostRecentEditBlock.TextEditKind != textEditKind)
-	    {
-	        var newEditBlockIndex = EditBlockIndex;
-	
-	        EditBlockList.Insert(newEditBlockIndex, new EditBlock(
-	            textEditKind,
-	            textEditKind.ToString(),
-	            this.GetAllText(),
-	            otherTextEditKindIdentifier));
-	
-	        var removeBlocksStartingAt = newEditBlockIndex + 1;
-	
-	        _editBlocksList.RemoveRange(removeBlocksStartingAt, EditBlockList.Count - removeBlocksStartingAt);
-	
-	        _editBlockIndex++;
-	    }
-	*/
+	    
+	    if (newEdit.EditKind == TextEditorEditKind.OtherClose)
+			TagDoNotRemove = null;
 	}
 	
 	public void UndoEdit()
@@ -724,7 +725,8 @@ public partial class TextEditorModel
 				PerformDelete(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
 				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
-			case TextEditorEditKind.Other:
+			case TextEditorEditKind.OtherOpen:
+			case TextEditorEditKind.OtherClose:
 				while (true)
 				{
 					if (EditBlockIndex == 0)
@@ -745,16 +747,8 @@ public partial class TextEditorModel
 
 					mostRecentEdit = EditBlockList[EditBlockIndex];
 
-					if (mostRecentEdit.EditKind == TextEditorEditKind.Other)
+					if (mostRecentEdit.EditKind == TextEditorEditKind.OtherOpen)
 					{
-						// Nothing needs to be done when the tags don't match
-						// other than continuing the while loop.
-						//
-						// Given that the 'CloseOtherEdit(...)'
-						// will throw an exception when attempting to close a mismatching other edit.
-						//
-						// Finding the opening to the child 'other edit' is irrelevant since it is encompassed
-						// within the parent.
 						if (mostRecentEdit.Tag == undoEdit.Tag)
 						{
 							// Need to go one further than the opening,
@@ -812,7 +806,8 @@ public partial class TextEditorModel
 			case TextEditorEditKind.Delete: 
 				PerformDelete(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
-			case TextEditorEditKind.Other:
+			case TextEditorEditKind.OtherOpen:
+			case TextEditorEditKind.OtherClose:
 				while (true)
 				{
 					if (EditBlockIndex >= EditBlockList.Count - 1)
@@ -826,7 +821,7 @@ public partial class TextEditorModel
 
 					var nextEdit = EditBlockList[EditBlockIndex + 1];
 
-					if (nextEdit.EditKind == TextEditorEditKind.Other)
+					if (nextEdit.EditKind == TextEditorEditKind.OtherClose)
 					{
 						// Regardless of the tag of the next edit. One will need to increment EditIndex.
 						EditBlockIndex++;

@@ -50,8 +50,10 @@ public struct TextEditorEdit
 				break;
 			case TextEditorEditKind.Constructor:
 				throw new LuthetusTextEditorException($"The {nameof(TextEditorEditKind)}: {EditKind}, cannot be un-done. This edit represents the initial state.");
-			case TextEditorEditKind.Other:
-				throw new NotImplementedException("TODO: TextEditorEditKind.Other");
+			case TextEditorEditKind.OtherOpen:
+				throw new NotImplementedException("TODO: TextEditorEditKind.OtherOpen");
+			case TextEditorEditKind.OtherClose:
+				throw new NotImplementedException("TODO: TextEditorEditKind.OtherClose");
 			default:
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {EditKind} was not recognized.");
 		}
@@ -84,7 +86,8 @@ public struct TextEditorEdit
 					ContentBuilder);
 			case TextEditorEditKind.Constructor:
 				throw new LuthetusTextEditorException($"The {nameof(TextEditorEditKind)}: {EditKind}, cannot be un-done. This edit represents the initial state.");
-			case TextEditorEditKind.Other:
+			case TextEditorEditKind.OtherOpen:
+			case TextEditorEditKind.OtherClose:
 				// Other will return itself, and this signals to the undo code to enter a while loop
 				// and continually undo until it encounters a different Other edit with a matching Tag.
 				return this;
