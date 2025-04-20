@@ -109,13 +109,13 @@ public partial class TextEditorModel
 	    _allText = other._allText;
 	    _charCount = other._charCount;
 	    
-	    /*if (other.ShouldReloadVirtualizationResult)
+	    if (other.ShouldReloadVirtualizationResult)
 	    {
 	    	WriteEditBlockListToConsole();
-	    }*/
+	    }
     }
     
-    /*private void WriteEditBlockListToConsole()
+    private void WriteEditBlockListToConsole()
     {
     	Console.WriteLine($"Index:{EditBlockIndex}, Count:{EditBlockList.Count}, TagDoNotRemove:{(TagDoNotRemove is null ? "null" : TagDoNotRemove)} MAXIMUM_EDIT_BLOCKS:{MAXIMUM_EDIT_BLOCKS} ResourceUri:{ResourceUri.Value}");
     	
@@ -130,7 +130,7 @@ public partial class TextEditorModel
     		Console.WriteLine($"\t\tPositionIndex:  {entry.PositionIndex}");
     		Console.WriteLine($"\t\tContentBuilder: {entry.ContentBuilder}");
     	}
-    }*/
+    }
 	
 	/// <summary>
 	/// You have to check if the '_partitionListChanged'
@@ -599,6 +599,7 @@ public partial class TextEditorModel
 	public void EnsureUndoPoint(TextEditorEdit newEdit)
 	{
 		// Clear redo history
+		// TODO: Check how this interacts with an 'Other' edit group. (2025-04-20)
 		if (EditBlockIndex < EditBlockList.Count - 1)
 		{
 			for (int i = EditBlockIndex + 1; i < EditBlockList.Count; i++)
@@ -726,35 +727,16 @@ public partial class TextEditorModel
 				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.OtherOpen:
+				break;
 			case TextEditorEditKind.OtherClose:
 				while (true)
 				{
-					if (EditBlockIndex == 0)
-					{
-						// TODO: How does one handle the 'undo limit'...
-						//       ...with respect to 'other' edits?
-						//       If one does an 'other edit' with more child edits than
-						//       the amount of undo history one can have.
-						//
-						//       Then it would be impossible
-						//       to handle that 'other edit' properly.
-						//
-						//       Furthermore, one could have a small 'other edit' yet,
-						//       by way of future edits moving the undo history,
-						//       the 'other edit' opening will be lost.
-						break;
-					}
-
 					mostRecentEdit = EditBlockList[EditBlockIndex];
 
 					if (mostRecentEdit.EditKind == TextEditorEditKind.OtherOpen)
 					{
 						if (mostRecentEdit.Tag == undoEdit.Tag)
-						{
-							// Need to go one further than the opening,
-							EditBlockIndex--;
 							break;
-						}
 					}
 					else
 					{
@@ -792,9 +774,16 @@ public partial class TextEditorModel
 		if (EditBlockIndex >= EditBlockList.Count - 1)
 			throw new LuthetusTextEditorException("No edits are available to perform 'redo' on");
 
-		EditBlockIndex++;
-		var redoEdit = EditBlockList[EditBlockIndex];
+		TextEditorEdit redoEdit;
 
+		Console.WriteLine($"EditBlockIndex: {EditBlockIndex}");
+
+		// TODO: Ensure nested other tags will redo properly?
+		if (EditBlockList[EditBlockIndex].EditKind != TextEditorEditKind.OtherOpen)
+			EditBlockIndex++;
+		
+		redoEdit = EditBlockList[EditBlockIndex];
+		
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
@@ -807,7 +796,9 @@ public partial class TextEditorModel
 				PerformDelete(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.OtherOpen:
-			case TextEditorEditKind.OtherClose:
+			
+				EditBlockIndex++;
+			
 				while (true)
 				{
 					if (EditBlockIndex >= EditBlockList.Count - 1)
@@ -823,17 +814,18 @@ public partial class TextEditorModel
 
 					if (nextEdit.EditKind == TextEditorEditKind.OtherClose)
 					{
-						// Regardless of the tag of the next edit. One will need to increment EditIndex.
-						EditBlockIndex++;
-
 						if (nextEdit.Tag == redoEdit.Tag)
 							break;
+						else
+						    EditBlockIndex++;
 					}
 					else
 					{
 						RedoEditWithUserCursor(cursorModifierBag);
 					}
 				}
+				break;
+			case TextEditorEditKind.OtherClose:
 				break;
 			default:
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {redoEdit.EditKind} was not recognized.");
