@@ -697,10 +697,10 @@ public partial class TextEditorModel
 			Key<TextEditorViewModel>.Empty,
 			new(TextEditorCursor.Empty));
 			
-		UndoEditWithUserCursor(cursorModifierBag);
+		UndoEditWithCursor(cursorModifierBag);
 	}
 
-	public void UndoEditWithUserCursor(CursorModifierBagTextEditor cursorModifierBag)
+	public void UndoEditWithCursor(CursorModifierBagTextEditor cursorModifierBag)
 	{
 		if (EditBlockIndex <= 0)
 			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
@@ -740,7 +740,7 @@ public partial class TextEditorModel
 					}
 					else
 					{
-						UndoEditWithUserCursor(cursorModifierBag);
+						UndoEditWithCursor(cursorModifierBag);
 						RestoreCursor(cursorModifierBag, undoEdit);
 					}
 				}
@@ -765,10 +765,10 @@ public partial class TextEditorModel
 			Key<TextEditorViewModel>.Empty,
 			new(TextEditorCursor.Empty));
 	
-		RedoEditWithUserCursor(cursorModifierBag);
+		RedoEditWithCursor(cursorModifierBag);
 	}
 
-	public void RedoEditWithUserCursor(CursorModifierBagTextEditor cursorModifierBag)
+	public void RedoEditWithCursor(CursorModifierBagTextEditor cursorModifierBag)
 	{
 		// If there is no next then throw exception
 		if (EditBlockIndex >= EditBlockList.Count - 1)
@@ -776,9 +776,6 @@ public partial class TextEditorModel
 
 		TextEditorEdit redoEdit;
 
-		Console.WriteLine($"EditBlockIndex: {EditBlockIndex}");
-
-		// TODO: Ensure nested other tags will redo properly?
 		if (EditBlockList[EditBlockIndex].EditKind != TextEditorEditKind.OtherOpen)
 			EditBlockIndex++;
 		
@@ -821,7 +818,7 @@ public partial class TextEditorModel
 					}
 					else
 					{
-						RedoEditWithUserCursor(cursorModifierBag);
+						RedoEditWithCursor(cursorModifierBag);
 					}
 				}
 				break;

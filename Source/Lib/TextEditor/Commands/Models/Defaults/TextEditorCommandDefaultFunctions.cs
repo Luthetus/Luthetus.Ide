@@ -139,7 +139,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-        modelModifier.UndoEditWithUserCursor(cursorModifierBag);
+        modelModifier.UndoEditWithCursor(cursorModifierBag);
     }
 
     public static void Redo(
@@ -148,7 +148,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-		modelModifier.RedoEditWithUserCursor(cursorModifierBag);
+		modelModifier.RedoEditWithCursor(cursorModifierBag);
     }
 
     public static void TriggerRemeasure(
