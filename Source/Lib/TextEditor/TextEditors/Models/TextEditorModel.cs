@@ -527,6 +527,7 @@ public partial class TextEditorModel
             	{
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, LineEndKind.CarriageReturnLineFeed));
 	            	richCharacterList.Add(new(character, default));
+	            	richCharacterList.Add(new('\n', default));
 	            	richCharacterIndex += 2;
             	}
             	else if (LineEndKindPreference == LineEndKind.CarriageReturn)
