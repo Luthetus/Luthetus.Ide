@@ -6,11 +6,11 @@ namespace Luthetus.TextEditor.RazorLib.Edits.Models;
 
 public struct TextEditorEdit
 {
-	public TextEditorEdit(TextEditorEditKind editKind, string tag, TextEditorCursor cursor, int positionIndex, StringBuilder? contentBuilder)
+	public TextEditorEdit(TextEditorEditKind editKind, string tag, TextEditorCursor beforeCursor, int positionIndex, StringBuilder? contentBuilder)
 	{
 		EditKind = editKind;
 		Tag = tag;
-		Cursor = cursor;
+		BeforeCursor = beforeCursor;
 		PositionIndex = positionIndex;
 		ContentBuilder = contentBuilder;
 	}
@@ -23,7 +23,7 @@ public struct TextEditorEdit
 	/// Whether the 'Cursor' position index is equal to the 'PositionIndex' property on this type,
 	/// I'm not sure. So I'm keeping the separate 'PositionIndex' for now.
 	/// </summary>
-	public TextEditorCursor Cursor { get; }
+	public TextEditorCursor BeforeCursor { get; }
 	
 	/// <summary>
 	/// The TextEditorEditKind(s) { Constructor, Other } will have a null ContentBuilder.
@@ -67,21 +67,21 @@ public struct TextEditorEdit
 				return new TextEditorEdit(
 					TextEditorEditKind.Delete,
 					tag: string.Empty,
-					Cursor,
+					BeforeCursor,
 					PositionIndex,
 					ContentBuilder);
 			case TextEditorEditKind.Backspace:
 				return new TextEditorEdit(
 					TextEditorEditKind.Insert,
 					tag: string.Empty,
-					Cursor,
+					BeforeCursor,
 					PositionIndex - ContentBuilder.Length,
 					ContentBuilder);
 			case TextEditorEditKind.Delete:
 				return new TextEditorEdit(
 					TextEditorEditKind.Insert,
 					tag: string.Empty,
-					Cursor,
+					BeforeCursor,
 					PositionIndex,
 					ContentBuilder);
 			case TextEditorEditKind.Constructor:

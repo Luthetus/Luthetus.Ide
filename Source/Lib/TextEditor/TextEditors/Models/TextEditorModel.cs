@@ -109,13 +109,13 @@ public partial class TextEditorModel
 	    _allText = other._allText;
 	    _charCount = other._charCount;
 	    
-	    if (other.ShouldReloadVirtualizationResult)
+	    /*if (other.ShouldReloadVirtualizationResult)
 	    {
 	    	WriteEditBlockListToConsole();
-	    }
+	    }*/
     }
     
-    private void WriteEditBlockListToConsole()
+    /*private void WriteEditBlockListToConsole()
     {
     	Console.WriteLine($"Index:{EditBlockIndex}, Count:{EditBlockList.Count}, TagDoNotRemove:{(TagDoNotRemove is null ? "null" : TagDoNotRemove)} MAXIMUM_EDIT_BLOCKS:{MAXIMUM_EDIT_BLOCKS} ResourceUri:{ResourceUri.Value}");
     	
@@ -126,11 +126,11 @@ public partial class TextEditorModel
     		Console.WriteLine($"\tIndex: {i}:");
     		Console.WriteLine($"\t\tEditKind:       {entry.EditKind}");
     		Console.WriteLine($"\t\tTag:            {entry.Tag}");
-    		Console.WriteLine($"\t\tCursor:         {entry.Cursor}");
+    		Console.WriteLine($"\t\tCursor:         {entry.BeforeCursor}");
     		Console.WriteLine($"\t\tPositionIndex:  {entry.PositionIndex}");
     		Console.WriteLine($"\t\tContentBuilder: {entry.ContentBuilder}");
     	}
-    }
+    }*/
 	
 	/// <summary>
 	/// You have to check if the '_partitionListChanged'
@@ -707,7 +707,7 @@ public partial class TextEditorModel
 
 		var mostRecentEdit = EditBlockList[EditBlockIndex];
 		var undoEdit = mostRecentEdit.ToUndo();
-		RestoreCursor(cursorModifierBag, undoEdit);
+		RestoreBeforeCursor(cursorModifierBag, undoEdit);
 		
 		// In case the 'ToUndo(...)' throws an exception, the decrement to the EditIndex
 		// is being done only after a successful ToUndo(...)
@@ -717,15 +717,12 @@ public partial class TextEditorModel
 		{
 			case TextEditorEditKind.Insert:
 				PerformInsert(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.ToString());
-				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
 				PerformBackspace(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
-				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Delete: 
 				PerformDelete(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
-				RestoreCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				break;
@@ -774,7 +771,7 @@ public partial class TextEditorModel
 			EditBlockIndex++;
 		
 		redoEdit = EditBlockList[EditBlockIndex];
-		RestoreCursor(cursorModifierBag, redoEdit);
+		RestoreBeforeCursor(cursorModifierBag, redoEdit);
 		
 		switch (redoEdit.EditKind)
 		{
@@ -818,13 +815,13 @@ public partial class TextEditorModel
 		}
 	}
 	
-	private void RestoreCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit edit)
+	private void RestoreBeforeCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit edit)
 	{
-		cursorModifierBag.CursorModifier.LineIndex = edit.Cursor.LineIndex;
-		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(edit.Cursor.ColumnIndex);
+		cursorModifierBag.CursorModifier.LineIndex = edit.BeforeCursor.LineIndex;
+		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(edit.BeforeCursor.ColumnIndex);
 		
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = edit.Cursor.Selection.AnchorPositionIndex;
-		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = edit.Cursor.Selection.EndingPositionIndex;
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = edit.BeforeCursor.Selection.AnchorPositionIndex;
+		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = edit.BeforeCursor.Selection.EndingPositionIndex;
 	}
 	#endregion
 	
@@ -1373,6 +1370,8 @@ public partial class TextEditorModel
 					TextEditorEditKind.Delete,
 					tag: string.Empty,
 					originalCursor,
+					// Why is Delete using 'positionIndex'
+					// meanwhile Backspace is using 'initialPositionIndex'?
 					positionIndex,
 					new StringBuilder(textRemoved)));
 			}
