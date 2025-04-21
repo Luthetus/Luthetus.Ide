@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -7,10 +8,12 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -31,6 +34,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private bool _lastSeenShowFindOverlayValue = false;
     private bool _lastFindOverlayValueExternallyChangedMarker = false;
     private string _inputValue = string.Empty;
+    private string _inputReplace = string.Empty;
     private int? _activeIndexMatchedTextSpan = null;
 
     private Throttle _throttleInputValueChange = new Throttle(TimeSpan.FromMilliseconds(150));
@@ -99,6 +103,32 @@ public partial class FindOverlayDisplay : ComponentBase
             });
         }
     }
+    
+    private string InputReplace
+    {
+        get => _inputReplace;
+        set
+        {
+	    	var renderBatchLocal = RenderBatch;
+	    	if (renderBatchLocal is null)
+	    		return;
+        
+            _inputReplace = value;
+            
+        	TextEditorService.WorkerArbitrary.PostUnique(
+                nameof(FindOverlayDisplay),
+                editContext =>
+                {
+                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+
+                    if (viewModelModifier is null)
+                        return ValueTask.CompletedTask;
+
+                    viewModelModifier.ReplaceValueInFindOverlay = value;
+                    return ValueTask.CompletedTask;
+                });
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -128,6 +158,7 @@ public partial class FindOverlayDisplay : ComponentBase
         {
         	_lastFindOverlayValueExternallyChangedMarker = renderBatchLocal.ViewModel.FindOverlayValueExternallyChangedMarker;
         	InputValue = renderBatchLocal.ViewModel.FindOverlayValue;
+        	InputReplace = renderBatchLocal.ViewModel.ReplaceValueInFindOverlay;
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -348,5 +379,145 @@ public partial class FindOverlayDisplay : ComponentBase
                 return ValueTask.CompletedTask;
             });
 		return Task.CompletedTask;
+    }
+    
+    private void ToggleShowReplace()
+    {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+    	TextEditorService.WorkerArbitrary.PostRedundant(
+            nameof(FindOverlayDisplay),
+			renderBatchLocal.ViewModel.ResourceUri,
+            renderBatchLocal.ViewModel.ViewModelKey,
+            (TextEditorEditContext editContext) =>
+            {
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+
+                if (viewModelModifier is null)
+                    return ValueTask.CompletedTask;
+
+                viewModelModifier.ShowReplaceButtonInFindOverlay = !viewModelModifier.ShowReplaceButtonInFindOverlay;
+
+                return ValueTask.CompletedTask;
+            });
+    }
+    
+    private void ReplaceCurrent()
+    {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    
+    	TextEditorService.WorkerArbitrary.PostRedundant(
+            nameof(FindOverlayDisplay),
+			renderBatchLocal.ViewModel.ResourceUri,
+            renderBatchLocal.ViewModel.ViewModelKey,
+            (TextEditorEditContext editContext) =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+                var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
+
+                if (modelModifier is null || viewModelModifier is null || localActiveIndexMatchedTextSpan is null)
+                    return ValueTask.CompletedTask;
+
+                var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+                if (presentationModel?.CompletedCalculation is null)
+                	return ValueTask.CompletedTask;
+
+                var targetTextSpan = presentationModel.CompletedCalculation.TextSpanList[localActiveIndexMatchedTextSpan.Value];
+                
+                var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+                	targetTextSpan.StartingIndexInclusive);
+                	
+                cursorModifierBag.CursorModifier.LineIndex = lineIndex;
+                cursorModifierBag.CursorModifier.ColumnIndex = columnIndex;
+                
+                modelModifier.Delete(
+			        cursorModifierBag,
+			        columnCount: targetTextSpan.Length,
+			        expandWord: false,
+			        TextEditorModel.DeleteKind.Delete);
+			        
+			    modelModifier.Insert(
+			        viewModelModifier.ReplaceValueInFindOverlay,
+			        cursorModifierBag);
+
+                return ValueTask.CompletedTask;
+            });
+    }
+    
+    private void ReplaceAll()
+    {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    
+    	TextEditorService.WorkerArbitrary.PostRedundant(
+            nameof(FindOverlayDisplay),
+			renderBatchLocal.ViewModel.ResourceUri,
+            renderBatchLocal.ViewModel.ViewModelKey,
+            (TextEditorEditContext editContext) =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+                var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
+
+                if (modelModifier is null || viewModelModifier is null || localActiveIndexMatchedTextSpan is null)
+                    return ValueTask.CompletedTask;
+
+                var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
+                    x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+                if (presentationModel?.CompletedCalculation is null)
+                	return ValueTask.CompletedTask;
+                
+                modelModifier.EnsureUndoPoint(new TextEditorEdit(
+                	TextEditorEditKind.OtherOpen,
+                	"ReplaceAll",
+                	modelModifier.GetPositionIndex(cursorModifierBag.CursorModifier),
+                	cursorModifierBag.CursorModifier.ToCursor(),
+                	cursorModifierBag.CursorModifier.ToCursor(),
+                	editedTextBuilder: null));
+                
+                for (int i = presentationModel.CompletedCalculation.TextSpanList.Count - 1; i >= 0; i--)
+                {
+                	var targetTextSpan = presentationModel.CompletedCalculation.TextSpanList[i];
+                	
+	                var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+	                	targetTextSpan.StartingIndexInclusive);
+	                	
+	                cursorModifierBag.CursorModifier.LineIndex = lineIndex;
+	                cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
+	                
+	                cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
+	                
+	                modelModifier.Delete(
+				        cursorModifierBag,
+				        columnCount: targetTextSpan.Length,
+				        expandWord: false,
+				        TextEditorModel.DeleteKind.Delete);
+				        
+				    modelModifier.Insert(
+				        viewModelModifier.ReplaceValueInFindOverlay,
+				        cursorModifierBag);
+                }
+                
+                modelModifier.EnsureUndoPoint(new TextEditorEdit(
+                	TextEditorEditKind.OtherClose,
+                	"ReplaceAll",
+                	modelModifier.GetPositionIndex(cursorModifierBag.CursorModifier),
+                	cursorModifierBag.CursorModifier.ToCursor(),
+                	cursorModifierBag.CursorModifier.ToCursor(),
+                	editedTextBuilder: null));
+
+                return ValueTask.CompletedTask;
+            });
     }
 }

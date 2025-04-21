@@ -313,7 +313,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
         if (keymapArgs.ShiftKey)
         {
-            if (cursorModifier.SelectionAnchorPositionIndex is null ||
+            if (cursorModifier.SelectionAnchorPositionIndex == -1 ||
                 cursorModifier.SelectionEndingPositionIndex == cursorModifier.SelectionAnchorPositionIndex)
             {
                 var positionIndex = modelModifier.GetPositionIndex(
@@ -621,7 +621,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         else if (!keymapArgs.ShiftKey && shouldClearSelection)
         {
             // The active selection is needed, and cannot be touched until the end.
-            cursorModifier.SelectionAnchorPositionIndex = null;
+            cursorModifier.SelectionAnchorPositionIndex = -1;
             cursorModifier.SelectionEndingPositionIndex = 0;
         }
     }
