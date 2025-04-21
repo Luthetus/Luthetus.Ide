@@ -759,7 +759,7 @@ public partial class TextEditorModel
 		RedoEditWithCursor(cursorModifierBag);
 	}
 
-	public void RedoEditWithCursor(CursorModifierBagTextEditor cursorModifierBag)
+	public void RedoEditWithCursor(CursorModifierBagTextEditor cursorModifierBag, bool recursive = false)
 	{
 		// If there is no next then throw exception
 		if (EditBlockIndex >= EditBlockList.Count - 1)
@@ -767,7 +767,7 @@ public partial class TextEditorModel
 
 		TextEditorEdit redoEdit;
 
-		if (EditBlockList[EditBlockIndex].EditKind != TextEditorEditKind.OtherOpen)
+		if (recursive || EditBlockList[EditBlockIndex].EditKind != TextEditorEditKind.OtherOpen)
 			EditBlockIndex++;
 		
 		redoEdit = EditBlockList[EditBlockIndex];
@@ -785,9 +785,6 @@ public partial class TextEditorModel
 				PerformDelete(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.OtherOpen:
-			
-				EditBlockIndex++;
-			
 				while (true)
 				{
 					if (EditBlockIndex >= EditBlockList.Count - 1)
@@ -809,7 +806,7 @@ public partial class TextEditorModel
 					}
 					else
 					{
-						RedoEditWithCursor(cursorModifierBag);
+						RedoEditWithCursor(cursorModifierBag, recursive: true);
 					}
 				}
 				break;
