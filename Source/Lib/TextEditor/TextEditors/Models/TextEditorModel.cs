@@ -707,6 +707,7 @@ public partial class TextEditorModel
 
 		var mostRecentEdit = EditBlockList[EditBlockIndex];
 		var undoEdit = mostRecentEdit.ToUndo();
+		RestoreCursor(cursorModifierBag, undoEdit);
 		
 		// In case the 'ToUndo(...)' throws an exception, the decrement to the EditIndex
 		// is being done only after a successful ToUndo(...)
@@ -731,6 +732,9 @@ public partial class TextEditorModel
 			case TextEditorEditKind.OtherClose:
 				while (true)
 				{
+					if (EditBlockIndex <= 0)
+						break;
+				
 					mostRecentEdit = EditBlockList[EditBlockIndex];
 
 					if (mostRecentEdit.EditKind == TextEditorEditKind.OtherOpen)
@@ -741,22 +745,12 @@ public partial class TextEditorModel
 					else
 					{
 						UndoEditWithCursor(cursorModifierBag);
-						RestoreCursor(cursorModifierBag, undoEdit);
 					}
 				}
 				break;
 			default:
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {undoEdit.EditKind} was not recognized.");
 		}
-	}
-	
-	private void RestoreCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit undoEdit)
-	{
-		cursorModifierBag.CursorModifier.LineIndex = undoEdit.Cursor.LineIndex;
-		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(undoEdit.Cursor.ColumnIndex);
-		
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = undoEdit.Cursor.Selection.AnchorPositionIndex;
-		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = undoEdit.Cursor.Selection.EndingPositionIndex;
 	}
 	
 	public void RedoEdit()
@@ -780,6 +774,7 @@ public partial class TextEditorModel
 			EditBlockIndex++;
 		
 		redoEdit = EditBlockList[EditBlockIndex];
+		RestoreCursor(cursorModifierBag, redoEdit);
 		
 		switch (redoEdit.EditKind)
 		{
@@ -799,13 +794,7 @@ public partial class TextEditorModel
 				while (true)
 				{
 					if (EditBlockIndex >= EditBlockList.Count - 1)
-					{
-						// The 'Redo()' method deals with the next-edit
-						// as opposed to the 'Undo()' method that deals with the current-edit
-						//
-						// Therefore, if there is no 'next-edit' then break out
 						break;
-					}
 
 					var nextEdit = EditBlockList[EditBlockIndex + 1];
 
@@ -827,6 +816,15 @@ public partial class TextEditorModel
 			default:
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {redoEdit.EditKind} was not recognized.");
 		}
+	}
+	
+	private void RestoreCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit edit)
+	{
+		cursorModifierBag.CursorModifier.LineIndex = edit.Cursor.LineIndex;
+		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(edit.Cursor.ColumnIndex);
+		
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = edit.Cursor.Selection.AnchorPositionIndex;
+		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = edit.Cursor.Selection.EndingPositionIndex;
 	}
 	#endregion
 	
