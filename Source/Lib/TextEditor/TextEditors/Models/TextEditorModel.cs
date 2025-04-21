@@ -795,12 +795,17 @@ public partial class TextEditorModel
 
 					var nextEdit = EditBlockList[EditBlockIndex + 1];
 
-					if (nextEdit.EditKind == TextEditorEditKind.OtherClose)
+					if (nextEdit.EditKind == TextEditorEditKind.OtherOpen)
 					{
+						// Ignore nested 'OtherOpen'.
+						EditBlockIndex++;
+					}
+					else if (nextEdit.EditKind == TextEditorEditKind.OtherClose)
+					{
+						EditBlockIndex++;
+					
 						if (nextEdit.Tag == redoEdit.Tag)
 							break;
-						else
-						    EditBlockIndex++;
 					}
 					else
 					{
