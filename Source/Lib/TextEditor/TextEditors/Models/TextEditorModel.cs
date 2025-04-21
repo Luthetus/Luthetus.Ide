@@ -484,83 +484,175 @@ public partial class TextEditorModel
 		
         var rowIndex = 0;
         var charactersOnRow = 0;
+
         
+
         List<RichCharacter> richCharacterList = new();
+
         var richCharacterIndex = 0;
+
         
+
         for (var contentIndex = 0; contentIndex < content.Length; contentIndex++)
         {
             var character = content[contentIndex];
+
             charactersOnRow++;
+
             
+
             LineEndKind currentLineEndKind = LineEndKind.Unset;
+
             
+
             if ((character == '\r') && (contentIndex < content.Length - 1) && (content[contentIndex + 1] == '\n'))
+
             {
+
             	contentIndex++;
+
             	currentLineEndKind = LineEndKind.CarriageReturnLineFeed;
+
             	
+
             	if (LineEndKindPreference == LineEndKind.Unset)
+
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
+
             }
+
             else if (character == '\r')
+
             {
+
             	currentLineEndKind = LineEndKind.CarriageReturn;
+
             	
+
             	if (LineEndKindPreference == LineEndKind.Unset)
+
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
+
             }
+
             else if (character == '\n')
+
             {
+
             	currentLineEndKind = LineEndKind.LineFeed;
+
             	
+
             	if (LineEndKindPreference == LineEndKind.Unset)
+
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
+
             }
+
             
+
             if (currentLineEndKind != LineEndKind.Unset)
+
             {
+
 				if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+
 					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
             
+
             	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
+
             	{
+
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, LineEndKind.CarriageReturnLineFeed));
+
 	            	richCharacterList.Add(new(character, default));
+
 	            	richCharacterList.Add(new('\n', default));
+
 	            	richCharacterIndex += 2;
+
             	}
+
             	else if (LineEndKindPreference == LineEndKind.CarriageReturn)
+
             	{
+
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.CarriageReturn));
+
 					richCharacterList.Add(new(character, default));
+
 	            	richCharacterIndex++;
+
             	}
+
             	else if (LineEndKindPreference == LineEndKind.LineFeed)
+
             	{
+
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.LineFeed));
+
 					richCharacterList.Add(new(character, default));
+
 	            	richCharacterIndex++;
+
             	}
+
             	else
+
             	{
+
             		throw new NotImplementedException("only CarriageReturnLineFeed, CarriageReturn, and LineFeed are expected.");
+
             	}
+
 				
+
 				rowIndex++;
+
 	            charactersOnRow = 0;
+
             }
 			else if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+
 			{
                 TabKeyPositionList.Add(richCharacterIndex);
+
                 richCharacterList.Add(new(character, default));
+
             	richCharacterIndex++;
+
             }
+
             else
+
             {
+
             	richCharacterList.Add(new(character, default));
+
             	richCharacterIndex++;
+
             }
+        }
+        
+        if (LineEndKindPreference == LineEndKind.Unset)
+        {
+        	switch (Environment.NewLine)
+        	{
+        		case "\r":
+        			LineEndKindPreference = LineEndKind.CarriageReturn;
+        			break;
+        		case "\n":
+        			LineEndKindPreference = LineEndKind.LineFeed;
+        			break;
+        		case "\r\n":
+        			LineEndKindPreference = LineEndKind.CarriageReturnLineFeed;
+        			break;
+        		default:
+        			LineEndKindPreference = LineEndKind.LineFeed;
+        			break;
+        	}
         }
 
         __InsertRange(0, richCharacterList);
@@ -843,19 +935,30 @@ public partial class TextEditorModel
         OnlyLineEndKind = LineEndKind.Unset;
     }
 
-    public void SetLineEndKindPreference(LineEndKind rowEndingKind)
+    public void SetLineEndKindPreference(LineEndKind lineEndKind)
     {
-    	if (LineEndKindPreference == rowEndingKind)
+
+    	if (LineEndKindPreference == lineEndKind)
+
 	    	return;
+
     	
-        LineEndKindPreference = rowEndingKind;
+        LineEndKindPreference = lineEndKind;
+
         
-        if (rowEndingKind == LineEndKind.CarriageReturnLineFeed ||
-        	rowEndingKind == LineEndKind.CarriageReturn ||
-        	rowEndingKind == LineEndKind.LineFeed)
+
+        if (lineEndKind == LineEndKind.CarriageReturnLineFeed ||
+
+        	lineEndKind == LineEndKind.CarriageReturn ||
+
+        	lineEndKind == LineEndKind.LineFeed)
+
         {
-        	SetContent(AllText.ReplaceLineEndings(rowEndingKind.AsCharacters()));
+
+        	SetContent(AllText.ReplaceLineEndings(lineEndKind.AsCharacters()));
+
         }
+
     }
 
     public void SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
