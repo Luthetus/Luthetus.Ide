@@ -23,6 +23,9 @@
         <div class="luth_te_find-overlay-top-row"
              style="display: flex;">
              
+        	@*
+        	Comment out the find and replace (2025-04-12)
+        	
         	<button class="luth_button"
                     style="margin-left: 5px;"
                     @onclick="ToggleShowReplace"
@@ -41,6 +44,7 @@
                 	@IconChevronRightFragment.Render(iconDriver)
                 }
             </button>
+            *@
         
             <input @bind="InputValue"
                    @bind:event="oninput"
@@ -49,6 +53,9 @@
                    placeholder="Find..." />
          </div>
          
+        @*
+        Comment out the find and replace (2025-04-12)
+        
         @if (renderBatchLocal.ViewModel.ShowReplaceButtonInFindOverlay)
         {
 	        <div class="luth_te_find-overlay-replace-row">
@@ -82,6 +89,7 @@
                 </button>
 	        </div>
         }
+        *@
 
         <div class="luth_te_find-overlay-bottom-row">
             @{
