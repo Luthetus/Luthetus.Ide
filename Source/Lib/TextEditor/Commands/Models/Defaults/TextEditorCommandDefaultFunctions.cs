@@ -139,7 +139,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-        modelModifier.UndoEdit();
+        modelModifier.UndoEditWithCursor(cursorModifierBag);
     }
 
     public static void Redo(
@@ -148,7 +148,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-		modelModifier.RedoEdit();
+		modelModifier.RedoEditWithCursor(cursorModifierBag);
     }
 
     public static void TriggerRemeasure(
@@ -340,7 +340,7 @@ public class TextEditorCommandDefaultFunctions
     	
     	(int lowerRowIndexInclusive, int upperRowIndexExclusive) selectionBoundsInRowIndexUnits;
     
-    	if (primaryCursorModifier.SelectionAnchorPositionIndex is null)
+    	if (primaryCursorModifier.SelectionAnchorPositionIndex == -1)
     	{
     		selectionBoundsInRowIndexUnits = (primaryCursorModifier.LineIndex, primaryCursorModifier.LineIndex + 1);
     	}
@@ -433,7 +433,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
-        primaryCursorModifier.SelectionAnchorPositionIndex = null;
+        primaryCursorModifier.SelectionAnchorPositionIndex = -1;
     }
 
     public static void NewLineBelow(
@@ -443,7 +443,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
-        primaryCursorModifier.SelectionAnchorPositionIndex = null;
+        primaryCursorModifier.SelectionAnchorPositionIndex = -1;
 
         var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
 
@@ -486,7 +486,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag)
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
-        primaryCursorModifier.SelectionAnchorPositionIndex = null;
+        primaryCursorModifier.SelectionAnchorPositionIndex = -1;
             
         var originalColumnIndex = primaryCursorModifier.ColumnIndex;
 
@@ -557,8 +557,7 @@ public class TextEditorCommandDefaultFunctions
 
 			modelModifier.Insert(
 				value: currentLineContent,
-				cursorModifierBag: innerCursorModifierBag,
-				useLineEndKindPreference: false);
+				cursorModifierBag: innerCursorModifierBag);
 		}
 
 		// Delete
@@ -611,8 +610,7 @@ public class TextEditorCommandDefaultFunctions
 
 			modelModifier.Insert(
 				value: currentLineContent,
-				cursorModifierBag: innerCursorModifierBag,
-				useLineEndKindPreference: false);
+				cursorModifierBag: innerCursorModifierBag);
 		}
 
 		// Delete
@@ -657,7 +655,7 @@ public class TextEditorCommandDefaultFunctions
         }
         else
         {
-            primaryCursorModifier.SelectionAnchorPositionIndex = null;
+            primaryCursorModifier.SelectionAnchorPositionIndex = -1;
         }
 
         var previousCharacter = modelModifier.GetCharacter(cursorPositionIndex - 1);
