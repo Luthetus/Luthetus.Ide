@@ -848,7 +848,13 @@ public partial class TextEditorModel
 	    	return;
     	
         LineEndKindPreference = rowEndingKind;
-        SetContent(AllText.ReplaceLineEndings(rowEndingKind.AsCharacters()));
+        
+        if (rowEndingKind == LineEndKind.CarriageReturnLineFeed ||
+        	rowEndingKind == LineEndKind.CarriageReturn ||
+        	rowEndingKind == LineEndKind.LineFeed)
+        {
+        	SetContent(AllText.ReplaceLineEndings(rowEndingKind.AsCharacters()));
+        }
     }
 
     public void SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
