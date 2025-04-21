@@ -486,8 +486,9 @@ public partial class TextEditorModel
 			EditBlockList.Add(new TextEditorEdit(
 				TextEditorEditKind.Constructor,
 				tag: string.Empty,
-				TextEditorCursor.Empty,
 				0,
+				TextEditorCursor.Empty,
+				TextEditorCursor.Empty,
 				contentBuilder: null));
 		}
 		
@@ -617,7 +618,7 @@ public partial class TextEditorModel
 			{
 				// Batch if consecutive && contiguous.
 				if ((previousEdit.EditKind == TextEditorEditKind.Insert) &&
-				    (newEdit.PositionIndex == previousEdit.PositionIndex + previousEdit.ContentBuilder.Length))
+				    (newEdit.BeforePositionIndex == previousEdit.BeforePositionIndex + previousEdit.ContentBuilder.Length))
 				{
 					previousEdit.ContentBuilder!.Append(newEdit.ContentBuilder!.ToString());
 					break;
@@ -630,7 +631,7 @@ public partial class TextEditorModel
 			{
 				// Batch if consecutive && contiguous.
 				if ((previousEdit.EditKind == TextEditorEditKind.Backspace) &&
-				    (newEdit.PositionIndex == previousEdit.PositionIndex - previousEdit.ContentBuilder!.Length))
+				    (newEdit.BeforePositionIndex == previousEdit.BeforePositionIndex - previousEdit.ContentBuilder!.Length))
 				{
 					previousEdit.Add(newEdit.ContentBuilder!.ToString());
 					break;
@@ -643,7 +644,7 @@ public partial class TextEditorModel
 			{
 				// Batch if consecutive && contiguous.
 				if ((previousEdit.EditKind == TextEditorEditKind.Delete) &&
-				    (newEdit.PositionIndex == previousEdit.PositionIndex))
+				    (newEdit.BeforePositionIndex == previousEdit.BeforePositionIndex))
 				{
 					previousEdit.Add(newEdit.ContentBuilder!.ToString());
 					break;
@@ -707,7 +708,7 @@ public partial class TextEditorModel
 
 		var mostRecentEdit = EditBlockList[EditBlockIndex];
 		var undoEdit = mostRecentEdit.ToUndo();
-		RestoreBeforeCursor(cursorModifierBag, undoEdit);
+		RestoreAfterCursor(cursorModifierBag, undoEdit);
 		
 		// In case the 'ToUndo(...)' throws an exception, the decrement to the EditIndex
 		// is being done only after a successful ToUndo(...)
@@ -716,13 +717,16 @@ public partial class TextEditorModel
 		switch (undoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				PerformInsert(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.ToString());
+				PerformInsert(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.ContentBuilder.ToString());
+				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
 				break;
 			case TextEditorEditKind.Backspace:
-				PerformBackspace(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
+				PerformBackspace(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.ContentBuilder.Length);
+				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
 				break;
 			case TextEditorEditKind.Delete: 
-				PerformDelete(cursorModifierBag, undoEdit.PositionIndex, undoEdit.ContentBuilder.Length);
+				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.ContentBuilder.Length);
+				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
 				break;
 			case TextEditorEditKind.OtherOpen:
 				break;
@@ -776,13 +780,13 @@ public partial class TextEditorModel
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				PerformInsert(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.ToString());
+				PerformInsert(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
-				PerformBackspace(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
+				PerformBackspace(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.Delete: 
-				PerformDelete(cursorModifierBag, redoEdit.PositionIndex, redoEdit.ContentBuilder.Length);
+				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.ContentBuilder.Length);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				while (true)
@@ -824,6 +828,15 @@ public partial class TextEditorModel
 		
 		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = edit.BeforeCursor.Selection.AnchorPositionIndex;
 		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = edit.BeforeCursor.Selection.EndingPositionIndex;
+	}
+	
+	private void RestoreAfterCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit edit)
+	{
+		cursorModifierBag.CursorModifier.LineIndex = edit.AfterCursor.LineIndex;
+		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(edit.AfterCursor.ColumnIndex);
+		
+		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = edit.AfterCursor.Selection.AnchorPositionIndex;
+		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = edit.AfterCursor.Selection.EndingPositionIndex;
 	}
 	#endregion
 	
@@ -1072,8 +1085,9 @@ public partial class TextEditorModel
 			EnsureUndoPoint(new TextEditorEdit(
 				TextEditorEditKind.Insert,
 				tag: string.Empty,
-				originalCursor,
 				initialCursorPositionIndex,
+				originalCursor,
+				TextEditorCursor.Empty,
 				new StringBuilder(value)));
 		}
 
@@ -1358,23 +1372,30 @@ public partial class TextEditorModel
             return;
 		}
 
-        var (positionIndex, charCount) = tuple.Value;
+        var (calculatedPositionIndex, charCount) = tuple.Value;
 
-		var textRemoved = this.GetString(positionIndex, charCount);
+		var textRemoved = this.GetString(calculatedPositionIndex, charCount);
 
-        DeleteValue(positionIndex, charCount, cancellationToken);
+        DeleteValue(calculatedPositionIndex, charCount, cancellationToken);
 
 		if (shouldCreateEditHistory)
 		{
+			var (lineIndex, columnIndex) = GetLineAndColumnIndicesFromPositionIndex(calculatedPositionIndex);
+			var afterCursor = new TextEditorCursor(
+				lineIndex,
+				columnIndex,
+				isPrimaryCursor: true);
+		
 			if (deleteKind == DeleteKind.Delete)
 			{
 				EnsureUndoPoint(new TextEditorEdit(
 					TextEditorEditKind.Delete,
 					tag: string.Empty,
-					originalCursor,
-					// Why is Delete using 'positionIndex'
+					// Why is Delete using 'calculatedPositionIndex'
 					// meanwhile Backspace is using 'initialPositionIndex'?
-					positionIndex,
+					calculatedPositionIndex,
+					originalCursor,
+					afterCursor,
 					new StringBuilder(textRemoved)));
 			}
 			else if (deleteKind == DeleteKind.Backspace)
@@ -1382,8 +1403,9 @@ public partial class TextEditorModel
 				EnsureUndoPoint(new TextEditorEdit(
 					TextEditorEditKind.Backspace,
 					tag: string.Empty,
-					originalCursor,
 					initialPositionIndex,
+					originalCursor,
+					afterCursor,
 					new StringBuilder(textRemoved)));
 			}
 			else

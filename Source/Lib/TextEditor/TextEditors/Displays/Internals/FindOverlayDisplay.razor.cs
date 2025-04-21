@@ -8,9 +8,10 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 
@@ -480,8 +481,9 @@ public partial class FindOverlayDisplay : ComponentBase
                 modelModifier.EnsureUndoPoint(new TextEditorEdit(
                 	TextEditorEditKind.OtherOpen,
                 	"ReplaceAll",
-                	cursorModifierBag.CursorModifier.ToCursor(),
                 	modelModifier.GetPositionIndex(cursorModifierBag.CursorModifier),
+                	cursorModifierBag.CursorModifier.ToCursor(),
+                	cursorModifierBag.CursorModifier.ToCursor(),
                 	contentBuilder: null));
                 
                 for (int i = presentationModel.CompletedCalculation.TextSpanList.Count - 1; i >= 0; i--)
@@ -510,8 +512,9 @@ public partial class FindOverlayDisplay : ComponentBase
                 modelModifier.EnsureUndoPoint(new TextEditorEdit(
                 	TextEditorEditKind.OtherClose,
                 	"ReplaceAll",
-                	cursorModifierBag.CursorModifier.ToCursor(),
                 	modelModifier.GetPositionIndex(cursorModifierBag.CursorModifier),
+                	cursorModifierBag.CursorModifier.ToCursor(),
+                	cursorModifierBag.CursorModifier.ToCursor(),
                 	contentBuilder: null));
 
                 return ValueTask.CompletedTask;

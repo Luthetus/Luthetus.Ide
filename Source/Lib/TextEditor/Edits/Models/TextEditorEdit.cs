@@ -6,24 +6,34 @@ namespace Luthetus.TextEditor.RazorLib.Edits.Models;
 
 public struct TextEditorEdit
 {
-	public TextEditorEdit(TextEditorEditKind editKind, string tag, TextEditorCursor beforeCursor, int positionIndex, StringBuilder? contentBuilder)
+	public TextEditorEdit(
+		TextEditorEditKind editKind,
+		string tag,
+		int beforePositionIndex,
+		TextEditorCursor beforeCursor,
+		TextEditorCursor afterCursor,
+		StringBuilder? contentBuilder)
 	{
 		EditKind = editKind;
 		Tag = tag;
+		BeforePositionIndex = beforePositionIndex;
 		BeforeCursor = beforeCursor;
-		PositionIndex = positionIndex;
+		AfterCursor = afterCursor;
 		ContentBuilder = contentBuilder;
 	}
 
 	public TextEditorEditKind EditKind { get; }
 	public string Tag { get; } = string.Empty;
-	public int PositionIndex { get; }
+	
+	public int BeforePositionIndex { get; }
 	
 	/// <summary>
-	/// Whether the 'Cursor' position index is equal to the 'PositionIndex' property on this type,
-	/// I'm not sure. So I'm keeping the separate 'PositionIndex' for now.
+	/// Whether the 'Cursor' position index is equal to the 'BeforePositionIndex' property on this type,
+	/// I'm not sure. So I'm keeping the separate 'BeforePositionIndex' for now.
 	/// </summary>
 	public TextEditorCursor BeforeCursor { get; }
+	
+	public TextEditorCursor AfterCursor { get; }
 	
 	/// <summary>
 	/// The TextEditorEditKind(s) { Constructor, Other } will have a null ContentBuilder.
@@ -67,22 +77,25 @@ public struct TextEditorEdit
 				return new TextEditorEdit(
 					TextEditorEditKind.Delete,
 					tag: string.Empty,
+					BeforePositionIndex,
 					BeforeCursor,
-					PositionIndex,
+					AfterCursor,
 					ContentBuilder);
 			case TextEditorEditKind.Backspace:
 				return new TextEditorEdit(
 					TextEditorEditKind.Insert,
 					tag: string.Empty,
+					BeforePositionIndex - ContentBuilder.Length,
 					BeforeCursor,
-					PositionIndex - ContentBuilder.Length,
+					AfterCursor,
 					ContentBuilder);
 			case TextEditorEditKind.Delete:
 				return new TextEditorEdit(
 					TextEditorEditKind.Insert,
 					tag: string.Empty,
+					BeforePositionIndex,
 					BeforeCursor,
-					PositionIndex,
+					AfterCursor,
 					ContentBuilder);
 			case TextEditorEditKind.Constructor:
 				throw new LuthetusTextEditorException($"The {nameof(TextEditorEditKind)}: {EditKind}, cannot be un-done. This edit represents the initial state.");
