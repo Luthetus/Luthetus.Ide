@@ -557,8 +557,7 @@ public class TextEditorCommandDefaultFunctions
 
 			modelModifier.Insert(
 				value: currentLineContent,
-				cursorModifierBag: innerCursorModifierBag,
-				useLineEndKindPreference: false);
+				cursorModifierBag: innerCursorModifierBag);
 		}
 
 		// Delete
@@ -611,8 +610,7 @@ public class TextEditorCommandDefaultFunctions
 
 			modelModifier.Insert(
 				value: currentLineContent,
-				cursorModifierBag: innerCursorModifierBag,
-				useLineEndKindPreference: false);
+				cursorModifierBag: innerCursorModifierBag);
 		}
 
 		// Delete

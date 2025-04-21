@@ -44,7 +44,6 @@ public partial class TextEditorModel
 	    EditBlockList = new();
 	    ViewModelKeyList = new();
 	    LineEndList = new();
-	    LineEndKindCountList = new();
 	    PresentationModelList = new();
 	    TabKeyPositionList = new();
 	    OnlyLineEndKind = LineEndKind.Unset;
@@ -82,7 +81,6 @@ public partial class TextEditorModel
 	    EditBlockList = other.EditBlockList;
 	    ViewModelKeyList = other.ViewModelKeyList;
 	    LineEndList = other.LineEndList;
-	    LineEndKindCountList = other.LineEndKindCountList;
 	    PresentationModelList = other.PresentationModelList;
 	    TabKeyPositionList = other.TabKeyPositionList;
         OnlyLineEndKind = other.OnlyLineEndKind;
@@ -234,14 +232,13 @@ public partial class TextEditorModel
     public List<TextEditorEdit> EditBlockList { get; set; }
     public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; }
     public List<LineEnd> LineEndList { get; set; }
-    public List<(LineEndKind lineEndKind, int count)> LineEndKindCountList { get; set; }
     
     private bool _presentationModelListIsShallowCopy;
     public List<TextEditorPresentationModel> PresentationModelList { get; set; }
     
     public List<int> TabKeyPositionList { get; set; }
     public LineEndKind OnlyLineEndKind { get; set; }
-    public LineEndKind LineEndKindPreference { get; set; }
+    public LineEndKind LineEndKindPreference { get; private set; }
     public ResourceUri ResourceUri { get; set; }
     public DateTime ResourceLastWriteTime { get; set; }
     public string FileExtension { get; set; }
@@ -315,13 +312,6 @@ public partial class TextEditorModel
         LineEndList = new List<LineEnd> 
         {
             new LineEnd(0, 0, LineEndKind.EndOfFile)
-        };
-
-        LineEndKindCountList = new List<(LineEndKind rowEndingKind, int count)>
-        {
-            (LineEndKind.CarriageReturn, 0),
-            (LineEndKind.LineFeed, 0),
-            (LineEndKind.CarriageReturnLineFeed, 0),
         };
 
         TabKeyPositionList = new List<int>();
@@ -403,7 +393,7 @@ public partial class TextEditorModel
 		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
 		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 		
-		Insert(content, cursorModifierBag, false, CancellationToken.None, shouldCreateEditHistory: false);
+		Insert(content, cursorModifierBag, CancellationToken.None, shouldCreateEditHistory: false);
 	}
 
 	private void PerformBackspace(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
@@ -493,100 +483,97 @@ public partial class TextEditorModel
 		}
 		
         var rowIndex = 0;
-        var previousCharacter = '\0';
-
         var charactersOnRow = 0;
-
-        var carriageReturnCount = 0;
-        var linefeedCount = 0;
-        var carriageReturnLinefeedCount = 0;
-
-        for (var index = 0; index < content.Length; index++)
+        
+        List<RichCharacter> richCharacterList = new();
+        var richCharacterIndex = 0;
+        
+        for (var contentIndex = 0; contentIndex < content.Length; contentIndex++)
         {
-            var character = content[index];
-
+            var character = content[contentIndex];
             charactersOnRow++;
-
-            if (character == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
+            
+            LineEndKind currentLineEndKind = LineEndKind.Unset;
+            
+            if ((character == '\r') && (contentIndex < content.Length - 1) && (content[contentIndex + 1] == '\n'))
             {
-                if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-                    MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-                LineEndList.Insert(rowIndex, new(index, index + 1, LineEndKind.CarriageReturn));
-                rowIndex++;
-
-                charactersOnRow = 0;
-
-                carriageReturnCount++;
+            	contentIndex++;
+            	currentLineEndKind = LineEndKind.CarriageReturnLineFeed;
+            	
+            	if (LineEndKindPreference == LineEndKind.Unset)
+        			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
             }
-            else if (character == KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE)
+            else if (character == '\r')
             {
-                if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-                    MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-                if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
-                {
-                    var lineEnding = LineEndList[rowIndex - 1];
-
-                    LineEndList[rowIndex - 1] = lineEnding with
-					{
-						EndPositionIndexExclusive = lineEnding.EndPositionIndexExclusive + 1,
-                        LineEndKind = LineEndKind.CarriageReturnLineFeed
-					};
-
-                    carriageReturnCount--;
-                    carriageReturnLinefeedCount++;
-                }
-                else
-                {
-                    LineEndList.Insert(rowIndex, new(index, index + 1, LineEndKind.LineFeed));
-                    rowIndex++;
-
-                    linefeedCount++;
-                }
-
-                charactersOnRow = 0;
+            	currentLineEndKind = LineEndKind.CarriageReturn;
+            	
+            	if (LineEndKindPreference == LineEndKind.Unset)
+        			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
             }
-
-            if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-                TabKeyPositionList.Add(index);
-
-            previousCharacter = character;
+            else if (character == '\n')
+            {
+            	currentLineEndKind = LineEndKind.LineFeed;
+            	
+            	if (LineEndKindPreference == LineEndKind.Unset)
+        			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
+            }
+            
+            if (currentLineEndKind != LineEndKind.Unset)
+            {
+				if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+            
+            	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
+            	{
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, LineEndKind.CarriageReturnLineFeed));
+	            	richCharacterList.Add(new(character, default));
+	            	richCharacterIndex += 2;
+            	}
+            	else if (LineEndKindPreference == LineEndKind.CarriageReturn)
+            	{
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.CarriageReturn));
+					richCharacterList.Add(new(character, default));
+	            	richCharacterIndex++;
+            	}
+            	else if (LineEndKindPreference == LineEndKind.LineFeed)
+            	{
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.LineFeed));
+					richCharacterList.Add(new(character, default));
+	            	richCharacterIndex++;
+            	}
+            	else
+            	{
+            		throw new NotImplementedException("only CarriageReturnLineFeed, CarriageReturn, and LineFeed are expected.");
+            	}
+				
+				rowIndex++;
+	            charactersOnRow = 0;
+            }
+			else if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+			{
+                TabKeyPositionList.Add(richCharacterIndex);
+                richCharacterList.Add(new(character, default));
+            	richCharacterIndex++;
+            }
+            else
+            {
+            	richCharacterList.Add(new(character, default));
+            	richCharacterIndex++;
+            }
         }
 
-        __InsertRange(0, content.Select(x => new RichCharacter(x, default)));
-
-        // Update the line end count list (TODO: Fix the awkward tuple not a variable logic going on here)
-        {
-            {
-                var indexCarriageReturn = LineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.CarriageReturn);
-                LineEndKindCountList[indexCarriageReturn] = (LineEndKind.CarriageReturn, carriageReturnCount);
-            }
-            {
-                var indexLineFeed = LineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.LineFeed);
-                LineEndKindCountList[indexLineFeed] = (LineEndKind.LineFeed, linefeedCount);
-            }
-            {
-                var indexCarriageReturnLineFeed = LineEndKindCountList.FindIndex(x => x.lineEndKind == LineEndKind.CarriageReturnLineFeed);
-                LineEndKindCountList[indexCarriageReturnLineFeed] = (LineEndKind.CarriageReturnLineFeed, carriageReturnLinefeedCount);
-            }
-        }
+        __InsertRange(0, richCharacterList);
 
         // Update the EndOfFile line end.
-        {
-            var endOfFile = LineEndList[^1];
+        var endOfFile = LineEndList[^1];
+        if (endOfFile.LineEndKind != LineEndKind.EndOfFile)
+            throw new LuthetusTextEditorException($"The text editor model is malformed; the final entry of {nameof(LineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
+        LineEndList[^1] = endOfFile with
+		{
+			StartPositionIndexInclusive = richCharacterList.Count,
+			EndPositionIndexExclusive = richCharacterList.Count,
+		};
 
-            if (endOfFile.LineEndKind != LineEndKind.EndOfFile)
-                throw new LuthetusTextEditorException($"The text editor model is malformed; the final entry of {nameof(LineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
-
-            LineEndList[^1] = endOfFile with
-			{
-				StartPositionIndexInclusive = content.Length,
-				EndPositionIndexExclusive = content.Length,
-			};
-        }
-
-        CheckRowEndingPositions(true);
         SetIsDirtyTrue();
 		ShouldReloadVirtualizationResult = true;
     }
@@ -857,7 +844,11 @@ public partial class TextEditorModel
 
     public void SetLineEndKindPreference(LineEndKind rowEndingKind)
     {
+    	if (LineEndKindPreference == rowEndingKind)
+	    	return;
+    	
         LineEndKindPreference = rowEndingKind;
+        SetContent(AllText.ReplaceLineEndings(rowEndingKind.AsCharacters()));
     }
 
     public void SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
@@ -976,48 +967,6 @@ public partial class TextEditorModel
             CompletedCalculation = calculation,
         };
     }
-
-    private void MutateLineEndKindCount(LineEndKind rowEndingKind, int changeBy)
-    {
-        var indexOfRowEndingKindCount = LineEndKindCountList.FindIndex(x => x.lineEndKind == rowEndingKind);
-        var currentRowEndingKindCount = LineEndKindCountList[indexOfRowEndingKindCount].count;
-
-        LineEndKindCountList[indexOfRowEndingKindCount] = (rowEndingKind, currentRowEndingKindCount + changeBy);
-
-        CheckRowEndingPositions(false);
-    }
-
-    private void CheckRowEndingPositions(bool setUsingRowEndingKind)
-    {
-        var existingRowEndingsList = LineEndKindCountList
-            .Where(x => x.count > 0)
-            .ToArray();
-
-        if (!existingRowEndingsList.Any())
-        {
-            OnlyLineEndKind = LineEndKind.Unset;
-            LineEndKindPreference = LineEndKind.LineFeed;
-        }
-        else
-        {
-            if (existingRowEndingsList.Length == 1)
-            {
-                var rowEndingKind = existingRowEndingsList.Single().lineEndKind;
-
-                if (setUsingRowEndingKind)
-                    LineEndKindPreference = rowEndingKind;
-
-                OnlyLineEndKind = rowEndingKind;
-            }
-            else
-            {
-                if (setUsingRowEndingKind)
-                    LineEndKindPreference = existingRowEndingsList.MaxBy(x => x.count).lineEndKind;
-
-                OnlyLineEndKind = LineEndKind.Unset;
-            }
-        }
-    }
     #endregion
     
     #region TextEditorModelInProgress
@@ -1033,7 +982,6 @@ public partial class TextEditorModel
     public void Insert(
         string value,
         CursorModifierBagTextEditor cursorModifierBag,
-        bool useLineEndKindPreference = true,
         CancellationToken cancellationToken = default,
 		bool shouldCreateEditHistory = true)
     {
@@ -1052,19 +1000,6 @@ public partial class TextEditorModel
                 CancellationToken.None);
         }
 
-        {
-            // TODO: If one inserts a carriage return character,
-            //       meanwhile the text editor model happens to have a line feed character at the position
-            //       you are inserting at.
-            //       |
-            //       Then, the '\r' takes the position of the '\n', and the '\n' is shifted further
-            //       by 1 position in order to allow space the '\r'.
-            //       |
-            //       Well, now the text editor model sees its contents as "\r\n".
-            //       What is to be done in this scenario?
-            //       (2024-04-22)
-        }
-
         // Remember the cursorPositionIndex
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
 
@@ -1073,12 +1008,12 @@ public partial class TextEditorModel
         // Metadata must be done prior to 'InsertValue'
         //
         // 'value' is replaced by the original with any line endings changed (based on 'useLineEndKindPreference').
-        value = InsertMetadata(value, cursorModifier, useLineEndKindPreference, cancellationToken);
+        value = InsertMetadata(value, cursorModifier, cancellationToken);
 
         // Now the text still needs to be inserted.
         // The cursorModifier is invalid, because the metadata step moved its position.
         // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
-        InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
+        InsertValue(value, initialCursorPositionIndex, cancellationToken);
 
 		if (shouldCreateEditHistory)
 		{
@@ -1120,7 +1055,6 @@ public partial class TextEditorModel
 	private string InsertMetadata(
         string value,
         TextEditorCursorModifier cursorModifier,
-        bool useLineEndKindPreference,
         CancellationToken cancellationToken)
     {
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
@@ -1148,18 +1082,6 @@ public partial class TextEditorModel
             // The CRLF boolean must be checked prior to CR, as one is a "substring" of the other
             isCarriageReturnLineFeed = isCarriageReturn && charIndex != value.Length - 1 && value[1 + charIndex] == '\n';
 
-            {
-                // TODO: If one inserts a carriage return character, meanwhile the text editor model
-                //       happens to have a line feed character at the position you are inserting at.
-                //       |
-                //       Then, the '\r' takes the position of the '\n', and the '\n' is shifted further
-                //       by 1 position in order to allow space the '\r'.
-                //       |
-                //       Well, now the text editor model sees its contents as "\r\n".
-                //       What is to be done in this scenario?
-                //       (2024-04-22)
-            }
-
             if (isLineFeed || isCarriageReturn || isCarriageReturnLineFeed)
             {
                 // Regardless of which line ending is used, since the source text
@@ -1169,20 +1091,26 @@ public partial class TextEditorModel
 
                 LineEndKind lineEndKind;
                 
-                if (useLineEndKindPreference)
+                switch (LineEndKindPreference)
                 {
-                    lineEndKind = LineEndKindPreference;
+                	case LineEndKind.CarriageReturn:
+                		lineEndKind = LineEndKind.CarriageReturn;
+                		break;
+				    case LineEndKind.LineFeed:
+				    	lineEndKind = LineEndKind.LineFeed;
+                		break;
+				    case LineEndKind.CarriageReturnLineFeed:
+				    	lineEndKind = LineEndKind.CarriageReturnLineFeed;
+                		break;
+            		case LineEndKind.Unset:
+				    case LineEndKind.EndOfFile:
+				    case LineEndKind.StartOfFile:
+				    	lineEndKind = LineEndKind.LineFeed;
+                		break;
+                	default:
+                		throw new NotImplementedException($"The {nameof(LineEndKind)}: '{LineEndKindPreference}' was not recognized.");
                 }
-                else
-                {
-                    lineEndKind =
-                        // CRLF must be checked prior to CR, as one is a "substring" of the other.
-                        isCarriageReturnLineFeed ? LineEndKind.CarriageReturnLineFeed :
-                        isCarriageReturn ? LineEndKind.CarriageReturn :
-                        isLineFeed ? LineEndKind.LineFeed :
-                        LineEndKindPreference;
-                }
-
+                
                 // The LineEndKindPreference can invalidate the booleans
                 //
                 // Additionally, by clearing all the booleans and then setting only one of them,
@@ -1214,7 +1142,7 @@ public partial class TextEditorModel
 
                 lineEndingsChangedValueBuilder.Append(lineEndCharacters);
 
-                MutateLineEndKindCount(lineEndKind, 1);
+                // MutateLineEndKindCount(lineEndKind, 1);
 
                 cursorModifier.LineIndex++;
                 cursorModifier.SetColumnIndexAndPreferred(0);
@@ -1307,7 +1235,6 @@ public partial class TextEditorModel
 	private void InsertValue(
         string value,
         int cursorPositionIndex,
-        bool useLineEndKindPreference,
         CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
@@ -1543,7 +1470,7 @@ public partial class TextEditorModel
                     var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
                     charCount += lengthOfLineEnd;
 
-                    MutateLineEndKindCount(lineEnd.LineEndKind, -1);
+                    // MutateLineEndKindCount(lineEnd.LineEndKind, -1);
 
                     if (lineEnd.LineEndKind == LineEndKind.CarriageReturnLineFeed && initiallyHadSelection)
                     {
@@ -1616,7 +1543,7 @@ public partial class TextEditorModel
                     var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
                     charCount += lengthOfLineEnd;
 
-                    MutateLineEndKindCount(lineEnd.LineEndKind, -1);
+                    // MutateLineEndKindCount(lineEnd.LineEndKind, -1);
                 }
                 else
                 {
