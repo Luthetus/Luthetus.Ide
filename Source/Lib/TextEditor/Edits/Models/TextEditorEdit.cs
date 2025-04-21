@@ -12,14 +12,14 @@ public struct TextEditorEdit
 		int beforePositionIndex,
 		TextEditorCursor beforeCursor,
 		TextEditorCursor afterCursor,
-		StringBuilder? contentBuilder)
+		StringBuilder? editedTextBuilder)
 	{
 		EditKind = editKind;
 		Tag = tag;
 		BeforePositionIndex = beforePositionIndex;
 		BeforeCursor = beforeCursor;
 		AfterCursor = afterCursor;
-		ContentBuilder = contentBuilder;
+		EditedTextBuilder = editedTextBuilder;
 	}
 
 	public TextEditorEditKind EditKind { get; }
@@ -36,27 +36,27 @@ public struct TextEditorEdit
 	public TextEditorCursor AfterCursor { get; }
 	
 	/// <summary>
-	/// The TextEditorEditKind(s) { Constructor, Other } will have a null ContentBuilder.
+	/// The TextEditorEditKind(s) { Constructor, Other } will have a null EditedTextBuilder.
 	///
 	/// All other TextEditorEditKind(s) are presumed to NOT be null.
 	///
 	/// TODO: (optimization) Consider storing the text that was inserted/deleted in a shared List,...
 	/// ...and each edit stores the indices at which the text it altered exists.
 	/// </summary>
-	public StringBuilder? ContentBuilder { get; }
+	public StringBuilder? EditedTextBuilder { get; }
 	
 	public void Add(string text)
 	{
 		switch (EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				ContentBuilder!.Append(text);
+				EditedTextBuilder!.Append(text);
 				break;
 			case TextEditorEditKind.Delete:
-				ContentBuilder!.Append(text);
+				EditedTextBuilder!.Append(text);
 				break;
 			case TextEditorEditKind.Backspace:
-				ContentBuilder!.Insert(0, text);
+				EditedTextBuilder!.Insert(0, text);
 				break;
 			case TextEditorEditKind.Constructor:
 				throw new LuthetusTextEditorException($"The {nameof(TextEditorEditKind)}: {EditKind}, cannot be un-done. This edit represents the initial state.");
@@ -80,15 +80,15 @@ public struct TextEditorEdit
 					BeforePositionIndex,
 					BeforeCursor,
 					AfterCursor,
-					ContentBuilder);
+					EditedTextBuilder);
 			case TextEditorEditKind.Backspace:
 				return new TextEditorEdit(
 					TextEditorEditKind.Insert,
 					tag: string.Empty,
-					BeforePositionIndex - ContentBuilder.Length,
+					BeforePositionIndex - EditedTextBuilder.Length,
 					BeforeCursor,
 					AfterCursor,
-					ContentBuilder);
+					EditedTextBuilder);
 			case TextEditorEditKind.Delete:
 				return new TextEditorEdit(
 					TextEditorEditKind.Insert,
@@ -96,7 +96,7 @@ public struct TextEditorEdit
 					BeforePositionIndex,
 					BeforeCursor,
 					AfterCursor,
-					ContentBuilder);
+					EditedTextBuilder);
 			case TextEditorEditKind.Constructor:
 				throw new LuthetusTextEditorException($"The {nameof(TextEditorEditKind)}: {EditKind}, cannot be un-done. This edit represents the initial state.");
 			case TextEditorEditKind.OtherOpen:

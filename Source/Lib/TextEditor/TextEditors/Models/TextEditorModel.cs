@@ -489,7 +489,7 @@ public partial class TextEditorModel
 				0,
 				TextEditorCursor.Empty,
 				TextEditorCursor.Empty,
-				contentBuilder: null));
+				editedTextBuilder: null));
 		}
 		
         var rowIndex = 0;
@@ -618,9 +618,9 @@ public partial class TextEditorModel
 			{
 				// Batch if consecutive && contiguous.
 				if ((previousEdit.EditKind == TextEditorEditKind.Insert) &&
-				    (newEdit.BeforePositionIndex == previousEdit.BeforePositionIndex + previousEdit.ContentBuilder.Length))
+				    (newEdit.BeforePositionIndex == previousEdit.BeforePositionIndex + previousEdit.EditedTextBuilder.Length))
 				{
-					previousEdit.ContentBuilder!.Append(newEdit.ContentBuilder!.ToString());
+					previousEdit.EditedTextBuilder!.Append(newEdit.EditedTextBuilder!.ToString());
 					break;
 				}
 				
@@ -631,9 +631,9 @@ public partial class TextEditorModel
 			{
 				// Batch if consecutive && contiguous.
 				if ((previousEdit.EditKind == TextEditorEditKind.Backspace) &&
-				    (newEdit.BeforePositionIndex == previousEdit.BeforePositionIndex - previousEdit.ContentBuilder!.Length))
+				    (newEdit.BeforePositionIndex == previousEdit.BeforePositionIndex - previousEdit.EditedTextBuilder!.Length))
 				{
-					previousEdit.Add(newEdit.ContentBuilder!.ToString());
+					previousEdit.Add(newEdit.EditedTextBuilder!.ToString());
 					break;
 				}
 				
@@ -646,7 +646,7 @@ public partial class TextEditorModel
 				if ((previousEdit.EditKind == TextEditorEditKind.Delete) &&
 				    (newEdit.BeforePositionIndex == previousEdit.BeforePositionIndex))
 				{
-					previousEdit.Add(newEdit.ContentBuilder!.ToString());
+					previousEdit.Add(newEdit.EditedTextBuilder!.ToString());
 					break;
 				}
 				
@@ -717,15 +717,15 @@ public partial class TextEditorModel
 		switch (undoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				PerformInsert(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.ContentBuilder.ToString());
+				PerformInsert(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.ToString());
 				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
 				break;
 			case TextEditorEditKind.Backspace:
-				PerformBackspace(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.ContentBuilder.Length);
+				PerformBackspace(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
 				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
 				break;
 			case TextEditorEditKind.Delete: 
-				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.ContentBuilder.Length);
+				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
 				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
 				break;
 			case TextEditorEditKind.OtherOpen:
@@ -780,13 +780,13 @@ public partial class TextEditorModel
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				PerformInsert(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.ContentBuilder.ToString());
+				PerformInsert(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
-				PerformBackspace(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.ContentBuilder.Length);
+				PerformBackspace(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
 				break;
 			case TextEditorEditKind.Delete: 
-				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.ContentBuilder.Length);
+				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				while (true)
