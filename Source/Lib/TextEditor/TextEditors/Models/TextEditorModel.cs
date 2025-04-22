@@ -258,6 +258,18 @@ public partial class TextEditorModel
 
     public int PreviousLineCount { get; set; }
     
+    /// <summary>
+    /// Be sure to set this to true in order to have the override used.
+    /// See 'UnsetOverrideLineEndKind'.
+    /// To get this applied on the initial 'SetContent(...)' invocation, use object initialization syntax.
+    /// </summary>
+    public bool UseUnsetOverride { get; set; }
+    /// <summary>
+    /// Be sure to set 'UseUnsetOverride' to true in order to have the override used.
+    /// To get this applied on the initial 'SetContent(...)' invocation, use object initialization syntax.
+    /// </summary>
+    public LineEndKind UnsetOverrideLineEndKind { get; set; } = LineEndKind.LineFeed;
+    
     public int LineCount => LineEndList.Count;
 
     /// <summary>
@@ -640,21 +652,28 @@ public partial class TextEditorModel
         
         if (LineEndKindPreference == LineEndKind.Unset)
         {
-        	switch (Environment.NewLine)
+        	if (UseUnsetOverride)
         	{
-        		case "\r":
-        			LineEndKindPreference = LineEndKind.CarriageReturn;
-        			break;
-        		case "\n":
-        			LineEndKindPreference = LineEndKind.LineFeed;
-        			break;
-        		case "\r\n":
-        			LineEndKindPreference = LineEndKind.CarriageReturnLineFeed;
-        			break;
-        		default:
-        			LineEndKindPreference = LineEndKind.LineFeed;
-        			break;
+        		LineEndKindPreference = UnsetOverrideLineEndKind;
         	}
+        	else
+        	{
+	        	switch (Environment.NewLine)
+	        	{
+	        		case "\r":
+	        			LineEndKindPreference = LineEndKind.CarriageReturn;
+	        			break;
+	        		case "\n":
+	        			LineEndKindPreference = LineEndKind.LineFeed;
+	        			break;
+	        		case "\r\n":
+	        			LineEndKindPreference = LineEndKind.CarriageReturnLineFeed;
+	        			break;
+	        		default:
+	        			LineEndKindPreference = LineEndKind.LineFeed;
+	        			break;
+	        	}
+	        }
         }
 
         __InsertRange(0, richCharacterList);
