@@ -24,7 +24,7 @@ public struct OnWheel
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelSlimDisplay.TextEditorService);
     
         var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
         if (viewModelModifier is null)

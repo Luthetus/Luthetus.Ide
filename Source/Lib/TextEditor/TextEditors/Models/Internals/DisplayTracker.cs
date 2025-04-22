@@ -46,14 +46,14 @@ public sealed class DisplayTracker : IDisposable
     private bool _hasBeenDisplayedAtLeastOnceBefore;
 
     /// <summary>
-    /// <see cref="Links"/> refers to a Blazor TextEditorViewModelDisplay having had its OnParametersSet invoked
+    /// <see cref="Links"/> refers to a Blazor TextEditorViewModelSlimDisplay having had its OnParametersSet invoked
     /// and the ViewModelKey that was passed as a parameter matches this encompasing ViewModel's key. In this situation
     /// <see cref="Links"/> would be incremented by 1 in a concurrency safe manner.<br/><br/>
     /// 
     /// As well OnParametersSet includes the case where the ViewModelKey that was passed as a parameter is changed.
     /// In this situation the previous ViewModel would have its <see cref="Links"/> decremented by 1 in a concurrency safe manner.<br/><br/>
     /// 
-    /// TextEditorViewModelDisplay implements IDisposable. In the Dispose implementation,
+    /// TextEditorViewModelSlimDisplay implements IDisposable. In the Dispose implementation,
     /// the active ViewModel would have its <see cref="Links"/> decremented by 1 in a concurrency safe manner.
     /// </summary>
     public int Links { get; private set; }
@@ -95,7 +95,7 @@ public sealed class DisplayTracker : IDisposable
 				//throw new LuthetusFatalException($"{nameof(DisplayTracker)} detected a {nameof(TextEditorViewModel)}" +
 				//								 " was being displayed in two places simultaneously." +
 				//								 " A {nameof(TextEditorViewModel)} can only be displayed by a single" +
-				//								 " {nameof(TextEditorViewModelDisplay)} at a time.");
+				//								 " {nameof(TextEditorViewModelSlimDisplay)} at a time.");
 			}
         }
 

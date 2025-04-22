@@ -17,7 +17,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 	private ITextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
+	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
 
 	public int _previousPositionNumber;
 	

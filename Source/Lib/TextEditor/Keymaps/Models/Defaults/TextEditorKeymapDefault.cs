@@ -47,7 +47,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
     public async ValueTask HandleEvent(OnKeyDown onKeyDown)
     {
-    	var editContext = new TextEditorEditContext(onKeyDown.ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(onKeyDown.ComponentData.TextEditorViewModelSlimDisplay.TextEditorService);
 
 		// An NRE will be caught by the IBackgroundTaskService so don't bother checking 'viewModel is null'.
         var viewModel = editContext.GetViewModelModifier(onKeyDown.ViewModelKey);

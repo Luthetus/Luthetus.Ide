@@ -24,7 +24,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
+	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
 	
 	private ResourceUri _resourceUriPrevious = ResourceUri.Empty;
 	
@@ -59,12 +59,12 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private void UpdateUi()
     {
-    	if (TextEditorViewModelDisplay._activeRenderBatch is null)
+    	if (TextEditorViewModelSlimDisplay._activeRenderBatch is null)
     		return;
     	
     	TextEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), async editContext =>
     	{
-    		var renderBatch = TextEditorViewModelDisplay._activeRenderBatch;
+    		var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
     	
     		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
