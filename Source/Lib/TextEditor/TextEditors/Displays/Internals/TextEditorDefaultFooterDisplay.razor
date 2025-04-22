@@ -96,11 +96,11 @@
 	                </div>
 	
 	                <div class="luth_te_text-editor-footer-entry">
-	                    <select @onchange="e => SelectRowEndingKindOnChange(renderBatch, e)">
+	                    <select @bind="SelectedLineEndKindString"
+	                            title="Line ending kind">
 	                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
 	                        {
-	                            <option value="@rowEndingKind.ToString()"
-	                                    selected="@(model.LineEndKindPreference == rowEndingKind)">
+	                            <option value="@rowEndingKind.ToString()">
 	                                @rowEndingKind.AsFriendlyName()
 	                            </option>
 	                        }
