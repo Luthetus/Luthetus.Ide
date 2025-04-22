@@ -107,13 +107,13 @@ public partial class TextEditorModel
 	    _allText = other._allText;
 	    _charCount = other._charCount;
 	    
-	    /*if (other.ShouldReloadVirtualizationResult)
+	    if (other.ShouldReloadVirtualizationResult)
 	    {
 	    	WriteEditBlockListToConsole();
-	    }*/
+	    }
     }
     
-    /*private void WriteEditBlockListToConsole()
+    private void WriteEditBlockListToConsole()
     {
     	Console.WriteLine($"Index:{EditBlockIndex}, Count:{EditBlockList.Count}, TagDoNotRemove:{(TagDoNotRemove is null ? "null" : TagDoNotRemove)} MAXIMUM_EDIT_BLOCKS:{MAXIMUM_EDIT_BLOCKS} ResourceUri:{ResourceUri.Value}");
     	
@@ -128,7 +128,7 @@ public partial class TextEditorModel
     		Console.WriteLine($"\t\tBeforePositionIndex:  {entry.BeforePositionIndex}");
     		Console.WriteLine($"\t\tEditedTextBuilder: {entry.EditedTextBuilder}");
     	}
-    }*/
+    }
 	
 	/// <summary>
 	/// You have to check if the '_partitionListChanged'
@@ -1455,23 +1455,35 @@ public partial class TextEditorModel
 			}
 			else if (deleteKind == DeleteKind.Delete)
 			{
-				EnsureUndoPoint(new TextEditorEdit(
-					TextEditorEditKind.Delete,
-					tag: string.Empty,
-					calculatedPositionIndex,
-					originalCursor,
-					afterCursor,
-					new StringBuilder(textRemoved)));
+				// WARNING: If 'GetString(...)' ever returns an empty string erroneously then this if makes things very confusing...
+				// ...the alternatives however involved getting the final position index and this might result in an extra .SelectMany on the partitions.
+				// There is no proof for the extra .SelectMany, it is just a worry and I'm quite tired at the moment.
+				if (textRemoved != string.Empty)
+				{
+					EnsureUndoPoint(new TextEditorEdit(
+						TextEditorEditKind.Delete,
+						tag: string.Empty,
+						calculatedPositionIndex,
+						originalCursor,
+						afterCursor,
+						new StringBuilder(textRemoved)));
+				}
 			}
 			else if (deleteKind == DeleteKind.Backspace)
 			{
-				EnsureUndoPoint(new TextEditorEdit(
-					TextEditorEditKind.Backspace,
-					tag: string.Empty,
-					initialPositionIndex, // NOTE: this is different
-					originalCursor,
-					afterCursor,
-					new StringBuilder(textRemoved)));
+				// WARNING: If 'GetString(...)' ever returns an empty string erroneously then this if makes things very confusing...
+				// ...the alternatives however involved getting the final position index and this might result in an extra .SelectMany on the partitions.
+				// There is no proof for the extra .SelectMany, it is just a worry and I'm quite tired at the moment.
+				if (textRemoved != string.Empty)
+				{
+					EnsureUndoPoint(new TextEditorEdit(
+						TextEditorEditKind.Backspace,
+						tag: string.Empty,
+						initialPositionIndex, // NOTE: this is different
+						originalCursor,
+						afterCursor,
+						new StringBuilder(textRemoved)));
+				}
 			}
 			else
 			{
