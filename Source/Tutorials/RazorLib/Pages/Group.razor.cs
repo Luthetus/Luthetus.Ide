@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.Tutorials.RazorLib.Pages;
 
-public partial class Index : ComponentBase
+public partial class Group : ComponentBase
 {
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
@@ -17,8 +18,9 @@ public partial class Index : ComponentBase
 	[Inject]
 	private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
 
-	public static ResourceUri ResourceUri { get; } = new("/index.txt");
+	public static ResourceUri ResourceUri { get; } = new("/group.txt");
 	public static Key<TextEditorViewModel> ViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
+	public static Key<TextEditorGroup> GroupKey { get; } = Key<TextEditorGroup>.NewKey();
 	
 	protected override void OnInitialized()
 	{
@@ -36,27 +38,47 @@ public partial class Index : ComponentBase
 	        ResourceUri,
 	        DateTime.UtcNow,
 	        ExtensionNoPeriodFacts.TXT,
-	        @"public class MyClass
+	        @"namespace Luthetus.TextEditor.RazorLib.Groups.Models;
+
+/// <summary>
+/// Store the state of none or many tabs, and which tab is the active one.
+/// Each tab represents a <see cref=""TextEditorViewModel""/>.
+/// </summary>
+public record TextEditorGroup(/*...*/) : ITabGroup
 {
-	public MyClass(string firstName, string lastName)
-	{
-		FirstName = firstName;
-		LastName = lastName;
-	}
-	
-	public string FirstName { get; set; }
-	public string LastName { get; set; }
-	
-	public string DisplayName => $""{{FirstName}} {LastName}"";
-	
-	public void SomeMethod(int arg1, MyClass arg2)
-	{
-		if (arg1 == 2)
-			return;
-		
-		return;
-	}
-}",
+    public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
+
+    public bool GetIsActive(ITab tab)
+    {
+        /*...*/
+    }
+
+    public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs)
+    {
+        /*...*/
+    }
+
+    public string GetDynamicCss(ITab tab)
+    {
+        /*...*/
+    }
+
+    public Task CloseAsync(ITab tab)
+    {
+        /*...*/
+    }
+
+    public async Task CloseAllAsync()
+    {
+        /*...*/
+    }
+
+	public async Task CloseOthersAsync(ITab safeTab)
+    {
+        /*...*/
+    }
+}
+",
 	        genericDecorationMapper,
 	        cSharpCompilerService);
 	
@@ -73,7 +95,13 @@ public partial class Index : ComponentBase
 				ViewModelKey,
 				ResourceUri,
 				new Category("main"));
-				
+			
+			TextEditorService.GroupApi.Register(GroupKey, category: new("main"));
+			TextEditorService.GroupApi.AddViewModel(GroupKey, Group.ViewModelKey);
+			TextEditorService.GroupApi.AddViewModel(GroupKey, Index.ViewModelKey);
+			
+			// TextEditorService.GroupApi.SetActiveViewModel(GroupKey, Group.ViewModelKey);
+		
 			return ValueTask.CompletedTask;
 		});
 			

@@ -1,0 +1,41 @@
+@{ var viewModelDisplayLocal = _viewModelDisplay; }
+
+@if (_isLoaded)
+{
+	if (_viewModelDisplayPrevious != viewModelDisplayLocal)
+	{
+		_viewModelDisplayPrevious = viewModelDisplayLocal;
+	
+		DependentComponentParameters = new Dictionary<string, object?>
+		{
+			{
+				nameof(TextEditorViewModelDisplay),
+				viewModelDisplayLocal
+			}
+		};
+	}
+}
+
+@if (ViewModelDisplayOptions is not null && _isLoaded && viewModelDisplayLocal is not null)
+{
+	var headerComponentType = ViewModelDisplayOptions.HeaderComponentType;
+    if (headerComponentType is not null)
+    {
+		<DynamicComponent Type="headerComponentType"
+						  Parameters="DependentComponentParameters"/>
+    }
+}
+
+<TextEditorViewModelDisplay @ref="_viewModelDisplay"
+							TextEditorViewModelKey="TextEditorViewModelKey"
+                            ViewModelDisplayOptions="ViewModelDisplayOptions"/>
+
+@if (ViewModelDisplayOptions is not null && _isLoaded && viewModelDisplayLocal is not null)
+{
+	var footerComponentType = ViewModelDisplayOptions.FooterComponentType;
+    if (footerComponentType is not null)
+    {
+		<DynamicComponent Type="footerComponentType"
+						  Parameters="DependentComponentParameters"/>
+    }
+}

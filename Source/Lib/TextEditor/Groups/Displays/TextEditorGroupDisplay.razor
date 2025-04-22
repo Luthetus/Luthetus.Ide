@@ -28,17 +28,16 @@
                 }
                 else
                 {
-                	// Add a ShouldRenderBoundary here? (2024-08-04)
-                	// If this group component re-renders, could it cause a double render
-                	// due to the TextEditorViewModelDisplay re-rendering because:
-                	// 	- It is a child of this component
-                	//     - It is subscribed to the state change
-                	//
-                	// (2024-09-07)
-                	// It turns out that this component specifically tells the TabListDisplay to invoke
-                	// its StateHasChanged when the view model changes.
-                    <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
-                                                ViewModelDisplayOptions="ViewModelDisplayOptions"/>
+                	if (UseTextEditorViewModelAutoDisplay)
+                	{
+                		<TextEditorViewModelAutoDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+	                                                    ViewModelDisplayOptions="ViewModelDisplayOptions"/>
+                	}
+                	else
+                	{
+	                    <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+	                                                ViewModelDisplayOptions="ViewModelDisplayOptions"/>
+                	}
                 }
             }
         </div>
