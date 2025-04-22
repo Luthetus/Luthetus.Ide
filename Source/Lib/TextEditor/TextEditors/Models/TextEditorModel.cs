@@ -107,13 +107,13 @@ public partial class TextEditorModel
 	    _allText = other._allText;
 	    _charCount = other._charCount;
 	    
-	    if (other.ShouldReloadVirtualizationResult)
+	    /*if (other.ShouldReloadVirtualizationResult)
 	    {
 	    	WriteEditBlockListToConsole();
-	    }
+	    }*/
     }
     
-    private void WriteEditBlockListToConsole()
+    /*private void WriteEditBlockListToConsole()
     {
     	Console.WriteLine($"Index:{EditBlockIndex}, Count:{EditBlockList.Count}, TagDoNotRemove:{(TagDoNotRemove is null ? "null" : TagDoNotRemove)} MAXIMUM_EDIT_BLOCKS:{MAXIMUM_EDIT_BLOCKS} ResourceUri:{ResourceUri.Value}");
     	
@@ -128,7 +128,7 @@ public partial class TextEditorModel
     		Console.WriteLine($"\t\tBeforePositionIndex:  {entry.BeforePositionIndex}");
     		Console.WriteLine($"\t\tEditedTextBuilder: {entry.EditedTextBuilder}");
     	}
-    }
+    }*/
 	
 	/// <summary>
 	/// You have to check if the '_partitionListChanged'
