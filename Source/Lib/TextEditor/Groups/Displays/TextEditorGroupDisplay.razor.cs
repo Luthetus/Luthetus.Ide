@@ -32,7 +32,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     [Parameter]
     public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
     [Parameter]
-    public bool UseTextEditorViewModelAutoDisplay { get; set; } = true;
+    public bool UseTextEditorViewModelSlimDisplay { get; set; }
 
 	private TabListDisplay? _tabListDisplay;
 
