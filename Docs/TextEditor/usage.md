@@ -1,4 +1,4 @@
-# Luthetus.TextEditor (v2.1.0)
+# Luthetus.TextEditor (v4.9.0)
 
 ## Usage
 
@@ -65,13 +65,13 @@ private ITextEditorService TextEditorService { get; set; } = null!;
 
 - The `ITextEditorService` has public properties that encapsulate the API for a given datatype in the `Luthetus.TextEditor` namespace. For example, `TextEditorService.ModelApi` accesses the `ModelApi` property, which has all of the API related to the `TextEditorModel` datatype.
 
-- By invoking `TextEditorService.ModelApi.RegisterCustom(...);`, we can create register a TextEditorModel. The `RegisterCustom(...)` method takes as parameters: an instance of `TextEditorModel`, and a [TextEditorEditContext](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditorEditContext.cs#L9). So we need to make the `TextEditorModel` instance.
+- By invoking `TextEditorService.ModelApi.RegisterCustom(...);`, we can create register a TextEditorModel. The `RegisterCustom(...)` method takes as parameters: an instance of [TextEditorEditContext](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditorEditContext.cs#L9), and a `TextEditorModel`. So we need to make the `TextEditorModel` instance.
 
 - In the override for `OnInitialized()`, create an instance of a `TextEditorModel`.
 
-- Now, we need the `TextEditorEditContext`. Invoke `TextEditorService.TextEditorWorker.PostUnique(...)`. The first argument is a "name" for the work item. The second argument is a Func that will provide you a `TextEditorEditContext` instance, and excepts you to return a `ValueTask`.
+- Now, we need the `TextEditorEditContext`. Invoke `TextEditorService.WorkerArbitrary.PostUnique(...)`. The first argument is a "name" for the work item. The second argument is a Func that will provide you a `TextEditorEditContext` instance, and excepts you to return a `ValueTask`.
 
-- Inside the `TextEditorService.TextEditorWorker.PostUnique(...)` Func argument, go on to in the body of the Func, invoke `TextEditorService.Model.RegisterCustom(...)`. Pass the `TextEditorEditContext` that the Func provided, and the instance of the `TextEditorModel`.
+- Inside the `TextEditorService.WorkerArbitrary.PostUnique(...)` Func argument, go on to in the body of the Func, invoke `TextEditorService.Model.RegisterCustom(...)`. Pass the `TextEditorEditContext` that the Func provided, and the instance of the `TextEditorModel`.
 
 ```csharp
 protected override void OnInitialized()
@@ -189,7 +189,7 @@ public partial class Index : ComponentBase
 	    decorationMapper: null,
         compilerService: null);
 
-		TextEditorService.TextEditorWorker.PostUnique(nameof(Index), editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(nameof(Index), editContext =>
 		{
 			TextEditorService.ModelApi.RegisterCustom(editContext, model);
 		
@@ -207,9 +207,9 @@ public partial class Index : ComponentBase
 
 - In the .razor markup (`Pages/Index.razor`) render the Blazor component: `<Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay/>`
 
-- This component takes various parameters, but only one of them is required. The rest of the parameters are for customization.
+- This component takes only one required parameter, any others are for customization.
 
-- Pass in the required parameter `TextEditorViewModelKey` to have the value of the `TextEditorViewModelKey` property from the codebehind.
+- The required parameter named `TextEditorViewModelKey` can be given the property named `ViewModelKey`, which was made in the codebehind.
 
 ```csharp
 @page "/"
@@ -229,12 +229,12 @@ Welcome to your new app.
 
 ![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/text-editor-tutorial-midway.gif)
 
-> *NOTE:* Height of the text editor is 100% of the parent element. In the Blazor default project template one needs the following:
+> Height of the text editor is 100% of the parent element.
+
+> For the Blazor default project template I'll provide a quick hack I did to get things to work, but this only demonstrates the idea of how you'd fix a height issue, not well written CSS.
 
 ``` html
-<!-- Example for more height in the Blazor default project template (this is not an example of ideal responsive UI css but it gets across the idea and one can customize as needed.) -->
-
-<!-- Index.razor -->
+<!-- Blazor template: Index.razor -->
 
 @page "/"
 
@@ -252,14 +252,10 @@ Welcome to your new app.
 <div style="height: calc(100% - 5em - 10px);">
 	<TextEditorViewModelDisplay TextEditorViewModelKey="ViewModelKey"/>
 </div>
-
-
 ```
 
 ``` html
-<!-- Example for more height in the Blazor default project template (this is not an example of ideal responsive UI css but it gets across the idea and one can customize as needed.) -->
-
-<!-- MainLayout.razor -->
+<!-- Blazor template: MainLayout.razor -->
 
 @inherits LayoutComponentBase
 
@@ -281,9 +277,9 @@ Welcome to your new app.
         </article>
     </main>
 </div>
-
 ```
 
+The following GIF showcases the result of the "Blazor template height hack":
 ![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/text-editor-tutorial-resize.gif)
 
 - Now we can add in the C# Compiler Service.
@@ -293,8 +289,8 @@ Welcome to your new app.
 Go to the file that you register your services and add the following lines of C# code.
 
 ```csharp
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
+/*using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;*/
 
 // NOTE: the next step creates the implementations
 services
@@ -304,12 +300,10 @@ services
 
 Add CompilerServiceRegistry.cs as follows:
 ```csharp
-using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -319,19 +313,18 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
 {
     private readonly Dictionary<string, ICompilerService> _map = new();
 
-    public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
-    public ImmutableList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToImmutableList();
+    public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Values.ToList();
 
-    public CompilerServiceRegistry(ITextEditorService textEditorService)
+    public CompilerServiceRegistry(ITextEditorService textEditorService, IClipboardService clipboardService)
     {
-        CSharpCompilerService = new CSharpCompilerService(textEditorService);
-        DefaultCompilerService = new CompilerService(textEditorService);
+        CSharpCompilerService = new CSharpCompilerService(textEditorService, clipboardService);
+        DefaultCompilerService = new CompilerServiceDoNothing();
         
         _map.Add(ExtensionNoPeriodFacts.C_SHARP_CLASS, CSharpCompilerService);
     }
 
     public CSharpCompilerService CSharpCompilerService { get; }
-    public CompilerService DefaultCompilerService { get; }
+    public CompilerServiceDoNothing DefaultCompilerService { get; }
 
     public ICompilerService GetCompilerService(string extensionNoPeriod)
     {
@@ -344,10 +337,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
 ```
 
 Add DecorationMapperRegistry.cs as follows:
-
 ```csharp
-using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -356,8 +346,6 @@ namespace Luthetus.Tutorials.RazorLib.Decorations;
 public class DecorationMapperRegistry : IDecorationMapperRegistry
 {
     private Dictionary<string, IDecorationMapper> _map { get; } = new();
-
-    public ImmutableDictionary<string, IDecorationMapper> Map => _map.ToImmutableDictionary();
 
     public DecorationMapperRegistry()
     {
@@ -385,8 +373,8 @@ public class DecorationMapperRegistry : IDecorationMapperRegistry
 - Inject the `ICompilerServiceRegistry` and the `IDecorationMapperRegistry`
 
 ```csharp
-// using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-// using Luthetus.TextEditor.RazorLib.Decorations.Models;
+/*using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;*/
 
 [Inject]
 private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
@@ -469,14 +457,17 @@ public partial class Home : ComponentBase
             genericDecorationMapper,
             cSharpCompilerService);
 
-		TextEditorService.ModelApi.RegisterCustom(model);
+		TextEditorService.TextEditorWorker.PostUnique(nameof(Index), editContext =>
+		{
+			TextEditorService.ModelApi.RegisterCustom(editContext, model);
 
-        cSharpCompilerService.RegisterResource(model.ResourceUri, shouldTriggerResourceWasModified: true);
+			cSharpCompilerService.RegisterResource(model.ResourceUri, shouldTriggerResourceWasModified: true);
 
-        TextEditorService.ViewModelApi.Register(
+			TextEditorService.ViewModelApi.Register(
 			ViewModelKey,
 			ResourceUri,
 			new Category("main"));
+		});
 
 		base.OnInitialized();
 	}

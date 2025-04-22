@@ -1,4 +1,4 @@
-# Luthetus.TextEditor (v4.2.0)
+# Luthetus.TextEditor (v4.9.0)
 
 ## Installation
 
@@ -27,14 +27,12 @@ The nuget.org link to the NuGet Package is here: https://www.nuget.org/packages/
 Go to the file that you register your services and add the following lines of C# code.
 
 ```csharp
-// using Microsoft.Extensions.DependencyInjection;
-// using Luthetus.Common.RazorLib.Installations.Models;
-// using Luthetus.Common.RazorLib.Contexts.Models;
-// using Luthetus.Tutorials.RazorLib.CompilerServices;
-// using Luthetus.Tutorials.RazorLib.Decorations;
-// using Luthetus.TextEditor.RazorLib.Installations.Models;
-// using Luthetus.TextEditor.RazorLib.CompilerServices;
-// using Luthetus.TextEditor.RazorLib.Decorations.Models;
+/* using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Decorations.Models; */
 
 // Use either Wasm or ServerSide depending on how your app is being hosted.
 // var luthetusHostingKind = LuthetusHostingKind.ServerSide;
@@ -47,12 +45,20 @@ var hostingInformation = new LuthetusHostingInformation(
 
 services.AddLuthetusTextEditor(hostingInformation);
 
-// This is supposed to be used to reposition a dropdown if it goes off screen. I am very delirious at the moment, I'm kind of confused maybe this works?
-ContextFacts.RootHtmlElementId = ContextFacts.TextEditorContext.ContextElementId;
-
+// CompilerServiceRegistry
+//
+// You can create your own implementation of:
+// - ICompilerServiceRegistry
+// - IDecorationMapperRegistry
+//
+// In order to support any file extension.
+//
+// The "Default" ones will treat all file extensions
+// as plain text.
+//
 return services
-    .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
-    .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>();
+    .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistryDefault>()
+    .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistryDefault>();
 ```
 
 - Reference the `CSS`

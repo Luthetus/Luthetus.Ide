@@ -9,11 +9,10 @@ public class CompilerServiceRegistryDefault : ICompilerServiceRegistry
         CompilerServiceDoNothing = new CompilerServiceDoNothing();
     }
 
+    public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Values.ToList();
+
     public CompilerServiceDoNothing CompilerServiceDoNothing { get; }
     
-    public IReadOnlyDictionary<string, ICompilerService> Map => _map;
-    public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToList();
-
     public ICompilerService GetCompilerService(string extensionNoPeriod)
     {
         if (_map.TryGetValue(extensionNoPeriod, out var compilerService))

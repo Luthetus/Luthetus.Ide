@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib;
@@ -13,7 +12,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     private readonly Dictionary<string, ICompilerService> _map = new();
 
     public IReadOnlyDictionary<string, ICompilerService> Map => _map;
-    public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToImmutableList();
+    public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Values.ToList();
 
     public CompilerServiceRegistry(ITextEditorService textEditorService, IClipboardService clipboardService)
     {
