@@ -155,7 +155,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-        viewModel.DisplayTracker.PostScrollAndRemeasure();
+    	editContext.TextEditorService.AppDimensionService.NotifyIntraAppResize();
     }
 
     public static void ScrollLineDown(
