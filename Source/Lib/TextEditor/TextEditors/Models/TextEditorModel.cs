@@ -974,28 +974,22 @@ public partial class TextEditorModel
 
     public void SetLineEndKindPreference(LineEndKind lineEndKind)
     {
-
     	if (LineEndKindPreference == lineEndKind)
-
 	    	return;
-
     	
         LineEndKindPreference = lineEndKind;
 
-        
-
         if (lineEndKind == LineEndKind.CarriageReturnLineFeed ||
-
         	lineEndKind == LineEndKind.CarriageReturn ||
-
         	lineEndKind == LineEndKind.LineFeed)
-
         {
-
+        	ClearEditBlocks();
+        
+        	UseUnsetOverride = true;
+        	UnsetOverrideLineEndKind = lineEndKind;
+        
         	SetContent(AllText.ReplaceLineEndings(lineEndKind.AsCharacters()));
-
         }
-
     }
 
     public void SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
