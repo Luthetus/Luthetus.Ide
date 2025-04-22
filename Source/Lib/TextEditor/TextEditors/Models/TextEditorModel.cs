@@ -876,7 +876,7 @@ public partial class TextEditorModel
 				break;
 			case TextEditorEditKind.Backspace:
 				PerformBackspace(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
-				RestoreAfterCursor(cursorModifierBag, redoEdit);
+				// Do not restore after cursor for 'Backspace'.
 				break;
 			case TextEditorEditKind.Delete: 
 				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
