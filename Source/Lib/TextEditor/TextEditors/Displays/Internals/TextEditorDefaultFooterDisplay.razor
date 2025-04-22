@@ -96,16 +96,6 @@
 	                </div>
 	
 	                <div class="luth_te_text-editor-footer-entry">
-	                    @if (model.OnlyLineEndKind == LineEndKind.Unset)
-	                    {
-	                        <text>has:unset </text>
-	                    }
-	                    else
-	                    {
-	                        <text>has:@model.OnlyLineEndKind.AsFriendlyName() </text>
-	                    }
-	
-	                    use:
 	                    <select @onchange="e => SelectRowEndingKindOnChange(renderBatch, e)">
 	                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
 	                        {
