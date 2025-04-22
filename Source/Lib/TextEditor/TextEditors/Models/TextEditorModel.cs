@@ -800,15 +800,15 @@ public partial class TextEditorModel
 		{
 			case TextEditorEditKind.Insert:
 				PerformInsert(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.ToString());
-				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
+				RestoreBeforeCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
 				PerformBackspace(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
-				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
+				RestoreBeforeCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Delete: 
 				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
-				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
+				RestoreBeforeCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				break;
@@ -863,12 +863,15 @@ public partial class TextEditorModel
 		{
 			case TextEditorEditKind.Insert:
 				PerformInsert(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.ToString());
+				RestoreAfterCursor(cursorModifierBag, redoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
 				PerformBackspace(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				RestoreAfterCursor(cursorModifierBag, redoEdit);
 				break;
 			case TextEditorEditKind.Delete: 
 				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				RestoreAfterCursor(cursorModifierBag, redoEdit);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				while (true)
@@ -1426,7 +1429,7 @@ public partial class TextEditorModel
 				columnIndex,
 				isPrimaryCursor: true);
 		
-			if (deleteKind == DeleteKind.Delete)
+			if (deleteKind == DeleteKind.Delete || deleteKind == DeleteKind.Backspace)
 			{
 				EnsureUndoPoint(new TextEditorEdit(
 					TextEditorEditKind.Delete,
@@ -1438,7 +1441,7 @@ public partial class TextEditorModel
 					afterCursor,
 					new StringBuilder(textRemoved)));
 			}
-			else if (deleteKind == DeleteKind.Backspace)
+			/*else if (deleteKind == DeleteKind.Backspace)
 			{
 				EnsureUndoPoint(new TextEditorEdit(
 					TextEditorEditKind.Backspace,
@@ -1447,7 +1450,7 @@ public partial class TextEditorModel
 					originalCursor,
 					afterCursor,
 					new StringBuilder(textRemoved)));
-			}
+			}*/
 			else
 			{
 				throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
