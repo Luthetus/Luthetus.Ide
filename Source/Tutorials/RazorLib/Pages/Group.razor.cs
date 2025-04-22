@@ -98,9 +98,6 @@ public record TextEditorGroup(/*...*/) : ITabGroup
 			
 			TextEditorService.GroupApi.Register(GroupKey, category: new("main"));
 			TextEditorService.GroupApi.AddViewModel(GroupKey, Group.ViewModelKey);
-			TextEditorService.GroupApi.AddViewModel(GroupKey, Index.ViewModelKey);
-			
-			// TextEditorService.GroupApi.SetActiveViewModel(GroupKey, Group.ViewModelKey);
 		
 			return ValueTask.CompletedTask;
 		});
