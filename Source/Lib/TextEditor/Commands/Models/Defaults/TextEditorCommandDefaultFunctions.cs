@@ -155,7 +155,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-        editContext.TextEditorService.OptionsApi.SetRenderStateKey(Key<RenderState>.NewKey());
+        viewModel.DisplayTracker.PostScrollAndRemeasure();
     }
 
     public static void ScrollLineDown(
