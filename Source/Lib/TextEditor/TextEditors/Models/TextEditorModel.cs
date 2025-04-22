@@ -410,7 +410,8 @@ public partial class TextEditorModel
 			false,
 			DeleteKind.Backspace,
 			CancellationToken.None,
-			shouldCreateEditHistory: false);
+			shouldCreateEditHistory: false,
+			usePositionIndex: true);
 	}
 
 	private void PerformDelete(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
@@ -427,7 +428,8 @@ public partial class TextEditorModel
 			false,
 			DeleteKind.Delete,
 			CancellationToken.None,
-			shouldCreateEditHistory: false);
+			shouldCreateEditHistory: false,
+			usePositionIndex: true);
 	}
 
 	public void DeleteTextByMotion(
@@ -1391,7 +1393,8 @@ public partial class TextEditorModel
         bool expandWord,
         DeleteKind deleteKind,
         CancellationToken cancellationToken = default,
-		bool shouldCreateEditHistory = true)
+		bool shouldCreateEditHistory = true,
+		bool usePositionIndex = false)
 	{
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
@@ -1401,7 +1404,7 @@ public partial class TextEditorModel
 
 		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
 
-        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
+        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, usePositionIndex, cancellationToken);
 
         if (tuple is null)
         {
@@ -1496,6 +1499,7 @@ public partial class TextEditorModel
         TextEditorCursorModifier cursorModifier,
         bool expandWord,
         DeleteKind deleteKind,
+        bool usePositionIndex,
         CancellationToken cancellationToken)
 	{
         var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
@@ -1577,8 +1581,14 @@ public partial class TextEditorModel
                     lineEndPositionLazyRemoveRange.index ??= indexLineEnd;
                     lineEndPositionLazyRemoveRange.count++;
 
-                    var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
+					var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
                     charCount += lengthOfLineEnd;
+	                    
+					if (usePositionIndex)
+					{
+						// -1 since the for loop always will increment at least once.
+						i += (lengthOfLineEnd - 1);
+					}
 
                     // MutateLineEndKindCount(lineEnd.LineEndKind, -1);
 
@@ -1650,8 +1660,14 @@ public partial class TextEditorModel
                     lineEndPositionLazyRemoveRange.index = indexLineEnd;
                     lineEndPositionLazyRemoveRange.count++;
 
-                    var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
-                    charCount += lengthOfLineEnd;
+					var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
+					charCount += lengthOfLineEnd;
+					
+					if (usePositionIndex)
+					{
+						// -1 since the for loop always will increment at least once.
+						i += (lengthOfLineEnd - 1);
+					}
 
                     // MutateLineEndKindCount(lineEnd.LineEndKind, -1);
                 }
