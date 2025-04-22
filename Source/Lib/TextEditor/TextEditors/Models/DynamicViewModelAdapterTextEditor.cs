@@ -40,10 +40,10 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
         DialogService = dialogService;
         CommonBackgroundTaskApi = commonBackgroundTaskApi;
 
-        ComponentType = typeof(TextEditorViewModelSlimDisplay);
+        ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()
         {
-            { nameof(TextEditorViewModelSlimDisplay.TextEditorViewModelKey), ViewModelKey }
+            { nameof(TextEditorViewModelDisplay.TextEditorViewModelKey), ViewModelKey }
         };
 
         _dragTabComponentType = typeof(TabDisplay);
@@ -318,11 +318,11 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
                     new Key<Panel>(ViewModelKey.Guid),
                     DynamicViewModelKey,
                     Key<ContextRecord>.Empty,
-                    typeof(TextEditorViewModelSlimDisplay),
+                    typeof(TextEditorViewModelDisplay),
                     new Dictionary<string, object?>
                     {
                         {
-                            nameof(TextEditorViewModelSlimDisplay.TextEditorViewModelKey),
+                            nameof(TextEditorViewModelDisplay.TextEditorViewModelKey),
                             ViewModelKey
                         },
                     },
