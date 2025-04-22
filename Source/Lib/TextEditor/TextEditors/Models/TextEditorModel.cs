@@ -125,8 +125,8 @@ public partial class TextEditorModel
     		Console.WriteLine($"\t\tEditKind:       {entry.EditKind}");
     		Console.WriteLine($"\t\tTag:            {entry.Tag}");
     		Console.WriteLine($"\t\tCursor:         {entry.BeforeCursor}");
-    		Console.WriteLine($"\t\tPositionIndex:  {entry.PositionIndex}");
-    		Console.WriteLine($"\t\tContentBuilder: {entry.ContentBuilder}");
+    		Console.WriteLine($"\t\tBeforePositionIndex:  {entry.BeforePositionIndex}");
+    		Console.WriteLine($"\t\tEditedTextBuilder: {entry.EditedTextBuilder}");
     	}
     }*/
 	
@@ -735,6 +735,11 @@ public partial class TextEditorModel
 				shouldAddNewEdit = true;
 				break;
 			}
+			case TextEditorEditKind.DeleteSelection:
+			{
+				shouldAddNewEdit = true;
+				break;
+			}
 			case TextEditorEditKind.OtherOpen:
 			{
 				TagDoNotRemove = newEdit.Tag;
@@ -810,6 +815,10 @@ public partial class TextEditorModel
 				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
 				RestoreBeforeCursor(cursorModifierBag, undoEdit);
 				break;
+			case TextEditorEditKind.DeleteSelection: 
+				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
+				RestoreBeforeCursor(cursorModifierBag, undoEdit);
+				break;
 			case TextEditorEditKind.OtherOpen:
 				break;
 			case TextEditorEditKind.OtherClose:
@@ -870,6 +879,10 @@ public partial class TextEditorModel
 				RestoreAfterCursor(cursorModifierBag, redoEdit);
 				break;
 			case TextEditorEditKind.Delete: 
+				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				RestoreAfterCursor(cursorModifierBag, redoEdit);
+				break;
+			case TextEditorEditKind.DeleteSelection: 
 				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
 				RestoreAfterCursor(cursorModifierBag, redoEdit);
 				break;
@@ -1406,6 +1419,7 @@ public partial class TextEditorModel
         var originalCursor = cursorModifier.ToCursor();
 
 		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
+		var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 
         var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, usePositionIndex, cancellationToken);
 
@@ -1428,29 +1442,37 @@ public partial class TextEditorModel
 				lineIndex,
 				columnIndex,
 				isPrimaryCursor: true);
-		
-			if (deleteKind == DeleteKind.Delete || deleteKind == DeleteKind.Backspace)
+			
+			if (initiallyHadSelection)
 			{
 				EnsureUndoPoint(new TextEditorEdit(
-					TextEditorEditKind.Delete,
+					TextEditorEditKind.DeleteSelection,
 					tag: string.Empty,
-					// Why is Delete using 'calculatedPositionIndex'
-					// meanwhile Backspace is using 'initialPositionIndex'?
 					calculatedPositionIndex,
 					originalCursor,
 					afterCursor,
 					new StringBuilder(textRemoved)));
 			}
-			/*else if (deleteKind == DeleteKind.Backspace)
+			else if (deleteKind == DeleteKind.Delete)
+			{
+				EnsureUndoPoint(new TextEditorEdit(
+					TextEditorEditKind.Delete,
+					tag: string.Empty,
+					calculatedPositionIndex,
+					originalCursor,
+					afterCursor,
+					new StringBuilder(textRemoved)));
+			}
+			else if (deleteKind == DeleteKind.Backspace)
 			{
 				EnsureUndoPoint(new TextEditorEdit(
 					TextEditorEditKind.Backspace,
 					tag: string.Empty,
-					initialPositionIndex,
+					initialPositionIndex, // NOTE: this is different
 					originalCursor,
 					afterCursor,
 					new StringBuilder(textRemoved)));
-			}*/
+			}
 			else
 			{
 				throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");

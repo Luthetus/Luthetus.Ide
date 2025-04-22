@@ -55,6 +55,9 @@ public struct TextEditorEdit
 			case TextEditorEditKind.Delete:
 				EditedTextBuilder!.Append(text);
 				break;
+			case TextEditorEditKind.DeleteSelection:
+				throw new NotImplementedException("Cannot batch TextEditorEditKind.DeleteSelection");
+				break;
 			case TextEditorEditKind.Backspace:
 				EditedTextBuilder!.Insert(0, text);
 				break;
@@ -90,6 +93,14 @@ public struct TextEditorEdit
 					AfterCursor,
 					EditedTextBuilder);
 			case TextEditorEditKind.Delete:
+				return new TextEditorEdit(
+					TextEditorEditKind.Insert,
+					tag: string.Empty,
+					BeforePositionIndex,
+					BeforeCursor,
+					AfterCursor,
+					EditedTextBuilder);
+			case TextEditorEditKind.DeleteSelection:
 				return new TextEditorEdit(
 					TextEditorEditKind.Insert,
 					tag: string.Empty,

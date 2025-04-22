@@ -6,6 +6,7 @@ public enum TextEditorEditKind
 	Insert,
 	Backspace,
 	Delete,
+	DeleteSelection,
 	OtherOpen,
 	OtherClose,
 }
