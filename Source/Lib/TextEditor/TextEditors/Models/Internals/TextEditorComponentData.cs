@@ -15,7 +15,7 @@ using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 /// <summary>
-/// Everytime one renders a unique <see cref="Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay"/>,
+/// Everytime one renders a unique <see cref="Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelSlimDisplay"/>,
 /// a unique identifier for the HTML elements is created.
 ///
 /// That unique identifier, and other data, is on this class.
@@ -41,7 +41,7 @@ public sealed class TextEditorComponentData
 		Guid textEditorHtmlElementId,
 		ViewModelDisplayOptions viewModelDisplayOptions,
 		TextEditorOptions options,
-		TextEditorViewModelDisplay textEditorViewModelDisplay,
+		TextEditorViewModelSlimDisplay textEditorViewModelSlimDisplay,
 		IDropdownService dropdownService,
 		IClipboardService clipboardService,
 		ICommonComponentRenderers commonComponentRenderers,
@@ -56,7 +56,7 @@ public sealed class TextEditorComponentData
 		TextEditorHtmlElementId = textEditorHtmlElementId;
 		ViewModelDisplayOptions = viewModelDisplayOptions;
 		Options = options;
-		TextEditorViewModelDisplay = textEditorViewModelDisplay;
+		TextEditorViewModelSlimDisplay = textEditorViewModelSlimDisplay;
 		DropdownService = dropdownService;
 		ClipboardService = clipboardService;
 		CommonComponentRenderers = commonComponentRenderers;
@@ -81,7 +81,7 @@ public sealed class TextEditorComponentData
 			Keymap = keymap
 		};
 
-		TextEditorViewModelDisplay = otherComponentData.TextEditorViewModelDisplay;
+		TextEditorViewModelSlimDisplay = otherComponentData.TextEditorViewModelSlimDisplay;
 		ServiceProvider = otherComponentData.ServiceProvider;
 	}*/
 
@@ -94,7 +94,7 @@ public sealed class TextEditorComponentData
 
 	public Guid TextEditorHtmlElementId { get; }
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
-	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; }
+	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; }
 	public IDropdownService DropdownService { get; }
 	public IClipboardService ClipboardService { get; }
 	public ICommonComponentRenderers CommonComponentRenderers { get; }

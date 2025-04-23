@@ -292,7 +292,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
 Sln-Directory: '{parentDirectory}'
-General Terminal"));
+General Terminal".ReplaceLineEndings("\n")));
 		        		return Task.CompletedTask;
 		        	}
 		        };
@@ -312,7 +312,7 @@ General Terminal"));
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
 Sln-Directory: '{parentDirectory}'
-Execution Terminal"));
+Execution Terminal".ReplaceLineEndings("\n")));
 		        		return Task.CompletedTask;
 		        	}
 		        };

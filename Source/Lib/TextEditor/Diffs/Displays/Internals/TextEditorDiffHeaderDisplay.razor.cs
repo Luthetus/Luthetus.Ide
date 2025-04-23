@@ -8,13 +8,13 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.Displays.Internals;
 public partial class TextEditorDiffHeaderDisplay : ComponentBase, ITextEditorDependentComponent
 {
 	[Parameter, EditorRequired]
-	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
+	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
 
 	private static readonly Throttle _throttleRender = new(TimeSpan.FromMilliseconds(1_000));
 
 	protected override void OnInitialized()
     {
-        TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
+        TextEditorViewModelSlimDisplay.RenderBatchChanged += OnRenderBatchChanged;
         OnRenderBatchChanged();
         
         base.OnInitialized();
@@ -30,6 +30,6 @@ public partial class TextEditorDiffHeaderDisplay : ComponentBase, ITextEditorDep
 
 	public void Dispose()
     {
-    	TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
+    	TextEditorViewModelSlimDisplay.RenderBatchChanged -= OnRenderBatchChanged;
     }
 }

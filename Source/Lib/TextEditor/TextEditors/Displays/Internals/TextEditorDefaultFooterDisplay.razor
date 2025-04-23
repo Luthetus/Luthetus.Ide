@@ -5,12 +5,12 @@
 @using Luthetus.TextEditor.RazorLib.Rows.Models
 @using Luthetus.TextEditor.RazorLib.Htmls.Models
 
-@{ var renderBatch = TextEditorViewModelDisplay._activeRenderBatch; }
+@{ var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch; }
 
 @if (renderBatch is not null)
 {
-	<div class="luth_te_text-editor-footer @TextEditorViewModelDisplay.WrapperCssClass @TextEditorService.ThemeCssClassString"
-		 style="@TextEditorViewModelDisplay.WrapperCssStyle">
+	<div class="luth_te_text-editor-footer @TextEditorViewModelSlimDisplay.WrapperCssClass @TextEditorService.ThemeCssClassString"
+		 style="@TextEditorViewModelSlimDisplay.WrapperCssStyle">
 	    <div class="luth_te_text-editor-footer-listing">
 	        @{
 	            var model = renderBatch.Model;
@@ -96,21 +96,11 @@
 	                </div>
 	
 	                <div class="luth_te_text-editor-footer-entry">
-	                    @if (model.OnlyLineEndKind == LineEndKind.Unset)
-	                    {
-	                        <text>has:unset </text>
-	                    }
-	                    else
-	                    {
-	                        <text>has:@model.OnlyLineEndKind.AsFriendlyName() </text>
-	                    }
-	
-	                    use:
-	                    <select @onchange="e => SelectRowEndingKindOnChange(renderBatch, e)">
+	                    <select @bind="SelectedLineEndKindString"
+	                            title="Line ending kind">
 	                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
 	                        {
-	                            <option value="@rowEndingKind.ToString()"
-	                                    selected="@(model.LineEndKindPreference == rowEndingKind)">
+	                            <option value="@rowEndingKind.ToString()">
 	                                @rowEndingKind.AsFriendlyName()
 	                            </option>
 	                        }

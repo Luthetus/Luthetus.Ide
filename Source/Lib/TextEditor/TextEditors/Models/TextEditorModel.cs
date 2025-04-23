@@ -125,8 +125,8 @@ public partial class TextEditorModel
     		Console.WriteLine($"\t\tEditKind:       {entry.EditKind}");
     		Console.WriteLine($"\t\tTag:            {entry.Tag}");
     		Console.WriteLine($"\t\tCursor:         {entry.BeforeCursor}");
-    		Console.WriteLine($"\t\tPositionIndex:  {entry.PositionIndex}");
-    		Console.WriteLine($"\t\tContentBuilder: {entry.ContentBuilder}");
+    		Console.WriteLine($"\t\tBeforePositionIndex:  {entry.BeforePositionIndex}");
+    		Console.WriteLine($"\t\tEditedTextBuilder: {entry.EditedTextBuilder}");
     	}
     }*/
 	
@@ -257,6 +257,18 @@ public partial class TextEditorModel
     public int RenderStateSequence { get; set; }
 
     public int PreviousLineCount { get; set; }
+    
+    /// <summary>
+    /// Be sure to set this to true in order to have the override used.
+    /// See 'UnsetOverrideLineEndKind'.
+    /// To get this applied on the initial 'SetContent(...)' invocation, use object initialization syntax.
+    /// </summary>
+    public bool UseUnsetOverride { get; set; }
+    /// <summary>
+    /// Be sure to set 'UseUnsetOverride' to true in order to have the override used.
+    /// To get this applied on the initial 'SetContent(...)' invocation, use object initialization syntax.
+    /// </summary>
+    public LineEndKind UnsetOverrideLineEndKind { get; set; } = LineEndKind.LineFeed;
     
     public int LineCount => LineEndList.Count;
 
@@ -410,7 +422,8 @@ public partial class TextEditorModel
 			false,
 			DeleteKind.Backspace,
 			CancellationToken.None,
-			shouldCreateEditHistory: false);
+			shouldCreateEditHistory: false,
+			usePositionIndex: true);
 	}
 
 	private void PerformDelete(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
@@ -427,7 +440,8 @@ public partial class TextEditorModel
 			false,
 			DeleteKind.Delete,
 			CancellationToken.None,
-			shouldCreateEditHistory: false);
+			shouldCreateEditHistory: false,
+			usePositionIndex: true);
 	}
 
 	public void DeleteTextByMotion(
@@ -484,83 +498,182 @@ public partial class TextEditorModel
 		
         var rowIndex = 0;
         var charactersOnRow = 0;
+
         
+
         List<RichCharacter> richCharacterList = new();
+
         var richCharacterIndex = 0;
+
         
+
         for (var contentIndex = 0; contentIndex < content.Length; contentIndex++)
         {
             var character = content[contentIndex];
+
             charactersOnRow++;
+
             
+
             LineEndKind currentLineEndKind = LineEndKind.Unset;
+
             
+
             if ((character == '\r') && (contentIndex < content.Length - 1) && (content[contentIndex + 1] == '\n'))
+
             {
+
             	contentIndex++;
+
             	currentLineEndKind = LineEndKind.CarriageReturnLineFeed;
+
             	
+
             	if (LineEndKindPreference == LineEndKind.Unset)
+
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
+
             }
+
             else if (character == '\r')
+
             {
+
             	currentLineEndKind = LineEndKind.CarriageReturn;
+
             	
+
             	if (LineEndKindPreference == LineEndKind.Unset)
+
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
+
             }
+
             else if (character == '\n')
+
             {
+
             	currentLineEndKind = LineEndKind.LineFeed;
+
             	
+
             	if (LineEndKindPreference == LineEndKind.Unset)
+
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
+
             }
+
             
+
             if (currentLineEndKind != LineEndKind.Unset)
+
             {
+
 				if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+
 					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+
             
+
             	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
+
             	{
+
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, LineEndKind.CarriageReturnLineFeed));
+
 	            	richCharacterList.Add(new(character, default));
+
 	            	richCharacterList.Add(new('\n', default));
+
 	            	richCharacterIndex += 2;
+
             	}
+
             	else if (LineEndKindPreference == LineEndKind.CarriageReturn)
+
             	{
+
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.CarriageReturn));
+
 					richCharacterList.Add(new(character, default));
+
 	            	richCharacterIndex++;
+
             	}
+
             	else if (LineEndKindPreference == LineEndKind.LineFeed)
+
             	{
+
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.LineFeed));
+
 					richCharacterList.Add(new(character, default));
+
 	            	richCharacterIndex++;
+
             	}
+
             	else
+
             	{
+
             		throw new NotImplementedException("only CarriageReturnLineFeed, CarriageReturn, and LineFeed are expected.");
+
             	}
+
 				
+
 				rowIndex++;
+
 	            charactersOnRow = 0;
+
             }
 			else if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+
 			{
                 TabKeyPositionList.Add(richCharacterIndex);
+
                 richCharacterList.Add(new(character, default));
+
             	richCharacterIndex++;
+
             }
+
             else
+
             {
+
             	richCharacterList.Add(new(character, default));
+
             	richCharacterIndex++;
+
             }
+        }
+        
+        if (LineEndKindPreference == LineEndKind.Unset)
+        {
+        	if (UseUnsetOverride)
+        	{
+        		LineEndKindPreference = UnsetOverrideLineEndKind;
+        	}
+        	else
+        	{
+	        	switch (Environment.NewLine)
+	        	{
+	        		case "\r":
+	        			LineEndKindPreference = LineEndKind.CarriageReturn;
+	        			break;
+	        		case "\n":
+	        			LineEndKindPreference = LineEndKind.LineFeed;
+	        			break;
+	        		case "\r\n":
+	        			LineEndKindPreference = LineEndKind.CarriageReturnLineFeed;
+	        			break;
+	        		default:
+	        			LineEndKindPreference = LineEndKind.LineFeed;
+	        			break;
+	        	}
+	        }
         }
 
         __InsertRange(0, richCharacterList);
@@ -641,6 +754,11 @@ public partial class TextEditorModel
 				shouldAddNewEdit = true;
 				break;
 			}
+			case TextEditorEditKind.DeleteSelection:
+			{
+				shouldAddNewEdit = true;
+				break;
+			}
 			case TextEditorEditKind.OtherOpen:
 			{
 				TagDoNotRemove = newEdit.Tag;
@@ -706,15 +824,19 @@ public partial class TextEditorModel
 		{
 			case TextEditorEditKind.Insert:
 				PerformInsert(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.ToString());
-				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
+				RestoreBeforeCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
 				PerformBackspace(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
-				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
+				RestoreBeforeCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.Delete: 
 				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
-				RestoreBeforeCursor(cursorModifierBag, undoEdit); // Only Undo needs to restore the before cursor --- after undoing/redoing.
+				RestoreBeforeCursor(cursorModifierBag, undoEdit);
+				break;
+			case TextEditorEditKind.DeleteSelection: 
+				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
+				RestoreBeforeCursor(cursorModifierBag, undoEdit);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				break;
@@ -769,12 +891,19 @@ public partial class TextEditorModel
 		{
 			case TextEditorEditKind.Insert:
 				PerformInsert(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.ToString());
+				RestoreAfterCursor(cursorModifierBag, redoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
 				PerformBackspace(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				// Do not restore after cursor for 'Backspace'.
 				break;
 			case TextEditorEditKind.Delete: 
 				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				RestoreAfterCursor(cursorModifierBag, redoEdit);
+				break;
+			case TextEditorEditKind.DeleteSelection: 
+				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				RestoreAfterCursor(cursorModifierBag, redoEdit);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				while (true)
@@ -843,18 +972,23 @@ public partial class TextEditorModel
         OnlyLineEndKind = LineEndKind.Unset;
     }
 
-    public void SetLineEndKindPreference(LineEndKind rowEndingKind)
+    public void SetLineEndKindPreference(LineEndKind lineEndKind)
     {
-    	if (LineEndKindPreference == rowEndingKind)
+    	if (LineEndKindPreference == lineEndKind)
 	    	return;
     	
-        LineEndKindPreference = rowEndingKind;
-        
-        if (rowEndingKind == LineEndKind.CarriageReturnLineFeed ||
-        	rowEndingKind == LineEndKind.CarriageReturn ||
-        	rowEndingKind == LineEndKind.LineFeed)
+        LineEndKindPreference = lineEndKind;
+
+        if (lineEndKind == LineEndKind.CarriageReturnLineFeed ||
+        	lineEndKind == LineEndKind.CarriageReturn ||
+        	lineEndKind == LineEndKind.LineFeed)
         {
-        	SetContent(AllText.ReplaceLineEndings(rowEndingKind.AsCharacters()));
+        	ClearEditBlocks();
+        
+        	UseUnsetOverride = true;
+        	UnsetOverrideLineEndKind = lineEndKind;
+        
+        	SetContent(AllText.ReplaceLineEndings(lineEndKind.AsCharacters()));
         }
     }
 
@@ -1288,7 +1422,8 @@ public partial class TextEditorModel
         bool expandWord,
         DeleteKind deleteKind,
         CancellationToken cancellationToken = default,
-		bool shouldCreateEditHistory = true)
+		bool shouldCreateEditHistory = true,
+		bool usePositionIndex = false)
 	{
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
@@ -1297,8 +1432,9 @@ public partial class TextEditorModel
         var originalCursor = cursorModifier.ToCursor();
 
 		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
+		var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 
-        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
+        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, usePositionIndex, cancellationToken);
 
         if (tuple is null)
         {
@@ -1319,28 +1455,48 @@ public partial class TextEditorModel
 				lineIndex,
 				columnIndex,
 				isPrimaryCursor: true);
-		
-			if (deleteKind == DeleteKind.Delete)
+			
+			if (initiallyHadSelection)
 			{
 				EnsureUndoPoint(new TextEditorEdit(
-					TextEditorEditKind.Delete,
+					TextEditorEditKind.DeleteSelection,
 					tag: string.Empty,
-					// Why is Delete using 'calculatedPositionIndex'
-					// meanwhile Backspace is using 'initialPositionIndex'?
 					calculatedPositionIndex,
 					originalCursor,
 					afterCursor,
 					new StringBuilder(textRemoved)));
 			}
+			else if (deleteKind == DeleteKind.Delete)
+			{
+				// WARNING: If 'GetString(...)' ever returns an empty string erroneously then this if makes things very confusing...
+				// ...the alternatives however involved getting the final position index and this might result in an extra .SelectMany on the partitions.
+				// There is no proof for the extra .SelectMany, it is just a worry and I'm quite tired at the moment.
+				if (textRemoved != string.Empty)
+				{
+					EnsureUndoPoint(new TextEditorEdit(
+						TextEditorEditKind.Delete,
+						tag: string.Empty,
+						calculatedPositionIndex,
+						originalCursor,
+						afterCursor,
+						new StringBuilder(textRemoved)));
+				}
+			}
 			else if (deleteKind == DeleteKind.Backspace)
 			{
-				EnsureUndoPoint(new TextEditorEdit(
-					TextEditorEditKind.Backspace,
-					tag: string.Empty,
-					initialPositionIndex,
-					originalCursor,
-					afterCursor,
-					new StringBuilder(textRemoved)));
+				// WARNING: If 'GetString(...)' ever returns an empty string erroneously then this if makes things very confusing...
+				// ...the alternatives however involved getting the final position index and this might result in an extra .SelectMany on the partitions.
+				// There is no proof for the extra .SelectMany, it is just a worry and I'm quite tired at the moment.
+				if (textRemoved != string.Empty)
+				{
+					EnsureUndoPoint(new TextEditorEdit(
+						TextEditorEditKind.Backspace,
+						tag: string.Empty,
+						initialPositionIndex, // NOTE: this is different
+						originalCursor,
+						afterCursor,
+						new StringBuilder(textRemoved)));
+				}
 			}
 			else
 			{
@@ -1393,6 +1549,7 @@ public partial class TextEditorModel
         TextEditorCursorModifier cursorModifier,
         bool expandWord,
         DeleteKind deleteKind,
+        bool usePositionIndex,
         CancellationToken cancellationToken)
 	{
         var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
@@ -1474,8 +1631,14 @@ public partial class TextEditorModel
                     lineEndPositionLazyRemoveRange.index ??= indexLineEnd;
                     lineEndPositionLazyRemoveRange.count++;
 
-                    var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
+					var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
                     charCount += lengthOfLineEnd;
+	                    
+					if (usePositionIndex)
+					{
+						// -1 since the for loop always will increment at least once.
+						i += (lengthOfLineEnd - 1);
+					}
 
                     // MutateLineEndKindCount(lineEnd.LineEndKind, -1);
 
@@ -1547,8 +1710,14 @@ public partial class TextEditorModel
                     lineEndPositionLazyRemoveRange.index = indexLineEnd;
                     lineEndPositionLazyRemoveRange.count++;
 
-                    var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
-                    charCount += lengthOfLineEnd;
+					var lengthOfLineEnd = LineEndList[indexLineEnd].LineEndKind.AsCharacters().Length;
+					charCount += lengthOfLineEnd;
+					
+					if (usePositionIndex)
+					{
+						// -1 since the for loop always will increment at least once.
+						i += (lengthOfLineEnd - 1);
+					}
 
                     // MutateLineEndKindCount(lineEnd.LineEndKind, -1);
                 }

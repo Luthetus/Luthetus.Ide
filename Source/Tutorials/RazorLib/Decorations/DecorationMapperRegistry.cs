@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -7,8 +6,6 @@ namespace Luthetus.Tutorials.RazorLib.Decorations;
 public class DecorationMapperRegistry : IDecorationMapperRegistry
 {
     private Dictionary<string, IDecorationMapper> _map { get; } = new();
-
-    public ImmutableDictionary<string, IDecorationMapper> Map => _map.ToImmutableDictionary();
 
     public DecorationMapperRegistry()
     {

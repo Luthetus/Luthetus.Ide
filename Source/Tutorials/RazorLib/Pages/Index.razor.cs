@@ -60,7 +60,7 @@ public partial class Index : ComponentBase
 	        genericDecorationMapper,
 	        cSharpCompilerService);
 	
-		TextEditorService.TextEditorWorker.PostUnique(nameof(Index), editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(nameof(Index), editContext =>
 		{
 			TextEditorService.ModelApi.RegisterCustom(editContext, model);
 		

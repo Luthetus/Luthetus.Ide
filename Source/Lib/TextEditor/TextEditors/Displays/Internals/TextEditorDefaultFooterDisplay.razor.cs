@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 // FooterDriver.cs
@@ -17,9 +18,57 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 	private ITextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
+	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
 
 	public int _previousPositionNumber;
+	
+	private string _selectedLineEndKindString;
+	
+	private Key<TextEditorViewModel> _viewModelKeyPrevious = Key<TextEditorViewModel>.Empty;
+	private LineEndKind _lineEndKindPreferencePrevious;
+	
+	public string SelectedLineEndKindString
+	{
+		get => _selectedLineEndKindString;
+		set
+		{
+			var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+		
+			if (renderBatchLocal is null)
+	    		return;
+		    		
+	        var model = renderBatchLocal.Model;
+	        var viewModel = renderBatchLocal.ViewModel;
+	
+	        if (model is null || viewModel is null)
+	            return;
+	
+			_selectedLineEndKindString = value;
+	
+	        var rowEndingKindString = value;
+	
+	        if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
+	        {
+	            TextEditorService.WorkerArbitrary.PostRedundant(
+	                nameof(TextEditorService.ModelApi.SetUsingLineEndKind),
+	                viewModel.ResourceUri,
+					viewModel.ViewModelKey,
+	                editContext =>
+	                {
+	                	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+	                	
+	                	if (modelModifier is null)
+	                		return ValueTask.CompletedTask;
+	                	
+	                	TextEditorService.ModelApi.SetUsingLineEndKind(
+	                		editContext,
+		                    modelModifier,
+		                    rowEndingKind);
+		                return ValueTask.CompletedTask;
+		            });
+	        }
+		}
+	}
 	
 	protected override void OnInitialized()
     {
@@ -31,42 +80,27 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 
     private async void OnCursorShouldBlinkChanged()
     {
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+		if (renderBatchLocal?.Model is not null && renderBatchLocal?.ViewModel is not null)
+		{
+			var shouldSetSelectedLineEndKindString = false;
+			
+			if (_viewModelKeyPrevious != renderBatchLocal.ViewModel.ViewModelKey)
+			{
+				_viewModelKeyPrevious = renderBatchLocal.ViewModel.ViewModelKey;
+				shouldSetSelectedLineEndKindString = true;
+			}
+			else if (_lineEndKindPreferencePrevious != renderBatchLocal.Model.LineEndKindPreference)
+			{
+				_lineEndKindPreferencePrevious = renderBatchLocal.Model.LineEndKindPreference;
+				shouldSetSelectedLineEndKindString = true;
+			}
+			
+			if (shouldSetSelectedLineEndKindString)
+				_selectedLineEndKindString = renderBatchLocal.Model.LineEndKindPreference.ToString();
+    	}
+    
     	await InvokeAsync(StateHasChanged);
-    }
-
-    public void SelectRowEndingKindOnChange(TextEditorRenderBatch renderBatchLocal, ChangeEventArgs changeEventArgs)
-    {
-    	if (renderBatchLocal is null)
-    		return;
-	    		
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-
-        if (model is null || viewModel is null)
-            return;
-
-        var rowEndingKindString = (string)(changeEventArgs.Value ?? string.Empty);
-
-        if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
-        {
-            TextEditorService.WorkerArbitrary.PostRedundant(
-                nameof(TextEditorService.ModelApi.SetUsingLineEndKind),
-                viewModel.ResourceUri,
-				viewModel.ViewModelKey,
-                editContext =>
-                {
-                	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
-                	
-                	if (modelModifier is null)
-                		return ValueTask.CompletedTask;
-                	
-                	TextEditorService.ModelApi.SetUsingLineEndKind(
-                		editContext,
-	                    modelModifier,
-	                    rowEndingKind);
-	                return ValueTask.CompletedTask;
-	            });
-        }
     }
 
     public string StyleMinWidthFromMaxLengthOfValue(int value)

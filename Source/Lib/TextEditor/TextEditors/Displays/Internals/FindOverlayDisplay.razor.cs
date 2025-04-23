@@ -436,7 +436,8 @@ public partial class FindOverlayDisplay : ComponentBase
                 	targetTextSpan.StartingIndexInclusive);
                 	
                 cursorModifierBag.CursorModifier.LineIndex = lineIndex;
-                cursorModifierBag.CursorModifier.ColumnIndex = columnIndex;
+                cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
+                cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
                 
                 modelModifier.Delete(
 			        cursorModifierBag,
@@ -495,7 +496,6 @@ public partial class FindOverlayDisplay : ComponentBase
 	                	
 	                cursorModifierBag.CursorModifier.LineIndex = lineIndex;
 	                cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-	                
 	                cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 	                
 	                modelModifier.Delete(
