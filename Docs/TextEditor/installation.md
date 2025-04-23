@@ -7,7 +7,7 @@ was made by following steps described here. So, the completed result can be foun
 
 ### Goal
 
-![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/text-editor-tutorial-result.gif)
+![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/endResult.gif)
 
 - Reference the `Luthetus.TextEditor` Nuget Package
 - Register the `Services`
@@ -27,8 +27,7 @@ The nuget.org link to the NuGet Package is here: https://www.nuget.org/packages/
 Go to the file that you register your services and add the following lines of C# code.
 
 ```csharp
-/* using Microsoft.Extensions.DependencyInjection;
-using Luthetus.Common.RazorLib.Installations.Models;
+/* using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
