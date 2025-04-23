@@ -67,9 +67,20 @@ private ITextEditorService TextEditorService { get; set; } = null!;
 
 - The `ITextEditorService` has public properties that encapsulate the API for a given datatype in the `Luthetus.TextEditor` namespace. For example, `TextEditorService.ModelApi` accesses the `ModelApi` property, which has all of the API related to the `TextEditorModel` datatype.
 
-- By invoking `TextEditorService.ModelApi.RegisterCustom(...);`, we can create register a TextEditorModel. The `RegisterCustom(...)` method takes as parameters: an instance of [TextEditorEditContext](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditorEditContext.cs#L9), and a `TextEditorModel`. So we need to make the `TextEditorModel` instance.
+- By invoking `TextEditorService.ModelApi.RegisterCustom(...);`, we can register a TextEditorModel. The `RegisterCustom(...)` method takes as parameters: an instance of [TextEditorEditContext](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditorEditContext.cs#L9), and a `TextEditorModel`. So we need to make the `TextEditorModel` instance.
 
 - In the override for `OnInitialized()`, create an instance of a `TextEditorModel`.
+
+```csharp
+// using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+var model = new TextEditorModel(
+	ResourceUri,
+	DateTime.UtcNow,
+	ExtensionNoPeriodFacts.TXT,
+	"public class MyClass\n{\n\t\n}\n",
+	decorationMapper: null,
+	compilerService: null);
+```
 
 - Now, we need the `TextEditorEditContext`. Invoke `TextEditorService.WorkerArbitrary.PostUnique(...)`. The first argument is a "name" for the work item. The second argument is a Func that will provide you a `TextEditorEditContext` instance, and expects you to return a `ValueTask`.
 
@@ -112,12 +123,13 @@ protected override void OnInitialized()
 public static Key<TextEditorViewModel> ViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
 ```
 
-- Now, in the override for `OnInitialized()`, invoke `TextEditorService.ViewModelApi.Register(...)`.
+- Now, inside the `TextEditorService.WorkerArbitrary.PostUnique(...)` Func argument, invoke `TextEditorService.ViewModelApi.Register(...)` after the line that you registered the model.
 
 > *NOTE:* The argument 'Category' to 'TextEditorService.ViewModelApi.Register(...)' can be passed as 'new Category("main")'. It acts only as a way to filter a list of view models.
 
 ```csharp
 TextEditorService.ViewModelApi.Register(
+	editContext,
     ViewModelKey,
     ResourceUri,
     new Category("main"));
