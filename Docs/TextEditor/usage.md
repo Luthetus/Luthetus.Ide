@@ -192,7 +192,7 @@ public partial class Index : ComponentBase
 
 - The required parameter named `TextEditorViewModelKey` can be given the property named `ViewModelKey`, which was made in the codebehind.
 
-```csharp
+```razor
 @page "/"
 
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
