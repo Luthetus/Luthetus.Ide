@@ -27,7 +27,7 @@
     
     	@if (textEditorGroup is not null)
     	{
-    		var viewModelDisplayLocal = _viewModelDisplay;
+    		var viewModelSlimDisplayLocal = _viewModelSlimDisplay;
     		
     		<div class="luth_te_text-editor-group-tabs-list">
 				<TabListDisplay @ref="_tabListDisplay"
@@ -46,19 +46,19 @@
 		            }
 		            else
 		            {
-		            	if (_isLoaded && viewModelDisplayLocal is not null)
+		            	if (_isLoaded && viewModelSlimDisplayLocal is not null)
 						{
-							<TextEditorFileExtensionHeaderDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"
+							<TextEditorFileExtensionHeaderDisplay TextEditorViewModelSlimDisplay="viewModelSlimDisplayLocal"
 							                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
 						}
 		            	
-		                <TextEditorViewModelDisplay @ref="_viewModelDisplay"
-		                							TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
-		                                            ViewModelDisplayOptions="_viewModelDisplayOptions"/>
+		                <TextEditorViewModelSlimDisplay @ref="_viewModelSlimDisplay"
+		                							    TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+		                                                ViewModelDisplayOptions="_viewModelDisplayOptions"/>
 		                                            
-						if (_isLoaded && viewModelDisplayLocal is not null)
+						if (_isLoaded && viewModelSlimDisplayLocal is not null)
 						{
-							<TextEditorDefaultFooterDisplay TextEditorViewModelDisplay="viewModelDisplayLocal"/>
+							<TextEditorDefaultFooterDisplay TextEditorViewModelSlimDisplay="viewModelSlimDisplayLocal"/>
 						}
 		            }
 	            }

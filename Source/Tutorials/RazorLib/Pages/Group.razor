@@ -1,0 +1,15 @@
+@page "/group"
+
+@using Luthetus.TextEditor.RazorLib.Groups.Displays;
+
+<PageTitle>Group</PageTitle>
+
+<div style="height: 5em;">
+	<h1>Groups</h1>
+</div>
+
+@* 10px for padding *@
+<div style="height: calc(100% - 5em - 10px);">
+	<TextEditorGroupDisplay TextEditorGroupKey="GroupKey"/>
+</div>
+

@@ -14,15 +14,15 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 	[Parameter, EditorRequired]
 	public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; }
 	[Parameter, EditorRequired]
-	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
+	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
 	
 	private Dictionary<string, object?> _componentInnerParameters = null!;
 	
 	private string _fileExtensionCurrent = string.Empty;
 	
-	private TextEditorViewModelDisplay? _previousTextEditorViewModelDisplay;
+	private TextEditorViewModelSlimDisplay _previousTextEditorViewModelSlimDisplay;
 	
-	private string DictionaryKey => nameof(ITextEditorDependentComponent.TextEditorViewModelDisplay);
+	private string DictionaryKey => nameof(ITextEditorDependentComponent.TextEditorViewModelSlimDisplay);
 	
 	protected override void OnInitialized()
 	{
@@ -30,7 +30,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 		{
 			{
 				DictionaryKey,
-				TextEditorViewModelDisplay
+				TextEditorViewModelSlimDisplay
 			}
 		};
 
@@ -40,10 +40,10 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 	
 	protected override bool ShouldRender()
 	{
-		if (_previousTextEditorViewModelDisplay != TextEditorViewModelDisplay)
+		if (_previousTextEditorViewModelSlimDisplay != TextEditorViewModelSlimDisplay)
 		{
-			_previousTextEditorViewModelDisplay = TextEditorViewModelDisplay;
-			_componentInnerParameters[DictionaryKey] = TextEditorViewModelDisplay;
+			_previousTextEditorViewModelSlimDisplay = TextEditorViewModelSlimDisplay;
+			_componentInnerParameters[DictionaryKey] = TextEditorViewModelSlimDisplay;
 		}
 	
 		var localTextEditorState = TextEditorService.TextEditorState;

@@ -34,7 +34,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	
 	private bool _isLoaded = false;
 	
-	private TextEditorViewModelDisplay _viewModelDisplay;
+	private TextEditorViewModelSlimDisplay _viewModelSlimDisplay;
 	
 	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
 

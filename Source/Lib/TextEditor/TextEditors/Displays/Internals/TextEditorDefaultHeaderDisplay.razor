@@ -1,12 +1,12 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 
-@{ var renderBatch = TextEditorViewModelDisplay._activeRenderBatch; }
+@{ var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch; }
 
 @if (renderBatch is not null)
 {
-	<div class="luth_te_text-editor-header @TextEditorViewModelDisplay.WrapperCssClass @TextEditorService.ThemeCssClassString"
-	     style="@TextEditorViewModelDisplay.WrapperCssStyle">
+	<div class="luth_te_text-editor-header @TextEditorViewModelSlimDisplay.WrapperCssClass @TextEditorService.ThemeCssClassString"
+	     style="@TextEditorViewModelSlimDisplay.WrapperCssStyle">
 	    <div class="luth_te_text-editor-header-listing"
 	         style="overflow-y: hidden;">
 	        

@@ -26,7 +26,7 @@ public struct OnMouseDown
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelDisplay.TextEditorService);
+    	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelSlimDisplay.TextEditorService);
     
     	var viewModel = editContext.GetViewModelModifier(ViewModelKey);
         var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, true);
