@@ -129,7 +129,7 @@ public static Key<TextEditorViewModel> ViewModelKey { get; } = Key<TextEditorVie
 
 ```csharp
 TextEditorService.ViewModelApi.Register(
-	editContext,
+    editContext,
     ViewModelKey,
     ResourceUri,
     new Category("main"));
