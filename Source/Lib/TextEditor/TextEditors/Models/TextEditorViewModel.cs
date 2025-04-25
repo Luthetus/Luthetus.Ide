@@ -245,7 +245,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// a panel tab, or a text editor group tab.
     /// </summary>
     public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
-    public List<int> GutterChevronList { get; set; } = new() { 0, };
+    public List<(int LineIndex, bool IsExpanded)> GutterChevronList { get; set; } = new() { (0, false) };
     
     public bool ScrollWasModified { get; set; }
 	/// <summary>

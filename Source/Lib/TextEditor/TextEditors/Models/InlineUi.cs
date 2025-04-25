@@ -11,13 +11,15 @@ public struct InlineUi
     public int PositionIndex { get; private set; }
     public InlineUiKind InlineUiKind { get; }
     
-    public void IncrementPositionIndex(int amount)
+    public InlineUi WithIncrementPositionIndex(int amount)
     {
     	PositionIndex += amount;
+    	return this;
     }
     
-    public void DecrementPositionIndex(int amount)
+    public InlineUi WithDecrementPositionIndex(int amount)
     {
     	PositionIndex -= amount;
+    	return this;
     }
 }

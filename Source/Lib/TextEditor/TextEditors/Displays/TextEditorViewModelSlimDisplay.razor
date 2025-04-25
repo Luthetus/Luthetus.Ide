@@ -63,6 +63,10 @@
 		        <div class="luth_te_gutter"
 		             style="@(GetGutterStyleCss(virtualizedRow.LineIndex))">
 		            @(virtualizedRow.LineIndex + 1)
+		            
+		            @*
+		            @{
+		            }
 
     				@if (_activeRenderBatch.ViewModel.GutterChevronList.Contains(virtualizedRow.LineIndex))
     				{
@@ -70,7 +74,7 @@
     						@IconChevronDownFragment.Render(_iconDriver)
 						</span>
     						
-    				}
+    				}*@
 		        </div>
 		    }
 		    

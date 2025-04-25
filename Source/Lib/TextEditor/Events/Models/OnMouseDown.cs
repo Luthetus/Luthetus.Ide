@@ -66,6 +66,17 @@ public struct OnMouseDown
 				ComponentData,
 				editContext)
 			.ConfigureAwait(false);
+			
+		if (rowAndColumnIndex.positionX < 0)
+		{
+			var indexGutterChevron = viewModel.GutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
+			
+			if (indexGutterChevron != -1)
+			{
+				
+				// indexGutterChevron.IsExpanded = !indexGutterChevron.IsExpanded;
+			}
+		}
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;

@@ -1331,7 +1331,7 @@ public partial class TextEditorModel
             {
                 for (var i = firstTabKeyPositionIndexToModify; i < InlineUiList.Count; i++)
                 {
-                    InlineUiList[i].IncrementPositionIndex(lineEndingsChangedValueBuilder.Length);
+                    InlineUiList[i] = InlineUiList[i].WithIncrementPositionIndex(lineEndingsChangedValueBuilder.Length);
                 }
             }
         }
@@ -1765,7 +1765,7 @@ public partial class TextEditorModel
             {
                 for (var i = firstTabKeyPositionIndexToModify; i < InlineUiList.Count; i++)
                 {
-                    InlineUiList[i].DecrementPositionIndex(charCount);
+                    InlineUiList[i] = InlineUiList[i].WithDecrementPositionIndex(charCount);
                 }
             }
         }
