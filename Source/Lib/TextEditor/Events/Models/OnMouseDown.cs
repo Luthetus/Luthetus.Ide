@@ -83,6 +83,37 @@ public struct OnMouseDown
 					allGutterChevron.IsExpanded = virtualizedGutterChevron.IsExpanded;
 					viewModel.AllGutterChevronList[allIndexGutterChevron] = allGutterChevron;
 					
+					if (virtualizedGutterChevron.IsExpanded)
+        			{
+        				// TODO: Bad, this only permits one name regardless of scope
+        				var indexTagMatchedInlineUi = viewModel.InlineUiList.FindIndex(
+        					x => x.Tag == virtualizedGutterChevron.Identifier);
+        					
+        				if (indexTagMatchedInlineUi != -1)
+        				{
+            				var indexModelInlineUi = modelModifier.InlineUiList.FindIndex(
+        						x => x.PositionIndex == viewModel.InlineUiList[indexTagMatchedInlineUi].InlineUi.PositionIndex);
+        					modelModifier.InlineUiList.RemoveAt(indexModelInlineUi);
+            				
+            				viewModel.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
+        				}
+        			}
+        			else
+        			{
+        				var lineInformation = modelModifier.GetLineInformation(virtualizedGutterChevron.LineIndex);
+        				
+        				var inlineUi = new InlineUi(
+        					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+        					InlineUiKind.ThreeDotsExpandInlineUiThing);
+        				
+        				modelModifier.InlineUiList.Add(inlineUi);
+        				viewModel.InlineUiList.Add(
+        					(
+        						inlineUi,
+                				Tag: virtualizedGutterChevron.Identifier
+                			));
+        			}
+					
 					viewModel.ShouldReloadVirtualizationResult = true;
 					goto finalize;
 				}

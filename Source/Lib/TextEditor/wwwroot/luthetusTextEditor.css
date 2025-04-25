@@ -161,6 +161,11 @@
     top: 0;
 }
 
+.luth_te_three-dots {
+	border: 1px solid #a7c4c4;
+	color: #a7c4c4;
+}
+
 .luth_te_command-bar {
     height: var(--luth_te_text-editor-command-bar-height);
     position: absolute;
