@@ -150,7 +150,7 @@
 						lastIndex = -1;
 					}
 		
-		            var imaginaryNextIndex = lastIndex + 1;
+		            var imaginaryNextIndex = lastIndex + 1 - _activeRenderBatch.ViewModel.VirtualizationResult.CollapsedLineCount;
 		            
 		            <div class="luth_te_gutter"
 		                 style="@(GetGutterStyleCssImaginary(imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">

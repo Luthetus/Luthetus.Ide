@@ -785,6 +785,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			
 			var collapsedCount = 0;
 			
+			for (int i = 0; i < verticalStartingIndex; i++)
+			{
+				var gutterChevron = viewModel.AllGutterChevronList[i];
+				if (gutterChevron.IsExpanded)
+					continue;
+				if (i > gutterChevron.LineIndex && i < gutterChevron.ExclusiveLineIndex)
+					collapsedCount++;
+			}
+			
 			var virtualizedLineList = new List<VirtualizationLine>(lineCountToReturn);
 			{
 				// 1 of the character width is already accounted for
