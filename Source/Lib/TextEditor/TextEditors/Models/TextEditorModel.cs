@@ -1207,9 +1207,11 @@ public partial class TextEditorModel
         bool isCarriageReturn = false;
         bool isLineFeed = false;
         bool isCarriageReturnLineFeed = false;
-
-        (int? index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (null, new());
-        (int? index, List<InlineUi> localTabPositionList) tabPositionLazyInsertRange = (null, new());
+	
+		// Use -1 to indicate null.
+        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (-1, new());
+        // Use -1 to indicate null.
+        (int index, List<InlineUi> localTabPositionList) tabPositionLazyInsertRange = (-1, new());
 
         var lineEndingsChangedValueBuilder = new StringBuilder();
 
@@ -1272,7 +1274,8 @@ public partial class TextEditorModel
                         isLineFeed = true;
                 }
 
-                lineEndPositionLazyInsertRange.index ??= cursorModifier.LineIndex;
+				if (lineEndPositionLazyInsertRange.index == -1)
+                	lineEndPositionLazyInsertRange.index = cursorModifier.LineIndex;
 
                 var lineEndCharacters = lineEndKind.AsCharacters();
 
@@ -1292,7 +1295,7 @@ public partial class TextEditorModel
             {
                 if (isTab)
                 {
-                    if (tabPositionLazyInsertRange.index is null)
+                    if (tabPositionLazyInsertRange.index == -1)
                     {
                         tabPositionLazyInsertRange.index = InlineUiList.FindIndex(x => x.PositionIndex >= initialCursorPositionIndex);
 
@@ -1356,17 +1359,17 @@ public partial class TextEditorModel
 
         // Add in any new metadata
         {
-            if (lineEndPositionLazyInsertRange.index is not null)
+            if (lineEndPositionLazyInsertRange.index != -1)
             {
                 LineEndList.InsertRange(
-                    lineEndPositionLazyInsertRange.index.Value,
+                    lineEndPositionLazyInsertRange.index,
                     lineEndPositionLazyInsertRange.localLineEndList);
             }
 
-            if (tabPositionLazyInsertRange.index is not null)
+            if (tabPositionLazyInsertRange.index != -1)
             {
                 InlineUiList.InsertRange(
-                    tabPositionLazyInsertRange.index.Value,
+                    tabPositionLazyInsertRange.index,
                     tabPositionLazyInsertRange.localTabPositionList);
             }
         }
