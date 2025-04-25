@@ -166,7 +166,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit &&
 				extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
 			{
-				var gutterChevronList = new List<(int LineIndex, bool IsExpanded)>();
+				var gutterChevronList = new List<(int LineIndex, bool IsExpanded, string Identifier, int StartingIndexInclusive, int EndingIndexExclusive, int ExclusiveLineIndex)>();
 				
 				if (viewModelModifier.VirtualizationResult.EntryList.Any())
             	{
@@ -178,6 +178,10 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	                
 	                foreach (var typeDefinitionNode in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
 	                {
+	                	if (typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri ||
+	                		typeDefinitionNode.IsFabricated)
+	                		continue;
+	                
 	                	if (lowerLine.StartPositionIndexInclusive <= typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive &&
 	                	    upperLine.EndPositionIndexExclusive >= typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive)
 	                	{
@@ -194,7 +198,16 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
             				else
             					isExpanded = true;
 	                		
-	                		gutterChevronList.Add((lineAndColumnIndices.lineIndex, isExpanded));
+	                		var closeCodeBlockLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+	                			typeDefinitionNode.CloseCodeBlockTextSpan.StartingIndexInclusive);
+	                		
+	                		gutterChevronList.Add((
+	                			lineAndColumnIndices.lineIndex,
+	                			isExpanded,
+	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
+	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive,
+	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive,
+	                			closeCodeBlockLineAndColumnIndices.lineIndex + 1));
 	                	}
 	                }
                 }

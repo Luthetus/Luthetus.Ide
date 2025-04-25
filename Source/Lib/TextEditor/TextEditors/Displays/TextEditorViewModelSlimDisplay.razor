@@ -65,7 +65,7 @@
 		            @(virtualizedRow.LineIndex + 1)
 		            
 		            @{
-		            	(int LineIndex, bool IsExpanded) gutterChevron = (-1, false);
+		            	(int LineIndex, bool IsExpanded, string Identifier, int StartingIndexInclusive, int EndingIndexExclusive, int ExclusiveLineIndex) gutterChevron = (-1, false, string.Empty, 0, 0, -1);
 		            	
 		            	for (int i = 0; i < _activeRenderBatch.ViewModel.GutterChevronList.Count; i++)
 		            	{
