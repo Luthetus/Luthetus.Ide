@@ -73,8 +73,10 @@ public struct OnMouseDown
 			
 			if (indexGutterChevron != -1)
 			{
-				
-				// indexGutterChevron.IsExpanded = !indexGutterChevron.IsExpanded;
+				var gutterChevron = viewModel.GutterChevronList[indexGutterChevron];
+				gutterChevron.IsExpanded = !gutterChevron.IsExpanded;
+				viewModel.GutterChevronList[indexGutterChevron] = gutterChevron;
+				goto finalize;
 			}
 		}
 
@@ -104,6 +106,8 @@ public struct OnMouseDown
         }
 
         primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
+        
+        finalize:
         
         editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
         

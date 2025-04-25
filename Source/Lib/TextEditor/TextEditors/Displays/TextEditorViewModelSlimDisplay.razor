@@ -80,7 +80,14 @@
     				@if (gutterChevron.LineIndex == virtualizedRow.LineIndex)
     				{
 					    <span class="luth_te_gutter-chevron">
-    						@IconChevronDownFragment.Render(_iconDriver)
+					    	@if (gutterChevron.IsExpanded)
+					    	{
+					    		@IconChevronDownFragment.Render(_iconDriver)
+					    	}
+					    	else
+					    	{
+					    		@IconChevronRightFragment.Render(_iconDriver)
+					    	}
 						</span>
     				}
 		        </div>
