@@ -161,6 +161,39 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
 				
+			var resource = extendedCompilerService.GetResource(modelModifier.ResourceUri);
+			
+			Console.WriteLine("b4");
+			if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit &&
+				extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
+			{
+				Console.WriteLine("in");
+				var gutterChevronList = new List<(int LineIndex, bool IsExpanded)>();
+				
+				if (viewModelModifier.VirtualizationResult.EntryList.Any())
+            	{
+	                var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.First().LineIndex;
+	                var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.Last().LineIndex;
+	                
+	                var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
+	                var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
+	                
+	                foreach (var typeDefinitionNode in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
+	                {
+	                	if (lowerLine.StartPositionIndexInclusive <= typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive &&
+	                	    upperLine.EndPositionIndexExclusive >= typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive)
+	                	{
+	                		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive);
+	                			
+	                		gutterChevronList.Add((lineAndColumnIndices.lineIndex, IsExpanded: true));
+	                	}
+	                }
+                }
+				
+				viewModelModifier.GutterChevronList = gutterChevronList;
+			}
+				
 			if (_codeBlockOwner != targetScope.CodeBlockOwner)
 			{
 				_codeBlockOwner = targetScope.CodeBlockOwner;
