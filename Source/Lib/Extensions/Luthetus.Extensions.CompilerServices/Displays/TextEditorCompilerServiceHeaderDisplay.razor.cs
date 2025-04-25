@@ -10,6 +10,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.Extensions.CompilerServices.Displays;
@@ -163,74 +165,53 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				
 			var resource = extendedCompilerService.GetResource(modelModifier.ResourceUri);
 			
+			var virtualizedGutterChevronList = new List<GutterChevron>();
+			
 			if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit &&
-				extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
+				viewModelModifier.VirtualizationResult.EntryList.Any())
 			{
-				var virtualizedGutterChevronList = new List<GutterChevron>();
+	            var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.First().LineIndex;
+	            var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.Last().LineIndex;
+	            
+	            var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
+	            var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
+			
+				if (extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
+				{
+					foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
+					{
+						Aaa(
+					    	viewModelModifier,
+					    	modelModifier,
+					    	extendedCompilationUnit,
+					    	virtualizedGutterChevronList,
+					    	entry.TypeIdentifierToken,
+					    	lowerLine,
+					    	upperLine,
+					    	entry.CloseCodeBlockTextSpan);
+					}
+				}
 				
-				if (viewModelModifier.VirtualizationResult.EntryList.Any())
-            	{
-	                var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.First().LineIndex;
-	                var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.Last().LineIndex;
-	                
-	                var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
-	                var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
-	                
-	                foreach (var typeDefinitionNode in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
-	                {
-	                	if (typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri ||
-	                		typeDefinitionNode.IsFabricated)
-	                		continue;
-	                
-	                	if (lowerLine.StartPositionIndexInclusive <= typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive &&
-	                	    upperLine.EndPositionIndexExclusive >= typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive)
-	                	{
-	                		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive);
-	                		
-	                		var indexPreviousChevron = viewModelModifier.AllGutterChevronList.FindIndex(
-	                			x => x.LineIndex == lineAndColumnIndices.lineIndex);
-	                			
-	                		bool isExpanded;
-	                		bool shouldAddToAll = false;
-	                			
-                			if (indexPreviousChevron != -1)
-                			{
-                				var previousChevron = viewModelModifier.AllGutterChevronList[indexPreviousChevron];
-                				isExpanded = viewModelModifier.AllGutterChevronList[indexPreviousChevron].IsExpanded;
-                				
-                				if (previousChevron.Identifier != typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText())
-                				{
-                					viewModelModifier.AllGutterChevronList.RemoveAt(indexPreviousChevron);
-                					shouldAddToAll = true;
-                				}
-            				}
-            				else
-            				{
-            					isExpanded = true;
-            					shouldAddToAll = true;
-            				}
-	                		
-	                		var closeCodeBlockLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-	                			typeDefinitionNode.CloseCodeBlockTextSpan.StartingIndexInclusive);
-	                		
-	                		var newGutterChevron = new GutterChevron(
-	                			lineAndColumnIndices.lineIndex,
-	                			isExpanded,
-	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
-	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive,
-	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive,
-	                			closeCodeBlockLineAndColumnIndices.lineIndex + 1);
-	                		
-	                		virtualizedGutterChevronList.Add(newGutterChevron);
-                			if (shouldAddToAll)
-                				viewModelModifier.AllGutterChevronList.Add(newGutterChevron);
-	                	}
-	                }
-                }
-				
-				viewModelModifier.VirtualizedGutterChevronList = virtualizedGutterChevronList;
+				if (extendedCompilationUnit.ScopeFunctionDefinitionMap is not null)
+				{
+					foreach (var entry in extendedCompilationUnit.ScopeFunctionDefinitionMap.Values)
+					{
+						Aaa(
+					    	viewModelModifier,
+					    	modelModifier,
+					    	extendedCompilationUnit,
+					    	virtualizedGutterChevronList,
+					    	entry.FunctionIdentifierToken,
+					    	lowerLine,
+					    	upperLine,
+					    	entry.CloseCodeBlockTextSpan);
+					}
+				}
 			}
+
+			
+			
+			viewModelModifier.VirtualizedGutterChevronList = virtualizedGutterChevronList;
 				
 			if (_codeBlockOwner != targetScope.CodeBlockOwner)
 			{
@@ -240,6 +221,65 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			
 			await InvokeAsync(StateHasChanged);
     	});
+    }
+    
+    private void Aaa(
+    	TextEditorViewModel viewModelModifier,
+    	TextEditorModel modelModifier,
+    	IExtendedCompilationUnit extendedCompilationUnit,
+    	List<GutterChevron> virtualizedGutterChevronList,
+    	SyntaxToken token,
+    	LineInformation lowerLine,
+    	LineInformation upperLine,
+    	TextEditorTextSpan closeCodeBlockTextSpan)
+    {
+    	if (token.TextSpan.ResourceUri != modelModifier.ResourceUri)
+    		return;
+    
+    	if (lowerLine.StartPositionIndexInclusive <= token.TextSpan.StartingIndexInclusive &&
+    	    upperLine.EndPositionIndexExclusive >= token.TextSpan.EndingIndexExclusive)
+    	{
+    		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+    			token.TextSpan.StartingIndexInclusive);
+    		
+    		var indexPreviousChevron = viewModelModifier.AllGutterChevronList.FindIndex(
+    			x => x.LineIndex == lineAndColumnIndices.lineIndex);
+    			
+    		bool isExpanded;
+    		bool shouldAddToAll = false;
+    			
+			if (indexPreviousChevron != -1)
+			{
+				var previousChevron = viewModelModifier.AllGutterChevronList[indexPreviousChevron];
+				isExpanded = viewModelModifier.AllGutterChevronList[indexPreviousChevron].IsExpanded;
+				
+				if (previousChevron.Identifier != token.TextSpan.GetText())
+				{
+					viewModelModifier.AllGutterChevronList.RemoveAt(indexPreviousChevron);
+					shouldAddToAll = true;
+				}
+			}
+			else
+			{
+				isExpanded = true;
+				shouldAddToAll = true;
+			}
+    		
+    		var closeCodeBlockLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+    			closeCodeBlockTextSpan.StartingIndexInclusive);
+    		
+    		var newGutterChevron = new GutterChevron(
+    			lineAndColumnIndices.lineIndex,
+    			isExpanded,
+    			token.TextSpan.GetText(),
+    			token.TextSpan.StartingIndexInclusive,
+    			token.TextSpan.EndingIndexExclusive,
+    			closeCodeBlockLineAndColumnIndices.lineIndex + 1);
+    		
+    		virtualizedGutterChevronList.Add(newGutterChevron);
+			if (shouldAddToAll)
+				viewModelModifier.AllGutterChevronList.Add(newGutterChevron);
+    	}
     }
 
 	public void Dispose()

@@ -8,4 +8,5 @@ public interface IExtendedCompilationUnit : ICompilationUnit
 {
 	public IReadOnlyList<Symbol> SymbolList { get; }
 	public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; }
+	public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; }
 }
