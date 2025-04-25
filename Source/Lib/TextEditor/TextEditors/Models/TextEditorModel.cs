@@ -1207,11 +1207,9 @@ public partial class TextEditorModel
         bool isCarriageReturn = false;
         bool isLineFeed = false;
         bool isCarriageReturnLineFeed = false;
-	
-		// Use int.MinValue to indicate null.
-        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, new());
-        // Use int.MinValue to indicate null.
-        (int index, List<InlineUi> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, new());
+
+        (int? index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (null, new());
+        (int? index, List<InlineUi> localTabPositionList) tabPositionLazyInsertRange = (null, new());
 
         var lineEndingsChangedValueBuilder = new StringBuilder();
 
@@ -1274,8 +1272,7 @@ public partial class TextEditorModel
                         isLineFeed = true;
                 }
 
-				if (lineEndPositionLazyInsertRange.index == -1)
-                	lineEndPositionLazyInsertRange.index = cursorModifier.LineIndex;
+                lineEndPositionLazyInsertRange.index ??= cursorModifier.LineIndex;
 
                 var lineEndCharacters = lineEndKind.AsCharacters();
 
@@ -1295,7 +1292,7 @@ public partial class TextEditorModel
             {
                 if (isTab)
                 {
-                    if (tabPositionLazyInsertRange.index == int.MinValue)
+                    if (tabPositionLazyInsertRange.index is null)
                     {
                         tabPositionLazyInsertRange.index = InlineUiList.FindIndex(x => x.PositionIndex >= initialCursorPositionIndex);
 
@@ -1359,17 +1356,17 @@ public partial class TextEditorModel
 
         // Add in any new metadata
         {
-            if (lineEndPositionLazyInsertRange.index != int.MinValue)
+            if (lineEndPositionLazyInsertRange.index is not null)
             {
                 LineEndList.InsertRange(
-                    lineEndPositionLazyInsertRange.index,
+                    lineEndPositionLazyInsertRange.index.Value,
                     lineEndPositionLazyInsertRange.localLineEndList);
             }
 
-            if (tabPositionLazyInsertRange.index != int.MinValue)
+            if (tabPositionLazyInsertRange.index is not null)
             {
                 InlineUiList.InsertRange(
-                    tabPositionLazyInsertRange.index,
+                    tabPositionLazyInsertRange.index.Value,
                     tabPositionLazyInsertRange.localTabPositionList);
             }
         }
@@ -1826,6 +1823,7 @@ public partial class TextEditorModel
             // Reposition the cursor
             {
                 var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(calculatedPositionIndex);
+                
                 cursorModifier.LineIndex = lineIndex;
                 cursorModifier.SetColumnIndexAndPreferred(columnIndex);
             }

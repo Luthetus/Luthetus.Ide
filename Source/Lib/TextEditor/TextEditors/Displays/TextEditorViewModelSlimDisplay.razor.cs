@@ -14,6 +14,7 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Icons.Displays;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
@@ -172,6 +173,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private string _personalWrapperCssClass;
     private string _personalWrapperCssStyle;
+    
+    private IconDriver _iconDriver = new IconDriver(widthInPixels: 30, heightInPixels: 30);
     
     private string ContentElementId { get; set; }
     
