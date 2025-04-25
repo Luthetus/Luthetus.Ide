@@ -1208,10 +1208,10 @@ public partial class TextEditorModel
         bool isLineFeed = false;
         bool isCarriageReturnLineFeed = false;
 	
-		// Use -1 to indicate null.
-        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (-1, new());
-        // Use -1 to indicate null.
-        (int index, List<InlineUi> localTabPositionList) tabPositionLazyInsertRange = (-1, new());
+		// Use int.MinValue to indicate null.
+        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, new());
+        // Use int.MinValue to indicate null.
+        (int index, List<InlineUi> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, new());
 
         var lineEndingsChangedValueBuilder = new StringBuilder();
 
@@ -1295,7 +1295,7 @@ public partial class TextEditorModel
             {
                 if (isTab)
                 {
-                    if (tabPositionLazyInsertRange.index == -1)
+                    if (tabPositionLazyInsertRange.index == int.MinValue)
                     {
                         tabPositionLazyInsertRange.index = InlineUiList.FindIndex(x => x.PositionIndex >= initialCursorPositionIndex);
 
@@ -1359,14 +1359,14 @@ public partial class TextEditorModel
 
         // Add in any new metadata
         {
-            if (lineEndPositionLazyInsertRange.index != -1)
+            if (lineEndPositionLazyInsertRange.index != int.MinValue)
             {
                 LineEndList.InsertRange(
                     lineEndPositionLazyInsertRange.index,
                     lineEndPositionLazyInsertRange.localLineEndList);
             }
 
-            if (tabPositionLazyInsertRange.index != -1)
+            if (tabPositionLazyInsertRange.index != int.MinValue)
             {
                 InlineUiList.InsertRange(
                     tabPositionLazyInsertRange.index,
