@@ -63,7 +63,7 @@ public partial interface ITextEditorService
 	public IBackgroundTaskService BackgroundTaskService { get; }
 	
 	/// <summary>
-	/// Do not touch this property, it is used for the VirtualizationGrid.
+	/// Do not touch this property, it is used for the VirtualizationGrid and VirtualizationLine.
 	/// </summary>
 	public StringBuilder __StringBuilder { get; }
 	

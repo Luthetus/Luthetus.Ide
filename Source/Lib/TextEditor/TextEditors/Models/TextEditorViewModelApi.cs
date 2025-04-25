@@ -932,14 +932,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						linesTaken++;
 						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
-							PositionIndexInclusiveStart: positionIndexInclusiveStart,
-							PositionIndexExclusiveEnd: positionIndexExclusiveEnd,
-							VirtualizationSpanIndexInclusiveStart: 0,
-							VirtualizationSpanIndexExclusiveEnd: 0,
+							positionIndexInclusiveStart: positionIndexInclusiveStart,
+							positionIndexExclusiveEnd: positionIndexExclusiveEnd,
+							virtualizationSpanIndexInclusiveStart: 0,
+							virtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
-							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount)));
+							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount),
+							_textEditorService.__StringBuilder));
 					}
 					else
 					{
@@ -972,14 +973,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						linesTaken++;
 						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
-							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
-							PositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
-							VirtualizationSpanIndexInclusiveStart: 0,
-							VirtualizationSpanIndexExclusiveEnd: 0,
+							positionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
+							positionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+							virtualizationSpanIndexInclusiveStart: 0,
+							virtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							0,
-							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount)));
+							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount),
+							_textEditorService.__StringBuilder));
 					}
 				}
 			}

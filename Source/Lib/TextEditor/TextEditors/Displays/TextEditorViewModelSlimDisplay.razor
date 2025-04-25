@@ -61,7 +61,7 @@
 		    @foreach (var virtualizedRow in _activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
-		             style="@(GetGutterStyleCss(virtualizedRow.LineIndex))">
+		             style="@(GetGutterStyleCss(virtualizedRow.TopCssStyle))">
 		            @(virtualizedRow.LineIndex + 1)
 		            
 		            @{
@@ -153,7 +153,7 @@
 		            var imaginaryNextIndex = lastIndex + 1;
 		            
 		            <div class="luth_te_gutter"
-		                 style="@(GetGutterStyleCss(imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
+		                 style="@(GetGutterStyleCssImaginary(imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
 		            </div>
 		        }
 		    }
@@ -309,7 +309,7 @@
 				@foreach (var virtualizationLine in _activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 				{
 					<div class="luth_te_row"
-						 style="@RowSection_GetRowStyleCss(virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
+						 style="@RowSection_GetRowStyleCss(virtualizationLine.TopCssStyle, virtualizationLine.LeftInPixels)">
 					
 						@*
 							'!= 0' because the struct's int property will default to '0',

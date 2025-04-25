@@ -888,8 +888,18 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			    return ValueTask.CompletedTask;
             });
     }
+
+    public string GetGutterStyleCss(string topCssStyle)
+    {
+    	_uiStringBuilder.Clear();
     
-    public string GetGutterStyleCss(int index)
+        _uiStringBuilder.Append(topCssStyle);
+        _uiStringBuilder.Append(_gutterHeightWidthPaddingStyleCssString);
+
+        return _uiStringBuilder.ToString();
+    }
+    
+    public string GetGutterStyleCssImaginary(int index)
     {
     	_uiStringBuilder.Clear();
     
@@ -911,18 +921,13 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
     
     /* RowSection.razor Open */
-    public string RowSection_GetRowStyleCss(int index, double virtualizedRowLeftInPixels)
+    public string RowSection_GetRowStyleCss(string topCssStyle, double virtualizedRowLeftInPixels)
     {
     	// _activeRenderBatch, 
     
     	_uiStringBuilder.Clear();
     
-        var charMeasurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
-
-        var topInPixelsInvariantCulture = (index * charMeasurements.LineHeight).ToCssValue();
-        _uiStringBuilder.Append("top: ");
-        _uiStringBuilder.Append(topInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
+        _uiStringBuilder.Append(topCssStyle);
 
         _uiStringBuilder.Append(_lineHeightStyleCssString);
 
