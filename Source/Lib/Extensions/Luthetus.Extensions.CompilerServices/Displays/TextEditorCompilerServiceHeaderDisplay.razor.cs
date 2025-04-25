@@ -163,11 +163,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				
 			var resource = extendedCompilerService.GetResource(modelModifier.ResourceUri);
 			
-			Console.WriteLine("b4");
 			if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit &&
 				extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
 			{
-				Console.WriteLine("in");
 				var gutterChevronList = new List<(int LineIndex, bool IsExpanded)>();
 				
 				if (viewModelModifier.VirtualizationResult.EntryList.Any())
@@ -185,8 +183,18 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	                	{
 	                		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
 	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive);
+	                		
+	                		var indexPreviousChevron = viewModelModifier.GutterChevronList.FindIndex(
+	                			x => x.LineIndex == lineAndColumnIndices.lineIndex);
 	                			
-	                		gutterChevronList.Add((lineAndColumnIndices.lineIndex, IsExpanded: true));
+	                		bool isExpanded;
+	                			
+                			if (indexPreviousChevron != -1)
+                				isExpanded = viewModelModifier.GutterChevronList[indexPreviousChevron].IsExpanded;
+            				else
+            					isExpanded = true;
+	                		
+	                		gutterChevronList.Add((lineAndColumnIndices.lineIndex, isExpanded));
 	                	}
 	                }
                 }
