@@ -783,7 +783,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	        if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
 	            return;
 			
-			var virtualizedLineList = new VirtualizationLine[lineCountToReturn];
+			var virtualizedLineList = new List<VirtualizationLine>(lineCountToReturn);
 			{
 				// 1 of the character width is already accounted for
 				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
@@ -793,9 +793,36 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				var minLineWidthToTriggerVirtualizationExclusive = LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION *
 					viewModel.TextEditorDimensions.Width;
 					
-				for (int lineOffset = 0; lineOffset < lineCountToReturn; lineOffset++)
+				var collapsedCount = 0;
+				
+				int lineOffset = -1;
+				int linesTaken = 0;
+				
+				while (true)
 				{
+					lineOffset++;
+				
+					if (linesTaken >= lineCountToReturn)
+						break;
+					// TODO: Is this '>' or '>='?
+					if (verticalStartingIndex + lineOffset >= modelModifier.LineEndList.Count)
+						break;
+				
 					var lineIndex = verticalStartingIndex + lineOffset;
+					
+					var isCollapsed = false;
+					foreach (var gutterChevron in viewModel.GutterChevronList)
+					{
+						if (lineIndex > gutterChevron.LineIndex && lineIndex < gutterChevron.ExclusiveLineIndex)
+						{
+							isCollapsed = true;
+							collapsedCount++;
+							break;
+						}
+					}
+					if (isCollapsed)
+						continue;
+					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    
 					var lineStartPositionIndexInclusive = lineInformation.StartPositionIndexInclusive;
@@ -902,7 +929,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						if (positionIndexExclusiveEnd > lineInformation.UpperLineEnd.StartPositionIndexInclusive)
 							positionIndexExclusiveEnd = lineInformation.UpperLineEnd.StartPositionIndexInclusive;
 						
-						virtualizedLineList[lineOffset] = new VirtualizationLine(
+						linesTaken++;
+						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
 							PositionIndexInclusiveStart: positionIndexInclusiveStart,
 							PositionIndexExclusiveEnd: positionIndexExclusiveEnd,
@@ -911,7 +939,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
-							topInPixels);
+							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount)));
 					}
 					else
 					{
@@ -941,7 +969,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						widthInPixels += (extraWidthPerTabKey * resultTabCount) *
 							viewModel.CharAndLineMeasurements.CharacterWidth;
 					
-						virtualizedLineList[lineOffset] = new VirtualizationLine(
+						linesTaken++;
+						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
 							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
 							PositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
@@ -950,7 +979,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							0,
-							lineIndex * viewModel.CharAndLineMeasurements.LineHeight);
+							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount)));
 					}
 				}
 			}
@@ -992,7 +1021,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
 				totalHeight += marginScrollHeight;
 			}
-
+			
 			virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
         		new List<VirtualizationSpan>(),

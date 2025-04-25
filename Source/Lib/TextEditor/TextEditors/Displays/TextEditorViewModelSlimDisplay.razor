@@ -94,7 +94,7 @@
 		    }
 		    
 		    @{
-		        var heightOfGutter = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Length *
+		        var heightOfGutter = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count *
 		                             _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
 		
 		        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
@@ -112,7 +112,7 @@
 		        
 		        double topOffscreenOverhang;
 		        
-		        if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
+		        if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 		        {
 		        	// TODO: It doesn't seem 'VirtualizationLine' ever will have a null value so it is no longer nullable...
 		        	// ...if any code breaks I think this is the only possible place. It is doing '?? -1' here.
@@ -141,7 +141,7 @@
 		
 					int lastIndex;
 					
-					if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
+					if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 					{
 						lastIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 					}
@@ -229,7 +229,7 @@
 				
 				<div class="luth_te_text-selection-group">
 				    @if (TextEditorSelectionHelper.HasSelectedText(_activeRenderBatch.ViewModel.PrimaryCursor.Selection) &&
-				         _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
+				         _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 				    {
 				        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
 				            _activeRenderBatch.ViewModel.PrimaryCursor.Selection);

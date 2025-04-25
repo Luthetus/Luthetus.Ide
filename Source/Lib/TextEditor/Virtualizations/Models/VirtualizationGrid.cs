@@ -48,7 +48,7 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 public record VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
-        Array.Empty<VirtualizationLine>(),
+        new(),
         new List<VirtualizationSpan>(),
         totalWidth: 0,
         totalHeight: 0,
@@ -59,7 +59,7 @@ public record VirtualizationGrid
 
 	/// <summary>Measurements are in pixels</summary>
     public VirtualizationGrid(
-        VirtualizationLine[] entries,
+        List<VirtualizationLine> entries,
         List<VirtualizationSpan> virtualizationSpanList,
         double totalWidth,
         double totalHeight,
@@ -78,7 +78,7 @@ public record VirtualizationGrid
         VirtualTop = top;
     }
 
-    public VirtualizationLine[] EntryList { get; init; }
+    public List<VirtualizationLine> EntryList { get; init; }
     public List<VirtualizationSpan> VirtualizationSpanList { get; init; }
     
     /// <summary>
@@ -154,7 +154,7 @@ public record VirtualizationGrid
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
     
-    	if (viewModel.VirtualizationResult.EntryList.Length == 0)
+    	if (viewModel.VirtualizationResult.EntryList.Count == 0)
 			return;
 		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -168,7 +168,7 @@ public record VirtualizationGrid
 		
 		textEditorService.__StringBuilder.Clear();
 		
-		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
+		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Count; entryIndex++)
 		{
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
 			
