@@ -1,5 +1,8 @@
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
+/// <summary>
+/// InlineUiKind.None indicates the default value.
+/// </summary>
 public struct InlineUi
 {
 	public InlineUi(int positionIndex, InlineUiKind inlineUiKind)
