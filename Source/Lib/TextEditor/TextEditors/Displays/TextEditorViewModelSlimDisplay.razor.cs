@@ -174,7 +174,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private string _personalWrapperCssClass;
     private string _personalWrapperCssStyle;
     
-    private IconDriver _iconDriver = new IconDriver(widthInPixels: 30, heightInPixels: 30);
+    private IconDriver _iconDriver = new IconDriver(widthInPixels: 15, heightInPixels: 15);
     
     private string ContentElementId { get; set; }
     
