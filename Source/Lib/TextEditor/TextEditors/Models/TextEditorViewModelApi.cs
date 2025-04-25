@@ -813,6 +813,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					var isCollapsed = false;
 					foreach (var gutterChevron in viewModel.GutterChevronList)
 					{
+						if (gutterChevron.IsExpanded)
+							continue;
 						if (lineIndex > gutterChevron.LineIndex && lineIndex < gutterChevron.ExclusiveLineIndex)
 						{
 							isCollapsed = true;

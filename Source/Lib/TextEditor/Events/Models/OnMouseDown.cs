@@ -76,6 +76,7 @@ public struct OnMouseDown
 				var gutterChevron = viewModel.GutterChevronList[indexGutterChevron];
 				gutterChevron.IsExpanded = !gutterChevron.IsExpanded;
 				viewModel.GutterChevronList[indexGutterChevron] = gutterChevron;
+				viewModel.ShouldReloadVirtualizationResult = true;
 				goto finalize;
 			}
 		}
