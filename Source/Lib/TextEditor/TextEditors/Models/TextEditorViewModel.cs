@@ -109,6 +109,7 @@ public sealed class TextEditorViewModel : IDisposable
 	    ShouldRevealCursor = other.ShouldRevealCursor;
 	    CursorIsIntersecting = other.CursorIsIntersecting;
 	    DynamicViewModelAdapter = other.DynamicViewModelAdapter;
+		GutterChevronList = other.GutterChevronList;
 	    
 	    BodyElementId = other.BodyElementId;
 	    PrimaryCursorContentId = other.PrimaryCursorContentId;
@@ -244,6 +245,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// a panel tab, or a text editor group tab.
     /// </summary>
     public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
+    public List<int> GutterChevronList { get; set; } = new() { 0, };
     
     public bool ScrollWasModified { get; set; }
 	/// <summary>
