@@ -65,13 +65,13 @@
 		            @(virtualizedRow.LineIndex + 1)
 		            
 		            @{
-		            	(int LineIndex, bool IsExpanded, string Identifier, int StartingIndexInclusive, int EndingIndexExclusive, int ExclusiveLineIndex) gutterChevron = (-1, false, string.Empty, 0, 0, -1);
+		            	var gutterChevron = new GutterChevron(-1, false, string.Empty, 0, 0, -1);
 		            	
-		            	for (int i = 0; i < _activeRenderBatch.ViewModel.GutterChevronList.Count; i++)
+		            	for (int i = 0; i < _activeRenderBatch.ViewModel.VirtualizedGutterChevronList.Count; i++)
 		            	{
-		            		if (_activeRenderBatch.ViewModel.GutterChevronList[i].LineIndex == virtualizedRow.LineIndex)
+		            		if (_activeRenderBatch.ViewModel.VirtualizedGutterChevronList[i].LineIndex == virtualizedRow.LineIndex)
 		            		{
-		            			gutterChevron = _activeRenderBatch.ViewModel.GutterChevronList[i];
+		            			gutterChevron = _activeRenderBatch.ViewModel.VirtualizedGutterChevronList[i];
 		            			break;
 		            		}
 		            	}

@@ -69,15 +69,23 @@ public struct OnMouseDown
 			
 		if (rowAndColumnIndex.positionX < 0)
 		{
-			var indexGutterChevron = viewModel.GutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
-			
-			if (indexGutterChevron != -1)
+			var virtualizedIndexGutterChevron = viewModel.VirtualizedGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
+			if (virtualizedIndexGutterChevron != -1)
 			{
-				var gutterChevron = viewModel.GutterChevronList[indexGutterChevron];
-				gutterChevron.IsExpanded = !gutterChevron.IsExpanded;
-				viewModel.GutterChevronList[indexGutterChevron] = gutterChevron;
-				viewModel.ShouldReloadVirtualizationResult = true;
-				goto finalize;
+				var allIndexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
+				if (allIndexGutterChevron != -1)
+				{
+					var virtualizedGutterChevron = viewModel.VirtualizedGutterChevronList[virtualizedIndexGutterChevron];
+					virtualizedGutterChevron.IsExpanded = !virtualizedGutterChevron.IsExpanded;
+					viewModel.VirtualizedGutterChevronList[virtualizedIndexGutterChevron] = virtualizedGutterChevron;
+					
+					var allGutterChevron = viewModel.AllGutterChevronList[allIndexGutterChevron];
+					allGutterChevron.IsExpanded = virtualizedGutterChevron.IsExpanded;
+					viewModel.AllGutterChevronList[allIndexGutterChevron] = allGutterChevron;
+					
+					viewModel.ShouldReloadVirtualizationResult = true;
+					goto finalize;
+				}
 			}
 		}
 

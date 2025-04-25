@@ -783,6 +783,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	        if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
 	            return;
 			
+			var collapsedCount = 0;
+			
 			var virtualizedLineList = new List<VirtualizationLine>(lineCountToReturn);
 			{
 				// 1 of the character width is already accounted for
@@ -793,8 +795,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				var minLineWidthToTriggerVirtualizationExclusive = LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION *
 					viewModel.TextEditorDimensions.Width;
 					
-				var collapsedCount = 0;
-				
 				int lineOffset = -1;
 				int linesTaken = 0;
 				
@@ -811,7 +811,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					var lineIndex = verticalStartingIndex + lineOffset;
 					
 					var isCollapsed = false;
-					foreach (var gutterChevron in viewModel.GutterChevronList)
+					foreach (var gutterChevron in viewModel.AllGutterChevronList)
 					{
 						if (gutterChevron.IsExpanded)
 							continue;
@@ -1034,7 +1034,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		        resultWidth: horizontalTake * viewModel.CharAndLineMeasurements.CharacterWidth,
 		        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
 		        left: horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth,
-		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
+		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight,
+		        collapsedLineCount: collapsedCount);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
 			

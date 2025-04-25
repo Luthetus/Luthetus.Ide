@@ -166,7 +166,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit &&
 				extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
 			{
-				var gutterChevronList = new List<(int LineIndex, bool IsExpanded, string Identifier, int StartingIndexInclusive, int EndingIndexExclusive, int ExclusiveLineIndex)>();
+				var virtualizedGutterChevronList = new List<GutterChevron>();
 				
 				if (viewModelModifier.VirtualizationResult.EntryList.Any())
             	{
@@ -188,31 +188,48 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	                		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
 	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive);
 	                		
-	                		var indexPreviousChevron = viewModelModifier.GutterChevronList.FindIndex(
+	                		var indexPreviousChevron = viewModelModifier.AllGutterChevronList.FindIndex(
 	                			x => x.LineIndex == lineAndColumnIndices.lineIndex);
 	                			
 	                		bool isExpanded;
+	                		bool shouldAddToAll = false;
 	                			
                 			if (indexPreviousChevron != -1)
-                				isExpanded = viewModelModifier.GutterChevronList[indexPreviousChevron].IsExpanded;
+                			{
+                				var previousChevron = viewModelModifier.AllGutterChevronList[indexPreviousChevron];
+                				isExpanded = viewModelModifier.AllGutterChevronList[indexPreviousChevron].IsExpanded;
+                				
+                				if (previousChevron.Identifier != typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText())
+                				{
+                					viewModelModifier.AllGutterChevronList.RemoveAt(indexPreviousChevron);
+                					shouldAddToAll = true;
+                				}
+            				}
             				else
+            				{
             					isExpanded = true;
+            					shouldAddToAll = true;
+            				}
 	                		
 	                		var closeCodeBlockLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
 	                			typeDefinitionNode.CloseCodeBlockTextSpan.StartingIndexInclusive);
 	                		
-	                		gutterChevronList.Add((
+	                		var newGutterChevron = new GutterChevron(
 	                			lineAndColumnIndices.lineIndex,
 	                			isExpanded,
 	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
 	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive,
 	                			typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive,
-	                			closeCodeBlockLineAndColumnIndices.lineIndex + 1));
+	                			closeCodeBlockLineAndColumnIndices.lineIndex + 1);
+	                		
+	                		virtualizedGutterChevronList.Add(newGutterChevron);
+                			if (shouldAddToAll)
+                				viewModelModifier.AllGutterChevronList.Add(newGutterChevron);
 	                	}
 	                }
                 }
 				
-				viewModelModifier.GutterChevronList = gutterChevronList;
+				viewModelModifier.VirtualizedGutterChevronList = virtualizedGutterChevronList;
 			}
 				
 			if (_codeBlockOwner != targetScope.CodeBlockOwner)

@@ -55,7 +55,8 @@ public record VirtualizationGrid
         resultWidth: 0,
         resultHeight: 0,
         left: 0,
-        top: 0);
+        top: 0,
+        collapsedLineCount: 0);
 
 	/// <summary>Measurements are in pixels</summary>
     public VirtualizationGrid(
@@ -66,7 +67,8 @@ public record VirtualizationGrid
         double resultWidth,
         double resultHeight,
         double left,
-        double top)
+        double top,
+        int collapsedLineCount)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -76,6 +78,7 @@ public record VirtualizationGrid
         VirtualHeight = resultHeight;
         VirtualLeft = left;
         VirtualTop = top;
+        CollapsedLineCount = collapsedLineCount;
     }
 
     public List<VirtualizationLine> EntryList { get; init; }
@@ -117,6 +120,8 @@ public record VirtualizationGrid
     /// Lowest 'top' point where a rendered element is displayed.
     /// </summary>
     public double VirtualTop { get; init; }
+    
+    public int CollapsedLineCount { get; init; }
 
     /// <summary>
     ///
