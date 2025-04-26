@@ -102,13 +102,72 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
     
     	await InvokeAsync(StateHasChanged);
     }
-
-    public string StyleMinWidthFromMaxLengthOfValue(int value)
+    
+    private static int CountDigits(int argumentNumber)
     {
-        var maxLengthOfValue = value.ToString().Length;
-        var padCharacterWidthUnits = 1;
-
-        return $"min-width: calc(1ch * {maxLengthOfValue + padCharacterWidthUnits})";
+    	var digitCount = 1;
+    	var runningNumber = argumentNumber;
+    	
+    	while ((runningNumber /= 10) > 0)
+    	{
+    		digitCount++;
+    	}
+    	
+    	return digitCount;
+    }
+    
+    private int _documentLengthDigitCountValuePrevious;
+    private string _documentLengthDigitCountCssPrevious = string.Empty;
+    private string GetDocumentLengthCssStyle(int documentLength)
+    {
+    	var digitCount = CountDigits(documentLength);
+    	
+    	if (_documentLengthDigitCountValuePrevious != digitCount)
+    	{
+    		Console.WriteLine($"documentLength: {digitCount}");
+    		_documentLengthDigitCountValuePrevious = digitCount;
+    		_documentLengthDigitCountCssPrevious = DigitCountToCssStyle(_documentLengthDigitCountValuePrevious);
+    	}
+    	
+    	return _documentLengthDigitCountCssPrevious;
+    }
+	
+	private int _lineCountDigitCountValuePrevious;
+    private string _lineCountDigitCountCssPrevious = string.Empty;
+	private string GetLineCountCssStyle(int lineCount)
+    {
+    	var digitCount = CountDigits(lineCount);
+    	
+    	if (_lineCountDigitCountValuePrevious != digitCount)
+    	{
+    		Console.WriteLine($"lineCount: {digitCount}");
+    		_lineCountDigitCountValuePrevious = digitCount;
+    		_lineCountDigitCountCssPrevious = DigitCountToCssStyle(_lineCountDigitCountValuePrevious);
+    	}
+    	
+    	return _lineCountDigitCountCssPrevious;
+    }
+	
+	private int _mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious;
+    private string _mostCharactersOnASingleLineTupleLineLengthDigitCountCssPrevious = string.Empty;
+	private string GetMostCharactersOnASingleLineTupleLineLengthCssStyle(int mostCharactersOnASingleLineTupleLineLength)
+    {
+    	var digitCount = CountDigits(mostCharactersOnASingleLineTupleLineLength);
+    	
+    	if (_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious != digitCount)
+    	{
+    		Console.WriteLine($"mostCharactersOnASingleLineTupleLineLength: {digitCount}");
+    		_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious = digitCount;
+    		_mostCharactersOnASingleLineTupleLineLengthDigitCountCssPrevious = DigitCountToCssStyle(_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious);
+    	}
+    	
+    	return _mostCharactersOnASingleLineTupleLineLengthDigitCountCssPrevious;
+    }
+    
+    public string DigitCountToCssStyle(int digitCount)
+    {
+        // '+1' for padding character width units
+        return $"min-width: {digitCount + 1}ch;";
     }
 
     public int GetPositionNumber(TextEditorModel model, TextEditorViewModel viewModel)

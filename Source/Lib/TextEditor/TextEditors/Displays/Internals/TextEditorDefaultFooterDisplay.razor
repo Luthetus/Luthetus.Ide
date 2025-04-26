@@ -32,7 +32,7 @@
 	                            length:
 	                        </div>
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
+	                             style="@GetDocumentLengthCssStyle(model.DocumentLength)">
 	                            @model.DocumentLength
 	                        </div>
 	                    </div>
@@ -42,7 +42,7 @@
 	                            lines:
 	                        </div>
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
+	                             style="@GetLineCountCssStyle(model.LineCount)">
 	                            @model.LineCount
 	                        </div>
 	                    </div>
@@ -59,7 +59,7 @@
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
+	                             style="@GetLineCountCssStyle(model.LineCount)">
 	                            @rowNumber
 	                        </div>
 	                    </div>
@@ -74,7 +74,7 @@
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleLineTuple.lineLength)">
+	                             style="@GetMostCharactersOnASingleLineTupleLineLengthCssStyle(model.MostCharactersOnASingleLineTuple.lineLength)">
 	                            @columnNumber
 	                        </div>
 	                    </div>
@@ -89,7 +89,7 @@
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
+	                             style="@GetDocumentLengthCssStyle(model.DocumentLength)">
 	                            @positionNumber
 	                        </div>
 	                    </div>
