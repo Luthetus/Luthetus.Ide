@@ -785,12 +785,16 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			
 			var collapsedCount = 0;
 			
-			for (int i = 0; i < verticalStartingIndex; i++)
+			for (int priorLineIndex = 0; priorLineIndex < verticalStartingIndex; priorLineIndex++)
 			{
-				var gutterChevron = viewModel.AllGutterChevronList[i];
+				var indexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == priorLineIndex);
+				if (indexGutterChevron == -1)
+					continue;
+				
+				var gutterChevron = viewModel.AllGutterChevronList[indexGutterChevron];
 				if (gutterChevron.IsExpanded)
 					continue;
-				if (i > gutterChevron.LineIndex && i < gutterChevron.ExclusiveLineIndex)
+				if (priorLineIndex > gutterChevron.LineIndex && priorLineIndex < gutterChevron.ExclusiveLineIndex)
 					collapsedCount++;
 			}
 			
