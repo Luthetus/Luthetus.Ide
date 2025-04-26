@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-
-// FooterDriver.cs
-using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -124,7 +120,6 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
     	
     	if (_documentLengthDigitCountValuePrevious != digitCount)
     	{
-    		Console.WriteLine($"documentLength: {digitCount}");
     		_documentLengthDigitCountValuePrevious = digitCount;
     		_documentLengthDigitCountCssPrevious = DigitCountToCssStyle(_documentLengthDigitCountValuePrevious);
     	}
@@ -140,7 +135,6 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
     	
     	if (_lineCountDigitCountValuePrevious != digitCount)
     	{
-    		Console.WriteLine($"lineCount: {digitCount}");
     		_lineCountDigitCountValuePrevious = digitCount;
     		_lineCountDigitCountCssPrevious = DigitCountToCssStyle(_lineCountDigitCountValuePrevious);
     	}
@@ -156,7 +150,6 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
     	
     	if (_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious != digitCount)
     	{
-    		Console.WriteLine($"mostCharactersOnASingleLineTupleLineLength: {digitCount}");
     		_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious = digitCount;
     		_mostCharactersOnASingleLineTupleLineLengthDigitCountCssPrevious = DigitCountToCssStyle(_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious);
     	}
