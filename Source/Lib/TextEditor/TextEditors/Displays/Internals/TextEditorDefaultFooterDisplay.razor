@@ -33,7 +33,7 @@
 	                        </div>
 	                        <div class="luth_te_text-editor-footer-value"
 	                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-	                            @($"{model.DocumentLength}")
+	                            @model.DocumentLength
 	                        </div>
 	                    </div>
 	
@@ -43,7 +43,7 @@
 	                        </div>
 	                        <div class="luth_te_text-editor-footer-value"
 	                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
-	                            @($"{model.LineCount}")
+	                            @model.LineCount
 	                        </div>
 	                    </div>
 	                </div>
@@ -60,7 +60,7 @@
 	
 	                        <div class="luth_te_text-editor-footer-value"
 	                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
-	                            @($"{rowNumber}")
+	                            @rowNumber
 	                        </div>
 	                    </div>
 	
@@ -75,7 +75,7 @@
 	
 	                        <div class="luth_te_text-editor-footer-value"
 	                             style="@StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleLineTuple.lineLength)">
-	                            @($"{columnNumber}")
+	                            @columnNumber
 	                        </div>
 	                    </div>
 	
@@ -90,7 +90,7 @@
 	
 	                        <div class="luth_te_text-editor-footer-value"
 	                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-	                            @($"{positionNumber}")
+	                            @positionNumber
 	                        </div>
 	                    </div>
 	                </div>
@@ -100,7 +100,7 @@
 	                            title="Line ending kind">
 	                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
 	                        {
-	                            <option value="@rowEndingKind.ToString()">
+	                            <option value="@rowEndingKind.AsEnumName()">
 	                                @rowEndingKind.AsFriendlyName()
 	                            </option>
 	                        }
