@@ -39,8 +39,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	private string? _htmlId = null;
 	private string HtmlId => _htmlId ??= $"luth_te_group_{EditorIdeApi.EditorTextEditorGroupKey.Guid}";
 	
-	private bool _isLoaded = false;
-	
 	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
 	
 	private Key<TextEditorComponentData> _componentDataKey;
@@ -61,16 +59,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
         DirtyResourceUriService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
 
         base.OnInitialized();
-    }
-    
-    protected override void OnAfterRender(bool firstRender)
-    {
-    	if (firstRender)
-    	{
-    		_isLoaded = true;
-    	}
-    	
-    	base.OnAfterRender(firstRender);
     }
 
     private async void TextEditorGroupWrapOnStateChanged()
