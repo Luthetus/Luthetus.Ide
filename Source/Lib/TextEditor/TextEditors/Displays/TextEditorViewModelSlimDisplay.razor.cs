@@ -186,8 +186,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-    	Console.WriteLine(ComponentData.ComponentDataKey.Guid);
-    
         if (firstRender)
         {
             await TextEditorService.JsRuntimeTextEditorApi
@@ -847,7 +845,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
 	protected override bool ShouldRender()
     {
-    	if (_componentData._activeRenderBatch.ViewModel.UiOutdated)
+    	/*if (_componentData._activeRenderBatch.ViewModel.UiOutdated)
     	{
     		// Trigger 'TextEditorComponentData.CalculateUi(TextEditorEditContext editContext)'
     		TextEditorService.WorkerArbitrary.PostUnique(
@@ -857,7 +855,181 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     				editContext.GetViewModelModifier(_componentData._activeRenderBatch.ViewModel.ViewModelKey);
     				return ValueTask.CompletedTask;
     			});
-    	}
+    	}*/
+    	
+    	if (_linkedViewModel is null)
+            HandleTextEditorViewModelKeyChange();
+
+        ConstructRenderBatch();
+
+        if (ComponentData._currentRenderBatch.ViewModel is not null && ComponentData._currentRenderBatch.Options is not null)
+        {
+            if (ComponentData._currentRenderBatch.ViewModel.DisplayTracker.ConsumeIsFirstDisplay())
+				QueueCalculateVirtualizationResultBackgroundTask(ComponentData._currentRenderBatch);
+        }
+        
+        // Check if the gutter width changed. If so, re-measure text editor.
+        if (ComponentData._activeRenderBatch?.ViewModel is not null)
+		{
+			var gutterWidthInPixels = ComponentData._activeRenderBatch.GutterWidthInPixels;
+		
+			if (ComponentData._previousGutterWidthInPixels >= 0 && gutterWidthInPixels >= 0)
+			{
+	        	var absoluteValueDifference = Math.Abs(ComponentData._previousGutterWidthInPixels - gutterWidthInPixels);
+	        	
+	        	if (absoluteValueDifference >= 0.2)
+	        	{
+	        		ComponentData._previousGutterWidthInPixels = gutterWidthInPixels;
+	        		var widthInPixelsInvariantCulture = gutterWidthInPixels.ToCssValue();
+	        		
+	        		ComponentData._uiStringBuilder.Clear();
+	        		ComponentData._uiStringBuilder.Append("width: ");
+	        		ComponentData._uiStringBuilder.Append(widthInPixelsInvariantCulture);
+	        		ComponentData._uiStringBuilder.Append("px;");
+	        		ComponentData._gutterWidthStyleCssString = ComponentData._uiStringBuilder.ToString();
+	        		
+	        		ComponentData._uiStringBuilder.Clear();
+	        		ComponentData._uiStringBuilder.Append(ComponentData._lineHeightStyleCssString);
+			        ComponentData._uiStringBuilder.Append(ComponentData._gutterWidthStyleCssString);
+			        ComponentData._uiStringBuilder.Append(ComponentData._gutterPaddingStyleCssString);
+	        		ComponentData._gutterHeightWidthPaddingStyleCssString = ComponentData._uiStringBuilder.ToString();
+	        		
+	        		ComponentData._uiStringBuilder.Clear();
+	        		ComponentData._uiStringBuilder.Append("width: calc(100% - ");
+			        ComponentData._uiStringBuilder.Append(widthInPixelsInvariantCulture);
+			        ComponentData._uiStringBuilder.Append("px); left: ");
+			        ComponentData._uiStringBuilder.Append(widthInPixelsInvariantCulture);
+			        ComponentData._uiStringBuilder.Append("px;");
+	        		ComponentData._bodyStyle = ComponentData._uiStringBuilder.ToString();
+	        			        		
+	        		// (2025-03-28)
+	        		// Console.WriteLine("_activeRenderBatch.ViewModel.DisplayTracker.PostScrollAndRemeasure();");
+	        		ComponentData._activeRenderBatch.ViewModel.DisplayTracker.PostScrollAndRemeasure();
+	        		return true;
+	        	}
+			}
+			
+			// NOTE: The 'gutterWidth' version of this will do a re-measure,...
+			// ...and therefore will return if its condition branch was entered.
+			var lineHeightInPixels = ComponentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
+			
+			// The 'gutterWidth' version of this code was written first,
+			// and this is just more or less copying the template.
+			//
+			// TODO: What was the reason for 'gutterWidth' not just doing an '!='?
+			//
+			if (ComponentData._previousLineHeightInPixels >= 0 && lineHeightInPixels >= 0)
+			{
+				var absoluteValueDifference = Math.Abs(ComponentData._previousLineHeightInPixels - lineHeightInPixels);
+	        	
+	        	if (absoluteValueDifference >= 0.2)
+	        	{
+	        		ComponentData._previousLineHeightInPixels = lineHeightInPixels;
+					var heightInPixelsInvariantCulture = lineHeightInPixels.ToCssValue();
+					
+					ComponentData._uiStringBuilder.Clear();
+	        		ComponentData._uiStringBuilder.Append("height: ");
+			        ComponentData._uiStringBuilder.Append(heightInPixelsInvariantCulture);
+			        ComponentData._uiStringBuilder.Append("px;");
+			        ComponentData._lineHeightStyleCssString = ComponentData._uiStringBuilder.ToString();
+			        
+			        ComponentData._uiStringBuilder.Clear();
+	        		ComponentData._uiStringBuilder.Append(ComponentData._lineHeightStyleCssString);
+			        ComponentData._uiStringBuilder.Append(ComponentData._gutterWidthStyleCssString);
+			        ComponentData._uiStringBuilder.Append(ComponentData._gutterPaddingStyleCssString);
+	        		ComponentData._gutterHeightWidthPaddingStyleCssString = ComponentData._uiStringBuilder.ToString();
+        		}
+			}
+			
+			var textEditorWidth = ComponentData._activeRenderBatch.ViewModel.TextEditorDimensions.Width;
+			var textEditorHeight = ComponentData._activeRenderBatch.ViewModel.TextEditorDimensions.Height;
+			var scrollLeft = ComponentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft;
+			var scrollWidth = ComponentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+			var scrollHeight = ComponentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollHeight;
+			var scrollTop = ComponentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollTop;
+			
+			bool shouldCalculateVerticalSlider = false;
+			bool shouldCalculateHorizontalSlider = false;
+			bool shouldCalculateHorizontalScrollbar = false;
+			
+			if (ComponentData._previousTextEditorHeightInPixels >= 0 && textEditorHeight >= 0)
+			{
+				var absoluteValueDifference = Math.Abs(ComponentData._previousTextEditorHeightInPixels - textEditorHeight);
+	        	
+	        	if (absoluteValueDifference >= 0.2)
+	        	{
+	        		ComponentData._previousTextEditorHeightInPixels = textEditorHeight;
+	        		shouldCalculateVerticalSlider = true;
+			    }
+			}
+			
+			if (ComponentData._previousScrollHeightInPixels >= 0 && scrollHeight >= 0)
+			{
+				var absoluteValueDifference = Math.Abs(ComponentData._previousScrollHeightInPixels - scrollHeight);
+	        	
+	        	if (absoluteValueDifference >= 0.2)
+	        	{
+	        		ComponentData._previousScrollHeightInPixels = scrollHeight;
+	        		shouldCalculateVerticalSlider = true;
+			    }
+			}
+			
+			if (ComponentData._previousScrollTopInPixels >= 0 && scrollTop >= 0)
+			{
+				var absoluteValueDifference = Math.Abs(ComponentData._previousScrollTopInPixels - scrollTop);
+	        	
+	        	if (absoluteValueDifference >= 0.2)
+	        	{
+	        		ComponentData._previousScrollTopInPixels = scrollTop;
+	        		shouldCalculateVerticalSlider = true;
+			    }
+			}
+			
+			if (ComponentData._previousTextEditorWidthInPixels >= 0 && textEditorWidth >= 0)
+			{
+				var absoluteValueDifference = Math.Abs(ComponentData._previousTextEditorWidthInPixels - textEditorWidth);
+	        	
+	        	if (absoluteValueDifference >= 0.2)
+	        	{
+	        		ComponentData._previousTextEditorWidthInPixels = textEditorWidth;
+	        		shouldCalculateHorizontalSlider = true;
+	        		shouldCalculateHorizontalScrollbar = true;
+			    }
+			}
+			
+			if (ComponentData._previousScrollWidthInPixels >= 0 && scrollWidth >= 0)
+			{
+				var absoluteValueDifference = Math.Abs(ComponentData._previousScrollWidthInPixels - scrollWidth);
+	        	
+	        	if (absoluteValueDifference >= 0.2)
+	        	{
+	        		ComponentData._previousScrollWidthInPixels = scrollWidth;
+	        		shouldCalculateHorizontalSlider = true;
+			    }
+			}
+			
+			if (ComponentData._previousScrollLeftInPixels >= 0 && scrollLeft >= 0)
+			{
+				var absoluteValueDifference = Math.Abs(ComponentData._previousScrollLeftInPixels - scrollLeft);
+	        	
+	        	if (absoluteValueDifference >= 0.2)
+	        	{
+	        		ComponentData._previousScrollLeftInPixels = scrollLeft;
+	        		shouldCalculateHorizontalSlider = true;
+			    }
+			}
+
+			if (shouldCalculateVerticalSlider)
+				ComponentData.VERTICAL_GetSliderVerticalStyleCss();
+			
+			if (shouldCalculateHorizontalSlider)
+				ComponentData.HORIZONTAL_GetSliderHorizontalStyleCss();
+			
+			if (shouldCalculateHorizontalScrollbar)
+				ComponentData.HORIZONTAL_GetScrollbarHorizontalStyleCss();
+			
+			ComponentData.GetCursorAndCaretRowStyleCss();
+		}
     	
         return true;
     }

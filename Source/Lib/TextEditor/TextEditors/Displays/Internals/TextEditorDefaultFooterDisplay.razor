@@ -6,19 +6,8 @@
 @using Luthetus.TextEditor.RazorLib.Htmls.Models
 
 @{
-	Console.WriteLine("TextEditorDefaultFooterDisplay intentrender");
 	var renderBatch = GetRenderBatch();
 	var componentData = GetComponentData();
-	
-	if (renderBatch is null)
-	{
-		Console.WriteLine("TextEditorDefaultFooterDisplay renderBatch is null");
-	}
-	
-	if (componentData is null)
-	{
-		Console.WriteLine("TextEditorDefaultFooterDisplay componentData is null");
-	}
 }
 
 @if (renderBatch is not null && componentData is not null)

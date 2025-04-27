@@ -73,7 +73,6 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	
 	protected override void OnInitialized()
     {
-    	Console.WriteLine("TextEditorDefaultFooterDisplay");
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         OnCursorShouldBlinkChanged();
         

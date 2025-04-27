@@ -313,7 +313,7 @@ public partial class TextEditorService : ITextEditorService
 	    
 	    __IsAvailableCursorModifier = true;
 	    
-	    foreach (var viewModel in __ViewModelList)
+	    /*foreach (var viewModel in __ViewModelList)
 	    {
 	    	if (viewModel.UiOutdated || viewModel.DisplayTracker.ComponentData is not null)
 	    	{
@@ -324,7 +324,7 @@ public partial class TextEditorService : ITextEditorService
 	    	{
 	    		viewModel.UiOutdated = true;
 	    	}
-	    }
+	    }*/
 	    
 	    SetModelAndViewModelRange(editContext);
 	}
