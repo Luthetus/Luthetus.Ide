@@ -28,7 +28,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 		get => _selectedLineEndKindString;
 		set
 		{
-			var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+			var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
 		
 			if (renderBatchLocal is null)
 	    		return;
@@ -76,7 +76,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 
     private async void OnCursorShouldBlinkChanged()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
 		if (renderBatchLocal?.Model is not null && renderBatchLocal?.ViewModel is not null)
 		{
 			var shouldSetSelectedLineEndKindString = false;

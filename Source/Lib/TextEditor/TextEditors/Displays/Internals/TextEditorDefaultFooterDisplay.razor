@@ -5,12 +5,12 @@
 @using Luthetus.TextEditor.RazorLib.Rows.Models
 @using Luthetus.TextEditor.RazorLib.Htmls.Models
 
-@{ var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch; }
+@{ var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch; }
 
 @if (renderBatch is not null)
 {
-	<div class="luth_te_text-editor-footer @TextEditorViewModelSlimDisplay.WrapperCssClass @TextEditorService.ThemeCssClassString"
-		 style="@TextEditorViewModelSlimDisplay.WrapperCssStyle">
+	<div class="luth_te_text-editor-footer @TextEditorViewModelSlimDisplay.ComponentData.WrapperCssClass @TextEditorService.ThemeCssClassString"
+		 style="@TextEditorViewModelSlimDisplay.ComponentData.WrapperCssStyle">
 	    <div class="luth_te_text-editor-footer-listing">
 	        @{
 	            var model = renderBatch.Model;

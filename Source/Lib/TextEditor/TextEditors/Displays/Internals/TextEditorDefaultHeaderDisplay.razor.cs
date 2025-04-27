@@ -67,7 +67,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     
     public Task DoSaveOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
 
@@ -93,7 +93,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public void ShowWatchWindowDisplayDialogOnClick()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return;
     	
@@ -128,7 +128,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
 	public Task DoCopyOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -152,7 +152,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoCutOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -176,7 +176,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoPasteOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -200,7 +200,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRedoOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
 
@@ -225,7 +225,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoUndoOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -249,7 +249,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoSelectAllOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -274,7 +274,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRemeasureOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -297,7 +297,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public async Task DoReloadOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return;
         
@@ -358,7 +358,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRefreshOnClick()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -387,7 +387,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     /// </summary>
     public bool GetUndoDisabledAttribute()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return true;
     	
@@ -409,7 +409,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     /// </summary>
     public bool GetRedoDisabledAttribute()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatchLocal is null)
     		return true;
     	

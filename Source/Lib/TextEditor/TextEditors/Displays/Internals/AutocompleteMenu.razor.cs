@@ -65,7 +65,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatch is null)
     		return Task.CompletedTask;
     
@@ -77,7 +77,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private async Task ReturnFocusToThisAsync()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatch is null)
     		return;
     		
@@ -111,7 +111,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private MenuRecord GetMenuRecord()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatch is null)
     		return NoResultsMenuRecord;
     
@@ -128,7 +128,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     public MenuRecord GetDefaultMenuRecord(List<AutocompleteEntry>? otherAutocompleteEntryList = null)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatch is null)
     		return NoResultsMenuRecord;
     
@@ -197,7 +197,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     public async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatch is null)
     		return;
     
@@ -256,7 +256,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
+    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
     	if (renderBatch is null)
     		return;
     
