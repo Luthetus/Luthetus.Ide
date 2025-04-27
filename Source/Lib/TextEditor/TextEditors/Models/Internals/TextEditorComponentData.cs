@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
@@ -104,6 +105,7 @@ public sealed class TextEditorComponentData
 	public TextEditorOptions Options { get; init; }
 
 	public Guid TextEditorHtmlElementId { get; }
+	public Key<TextEditorComponentData> ComponentDataKey { get; }
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
 	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; }
 	public IDropdownService DropdownService { get; }

@@ -8,13 +8,13 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditorDependentComponent
+public partial class TextEditorDefaultFooterDisplay : ComponentBase
 {
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
+	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 
 	public int _previousPositionNumber;
 	
@@ -28,7 +28,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 		get => _selectedLineEndKindString;
 		set
 		{
-			var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+			var renderBatchLocal = GetRenderBatch();
 		
 			if (renderBatchLocal is null)
 	    		return;
@@ -73,10 +73,26 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
         
         base.OnInitialized();
     }
+    
+    private TextEditorRenderBatch? GetRenderBatch()
+    {
+    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
+    		return componentData._activeRenderBatch;
+    	
+    	return null;
+    }
+    
+    private TextEditorComponentData? GetComponentData()
+    {
+    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
+    		return componentData;
+    	
+    	return null;
+    }
 
     private async void OnCursorShouldBlinkChanged()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
 		if (renderBatchLocal?.Model is not null && renderBatchLocal?.ViewModel is not null)
 		{
 			var shouldSetSelectedLineEndKindString = false;

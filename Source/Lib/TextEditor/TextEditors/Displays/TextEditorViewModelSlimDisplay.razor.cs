@@ -155,6 +155,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     protected override void OnInitialized()
     {
     	SetComponentData();
+    	_ = TextEditorService.TextEditorState._componentDataMap.TryAdd(_componentData.ComponentDataKey, _componentData);
     	
     	CssOnInitializedStepOne();
   		  
@@ -1092,6 +1093,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 _linkedViewModel = null;
             }
         }
+        
+        TextEditorService.TextEditorState._componentDataMap.Remove(_componentData.ComponentDataKey);
 
         _onMouseMoveCancellationTokenSource.Cancel();
         _onMouseMoveCancellationTokenSource.Dispose();
