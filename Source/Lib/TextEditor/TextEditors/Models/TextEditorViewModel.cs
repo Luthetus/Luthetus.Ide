@@ -112,6 +112,7 @@ public sealed class TextEditorViewModel : IDisposable
 		AllGutterChevronList = other.AllGutterChevronList;
 		VirtualizedGutterChevronList = other.VirtualizedGutterChevronList;
 		InlineUiList = other.InlineUiList;
+		UiOutdated = other.UiOutdated;
 	    
 	    BodyElementId = other.BodyElementId;
 	    PrimaryCursorContentId = other.PrimaryCursorContentId;
@@ -262,6 +263,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// should have different collapse/expand states.
     /// </summary>
     public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; } = new();
+    public bool UiOutdated { get; set; }
     
     public bool ScrollWasModified { get; set; }
 	/// <summary>

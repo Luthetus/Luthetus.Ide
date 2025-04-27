@@ -313,6 +313,19 @@ public partial class TextEditorService : ITextEditorService
 	    
 	    __IsAvailableCursorModifier = true;
 	    
+	    foreach (var viewModel in __ViewModelList)
+	    {
+	    	if (viewModel.UiOutdated || viewModel.DisplayTracker.ComponentData is not null)
+	    	{
+	    		viewModel.UiOutdated = false;
+	    		viewModel.DisplayTracker.ComponentData.CalculateUi(editContext);
+	    	}
+	    	else
+	    	{
+	    		viewModel.UiOutdated = true;
+	    	}
+	    }
+	    
 	    SetModelAndViewModelRange(editContext);
 	}
 	
