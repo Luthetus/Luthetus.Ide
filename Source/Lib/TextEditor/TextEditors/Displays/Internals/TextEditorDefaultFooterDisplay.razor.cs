@@ -18,16 +18,18 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 
 	public int _previousPositionNumber;
 	
-	private string _selectedLineEndKindString;
+	private string _selectedLineEndKindString = LineEndKind.LineFeed.AsEnumName();
 	
 	private Key<TextEditorViewModel> _viewModelKeyPrevious = Key<TextEditorViewModel>.Empty;
-	private LineEndKind _lineEndKindPreferencePrevious;
+	private LineEndKind _lineEndKindPreferencePrevious = LineEndKind.LineFeed;
 	
 	public string SelectedLineEndKindString
 	{
 		get => _selectedLineEndKindString;
 		set
 		{
+			Console.WriteLine("TextEditorDefaultFooterDisplay set");
+			
 			var renderBatchLocal = GetRenderBatch();
 		
 			if (renderBatchLocal is null)
@@ -68,6 +70,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	
 	protected override void OnInitialized()
     {
+    	Console.WriteLine("TextEditorDefaultFooterDisplay");
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         OnCursorShouldBlinkChanged();
         
@@ -77,7 +80,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
     private TextEditorRenderBatch? GetRenderBatch()
     {
     	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData._activeRenderBatch;
+    		return componentData?._activeRenderBatch;
     	
     	return null;
     }
@@ -109,7 +112,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 			}
 			
 			if (shouldSetSelectedLineEndKindString)
-				_selectedLineEndKindString = renderBatchLocal.Model.LineEndKindPreference.ToString();
+				_selectedLineEndKindString = renderBatchLocal.Model.LineEndKindPreference.AsEnumName();
     	}
     
     	await InvokeAsync(StateHasChanged);

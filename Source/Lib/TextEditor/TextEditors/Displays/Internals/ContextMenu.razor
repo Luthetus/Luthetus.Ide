@@ -1,6 +1,6 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 
-@{ var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch; }
+@{ var renderBatch = GetRenderBatch(); }
 
 @if (renderBatch is not null)
 {

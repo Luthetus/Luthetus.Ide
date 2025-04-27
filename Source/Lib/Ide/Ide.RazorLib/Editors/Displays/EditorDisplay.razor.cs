@@ -26,6 +26,13 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
+    
+    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
+        Enum.GetValues(typeof(HeaderButtonKind))
+            .Cast<HeaderButtonKind>()
+            .ToList();
+
+    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
 
 	private TabListDisplay? _tabListDisplay;
 
@@ -34,9 +41,9 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	
 	private bool _isLoaded = false;
 	
-	private TextEditorViewModelSlimDisplay _viewModelSlimDisplay;
-	
 	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
+	
+	private Key<TextEditorComponentData> _componentDataKey;
 
     protected override void OnInitialized()
     {
@@ -45,8 +52,11 @@ public partial class EditorDisplay : ComponentBase, IDisposable
             TabIndex = 0,
             HeaderButtonKinds = TextEditorHeaderButtonKindsList,
             HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
+            TextEditorHtmlElementId = Guid.NewGuid(),
         };
     
+        _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
+        
         TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
         DirtyResourceUriService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
 
@@ -105,13 +115,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
 		return tabList;
 	}
-
-    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
-        Enum.GetValues(typeof(HeaderButtonKind))
-            .Cast<HeaderButtonKind>()
-            .ToList();
-
-    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
 
     public void Dispose()
     {

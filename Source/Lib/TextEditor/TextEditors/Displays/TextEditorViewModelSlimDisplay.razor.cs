@@ -84,7 +84,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Parameter]
     public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
-    private readonly Guid _textEditorHtmlElementId = Guid.NewGuid();
+    private Guid _textEditorHtmlElementId;
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
 
@@ -154,6 +154,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     protected override void OnInitialized()
     {
+    	if (ViewModelDisplayOptions.TextEditorHtmlElementId != Guid.Empty)
+    		_textEditorHtmlElementId = ViewModelDisplayOptions.TextEditorHtmlElementId;
+    	else
+    		_textEditorHtmlElementId = Guid.NewGuid();
+    	
+    
     	SetComponentData();
     	_ = TextEditorService.TextEditorState._componentDataMap.TryAdd(_componentData.ComponentDataKey, _componentData);
     	
@@ -180,6 +186,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+    	Console.WriteLine(ComponentData.ComponentDataKey.Guid);
+    
         if (firstRender)
         {
             await TextEditorService.JsRuntimeTextEditorApi

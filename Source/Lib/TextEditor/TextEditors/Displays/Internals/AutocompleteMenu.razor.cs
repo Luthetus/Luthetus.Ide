@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -27,7 +28,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
+	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 	
 	public const string HTML_ELEMENT_ID = "luth_te_autocomplete-menu-id";
 	
@@ -42,20 +43,38 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     protected override void OnInitialized()
     {
-        TextEditorViewModelSlimDisplay.RenderBatchChanged += OnRenderBatchChanged; 
+        // TextEditorViewModelSlimDisplay.RenderBatchChanged += OnRenderBatchChanged; 
         base.OnInitialized();
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-    	if (TextEditorViewModelSlimDisplay.ComponentData.MenuShouldTakeFocus)
+    	var componentData = GetComponentData();
+    	
+    	if (componentData?.MenuShouldTakeFocus ?? false)
     	{
-    		TextEditorViewModelSlimDisplay.ComponentData.MenuShouldTakeFocus = false;
+    		componentData.MenuShouldTakeFocus = false;
         		
         	await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
     	}
     	
     	await base.OnAfterRenderAsync(firstRender);
+    }
+    
+    private TextEditorRenderBatch? GetRenderBatch()
+    {
+    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
+    		return componentData?._activeRenderBatch;
+    	
+    	return null;
+    }
+    
+    private TextEditorComponentData? GetComponentData()
+    {
+    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
+    		return componentData;
+    	
+    	return null;
     }
     
     private async void OnRenderBatchChanged()
@@ -65,7 +84,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatch = GetRenderBatch();
     	if (renderBatch is null)
     		return Task.CompletedTask;
     
@@ -77,7 +96,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private async Task ReturnFocusToThisAsync()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatch = GetRenderBatch();
     	if (renderBatch is null)
     		return;
     		
@@ -111,7 +130,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private MenuRecord GetMenuRecord()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatch = GetRenderBatch();
     	if (renderBatch is null)
     		return NoResultsMenuRecord;
     
@@ -128,7 +147,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     public MenuRecord GetDefaultMenuRecord(List<AutocompleteEntry>? otherAutocompleteEntryList = null)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatch = GetRenderBatch();
     	if (renderBatch is null)
     		return NoResultsMenuRecord;
     
@@ -197,7 +216,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     public async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatch = GetRenderBatch();
     	if (renderBatch is null)
     		return;
     
@@ -256,7 +275,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatch = GetRenderBatch();
     	if (renderBatch is null)
     		return;
     
@@ -287,6 +306,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     public void Dispose()
     {
-    	TextEditorViewModelSlimDisplay.RenderBatchChanged -= OnRenderBatchChanged;
+    	// TextEditorViewModelSlimDisplay.RenderBatchChanged -= OnRenderBatchChanged;
     }
 }

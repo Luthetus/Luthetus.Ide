@@ -2,8 +2,12 @@
 @using Luthetus.Extensions.CompilerServices.Syntax.Nodes
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 
-<div class="luth_te_text-editor-header @TextEditorViewModelSlimDisplay.ComponentData.WrapperCssClass luth_te_compiler-service-header"
-     style="@TextEditorViewModelSlimDisplay.ComponentData.WrapperCssStyle">
+@{
+	var componentData = GetComponentData();
+}
+
+<div class="luth_te_text-editor-header @componentData?.WrapperCssClass luth_te_compiler-service-header"
+     style="@componentData?.WrapperCssStyle">
 	 
 	@{
 		var showDefaultToolbarLocal = _showDefaultToolbar;
@@ -80,7 +84,7 @@
 		@if (showDefaultToolbarLocal)
 		{
 			<div class="luth_te_compiler-service-header-dropdown">
-				<TextEditorDefaultHeaderDisplay TextEditorViewModelSlimDisplay="TextEditorViewModelSlimDisplay"/>
+				<TextEditorDefaultHeaderDisplay ComponentDataKey="ComponentDataKey"/>
 			</div>
 		}
 	

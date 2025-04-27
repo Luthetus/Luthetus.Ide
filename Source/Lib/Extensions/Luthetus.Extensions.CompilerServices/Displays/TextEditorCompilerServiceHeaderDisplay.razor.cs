@@ -26,7 +26,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
+	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 	
 	private ResourceUri _resourceUriPrevious = ResourceUri.Empty;
 	
@@ -47,6 +47,22 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
         
         base.OnInitialized();
     }
+    
+    private TextEditorRenderBatch? GetRenderBatch()
+    {
+    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
+    		return componentData?._activeRenderBatch;
+    	
+    	return null;
+    }
+    
+    private TextEditorComponentData? GetComponentData()
+    {
+    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
+    		return componentData;
+    	
+    	return null;
+    }
 
 	private async void OnCursorShouldBlinkChanged()
     {
@@ -61,12 +77,12 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private void UpdateUi()
     {
-    	if (TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch is null)
+    	if (GetRenderBatch() is null)
     		return;
     	
     	TextEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), async editContext =>
     	{
-    		var renderBatch = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    		var renderBatch = GetRenderBatch();
     	
     		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);

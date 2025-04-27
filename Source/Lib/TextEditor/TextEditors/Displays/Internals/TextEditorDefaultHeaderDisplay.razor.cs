@@ -48,16 +48,32 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
+	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 
 	public string _reloadButtonHtmlElementId = "luth_te_text-editor-header-reload-button";
 
 	protected override void OnInitialized()
     {
-        TextEditorViewModelSlimDisplay.TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         OnCursorShouldBlinkChanged();
         
         base.OnInitialized();
+    }
+    
+    private TextEditorRenderBatch? GetRenderBatch()
+    {
+    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
+    		return componentData?._activeRenderBatch;
+    	
+    	return null;
+    }
+    
+    private TextEditorComponentData? GetComponentData()
+    {
+    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
+    		return componentData;
+    	
+    	return null;
     }
 
 	private async void OnCursorShouldBlinkChanged()
@@ -67,7 +83,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     
     public Task DoSaveOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
 
@@ -93,7 +109,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public void ShowWatchWindowDisplayDialogOnClick()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return;
     	
@@ -128,7 +144,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
 	public Task DoCopyOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -152,7 +168,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoCutOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -176,7 +192,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoPasteOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -200,7 +216,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRedoOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
 
@@ -225,7 +241,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoUndoOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -249,7 +265,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoSelectAllOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -274,7 +290,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRemeasureOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -297,7 +313,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public async Task DoReloadOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return;
         
@@ -358,7 +374,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRefreshOnClick()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return Task.CompletedTask;
     	
@@ -387,7 +403,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     /// </summary>
     public bool GetUndoDisabledAttribute()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return true;
     	
@@ -409,7 +425,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     /// </summary>
     public bool GetRedoDisabledAttribute()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay.ComponentData._activeRenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (renderBatchLocal is null)
     		return true;
     	
@@ -424,6 +440,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
 	public void Dispose()
     {
-    	TextEditorViewModelSlimDisplay.TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
     }
 }

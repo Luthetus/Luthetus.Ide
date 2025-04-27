@@ -74,6 +74,8 @@ public sealed class TextEditorComponentData
 		EnvironmentProvider = environmentProvider;
 		FileSystemProvider = fileSystemProvider;
 		ServiceProvider = serviceProvider;
+		
+		ComponentDataKey = new Key<TextEditorComponentData>(TextEditorHtmlElementId);
 	}
 
 	/*public TextEditorComponentData(
