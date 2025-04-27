@@ -41,6 +41,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 
     private ElementReference? _textEditorContextMenuElementReference;
+    
+    private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
+    private TextEditorComponentData? _componentData;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -69,18 +72,26 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     private TextEditorRenderBatch? GetRenderBatch()
     {
-    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData?._activeRenderBatch;
-    	
-    	return null;
+    	return GetComponentData()?._activeRenderBatch;
     }
     
     private TextEditorComponentData? GetComponentData()
     {
-    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData;
+    	if (_componentDataKeyPrevious != ComponentDataKey)
+    	{
+    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+    		    componentData is null)
+    		{
+    			_componentData = null;
+    		}
+    		else
+    		{
+    			_componentData = componentData;
+				_componentDataKeyPrevious = ComponentDataKey;
+    		}
+    	}
     	
-    	return null;
+		return _componentData;
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

@@ -41,6 +41,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     private ElementReference? _autocompleteMenuElementReference;
     private MenuDisplay? _autocompleteMenuComponent;
     
+    private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
+    private TextEditorComponentData? _componentData;
+    
     protected override void OnInitialized()
     {
         // TextEditorViewModelSlimDisplay.RenderBatchChanged += OnRenderBatchChanged; 
@@ -63,18 +66,26 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     private TextEditorRenderBatch? GetRenderBatch()
     {
-    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData?._activeRenderBatch;
-    	
-    	return null;
+    	return GetComponentData()?._activeRenderBatch;
     }
     
     private TextEditorComponentData? GetComponentData()
     {
-    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData;
+    	if (_componentDataKeyPrevious != ComponentDataKey)
+    	{
+    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+    		    componentData is null)
+    		{
+    			_componentData = null;
+    		}
+    		else
+    		{
+    			_componentData = componentData;
+				_componentDataKeyPrevious = ComponentDataKey;
+    		}
+    	}
     	
-    	return null;
+		return _componentData;
     }
     
     private async void OnRenderBatchChanged()

@@ -40,6 +40,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	
 	private CancellationTokenSource _cancellationTokenSource = new();
 	
+	private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
+    private TextEditorComponentData? _componentData;
+	
 	protected override void OnInitialized()
     {
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
@@ -50,18 +53,26 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private TextEditorRenderBatch? GetRenderBatch()
     {
-    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData?._activeRenderBatch;
-    	
-    	return null;
+    	return GetComponentData()?._activeRenderBatch;
     }
     
     private TextEditorComponentData? GetComponentData()
     {
-    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData;
+    	if (_componentDataKeyPrevious != ComponentDataKey)
+    	{
+    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+    		    componentData is null)
+    		{
+    			_componentData = null;
+    		}
+    		else
+    		{
+    			_componentData = componentData;
+				_componentDataKeyPrevious = ComponentDataKey;
+    		}
+    	}
     	
-    	return null;
+		return _componentData;
     }
 
 	private async void OnCursorShouldBlinkChanged()

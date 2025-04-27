@@ -23,6 +23,9 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	private Key<TextEditorViewModel> _viewModelKeyPrevious = Key<TextEditorViewModel>.Empty;
 	private LineEndKind _lineEndKindPreferencePrevious = LineEndKind.LineFeed;
 	
+	private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
+    private TextEditorComponentData? _componentData;
+	
 	public string SelectedLineEndKindString
 	{
 		get => _selectedLineEndKindString;
@@ -79,18 +82,26 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
     
     private TextEditorRenderBatch? GetRenderBatch()
     {
-    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData?._activeRenderBatch;
-    	
-    	return null;
+    	return GetComponentData()?._activeRenderBatch;
     }
     
     private TextEditorComponentData? GetComponentData()
     {
-    	if (TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData))
-    		return componentData;
+    	if (_componentDataKeyPrevious != ComponentDataKey)
+    	{
+    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+    		    componentData is null)
+    		{
+    			_componentData = null;
+    		}
+    		else
+    		{
+    			_componentData = componentData;
+				_componentDataKeyPrevious = ComponentDataKey;
+    		}
+    	}
     	
-    	return null;
+		return _componentData;
     }
 
     private async void OnCursorShouldBlinkChanged()
