@@ -494,118 +494,111 @@ public sealed class TextEditorComponentData
         int upperPositionIndexExclusive,
         int rowIndex)
     {
-    	try
-        {
-            var charMeasurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
-			var textEditorDimensions = _activeRenderBatch.ViewModel.TextEditorDimensions;
-            var scrollbarDimensions = _activeRenderBatch.ViewModel.ScrollbarDimensions;
+        var charMeasurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
+		var textEditorDimensions = _activeRenderBatch.ViewModel.TextEditorDimensions;
+        var scrollbarDimensions = _activeRenderBatch.ViewModel.ScrollbarDimensions;
 
-            if (rowIndex >= _activeRenderBatch.Model.LineEndList.Count)
-                return string.Empty;
-
-            var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
-
-            var startingColumnIndex = 0;
-            var endingColumnIndex = line.EndPositionIndexExclusive - 1;
-
-            var fullWidthOfRowIsSelected = true;
-
-            if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
-            {
-                startingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
-                fullWidthOfRowIsSelected = false;
-            }
-
-            if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
-            {
-                endingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
-                fullWidthOfRowIsSelected = false;
-            }
-
-            var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
-            
-            _uiStringBuilder.Clear();
-            _uiStringBuilder.Append("position: absolute; ");
-
-			_uiStringBuilder.Append("top: ");
-			_uiStringBuilder.Append(topInPixelsInvariantCulture);
-			_uiStringBuilder.Append("px;");
-
-            var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
-
-            _uiStringBuilder.Append("height: ");
-            _uiStringBuilder.Append(heightInPixelsInvariantCulture);
-            _uiStringBuilder.Append("px;");
-
-            var startInPixels = startingColumnIndex * charMeasurements.CharacterWidth;
-
-            // startInPixels offset from Tab keys a width of many characters
-            {
-                var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-                    rowIndex,
-                    startingColumnIndex);
-
-                // 1 of the character width is already accounted for
-                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-
-                startInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
-            }
-
-            var startInPixelsInvariantCulture = startInPixels.ToCssValue();
-            _uiStringBuilder.Append("left: ");
-            _uiStringBuilder.Append(startInPixelsInvariantCulture);
-            _uiStringBuilder.Append("px;");
-
-            var widthInPixels = endingColumnIndex * charMeasurements.CharacterWidth - startInPixels;
-
-            // Tab keys a width of many characters
-            {
-                var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-                    rowIndex,
-                    line.LastValidColumnIndex);
-
-                // 1 of the character width is already accounted for
-                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-
-                widthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
-            }
-
-            _uiStringBuilder.Append("width: ");
-
-            var fullWidthValue = scrollbarDimensions.ScrollWidth;
-
-            if (textEditorDimensions.Width > scrollbarDimensions.ScrollWidth)
-                fullWidthValue = textEditorDimensions.Width; // If content does not fill the viewable width of the Text Editor User Interface
-
-            var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
-
-            var widthInPixelsInvariantCulture = widthInPixels.ToCssValue();
-
-            if (fullWidthOfRowIsSelected)
-            {
-                _uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
-                _uiStringBuilder.Append("px;");
-            }
-            else if (startingColumnIndex != 0 && upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
-            {
-            	_uiStringBuilder.Append("calc(");
-            	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
-            	_uiStringBuilder.Append("px - ");
-            	_uiStringBuilder.Append(startInPixelsInvariantCulture);
-            	_uiStringBuilder.Append("px);");
-            }
-            else
-            {
-            	_uiStringBuilder.Append(widthInPixelsInvariantCulture);
-            	_uiStringBuilder.Append("px;");;
-            }
-
-            return _uiStringBuilder.ToString();
-        }
-        catch (LuthetusTextEditorException)
-        {
+        if (rowIndex >= _activeRenderBatch.Model.LineEndList.Count)
             return string.Empty;
+
+        var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
+
+        var startingColumnIndex = 0;
+        var endingColumnIndex = line.EndPositionIndexExclusive - 1;
+
+        var fullWidthOfRowIsSelected = true;
+
+        if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
+        {
+            startingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
+            fullWidthOfRowIsSelected = false;
         }
+
+        if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
+        {
+            endingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
+            fullWidthOfRowIsSelected = false;
+        }
+
+        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
+        
+        _uiStringBuilder.Clear();
+        _uiStringBuilder.Append("position: absolute; ");
+
+		_uiStringBuilder.Append("top: ");
+		_uiStringBuilder.Append(topInPixelsInvariantCulture);
+		_uiStringBuilder.Append("px;");
+
+        var heightInPixelsInvariantCulture = charMeasurements.LineHeight.ToCssValue();
+
+        _uiStringBuilder.Append("height: ");
+        _uiStringBuilder.Append(heightInPixelsInvariantCulture);
+        _uiStringBuilder.Append("px;");
+
+        var startInPixels = startingColumnIndex * charMeasurements.CharacterWidth;
+
+        // startInPixels offset from Tab keys a width of many characters
+        {
+            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                rowIndex,
+                startingColumnIndex);
+
+            // 1 of the character width is already accounted for
+            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+            startInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+        }
+
+        var startInPixelsInvariantCulture = startInPixels.ToCssValue();
+        _uiStringBuilder.Append("left: ");
+        _uiStringBuilder.Append(startInPixelsInvariantCulture);
+        _uiStringBuilder.Append("px;");
+
+        var widthInPixels = endingColumnIndex * charMeasurements.CharacterWidth - startInPixels;
+
+        // Tab keys a width of many characters
+        {
+            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                rowIndex,
+                line.LastValidColumnIndex);
+
+            // 1 of the character width is already accounted for
+            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+            widthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+        }
+
+        _uiStringBuilder.Append("width: ");
+
+        var fullWidthValue = scrollbarDimensions.ScrollWidth;
+
+        if (textEditorDimensions.Width > scrollbarDimensions.ScrollWidth)
+            fullWidthValue = textEditorDimensions.Width; // If content does not fill the viewable width of the Text Editor User Interface
+
+        var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
+
+        var widthInPixelsInvariantCulture = widthInPixels.ToCssValue();
+
+        if (fullWidthOfRowIsSelected)
+        {
+            _uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
+            _uiStringBuilder.Append("px;");
+        }
+        else if (startingColumnIndex != 0 && upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
+        {
+        	_uiStringBuilder.Append("calc(");
+        	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
+        	_uiStringBuilder.Append("px - ");
+        	_uiStringBuilder.Append(startInPixelsInvariantCulture);
+        	_uiStringBuilder.Append("px);");
+        }
+        else
+        {
+        	_uiStringBuilder.Append(widthInPixelsInvariantCulture);
+        	_uiStringBuilder.Append("px;");
+        }
+
+        return _uiStringBuilder.ToString();
     }
 
     public string PresentationGetCssClass(TextEditorPresentationModel presentationModel, byte decorationByte)
@@ -617,114 +610,93 @@ public sealed class TextEditorComponentData
         IReadOnlyList<TextEditorTextModification> textModifications,
         IReadOnlyList<TextEditorTextSpan> inTextSpanList)
     {
-    	// (2025-01-22)
-    	// ============
-    	// The text spans need to be tied to the partitions they reside in
-    	// (careful of a textspan that overlaps two partitions).
-    	//
-    	// This shouldn't be done here, it should be done during the editContext.
-    	
-    	try
+        // Virtualize the text spans
+        var virtualizedTextSpanList = new List<TextEditorTextSpan>();
+        if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Any())
         {
-            // Virtualize the text spans
-            var virtualizedTextSpanList = new List<TextEditorTextSpan>();
-            if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Any())
-            {
-                var lowerLineIndexInclusive = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
-                var upperLineIndexInclusive = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+            var lowerLineIndexInclusive = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
+            var upperLineIndexInclusive = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 
-                var lowerLine = _activeRenderBatch.Model.GetLineInformation(lowerLineIndexInclusive);
-                var upperLine = _activeRenderBatch.Model.GetLineInformation(upperLineIndexInclusive);
+            var lowerLine = _activeRenderBatch.Model.GetLineInformation(lowerLineIndexInclusive);
+            var upperLine = _activeRenderBatch.Model.GetLineInformation(upperLineIndexInclusive);
+
+			// Awkward enumeration was modified 'for loop' (2025-01-22)
+			// Also, this shouldn't be done here, it should be done during the editContext.
+			var count = inTextSpanList.Count;
+            for (int i = 0; i < count; i++)
+            {
+            	var textSpan = inTextSpanList[i];
+            	
+                if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
+                    upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
+                {
+                    virtualizedTextSpanList.Add(textSpan);
+                }
+            }
+        }
+        else
+        {
+            // No 'VirtualizationResult', so don't render any text spans.
+            return Array.Empty<TextEditorTextSpan>();
+        }
+
+        var outTextSpansList = new List<TextEditorTextSpan>();
+        // Shift the text spans
+        {
+            foreach (var textSpan in virtualizedTextSpanList)
+            {
+                var startingIndexInclusive = textSpan.StartingIndexInclusive;
+                var endingIndexExclusive = textSpan.EndingIndexExclusive;
 
 				// Awkward enumeration was modified 'for loop' (2025-01-22)
 				// Also, this shouldn't be done here, it should be done during the editContext.
-				var count = inTextSpanList.Count;
+				var count = textModifications.Count;
                 for (int i = 0; i < count; i++)
                 {
-                	var textSpan = inTextSpanList[i];
-                	
-                    if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
-                        upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
+                	var textModification = textModifications[i];
+                
+                    if (textModification.WasInsertion)
                     {
-                        virtualizedTextSpanList.Add(textSpan);
+                        if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
+                        {
+                            startingIndexInclusive += textModification.TextEditorTextSpan.Length;
+                            endingIndexExclusive += textModification.TextEditorTextSpan.Length;
+                        }
+                    }
+                    else // was deletion
+                    {
+                        if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
+                        {
+                            startingIndexInclusive -= textModification.TextEditorTextSpan.Length;
+                            endingIndexExclusive -= textModification.TextEditorTextSpan.Length;
+                        }
                     }
                 }
-            }
-            else
-            {
-                // No 'VirtualizationResult', so don't render any text spans.
-                return Array.Empty<TextEditorTextSpan>();
-            }
 
-            var outTextSpansList = new List<TextEditorTextSpan>();
-            // Shift the text spans
-            {
-                foreach (var textSpan in virtualizedTextSpanList)
+                outTextSpansList.Add(textSpan with
                 {
-                    var startingIndexInclusive = textSpan.StartingIndexInclusive;
-                    var endingIndexExclusive = textSpan.EndingIndexExclusive;
-
-					// Awkward enumeration was modified 'for loop' (2025-01-22)
-					// Also, this shouldn't be done here, it should be done during the editContext.
-					var count = textModifications.Count;
-                    for (int i = 0; i < count; i++)
-                    {
-                    	var textModification = textModifications[i];
-                    
-                        if (textModification.WasInsertion)
-                        {
-                            if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
-                            {
-                                startingIndexInclusive += textModification.TextEditorTextSpan.Length;
-                                endingIndexExclusive += textModification.TextEditorTextSpan.Length;
-                            }
-                        }
-                        else // was deletion
-                        {
-                            if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
-                            {
-                                startingIndexInclusive -= textModification.TextEditorTextSpan.Length;
-                                endingIndexExclusive -= textModification.TextEditorTextSpan.Length;
-                            }
-                        }
-                    }
-
-                    outTextSpansList.Add(textSpan with
-                    {
-                        StartingIndexInclusive = startingIndexInclusive,
-                        EndingIndexExclusive = endingIndexExclusive
-                    });
-                }
+                    StartingIndexInclusive = startingIndexInclusive,
+                    EndingIndexExclusive = endingIndexExclusive
+                });
             }
+        }
 
-            return outTextSpansList;
-        }
-        catch (LuthetusTextEditorException)
-        {
-            return Array.Empty<TextEditorTextSpan>();
-        }
+        return outTextSpansList;
     }
     
     public (int FirstRowToSelectDataInclusive, int LastRowToSelectDataExclusive) PresentationGetBoundsInRowIndexUnits(
     	(int StartingIndexInclusive, int EndingIndexExclusive) boundsInPositionIndexUnits)
     {
-    	try
-        {
-            var firstRowToSelectDataInclusive = _activeRenderBatch.Model
-                .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive)
-                .Index;
+        var firstRowToSelectDataInclusive = _activeRenderBatch.Model
+            .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive)
+            .Index;
 
-            var lastRowToSelectDataExclusive = _activeRenderBatch.Model
-                .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive)
-                .Index +
-                1;
+        var lastRowToSelectDataExclusive = _activeRenderBatch.Model
+            .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive)
+            .Index +
+            1;
 
-            return (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
-        }
-        catch (LuthetusTextEditorException)
-        {
-            return (0, 0);
-        }
+        return (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
     }
     
     public string GetTextSelectionStyleCss(
