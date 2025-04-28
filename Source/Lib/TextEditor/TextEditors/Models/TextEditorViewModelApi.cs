@@ -1063,7 +1063,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
 			#endif
 			
-			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
+			// virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
 		}
 		catch (LuthetusTextEditorException exception)
 		{

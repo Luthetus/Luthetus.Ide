@@ -122,6 +122,8 @@ public record VirtualizationGrid
     public double VirtualTop { get; init; }
     
     public int CollapsedLineCount { get; init; }
+    
+    public bool CreateCacheWasInvoked { get; set; }
 
     /// <summary>
     ///

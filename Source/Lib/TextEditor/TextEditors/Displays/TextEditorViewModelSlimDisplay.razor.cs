@@ -1018,7 +1018,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			if (shouldCalculateHorizontalScrollbar)
 				ComponentData.HORIZONTAL_GetScrollbarHorizontalStyleCss();
 			
-			ComponentData.GetCursorAndCaretRowStyleCss();
+			ComponentData.CreateUi();
 		}
     	
         return true;
@@ -1035,6 +1035,15 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             model_viewmodel_tuple.Model,
             model_viewmodel_tuple.ViewModel,
             _textEditorRenderBatchConstants);
+        
+        if (!renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCacheWasInvoked &&
+        	renderBatchUnsafe.Model is not null && renderBatchUnsafe.ViewModel is not null)
+        {
+        	renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCache(
+        		TextEditorService,
+        		renderBatchUnsafe.Model,
+        		renderBatchUnsafe.ViewModel);
+        }
         
         _componentData._previousRenderBatch = _componentData._currentRenderBatch;
         

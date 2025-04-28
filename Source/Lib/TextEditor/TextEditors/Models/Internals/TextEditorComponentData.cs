@@ -290,103 +290,96 @@ public sealed class TextEditorComponentData
         
     public void GetCursorAndCaretRowStyleCss()
     {
-        try
-        {
-        	var measurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
+    	var measurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
 
-	        var leftInPixels = 0d;
-	
-	        // Tab key column offset
-	        {
-	            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-	                _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex,
-	                _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex);
-	
-	            // 1 of the character width is already accounted for
-	
-	            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-	
-	            leftInPixels += extraWidthPerTabKey *
-	                tabsOnSameRowBeforeCursor *
-	                measurements.CharacterWidth;
-	        }
-	
-	        leftInPixels += measurements.CharacterWidth * _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex;
-	        
-	        _uiStringBuilder.Clear();
-	
-	        var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
-	        _uiStringBuilder.Append("left: ");
-	        _uiStringBuilder.Append(leftInPixelsInvariantCulture);
-	        _uiStringBuilder.Append("px;");
-	
-	        var topInPixelsInvariantCulture = (measurements.LineHeight * _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex)
-	            .ToCssValue();
-	
-			_uiStringBuilder.Append("top: ");
-			_uiStringBuilder.Append(topInPixelsInvariantCulture);
-			_uiStringBuilder.Append("px;");
-	
-	        _uiStringBuilder.Append(_lineHeightStyleCssString);
-	
-	        var widthInPixelsInvariantCulture = _activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.CursorWidthInPixels.ToCssValue();
-	        _uiStringBuilder.Append("width: ");
-	        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
-	        _uiStringBuilder.Append("px;");
-	
-	        _uiStringBuilder.Append(((ITextEditorKeymap)_activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.Keymap).GetCursorCssStyleString(
-	            _activeRenderBatch.Model,
-	            _activeRenderBatch.ViewModel,
-	            _activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions));
-	        
-	        // This feels a bit hacky, exceptions are happening because the UI isn't accessing
-	        // the text editor in a thread safe way.
-	        //
-	        // When an exception does occur though, the cursor should receive a 'text editor changed'
-	        // event and re-render anyhow however.
-	        // 
-	        // So store the result of this method incase an exception occurs in future invocations,
-	        // to keep the cursor on screen while the state works itself out.
-	        _previousGetCursorStyleCss = _uiStringBuilder.ToString();
-        
-        	/////////////////////
-        	/////////////////////
-        	
-        	// CaretRow starts here
-        	
-        	/////////////////////
-        	/////////////////////
-			
-			_uiStringBuilder.Clear();
-			
-			_uiStringBuilder.Append("top: ");
-			_uiStringBuilder.Append(topInPixelsInvariantCulture);
-			_uiStringBuilder.Append("px;");
-	
-	        _uiStringBuilder.Append(_lineHeightStyleCssString);
-	
-	        var widthOfBodyInPixelsInvariantCulture =
-	            (_activeRenderBatch.Model.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
-	            .ToCssValue();
-	
-			_uiStringBuilder.Append("width: ");
-			_uiStringBuilder.Append(widthOfBodyInPixelsInvariantCulture);
-			_uiStringBuilder.Append("px;");
-	
-	        // This feels a bit hacky, exceptions are happening because the UI isn't accessing
-	        // the text editor in a thread safe way.
-	        //
-	        // When an exception does occur though, the cursor should receive a 'text editor changed'
-	        // event and re-render anyhow however.
-	        // 
-	        // So store the result of this method incase an exception occurs in future invocations,
-	        // to keep the cursor on screen while the state works itself out.
-	        _previousGetCaretRowStyleCss = _uiStringBuilder.ToString();
-        }
-        catch (LuthetusTextEditorException e)
+        var leftInPixels = 0d;
+
+        // Tab key column offset
         {
-        	Console.WriteLine(e);
+            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex,
+                _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex);
+
+            // 1 of the character width is already accounted for
+
+            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+            leftInPixels += extraWidthPerTabKey *
+                tabsOnSameRowBeforeCursor *
+                measurements.CharacterWidth;
         }
+
+        leftInPixels += measurements.CharacterWidth * _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex;
+        
+        _uiStringBuilder.Clear();
+
+        var leftInPixelsInvariantCulture = leftInPixels.ToCssValue();
+        _uiStringBuilder.Append("left: ");
+        _uiStringBuilder.Append(leftInPixelsInvariantCulture);
+        _uiStringBuilder.Append("px;");
+
+        var topInPixelsInvariantCulture = (measurements.LineHeight * _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex)
+            .ToCssValue();
+
+		_uiStringBuilder.Append("top: ");
+		_uiStringBuilder.Append(topInPixelsInvariantCulture);
+		_uiStringBuilder.Append("px;");
+
+        _uiStringBuilder.Append(_lineHeightStyleCssString);
+
+        var widthInPixelsInvariantCulture = _activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.CursorWidthInPixels.ToCssValue();
+        _uiStringBuilder.Append("width: ");
+        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+        _uiStringBuilder.Append("px;");
+
+        _uiStringBuilder.Append(((ITextEditorKeymap)_activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.Keymap).GetCursorCssStyleString(
+            _activeRenderBatch.Model,
+            _activeRenderBatch.ViewModel,
+            _activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions));
+        
+        // This feels a bit hacky, exceptions are happening because the UI isn't accessing
+        // the text editor in a thread safe way.
+        //
+        // When an exception does occur though, the cursor should receive a 'text editor changed'
+        // event and re-render anyhow however.
+        // 
+        // So store the result of this method incase an exception occurs in future invocations,
+        // to keep the cursor on screen while the state works itself out.
+        _previousGetCursorStyleCss = _uiStringBuilder.ToString();
+    
+    	/////////////////////
+    	/////////////////////
+    	
+    	// CaretRow starts here
+    	
+    	/////////////////////
+    	/////////////////////
+		
+		_uiStringBuilder.Clear();
+		
+		_uiStringBuilder.Append("top: ");
+		_uiStringBuilder.Append(topInPixelsInvariantCulture);
+		_uiStringBuilder.Append("px;");
+
+        _uiStringBuilder.Append(_lineHeightStyleCssString);
+
+        var widthOfBodyInPixelsInvariantCulture =
+            (_activeRenderBatch.Model.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
+            .ToCssValue();
+
+		_uiStringBuilder.Append("width: ");
+		_uiStringBuilder.Append(widthOfBodyInPixelsInvariantCulture);
+		_uiStringBuilder.Append("px;");
+
+        // This feels a bit hacky, exceptions are happening because the UI isn't accessing
+        // the text editor in a thread safe way.
+        //
+        // When an exception does occur though, the cursor should receive a 'text editor changed'
+        // event and re-render anyhow however.
+        // 
+        // So store the result of this method incase an exception occurs in future invocations,
+        // to keep the cursor on screen while the state works itself out.
+        _previousGetCaretRowStyleCss = _uiStringBuilder.ToString();
     }
 
 	public void HORIZONTAL_GetScrollbarHorizontalStyleCss()
@@ -966,5 +959,17 @@ public sealed class TextEditorComponentData
 	    	_uiStringBuilder.Append("px;");
 	    	_verticalVirtualizationBoundaryStyleCssString = _uiStringBuilder.ToString();
     	}
+    }
+    
+    public void CreateUi()
+    {
+    	try
+        {
+            GetCursorAndCaretRowStyleCss();
+        }
+        catch (LuthetusTextEditorException e)
+        {
+        	Console.WriteLine(e);
+        }
     }
 }
