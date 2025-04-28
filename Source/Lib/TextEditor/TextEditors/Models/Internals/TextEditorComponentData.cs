@@ -141,6 +141,9 @@ public sealed class TextEditorComponentData
     
     public List<(string CssClassString, int IndexInclusiveStart, int IndexExclusiveEnd)> firstPresentationLayerGroupList = new();
 	public List<(string PresentationCssClass, string PresentationCssStyle)> firstPresentationLayerTextSpanList = new();
+	
+    public List<(string CssClassString, int IndexInclusiveStart, int IndexExclusiveEnd)> lastPresentationLayerGroupList = new();
+	public List<(string PresentationCssClass, string PresentationCssStyle)> lastPresentationLayerTextSpanList = new();
     
     public List<string> SelectionStyleList = new List<string>();
 
@@ -982,10 +985,12 @@ public sealed class TextEditorComponentData
     	}
     }
     
-    private void FirstPresentationLayer()
+    private void GetPresentationLayer(
+    	List<(string CssClassString, int IndexInclusiveStart, int IndexExclusiveEnd)> presentationLayerGroupList,
+    	List<(string PresentationCssClass, string PresentationCssStyle)> presentationLayerTextSpanList)
     {
-    	firstPresentationLayerGroupList.Clear();
-    	firstPresentationLayerTextSpanList.Clear();
+    	presentationLayerGroupList.Clear();
+    	presentationLayerTextSpanList.Clear();
     
     	foreach (var presentationKey in _activeRenderBatch.ViewModel.FirstPresentationLayerKeysList)
 	    {
@@ -1007,7 +1012,7 @@ public sealed class TextEditorComponentData
         	// Should be using 'textSpansList' not 'completedCalculation.TextSpanList'?
             textSpansList = PresentationVirtualizeAndShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
 
-			var indexInclusiveStart = firstPresentationLayerTextSpanList.Count;
+			var indexInclusiveStart = presentationLayerTextSpanList.Count;
 
             foreach (var textSpan in textSpansList)
             {
@@ -1019,7 +1024,7 @@ public sealed class TextEditorComponentData
                      i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
                      i++)
                 {
-                	firstPresentationLayerTextSpanList.Add((
+                	presentationLayerTextSpanList.Add((
                 		PresentationGetCssClass(presentationLayer, textSpan.DecorationByte),
                 		PresentationGetCssStyleString(
                             boundsInPositionIndexUnits.StartingIndexInclusive,
@@ -1028,11 +1033,11 @@ public sealed class TextEditorComponentData
                 }
             }
             
-            firstPresentationLayerGroupList.Add(
+            presentationLayerGroupList.Add(
             	(
             		presentationLayer.CssClassString,
             	    indexInclusiveStart,
-            	    indexExclusiveEnd: firstPresentationLayerTextSpanList.Count)
+            	    indexExclusiveEnd: presentationLayerTextSpanList.Count)
             	);
 	    }
     }
@@ -1043,7 +1048,9 @@ public sealed class TextEditorComponentData
         {
             GetCursorAndCaretRowStyleCss();
             GetSelection();
-            FirstPresentationLayer();
+            
+            GetPresentationLayer(firstPresentationLayerGroupList, firstPresentationLayerTextSpanList);
+            GetPresentationLayer(lastPresentationLayerGroupList, lastPresentationLayerTextSpanList);
         }
         catch (LuthetusTextEditorException e)
         {

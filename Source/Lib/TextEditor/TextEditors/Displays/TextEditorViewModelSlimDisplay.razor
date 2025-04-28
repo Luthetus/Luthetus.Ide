@@ -214,7 +214,6 @@
 							@for (int textSpanIndex = presentationLayerTuple.IndexInclusiveStart; textSpanIndex < presentationLayerTuple.IndexExclusiveEnd; textSpanIndex++)
 							{
 								var textSpanTuple = _componentData.firstPresentationLayerTextSpanList[textSpanIndex];
-								
 								<div class="@textSpanTuple.PresentationCssClass"
 		                             style="@textSpanTuple.PresentationCssStyle">
 		                        </div>
@@ -235,51 +234,21 @@
 				        }
 				    }
 				</div>
-				                        
+				
 				<div class="luth_te_last-render-presentation-layer-group">
-				
-				    @foreach (var presentationKey in ComponentData._activeRenderBatch.ViewModel.LastPresentationLayerKeysList)
-				    {
-				    	var presentationLayer = ComponentData._activeRenderBatch.Model.PresentationModelList.FirstOrDefault(x =>
-				            x.TextEditorPresentationKey == presentationKey);
-				            
-				        if (presentationLayer is null)
-				        	continue;
-				    
-				        var completedCalculation = presentationLayer.CompletedCalculation;
-				        
-				        var textSpansList = completedCalculation?.TextSpanList
-				            ?? Array.Empty<TextEditorTextSpan>();
-				
-				        IReadOnlyList<TextEditorTextModification> textModificationList = ((IReadOnlyList<TextEditorTextModification>?)completedCalculation?.TextModificationsSinceRequestList)
-				            ?? Array.Empty<TextEditorTextModification>();
-				
-				        @if (completedCalculation is not null)
-				        {
-				            textSpansList = _componentData.PresentationVirtualizeAndShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
-				
-				            <div class="@presentationLayer.CssClassString">
-				                @foreach (var textSpan in textSpansList)
-				                {
-				                    var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
-				
-				                    var boundsInRowIndexUnits = _componentData.PresentationGetBoundsInRowIndexUnits(boundsInPositionIndexUnits);
-				
-				                    for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
-				                         i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
-				                         i++)
-				                    {
-				                        <div class="@_componentData.PresentationGetCssClass(presentationLayer, textSpan.DecorationByte)"
-				                             style="@_componentData.PresentationGetCssStyleString(
-				                                    boundsInPositionIndexUnits.StartingIndexInclusive,
-				                                    boundsInPositionIndexUnits.EndingIndexExclusive,
-				                                    i)">
-				                        </div>
-				                    }
-				                }
-				            </div>
-				        }
-				    }
+					@for (int groupIndex = 0; groupIndex < _componentData.lastPresentationLayerGroupList.Count; groupIndex++)
+					{
+						var presentationLayerTuple = _componentData.lastPresentationLayerGroupList[groupIndex];
+						<div class="@presentationLayerTuple.CssClassString">
+							@for (int textSpanIndex = presentationLayerTuple.IndexInclusiveStart; textSpanIndex < presentationLayerTuple.IndexExclusiveEnd; textSpanIndex++)
+							{
+								var textSpanTuple = _componentData.lastPresentationLayerTextSpanList[textSpanIndex];
+								<div class="@textSpanTuple.PresentationCssClass"
+		                             style="@textSpanTuple.PresentationCssStyle">
+		                        </div>
+							}
+						</div>
+					}
 				</div>
 				@*  PresentationAndSelection Close *@
 				
