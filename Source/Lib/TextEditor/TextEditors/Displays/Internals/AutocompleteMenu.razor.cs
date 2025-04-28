@@ -46,8 +46,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     protected override void OnInitialized()
     {
-        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
-        OnCursorShouldBlinkChanged();
+        TextEditorService.TextEditorStateChanged += OnTextEditorStateChanged;
+        OnTextEditorStateChanged();
         
         base.OnInitialized();
     }
@@ -90,7 +90,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 		return _componentData;
     }
     
-    private async void OnCursorShouldBlinkChanged()
+    private async void OnTextEditorStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
@@ -319,6 +319,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     public void Dispose()
     {
-    	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.TextEditorStateChanged -= OnTextEditorStateChanged;
     }
 }
