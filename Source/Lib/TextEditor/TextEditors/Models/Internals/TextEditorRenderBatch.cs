@@ -18,9 +18,6 @@ public struct TextEditorRenderBatch
 	    TextEditorRenderBatchConstants = textEditorRenderBatchConstants;
 	}
 
-	// Don't ??= because it only should be set inside 'Validate()'.
-    private double? _gutterWidthInPixels;
-    
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
     public TextEditorRenderBatchConstants TextEditorRenderBatchConstants { get; set; }
@@ -29,7 +26,7 @@ public struct TextEditorRenderBatch
 								         ViewModel is not null &&
 								         TextEditorRenderBatchConstants.TextEditorOptions is not null;
 
-    public double GutterWidthInPixels => _gutterWidthInPixels ?? GetGutterWidthInPixels();
+    public double GutterWidthInPixels { get; private set; }
 
     public bool IsValid { get; private set; }
         
@@ -40,9 +37,7 @@ public struct TextEditorRenderBatch
 	        TextEditorRenderBatchConstants.TextEditorOptions is not null;
 	    
 	    if (IsValid)
-	    {
-	    	_gutterWidthInPixels = GutterWidthInPixels;
-	    }
+	    	GutterWidthInPixels = GetGutterWidthInPixels();
 	    
 	    return IsValid;
     }
