@@ -226,7 +226,7 @@
 				    @if (TextEditorSelectionHelper.HasSelectedText(ComponentData._activeRenderBatch.ViewModel.PrimaryCursor.Selection) &&
 				         ComponentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 				    {
-				        for (var i = 0; i < ComponentData.useUpperBoundExclusiveRowIndex - ComponentData.useLowerBoundInclusiveRowIndex; i++)
+				        for (var i = 0; i < ComponentData.SelectionStyleList.Count; i++)
 				        {
 							<div class="luth_te_text-selection"
 							     style="@ComponentData.SelectionStyleList[i]">
