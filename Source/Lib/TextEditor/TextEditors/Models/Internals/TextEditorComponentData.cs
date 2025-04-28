@@ -726,123 +726,115 @@ public sealed class TextEditorComponentData
         int upperPositionIndexExclusive,
         int rowIndex)
     {
-    	try
-		{
-	        if (rowIndex >= _activeRenderBatch.Model.LineEndList.Count)
-	            return string.Empty;
-	
-	        var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
-	
-	        var selectionStartingColumnIndex = 0;
-	        var selectionEndingColumnIndex = line.EndPositionIndexExclusive - 1;
-	
-	        var fullWidthOfRowIsSelected = true;
-	
-	        if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
-	        {
-	            selectionStartingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
-	            fullWidthOfRowIsSelected = false;
-	        }
-	
-	        if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
-	        {
-	            selectionEndingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
-	            fullWidthOfRowIsSelected = false;
-	        }
-	
-	        var charMeasurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
-	
-	        _uiStringBuilder.Clear();
-	        
-	        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
-	        _uiStringBuilder.Append("top: ");
-	        _uiStringBuilder.Append(topInPixelsInvariantCulture);
-	        _uiStringBuilder.Append("px;");
-	
-	        _uiStringBuilder.Append(_lineHeightStyleCssString);
-	
-	        var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidth;
-	
-	        // selectionStartInPixels offset from Tab keys a width of many characters
-	        {
-	            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-	                rowIndex,
-	                selectionStartingColumnIndex);
-	
-	            // 1 of the character width is already accounted for
-	            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-	
-	            selectionStartInPixels += 
-	                extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
-	        }
-	
-	        var selectionStartInPixelsInvariantCulture = selectionStartInPixels.ToCssValue();
-	        _uiStringBuilder.Append("left: ");
-	        _uiStringBuilder.Append(selectionStartInPixelsInvariantCulture);
-	        _uiStringBuilder.Append("px;");
-	
-	        var selectionWidthInPixels = 
-	            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels;
-	
-	        // Tab keys a width of many characters
-	        {
-	            var lineInformation = _activeRenderBatch.Model.GetLineInformation(rowIndex);
-	
-	            selectionEndingColumnIndex = Math.Min(
-	                selectionEndingColumnIndex,
-	                lineInformation.LastValidColumnIndex);
-	
-	            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-	                rowIndex,
-	                selectionEndingColumnIndex);
-	
-	            // 1 of the character width is already accounted for
-	            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-	
-	            selectionWidthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
-	        }
-	
-	        _uiStringBuilder.Append("width: ");
-	        var fullWidthValue = _activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
-	
-	        if (_activeRenderBatch.ViewModel.TextEditorDimensions.Width >
-	            _activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth)
-	        {
-	            // If content does not fill the viewable width of the Text Editor User Interface
-	            fullWidthValue = _activeRenderBatch.ViewModel.TextEditorDimensions.Width;
-	        }
-	
-	        var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
-	
-	        var selectionWidthInPixelsInvariantCulture = selectionWidthInPixels.ToCssValue();
-	
-	        if (fullWidthOfRowIsSelected)
-	        {
-	        	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
-	        	_uiStringBuilder.Append("px;");
-	        }
-	        else if (selectionStartingColumnIndex != 0 &&
-	                 upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
-	        {
-	        	_uiStringBuilder.Append("calc(");
-	        	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
-	        	_uiStringBuilder.Append("px - ");
-	        	_uiStringBuilder.Append(selectionStartInPixelsInvariantCulture);
-	        	_uiStringBuilder.Append("px);");
-	        }
-	        else
-	        {
-	        	_uiStringBuilder.Append(selectionWidthInPixelsInvariantCulture);
-	        	_uiStringBuilder.Append("px;");
-	        }
-	
-	        return _uiStringBuilder.ToString();
-		}
-		catch (LuthetusTextEditorException e)
-		{
-			Console.WriteLine(e);
-			return "display: none;";
-		}
+        if (rowIndex >= _activeRenderBatch.Model.LineEndList.Count)
+            return string.Empty;
+
+        var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
+
+        var selectionStartingColumnIndex = 0;
+        var selectionEndingColumnIndex = line.EndPositionIndexExclusive - 1;
+
+        var fullWidthOfRowIsSelected = true;
+
+        if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
+        {
+            selectionStartingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
+            fullWidthOfRowIsSelected = false;
+        }
+
+        if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
+        {
+            selectionEndingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
+            fullWidthOfRowIsSelected = false;
+        }
+
+        var charMeasurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
+
+        _uiStringBuilder.Clear();
+        
+        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
+        _uiStringBuilder.Append("top: ");
+        _uiStringBuilder.Append(topInPixelsInvariantCulture);
+        _uiStringBuilder.Append("px;");
+
+        _uiStringBuilder.Append(_lineHeightStyleCssString);
+
+        var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidth;
+
+        // selectionStartInPixels offset from Tab keys a width of many characters
+        {
+            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                rowIndex,
+                selectionStartingColumnIndex);
+
+            // 1 of the character width is already accounted for
+            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+            selectionStartInPixels += 
+                extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+        }
+
+        var selectionStartInPixelsInvariantCulture = selectionStartInPixels.ToCssValue();
+        _uiStringBuilder.Append("left: ");
+        _uiStringBuilder.Append(selectionStartInPixelsInvariantCulture);
+        _uiStringBuilder.Append("px;");
+
+        var selectionWidthInPixels = 
+            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels;
+
+        // Tab keys a width of many characters
+        {
+            var lineInformation = _activeRenderBatch.Model.GetLineInformation(rowIndex);
+
+            selectionEndingColumnIndex = Math.Min(
+                selectionEndingColumnIndex,
+                lineInformation.LastValidColumnIndex);
+
+            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                rowIndex,
+                selectionEndingColumnIndex);
+
+            // 1 of the character width is already accounted for
+            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+            selectionWidthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+        }
+
+        _uiStringBuilder.Append("width: ");
+        var fullWidthValue = _activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+
+        if (_activeRenderBatch.ViewModel.TextEditorDimensions.Width >
+            _activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth)
+        {
+            // If content does not fill the viewable width of the Text Editor User Interface
+            fullWidthValue = _activeRenderBatch.ViewModel.TextEditorDimensions.Width;
+        }
+
+        var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
+
+        var selectionWidthInPixelsInvariantCulture = selectionWidthInPixels.ToCssValue();
+
+        if (fullWidthOfRowIsSelected)
+        {
+        	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
+        	_uiStringBuilder.Append("px;");
+        }
+        else if (selectionStartingColumnIndex != 0 &&
+                 upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
+        {
+        	_uiStringBuilder.Append("calc(");
+        	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
+        	_uiStringBuilder.Append("px - ");
+        	_uiStringBuilder.Append(selectionStartInPixelsInvariantCulture);
+        	_uiStringBuilder.Append("px);");
+        }
+        else
+        {
+        	_uiStringBuilder.Append(selectionWidthInPixelsInvariantCulture);
+        	_uiStringBuilder.Append("px;");
+        }
+
+        return _uiStringBuilder.ToString();
     }
 
     public void GetSelection()
