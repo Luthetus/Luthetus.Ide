@@ -212,6 +212,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         await base.OnAfterRenderAsync(firstRender);
     }
     
+    public async Task FocusTextEditorAsync()
+	{
+	  var nextViewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
+	  
+	  if (nextViewModel is not null)
+	  	await nextViewModel.FocusAsync();
+	}
+    
     private void CssOnInitializedStepOne()
 	{
 		_componentData.SetWrapperCssAndStyle();
@@ -357,14 +365,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             return ValueTask.CompletedTask;
     	});
     }
-
-	public async Task FocusTextEditorAsync()
-	{
-	  var nextViewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
-	  
-	  if (nextViewModel is not null)
-	  	await nextViewModel.FocusAsync();
-	}
     
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
