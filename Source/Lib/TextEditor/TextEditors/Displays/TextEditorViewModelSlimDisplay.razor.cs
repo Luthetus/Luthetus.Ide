@@ -131,12 +131,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	public bool GlobalShowNewlines => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowNewlines;
 	
-	/// <summary>This property will need to be used when multi-cursor is added.</summary>
-    public bool IsFocusTarget => true;
-
-    public ElementReference? _cursorDisplayElementReference;
-    public int _menuShouldGetFocusRequestCount;
-
     private readonly CancellationTokenSource _onMouseMoveCancellationTokenSource = new();
     private MouseEventArgs? _onMouseMoveMouseEventArgs;
     private Task _onMouseMoveTask = Task.CompletedTask;
@@ -174,6 +168,31 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	base.OnParametersSet();
     }
 
+	protected override bool ShouldRender()
+    {
+    	try
+		{
+			if (_linkedViewModel is null)
+	            HandleTextEditorViewModelKeyChange();
+	
+	        ConstructRenderBatch();
+	
+	        if (ComponentData._currentRenderBatch.ViewModel is not null && ComponentData._currentRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is not null)
+	        {
+	            if (ComponentData._currentRenderBatch.ViewModel.DisplayTracker.ConsumeIsFirstDisplay())
+					QueueCalculateVirtualizationResultBackgroundTask(ComponentData._currentRenderBatch);
+	        
+				ComponentData.CreateUi();
+			}
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+    	
+        return true;
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -191,6 +210,113 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+    
+    private void CssOnInitializedStepOne()
+	{
+		_componentData.SetWrapperCssAndStyle();
+    	
+    	ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
+	    
+	    VERTICAL_ScrollbarElementId = $"luth_te_{VERTICAL_scrollbarGuid}";
+	    VERTICAL_ScrollbarSliderElementId = $"luth_te_{VERTICAL_scrollbarGuid}-slider";
+	    
+	    HORIZONTAL_ScrollbarElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}";
+	    HORIZONTAL_ScrollbarSliderElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}-slider";
+	    
+	    var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
+	    var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
+        _componentData._gutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
+        
+        _componentData._scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
+	}
+	
+	private void CssOnInitializedStepTwo()
+	{
+		_componentData._blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink ";
+	    _componentData._blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";
+	    
+	    var cursorCssClassString = _componentData._activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions?.Keymap?.GetCursorCssClassString();
+        if (cursorCssClassString is not null)
+        {
+        	_componentData._blinkAnimationCssClassOn += cursorCssClassString;
+        	_componentData._blinkAnimationCssClassOff += cursorCssClassString;
+        }
+	}
+	
+	public void ConstructRenderBatch()
+    {
+    	var localTextEditorState = TextEditorService.TextEditorState;
+    
+		var inViewModel = localTextEditorState._viewModelMap[TextEditorViewModelKey];
+		var inModel = localTextEditorState._modelMap[inViewModel.ResourceUri];
+    
+    	(TextEditorModel Model, TextEditorViewModel ViewModel) model_viewmodel_tuple = (inModel, inViewModel);
+		
+        var renderBatchUnsafe = new TextEditorRenderBatch(
+            model_viewmodel_tuple.Model,
+            model_viewmodel_tuple.ViewModel,
+            _textEditorRenderBatchConstants);
+        
+        if (!renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCacheWasInvoked &&
+        	renderBatchUnsafe.Model is not null && renderBatchUnsafe.ViewModel is not null)
+        {
+        	renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCache(
+        		TextEditorService,
+        		renderBatchUnsafe.Model,
+        		renderBatchUnsafe.ViewModel);
+        }
+        
+        _componentData._previousRenderBatch = _componentData._currentRenderBatch;
+        
+        _componentData._currentRenderBatch = renderBatchUnsafe;
+        
+        _componentData._activeRenderBatch = renderBatchUnsafe.Validate() ? renderBatchUnsafe : default;
+    }
+    
+    private void SetComponentData()
+    {
+		_componentData = new(
+			_textEditorHtmlElementId,
+			ViewModelDisplayOptions,
+			TextEditorService.OptionsApi.GetTextEditorOptionsState().Options,
+			this,
+			DropdownService,
+			ClipboardService,
+			CommonComponentRenderers,
+			NotificationService,
+			TextEditorService,
+			TextEditorComponentRenderers,
+			FindAllService,
+			EnvironmentProvider,
+			FileSystemProvider,
+			ServiceProvider);
+			
+		SetRenderBatchConstants();
+    }
+    
+    public void SetRenderBatchConstants()
+    {
+    	var textEditorOptions = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+			
+		string fontFamily;
+		if (!string.IsNullOrWhiteSpace(textEditorOptions.CommonOptions?.FontFamily))
+			fontFamily = textEditorOptions.CommonOptions!.FontFamily;
+		else
+			fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+			
+		int fontSizeInPixels;
+		if (textEditorOptions.CommonOptions?.FontSizeInPixels is not null)
+            fontSizeInPixels = textEditorOptions.CommonOptions.FontSizeInPixels;
+        else
+        	fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+		
+		_textEditorRenderBatchConstants = new TextEditorRenderBatchConstants(
+			textEditorOptions,
+			fontFamily,
+			fontSizeInPixels,
+			ViewModelDisplayOptions,
+			_componentData);
     }
 
     private async void GeneralOnStateChangedEventHandler() =>
@@ -239,51 +365,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	  if (nextViewModel is not null)
 	  	await nextViewModel.FocusAsync();
 	}
-
-    public async Task FocusAsync()
-    {
-        try
-        {
-            if (_cursorDisplayElementReference is not null)
-            {
-                await _cursorDisplayElementReference.Value
-                    .FocusAsync(preventScroll: true)
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception)
-        {
-            // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-            //             This bug is seemingly happening randomly. I have a suspicion
-            //             that there are race-condition exceptions occurring with "FocusAsync"
-            //             on an ElementReference.
-        }
-    }
-
-    public async Task SetFocusToActiveMenuAsync()
-    {
-        _menuShouldGetFocusRequestCount++;
-        // await InvokeAsync(StateHasChanged);
-    }
-
-    public bool TextEditorMenuShouldTakeFocus()
-    {
-        if (_menuShouldGetFocusRequestCount > 0)
-        {
-            _menuShouldGetFocusRequestCount = 0;
-            return true;
-        }
-
-        return false;
-    }
-
-    public int GetTabIndex()
-    {
-        if (!IsFocusTarget)
-            return -1;
-
-        return _componentData._activeRenderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex;
-    }
     
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
@@ -799,297 +880,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     {
     	_componentData.SetWrapperCssAndStyle();
     	await InvokeAsync(StateHasChanged);
-    }
-    
-    private void CssOnInitializedStepOne()
-	{
-		_componentData.SetWrapperCssAndStyle();
-    	
-    	ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
-	    
-	    VERTICAL_ScrollbarElementId = $"luth_te_{VERTICAL_scrollbarGuid}";
-	    VERTICAL_ScrollbarSliderElementId = $"luth_te_{VERTICAL_scrollbarGuid}-slider";
-	    
-	    HORIZONTAL_ScrollbarElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}";
-	    HORIZONTAL_ScrollbarSliderElementId = $"luth_te_{HORIZONTAL_scrollbarGuid}-slider";
-	    
-	    var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
-	    var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
-        _componentData._gutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
-        
-        _componentData._scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
-	}
-	
-	private void CssOnInitializedStepTwo()
-	{
-		_componentData._blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink ";
-	    _componentData._blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";
-	    
-	    var cursorCssClassString = _componentData._activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions?.Keymap?.GetCursorCssClassString();
-        if (cursorCssClassString is not null)
-        {
-        	_componentData._blinkAnimationCssClassOn += cursorCssClassString;
-        	_componentData._blinkAnimationCssClassOff += cursorCssClassString;
-        }
-	}
-
-	protected override bool ShouldRender()
-    {
-    	/*if (_componentData._activeRenderBatch.ViewModel.UiOutdated)
-    	{
-    		// Trigger 'TextEditorComponentData.CalculateUi(TextEditorEditContext editContext)'
-    		TextEditorService.WorkerArbitrary.PostUnique(
-    			nameof(_componentData._activeRenderBatch.ViewModel.UiOutdated),
-    			editContext =>
-    			{
-    				editContext.GetViewModelModifier(_componentData._activeRenderBatch.ViewModel.ViewModelKey);
-    				return ValueTask.CompletedTask;
-    			});
-    	}*/
-    	
-    	if (_linkedViewModel is null)
-            HandleTextEditorViewModelKeyChange();
-
-        ConstructRenderBatch();
-
-        if (ComponentData._currentRenderBatch.ViewModel is not null && ComponentData._currentRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is not null)
-        {
-            if (ComponentData._currentRenderBatch.ViewModel.DisplayTracker.ConsumeIsFirstDisplay())
-				QueueCalculateVirtualizationResultBackgroundTask(ComponentData._currentRenderBatch);
-        }
-        
-        // Check if the gutter width changed. If so, re-measure text editor.
-        if (ComponentData._activeRenderBatch.ViewModel is not null)
-		{
-			var gutterWidthInPixels = ComponentData._activeRenderBatch.GutterWidthInPixels;
-		
-			if (ComponentData._previousGutterWidthInPixels >= 0 && gutterWidthInPixels >= 0)
-			{
-	        	var absoluteValueDifference = Math.Abs(ComponentData._previousGutterWidthInPixels - gutterWidthInPixels);
-	        	
-	        	if (absoluteValueDifference >= 0.2)
-	        	{
-	        		ComponentData._previousGutterWidthInPixels = gutterWidthInPixels;
-	        		var widthInPixelsInvariantCulture = gutterWidthInPixels.ToCssValue();
-	        		
-	        		ComponentData._uiStringBuilder.Clear();
-	        		ComponentData._uiStringBuilder.Append("width: ");
-	        		ComponentData._uiStringBuilder.Append(widthInPixelsInvariantCulture);
-	        		ComponentData._uiStringBuilder.Append("px;");
-	        		ComponentData._gutterWidthStyleCssString = ComponentData._uiStringBuilder.ToString();
-	        		
-	        		ComponentData._uiStringBuilder.Clear();
-	        		ComponentData._uiStringBuilder.Append(ComponentData._lineHeightStyleCssString);
-			        ComponentData._uiStringBuilder.Append(ComponentData._gutterWidthStyleCssString);
-			        ComponentData._uiStringBuilder.Append(ComponentData._gutterPaddingStyleCssString);
-	        		ComponentData._gutterHeightWidthPaddingStyleCssString = ComponentData._uiStringBuilder.ToString();
-	        		
-	        		ComponentData._uiStringBuilder.Clear();
-	        		ComponentData._uiStringBuilder.Append("width: calc(100% - ");
-			        ComponentData._uiStringBuilder.Append(widthInPixelsInvariantCulture);
-			        ComponentData._uiStringBuilder.Append("px); left: ");
-			        ComponentData._uiStringBuilder.Append(widthInPixelsInvariantCulture);
-			        ComponentData._uiStringBuilder.Append("px;");
-	        		ComponentData._bodyStyle = ComponentData._uiStringBuilder.ToString();
-	        			        		
-	        		// (2025-03-28)
-	        		// Console.WriteLine("_activeRenderBatch.ViewModel.DisplayTracker.PostScrollAndRemeasure();");
-	        		ComponentData._activeRenderBatch.ViewModel.DisplayTracker.PostScrollAndRemeasure();
-	        		return true;
-	        	}
-			}
-			
-			// NOTE: The 'gutterWidth' version of this will do a re-measure,...
-			// ...and therefore will return if its condition branch was entered.
-			var lineHeightInPixels = ComponentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
-			
-			// The 'gutterWidth' version of this code was written first,
-			// and this is just more or less copying the template.
-			//
-			// TODO: What was the reason for 'gutterWidth' not just doing an '!='?
-			//
-			if (ComponentData._previousLineHeightInPixels >= 0 && lineHeightInPixels >= 0)
-			{
-				var absoluteValueDifference = Math.Abs(ComponentData._previousLineHeightInPixels - lineHeightInPixels);
-	        	
-	        	if (absoluteValueDifference >= 0.2)
-	        	{
-	        		ComponentData._previousLineHeightInPixels = lineHeightInPixels;
-					var heightInPixelsInvariantCulture = lineHeightInPixels.ToCssValue();
-					
-					ComponentData._uiStringBuilder.Clear();
-	        		ComponentData._uiStringBuilder.Append("height: ");
-			        ComponentData._uiStringBuilder.Append(heightInPixelsInvariantCulture);
-			        ComponentData._uiStringBuilder.Append("px;");
-			        ComponentData._lineHeightStyleCssString = ComponentData._uiStringBuilder.ToString();
-			        
-			        ComponentData._uiStringBuilder.Clear();
-	        		ComponentData._uiStringBuilder.Append(ComponentData._lineHeightStyleCssString);
-			        ComponentData._uiStringBuilder.Append(ComponentData._gutterWidthStyleCssString);
-			        ComponentData._uiStringBuilder.Append(ComponentData._gutterPaddingStyleCssString);
-	        		ComponentData._gutterHeightWidthPaddingStyleCssString = ComponentData._uiStringBuilder.ToString();
-        		}
-			}
-			
-			var textEditorWidth = ComponentData._activeRenderBatch.ViewModel.TextEditorDimensions.Width;
-			var textEditorHeight = ComponentData._activeRenderBatch.ViewModel.TextEditorDimensions.Height;
-			var scrollLeft = ComponentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft;
-			var scrollWidth = ComponentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
-			var scrollHeight = ComponentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollHeight;
-			var scrollTop = ComponentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollTop;
-			
-			bool shouldCalculateVerticalSlider = false;
-			bool shouldCalculateHorizontalSlider = false;
-			bool shouldCalculateHorizontalScrollbar = false;
-			
-			if (ComponentData._previousTextEditorHeightInPixels >= 0 && textEditorHeight >= 0)
-			{
-				var absoluteValueDifference = Math.Abs(ComponentData._previousTextEditorHeightInPixels - textEditorHeight);
-	        	
-	        	if (absoluteValueDifference >= 0.2)
-	        	{
-	        		ComponentData._previousTextEditorHeightInPixels = textEditorHeight;
-	        		shouldCalculateVerticalSlider = true;
-			    }
-			}
-			
-			if (ComponentData._previousScrollHeightInPixels >= 0 && scrollHeight >= 0)
-			{
-				var absoluteValueDifference = Math.Abs(ComponentData._previousScrollHeightInPixels - scrollHeight);
-	        	
-	        	if (absoluteValueDifference >= 0.2)
-	        	{
-	        		ComponentData._previousScrollHeightInPixels = scrollHeight;
-	        		shouldCalculateVerticalSlider = true;
-			    }
-			}
-			
-			if (ComponentData._previousScrollTopInPixels >= 0 && scrollTop >= 0)
-			{
-				var absoluteValueDifference = Math.Abs(ComponentData._previousScrollTopInPixels - scrollTop);
-	        	
-	        	if (absoluteValueDifference >= 0.2)
-	        	{
-	        		ComponentData._previousScrollTopInPixels = scrollTop;
-	        		shouldCalculateVerticalSlider = true;
-			    }
-			}
-			
-			if (ComponentData._previousTextEditorWidthInPixels >= 0 && textEditorWidth >= 0)
-			{
-				var absoluteValueDifference = Math.Abs(ComponentData._previousTextEditorWidthInPixels - textEditorWidth);
-	        	
-	        	if (absoluteValueDifference >= 0.2)
-	        	{
-	        		ComponentData._previousTextEditorWidthInPixels = textEditorWidth;
-	        		shouldCalculateHorizontalSlider = true;
-	        		shouldCalculateHorizontalScrollbar = true;
-			    }
-			}
-			
-			if (ComponentData._previousScrollWidthInPixels >= 0 && scrollWidth >= 0)
-			{
-				var absoluteValueDifference = Math.Abs(ComponentData._previousScrollWidthInPixels - scrollWidth);
-	        	
-	        	if (absoluteValueDifference >= 0.2)
-	        	{
-	        		ComponentData._previousScrollWidthInPixels = scrollWidth;
-	        		shouldCalculateHorizontalSlider = true;
-			    }
-			}
-			
-			if (ComponentData._previousScrollLeftInPixels >= 0 && scrollLeft >= 0)
-			{
-				var absoluteValueDifference = Math.Abs(ComponentData._previousScrollLeftInPixels - scrollLeft);
-	        	
-	        	if (absoluteValueDifference >= 0.2)
-	        	{
-	        		ComponentData._previousScrollLeftInPixels = scrollLeft;
-	        		shouldCalculateHorizontalSlider = true;
-			    }
-			}
-
-			if (shouldCalculateVerticalSlider)
-				ComponentData.VERTICAL_GetSliderVerticalStyleCss();
-			
-			if (shouldCalculateHorizontalSlider)
-				ComponentData.HORIZONTAL_GetSliderHorizontalStyleCss();
-			
-			if (shouldCalculateHorizontalScrollbar)
-				ComponentData.HORIZONTAL_GetScrollbarHorizontalStyleCss();
-			
-			ComponentData.CreateUi();
-		}
-    	
-        return true;
-    }
-    
-    public void ConstructRenderBatch()
-    {
-    	var localTextEditorState = TextEditorService.TextEditorState;
-    
-    	var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefault(
-			TextEditorViewModelKey);
-		
-        var renderBatchUnsafe = new TextEditorRenderBatch(
-            model_viewmodel_tuple.Model,
-            model_viewmodel_tuple.ViewModel,
-            _textEditorRenderBatchConstants);
-        
-        if (!renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCacheWasInvoked &&
-        	renderBatchUnsafe.Model is not null && renderBatchUnsafe.ViewModel is not null)
-        {
-        	renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCache(
-        		TextEditorService,
-        		renderBatchUnsafe.Model,
-        		renderBatchUnsafe.ViewModel);
-        }
-        
-        _componentData._previousRenderBatch = _componentData._currentRenderBatch;
-        
-        _componentData._currentRenderBatch = renderBatchUnsafe;
-        
-        _componentData._activeRenderBatch = renderBatchUnsafe.Validate() ? renderBatchUnsafe : default;
-    }
-    
-    private void SetComponentData()
-    {
-		_componentData = new(
-			_textEditorHtmlElementId,
-			ViewModelDisplayOptions,
-			TextEditorService.OptionsApi.GetTextEditorOptionsState().Options,
-			this,
-			DropdownService,
-			ClipboardService,
-			CommonComponentRenderers,
-			NotificationService,
-			TextEditorService,
-			TextEditorComponentRenderers,
-			FindAllService,
-			EnvironmentProvider,
-			FileSystemProvider,
-			ServiceProvider);
-			
-		var textEditorOptions = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
-			
-		string fontFamily;
-		if (!string.IsNullOrWhiteSpace(textEditorOptions.CommonOptions?.FontFamily))
-			fontFamily = textEditorOptions.CommonOptions!.FontFamily;
-		else
-			fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
-			
-		int fontSizeInPixels;
-		if (textEditorOptions.CommonOptions?.FontSizeInPixels is not null)
-            fontSizeInPixels = textEditorOptions.CommonOptions.FontSizeInPixels;
-        else
-        	fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
-		
-		_textEditorRenderBatchConstants = new TextEditorRenderBatchConstants(
-			textEditorOptions,
-			fontFamily,
-			fontSizeInPixels,
-			ViewModelDisplayOptions,
-			_componentData);
     }
     
     public void Dispose()

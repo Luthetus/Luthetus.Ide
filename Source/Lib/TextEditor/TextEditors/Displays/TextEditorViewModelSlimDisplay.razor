@@ -289,8 +289,8 @@
 					</div>
 				}
 								
-				<textarea id="@_componentData.GetCursorDisplayId()"
-							tabindex="@GetTabIndex()"
+				<textarea id="@_componentData._activeRenderBatch.ViewModel.PrimaryCursorContentId"
+							tabindex="@_componentData._activeRenderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex"
 							class="@_componentData.BlinkAnimationCssClass"
 							style="@_componentData._previousGetCursorStyleCss">
 				</textarea>
