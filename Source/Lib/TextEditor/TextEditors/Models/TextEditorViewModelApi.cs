@@ -785,7 +785,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			
 			var collapsedCount = 0;
 			
-			for (int priorLineIndex = 0; priorLineIndex < verticalStartingIndex; priorLineIndex++)
+			/*for (int priorLineIndex = 0; priorLineIndex < verticalStartingIndex; priorLineIndex++)
 			{
 				var indexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == priorLineIndex);
 				if (indexGutterChevron == -1)
@@ -796,7 +796,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					continue;
 				if (priorLineIndex > gutterChevron.LineIndex && priorLineIndex < gutterChevron.ExclusiveLineIndex)
 					collapsedCount++;
-			}
+			}*/
 			
 			var virtualizedLineList = new List<VirtualizationLine>(lineCountToReturn);
 			{
@@ -823,7 +823,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				
 					var lineIndex = verticalStartingIndex + lineOffset;
 					
-					var isCollapsed = false;
+					/*var isCollapsed = false;
 					foreach (var gutterChevron in viewModel.AllGutterChevronList)
 					{
 						if (gutterChevron.IsExpanded)
@@ -836,7 +836,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						}
 					}
 					if (isCollapsed)
-						continue;
+						continue;*/
 					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    

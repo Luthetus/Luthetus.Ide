@@ -190,7 +190,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
 				
-			var resource = extendedCompilerService.GetResource(modelModifier.ResourceUri);
+			/*var resource = extendedCompilerService.GetResource(modelModifier.ResourceUri);
 			
 			var virtualizedGutterChevronList = new List<GutterChevron>();
 			
@@ -235,10 +235,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 					}
 				}
 			}
-
 			
-			
-			viewModelModifier.VirtualizedGutterChevronList = virtualizedGutterChevronList;
+			viewModelModifier.VirtualizedGutterChevronList = virtualizedGutterChevronList;*/
 				
 			if (_codeBlockOwner != targetScope.CodeBlockOwner)
 			{
@@ -250,7 +248,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	});
     }
     
-    private void Aaa(
+    /*private void Aaa(
     	TextEditorViewModel viewModelModifier,
     	TextEditorModel modelModifier,
     	IExtendedCompilationUnit extendedCompilationUnit,
@@ -307,7 +305,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			if (shouldAddToAll)
 				viewModelModifier.AllGutterChevronList.Add(newGutterChevron);
     	}
-    }
+    }*/
 
 	public void Dispose()
     {

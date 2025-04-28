@@ -64,6 +64,7 @@
 		             style="@(_componentData.GetGutterStyleCss(virtualizedRow.TopCssStyle))">
 		            @(virtualizedRow.LineIndex + 1)
 		            
+		            @*
 		            @{
 		            	var gutterChevron = new GutterChevron(-1, false, string.Empty, 0, 0, -1);
 		            	
@@ -90,6 +91,7 @@
 					    	}
 						</span>
     				}
+    				*@
 		        </div>
 		    }
 		    
@@ -180,7 +182,7 @@
 				</div>
                 @* Virtualization Close *@
                 
-                <div class="luth_te_three-dots-section">
+                @*<div class="luth_te_three-dots-section">
                 	@foreach (var entry in ComponentData._activeRenderBatch.ViewModel.InlineUiList)
                 	{
                 		var lineAndColumnIndices = ComponentData._activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
@@ -201,7 +203,7 @@
                 			...
                 		</div>
                 	}
-                </div>
+                </div>*@
 							                           
 				@*  PresentationAndSelection Open *@
 				<div class="luth_te_first-render-presentation-layer-group">
