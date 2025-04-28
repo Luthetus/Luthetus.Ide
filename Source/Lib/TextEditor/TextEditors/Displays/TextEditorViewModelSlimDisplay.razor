@@ -256,29 +256,10 @@
 				    @if (TextEditorSelectionHelper.HasSelectedText(ComponentData._activeRenderBatch.ViewModel.PrimaryCursor.Selection) &&
 				         ComponentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 				    {
-				        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-				            ComponentData._activeRenderBatch.ViewModel.PrimaryCursor.Selection);
-				
-				        var selectionBoundsInRowIndexUnits = _componentData.GetSelectionBoundsInRowIndexUnits(selectionBoundsInPositionIndexUnits);
-				
-				        var virtualLowerBoundInclusiveRowIndex = ComponentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
-				        var virtualUpperBoundExclusiveRowIndex = 1 + ComponentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
-				
-				        int useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
-				            ? virtualLowerBoundInclusiveRowIndex
-				            : selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
-				
-				        int useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.upperRowIndexExclusive
-				            ? virtualUpperBoundExclusiveRowIndex
-				            : selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
-				
-				        for (var i = useLowerBoundInclusiveRowIndex; i < useUpperBoundExclusiveRowIndex; i++)
+				        for (var i = 0; i < ComponentData.useUpperBoundExclusiveRowIndex - ComponentData.useLowerBoundInclusiveRowIndex; i++)
 				        {
 							<div class="luth_te_text-selection"
-							     style="@_componentData.GetTextSelectionStyleCss(
-							     	   selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
-							     	   selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
-							     	   i)">
+							     style="@ComponentData.SelectionStyleList[i]">
 							</div>
 				        }
 				    }

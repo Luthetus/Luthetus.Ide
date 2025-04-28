@@ -134,6 +134,12 @@ public sealed class TextEditorComponentData
     public bool ThinksLeftMouseButtonIsDown { get; set; }
     
     public bool MenuShouldTakeFocus { get; set; }
+    
+    public int useLowerBoundInclusiveRowIndex;
+    public int useUpperBoundExclusiveRowIndex;
+    public (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) selectionBoundsInPositionIndexUnits;
+    
+    public List<string> SelectionStyleList = new List<string>();
 
 	public void ThrottleApplySyntaxHighlighting(TextEditorModel modelModifier)
     {
@@ -839,19 +845,39 @@ public sealed class TextEditorComponentData
 		}
     }
 
-    public (int lowerRowIndexInclusive, int upperRowIndexExclusive) GetSelectionBoundsInRowIndexUnits(
-    	(int lowerPositionIndexInclusive, int upperPositionIndexExclusive) selectionBoundsInPositionIndexUnits)
+    public void GetSelection()
     {
-    	try
-        {
-            return TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+    	if (TextEditorSelectionHelper.HasSelectedText(_activeRenderBatch.ViewModel.PrimaryCursor.Selection) &&
+	         _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+	    {
+	    	SelectionStyleList.Clear();
+	    
+	        selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
+	            _activeRenderBatch.ViewModel.PrimaryCursor.Selection);
+	
+	        var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
                 _activeRenderBatch.Model,
                 selectionBoundsInPositionIndexUnits);
-        }
-        catch (LuthetusTextEditorException)
-        {
-            return (0, 0);
-        }
+	
+	        var virtualLowerBoundInclusiveRowIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
+	        var virtualUpperBoundExclusiveRowIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+	
+	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
+	            ? virtualLowerBoundInclusiveRowIndex
+	            : selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+	
+	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.upperRowIndexExclusive
+	            ? virtualUpperBoundExclusiveRowIndex
+            	: selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+            	
+            for (var i = useLowerBoundInclusiveRowIndex; i < useUpperBoundExclusiveRowIndex; i++)
+	        {
+	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
+		     	   selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
+		     	   selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
+		     	   i));
+	        }
+	    }
     }
 
 	/// <summary>
@@ -966,6 +992,7 @@ public sealed class TextEditorComponentData
     	try
         {
             GetCursorAndCaretRowStyleCss();
+            GetSelection();
         }
         catch (LuthetusTextEditorException e)
         {
