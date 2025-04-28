@@ -18,6 +18,7 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Icons.Displays;
+using Luthetus.Common.RazorLib.CustomEvents.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
@@ -84,6 +85,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Parameter]
     public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; } = new();
 
+	private Action<KeyboardEventArgs> _onKeyDownNonRenderingEventHandler;
+	private Action _onContextMenuNonRenderingEventHandler;	
+	private Action<MouseEventArgs> _onMouseDownNonRenderingEventHandler;
+	private Action<MouseEventArgs> _onMouseMoveNonRenderingEventHandler;
+	private Action<MouseEventArgs> _onMouseOutNonRenderingEventHandler;
+	private Action<MouseEventArgs> _onDblClickNonRenderingEventHandler;
+	private Action<WheelEventArgs> _onWheelNonRenderingEventHandler;
+
     private Guid _textEditorHtmlElementId;
     /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
     private readonly object _linkedViewModelLock = new();
@@ -139,6 +148,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     protected override void OnInitialized()
     {
+    	 _onKeyDownNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown);
+    	 _onContextMenuNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler(ReceiveOnContextMenu);
+    	 _onMouseDownNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseDown);
+    	 _onMouseMoveNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseMove);
+    	 _onMouseOutNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseOut);
+    	 _onDblClickNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveOnDoubleClick);
+    	 _onWheelNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<WheelEventArgs>(ReceiveOnWheel);
+    
     	if (ViewModelDisplayOptions.TextEditorHtmlElementId != Guid.Empty)
     		_textEditorHtmlElementId = ViewModelDisplayOptions.TextEditorHtmlElementId;
     	else
