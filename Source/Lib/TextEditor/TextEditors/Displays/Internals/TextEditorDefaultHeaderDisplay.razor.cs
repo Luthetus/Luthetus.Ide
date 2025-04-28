@@ -63,9 +63,9 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         base.OnInitialized();
     }
     
-    private TextEditorRenderBatch? GetRenderBatch()
+    private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._activeRenderBatch;
+    	return GetComponentData()?._activeRenderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -95,7 +95,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public Task DoSaveOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
 
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -121,7 +121,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public void ShowWatchWindowDisplayDialogOnClick()
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     	
         var model = renderBatchLocal.Model;
@@ -156,7 +156,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	public Task DoCopyOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -180,7 +180,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public Task DoCutOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -204,7 +204,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public Task DoPasteOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -228,7 +228,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public Task DoRedoOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
 
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -253,7 +253,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public Task DoUndoOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -277,7 +277,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public Task DoSelectAllOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -302,7 +302,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public Task DoRemeasureOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -325,7 +325,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public async Task DoReloadOnClick(MouseEventArgs arg)
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
         
         var dropdownKey = Key<DropdownRecord>.NewKey();
@@ -386,7 +386,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public Task DoRefreshOnClick()
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -415,7 +415,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public bool GetUndoDisabledAttribute()
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return true;
     	
         var model = renderBatchLocal.Model;
@@ -437,7 +437,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     public bool GetRedoDisabledAttribute()
     {
     	var renderBatchLocal = GetRenderBatch();
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return true;
     	
         var model = renderBatchLocal.Model;

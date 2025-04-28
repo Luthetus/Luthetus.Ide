@@ -96,8 +96,8 @@ public sealed class TextEditorComponentData
 	
 	// Active is the one given to the UI after the current was validated and found to be valid.
     public TextEditorRenderBatch _currentRenderBatch;
-    public TextEditorRenderBatch? _previousRenderBatch;
-    public TextEditorRenderBatch? _activeRenderBatch;
+    public TextEditorRenderBatch _previousRenderBatch;
+    public TextEditorRenderBatch _activeRenderBatch;
 
 	/// <summary>
 	/// This property contains the global options, with an extra step of overriding any specified options
@@ -284,7 +284,7 @@ public sealed class TextEditorComponentData
     public string GetCursorDisplayId()
     {
     	return _activeRenderBatch.ViewModel.PrimaryCursor.IsPrimaryCursor
-	        ? _activeRenderBatch?.ViewModel?.PrimaryCursorContentId ?? string.Empty
+	        ? _activeRenderBatch.ViewModel?.PrimaryCursorContentId ?? string.Empty
 	        : string.Empty;
     }
         
@@ -329,15 +329,15 @@ public sealed class TextEditorComponentData
 	
 	        _uiStringBuilder.Append(_lineHeightStyleCssString);
 	
-	        var widthInPixelsInvariantCulture = _activeRenderBatch.Options.CursorWidthInPixels.ToCssValue();
+	        var widthInPixelsInvariantCulture = _activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.CursorWidthInPixels.ToCssValue();
 	        _uiStringBuilder.Append("width: ");
 	        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
 	        _uiStringBuilder.Append("px;");
 	
-	        _uiStringBuilder.Append(((ITextEditorKeymap)_activeRenderBatch.Options.Keymap).GetCursorCssStyleString(
+	        _uiStringBuilder.Append(((ITextEditorKeymap)_activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.Keymap).GetCursorCssStyleString(
 	            _activeRenderBatch.Model,
 	            _activeRenderBatch.ViewModel,
-	            _activeRenderBatch.Options));
+	            _activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions));
 	        
 	        // This feels a bit hacky, exceptions are happening because the UI isn't accessing
 	        // the text editor in a thread safe way.
@@ -941,7 +941,7 @@ public sealed class TextEditorComponentData
     
     public void ConstructVirtualizationStyleCssStrings()
     {
-    	if (_activeRenderBatch is null)
+    	if (!_activeRenderBatch.ConstructorWasInvoked)
     		return;
     	
     	if (_activeRenderBatch.ViewModel.VirtualizationResult.TotalWidth != _previousTotalWidth)

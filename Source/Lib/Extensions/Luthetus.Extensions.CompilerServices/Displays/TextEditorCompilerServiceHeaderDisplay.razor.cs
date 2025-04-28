@@ -51,9 +51,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
         base.OnInitialized();
     }
     
-    private TextEditorRenderBatch? GetRenderBatch()
+    private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._activeRenderBatch;
+    	return GetComponentData()?._activeRenderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -88,7 +88,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private void UpdateUi()
     {
-    	if (GetRenderBatch() is null)
+    	if (!GetRenderBatch().ConstructorWasInvoked)
     		return;
     	
     	TextEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), async editContext =>

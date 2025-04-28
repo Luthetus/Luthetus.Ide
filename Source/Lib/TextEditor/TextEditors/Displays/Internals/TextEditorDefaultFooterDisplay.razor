@@ -10,7 +10,7 @@
 	var componentData = GetComponentData();
 }
 
-@if (renderBatch is not null && componentData is not null)
+@if (renderBatch.ConstructorWasInvoked && componentData is not null)
 {
 	<div class="luth_te_text-editor-footer @componentData?.WrapperCssClass @TextEditorService.ThemeCssClassString"
 		 style="@componentData?.WrapperCssStyle">
@@ -18,7 +18,7 @@
 	        @{
 	            var model = renderBatch.Model;
 	            var viewModel = renderBatch.ViewModel;
-	            var options = renderBatch.Options;
+	            var options = renderBatch.TextEditorRenderBatchConstants.TextEditorOptions;
 	
 	            if (model is not null && viewModel is not null)
 	            {

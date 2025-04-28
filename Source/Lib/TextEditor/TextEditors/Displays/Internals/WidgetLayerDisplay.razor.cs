@@ -14,7 +14,7 @@ public partial class WidgetLayerDisplay : ComponentBase
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	
     [Parameter, EditorRequired]
-    public TextEditorRenderBatch? RenderBatch { get; set; }
+    public TextEditorRenderBatch RenderBatch { get; set; }
     
     /// <summary>
     /// This does not change per WidgetBlock rendered.

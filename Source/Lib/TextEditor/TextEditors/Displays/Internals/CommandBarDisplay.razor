@@ -1,6 +1,6 @@
 @{ var renderBatchLocal = RenderBatch; }
 
-@if (renderBatchLocal is not null)
+@if (renderBatchLocal.ConstructorWasInvoked)
 {
 	<div class="luth_te_command-bar"
 	     @onmousedown:stopPropagation="true"

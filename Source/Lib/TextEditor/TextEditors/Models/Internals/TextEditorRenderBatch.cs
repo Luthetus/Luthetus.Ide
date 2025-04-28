@@ -4,26 +4,18 @@ using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public class TextEditorRenderBatch
+public struct TextEditorRenderBatch
 {
 	public const string DEFAULT_FONT_FAMILY = "monospace";
 	
 	public TextEditorRenderBatch(
 	    TextEditorModel? model,
 	    TextEditorViewModel? viewModel,
-	    TextEditorOptions options,
-	    string fontFamily,
-	    int fontSizeInPixels,
-	    ViewModelDisplayOptions viewModelDisplayOptions,
-		TextEditorComponentData componentData)
+	    TextEditorRenderBatchConstants textEditorRenderBatchConstants)
 	{
 		Model = model;
 	    ViewModel = viewModel;
-	    Options = options;
-	    FontFamily = fontFamily;
-	    FontSizeInPixels = fontSizeInPixels;
-	    ViewModelDisplayOptions = viewModelDisplayOptions;
-		ComponentData = componentData;
+	    TextEditorRenderBatchConstants = textEditorRenderBatchConstants;
 	}
 
 	// Don't ??= because it only should be set inside 'Validate()'.
@@ -31,11 +23,11 @@ public class TextEditorRenderBatch
     
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
-    public TextEditorOptions? Options { get; set; }
-    public string FontFamily { get; set; }
-    public int FontSizeInPixels { get; set; }
-    public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; }
-	public TextEditorComponentData ComponentData { get; set; }
+    public TextEditorRenderBatchConstants TextEditorRenderBatchConstants { get; set; }
+    
+    public bool ConstructorWasInvoked => Model is not null &&
+								         ViewModel is not null &&
+								         TextEditorRenderBatchConstants.TextEditorOptions is not null;
 
     public double GutterWidthInPixels => _gutterWidthInPixels ?? GetGutterWidthInPixels();
 
@@ -45,7 +37,7 @@ public class TextEditorRenderBatch
     {
     	IsValid = Model is not null &&
 	        ViewModel is not null &&
-	        Options is not null;
+	        TextEditorRenderBatchConstants.TextEditorOptions is not null;
 	    
 	    if (IsValid)
 	    {
@@ -57,7 +49,7 @@ public class TextEditorRenderBatch
 
     private double GetGutterWidthInPixels()
     {
-        if (!ViewModelDisplayOptions.IncludeGutterComponent)
+        if (!TextEditorRenderBatchConstants.ViewModelDisplayOptions.IncludeGutterComponent)
             return 0;
 
         var mostDigitsInARowLineNumber = Model!.LineCount.ToString().Length;

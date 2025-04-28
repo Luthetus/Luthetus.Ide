@@ -44,7 +44,7 @@
     	_componentData.ConstructVirtualizationStyleCssStrings();
     }
     
-    @if (ViewModelDisplayOptions.IncludeGutterComponent && ComponentData._activeRenderBatch is not null)
+    @if (ViewModelDisplayOptions.IncludeGutterComponent && ComponentData._activeRenderBatch.ConstructorWasInvoked)
     {
         <div class="luth_te_gutter-section"
 		      style="@(_componentData.GetGutterSectionStyleCss())"
@@ -160,7 +160,7 @@
 		</div>
     }
 
-    @if (ComponentData._activeRenderBatch is not null)
+    @if (ComponentData._activeRenderBatch.ConstructorWasInvoked)
     {
     	<div class="luth_te_body-section"
 	 		style="@_componentData._bodyStyle">
@@ -462,7 +462,7 @@
 	    {
 	        <div>The @nameof(TextEditorViewModel) was null</div>
 	    }
-	    else if (ComponentData._currentRenderBatch.Options is null)
+	    else if (ComponentData._currentRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is null)
 	    {
 	        <div>The @nameof(TextEditorOptions) was null</div>
 	    }

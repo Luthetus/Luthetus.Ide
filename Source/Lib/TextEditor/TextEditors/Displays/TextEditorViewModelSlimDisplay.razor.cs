@@ -89,6 +89,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private readonly object _linkedViewModelLock = new();
 
     private TextEditorComponentData _componentData = null!;
+    private TextEditorRenderBatchConstants _textEditorRenderBatchConstants;
     
     public TextEditorViewModel? _linkedViewModel;
     
@@ -141,16 +142,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private Task _onMouseMoveTask = Task.CompletedTask;
 
 	public TextEditorComponentData ComponentData => _componentData;
-	
-	/// <summary>
-	/// Any external UI that isn't a child component of this can subscribe to this event,
-	/// and then synchronize with what the text editor is rendering.<br/><br/>
-	///
-	/// A result of this, is that one can have 'extra' components that are low priority rendering.
-	/// Because one can throttle the rendering of those low priority components, and they
-	/// will be up to date eventually regardless of how long the throttle is.<br/><br/>
-	/// </summary>
-	public event Action? RenderBatchChanged;
 
     protected override void OnInitialized()
     {
@@ -158,7 +149,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     		_textEditorHtmlElementId = ViewModelDisplayOptions.TextEditorHtmlElementId;
     	else
     		_textEditorHtmlElementId = Guid.NewGuid();
-    	
     
     	SetComponentData();
     	_ = TextEditorService.TextEditorState._componentDataMap.TryAdd(_componentData.ComponentDataKey, _componentData);
@@ -292,7 +282,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (!IsFocusTarget)
             return -1;
 
-        return _componentData._activeRenderBatch.ViewModelDisplayOptions.TabIndex;
+        return _componentData._activeRenderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex;
     }
     
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -603,7 +593,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
     	var renderBatchLocal = ComponentData._activeRenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     		
     	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
@@ -633,7 +623,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
     	var renderBatchLocal = _componentData._activeRenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     
     	VERTICAL_thinksLeftMouseButtonIsDown = true;
@@ -682,7 +672,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private Task HORIZONTAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
     	var renderBatchLocal = _componentData._activeRenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     
     	var localThinksLeftMouseButtonIsDown = HORIZONTAL_thinksLeftMouseButtonIsDown;
@@ -703,7 +693,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				// Drag far left to reset scroll to original
 				onScrollHorizontal = new OnScrollHorizontal(
 					HORIZONTAL_scrollLeftOnMouseDown,
-					renderBatchLocal.ComponentData,
+					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
 					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 			else
@@ -725,7 +715,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 				onScrollHorizontal = new OnScrollHorizontal(
 					scrollLeft,
-					renderBatchLocal.ComponentData,
+					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
 					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 
@@ -742,7 +732,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private Task VERTICAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
     	var renderBatchLocal = _componentData._activeRenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     
     	var localThinksLeftMouseButtonIsDown = VERTICAL_thinksLeftMouseButtonIsDown;
@@ -763,7 +753,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				// Drag far left to reset scroll to original
 				onScrollVertical = new OnScrollVertical(
 					VERTICAL_scrollTopOnMouseDown,
-					renderBatchLocal.ComponentData,
+					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
 					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 			else
@@ -785,7 +775,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 				onScrollVertical = new OnScrollVertical(
 					scrollTop,
-					renderBatchLocal.ComponentData,
+					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
 					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 
@@ -835,7 +825,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		_componentData._blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink ";
 	    _componentData._blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";
 	    
-	    var cursorCssClassString = _componentData._activeRenderBatch?.Options?.Keymap?.GetCursorCssClassString();
+	    var cursorCssClassString = _componentData._activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions?.Keymap?.GetCursorCssClassString();
         if (cursorCssClassString is not null)
         {
         	_componentData._blinkAnimationCssClassOn += cursorCssClassString;
@@ -862,14 +852,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         ConstructRenderBatch();
 
-        if (ComponentData._currentRenderBatch.ViewModel is not null && ComponentData._currentRenderBatch.Options is not null)
+        if (ComponentData._currentRenderBatch.ViewModel is not null && ComponentData._currentRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is not null)
         {
             if (ComponentData._currentRenderBatch.ViewModel.DisplayTracker.ConsumeIsFirstDisplay())
 				QueueCalculateVirtualizationResultBackgroundTask(ComponentData._currentRenderBatch);
         }
         
         // Check if the gutter width changed. If so, re-measure text editor.
-        if (ComponentData._activeRenderBatch?.ViewModel is not null)
+        if (ComponentData._activeRenderBatch.ViewModel is not null)
 		{
 			var gutterWidthInPixels = ComponentData._activeRenderBatch.GutterWidthInPixels;
 		
@@ -1041,36 +1031,16 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefault(
 			TextEditorViewModelKey);
 		
-		var textEditorOptions = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
-		
-		string fontFamily;
-		if (!string.IsNullOrWhiteSpace(textEditorOptions.CommonOptions?.FontFamily))
-			fontFamily = textEditorOptions.CommonOptions!.FontFamily;
-		else
-			fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
-			
-		int fontSizeInPixels;
-		if (textEditorOptions.CommonOptions?.FontSizeInPixels is not null)
-            fontSizeInPixels = textEditorOptions.CommonOptions.FontSizeInPixels;
-        else
-        	fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
-				
         var renderBatchUnsafe = new TextEditorRenderBatch(
             model_viewmodel_tuple.Model,
             model_viewmodel_tuple.ViewModel,
-            TextEditorService.OptionsApi.GetTextEditorOptionsState().Options,
-            fontFamily,
-            fontSizeInPixels,
-            ViewModelDisplayOptions,
-			_componentData);
+            _textEditorRenderBatchConstants);
         
         _componentData._previousRenderBatch = _componentData._currentRenderBatch;
         
         _componentData._currentRenderBatch = renderBatchUnsafe;
         
-        _componentData._activeRenderBatch = renderBatchUnsafe.Validate() ? renderBatchUnsafe : null;
-        
-        RenderBatchChanged?.Invoke();
+        _componentData._activeRenderBatch = renderBatchUnsafe.Validate() ? renderBatchUnsafe : default;
     }
     
     private void SetComponentData()
@@ -1090,6 +1060,27 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			EnvironmentProvider,
 			FileSystemProvider,
 			ServiceProvider);
+			
+		var textEditorOptions = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+			
+		string fontFamily;
+		if (!string.IsNullOrWhiteSpace(textEditorOptions.CommonOptions?.FontFamily))
+			fontFamily = textEditorOptions.CommonOptions!.FontFamily;
+		else
+			fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+			
+		int fontSizeInPixels;
+		if (textEditorOptions.CommonOptions?.FontSizeInPixels is not null)
+            fontSizeInPixels = textEditorOptions.CommonOptions.FontSizeInPixels;
+        else
+        	fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+		
+		_textEditorRenderBatchConstants = new TextEditorRenderBatchConstants(
+			textEditorOptions,
+			fontFamily,
+			fontSizeInPixels,
+			ViewModelDisplayOptions,
+			_componentData);
     }
     
     public void Dispose()
