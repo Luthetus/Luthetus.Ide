@@ -46,13 +46,26 @@ public struct TextEditorRenderBatch
 	    
 	    return IsValid;
     }
+    
+    private static int CountDigits(int argumentNumber)
+    {
+    	var digitCount = 1;
+    	var runningNumber = argumentNumber;
+    	
+    	while ((runningNumber /= 10) > 0)
+    	{
+    		digitCount++;
+    	}
+    	
+    	return digitCount;
+    }
 
     private double GetGutterWidthInPixels()
     {
         if (!TextEditorRenderBatchConstants.ViewModelDisplayOptions.IncludeGutterComponent)
             return 0;
 
-        var mostDigitsInARowLineNumber = Model!.LineCount.ToString().Length;
+        var mostDigitsInARowLineNumber = CountDigits(Model!.LineCount);
 
         var gutterWidthInPixels = mostDigitsInARowLineNumber *
             ViewModel!.CharAndLineMeasurements.CharacterWidth;
