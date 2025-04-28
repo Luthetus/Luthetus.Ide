@@ -148,8 +148,15 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	_ = TextEditorService.TextEditorState._componentDataMap.TryAdd(_componentData.ComponentDataKey, _componentData);
     	
     	CssOnInitializedStepOne();
-  		  
-        ConstructRenderBatch();
+  	  
+  	  try
+  	  {
+  	  	ConstructRenderBatch();
+  	  }
+  	  catch (Exception e)
+  	  {
+  	  	Console.WriteLine(e);
+  	  }
         
         CssOnInitializedStepTwo();
 

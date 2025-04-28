@@ -227,6 +227,12 @@ public sealed class TextEditorComponentData
     
     public string _blinkAnimationCssClassOn;
     public string _blinkAnimationCssClassOff;
+    
+    public double valueTooltipRelativeX;
+    public double valueTooltipRelativeY;
+	
+	public string tooltipRelativeX = string.Empty;
+	public string tooltipRelativeY = string.Empty;
 	
 	// _ = "luth_te_text-editor-cursor " + BlinkAnimationCssClass + " " + _activeRenderBatch.Options.Keymap.GetCursorCssClassString();
 	public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
@@ -1144,6 +1150,19 @@ public sealed class TextEditorComponentData
     
     	ConstructVirtualizationStyleCssStrings();
     	
-    	
+    	if (_activeRenderBatch.ViewModel.TooltipViewModel is not null)
+		{
+			if (valueTooltipRelativeX != _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeX)
+			{
+				valueTooltipRelativeX = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeX;
+				tooltipRelativeX = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeX.ToCssValue();
+			}
+		
+			if (valueTooltipRelativeY != _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY)
+			{
+				valueTooltipRelativeY = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY;
+				tooltipRelativeY = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
+			}
+		}
     }
 }

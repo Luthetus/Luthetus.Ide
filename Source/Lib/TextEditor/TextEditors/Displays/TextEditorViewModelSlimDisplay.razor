@@ -345,11 +345,8 @@
 		    @* TooltipDisplay.razor Open *@
 		    @if (_componentData._activeRenderBatch.ViewModel.TooltipViewModel is not null)
 		    {
-		        var relativeX = _componentData._activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeX.ToCssValue();
-		        var relativeY = _componentData._activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
-		
 		        <div class="luth_te_tooltip luth_set-selectable @(_componentData._activeRenderBatch.ViewModel.TooltipViewModel.CssClassString ?? string.Empty)"
-		             style="left: @(relativeX)px; top: @(relativeY)px;"
+		             style="left: @(_componentData.tooltipRelativeX)px; top: @(_componentData.tooltipRelativeY)px;"
 		             @onmouseover="_componentData._activeRenderBatch.ViewModel.TooltipViewModel.OnMouseOver"
 		             @onmousedown:stopPropagation="true"
 		             @onmousemove:stopPropagation="true"
