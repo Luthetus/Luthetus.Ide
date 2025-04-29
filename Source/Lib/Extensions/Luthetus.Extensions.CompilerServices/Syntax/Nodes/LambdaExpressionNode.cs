@@ -65,4 +65,11 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 		return ReturnTypeReference;
 	}
 	#endregion
+
+	#if DEBUG	
+	~LambdaExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LambdaExpressionNode--;
+	}
+	#endif
 }

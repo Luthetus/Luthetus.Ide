@@ -268,7 +268,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		_componentData._blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink ";
 	    _componentData._blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";
 	    
-	    var cursorCssClassString = _componentData._activeRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions?.Keymap?.GetCursorCssClassString();
+	    var cursorCssClassString = _componentData._activeRenderBatch.TextEditorRenderBatchConstants?.TextEditorOptions?.Keymap?.GetCursorCssClassString();
         if (cursorCssClassString is not null)
         {
         	_componentData._blinkAnimationCssClassOn += cursorCssClassString;

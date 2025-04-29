@@ -47,4 +47,11 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 		return TypeFacts.NotApplicable.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~WhileStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.WhileStatementNode--;
+	}
+	#endif
 }

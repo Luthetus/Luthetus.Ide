@@ -21,4 +21,11 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
+
+	#if DEBUG	
+	~PreprocessorLibraryReferenceStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.PreprocessorLibraryReferenceStatementNode--;
+	}
+	#endif
 }

@@ -47,4 +47,11 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~GlobalCodeBlockNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GlobalCodeBlockNode--;
+	}
+	#endif
 }

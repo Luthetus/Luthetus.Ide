@@ -49,4 +49,11 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~SwitchStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.SwitchStatementNode--;
+	}
+	#endif
 }

@@ -33,4 +33,11 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
 	
 	public bool IsParsingFunctionParameters { get; set; }
+
+	#if DEBUG	
+	~ConstructorInvocationExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorInvocationExpressionNode--;
+	}
+	#endif
 }

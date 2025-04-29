@@ -50,4 +50,11 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~TryStatementCatchNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementCatchNode--;
+	}
+	#endif
 }

@@ -59,4 +59,11 @@ public sealed class ForStatementNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~ForStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ForStatementNode--;
+	}
+	#endif
 }

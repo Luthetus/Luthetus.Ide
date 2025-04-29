@@ -174,4 +174,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		_memberListIsDirty = true;
 		return this;
 	}
+
+	#if DEBUG	
+	~TypeDefinitionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeDefinitionNode--;
+	}
+	#endif
 }

@@ -30,4 +30,11 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
+
+	#if DEBUG	
+	~ParenthesizedExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ParenthesizedExpressionNode--;
+	}
+	#endif
 }

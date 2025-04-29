@@ -20,4 +20,11 @@ public sealed class ReturnStatementNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
+
+	#if DEBUG	
+	~ReturnStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ReturnStatementNode--;
+	}
+	#endif
 }

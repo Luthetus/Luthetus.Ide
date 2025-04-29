@@ -48,4 +48,11 @@ public sealed class LockStatementNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~LockStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LockStatementNode--;
+	}
+	#endif
 }

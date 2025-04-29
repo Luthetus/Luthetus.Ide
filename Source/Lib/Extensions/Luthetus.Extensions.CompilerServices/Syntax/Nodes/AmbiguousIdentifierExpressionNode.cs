@@ -41,5 +41,12 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	}
 	
 	public bool IsParsingGenericParameters { get; set; }
+
+	#if DEBUG	
+	~AmbiguousIdentifierExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.AmbiguousIdentifierExpressionNode--;
+	}
+	#endif
 }
 

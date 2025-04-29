@@ -76,74 +76,82 @@ public class CSharpCodeBlockBuilder
 		{
 			case SyntaxKind.BinaryExpressionNode:
 			{
-				syntax = TryOptimizeStorage((BinaryExpressionNode)syntax);
-				break;
+				return;
+				// syntax = TryOptimizeStorageExpression((BinaryExpressionNode)syntax);
+				// break;
 			}
 			case SyntaxKind.IfStatementNode:
 			{
-				var ifStatementNode = (IfStatementNode)syntax;
-				ifStatementNode.ExpressionNode = TryOptimizeStorage(ifStatementNode.ExpressionNode);
-				break;
+				return;
+				// var ifStatementNode = (IfStatementNode)syntax;
+				// ifStatementNode.ExpressionNode = TryOptimizeStorageExpression(ifStatementNode.ExpressionNode);
+				// break;
 			}
 			case SyntaxKind.WhileStatementNode:
 			{
-				var whileStatementNode = (WhileStatementNode)syntax;
-				whileStatementNode.ExpressionNode = TryOptimizeStorage(whileStatementNode.ExpressionNode);
-				break;
+				return;
+				// var whileStatementNode = (WhileStatementNode)syntax;
+				// whileStatementNode.ExpressionNode = TryOptimizeStorageExpression(whileStatementNode.ExpressionNode);
+				// break;
 			}
 			case SyntaxKind.ConstructorInvocationExpressionNode:
 			{
-				var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntax;
-				
-				if (constructorInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
-				{
-					for (int i = 0; i < constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList.Count; i++)
-					{
-						var item = constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i];
-						item.ExpressionNode = TryOptimizeStorage(item.ExpressionNode);
-						constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i] = item;
-					}
-				}
-				
-				break;
+				return;
+			
+				// var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntax;
+				// 
+				// if (constructorInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
+				// {
+				// 	for (int i = 0; i < constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList.Count; i++)
+				// 	{
+				// 		var item = constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i];
+				// 		item.ExpressionNode = TryOptimizeStorageExpression(item.ExpressionNode);
+				// 		constructorInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i] = item;
+				// 	}
+				// }
+				// 
+				// break;
 			}
 			case SyntaxKind.FunctionInvocationNode:
 			{
-				var functionInvocationNode = (FunctionInvocationNode)syntax;
+				return;
+				/*var functionInvocationNode = (FunctionInvocationNode)syntax;
 				
 				if (functionInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
 				{
 					for (int i = 0; i < functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList.Count; i++)
 					{
 						var item = functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i];
-						item.ExpressionNode = TryOptimizeStorage(item.ExpressionNode);
+						item.ExpressionNode = TryOptimizeStorageExpression(item.ExpressionNode);
 						functionInvocationNode.FunctionParameterListing.FunctionParameterEntryList[i] = item;
 					}
 				}
 				
-				break;
+				break;*/
 			}
 			case SyntaxKind.DoWhileStatementNode:
 			{
-				var doWhileStatementNode = (DoWhileStatementNode)syntax;
+				return;
+				/*var doWhileStatementNode = (DoWhileStatementNode)syntax;
 				
 				if (doWhileStatementNode.ExpressionNode is not null)
-					doWhileStatementNode.ExpressionNode = TryOptimizeStorage(doWhileStatementNode.ExpressionNode);
+					doWhileStatementNode.ExpressionNode = TryOptimizeStorageExpression(doWhileStatementNode.ExpressionNode);
 				
-				break;
+				break;*/
 			}
 			case SyntaxKind.ReturnStatementNode:
 			{
-				var returnStatementNode = (ReturnStatementNode)syntax;
-				returnStatementNode.ExpressionNode = TryOptimizeStorage(returnStatementNode.ExpressionNode);
-				break;
+				return;
+				/*var returnStatementNode = (ReturnStatementNode)syntax;
+				returnStatementNode.ExpressionNode = TryOptimizeStorageExpression(returnStatementNode.ExpressionNode);
+				break;*/
 			}
 		}
 		
 		ChildList.Add(syntax);
 	}
 	
-	private IExpressionNode TryOptimizeStorage(IExpressionNode syntax)
+	private IExpressionNode TryOptimizeStorageExpression(IExpressionNode syntax)
 	{
 		switch (syntax.SyntaxKind)
 		{
@@ -162,7 +170,7 @@ public class CSharpCodeBlockBuilder
 					syntax = binaryExpressionLeftVariableReference;
 					
 					binaryExpressionLeftVariableReference.SetRightExpressionNode(
-						TryOptimizeStorage(binaryExpressionLeftVariableReference.RightExpressionNode));
+						TryOptimizeStorageExpression(binaryExpressionLeftVariableReference.RightExpressionNode));
 				}
 				else if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 				{
@@ -170,7 +178,7 @@ public class CSharpCodeBlockBuilder
 					syntax = binaryExpressionRightVariableReference;
 					
 					binaryExpressionRightVariableReference.SetLeftExpressionNode(
-						TryOptimizeStorage(binaryExpressionRightVariableReference.LeftExpressionNode));
+						TryOptimizeStorageExpression(binaryExpressionRightVariableReference.LeftExpressionNode));
 				}
 				
 				break;

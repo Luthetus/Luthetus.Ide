@@ -69,6 +69,7 @@ public struct CSharpStatementBuilder
 	/// </summary>
 	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		// TODO: This is bad. Only do this when constructing the struct version.
 		parserModel.TypeClauseNode.IsBeingUsed = false;
 		parserModel.VariableReferenceNode.IsBeingUsed = false;
 		
