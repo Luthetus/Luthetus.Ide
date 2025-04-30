@@ -533,6 +533,11 @@ public sealed class TextEditorComponentData
         _uiStringBuilder.Append("height: ");
         _uiStringBuilder.Append(heightInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
+        
+        // This only happens when the 'EOF' position index is "inclusive"
+        // as something to be drawn for the presentation.
+        if (startingColumnIndex > line.LastValidColumnIndex)
+        	startingColumnIndex = line.LastValidColumnIndex;
 
         var startInPixels = startingColumnIndex * charMeasurements.CharacterWidth;
 
@@ -1016,11 +1021,18 @@ public sealed class TextEditorComponentData
     	if (!_activeRenderBatch.ConstructorWasInvoked)
     		return;
     
-        GetCursorAndCaretRowStyleCss();
-        GetSelection();
-        
-        GetPresentationLayer(firstPresentationLayerGroupList, firstPresentationLayerTextSpanList);
-        GetPresentationLayer(lastPresentationLayerGroupList, lastPresentationLayerTextSpanList);
+    	try
+    	{
+	        GetCursorAndCaretRowStyleCss();
+	        GetSelection();
+	        
+	        GetPresentationLayer(firstPresentationLayerGroupList, firstPresentationLayerTextSpanList);
+	        GetPresentationLayer(lastPresentationLayerGroupList, lastPresentationLayerTextSpanList);
+        }
+        catch (Exception e)
+        {
+        	Console.WriteLine("inner " + e);
+        }
         
         if (_activeRenderBatch.ViewModel is null)
         	return;
