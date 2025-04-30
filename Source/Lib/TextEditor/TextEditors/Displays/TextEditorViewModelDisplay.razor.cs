@@ -18,9 +18,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase
 
 	private TextEditorViewModelSlimDisplay? _viewModelSlimDisplay;
 	private TextEditorViewModelSlimDisplay? _viewModelSlimDisplayPrevious;
-	private bool _isLoaded;
+	private Key<TextEditorComponentData> _componentDataKey;
 	
-	private static string DictionaryKey => nameof(TextEditorViewModelSlimDisplay);
+	private static string DictionaryKey => nameof(TextEditorComponentData.ComponentDataKey);
 
 	public Dictionary<string, object?> DependentComponentParameters { get; set; } = new Dictionary<string, object?>
 	{
@@ -30,18 +30,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase
 		}
 	};
 	
-	protected override void OnAfterRender(bool firstRender)
-    {
-    	if (firstRender)
-    	{
-    		_isLoaded = true;
-    		
-    		TextEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorViewModelDisplay), async editContext =>
-			{
-				await InvokeAsync(StateHasChanged);
-			});
-    	}
-    	
-    	base.OnAfterRender(firstRender);
-    }
+	protected override void OnInitialized()
+	{
+		if (ViewModelDisplayOptions.TextEditorHtmlElementId == Guid.Empty)
+			ViewModelDisplayOptions.TextEditorHtmlElementId = Guid.NewGuid();
+			
+		_componentDataKey = new Key<TextEditorComponentData>(ViewModelDisplayOptions.TextEditorHtmlElementId);
+		DependentComponentParameters[DictionaryKey] = _componentDataKey;
+		
+		base.OnInitialized();
+	}
 }
