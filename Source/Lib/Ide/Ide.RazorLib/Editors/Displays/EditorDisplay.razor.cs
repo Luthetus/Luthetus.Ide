@@ -26,17 +26,22 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
+    
+    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
+        Enum.GetValues(typeof(HeaderButtonKind))
+            .Cast<HeaderButtonKind>()
+            .ToList();
+
+    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
 
 	private TabListDisplay? _tabListDisplay;
 
 	private string? _htmlId = null;
 	private string HtmlId => _htmlId ??= $"luth_te_group_{EditorIdeApi.EditorTextEditorGroupKey.Guid}";
 	
-	private bool _isLoaded = false;
-	
-	private TextEditorViewModelSlimDisplay _viewModelSlimDisplay;
-	
 	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
+	
+	private Key<TextEditorComponentData> _componentDataKey;
 
     protected override void OnInitialized()
     {
@@ -45,22 +50,15 @@ public partial class EditorDisplay : ComponentBase, IDisposable
             TabIndex = 0,
             HeaderButtonKinds = TextEditorHeaderButtonKindsList,
             HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
+            TextEditorHtmlElementId = Guid.NewGuid(),
         };
     
+        _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
+        
         TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
         DirtyResourceUriService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
 
         base.OnInitialized();
-    }
-    
-    protected override void OnAfterRender(bool firstRender)
-    {
-    	if (firstRender)
-    	{
-    		_isLoaded = true;
-    	}
-    	
-    	base.OnAfterRender(firstRender);
     }
 
     private async void TextEditorGroupWrapOnStateChanged()
@@ -105,13 +103,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
 		return tabList;
 	}
-
-    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
-        Enum.GetValues(typeof(HeaderButtonKind))
-            .Cast<HeaderButtonKind>()
-            .ToList();
-
-    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
 
     public void Dispose()
     {

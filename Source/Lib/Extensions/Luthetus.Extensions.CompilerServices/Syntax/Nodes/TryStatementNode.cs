@@ -26,4 +26,11 @@ public sealed class TryStatementNode : ISyntaxNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
+
+	#if DEBUG	
+	~TryStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementNode--;
+	}
+	#endif
 }

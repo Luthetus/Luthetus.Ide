@@ -66,6 +66,35 @@ public struct OnMouseDown
 				ComponentData,
 				editContext)
 			.ConfigureAwait(false);
+			
+		/*if (rowAndColumnIndex.positionX < 0)
+		{
+			var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel);
+			if (shouldGotoFinalize)
+				goto finalize;
+		}
+		else
+		{
+			// Check for collision with non-tab inline UI
+			foreach (var entry in viewModel.InlineUiList)
+			{
+				if (entry.InlineUi.InlineUiKind == InlineUiKind.Tab)
+					continue;
+			
+				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
+				var lineInformation = modelModifier.GetLineInformation(lineAndColumnIndices.lineIndex);
+			
+				if (rowAndColumnIndex.rowIndex == lineInformation.Index)
+				{
+					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					{
+						var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel);
+						if (shouldGotoFinalize)
+							goto finalize;
+					}
+				}
+			}
+		}*/
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
@@ -94,10 +123,77 @@ public struct OnMouseDown
 
         primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
         
+        finalize:
+        
         editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
         
         await editContext.TextEditorService
         	.FinalizePost(editContext)
         	.ConfigureAwait(false);
     }
+    
+    /*
+    /// <summary>
+    /// Returns whether you should goto finalize.
+    /// </summary>
+    private bool Toggle(
+    	(int rowIndex, int columnIndex, double positionX, double positionY) rowAndColumnIndex,
+    	TextEditorModel modelModifier,
+    	TextEditorViewModel viewModel)
+    {
+    	var virtualizedIndexGutterChevron = viewModel.VirtualizedGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
+		if (virtualizedIndexGutterChevron != -1)
+		{
+			var allIndexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
+			if (allIndexGutterChevron != -1)
+			{
+				var virtualizedGutterChevron = viewModel.VirtualizedGutterChevronList[virtualizedIndexGutterChevron];
+				virtualizedGutterChevron.IsExpanded = !virtualizedGutterChevron.IsExpanded;
+				viewModel.VirtualizedGutterChevronList[virtualizedIndexGutterChevron] = virtualizedGutterChevron;
+				
+				var allGutterChevron = viewModel.AllGutterChevronList[allIndexGutterChevron];
+				allGutterChevron.IsExpanded = virtualizedGutterChevron.IsExpanded;
+				viewModel.AllGutterChevronList[allIndexGutterChevron] = allGutterChevron;
+				
+				if (virtualizedGutterChevron.IsExpanded)
+    			{
+    				// TODO: Bad, this only permits one name regardless of scope
+    				var indexTagMatchedInlineUi = viewModel.InlineUiList.FindIndex(
+    					x => x.Tag == virtualizedGutterChevron.Identifier);
+    					
+    				if (indexTagMatchedInlineUi != -1)
+    				{
+        				var indexModelInlineUi = modelModifier.InlineUiList.FindIndex(
+    						x => x.PositionIndex == viewModel.InlineUiList[indexTagMatchedInlineUi].InlineUi.PositionIndex);
+    					modelModifier.InlineUiList.RemoveAt(indexModelInlineUi);
+        				
+        				viewModel.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
+    				}
+    			}
+    			else
+    			{
+					virtualizedIndexGutterChevron = viewModel.VirtualizedGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
+    				
+    				var lineInformation = modelModifier.GetLineInformation(virtualizedGutterChevron.LineIndex);
+    				
+    				var inlineUi = new InlineUi(
+    					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+    					InlineUiKind.ThreeDotsExpandInlineUiThing);
+    				
+    				modelModifier.InlineUiList.Add(inlineUi);
+    				viewModel.InlineUiList.Add(
+    					(
+    						inlineUi,
+            				Tag: virtualizedGutterChevron.Identifier
+            			));
+    			}
+				
+				viewModel.ShouldReloadVirtualizationResult = true;
+				return true;
+			}
+		}
+		
+		return false;
+    }
+    */
 }

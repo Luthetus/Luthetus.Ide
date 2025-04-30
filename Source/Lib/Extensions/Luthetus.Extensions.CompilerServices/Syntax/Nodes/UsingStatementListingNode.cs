@@ -18,4 +18,11 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementListingNode;
+
+	#if DEBUG	
+	~UsingStatementListingNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UsingStatementListingNode--;
+	}
+	#endif
 }

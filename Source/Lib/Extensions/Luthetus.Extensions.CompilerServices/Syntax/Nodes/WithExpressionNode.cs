@@ -19,4 +19,11 @@ public sealed class WithExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.WithExpressionNode;
+
+	#if DEBUG	
+	~WithExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.WithExpressionNode--;
+	}
+	#endif
 }

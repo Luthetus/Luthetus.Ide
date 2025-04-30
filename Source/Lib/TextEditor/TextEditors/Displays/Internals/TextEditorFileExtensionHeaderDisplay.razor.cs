@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -14,7 +15,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 	[Parameter, EditorRequired]
 	public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; }
 	[Parameter, EditorRequired]
-	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
+	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 	
 	private Dictionary<string, object?> _componentInnerParameters = null!;
 	
@@ -22,7 +23,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 	
 	private TextEditorViewModelSlimDisplay _previousTextEditorViewModelSlimDisplay;
 	
-	private string DictionaryKey => nameof(ITextEditorDependentComponent.TextEditorViewModelSlimDisplay);
+	private string DictionaryKey => nameof(ITextEditorDependentComponent.ComponentDataKey);
 	
 	protected override void OnInitialized()
 	{
@@ -30,7 +31,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 		{
 			{
 				DictionaryKey,
-				TextEditorViewModelSlimDisplay
+				ComponentDataKey
 			}
 		};
 
@@ -40,11 +41,11 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 	
 	protected override bool ShouldRender()
 	{
-		if (_previousTextEditorViewModelSlimDisplay != TextEditorViewModelSlimDisplay)
+		/*if (_previousTextEditorViewModelSlimDisplay != TextEditorViewModelSlimDisplay)
 		{
 			_previousTextEditorViewModelSlimDisplay = TextEditorViewModelSlimDisplay;
 			_componentInnerParameters[DictionaryKey] = TextEditorViewModelSlimDisplay;
-		}
+		}*/
 	
 		var localTextEditorState = TextEditorService.TextEditorState;
 		

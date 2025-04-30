@@ -29,4 +29,11 @@ public sealed class ExplicitCastNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
+
+	#if DEBUG	
+	~ExplicitCastNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ExplicitCastNode--;
+	}
+	#endif
 }

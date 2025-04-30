@@ -11,7 +11,7 @@ public partial class CommandBarDisplay : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorRenderBatch? RenderBatch { get; set; }
+    public TextEditorRenderBatch RenderBatch { get; set; }
 
     private ElementReference? _commandBarDisplayElementReference;
 
@@ -43,7 +43,7 @@ public partial class CommandBarDisplay : ComponentBase
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     		
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)

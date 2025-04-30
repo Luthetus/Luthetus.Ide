@@ -123,4 +123,11 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		ValueType = valueType;
 		return this;
 	}
+
+	#if DEBUG	
+	~TypeClauseNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TypeClauseNode--;
+	}
+	#endif
 }

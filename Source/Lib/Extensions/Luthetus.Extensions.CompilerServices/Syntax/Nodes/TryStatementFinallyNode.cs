@@ -42,4 +42,11 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~TryStatementFinallyNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementFinallyNode--;
+	}
+	#endif
 }

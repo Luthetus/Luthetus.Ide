@@ -41,4 +41,11 @@ public sealed class IfStatementNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~IfStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.IfStatementNode--;
+	}
+	#endif
 }

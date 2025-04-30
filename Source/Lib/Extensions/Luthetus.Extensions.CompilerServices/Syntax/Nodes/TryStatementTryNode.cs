@@ -42,4 +42,11 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~TryStatementTryNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TryStatementTryNode--;
+	}
+	#endif
 }

@@ -783,7 +783,22 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	        if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
 	            return;
 			
-			var virtualizedLineList = new VirtualizationLine[lineCountToReturn];
+			var collapsedCount = 0;
+			
+			/*for (int priorLineIndex = 0; priorLineIndex < verticalStartingIndex; priorLineIndex++)
+			{
+				var indexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == priorLineIndex);
+				if (indexGutterChevron == -1)
+					continue;
+				
+				var gutterChevron = viewModel.AllGutterChevronList[indexGutterChevron];
+				if (gutterChevron.IsExpanded)
+					continue;
+				if (priorLineIndex > gutterChevron.LineIndex && priorLineIndex < gutterChevron.ExclusiveLineIndex)
+					collapsedCount++;
+			}*/
+			
+			var virtualizedLineList = new List<VirtualizationLine>(lineCountToReturn);
 			{
 				// 1 of the character width is already accounted for
 				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
@@ -793,9 +808,36 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				var minLineWidthToTriggerVirtualizationExclusive = LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION *
 					viewModel.TextEditorDimensions.Width;
 					
-				for (int lineOffset = 0; lineOffset < lineCountToReturn; lineOffset++)
+				int lineOffset = -1;
+				int linesTaken = 0;
+				
+				while (true)
 				{
+					lineOffset++;
+				
+					if (linesTaken >= lineCountToReturn)
+						break;
+					// TODO: Is this '>' or '>='?
+					if (verticalStartingIndex + lineOffset >= modelModifier.LineEndList.Count)
+						break;
+				
 					var lineIndex = verticalStartingIndex + lineOffset;
+					
+					/*var isCollapsed = false;
+					foreach (var gutterChevron in viewModel.AllGutterChevronList)
+					{
+						if (gutterChevron.IsExpanded)
+							continue;
+						if (lineIndex > gutterChevron.LineIndex && lineIndex < gutterChevron.ExclusiveLineIndex)
+						{
+							isCollapsed = true;
+							collapsedCount++;
+							break;
+						}
+					}
+					if (isCollapsed)
+						continue;*/
+					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    
 					var lineStartPositionIndexInclusive = lineInformation.StartPositionIndexInclusive;
@@ -817,21 +859,21 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						
 						// Tab key adjustments
 						var line = modelModifier.GetLineInformation(lineIndex);
-						var firstTabKeyOnLineIndex = -1;
+						var firstInlineUiOnLineIndex = -1;
 						var foundLine = false;
-						var tabKeyPositionListCount = modelModifier.TabKeyPositionList.Count;
+						var inlineUiListCount = modelModifier.InlineUiList.Count;
 				
 						// Move the horizontal starting index based on the extra character width from 'tab' characters.
-						for (int i = 0; i < tabKeyPositionListCount; i++)
+						for (int i = 0; i < inlineUiListCount; i++)
 						{
-							var tabKeyPosition = modelModifier.TabKeyPositionList[i];
-							var tabKeyColumnIndex = tabKeyPosition - line.StartPositionIndexInclusive;
+							var inlineUi = modelModifier.InlineUiList[i];
+							var tabKeyColumnIndex = inlineUi.PositionIndex - line.StartPositionIndexInclusive;
 						
 							if (!foundLine)
 							{
-								if (tabKeyPosition >= line.StartPositionIndexInclusive)
+								if (inlineUi.PositionIndex >= line.StartPositionIndexInclusive)
 								{
-									firstTabKeyOnLineIndex = i;
+									firstInlineUiOnLineIndex = i;
 									foundLine = true;
 								}
 							}
@@ -857,13 +899,13 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						
 						// Count the 'tab' characters that preceed the text to display so that the 'left' can be modified by the extra width.
 						// Count the 'tab' characters that are among the text to display so that the 'width' can be modified by the extra width.
-						if (firstTabKeyOnLineIndex != -1)
+						if (firstInlineUiOnLineIndex != -1)
 						{
-							for (int i = firstTabKeyOnLineIndex; i < tabKeyPositionListCount; i++)
+							for (int i = firstInlineUiOnLineIndex; i < inlineUiListCount; i++)
 							{
-								var tabKeyPosition = modelModifier.TabKeyPositionList[i];
+								var inlineUi = modelModifier.InlineUiList[i];
 								
-								var tabKeyColumnIndex = tabKeyPosition - line.StartPositionIndexInclusive;
+								var tabKeyColumnIndex = inlineUi.PositionIndex - line.StartPositionIndexInclusive;
 								
 								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
 									break;
@@ -902,16 +944,18 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						if (positionIndexExclusiveEnd > lineInformation.UpperLineEnd.StartPositionIndexInclusive)
 							positionIndexExclusiveEnd = lineInformation.UpperLineEnd.StartPositionIndexInclusive;
 						
-						virtualizedLineList[lineOffset] = new VirtualizationLine(
+						linesTaken++;
+						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
-							PositionIndexInclusiveStart: positionIndexInclusiveStart,
-							PositionIndexExclusiveEnd: positionIndexExclusiveEnd,
-							VirtualizationSpanIndexInclusiveStart: 0,
-							VirtualizationSpanIndexExclusiveEnd: 0,
+							positionIndexInclusiveStart: positionIndexInclusiveStart,
+							positionIndexExclusiveEnd: positionIndexExclusiveEnd,
+							virtualizationSpanIndexInclusiveStart: 0,
+							virtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
-							topInPixels);
+							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount),
+							_textEditorService.__StringBuilder));
 					}
 					else
 					{
@@ -921,17 +965,17 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						var resultTabCount = 0;
 				
 						// Count the tabs that are among the rendered content.
-						foreach (var tabKeyPosition in modelModifier.TabKeyPositionList)
+						foreach (var inlineUi in modelModifier.InlineUiList)
 						{
 							if (!foundLine)
 							{
-								if (tabKeyPosition >= line.StartPositionIndexInclusive)
+								if (inlineUi.PositionIndex >= line.StartPositionIndexInclusive)
 									foundLine = true;
 							}
 							
 							if (foundLine)
 							{
-								if (tabKeyPosition >= line.LastValidColumnIndex)
+								if (inlineUi.PositionIndex >= line.LastValidColumnIndex)
 									break;
 							
 								resultTabCount++;
@@ -941,16 +985,18 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						widthInPixels += (extraWidthPerTabKey * resultTabCount) *
 							viewModel.CharAndLineMeasurements.CharacterWidth;
 					
-						virtualizedLineList[lineOffset] = new VirtualizationLine(
+						linesTaken++;
+						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
-							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
-							PositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
-							VirtualizationSpanIndexInclusiveStart: 0,
-							VirtualizationSpanIndexExclusiveEnd: 0,
+							positionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
+							positionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+							virtualizationSpanIndexInclusiveStart: 0,
+							virtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							0,
-							lineIndex * viewModel.CharAndLineMeasurements.LineHeight);
+							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount),
+							_textEditorService.__StringBuilder));
 					}
 				}
 			}
@@ -992,7 +1038,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
 				totalHeight += marginScrollHeight;
 			}
-
+			
 			virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
         		new List<VirtualizationSpan>(),
@@ -1001,7 +1047,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		        resultWidth: horizontalTake * viewModel.CharAndLineMeasurements.CharacterWidth,
 		        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
 		        left: horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth,
-		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
+		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight,
+		        collapsedLineCount: collapsedCount);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
 			
@@ -1016,7 +1063,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
 			#endif
 			
-			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
+			// virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
 		}
 		catch (LuthetusTextEditorException exception)
 		{

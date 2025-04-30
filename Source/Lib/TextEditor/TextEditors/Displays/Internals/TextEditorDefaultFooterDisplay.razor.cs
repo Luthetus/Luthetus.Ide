@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-
-// FooterDriver.cs
-using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -12,29 +8,32 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditorDependentComponent
+public partial class TextEditorDefaultFooterDisplay : ComponentBase
 {
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
+	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 
 	public int _previousPositionNumber;
 	
-	private string _selectedLineEndKindString;
+	private string _selectedLineEndKindString = LineEndKind.LineFeed.AsEnumName();
 	
 	private Key<TextEditorViewModel> _viewModelKeyPrevious = Key<TextEditorViewModel>.Empty;
-	private LineEndKind _lineEndKindPreferencePrevious;
+	private LineEndKind _lineEndKindPreferencePrevious = LineEndKind.LineFeed;
+	
+	private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
+    private TextEditorComponentData? _componentData;
 	
 	public string SelectedLineEndKindString
 	{
 		get => _selectedLineEndKindString;
 		set
 		{
-			var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
+			var renderBatchLocal = GetRenderBatch();
 		
-			if (renderBatchLocal is null)
+			if (!renderBatchLocal.ConstructorWasInvoked)
 	    		return;
 		    		
 	        var model = renderBatchLocal.Model;
@@ -77,11 +76,35 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
         
         base.OnInitialized();
     }
+    
+    private TextEditorRenderBatch GetRenderBatch()
+    {
+    	return GetComponentData()?._activeRenderBatch ?? default;
+    }
+    
+    private TextEditorComponentData? GetComponentData()
+    {
+    	if (_componentDataKeyPrevious != ComponentDataKey)
+    	{
+    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+    		    componentData is null)
+    		{
+    			_componentData = null;
+    		}
+    		else
+    		{
+    			_componentData = componentData;
+				_componentDataKeyPrevious = ComponentDataKey;
+    		}
+    	}
+    	
+		return _componentData;
+    }
 
     private async void OnCursorShouldBlinkChanged()
     {
-    	var renderBatchLocal = TextEditorViewModelSlimDisplay._activeRenderBatch;
-		if (renderBatchLocal?.Model is not null && renderBatchLocal?.ViewModel is not null)
+    	var renderBatchLocal = GetRenderBatch();
+		if (renderBatchLocal.ConstructorWasInvoked && renderBatchLocal.Model is not null && renderBatchLocal.ViewModel is not null)
 		{
 			var shouldSetSelectedLineEndKindString = false;
 			
@@ -97,18 +120,74 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 			}
 			
 			if (shouldSetSelectedLineEndKindString)
-				_selectedLineEndKindString = renderBatchLocal.Model.LineEndKindPreference.ToString();
+				_selectedLineEndKindString = renderBatchLocal.Model.LineEndKindPreference.AsEnumName();
     	}
     
     	await InvokeAsync(StateHasChanged);
     }
-
-    public string StyleMinWidthFromMaxLengthOfValue(int value)
+    
+    private static int CountDigits(int argumentNumber)
     {
-        var maxLengthOfValue = value.ToString().Length;
-        var padCharacterWidthUnits = 1;
-
-        return $"min-width: calc(1ch * {maxLengthOfValue + padCharacterWidthUnits})";
+    	var digitCount = 1;
+    	var runningNumber = argumentNumber;
+    	
+    	while ((runningNumber /= 10) > 0)
+    	{
+    		digitCount++;
+    	}
+    	
+    	return digitCount;
+    }
+    
+    private int _documentLengthDigitCountValuePrevious;
+    private string _documentLengthDigitCountCssPrevious = string.Empty;
+    private string GetDocumentLengthCssStyle(int documentLength)
+    {
+    	var digitCount = CountDigits(documentLength);
+    	
+    	if (_documentLengthDigitCountValuePrevious != digitCount)
+    	{
+    		_documentLengthDigitCountValuePrevious = digitCount;
+    		_documentLengthDigitCountCssPrevious = DigitCountToCssStyle(_documentLengthDigitCountValuePrevious);
+    	}
+    	
+    	return _documentLengthDigitCountCssPrevious;
+    }
+	
+	private int _lineCountDigitCountValuePrevious;
+    private string _lineCountDigitCountCssPrevious = string.Empty;
+	private string GetLineCountCssStyle(int lineCount)
+    {
+    	var digitCount = CountDigits(lineCount);
+    	
+    	if (_lineCountDigitCountValuePrevious != digitCount)
+    	{
+    		_lineCountDigitCountValuePrevious = digitCount;
+    		_lineCountDigitCountCssPrevious = DigitCountToCssStyle(_lineCountDigitCountValuePrevious);
+    	}
+    	
+    	return _lineCountDigitCountCssPrevious;
+    }
+	
+	private int _mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious;
+    private string _mostCharactersOnASingleLineTupleLineLengthDigitCountCssPrevious = string.Empty;
+	private string GetMostCharactersOnASingleLineTupleLineLengthCssStyle(int mostCharactersOnASingleLineTupleLineLength)
+    {
+    	var digitCount = CountDigits(mostCharactersOnASingleLineTupleLineLength);
+    	
+    	if (_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious != digitCount)
+    	{
+    		_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious = digitCount;
+    		_mostCharactersOnASingleLineTupleLineLengthDigitCountCssPrevious = DigitCountToCssStyle(_mostCharactersOnASingleLineTupleLineLengthDigitCountValuePrevious);
+    	}
+    	
+    	return _mostCharactersOnASingleLineTupleLineLengthDigitCountCssPrevious;
+    }
+    
+    public string DigitCountToCssStyle(int digitCount)
+    {
+        // '+1' for padding character width units
+        return $"min-width: {digitCount + 1}ch;";
     }
 
     public int GetPositionNumber(TextEditorModel model, TextEditorViewModel viewModel)

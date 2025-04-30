@@ -48,4 +48,11 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~DoWhileStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.DoWhileStatementNode--;
+	}
+	#endif
 }

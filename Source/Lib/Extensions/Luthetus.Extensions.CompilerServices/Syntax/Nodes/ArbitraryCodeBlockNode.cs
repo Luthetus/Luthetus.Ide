@@ -38,4 +38,11 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 		return ParentCodeBlockOwner.GetReturnTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~ArbitraryCodeBlockNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ArbitraryCodeBlockNode--;
+	}
+	#endif
 }

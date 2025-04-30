@@ -109,6 +109,10 @@ public sealed class TextEditorViewModel : IDisposable
 	    ShouldRevealCursor = other.ShouldRevealCursor;
 	    CursorIsIntersecting = other.CursorIsIntersecting;
 	    DynamicViewModelAdapter = other.DynamicViewModelAdapter;
+		// AllGutterChevronList = other.AllGutterChevronList;
+		// VirtualizedGutterChevronList = other.VirtualizedGutterChevronList;
+		// InlineUiList = other.InlineUiList;
+		// UiOutdated = other.UiOutdated;
 	    
 	    BodyElementId = other.BodyElementId;
 	    PrimaryCursorContentId = other.PrimaryCursorContentId;
@@ -244,6 +248,22 @@ public sealed class TextEditorViewModel : IDisposable
     /// a panel tab, or a text editor group tab.
     /// </summary>
     public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
+    // public List<GutterChevron> AllGutterChevronList { get; set; } = new();
+    // public List<GutterChevron> VirtualizedGutterChevronList { get; set; } = new();
+    /// <summary>
+    /// For the time being, this similarly named list on the TextEditorModel will be added
+    /// to alongside this one of the viewmodel.
+    ///
+    /// By adding to the model, the model's tab positioning logic can "just work" for the
+    /// 3 dots thing.
+    ///
+    /// But, the 3 dots thing shouldn't be on the model long term since it is tied to
+    /// the collapse/expand state and it was decided that
+    /// separate viewmodels that reference the same underlying model
+    /// should have different collapse/expand states.
+    /// </summary>
+    // public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; } = new();
+    // public bool UiOutdated { get; set; }
     
     public bool ScrollWasModified { get; set; }
 	/// <summary>

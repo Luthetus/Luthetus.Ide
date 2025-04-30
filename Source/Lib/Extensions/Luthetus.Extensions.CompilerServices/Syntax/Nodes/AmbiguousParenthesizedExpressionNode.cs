@@ -138,5 +138,12 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
+
+	#if DEBUG	
+	~AmbiguousParenthesizedExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.AmbiguousParenthesizedExpressionNode--;
+	}
+	#endif
 }
 

@@ -57,4 +57,11 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 		return ReturnTypeReference;
 	}
 	#endregion
+
+	#if DEBUG	
+	~FunctionDefinitionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionDefinitionNode--;
+	}
+	#endif
 }

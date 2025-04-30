@@ -17,4 +17,11 @@ public sealed class TupleExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
+
+	#if DEBUG	
+	~TupleExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.TupleExpressionNode--;
+	}
+	#endif
 }

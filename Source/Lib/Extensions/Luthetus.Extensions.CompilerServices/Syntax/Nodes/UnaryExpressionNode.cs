@@ -22,4 +22,11 @@ public sealed class UnaryExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
+
+	#if DEBUG	
+	~UnaryExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UnaryExpressionNode--;
+	}
+	#endif
 }

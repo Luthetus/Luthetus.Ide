@@ -71,4 +71,11 @@ public sealed class VariableReferenceNode : IExpressionNode
 		VariableDeclarationNode = variableDeclarationNode;
 		_isFabricated = false;
 	}
+
+	#if DEBUG	
+	~VariableReferenceNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableReferenceNode--;
+	}
+	#endif
 }

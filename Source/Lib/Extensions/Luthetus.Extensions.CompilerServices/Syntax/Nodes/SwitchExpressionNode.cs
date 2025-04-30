@@ -41,4 +41,11 @@ public sealed class SwitchExpressionNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~SwitchExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.SwitchExpressionNode--;
+	}
+	#endif
 }

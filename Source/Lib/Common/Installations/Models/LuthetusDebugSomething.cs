@@ -41,6 +41,7 @@ public static class LuthetusDebugSomething
 	public static int ForStatementNode { get; set; }
 	public static int FunctionDefinitionNode { get; set; }
 	public static int FunctionInvocationNode { get; set; }
+	public static int GetterOrSetterNode { get; set; }
 	public static int GlobalCodeBlockNode { get; set; }
 	public static int IfStatementNode { get; set; }
 	public static int InheritanceStatementNode { get; set; }
@@ -114,6 +115,7 @@ public static class LuthetusDebugSomething
 			("ForStatementNode", ForStatementNode),
 			("FunctionDefinitionNode", FunctionDefinitionNode),
 			("FunctionInvocationNode", FunctionInvocationNode),
+			("GetterOrSetterNode", GetterOrSetterNode),
 			("GlobalCodeBlockNode", GlobalCodeBlockNode),
 			("IfStatementNode", IfStatementNode),
 			("InheritanceStatementNode", InheritanceStatementNode),
@@ -171,6 +173,7 @@ public static class LuthetusDebugSomething
 			ForStatementNode +
 			FunctionDefinitionNode +
 			FunctionInvocationNode +
+			GetterOrSetterNode +
 			GlobalCodeBlockNode +
 			IfStatementNode +
 			InheritanceStatementNode +
