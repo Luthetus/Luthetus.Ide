@@ -67,7 +67,7 @@ public struct OnMouseDown
 				editContext)
 			.ConfigureAwait(false);
 			
-		/*if (rowAndColumnIndex.positionX < 0)
+		if (rowAndColumnIndex.positionX < 0)
 		{
 			var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel);
 			if (shouldGotoFinalize)
@@ -94,7 +94,7 @@ public struct OnMouseDown
 					}
 				}
 			}
-		}*/
+		}
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
@@ -132,7 +132,6 @@ public struct OnMouseDown
         	.ConfigureAwait(false);
     }
     
-    /*
     /// <summary>
     /// Returns whether you should goto finalize.
     /// </summary>
@@ -195,5 +194,4 @@ public struct OnMouseDown
 		
 		return false;
     }
-    */
 }

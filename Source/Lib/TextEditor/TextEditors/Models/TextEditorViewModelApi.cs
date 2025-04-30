@@ -785,7 +785,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			
 			var collapsedCount = 0;
 			
-			/*for (int priorLineIndex = 0; priorLineIndex < verticalStartingIndex; priorLineIndex++)
+			// TODO: Iterate the GutterChevronList instead there are way more lines (on average).
+			for (int priorLineIndex = 0; priorLineIndex < verticalStartingIndex; priorLineIndex++)
 			{
 				var indexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == priorLineIndex);
 				if (indexGutterChevron == -1)
@@ -796,7 +797,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					continue;
 				if (priorLineIndex > gutterChevron.LineIndex && priorLineIndex < gutterChevron.ExclusiveLineIndex)
 					collapsedCount++;
-			}*/
+			}
 			
 			var virtualizedLineList = new List<VirtualizationLine>(lineCountToReturn);
 			{
@@ -823,7 +824,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				
 					var lineIndex = verticalStartingIndex + lineOffset;
 					
-					/*var isCollapsed = false;
+					// TODO: Save the index you stopped at in the previous 'AllGutterChevronList' for loop...
+					// ...and use it as the starting point here.
+					var isCollapsed = false;
 					foreach (var gutterChevron in viewModel.AllGutterChevronList)
 					{
 						if (gutterChevron.IsExpanded)
@@ -836,7 +839,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						}
 					}
 					if (isCollapsed)
-						continue;*/
+						continue;
 					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    
