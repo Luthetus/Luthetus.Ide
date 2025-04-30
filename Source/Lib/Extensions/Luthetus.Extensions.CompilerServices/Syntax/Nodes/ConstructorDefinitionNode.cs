@@ -50,4 +50,11 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 		return ReturnTypeReference;
 	}
 	#endregion
+
+	#if DEBUG	
+	~ConstructorDefinitionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.ConstructorDefinitionNode--;
+	}
+	#endif
 }

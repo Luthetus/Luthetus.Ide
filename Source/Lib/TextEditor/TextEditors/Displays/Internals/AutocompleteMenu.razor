@@ -1,9 +1,9 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 @using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
-@{ var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch; }
+@{ var renderBatch = GetRenderBatch(); }
 
-@if (renderBatch is not null)
+@if (renderBatch.ConstructorWasInvoked)
 {
 	var appOptionsState = AppOptionsService.GetAppOptionsState();
 

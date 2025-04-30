@@ -40,4 +40,11 @@ public sealed class EmptyExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
+
+	#if DEBUG	
+	~EmptyExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.EmptyExpressionNode--;
+	}
+	#endif
 }

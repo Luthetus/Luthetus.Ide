@@ -44,4 +44,11 @@ public sealed class InterpolatedStringNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InterpolatedStringNode;
+
+	#if DEBUG	
+	~InterpolatedStringNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.InterpolatedStringNode--;
+	}
+	#endif
 }

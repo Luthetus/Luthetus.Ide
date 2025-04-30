@@ -22,4 +22,11 @@ public sealed class UnaryOperatorNode : ISyntaxNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
+
+	#if DEBUG	
+	~UnaryOperatorNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.UnaryOperatorNode--;
+	}
+	#endif
 }

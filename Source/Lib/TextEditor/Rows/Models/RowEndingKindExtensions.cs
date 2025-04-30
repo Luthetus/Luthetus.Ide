@@ -48,6 +48,24 @@ public static class RowEndingKindExtensions
             _ => throw new LuthetusTextEditorException($"Unexpected {nameof(LineEndKind)} of: {rowEndingKind}"),
         };
     }
+    
+    /// <summary>
+    /// TODO: Check if using an expression bound property that returns 'nameof(LineEndKind.CarriageReturn)'...
+    /// ...will return "CarriageReturn", and only be stored statically?
+    /// </summary>
+    public static string AsEnumName(this LineEndKind rowEndingKind)
+    {
+        return rowEndingKind switch
+        {
+            LineEndKind.CarriageReturn => nameof(LineEndKind.CarriageReturn),
+            LineEndKind.LineFeed => nameof(LineEndKind.LineFeed),
+            LineEndKind.CarriageReturnLineFeed => nameof(LineEndKind.CarriageReturnLineFeed),
+            LineEndKind.Unset => nameof(LineEndKind.Unset),
+            LineEndKind.StartOfFile => nameof(LineEndKind.StartOfFile),
+            LineEndKind.EndOfFile => nameof(LineEndKind.EndOfFile),
+            _ => throw new LuthetusTextEditorException($"Unexpected {nameof(LineEndKind)} of: {rowEndingKind}"),
+        };
+    }
 
     public static List<LineEndKind> GetRowEndingsUserAllowedToUse(this LineEndKind rowEndingKind)
     {

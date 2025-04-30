@@ -250,7 +250,7 @@ public static class EventUtils
                 !keymapArgs.CtrlKey;
     }
 
-	public static async Task<(int rowIndex, int columnIndex)> CalculateRowAndColumnIndex(
+	public static async Task<(int rowIndex, int columnIndex, double positionX, double positionY)> CalculateRowAndColumnIndex(
 		ResourceUri resourceUri,
 		Key<TextEditorViewModel> viewModelKey,
 		MouseEventArgs mouseEventArgs,
@@ -262,7 +262,7 @@ public static class EventUtils
         var globalTextEditorOptions = editContext.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
 
         if (modelModifier is null || viewModel is null)
-            return (0, 0);
+            return (0, 0, 0, 0);
     
         var charMeasurements = viewModel.CharAndLineMeasurements;
         var textEditorDimensions = viewModel.TextEditorDimensions;
@@ -340,6 +340,6 @@ public static class EventUtils
             ? lineLength
             : columnIndexInt;
         
-        return (rowIndex, literalLength);
+        return (rowIndex, literalLength, positionX, positionY);
     }
 }

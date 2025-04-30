@@ -1,4 +1,6 @@
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -16,5 +18,5 @@ public interface ITextEditorDependentComponent : IDisposable
 	/// This allows the accessory UI that surrounds the text editor to be rendered
 	/// at a "lower priority" than the text editor itself.
 	/// </summary>
-	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; }
+	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 }

@@ -57,4 +57,11 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~NamespaceStatementNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.NamespaceStatementNode--;
+	}
+	#endif
 }

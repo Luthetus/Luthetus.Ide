@@ -139,9 +139,15 @@
     white-space: nowrap;
     position: absolute;
     display: flex;
-    justify-content: end;
     box-shadow: -2px 0 0 var(--luth_te_text-editor-gutter-border-color) inset;
     background-color: var(--luth_te_text-editor-gutter-background-color);
+}
+
+.luth_te_gutter-chevron {
+	position: absolute;
+	z-index: 1;
+	bottom: 1px;
+	right: 2px;
 }
 
 .luth_te_gutter-section {
@@ -153,6 +159,11 @@
     height: 100%;
     position: absolute;
     top: 0;
+}
+
+.luth_te_three-dots {
+	border: 1px solid #a7c4c4;
+	color: #a7c4c4;
 }
 
 .luth_te_command-bar {

@@ -1,29 +1,17 @@
-@{ var viewModelSlimDisplayLocal = _viewModelSlimDisplay; }
-
-@if (_isLoaded)
+@if (ViewModelDisplayOptions is not null)
 {
-	if (_viewModelSlimDisplayPrevious != viewModelSlimDisplayLocal)
+	var headerComponentType = ViewModelDisplayOptions.HeaderComponentType;
+	if (headerComponentType is not null)
 	{
-		_viewModelSlimDisplayPrevious = viewModelSlimDisplayLocal;
-		DependentComponentParameters[DictionaryKey] = viewModelSlimDisplayLocal;
+		<DynamicComponent Type="headerComponentType"
+						  Parameters="DependentComponentParameters"/>
 	}
 }
 
-@if (ViewModelDisplayOptions is not null && _isLoaded && viewModelSlimDisplayLocal is not null)
-{
-	var headerComponentType = ViewModelDisplayOptions.HeaderComponentType;
-    if (headerComponentType is not null)
-    {
-		<DynamicComponent Type="headerComponentType"
-						  Parameters="DependentComponentParameters"/>
-    }
-}
-
-<TextEditorViewModelSlimDisplay @ref="_viewModelSlimDisplay"
-							    TextEditorViewModelKey="TextEditorViewModelKey"
+<TextEditorViewModelSlimDisplay TextEditorViewModelKey="TextEditorViewModelKey"
                                 ViewModelDisplayOptions="ViewModelDisplayOptions"/>
 
-@if (ViewModelDisplayOptions is not null && _isLoaded && viewModelSlimDisplayLocal is not null)
+@if (ViewModelDisplayOptions is not null)
 {
 	var footerComponentType = ViewModelDisplayOptions.FooterComponentType;
     if (footerComponentType is not null)

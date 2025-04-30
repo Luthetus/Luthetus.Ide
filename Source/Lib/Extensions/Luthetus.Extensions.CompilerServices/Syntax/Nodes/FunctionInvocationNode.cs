@@ -33,4 +33,11 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	
 	public bool IsParsingFunctionParameters { get; set; }
 	public bool IsParsingGenericParameters { get; set; }
+
+	#if DEBUG	
+	~FunctionInvocationNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.FunctionInvocationNode--;
+	}
+	#endif
 }

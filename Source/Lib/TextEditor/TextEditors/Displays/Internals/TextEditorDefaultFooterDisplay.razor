@@ -5,17 +5,20 @@
 @using Luthetus.TextEditor.RazorLib.Rows.Models
 @using Luthetus.TextEditor.RazorLib.Htmls.Models
 
-@{ var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch; }
+@{
+	var renderBatch = GetRenderBatch();
+	var componentData = GetComponentData();
+}
 
-@if (renderBatch is not null)
+@if (renderBatch.ConstructorWasInvoked && componentData is not null)
 {
-	<div class="luth_te_text-editor-footer @TextEditorViewModelSlimDisplay.WrapperCssClass @TextEditorService.ThemeCssClassString"
-		 style="@TextEditorViewModelSlimDisplay.WrapperCssStyle">
+	<div class="luth_te_text-editor-footer @componentData?.WrapperCssClass @TextEditorService.ThemeCssClassString"
+		 style="@componentData?.WrapperCssStyle">
 	    <div class="luth_te_text-editor-footer-listing">
 	        @{
 	            var model = renderBatch.Model;
 	            var viewModel = renderBatch.ViewModel;
-	            var options = renderBatch.Options;
+	            var options = renderBatch.TextEditorRenderBatchConstants.TextEditorOptions;
 	
 	            if (model is not null && viewModel is not null)
 	            {
@@ -32,8 +35,8 @@
 	                            length:
 	                        </div>
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-	                            @($"{model.DocumentLength}")
+	                             style="@GetDocumentLengthCssStyle(model.DocumentLength)">
+	                            @model.DocumentLength
 	                        </div>
 	                    </div>
 	
@@ -42,8 +45,8 @@
 	                            lines:
 	                        </div>
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
-	                            @($"{model.LineCount}")
+	                             style="@GetLineCountCssStyle(model.LineCount)">
+	                            @model.LineCount
 	                        </div>
 	                    </div>
 	                </div>
@@ -59,8 +62,8 @@
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
-	                            @($"{rowNumber}")
+	                             style="@GetLineCountCssStyle(model.LineCount)">
+	                            @rowNumber
 	                        </div>
 	                    </div>
 	
@@ -74,8 +77,8 @@
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleLineTuple.lineLength)">
-	                            @($"{columnNumber}")
+	                             style="@GetMostCharactersOnASingleLineTupleLineLengthCssStyle(model.MostCharactersOnASingleLineTuple.lineLength)">
+	                            @columnNumber
 	                        </div>
 	                    </div>
 	
@@ -89,8 +92,8 @@
 	                        }
 	
 	                        <div class="luth_te_text-editor-footer-value"
-	                             style="@StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-	                            @($"{positionNumber}")
+	                             style="@GetDocumentLengthCssStyle(model.DocumentLength)">
+	                            @positionNumber
 	                        </div>
 	                    </div>
 	                </div>
@@ -100,7 +103,7 @@
 	                            title="Line ending kind">
 	                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
 	                        {
-	                            <option value="@rowEndingKind.ToString()">
+	                            <option value="@rowEndingKind.AsEnumName()">
 	                                @rowEndingKind.AsFriendlyName()
 	                            </option>
 	                        }

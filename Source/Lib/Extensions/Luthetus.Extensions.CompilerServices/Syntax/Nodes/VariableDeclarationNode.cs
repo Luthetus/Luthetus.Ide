@@ -56,4 +56,11 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		TypeReference = typeReference;
 		return this;
 	}
+
+	#if DEBUG	
+	~VariableDeclarationNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.VariableDeclarationNode--;
+	}
+	#endif
 }

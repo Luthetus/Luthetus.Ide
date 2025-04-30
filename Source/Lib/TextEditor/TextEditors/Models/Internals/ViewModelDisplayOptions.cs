@@ -6,8 +6,13 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
+/// <summary>
+/// Do not re-use the same instance of this across different Blazor components.
+/// </summary>
 public sealed class ViewModelDisplayOptions
 {
+	public Guid TextEditorHtmlElementId { get; set; } = Guid.Empty;
+
     public string TextEditorStyleCssString { get; set; } = string.Empty;
     public string TextEditorClassCssString { get; set; } = string.Empty;
     

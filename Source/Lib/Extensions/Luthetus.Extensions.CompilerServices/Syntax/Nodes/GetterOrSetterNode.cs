@@ -8,6 +8,13 @@ namespace Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class GetterOrSetterNode : ICodeBlockOwner
 {
+	public GetterOrSetterNode()
+	{
+		#if DEBUG
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GetterOrSetterNode++;
+		#endif
+	}
+
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
@@ -24,5 +31,12 @@ public sealed class GetterOrSetterNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
+
+	#if DEBUG	
+	~GetterOrSetterNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.GetterOrSetterNode--;
+	}
+	#endif
 }
 

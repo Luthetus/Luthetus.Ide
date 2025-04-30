@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -37,9 +38,12 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
-	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; set; } = null!;
+	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 
     private ElementReference? _textEditorContextMenuElementReference;
+    
+    private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
+    private TextEditorComponentData? _componentData;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -65,11 +69,35 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
         await base.OnAfterRenderAsync(firstRender);
     }
+    
+    private TextEditorRenderBatch GetRenderBatch()
+    {
+    	return GetComponentData()?._activeRenderBatch ?? default;
+    }
+    
+    private TextEditorComponentData? GetComponentData()
+    {
+    	if (_componentDataKeyPrevious != ComponentDataKey)
+    	{
+    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+    		    componentData is null)
+    		{
+    			_componentData = null;
+    		}
+    		else
+    		{
+    			_componentData = componentData;
+				_componentDataKeyPrevious = ComponentDataKey;
+    		}
+    	}
+    	
+		return _componentData;
+    }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return;
     	
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
@@ -95,8 +123,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private Task ReturnFocusToThisAsync()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     		
         try
@@ -128,8 +156,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private MenuRecord GetMenuRecord()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
     		
     	return renderBatch.Model.CompilerService.GetContextMenu(renderBatch, this);
@@ -177,8 +205,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     		
         _ = Task.Run(async () =>
@@ -217,8 +245,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task CutMenuOption()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     		
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -241,8 +269,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task CopyMenuOption()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -265,8 +293,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task PasteMenuOption()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
 
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -289,8 +317,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task GoToDefinitionOption()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     		
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -319,8 +347,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task PeekDefinitionOption()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     		
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -349,8 +377,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task QuickActionsSlashRefactors()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -375,8 +403,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task FindInTextEditor()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -401,8 +429,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task FindAllReferences()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -425,8 +453,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task RelatedFilesQuickPick()
     {
-    	var renderBatch = TextEditorViewModelSlimDisplay._activeRenderBatch;
-    	if (renderBatch is null)
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(

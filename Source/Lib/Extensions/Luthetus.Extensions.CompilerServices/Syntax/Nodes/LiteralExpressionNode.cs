@@ -19,4 +19,11 @@ public sealed class LiteralExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
+
+	#if DEBUG	
+	~LiteralExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.LiteralExpressionNode--;
+	}
+	#endif
 }

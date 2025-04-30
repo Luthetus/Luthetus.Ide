@@ -48,25 +48,27 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 public record VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
-        Array.Empty<VirtualizationLine>(),
+        new(),
         new List<VirtualizationSpan>(),
         totalWidth: 0,
         totalHeight: 0,
         resultWidth: 0,
         resultHeight: 0,
         left: 0,
-        top: 0);
+        top: 0,
+        collapsedLineCount: 0);
 
 	/// <summary>Measurements are in pixels</summary>
     public VirtualizationGrid(
-        VirtualizationLine[] entries,
+        List<VirtualizationLine> entries,
         List<VirtualizationSpan> virtualizationSpanList,
         double totalWidth,
         double totalHeight,
         double resultWidth,
         double resultHeight,
         double left,
-        double top)
+        double top,
+        int collapsedLineCount)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -76,9 +78,10 @@ public record VirtualizationGrid
         VirtualHeight = resultHeight;
         VirtualLeft = left;
         VirtualTop = top;
+        CollapsedLineCount = collapsedLineCount;
     }
 
-    public VirtualizationLine[] EntryList { get; init; }
+    public List<VirtualizationLine> EntryList { get; init; }
     public List<VirtualizationSpan> VirtualizationSpanList { get; init; }
     
     /// <summary>
@@ -117,6 +120,10 @@ public record VirtualizationGrid
     /// Lowest 'top' point where a rendered element is displayed.
     /// </summary>
     public double VirtualTop { get; init; }
+    
+    public int CollapsedLineCount { get; init; }
+    
+    public bool CreateCacheWasInvoked { get; set; }
 
     /// <summary>
     ///
@@ -154,7 +161,7 @@ public record VirtualizationGrid
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
     
-    	if (viewModel.VirtualizationResult.EntryList.Length == 0)
+    	if (viewModel.VirtualizationResult.EntryList.Count == 0)
 			return;
 		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -168,7 +175,7 @@ public record VirtualizationGrid
 		
 		textEditorService.__StringBuilder.Clear();
 		
-		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
+		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Count; entryIndex++)
 		{
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
 			

@@ -29,7 +29,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorRenderBatch? RenderBatch { get; set; }
+    public TextEditorRenderBatch RenderBatch { get; set; }
 
     private bool _lastSeenShowFindOverlayValue = false;
     private bool _lastFindOverlayValueExternallyChangedMarker = false;
@@ -46,7 +46,7 @@ public partial class FindOverlayDisplay : ComponentBase
         set
         {
 	    	var renderBatchLocal = RenderBatch;
-	    	if (renderBatchLocal is null)
+	    	if (!renderBatchLocal.ConstructorWasInvoked)
 	    		return;
         
             _inputValue = value;
@@ -110,7 +110,7 @@ public partial class FindOverlayDisplay : ComponentBase
         set
         {
 	    	var renderBatchLocal = RenderBatch;
-	    	if (renderBatchLocal is null)
+	    	if (!renderBatchLocal.ConstructorWasInvoked)
 	    		return;
         
             _inputReplace = value;
@@ -133,7 +133,7 @@ public partial class FindOverlayDisplay : ComponentBase
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     		
     	var becameShown = false;
@@ -167,7 +167,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     	
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
@@ -218,7 +218,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private async Task MoveActiveIndexMatchedTextSpanUp()
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     	
         var findOverlayPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(
@@ -256,7 +256,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private async Task MoveActiveIndexMatchedTextSpanDown()
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     	
         var findOverlayPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(
@@ -294,7 +294,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private Task HandleActiveIndexMatchedTextSpanChanged()
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(
@@ -384,7 +384,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private void ToggleShowReplace()
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     	
     	TextEditorService.WorkerArbitrary.PostRedundant(
@@ -407,7 +407,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private void ReplaceCurrent()
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     
     	TextEditorService.WorkerArbitrary.PostRedundant(
@@ -456,7 +456,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private void ReplaceAll()
     {
     	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	if (!renderBatchLocal.ConstructorWasInvoked)
     		return;
     
     	TextEditorService.WorkerArbitrary.PostRedundant(

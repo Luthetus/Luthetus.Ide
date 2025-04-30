@@ -49,4 +49,11 @@ public sealed class BinaryExpressionNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
+
+	#if DEBUG	
+	~BinaryExpressionNode()
+	{
+		Luthetus.Common.RazorLib.Installations.Models.LuthetusDebugSomething.BinaryExpressionNode--;
+	}
+	#endif
 }

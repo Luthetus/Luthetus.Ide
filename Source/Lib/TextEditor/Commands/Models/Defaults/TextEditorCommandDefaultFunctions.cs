@@ -1258,8 +1258,8 @@ public class TextEditorCommandDefaultFunctions
 	        new Dictionary<string, object?>
 			{
 				{
-					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.TextEditorViewModelSlimDisplay),
-					componentData.TextEditorViewModelSlimDisplay
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.ComponentDataKey),
+					componentData.ComponentDataKey
 				},
 			});
 	}
@@ -1288,8 +1288,8 @@ public class TextEditorCommandDefaultFunctions
 	        new Dictionary<string, object?>
 			{
 				{
-					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorViewModelSlimDisplay),
-					componentData.TextEditorViewModelSlimDisplay
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.ComponentDataKey),
+					componentData.ComponentDataKey
 				},
 			});
 	}
