@@ -767,6 +767,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			var hiddenCount = 0;
 			var indexCollapsePoint = 0;
 			var previousEndExclusiveLineIndex = 0; // For nested chevrons
+			
+			for (int i = 0; i < verticalStartingIndex; i++)
+			{
+				if (viewModel.HiddenLineIndexHashSet.Contains(i))
+				{
+					hiddenCount++;
+				}
+			}
+			
 			/*for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
 			{
 				Console.WriteLine($"\t======== LOOP 1 Start ccplCount:{viewModel.CollapsedCollapsePointList.Count} ========");
@@ -825,6 +834,13 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						break;
 				
 					var lineIndex = verticalStartingIndex + lineOffset;
+
+					if (viewModel.HiddenLineIndexHashSet.Contains(lineIndex))
+					{
+						hiddenCount++;
+						lineOffset++;
+						continue;
+					}
 
 					/*var isCollapsed = false;
 					for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
