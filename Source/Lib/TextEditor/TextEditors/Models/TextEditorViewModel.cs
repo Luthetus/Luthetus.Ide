@@ -109,8 +109,9 @@ public sealed class TextEditorViewModel : IDisposable
 	    ShouldRevealCursor = other.ShouldRevealCursor;
 	    CursorIsIntersecting = other.CursorIsIntersecting;
 	    DynamicViewModelAdapter = other.DynamicViewModelAdapter;
-		AllGutterChevronList = other.AllGutterChevronList;
-		VirtualizedGutterChevronList = other.VirtualizedGutterChevronList;
+		AllCollapsePointList = other.AllCollapsePointList;
+		VirtualizedCollapsePointList = other.VirtualizedCollapsePointList;
+		CollapsedCollapsePointList = other.CollapsedCollapsePointList;
 		InlineUiList = other.InlineUiList;
 		UiOutdated = other.UiOutdated;
 	    
@@ -248,8 +249,12 @@ public sealed class TextEditorViewModel : IDisposable
     /// a panel tab, or a text editor group tab.
     /// </summary>
     public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
-    public List<GutterChevron> AllGutterChevronList { get; set; } = new();
-    public List<GutterChevron> VirtualizedGutterChevronList { get; set; } = new();
+    public List<CollapsePoint> AllCollapsePointList { get; set; } = new();
+    /// <summary>
+    /// TODO: This does not belong here move this to the 'TextEditorViewModelSlimDisplay.razor'.
+    /// </summary>
+    public List<CollapsePoint> VirtualizedCollapsePointList { get; set; } = new();
+    public List<CollapsePoint> CollapsedCollapsePointList { get; set; } = new();
     /// <summary>
     /// For the time being, this similarly named list on the TextEditorModel will be added
     /// to alongside this one of the viewmodel.

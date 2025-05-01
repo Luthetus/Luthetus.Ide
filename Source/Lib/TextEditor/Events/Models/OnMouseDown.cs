@@ -140,21 +140,38 @@ public struct OnMouseDown
     	TextEditorModel modelModifier,
     	TextEditorViewModel viewModel)
     {
-    	var virtualizedIndexGutterChevron = viewModel.VirtualizedGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
+    	var virtualizedIndexGutterChevron = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
 		if (virtualizedIndexGutterChevron != -1)
 		{
-			var allIndexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
+			var allIndexGutterChevron = viewModel.AllCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
 			if (allIndexGutterChevron != -1)
 			{
-				var virtualizedGutterChevron = viewModel.VirtualizedGutterChevronList[virtualizedIndexGutterChevron];
-				virtualizedGutterChevron.IsExpanded = !virtualizedGutterChevron.IsExpanded;
-				viewModel.VirtualizedGutterChevronList[virtualizedIndexGutterChevron] = virtualizedGutterChevron;
+				var virtualizedGutterChevron = viewModel.VirtualizedCollapsePointList[virtualizedIndexGutterChevron];
+				virtualizedGutterChevron.IsCollapsed = !virtualizedGutterChevron.IsCollapsed;
+				viewModel.VirtualizedCollapsePointList[virtualizedIndexGutterChevron] = virtualizedGutterChevron;
 				
-				var allGutterChevron = viewModel.AllGutterChevronList[allIndexGutterChevron];
-				allGutterChevron.IsExpanded = virtualizedGutterChevron.IsExpanded;
-				viewModel.AllGutterChevronList[allIndexGutterChevron] = allGutterChevron;
+				var allGutterChevron = viewModel.AllCollapsePointList[allIndexGutterChevron];
+				allGutterChevron.IsCollapsed = virtualizedGutterChevron.IsCollapsed;
+				viewModel.AllCollapsePointList[allIndexGutterChevron] = allGutterChevron;
 				
-				if (virtualizedGutterChevron.IsExpanded)
+				if (virtualizedGutterChevron.IsCollapsed)
+    			{
+    				virtualizedIndexGutterChevron = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
+    				
+    				var lineInformation = modelModifier.GetLineInformation(virtualizedGutterChevron.AppendToLineIndex);
+    				
+    				var inlineUi = new InlineUi(
+    					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+    					InlineUiKind.ThreeDotsExpandInlineUiThing);
+    				
+    				modelModifier.InlineUiList.Add(inlineUi);
+    				viewModel.InlineUiList.Add(
+    					(
+    						inlineUi,
+            				Tag: virtualizedGutterChevron.Identifier
+            			));
+    			}
+    			else
     			{
     				// TODO: Bad, this only permits one name regardless of scope
     				var indexTagMatchedInlineUi = viewModel.InlineUiList.FindIndex(
@@ -168,23 +185,6 @@ public struct OnMouseDown
         				
         				viewModel.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
     				}
-    			}
-    			else
-    			{
-					virtualizedIndexGutterChevron = viewModel.VirtualizedGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
-    				
-    				var lineInformation = modelModifier.GetLineInformation(virtualizedGutterChevron.LineIndex);
-    				
-    				var inlineUi = new InlineUi(
-    					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
-    					InlineUiKind.ThreeDotsExpandInlineUiThing);
-    				
-    				modelModifier.InlineUiList.Add(inlineUi);
-    				viewModel.InlineUiList.Add(
-    					(
-    						inlineUi,
-            				Tag: virtualizedGutterChevron.Identifier
-            			));
     			}
 				
 				viewModel.ShouldReloadVirtualizationResult = true;

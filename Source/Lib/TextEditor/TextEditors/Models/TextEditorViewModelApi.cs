@@ -752,18 +752,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			// Vertical Padding (render some offscreen data)
 			verticalTake += 1;
 
-			// Check index boundaries
-			{
-				verticalStartingIndex = Math.Max(0, verticalStartingIndex);
-
-				if (verticalStartingIndex + verticalTake > modelModifier.LineEndList.Count)
-				{
-					verticalTake = modelModifier.LineEndList.Count - verticalStartingIndex;
-				}
-
-				verticalTake = Math.Max(0, verticalTake);
-			}
-
 			var horizontalStartingIndex = (int)Math.Floor(
 				viewModel.ScrollbarDimensions.ScrollLeft /
 				viewModel.CharAndLineMeasurements.CharacterWidth);
@@ -772,32 +760,55 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				viewModel.TextEditorDimensions.Width /
 				viewModel.CharAndLineMeasurements.CharacterWidth);
 			
-			var lineCountAvailable = modelModifier.LineEndList.Count - verticalStartingIndex;
-
-	        var lineCountToReturn = verticalTake < lineCountAvailable
-	            ? verticalTake
-	            : lineCountAvailable;
-	
-	        var endingLineIndexExclusive = verticalStartingIndex + lineCountToReturn;
-	
-	        if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
-	            return;
-			
-			var collapsedCount = 0;
-			
-			// TODO: Iterate the GutterChevronList instead there are way more lines (on average).
-			for (int priorLineIndex = 0; priorLineIndex < verticalStartingIndex; priorLineIndex++)
+			var hiddenCount = 0;
+			var indexGutterChevron = 0;
+			var previousEndExclusiveLineIndex = 0; // For nested chevrons
+			for (; indexGutterChevron < viewModel.CollapsedCollapsePointList.Count; indexGutterChevron++)
 			{
-				var indexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == priorLineIndex);
-				if (indexGutterChevron == -1)
-					continue;
+				var gutterChevron = viewModel.CollapsedCollapsePointList[indexGutterChevron];
 				
-				var gutterChevron = viewModel.AllGutterChevronList[indexGutterChevron];
-				if (gutterChevron.IsExpanded)
-					continue;
-				if (priorLineIndex > gutterChevron.LineIndex && priorLineIndex < gutterChevron.ExclusiveLineIndex)
-					collapsedCount++;
+				if (gutterChevron.AppendToLineIndex >= verticalStartingIndex)
+					break;
+				
+				int pseudoRollupLineIndex;
+				
+				if (gutterChevron.AppendToLineIndex < previousEndExclusiveLineIndex)
+					pseudoRollupLineIndex = previousEndExclusiveLineIndex;
+				else
+					pseudoRollupLineIndex = gutterChevron.AppendToLineIndex;
+				
+				hiddenCount += gutterChevron.EndExclusiveLineIndex - pseudoRollupLineIndex - 1;
+				
+				if (gutterChevron.EndExclusiveLineIndex > previousEndExclusiveLineIndex)
+					previousEndExclusiveLineIndex = gutterChevron.EndExclusiveLineIndex;
 			}
+			
+			/*for (; indexGutterChevron < viewModel.CollapsedGutterChevronList.Count; indexGutterChevron++)
+			{
+				var gutterChevron = viewModel.CollapsedGutterChevronList[indexGutterChevron];
+				if (gutterChevron.LineIndex >= verticalStartingIndex)
+					break;
+			}*/
+			
+			verticalStartingIndex += hiddenCount;
+			
+			verticalStartingIndex = Math.Max(0, verticalStartingIndex);
+			
+			if (verticalStartingIndex + verticalTake > modelModifier.LineEndList.Count)
+			    verticalTake = modelModifier.LineEndList.Count - verticalStartingIndex;
+			
+			verticalTake = Math.Max(0, verticalTake);
+			
+			var lineCountAvailable = modelModifier.LineEndList.Count - verticalStartingIndex;
+			
+			var lineCountToReturn = verticalTake < lineCountAvailable
+			    ? verticalTake
+			    : lineCountAvailable;
+			
+			var endingLineIndexExclusive = verticalStartingIndex + lineCountToReturn;
+			
+			if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
+			    return;
 			
 			var virtualizedLineList = new List<VirtualizationLine>(lineCountToReturn);
 			{
@@ -827,16 +838,29 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					// TODO: Save the index you stopped at in the previous 'AllGutterChevronList' for loop...
 					// ...and use it as the starting point here.
 					var isCollapsed = false;
-					foreach (var gutterChevron in viewModel.AllGutterChevronList)
+					for (; indexGutterChevron < viewModel.CollapsedCollapsePointList.Count; indexGutterChevron++)
 					{
-						if (gutterChevron.IsExpanded)
-							continue;
-						if (lineIndex > gutterChevron.LineIndex && lineIndex < gutterChevron.ExclusiveLineIndex)
+						var gutterChevron = viewModel.CollapsedCollapsePointList[indexGutterChevron];
+						
+						if (lineIndex > gutterChevron.AppendToLineIndex && lineIndex < gutterChevron.EndExclusiveLineIndex ||
+							previousEndExclusiveLineIndex > lineIndex)
 						{
 							isCollapsed = true;
-							collapsedCount++;
-							break;
 						}
+						
+						int pseudoRollupLineIndex;
+						
+						if (gutterChevron.AppendToLineIndex < previousEndExclusiveLineIndex)
+							pseudoRollupLineIndex = previousEndExclusiveLineIndex;
+						else
+							pseudoRollupLineIndex = gutterChevron.AppendToLineIndex;
+						
+						var distanceGutterChevron = gutterChevron.EndExclusiveLineIndex - pseudoRollupLineIndex - 1;
+						hiddenCount += distanceGutterChevron;
+						lineOffset += distanceGutterChevron;
+						
+						if (gutterChevron.EndExclusiveLineIndex > previousEndExclusiveLineIndex)
+							previousEndExclusiveLineIndex = gutterChevron.EndExclusiveLineIndex;
 					}
 					if (isCollapsed)
 						continue;
@@ -957,7 +981,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
-							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount),
+							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount),
 							_textEditorService.__StringBuilder));
 					}
 					else
@@ -998,7 +1022,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							0,
-							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * collapsedCount),
+							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount),
 							_textEditorService.__StringBuilder));
 					}
 				}
@@ -1051,7 +1075,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
 		        left: horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth,
 		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight,
-		        collapsedLineCount: collapsedCount);
+		        collapsedLineCount: hiddenCount);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
 			

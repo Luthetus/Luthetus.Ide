@@ -61,28 +61,28 @@
 		            @(virtualizedRow.LineIndex + 1)
 		            
 		            @{
-		            	var gutterChevron = new GutterChevron(-1, false, string.Empty, 0, 0, -1);
+		            	var gutterChevron = new CollapsePoint(-1, false, string.Empty, -1);
 		            	
-		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedGutterChevronList.Count; i++)
+		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
 		            	{
-		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedGutterChevronList[i].LineIndex == virtualizedRow.LineIndex)
+		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedRow.LineIndex)
 		            		{
-		            			gutterChevron = _componentData._activeRenderBatch.ViewModel.VirtualizedGutterChevronList[i];
+		            			gutterChevron = _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i];
 		            			break;
 		            		}
 		            	}
 		            }
 
-    				@if (gutterChevron.LineIndex == virtualizedRow.LineIndex)
+    				@if (gutterChevron.AppendToLineIndex == virtualizedRow.LineIndex)
     				{
 					    <span class="luth_te_gutter-chevron">
-					    	@if (gutterChevron.IsExpanded)
+					    	@if (gutterChevron.IsCollapsed)
 					    	{
-					    		@IconChevronDownFragment.Render(_iconDriver)
+					    		@IconChevronRightFragment.Render(_iconDriver)
 					    	}
 					    	else
 					    	{
-					    		@IconChevronRightFragment.Render(_iconDriver)
+					    		@IconChevronDownFragment.Render(_iconDriver)
 					    	}
 						</span>
     				}

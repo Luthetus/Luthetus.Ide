@@ -192,7 +192,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				
 			var resource = extendedCompilerService.GetResource(modelModifier.ResourceUri);
 			
-			var virtualizedGutterChevronList = new List<GutterChevron>();
+			var virtualizedCollapsePointList = new List<CollapsePoint>();
 			
 			if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit &&
 				viewModelModifier.VirtualizationResult.EntryList.Any())
@@ -211,7 +211,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 					    	viewModelModifier,
 					    	modelModifier,
 					    	extendedCompilationUnit,
-					    	virtualizedGutterChevronList,
+					    	virtualizedCollapsePointList,
 					    	entry.TypeIdentifierToken,
 					    	lowerLine,
 					    	upperLine,
@@ -227,7 +227,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 					    	viewModelModifier,
 					    	modelModifier,
 					    	extendedCompilationUnit,
-					    	virtualizedGutterChevronList,
+					    	virtualizedCollapsePointList,
 					    	entry.FunctionIdentifierToken,
 					    	lowerLine,
 					    	upperLine,
@@ -236,7 +236,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				}
 			}
 			
-			viewModelModifier.VirtualizedGutterChevronList = virtualizedGutterChevronList;
+			viewModelModifier.VirtualizedCollapsePointList = virtualizedCollapsePointList;
 				
 			if (_codeBlockOwner != targetScope.CodeBlockOwner)
 			{
@@ -252,7 +252,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	TextEditorViewModel viewModelModifier,
     	TextEditorModel modelModifier,
     	IExtendedCompilationUnit extendedCompilationUnit,
-    	List<GutterChevron> virtualizedGutterChevronList,
+    	List<CollapsePoint> virtualizedCollapsePointList,
     	SyntaxToken token,
     	LineInformation lowerLine,
     	LineInformation upperLine,
@@ -267,43 +267,41 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
     			token.TextSpan.StartingIndexInclusive);
     		
-    		var indexPreviousChevron = viewModelModifier.AllGutterChevronList.FindIndex(
-    			x => x.LineIndex == lineAndColumnIndices.lineIndex);
+    		var indexPreviousChevron = viewModelModifier.AllCollapsePointList.FindIndex(
+    			x => x.AppendToLineIndex == lineAndColumnIndices.lineIndex);
     			
-    		bool isExpanded;
+    		bool isCollapsed;
     		bool shouldAddToAll = false;
     			
 			if (indexPreviousChevron != -1)
 			{
-				var previousChevron = viewModelModifier.AllGutterChevronList[indexPreviousChevron];
-				isExpanded = viewModelModifier.AllGutterChevronList[indexPreviousChevron].IsExpanded;
+				var previousChevron = viewModelModifier.AllCollapsePointList[indexPreviousChevron];
+				isCollapsed = viewModelModifier.AllCollapsePointList[indexPreviousChevron].IsCollapsed;
 				
 				if (previousChevron.Identifier != token.TextSpan.GetText())
 				{
-					viewModelModifier.AllGutterChevronList.RemoveAt(indexPreviousChevron);
+					viewModelModifier.AllCollapsePointList.RemoveAt(indexPreviousChevron);
 					shouldAddToAll = true;
 				}
 			}
 			else
 			{
-				isExpanded = true;
+				isCollapsed = false;
 				shouldAddToAll = true;
 			}
     		
     		var closeCodeBlockLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
     			closeCodeBlockTextSpan.StartingIndexInclusive);
     		
-    		var newGutterChevron = new GutterChevron(
+    		var newCollapsePoint = new CollapsePoint(
     			lineAndColumnIndices.lineIndex,
-    			isExpanded,
+    			isCollapsed,
     			token.TextSpan.GetText(),
-    			token.TextSpan.StartingIndexInclusive,
-    			token.TextSpan.EndingIndexExclusive,
     			closeCodeBlockLineAndColumnIndices.lineIndex + 1);
     		
-    		virtualizedGutterChevronList.Add(newGutterChevron);
+    		virtualizedCollapsePointList.Add(newCollapsePoint);
 			if (shouldAddToAll)
-				viewModelModifier.AllGutterChevronList.Add(newGutterChevron);
+				viewModelModifier.AllCollapsePointList.Add(newCollapsePoint);
     	}
     }
 
