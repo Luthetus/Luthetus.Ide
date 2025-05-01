@@ -760,13 +760,26 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				viewModel.TextEditorDimensions.Width /
 				viewModel.CharAndLineMeasurements.CharacterWidth);
 			
+			Console.WriteLine($"{nameof(CalculateVirtualizationResult)}-Dump");
+			Console.WriteLine($"\tverticalStartingIndex: {verticalStartingIndex}");
+			Console.WriteLine($"\tverticalTake: {verticalTake}");
+			
 			var hiddenCount = 0;
 			var indexCollapsePoint = 0;
 			var previousEndExclusiveLineIndex = 0; // For nested chevrons
-			for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
+			/*for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
 			{
-				
-			}
+				Console.WriteLine($"\t======== LOOP 1 Start ccplCount:{viewModel.CollapsedCollapsePointList.Count} ========");
+				var collapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsePoint];
+				if (collapsePoint.AppendToLineIndex >= verticalStartingIndex)
+				{
+					Console.WriteLine($"\t======== LOOP 1 Break ========");
+					break;
+				}
+				Console.WriteLine($"\t======== LOOP 1 End ========");
+			}*/
+			Console.WriteLine($"\tindexCollapsePoint: {indexCollapsePoint}");
+			Console.WriteLine($"\thiddenCount: {hiddenCount}");
 			
 			verticalStartingIndex += hiddenCount;
 			
@@ -812,16 +825,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						break;
 				
 					var lineIndex = verticalStartingIndex + lineOffset;
-					
-					// TODO: Save the index you stopped at in the previous 'AllCollapsePointList' for loop...
-					// ...and use it as the starting point here.
-					var isCollapsed = false;
+
+					/*var isCollapsed = false;
 					for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
 					{
-						
+						Console.WriteLine($"\t======== LOOP 2 Start ccplCount:{viewModel.CollapsedCollapsePointList.Count} ========");
+						Console.WriteLine($"\t======== LOOP 2 End ========");
 					}
 					if (isCollapsed)
-						continue;
+						continue;*/
 					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    

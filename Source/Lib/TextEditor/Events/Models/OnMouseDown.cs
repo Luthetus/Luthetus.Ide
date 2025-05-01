@@ -156,24 +156,23 @@ public struct OnMouseDown
 				
 				if (allCollapsePoint.IsCollapsed)
 				{
-					var indexCollapsedCollapsePoint = viewModel.CollapsedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
-				
-					if (indexCollapsedCollapsePoint != -1)
+					var firstToHideLineIndex = allCollapsePoint.AppendToLineIndex + 1;
+					for (var lineOffset = 0; lineOffset < allCollapsePoint.EndExclusiveLineIndex - allCollapsePoint.AppendToLineIndex - 1; lineOffset++)
 					{
-						var collapsedCollapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsedCollapsePoint];
-						collapsedCollapsePoint.IsCollapsed = true;
-					}
-					else
-					{
-						viewModel.CollapsedCollapsePointList.Add(allCollapsePoint);
+						viewModel.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
 					}
 				}
 				else
 				{
-					var indexCollapsedCollapsePoint = viewModel.CollapsedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
-				
-					if (indexCollapsedCollapsePoint != -1)
-						viewModel.CollapsedCollapsePointList.RemoveAt(indexCollapsedCollapsePoint);
+					viewModel.HiddenLineIndexHashSet.Clear();
+					foreach (var collapsePoint in viewModel.AllCollapsePointList)
+					{
+						var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
+						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
+						{
+							viewModel.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
+						}
+					}
 				}
 				
 				
