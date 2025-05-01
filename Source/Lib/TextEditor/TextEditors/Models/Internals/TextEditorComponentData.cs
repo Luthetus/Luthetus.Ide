@@ -146,6 +146,9 @@ public sealed class TextEditorComponentData
 	public List<(string PresentationCssClass, string PresentationCssStyle)> lastPresentationLayerTextSpanList = new();
     
     public List<string> SelectionStyleList = new List<string>();
+    
+    private List<TextEditorTextSpan> _virtualizedTextSpanList = new();
+    private List<TextEditorTextSpan> _outTextSpansList = new();
 
 	public void ThrottleApplySyntaxHighlighting(TextEditorModel modelModifier)
     {
@@ -614,8 +617,12 @@ public sealed class TextEditorComponentData
         IReadOnlyList<TextEditorTextModification> textModifications,
         IReadOnlyList<TextEditorTextSpan> inTextSpanList)
     {
+    	// TODO: Why virtualize then shift? Isn't it shift then virtualize? (2025-05-01)
+    	
+    	_virtualizedTextSpanList.Clear();
+    	_outTextSpansList.Clear();
+    
         // Virtualize the text spans
-        var virtualizedTextSpanList = new List<TextEditorTextSpan>();
         if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Any())
         {
             var lowerLineIndexInclusive = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
@@ -634,7 +641,7 @@ public sealed class TextEditorComponentData
                 if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
                     upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
                 {
-                    virtualizedTextSpanList.Add(textSpan);
+                    _virtualizedTextSpanList.Add(textSpan);
                 }
             }
         }
@@ -644,10 +651,9 @@ public sealed class TextEditorComponentData
             return Array.Empty<TextEditorTextSpan>();
         }
 
-        var outTextSpansList = new List<TextEditorTextSpan>();
         // Shift the text spans
         {
-            foreach (var textSpan in virtualizedTextSpanList)
+            foreach (var textSpan in _virtualizedTextSpanList)
             {
                 var startingIndexInclusive = textSpan.StartingIndexInclusive;
                 var endingIndexExclusive = textSpan.EndingIndexExclusive;
@@ -677,7 +683,7 @@ public sealed class TextEditorComponentData
                     }
                 }
 
-                outTextSpansList.Add(textSpan with
+                _outTextSpansList.Add(textSpan with
                 {
                     StartingIndexInclusive = startingIndexInclusive,
                     EndingIndexExclusive = endingIndexExclusive
@@ -685,7 +691,7 @@ public sealed class TextEditorComponentData
             }
         }
 
-        return outTextSpansList;
+        return _outTextSpansList;
     }
     
     public (int FirstRowToSelectDataInclusive, int LastRowToSelectDataExclusive) PresentationGetBoundsInRowIndexUnits(
