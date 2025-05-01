@@ -856,6 +856,9 @@ public sealed class TextEditorComponentData
             	
             for (var i = useLowerBoundInclusiveRowIndex; i < useUpperBoundExclusiveRowIndex; i++)
 	        {
+	        	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+	        		continue;
+	        	
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
 		     	   selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
 		     	   selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
