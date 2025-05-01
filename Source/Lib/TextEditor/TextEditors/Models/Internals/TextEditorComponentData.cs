@@ -641,11 +641,7 @@ public sealed class TextEditorComponentData
                 if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
                     upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
                 {
-                	if (!_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(
-                			_activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(textSpan.StartingIndexInclusive).lineIndex))
-                	{
-                		_virtualizedTextSpanList.Add(textSpan);
-                	}
+                	_virtualizedTextSpanList.Add(textSpan);
                 }
             }
         }
@@ -1011,6 +1007,9 @@ public sealed class TextEditorComponentData
                      i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
                      i++)
                 {
+                	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+                		continue;
+                		
                 	presentationLayerTextSpanList.Add((
                 		PresentationGetCssClass(presentationLayer, textSpan.DecorationByte),
                 		PresentationGetCssStyleString(
