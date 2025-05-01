@@ -494,7 +494,8 @@ public sealed class TextEditorComponentData
     public string PresentationGetCssStyleString(
         int lowerPositionIndexInclusive,
         int upperPositionIndexExclusive,
-        int rowIndex)
+        int rowIndex,
+        int hiddenLineCount)
     {
         var charMeasurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
 		var textEditorDimensions = _activeRenderBatch.ViewModel.TextEditorDimensions;
@@ -522,7 +523,7 @@ public sealed class TextEditorComponentData
             fullWidthOfRowIsSelected = false;
         }
 
-        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
+        var topInPixelsInvariantCulture = ((rowIndex - hiddenLineCount) * charMeasurements.LineHeight).ToCssValue();
         
         _uiStringBuilder.Clear();
         _uiStringBuilder.Append("position: absolute; ");
@@ -996,26 +997,41 @@ public sealed class TextEditorComponentData
             textSpansList = PresentationVirtualizeAndShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
 
 			var indexInclusiveStart = presentationLayerTextSpanList.Count;
+			
+			var hiddenLineCount = 0;
+			var checkHiddenLineIndex = 0;
 
             foreach (var textSpan in textSpansList)
             {
                 var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
 
                 var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(boundsInPositionIndexUnits);
+                
+                for (; checkHiddenLineIndex < boundsInRowIndexUnits.FirstRowToSelectDataInclusive; checkHiddenLineIndex++)
+                {
+                	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
+                		hiddenLineCount++;
+                }
 
                 for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
                      i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
                      i++)
                 {
+                	checkHiddenLineIndex++;
+                	
                 	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+                	{
+                		hiddenLineCount++;
                 		continue;
+                	}
                 		
                 	presentationLayerTextSpanList.Add((
                 		PresentationGetCssClass(presentationLayer, textSpan.DecorationByte),
                 		PresentationGetCssStyleString(
                             boundsInPositionIndexUnits.StartingIndexInclusive,
                             boundsInPositionIndexUnits.EndingIndexExclusive,
-                            i)));
+                            rowIndex: i,
+                            hiddenLineCount)));
                 }
             }
             
