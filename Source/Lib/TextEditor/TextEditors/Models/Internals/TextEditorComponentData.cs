@@ -713,7 +713,8 @@ public sealed class TextEditorComponentData
     public string GetTextSelectionStyleCss(
         int lowerPositionIndexInclusive,
         int upperPositionIndexExclusive,
-        int rowIndex)
+        int rowIndex,
+        int hiddenLineCount)
     {
         if (rowIndex >= _activeRenderBatch.Model.LineEndList.Count)
             return string.Empty;
@@ -741,7 +742,7 @@ public sealed class TextEditorComponentData
 
         _uiStringBuilder.Clear();
         
-        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
+        var topInPixelsInvariantCulture = ((rowIndex - hiddenLineCount) * charMeasurements.LineHeight).ToCssValue();
         _uiStringBuilder.Append("top: ");
         _uiStringBuilder.Append(topInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
@@ -850,16 +851,31 @@ public sealed class TextEditorComponentData
 	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.upperRowIndexExclusive
 	            ? virtualUpperBoundExclusiveRowIndex
             	: selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
-            	
+            
+            var hiddenLineCount = 0;
+			var checkHiddenLineIndex = 0;
+            
+            for (; checkHiddenLineIndex < useLowerBoundInclusiveRowIndex; checkHiddenLineIndex++)
+            {
+            	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
+            		hiddenLineCount++;
+            }
+            
             for (var i = useLowerBoundInclusiveRowIndex; i < useUpperBoundExclusiveRowIndex; i++)
 	        {
+	        	checkHiddenLineIndex++;
+	        
 	        	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+	        	{
+	        		hiddenLineCount++;
 	        		continue;
+	        	}
 	        	
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
 		     	   selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
 		     	   selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
-		     	   i));
+		     	   rowIndex: i,
+		     	   hiddenLineCount));
 	        }
 	    }
     }
