@@ -69,7 +69,7 @@ public struct OnMouseDown
 			
 		if (rowAndColumnIndex.positionX < 0)
 		{
-			var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel);
+			var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel, primaryCursorModifier);
 			if (shouldGotoFinalize)
 				goto finalize;
 		}
@@ -88,7 +88,7 @@ public struct OnMouseDown
 				{
 					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
-						var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel);
+						var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel, primaryCursorModifier);
 						if (shouldGotoFinalize)
 							goto finalize;
 					}
@@ -138,7 +138,8 @@ public struct OnMouseDown
     private bool Toggle(
     	(int rowIndex, int columnIndex, double positionX, double positionY) rowAndColumnIndex,
     	TextEditorModel modelModifier,
-    	TextEditorViewModel viewModel)
+    	TextEditorViewModel viewModel,
+    	TextEditorCursorModifier primaryCursorModifier)
     {
     	var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
 		if (virtualizedIndexCollapsePoint != -1)
@@ -166,6 +167,13 @@ public struct OnMouseDown
 					for (var lineOffset = 0; lineOffset < allCollapsePoint.EndExclusiveLineIndex - allCollapsePoint.AppendToLineIndex - 1; lineOffset++)
 					{
 						viewModel.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
+						
+						if (viewModel.PrimaryCursor.LineIndex == firstToHideLineIndex + lineOffset)
+						{
+							var lineInformation = modelModifier.GetLineInformation(virtualizedCollapsePoint.AppendToLineIndex);
+							primaryCursorModifier.LineIndex = allCollapsePoint.AppendToLineIndex;
+							primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+						}
 					}
 				}
 				else

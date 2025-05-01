@@ -332,7 +332,15 @@ public sealed class TextEditorComponentData
         _uiStringBuilder.Append(leftInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
 
-        var topInPixelsInvariantCulture = (measurements.LineHeight * _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex)
+		var hiddenLineCount = 0;
+
+		for (int i = 0; i < _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex; i++)
+		{
+			if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+				hiddenLineCount++;
+		}
+
+        var topInPixelsInvariantCulture = (measurements.LineHeight * (_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex - hiddenLineCount))
             .ToCssValue();
 
 		_uiStringBuilder.Append("top: ");
