@@ -154,6 +154,29 @@ public struct OnMouseDown
 				allCollapsePoint.IsCollapsed = virtualizedCollapsePoint.IsCollapsed;
 				viewModel.AllCollapsePointList[allIndexCollapsePoint] = allCollapsePoint;
 				
+				if (allCollapsePoint.IsCollapsed)
+				{
+					var indexCollapsedCollapsePoint = viewModel.CollapsedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
+				
+					if (indexCollapsedCollapsePoint != -1)
+					{
+						var collapsedCollapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsedCollapsePoint];
+						collapsedCollapsePoint.IsCollapsed = true;
+					}
+					else
+					{
+						viewModel.CollapsedCollapsePointList.Add(allCollapsePoint);
+					}
+				}
+				else
+				{
+					var indexCollapsedCollapsePoint = viewModel.CollapsedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
+				
+					if (indexCollapsedCollapsePoint != -1)
+						viewModel.CollapsedCollapsePointList.RemoveAt(indexCollapsedCollapsePoint);
+				}
+				
+				
 				if (virtualizedCollapsePoint.IsCollapsed)
     			{
     				virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
