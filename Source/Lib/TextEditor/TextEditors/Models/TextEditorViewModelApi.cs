@@ -776,17 +776,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				}
 			}
 			
-			/*for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
-			{
-				Console.WriteLine($"\t======== LOOP 1 Start ccplCount:{viewModel.CollapsedCollapsePointList.Count} ========");
-				var collapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsePoint];
-				if (collapsePoint.AppendToLineIndex >= verticalStartingIndex)
-				{
-					Console.WriteLine($"\t======== LOOP 1 Break ========");
-					break;
-				}
-				Console.WriteLine($"\t======== LOOP 1 End ========");
-			}*/
 			Console.WriteLine($"\tindexCollapsePoint: {indexCollapsePoint}");
 			Console.WriteLine($"\thiddenCount: {hiddenCount}");
 			
@@ -839,6 +828,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					{
 						hiddenCount++;
 						lineOffset++;
+						
+						Console.WriteLine($"\t\thiddenCount: {hiddenCount}");
 						continue;
 					}
 

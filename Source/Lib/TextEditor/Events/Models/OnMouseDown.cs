@@ -167,6 +167,8 @@ public struct OnMouseDown
 					viewModel.HiddenLineIndexHashSet.Clear();
 					foreach (var collapsePoint in viewModel.AllCollapsePointList)
 					{
+						if (!collapsePoint.IsCollapsed)
+							continue;
 						var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
 						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
 						{
