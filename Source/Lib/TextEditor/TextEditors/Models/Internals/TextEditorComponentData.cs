@@ -641,7 +641,11 @@ public sealed class TextEditorComponentData
                 if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
                     upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
                 {
-                    _virtualizedTextSpanList.Add(textSpan);
+                	if (!_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(
+                			_activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(textSpan.StartingIndexInclusive).lineIndex))
+                	{
+                		_virtualizedTextSpanList.Add(textSpan);
+                	}
                 }
             }
         }
