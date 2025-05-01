@@ -765,30 +765,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			var previousEndExclusiveLineIndex = 0; // For nested chevrons
 			for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
 			{
-				var collapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsePoint];
 				
-				if (collapsePoint.AppendToLineIndex >= verticalStartingIndex)
-					break;
-				
-				int pseudoRollupLineIndex;
-				
-				if (collapsePoint.AppendToLineIndex < previousEndExclusiveLineIndex)
-					pseudoRollupLineIndex = previousEndExclusiveLineIndex;
-				else
-					pseudoRollupLineIndex = collapsePoint.AppendToLineIndex;
-				
-				hiddenCount += collapsePoint.EndExclusiveLineIndex - pseudoRollupLineIndex - 1;
-				
-				if (collapsePoint.EndExclusiveLineIndex > previousEndExclusiveLineIndex)
-					previousEndExclusiveLineIndex = collapsePoint.EndExclusiveLineIndex;
 			}
-			
-			/*for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
-			{
-				var collapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsePoint];
-				if (collapsePoint.LineIndex >= verticalStartingIndex)
-					break;
-			}*/
 			
 			verticalStartingIndex += hiddenCount;
 			
@@ -840,27 +818,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					var isCollapsed = false;
 					for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
 					{
-						var collapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsePoint];
 						
-						if (lineIndex > collapsePoint.AppendToLineIndex && lineIndex < collapsePoint.EndExclusiveLineIndex ||
-							previousEndExclusiveLineIndex > lineIndex)
-						{
-							isCollapsed = true;
-						}
-						
-						int pseudoRollupLineIndex;
-						
-						if (collapsePoint.AppendToLineIndex < previousEndExclusiveLineIndex)
-							pseudoRollupLineIndex = previousEndExclusiveLineIndex;
-						else
-							pseudoRollupLineIndex = collapsePoint.AppendToLineIndex;
-						
-						var distanceCollapsePoint = collapsePoint.EndExclusiveLineIndex - pseudoRollupLineIndex - 1;
-						hiddenCount += distanceCollapsePoint;
-						lineOffset += distanceCollapsePoint;
-						
-						if (collapsePoint.EndExclusiveLineIndex > previousEndExclusiveLineIndex)
-							previousEndExclusiveLineIndex = collapsePoint.EndExclusiveLineIndex;
 					}
 					if (isCollapsed)
 						continue;
