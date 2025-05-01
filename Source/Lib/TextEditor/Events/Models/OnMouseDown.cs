@@ -140,25 +140,25 @@ public struct OnMouseDown
     	TextEditorModel modelModifier,
     	TextEditorViewModel viewModel)
     {
-    	var virtualizedIndexGutterChevron = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
-		if (virtualizedIndexGutterChevron != -1)
+    	var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
+		if (virtualizedIndexCollapsePoint != -1)
 		{
-			var allIndexGutterChevron = viewModel.AllCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
-			if (allIndexGutterChevron != -1)
+			var allIndexCollapsePoint = viewModel.AllCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
+			if (allIndexCollapsePoint != -1)
 			{
-				var virtualizedGutterChevron = viewModel.VirtualizedCollapsePointList[virtualizedIndexGutterChevron];
-				virtualizedGutterChevron.IsCollapsed = !virtualizedGutterChevron.IsCollapsed;
-				viewModel.VirtualizedCollapsePointList[virtualizedIndexGutterChevron] = virtualizedGutterChevron;
+				var virtualizedCollapsePoint = viewModel.VirtualizedCollapsePointList[virtualizedIndexCollapsePoint];
+				virtualizedCollapsePoint.IsCollapsed = !virtualizedCollapsePoint.IsCollapsed;
+				viewModel.VirtualizedCollapsePointList[virtualizedIndexCollapsePoint] = virtualizedCollapsePoint;
 				
-				var allGutterChevron = viewModel.AllCollapsePointList[allIndexGutterChevron];
-				allGutterChevron.IsCollapsed = virtualizedGutterChevron.IsCollapsed;
-				viewModel.AllCollapsePointList[allIndexGutterChevron] = allGutterChevron;
+				var allCollapsePoint = viewModel.AllCollapsePointList[allIndexCollapsePoint];
+				allCollapsePoint.IsCollapsed = virtualizedCollapsePoint.IsCollapsed;
+				viewModel.AllCollapsePointList[allIndexCollapsePoint] = allCollapsePoint;
 				
-				if (virtualizedGutterChevron.IsCollapsed)
+				if (virtualizedCollapsePoint.IsCollapsed)
     			{
-    				virtualizedIndexGutterChevron = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
+    				virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
     				
-    				var lineInformation = modelModifier.GetLineInformation(virtualizedGutterChevron.AppendToLineIndex);
+    				var lineInformation = modelModifier.GetLineInformation(virtualizedCollapsePoint.AppendToLineIndex);
     				
     				var inlineUi = new InlineUi(
     					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
@@ -168,14 +168,14 @@ public struct OnMouseDown
     				viewModel.InlineUiList.Add(
     					(
     						inlineUi,
-            				Tag: virtualizedGutterChevron.Identifier
+            				Tag: virtualizedCollapsePoint.Identifier
             			));
     			}
     			else
     			{
     				// TODO: Bad, this only permits one name regardless of scope
     				var indexTagMatchedInlineUi = viewModel.InlineUiList.FindIndex(
-    					x => x.Tag == virtualizedGutterChevron.Identifier);
+    					x => x.Tag == virtualizedCollapsePoint.Identifier);
     					
     				if (indexTagMatchedInlineUi != -1)
     				{

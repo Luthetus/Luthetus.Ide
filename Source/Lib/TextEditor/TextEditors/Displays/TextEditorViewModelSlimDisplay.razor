@@ -61,22 +61,22 @@
 		            @(virtualizedRow.LineIndex + 1)
 		            
 		            @{
-		            	var gutterChevron = new CollapsePoint(-1, false, string.Empty, -1);
+		            	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
 		            	
 		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
 		            	{
 		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedRow.LineIndex)
 		            		{
-		            			gutterChevron = _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i];
+		            			collapsePoint = _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i];
 		            			break;
 		            		}
 		            	}
 		            }
 
-    				@if (gutterChevron.AppendToLineIndex == virtualizedRow.LineIndex)
+    				@if (collapsePoint.AppendToLineIndex == virtualizedRow.LineIndex)
     				{
 					    <span class="luth_te_gutter-chevron">
-					    	@if (gutterChevron.IsCollapsed)
+					    	@if (collapsePoint.IsCollapsed)
 					    	{
 					    		@IconChevronRightFragment.Render(_iconDriver)
 					    	}

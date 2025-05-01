@@ -761,32 +761,32 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				viewModel.CharAndLineMeasurements.CharacterWidth);
 			
 			var hiddenCount = 0;
-			var indexGutterChevron = 0;
+			var indexCollapsePoint = 0;
 			var previousEndExclusiveLineIndex = 0; // For nested chevrons
-			for (; indexGutterChevron < viewModel.CollapsedCollapsePointList.Count; indexGutterChevron++)
+			for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
 			{
-				var gutterChevron = viewModel.CollapsedCollapsePointList[indexGutterChevron];
+				var collapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsePoint];
 				
-				if (gutterChevron.AppendToLineIndex >= verticalStartingIndex)
+				if (collapsePoint.AppendToLineIndex >= verticalStartingIndex)
 					break;
 				
 				int pseudoRollupLineIndex;
 				
-				if (gutterChevron.AppendToLineIndex < previousEndExclusiveLineIndex)
+				if (collapsePoint.AppendToLineIndex < previousEndExclusiveLineIndex)
 					pseudoRollupLineIndex = previousEndExclusiveLineIndex;
 				else
-					pseudoRollupLineIndex = gutterChevron.AppendToLineIndex;
+					pseudoRollupLineIndex = collapsePoint.AppendToLineIndex;
 				
-				hiddenCount += gutterChevron.EndExclusiveLineIndex - pseudoRollupLineIndex - 1;
+				hiddenCount += collapsePoint.EndExclusiveLineIndex - pseudoRollupLineIndex - 1;
 				
-				if (gutterChevron.EndExclusiveLineIndex > previousEndExclusiveLineIndex)
-					previousEndExclusiveLineIndex = gutterChevron.EndExclusiveLineIndex;
+				if (collapsePoint.EndExclusiveLineIndex > previousEndExclusiveLineIndex)
+					previousEndExclusiveLineIndex = collapsePoint.EndExclusiveLineIndex;
 			}
 			
-			/*for (; indexGutterChevron < viewModel.CollapsedGutterChevronList.Count; indexGutterChevron++)
+			/*for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
 			{
-				var gutterChevron = viewModel.CollapsedGutterChevronList[indexGutterChevron];
-				if (gutterChevron.LineIndex >= verticalStartingIndex)
+				var collapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsePoint];
+				if (collapsePoint.LineIndex >= verticalStartingIndex)
 					break;
 			}*/
 			
@@ -835,14 +835,14 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				
 					var lineIndex = verticalStartingIndex + lineOffset;
 					
-					// TODO: Save the index you stopped at in the previous 'AllGutterChevronList' for loop...
+					// TODO: Save the index you stopped at in the previous 'AllCollapsePointList' for loop...
 					// ...and use it as the starting point here.
 					var isCollapsed = false;
-					for (; indexGutterChevron < viewModel.CollapsedCollapsePointList.Count; indexGutterChevron++)
+					for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
 					{
-						var gutterChevron = viewModel.CollapsedCollapsePointList[indexGutterChevron];
+						var collapsePoint = viewModel.CollapsedCollapsePointList[indexCollapsePoint];
 						
-						if (lineIndex > gutterChevron.AppendToLineIndex && lineIndex < gutterChevron.EndExclusiveLineIndex ||
+						if (lineIndex > collapsePoint.AppendToLineIndex && lineIndex < collapsePoint.EndExclusiveLineIndex ||
 							previousEndExclusiveLineIndex > lineIndex)
 						{
 							isCollapsed = true;
@@ -850,17 +850,17 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						
 						int pseudoRollupLineIndex;
 						
-						if (gutterChevron.AppendToLineIndex < previousEndExclusiveLineIndex)
+						if (collapsePoint.AppendToLineIndex < previousEndExclusiveLineIndex)
 							pseudoRollupLineIndex = previousEndExclusiveLineIndex;
 						else
-							pseudoRollupLineIndex = gutterChevron.AppendToLineIndex;
+							pseudoRollupLineIndex = collapsePoint.AppendToLineIndex;
 						
-						var distanceGutterChevron = gutterChevron.EndExclusiveLineIndex - pseudoRollupLineIndex - 1;
-						hiddenCount += distanceGutterChevron;
-						lineOffset += distanceGutterChevron;
+						var distanceCollapsePoint = collapsePoint.EndExclusiveLineIndex - pseudoRollupLineIndex - 1;
+						hiddenCount += distanceCollapsePoint;
+						lineOffset += distanceCollapsePoint;
 						
-						if (gutterChevron.EndExclusiveLineIndex > previousEndExclusiveLineIndex)
-							previousEndExclusiveLineIndex = gutterChevron.EndExclusiveLineIndex;
+						if (collapsePoint.EndExclusiveLineIndex > previousEndExclusiveLineIndex)
+							previousEndExclusiveLineIndex = collapsePoint.EndExclusiveLineIndex;
 					}
 					if (isCollapsed)
 						continue;
