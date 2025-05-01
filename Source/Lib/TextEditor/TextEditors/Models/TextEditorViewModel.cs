@@ -254,6 +254,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// TODO: This does not belong here move this to the 'TextEditorViewModelSlimDisplay.razor'.
     /// </summary>
     public List<CollapsePoint> VirtualizedCollapsePointList { get; set; } = new();
+    public bool HiddenLineIndexHashSetIsShallowCopy { get; set; }
     public HashSet<int> HiddenLineIndexHashSet { get; set; } = new();
     /// <summary>
     /// For the time being, this similarly named list on the TextEditorModel will be added

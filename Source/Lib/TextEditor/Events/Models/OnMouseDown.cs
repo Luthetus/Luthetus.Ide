@@ -154,6 +154,12 @@ public struct OnMouseDown
 				allCollapsePoint.IsCollapsed = virtualizedCollapsePoint.IsCollapsed;
 				viewModel.AllCollapsePointList[allIndexCollapsePoint] = allCollapsePoint;
 				
+				if (!viewModel.HiddenLineIndexHashSetIsShallowCopy)
+				{
+					viewModel.HiddenLineIndexHashSet = new HashSet<int>(viewModel.HiddenLineIndexHashSet);
+					viewModel.HiddenLineIndexHashSetIsShallowCopy = true;
+				}
+				
 				if (allCollapsePoint.IsCollapsed)
 				{
 					var firstToHideLineIndex = allCollapsePoint.AppendToLineIndex + 1;
