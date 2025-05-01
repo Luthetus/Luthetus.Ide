@@ -177,7 +177,6 @@ public struct OnMouseDown
 					}
 				}
 				
-				
 				if (virtualizedCollapsePoint.IsCollapsed)
     			{
     				virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);

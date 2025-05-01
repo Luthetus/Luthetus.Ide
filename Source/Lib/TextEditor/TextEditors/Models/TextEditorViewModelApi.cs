@@ -827,7 +827,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					if (viewModel.HiddenLineIndexHashSet.Contains(lineIndex))
 					{
 						hiddenCount++;
-						lineOffset++;
 						
 						Console.WriteLine($"\t\thiddenCount: {hiddenCount}");
 						continue;
