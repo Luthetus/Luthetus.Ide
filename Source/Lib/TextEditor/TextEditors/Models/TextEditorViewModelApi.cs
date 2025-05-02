@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -616,6 +617,10 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         {
         	switch (keymapArgs.Key)
         	{
+        		case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+        		{
+        			break;
+        		}
         		case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
         		{
         			var success = false;
@@ -656,7 +661,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         			
         			break;
         		}
-        		case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
         		case KeyboardKeyFacts.MovementKeys.ARROW_UP:
         		{
         			var success = false;
@@ -698,6 +702,30 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         			break;
         		}
         		case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+    			{
+        			CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
+
+        			foreach (var collapsePoint in viewModel.AllCollapsePointList)
+        			{
+        				var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
+						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
+						{
+							if (cursorModifier.LineIndex == firstToHideLineIndex + lineOffset)
+								encompassingCollapsePoint = collapsePoint;
+						}
+        			}
+        			
+        			if (encompassingCollapsePoint.AppendToLineIndex != -1)
+        			{
+        				var lineIndex = encompassingCollapsePoint.EndExclusiveLineIndex - 1;
+        			
+        				var lineInformation = modelModifier.GetLineInformation(lineIndex);
+						cursorModifier.LineIndex = lineIndex;
+						cursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+        			}
+	        			
+        			break;
+        		}
         		case KeyboardKeyFacts.MovementKeys.HOME:
         		case KeyboardKeyFacts.MovementKeys.END:
         		{
