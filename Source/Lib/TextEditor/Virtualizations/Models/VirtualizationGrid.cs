@@ -181,13 +181,29 @@ public record VirtualizationGrid
 			
 			if (virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart <= 0)
 				continue;
+			
+			(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
+			var inlineUi = new InlineUi(0, InlineUiKind.None);
+			
+			foreach (var inlineUiTuple in viewModel.InlineUiList)
+			{
+				lineAndColumnIndices = model.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
 				
+				if (lineAndColumnIndices.lineIndex == virtualizationEntry.LineIndex)
+					inlineUi = inlineUiTuple.InlineUi;
+			}
+			
 			virtualizationEntry.VirtualizationSpanIndexInclusiveStart = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 			
 			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
 		    
 		    for (int i = virtualizationEntry.PositionIndexInclusiveStart; i < virtualizationEntry.PositionIndexExclusiveEnd; i++)
 		    {
+		    	if (inlineUi.InlineUiKind != InlineUiKind.None && inlineUi.PositionIndex == i)
+		    	{
+		    		textEditorService.__StringBuilder.Append("&nbsp;&nbsp;&nbsp;");
+		    	}
+		    	
 		    	var richCharacter = model.RichCharacterList[i];
 		    	 
 				if (currentDecorationByte == richCharacter.DecorationByte)

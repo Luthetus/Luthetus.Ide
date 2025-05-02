@@ -268,7 +268,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// separate viewmodels that reference the same underlying model
     /// should have different collapse/expand states.
     /// </summary>
-    public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; } = new();
+    public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; } = new() { (new InlineUi(10, InlineUiKind.ThreeDotsExpandInlineUiThing), "aaa") };
     public bool UiOutdated { get; set; }
     
     public bool ScrollWasModified { get; set; }
