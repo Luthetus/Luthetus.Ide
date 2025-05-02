@@ -202,6 +202,29 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                onKeyDown.ComponentData.TextEditorComponentRenderers);
 		            shouldRevealCursor = true;
 		            break;
+	            case "KeyM":
+            		CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
+
+					foreach (var collapsePoint in viewModel.AllCollapsePointList)
+					{
+						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex; lineOffset++)
+						{
+							if (primaryCursorModifier.LineIndex == collapsePoint.AppendToLineIndex + lineOffset)
+								encompassingCollapsePoint = collapsePoint;
+						}
+					}
+					
+	            	if (encompassingCollapsePoint.AppendToLineIndex != -1)
+	            	{
+	            		_ = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(
+		            		encompassingCollapsePoint.AppendToLineIndex,
+	            			modelModifier,
+	            			viewModel,
+	            			primaryCursorModifier);
+	            	}
+					
+		            shouldRevealCursor = true;
+		            break;
 		        case "KeyF":
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{

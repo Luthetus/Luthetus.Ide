@@ -985,6 +985,120 @@ public class TextEditorCommandDefaultFunctions
 				modelModifier.ResourceUri)
 			.ConfigureAwait(false);
     }
+    
+    /// <summary>
+    /// Returns whether you should goto finalize.
+    /// </summary>
+    public static bool ToggleCollapsePoint(
+    	int lineIndex,
+    	TextEditorModel modelModifier,
+    	TextEditorViewModel viewModel,
+    	TextEditorCursorModifier primaryCursorModifier)
+    {
+    	var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
+		if (virtualizedIndexCollapsePoint != -1)
+		{
+			var allIndexCollapsePoint = viewModel.AllCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
+			if (allIndexCollapsePoint != -1)
+			{
+				var virtualizedCollapsePoint = viewModel.VirtualizedCollapsePointList[virtualizedIndexCollapsePoint];
+				virtualizedCollapsePoint.IsCollapsed = !virtualizedCollapsePoint.IsCollapsed;
+				viewModel.VirtualizedCollapsePointList[virtualizedIndexCollapsePoint] = virtualizedCollapsePoint;
+				
+				var allCollapsePoint = viewModel.AllCollapsePointList[allIndexCollapsePoint];
+				allCollapsePoint.IsCollapsed = virtualizedCollapsePoint.IsCollapsed;
+				viewModel.AllCollapsePointList[allIndexCollapsePoint] = allCollapsePoint;
+				
+				if (!viewModel.HiddenLineIndexHashSetIsShallowCopy)
+				{
+					viewModel.HiddenLineIndexHashSet = new HashSet<int>(viewModel.HiddenLineIndexHashSet);
+					viewModel.HiddenLineIndexHashSetIsShallowCopy = true;
+				}
+				
+				if (allCollapsePoint.IsCollapsed)
+				{
+					var firstToHideLineIndex = allCollapsePoint.AppendToLineIndex + 1;
+					var upperExclusiveLimit = allCollapsePoint.EndExclusiveLineIndex - allCollapsePoint.AppendToLineIndex - 1;
+					for (var lineOffset = 0; lineOffset < upperExclusiveLimit; lineOffset++)
+					{
+						viewModel.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
+						
+						if (viewModel.PrimaryCursor.LineIndex == firstToHideLineIndex + lineOffset)
+						{
+							var shouldMoveCursor = true;
+						
+							if (lineOffset == upperExclusiveLimit - 1)
+							{
+								var loopLineInformation = modelModifier.GetLineInformation(firstToHideLineIndex + lineOffset);
+								
+								if (primaryCursorModifier.ColumnIndex == loopLineInformation.LastValidColumnIndex)
+									shouldMoveCursor = false;
+							}
+							
+							if (shouldMoveCursor)
+							{
+								var appendToLineInformation = modelModifier.GetLineInformation(virtualizedCollapsePoint.AppendToLineIndex);
+								primaryCursorModifier.LineIndex = allCollapsePoint.AppendToLineIndex;
+								primaryCursorModifier.SetColumnIndexAndPreferred(appendToLineInformation.LastValidColumnIndex);
+							}
+						}
+					}
+				}
+				else
+				{
+					viewModel.HiddenLineIndexHashSet.Clear();
+					foreach (var collapsePoint in viewModel.AllCollapsePointList)
+					{
+						if (!collapsePoint.IsCollapsed)
+							continue;
+						var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
+						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
+						{
+							viewModel.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
+						}
+					}
+				}
+				
+				if (virtualizedCollapsePoint.IsCollapsed)
+    			{
+    				virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
+    				
+    				var lineInformation = modelModifier.GetLineInformation(virtualizedCollapsePoint.AppendToLineIndex);
+    				
+    				var inlineUi = new InlineUi(
+    					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+    					InlineUiKind.ThreeDotsExpandInlineUiThing);
+    				
+    				modelModifier.InlineUiList.Add(inlineUi);
+    				viewModel.InlineUiList.Add(
+    					(
+    						inlineUi,
+            				Tag: virtualizedCollapsePoint.Identifier
+            			));
+    			}
+    			else
+    			{
+    				// TODO: Bad, this only permits one name regardless of scope
+    				var indexTagMatchedInlineUi = viewModel.InlineUiList.FindIndex(
+    					x => x.Tag == virtualizedCollapsePoint.Identifier);
+    					
+    				if (indexTagMatchedInlineUi != -1)
+    				{
+        				var indexModelInlineUi = modelModifier.InlineUiList.FindIndex(
+    						x => x.PositionIndex == viewModel.InlineUiList[indexTagMatchedInlineUi].InlineUi.PositionIndex);
+    					modelModifier.InlineUiList.RemoveAt(indexModelInlineUi);
+        				
+        				viewModel.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
+    				}
+    			}
+				
+				viewModel.ShouldReloadVirtualizationResult = true;
+				return true;
+			}
+		}
+		
+		return false;
+    }
 
 	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
 	public static async ValueTask HandleAfterOnKeyDownAsync(
