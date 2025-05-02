@@ -67,7 +67,8 @@ public struct OnMouseDown
 				editContext)
 			.ConfigureAwait(false);
 			
-		if (rowAndColumnIndex.positionX < 0)
+		if (rowAndColumnIndex.positionX < -4 &&
+			rowAndColumnIndex.positionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
 		{
 			var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel, primaryCursorModifier);
 			if (shouldGotoFinalize)
