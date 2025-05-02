@@ -87,7 +87,8 @@ public struct OnMouseDown
 			
 				if (rowAndColumnIndex.rowIndex == lineInformation.Index)
 				{
-					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2 &&
+					    rowAndColumnIndex.positionX < (lineInformation.LastValidColumnIndex + 3) * viewModel.CharAndLineMeasurements.CharacterWidth)
 					{
 						var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel, primaryCursorModifier);
 						if (shouldGotoFinalize)
