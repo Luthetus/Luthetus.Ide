@@ -619,6 +619,38 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         	{
         		case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
         		{
+        			CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
+
+        			foreach (var collapsePoint in viewModel.AllCollapsePointList)
+        			{
+        				var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
+						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
+						{
+							if (cursorModifier.LineIndex == firstToHideLineIndex + lineOffset)
+								encompassingCollapsePoint = collapsePoint;
+						}
+        			}
+        			
+        			if (encompassingCollapsePoint.AppendToLineIndex != -1)
+        			{
+        				var lineIndex = encompassingCollapsePoint.EndExclusiveLineIndex - 1;
+        				var lineInformation = modelModifier.GetLineInformation(lineIndex);
+        				
+        				if (cursorModifier.ColumnIndex != lineInformation.LastValidColumnIndex)
+        				{
+        					for (int i = cursorModifier.LineIndex; i >= 0; i--)
+		        			{
+		        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+		        				{
+		        					cursorModifier.LineIndex = i;
+		        					lineInformation = modelModifier.GetLineInformation(i);
+		        					cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+		        					break;
+		        				}
+		        			}
+        				}
+        			}
+        		
         			break;
         		}
         		case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
