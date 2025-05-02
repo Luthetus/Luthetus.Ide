@@ -277,6 +277,14 @@ public static class EventUtils
         
         var rowIndex = (int)(positionY / charMeasurements.LineHeight);
         
+        var hiddenLineCount = 0;
+        
+		for (int i = 0; i <= rowIndex; i++)
+		{
+			if (viewModel.HiddenLineIndexHashSet.Contains(i))
+				rowIndex++;
+		}
+        
         rowIndex = rowIndex > modelModifier.LineCount - 1
             ? modelModifier.LineCount - 1
             : rowIndex;
