@@ -164,15 +164,29 @@ public struct OnMouseDown
 				if (allCollapsePoint.IsCollapsed)
 				{
 					var firstToHideLineIndex = allCollapsePoint.AppendToLineIndex + 1;
-					for (var lineOffset = 0; lineOffset < allCollapsePoint.EndExclusiveLineIndex - allCollapsePoint.AppendToLineIndex - 1; lineOffset++)
+					var upperExclusiveLimit = allCollapsePoint.EndExclusiveLineIndex - allCollapsePoint.AppendToLineIndex - 1;
+					for (var lineOffset = 0; lineOffset < upperExclusiveLimit; lineOffset++)
 					{
 						viewModel.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
 						
 						if (viewModel.PrimaryCursor.LineIndex == firstToHideLineIndex + lineOffset)
 						{
-							var lineInformation = modelModifier.GetLineInformation(virtualizedCollapsePoint.AppendToLineIndex);
-							primaryCursorModifier.LineIndex = allCollapsePoint.AppendToLineIndex;
-							primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+							var shouldMoveCursor = true;
+						
+							if (lineOffset == upperExclusiveLimit - 1)
+							{
+								var loopLineInformation = modelModifier.GetLineInformation(firstToHideLineIndex + lineOffset);
+								
+								if (primaryCursorModifier.ColumnIndex == loopLineInformation.LastValidColumnIndex)
+									shouldMoveCursor = false;
+							}
+							
+							if (shouldMoveCursor)
+							{
+								var appendToLineInformation = modelModifier.GetLineInformation(virtualizedCollapsePoint.AppendToLineIndex);
+								primaryCursorModifier.LineIndex = allCollapsePoint.AppendToLineIndex;
+								primaryCursorModifier.SetColumnIndexAndPreferred(appendToLineInformation.LastValidColumnIndex);
+							}
 						}
 					}
 				}

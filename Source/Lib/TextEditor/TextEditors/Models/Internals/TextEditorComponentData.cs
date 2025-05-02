@@ -313,6 +313,9 @@ public sealed class TextEditorComponentData
 
 		foreach (var collapsePoint in _activeRenderBatch.ViewModel.AllCollapsePointList)
 		{
+			if (!collapsePoint.IsCollapsed)
+				continue;
+		
 			var lastLineIndex = collapsePoint.EndExclusiveLineIndex - 1;
 			
 			if (lastLineIndex == _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex)
