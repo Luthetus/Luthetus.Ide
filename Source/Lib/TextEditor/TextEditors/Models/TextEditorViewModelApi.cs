@@ -706,7 +706,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         					
         					var lineInformation = modelModifier.GetLineInformation(i);
         					
-        					if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+        					if (cursorModifier.PreferredColumnIndex <= lineInformation.LastValidColumnIndex)
+        						cursorModifier.ColumnIndex = cursorModifier.PreferredColumnIndex;
+        					else if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
         						cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
         					
         					break;
