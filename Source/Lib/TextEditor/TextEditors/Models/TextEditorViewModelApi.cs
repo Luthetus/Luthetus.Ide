@@ -1020,17 +1020,17 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						var line = modelModifier.GetLineInformation(lineIndex);
 						var firstInlineUiOnLineIndex = -1;
 						var foundLine = false;
-						var inlineUiListCount = modelModifier.InlineUiList.Count;
+						var tabCharPositionIndexListCount = modelModifier.TabCharPositionIndexList.Count;
 				
 						// Move the horizontal starting index based on the extra character width from 'tab' characters.
-						for (int i = 0; i < inlineUiListCount; i++)
+						for (int i = 0; i < tabCharPositionIndexListCount; i++)
 						{
-							var inlineUi = modelModifier.InlineUiList[i];
-							var tabKeyColumnIndex = inlineUi.PositionIndex - line.StartPositionIndexInclusive;
+							var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
+							var tabKeyColumnIndex = tabCharPositionIndex - line.StartPositionIndexInclusive;
 						
 							if (!foundLine)
 							{
-								if (inlineUi.PositionIndex >= line.StartPositionIndexInclusive)
+								if (tabCharPositionIndex >= line.StartPositionIndexInclusive)
 								{
 									firstInlineUiOnLineIndex = i;
 									foundLine = true;
@@ -1060,11 +1060,11 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						// Count the 'tab' characters that are among the text to display so that the 'width' can be modified by the extra width.
 						if (firstInlineUiOnLineIndex != -1)
 						{
-							for (int i = firstInlineUiOnLineIndex; i < inlineUiListCount; i++)
+							for (int i = firstInlineUiOnLineIndex; i < tabCharPositionIndexListCount; i++)
 							{
-								var inlineUi = modelModifier.InlineUiList[i];
+								var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
 								
-								var tabKeyColumnIndex = inlineUi.PositionIndex - line.StartPositionIndexInclusive;
+								var tabKeyColumnIndex = tabCharPositionIndex - line.StartPositionIndexInclusive;
 								
 								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
 									break;
@@ -1124,17 +1124,17 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						var resultTabCount = 0;
 				
 						// Count the tabs that are among the rendered content.
-						foreach (var inlineUi in modelModifier.InlineUiList)
+						foreach (var tabCharPositionIndex in modelModifier.TabCharPositionIndexList)
 						{
 							if (!foundLine)
 							{
-								if (inlineUi.PositionIndex >= line.StartPositionIndexInclusive)
+								if (tabCharPositionIndex >= line.StartPositionIndexInclusive)
 									foundLine = true;
 							}
 							
 							if (foundLine)
 							{
-								if (inlineUi.PositionIndex >= line.LastValidColumnIndex)
+								if (tabCharPositionIndex >= line.LastValidColumnIndex)
 									break;
 							
 								resultTabCount++;

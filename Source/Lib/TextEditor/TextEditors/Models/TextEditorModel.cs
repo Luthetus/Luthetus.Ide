@@ -45,7 +45,7 @@ public partial class TextEditorModel
 	    ViewModelKeyList = new();
 	    LineEndList = new();
 	    PresentationModelList = new();
-	    InlineUiList = new();
+	    TabCharPositionIndexList = new();
 	    OnlyLineEndKind = LineEndKind.Unset;
 	    LineEndKindPreference = LineEndKind.Unset;
 	    ResourceUri = resourceUri;
@@ -82,7 +82,7 @@ public partial class TextEditorModel
 	    ViewModelKeyList = other.ViewModelKeyList;
 	    LineEndList = other.LineEndList;
 	    PresentationModelList = other.PresentationModelList;
-	    InlineUiList = other.InlineUiList;
+	    TabCharPositionIndexList = other.TabCharPositionIndexList;
         OnlyLineEndKind = other.OnlyLineEndKind;
 	    LineEndKindPreference = other.LineEndKindPreference;
 	    ResourceUri = other.ResourceUri;
@@ -236,7 +236,7 @@ public partial class TextEditorModel
     private bool _presentationModelListIsShallowCopy;
     public List<TextEditorPresentationModel> PresentationModelList { get; set; }
     
-    public List<InlineUi> InlineUiList { get; set; }
+    public List<int> TabCharPositionIndexList { get; set; }
     public LineEndKind OnlyLineEndKind { get; set; }
     public LineEndKind LineEndKindPreference { get; private set; }
     public ResourceUri ResourceUri { get; set; }
@@ -326,7 +326,7 @@ public partial class TextEditorModel
             new LineEnd(0, 0, LineEndKind.EndOfFile)
         };
 
-        InlineUiList = new List<InlineUi>();
+        TabCharPositionIndexList = new();
 
         SetIsDirtyTrue();
     }
@@ -499,154 +499,83 @@ public partial class TextEditorModel
         var rowIndex = 0;
         var charactersOnRow = 0;
 
-        
-
         List<RichCharacter> richCharacterList = new();
-
         var richCharacterIndex = 0;
-
-        
 
         for (var contentIndex = 0; contentIndex < content.Length; contentIndex++)
         {
             var character = content[contentIndex];
-
             charactersOnRow++;
-
-            
 
             LineEndKind currentLineEndKind = LineEndKind.Unset;
 
-            
-
             if ((character == '\r') && (contentIndex < content.Length - 1) && (content[contentIndex + 1] == '\n'))
-
             {
-
             	contentIndex++;
-
             	currentLineEndKind = LineEndKind.CarriageReturnLineFeed;
 
-            	
-
             	if (LineEndKindPreference == LineEndKind.Unset)
-
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
 
             }
-
             else if (character == '\r')
-
             {
-
             	currentLineEndKind = LineEndKind.CarriageReturn;
 
-            	
-
             	if (LineEndKindPreference == LineEndKind.Unset)
 
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
-
             }
-
             else if (character == '\n')
-
             {
-
             	currentLineEndKind = LineEndKind.LineFeed;
 
-            	
-
             	if (LineEndKindPreference == LineEndKind.Unset)
-
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
-
             }
-
-            
 
             if (currentLineEndKind != LineEndKind.Unset)
-
             {
-
 				if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-
 					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-            
-
             	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
-
             	{
-
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, LineEndKind.CarriageReturnLineFeed));
-
 	            	richCharacterList.Add(new(character, default));
-
 	            	richCharacterList.Add(new('\n', default));
-
 	            	richCharacterIndex += 2;
-
             	}
-
             	else if (LineEndKindPreference == LineEndKind.CarriageReturn)
-
             	{
-
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.CarriageReturn));
-
 					richCharacterList.Add(new(character, default));
-
 	            	richCharacterIndex++;
-
             	}
-
             	else if (LineEndKindPreference == LineEndKind.LineFeed)
-
             	{
-
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.LineFeed));
-
 					richCharacterList.Add(new(character, default));
-
 	            	richCharacterIndex++;
-
             	}
-
             	else
-
             	{
-
             		throw new NotImplementedException("only CarriageReturnLineFeed, CarriageReturn, and LineFeed are expected.");
-
             	}
-
-				
 
 				rowIndex++;
-
 	            charactersOnRow = 0;
-
             }
 			else if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-
 			{
-                InlineUiList.Add(new InlineUi(richCharacterIndex, InlineUiKind.Tab));
-
+                TabCharPositionIndexList.Add(richCharacterIndex);
                 richCharacterList.Add(new(character, default));
-
             	richCharacterIndex++;
-
             }
-
             else
-
             {
-
             	richCharacterList.Add(new(character, default));
-
             	richCharacterIndex++;
-
             }
         }
         
@@ -1210,7 +1139,7 @@ public partial class TextEditorModel
 
 		// Use 'int.MinValue' to represent null.
         (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, new());
-        (int index, List<InlineUi> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, new());
+        (int index, List<int> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, new());
 
         var lineEndingsChangedValueBuilder = new StringBuilder();
 
@@ -1296,14 +1225,14 @@ public partial class TextEditorModel
                 {
                     if (tabPositionLazyInsertRange.index == int.MinValue)
                     {
-                        tabPositionLazyInsertRange.index = InlineUiList.FindIndex(x => x.PositionIndex >= initialCursorPositionIndex);
+                        tabPositionLazyInsertRange.index = TabCharPositionIndexList.FindIndex(x => x >= initialCursorPositionIndex);
 
                         if (tabPositionLazyInsertRange.index == -1)
-                            tabPositionLazyInsertRange.index = InlineUiList.Count;
+                            tabPositionLazyInsertRange.index = TabCharPositionIndexList.Count;
                     }
 
                     tabPositionLazyInsertRange.localTabPositionList.Add(
-                    	new InlineUi(initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length, InlineUiKind.Tab));
+                    	initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length);
                 }
 
                 lineEndingsChangedValueBuilder.Append(charValue);
@@ -1327,13 +1256,14 @@ public partial class TextEditorModel
 
         // Reposition the Tabs
         {
-            var firstTabKeyPositionIndexToModify = InlineUiList.FindIndex(x => x.PositionIndex >= initialCursorPositionIndex);
+            var firstTabKeyPositionIndexToModify = TabCharPositionIndexList.FindIndex(x => x >= initialCursorPositionIndex);
 
             if (firstTabKeyPositionIndexToModify != -1)
             {
-                for (var i = firstTabKeyPositionIndexToModify; i < InlineUiList.Count; i++)
+                for (var i = firstTabKeyPositionIndexToModify; i < TabCharPositionIndexList.Count; i++)
                 {
-                    InlineUiList[i] = InlineUiList[i].WithIncrementPositionIndex(lineEndingsChangedValueBuilder.Length);
+                	var tabCharPositionIndex = TabCharPositionIndexList[i];
+                    TabCharPositionIndexList[i] = tabCharPositionIndex + lineEndingsChangedValueBuilder.Length;
                 }
             }
         }
@@ -1367,7 +1297,7 @@ public partial class TextEditorModel
 
             if (tabPositionLazyInsertRange.index != int.MinValue)
             {
-                InlineUiList.InsertRange(
+                TabCharPositionIndexList.InsertRange(
                     tabPositionLazyInsertRange.index,
                     tabPositionLazyInsertRange.localTabPositionList);
             }
@@ -1658,8 +1588,7 @@ public partial class TextEditorModel
 
                     if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                     {
-                        var indexTabKey = InlineUiList.FindIndex(
-                            x => x.PositionIndex == toDeletePositionIndex);
+                        var indexTabKey = TabCharPositionIndexList.FindIndex(x => x == toDeletePositionIndex);
 
                         // Delete starts at the lowest index, therefore use '??=' to only assign once.
                         tabPositionLazyRemoveRange.index ??= indexTabKey;
@@ -1730,8 +1659,7 @@ public partial class TextEditorModel
 
                     if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                     {
-                        var indexTabKey = InlineUiList.FindIndex(
-                            x => x.PositionIndex == toDeletePositionIndex);
+                        var indexTabKey = TabCharPositionIndexList.FindIndex(x => x == toDeletePositionIndex);
 
                         // Backspace starts at the highest index, therefore use '=' to only assign everytime.
                         tabPositionLazyRemoveRange.index = indexTabKey;
@@ -1761,13 +1689,14 @@ public partial class TextEditorModel
 
         // Reposition the Tab(s)
         {
-            var firstTabKeyPositionIndexToModify = InlineUiList.FindIndex(x => x.PositionIndex >= positionIndex);
+            var firstTabKeyPositionIndexToModify = TabCharPositionIndexList.FindIndex(x => x >= positionIndex);
 
             if (firstTabKeyPositionIndexToModify != -1)
             {
-                for (var i = firstTabKeyPositionIndexToModify; i < InlineUiList.Count; i++)
+                for (var i = firstTabKeyPositionIndexToModify; i < TabCharPositionIndexList.Count; i++)
                 {
-                    InlineUiList[i] = InlineUiList[i].WithDecrementPositionIndex(charCount);
+                	var tabCharPositionIndex = TabCharPositionIndexList[i];
+                    TabCharPositionIndexList[i] = tabCharPositionIndex - charCount;
                 }
             }
         }
@@ -1801,7 +1730,7 @@ public partial class TextEditorModel
 
             if (tabPositionLazyRemoveRange.index is not null)
             {
-                InlineUiList.RemoveRange(
+                TabCharPositionIndexList.RemoveRange(
                     tabPositionLazyRemoveRange.index.Value,
                     tabPositionLazyRemoveRange.count);
             }
@@ -1925,14 +1854,14 @@ public partial class TextEditorModel
         var count = 0;
         var foundSpan = false;
         
-        foreach (var inlineUi in InlineUiList)
+        foreach (var tabCharPositionIndex in TabCharPositionIndexList)
         {
-        	if (!foundSpan && inlineUi.PositionIndex < line.StartPositionIndexInclusive)
+        	if (!foundSpan && tabCharPositionIndex < line.StartPositionIndexInclusive)
         		continue;
         	else
         		foundSpan = true;
         		
-        	if (inlineUi.PositionIndex < line.StartPositionIndexInclusive + columnIndex)
+        	if (tabCharPositionIndex < line.StartPositionIndexInclusive + columnIndex)
         		count++;
         	else
         		break;

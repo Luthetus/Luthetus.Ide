@@ -1069,7 +1069,6 @@ public class TextEditorCommandDefaultFunctions
     					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
     					InlineUiKind.ThreeDotsExpandInlineUiThing);
     				
-    				modelModifier.InlineUiList.Add(inlineUi);
     				viewModel.InlineUiList.Add(
     					(
     						inlineUi,
@@ -1083,13 +1082,7 @@ public class TextEditorCommandDefaultFunctions
     					x => x.Tag == virtualizedCollapsePoint.Identifier);
     					
     				if (indexTagMatchedInlineUi != -1)
-    				{
-        				var indexModelInlineUi = modelModifier.InlineUiList.FindIndex(
-    						x => x.PositionIndex == viewModel.InlineUiList[indexTagMatchedInlineUi].InlineUi.PositionIndex);
-    					modelModifier.InlineUiList.RemoveAt(indexModelInlineUi);
-        				
         				viewModel.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
-    				}
     			}
 				
 				viewModel.ShouldReloadVirtualizationResult = true;
