@@ -617,6 +617,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         	switch (keymapArgs.Key)
         	{
         		case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+        		{
         			var success = false;
         		
         			for (int i = cursorModifier.LineIndex + 1; i < modelModifier.LineCount; i++)
@@ -637,16 +638,71 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         			
         			if (!success)
         			{
-        				// TODO: Track the cursor's original position and restore it...
-        				// ... Or iterate backwards until you find a valid line index.
+        				for (int i = cursorModifier.LineIndex; i >= 0; i--)
+	        			{
+	        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+	        				{
+	        					cursorModifier.LineIndex = i;
+	        					
+	        					var lineInformation = modelModifier.GetLineInformation(i);
+	        					
+	        					if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+	        						cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+	        					
+	        					break;
+	        				}
+	        			}
         			}
+        			
         			break;
+        		}
         		case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
         		case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+        		{
+        			var success = false;
+        			
+        			for (int i = cursorModifier.LineIndex; i >= 0; i--)
+        			{
+        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+        				{
+        					success = true;
+        					cursorModifier.LineIndex = i;
+        					
+        					var lineInformation = modelModifier.GetLineInformation(i);
+        					
+        					if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+        						cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+        					
+        					break;
+        				}
+        			}
+        		
+        			if (!success)
+        			{
+        				for (int i = cursorModifier.LineIndex + 1; i < modelModifier.LineCount; i++)
+	        			{
+	        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+	        				{
+	        					cursorModifier.LineIndex = i;
+	        					
+	        					var lineInformation = modelModifier.GetLineInformation(i);
+	        					
+	        					if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+	        						cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+	        					
+	        					break;
+	        				}
+	        			}
+        			}
+        			
+        			break;
+        		}
         		case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
         		case KeyboardKeyFacts.MovementKeys.HOME:
         		case KeyboardKeyFacts.MovementKeys.END:
+        		{
         			break;
+        		}
         	}
         }
 
