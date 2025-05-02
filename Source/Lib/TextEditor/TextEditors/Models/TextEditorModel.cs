@@ -1751,6 +1751,14 @@ public partial class TextEditorModel
                 presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
             }
         }
+        
+        // Reposition the ViewModel InlineUiList
+        {
+        	__TextEditorViewModelLiason.DeleteRepositionInlineUiList(
+        		positionIndex,
+        		positionIndex + charCount,
+        		ViewModelKeyList);
+        }
 
 		// Delete metadata
         {

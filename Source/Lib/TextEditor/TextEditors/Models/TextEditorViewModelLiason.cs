@@ -55,4 +55,33 @@ public class TextEditorViewModelLiason
 			}
 		}
 	}
+	
+	/// <summary>
+	/// See: 'InsertRepositionInlineUiList(...)' summary
+	///      for 'TextEditorEditContext' explanation.
+	/// </summary>
+	public void DeleteRepositionInlineUiList(
+		int startInclusiveIndex,
+		int endExclusiveIndex,
+		List<Key<TextEditorViewModel>> viewModelKeyList)
+	{
+		var editContext = new TextEditorEditContext(_textEditorService);
+		
+		foreach (var viewModelKey in viewModelKeyList)
+		{
+			var viewModel = editContext.GetViewModelModifier(viewModelKey);
+			
+			// TODO: Determine which viewmodel sent the event?
+			for (int i = 0; i < viewModel.InlineUiList.Count; i++)
+			{
+				var inlineUiTuple = viewModel.InlineUiList[i];
+				
+				if (endExclusiveIndex - 1 < inlineUiTuple.InlineUi.PositionIndex)
+				{
+					inlineUiTuple.InlineUi = viewModel.InlineUiList[i].InlineUi.WithDecrementPositionIndex(endExclusiveIndex - startInclusiveIndex);
+					viewModel.InlineUiList[i] = inlineUiTuple;
+				}
+			}
+		}
+	}
 }
