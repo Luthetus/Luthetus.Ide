@@ -43,6 +43,15 @@ public struct OnMouseMove
 				ComponentData,
 				editContext)
 			.ConfigureAwait(false);
+			
+		if (rowAndColumnIndex.positionX < -4 &&
+			rowAndColumnIndex.positionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
+		{
+			var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
+			
+			if (virtualizedIndexCollapsePoint != -1)
+				goto finalize;
+		}
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
@@ -51,6 +60,8 @@ public struct OnMouseMove
 		// editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 
         primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+        
+        finalize:
 	
 		editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 	
