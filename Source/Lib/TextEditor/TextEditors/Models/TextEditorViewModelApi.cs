@@ -457,11 +457,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-            	Console.WriteLine(viewModel.VirtualAssociativityKind);
             	if (viewModel.VirtualAssociativityKind == VirtualAssociativityKind.Left)
             	{
             		viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Right;
-            		Console.WriteLine("asdfg");
             	}
                 else if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keymapArgs.ShiftKey)
                 {

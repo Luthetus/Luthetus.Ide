@@ -41,6 +41,7 @@ public partial class TextEditorModel
     
     	__LocalLineEndList = textEditorService.__LocalLineEndList;
         __LocalTabPositionList = textEditorService.__LocalTabPositionList;
+        __TextEditorViewModelLiason = textEditorService.__TextEditorViewModelLiason;
     
     	// Initialize
 	    _partitionList = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
@@ -82,6 +83,7 @@ public partial class TextEditorModel
 		
 		__LocalLineEndList = other.__LocalLineEndList;
 		__LocalTabPositionList = other.__LocalTabPositionList;
+		__TextEditorViewModelLiason = other.__TextEditorViewModelLiason;
 
 	    _partitionList = other.PartitionList;
 	    _richCharacterList = other.RichCharacterList;
@@ -253,6 +255,10 @@ public partial class TextEditorModel
 	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
 	/// </summary>
     private List<int> __LocalTabPositionList;
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    private TextEditorViewModelLiason __TextEditorViewModelLiason;
     
     public LineEndKind OnlyLineEndKind { get; set; }
     public LineEndKind LineEndKindPreference { get; private set; }
@@ -1303,6 +1309,14 @@ public partial class TextEditorModel
                 presentationModel.CompletedCalculation?.TextModificationsSinceRequestList.Add(textModification);
                 presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
             }
+        }
+        
+        // Reposition the ViewModel InlineUiList
+        {
+        	__TextEditorViewModelLiason.InsertRepositionInlineUiList(
+        		initialCursorPositionIndex,
+        		lineEndingsChangedValueBuilder.Length,
+        		ViewModelKeyList);
         }
 
         // Add in any new metadata

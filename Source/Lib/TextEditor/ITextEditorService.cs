@@ -107,6 +107,10 @@ public partial interface ITextEditorService
 	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
 	/// </summary>
     public List<int> __LocalTabPositionList { get; }
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
 	
 	public event Action? TextEditorStateChanged;
         
