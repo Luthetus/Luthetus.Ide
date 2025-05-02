@@ -377,6 +377,26 @@ public sealed class TextEditorComponentData
 	        }
 	        
 	        leftInPixels += measurements.CharacterWidth * _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex;
+	        
+	        foreach (var inlineUiTuple in _activeRenderBatch.ViewModel.InlineUiList)
+			{
+				var lineAndColumnIndices = _activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
+				
+				if (lineAndColumnIndices.lineIndex == _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex)
+				{
+					if (lineAndColumnIndices.columnIndex == _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex)
+					{
+						if (_activeRenderBatch.ViewModel.VirtualAssociativityKind == VirtualAssociativityKind.Right)
+						{
+							leftInPixels += measurements.CharacterWidth * 3;
+						}
+					}
+					else if (lineAndColumnIndices.columnIndex <= _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex)
+					{
+						leftInPixels += measurements.CharacterWidth * 3;
+					}
+				}
+			}
 	    }
         
         _uiStringBuilder.Clear();

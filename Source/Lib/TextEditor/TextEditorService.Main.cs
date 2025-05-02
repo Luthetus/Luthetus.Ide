@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -153,6 +154,15 @@ public partial class TextEditorService : ITextEditorService
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
     public List<TextEditorViewModel?> __ViewModelList { get; } = new();
+    
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    public List<LineEnd> __LocalLineEndList { get; } = new();
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    public List<int> __LocalTabPositionList { get; } = new();
     
     public event Action? TextEditorStateChanged;
 

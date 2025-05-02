@@ -457,7 +457,13 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keymapArgs.ShiftKey)
+            	Console.WriteLine(viewModel.VirtualAssociativityKind);
+            	if (viewModel.VirtualAssociativityKind == VirtualAssociativityKind.Left)
+            	{
+            		viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Right;
+            		Console.WriteLine("asdfg");
+            	}
+                else if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keymapArgs.ShiftKey)
                 {
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
@@ -767,6 +773,29 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         		}
         	}
         }
+        
+        (int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
+		var inlineUi = new InlineUi(0, InlineUiKind.None);
+		
+		foreach (var inlineUiTuple in viewModel.InlineUiList)
+		{
+			lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
+			
+			if (lineAndColumnIndices.lineIndex == cursorModifier.LineIndex &&
+				lineAndColumnIndices.columnIndex == cursorModifier.ColumnIndex)
+			{
+				inlineUi = inlineUiTuple.InlineUi;
+			}
+		}
+		
+		if (viewModel.VirtualAssociativityKind == VirtualAssociativityKind.None &&
+			inlineUi.InlineUiKind != InlineUiKind.None)
+		{
+			viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Left;
+		}
+		
+		if (inlineUi.InlineUiKind == InlineUiKind.None)
+			viewModel.VirtualAssociativityKind = VirtualAssociativityKind.None;
 
         if (keymapArgs.ShiftKey)
         {

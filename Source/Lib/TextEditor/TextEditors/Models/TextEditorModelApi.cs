@@ -43,7 +43,8 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
             overrideDisplayTextForFileExtension ?? extensionNoPeriod,
             initialContent,
             _textEditorRegistryWrap.DecorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
-            _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod));
+            _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod),
+            _textEditorService);
 
         _textEditorService.RegisterModel(editContext, model);
     }

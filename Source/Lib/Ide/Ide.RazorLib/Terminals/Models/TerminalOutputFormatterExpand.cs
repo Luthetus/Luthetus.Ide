@@ -118,7 +118,8 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            "terminal",
 	            string.Empty,
 	            new TerminalDecorationMapper(),
-	            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL))
+	            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
+            	_textEditorService)
 	        {
 	        	UseUnsetOverride = true,
 	        	UnsetOverrideLineEndKind = LineEndKind.LineFeed,

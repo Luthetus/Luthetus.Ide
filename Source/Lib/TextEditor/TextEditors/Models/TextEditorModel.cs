@@ -33,10 +33,14 @@ public partial class TextEditorModel
         string content,
         IDecorationMapper? decorationMapper,
         ICompilerService? compilerService,
+        ITextEditorService textEditorService,
 		int partitionSize = 4_096)
     {
     	if (partitionSize < MINIMUM_PARTITION_SIZE)
             throw new LuthetusTextEditorException($"{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
+    
+    	__LocalLineEndList = textEditorService.__LocalLineEndList;
+        __LocalTabPositionList = textEditorService.__LocalTabPositionList;
     
     	// Initialize
 	    _partitionList = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
@@ -63,7 +67,7 @@ public partial class TextEditorModel
 	    _allText = string.Empty;
 	    _charCount = 0;
         // LineCount => LineEndList.Count;
-
+        
 		SetContent(content);
 		IsDirty = false;
 	}
@@ -75,6 +79,9 @@ public partial class TextEditorModel
 		// Some are "safe" from causing an enumeration was modified
 		// if copied between the model instances as they get edited
 		// because the UI doesn't use them.
+		
+		__LocalLineEndList = other.__LocalLineEndList;
+		__LocalTabPositionList = other.__LocalTabPositionList;
 
 	    _partitionList = other.PartitionList;
 	    _richCharacterList = other.RichCharacterList;
@@ -237,6 +244,16 @@ public partial class TextEditorModel
     public List<TextEditorPresentationModel> PresentationModelList { get; set; }
     
     public List<int> TabCharPositionIndexList { get; set; }
+    
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    private List<LineEnd> __LocalLineEndList;
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    private List<int> __LocalTabPositionList;
+    
     public LineEndKind OnlyLineEndKind { get; set; }
     public LineEndKind LineEndKindPreference { get; private set; }
     public ResourceUri ResourceUri { get; set; }
@@ -1138,8 +1155,10 @@ public partial class TextEditorModel
         bool isCarriageReturnLineFeed = false;
 
 		// Use 'int.MinValue' to represent null.
-        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, new());
-        (int index, List<int> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, new());
+		__LocalLineEndList.Clear();
+		__LocalTabPositionList.Clear();
+        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, __LocalLineEndList);
+        (int index, List<int> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, __LocalTabPositionList);
 
         var lineEndingsChangedValueBuilder = new StringBuilder();
 

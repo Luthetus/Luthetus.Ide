@@ -113,7 +113,7 @@ public sealed class TextEditorViewModel : IDisposable
 		VirtualizedCollapsePointList = other.VirtualizedCollapsePointList;
 		HiddenLineIndexHashSet = other.HiddenLineIndexHashSet;
 		InlineUiList = other.InlineUiList;
-		UiOutdated = other.UiOutdated;
+		VirtualAssociativityKind = other.VirtualAssociativityKind;
 	    
 	    BodyElementId = other.BodyElementId;
 	    PrimaryCursorContentId = other.PrimaryCursorContentId;
@@ -269,7 +269,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// should have different collapse/expand states.
     /// </summary>
     public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; } = new() { (new InlineUi(10, InlineUiKind.ThreeDotsExpandInlineUiThing), "aaa") };
-    public bool UiOutdated { get; set; }
+    public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
     
     public bool ScrollWasModified { get; set; }
 	/// <summary>

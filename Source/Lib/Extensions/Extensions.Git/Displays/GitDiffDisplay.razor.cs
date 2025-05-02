@@ -123,7 +123,8 @@ public partial class GitDiffDisplay : ComponentBase
 	            absolutePath.ExtensionNoPeriod,
 	            content,
 	            decorationMapper,
-	            compilerService);
+	            compilerService,
+	            TextEditorService);
 	            
 	        var modelModifier = new TextEditorModel(model);
 	        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
