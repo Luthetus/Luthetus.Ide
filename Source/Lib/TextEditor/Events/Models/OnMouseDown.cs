@@ -76,23 +76,34 @@ public struct OnMouseDown
 		}
 		else
 		{
-			// Check for collision with non-tab inline UI
-			foreach (var entry in viewModel.InlineUiList)
+			var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.rowIndex);
+			
+			if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 			{
-				if (entry.InlineUi.InlineUiKind == InlineUiKind.Tab)
-					continue;
-			
-				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
-				var lineInformation = modelModifier.GetLineInformation(lineAndColumnIndices.lineIndex);
-			
-				if (rowAndColumnIndex.rowIndex == lineInformation.Index)
+				// Check for collision with non-tab inline UI
+				foreach (var collapsePoint in viewModel.AllCollapsePointList)
 				{
-					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2 &&
-					    rowAndColumnIndex.positionX < (lineInformation.LastValidColumnIndex + 3) * viewModel.CharAndLineMeasurements.CharacterWidth)
+					if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.rowIndex ||
+					    !collapsePoint.IsCollapsed)
 					{
-						var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel, primaryCursorModifier);
-						if (shouldGotoFinalize)
+						continue;
+				    }
+				
+					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					{
+						if (rowAndColumnIndex.positionX < (lineInformation.LastValidColumnIndex + 3) * viewModel.CharAndLineMeasurements.CharacterWidth)
+						{
+							var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel, primaryCursorModifier);
+							if (shouldGotoFinalize)
+								goto finalize;
+						}
+						else
+						{
+							var lastHiddenLineInformation = modelModifier.GetLineInformation(collapsePoint.EndExclusiveLineIndex - 1);
+							primaryCursorModifier.LineIndex = lastHiddenLineInformation.Index;
+							primaryCursorModifier.SetColumnIndexAndPreferred(lastHiddenLineInformation.LastValidColumnIndex);
 							goto finalize;
+						}
 					}
 				}
 			}

@@ -52,6 +52,31 @@ public struct OnMouseMove
 			if (virtualizedIndexCollapsePoint != -1)
 				goto finalize;
 		}
+		else
+		{
+			var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.rowIndex);
+			
+			if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+			{
+				// Check for collision with non-tab inline UI
+				foreach (var collapsePoint in viewModel.AllCollapsePointList)
+				{
+					if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.rowIndex ||
+					    !collapsePoint.IsCollapsed)
+					{
+						continue;
+				    }
+				
+					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					{
+						var lastHiddenLineInformation = modelModifier.GetLineInformation(collapsePoint.EndExclusiveLineIndex - 1);
+						primaryCursorModifier.LineIndex = lastHiddenLineInformation.Index;
+						primaryCursorModifier.SetColumnIndexAndPreferred(lastHiddenLineInformation.LastValidColumnIndex);
+						goto finalize;
+					}
+				}
+			}
+		}
 
         primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
