@@ -292,6 +292,20 @@ public static class EventUtils
         var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
         int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
         
+        var inlineUi = default(InlineUi);
+        (int lineIndex, int columnIndex) inlineUiLineAndColumnPositionIndices = (0, 0);
+        
+        foreach (var inlineUiTuple in viewModel.InlineUiList)
+        {
+        	inlineUiLineAndColumnPositionIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
+        	
+        	if (inlineUiLineAndColumnPositionIndices.lineIndex == rowIndex)
+        	{
+        		inlineUi = inlineUiTuple.InlineUi;
+        		break;
+        	}
+        }
+        
         var lineLength = modelModifier.GetLineLength(rowIndex);
         
         rowIndex = Math.Max(rowIndex, 0);
@@ -303,6 +317,8 @@ public static class EventUtils
 		int visualLength = 0;
 		
 		var previousCharacterWidth = 1;
+		var previousCharacterWidthIsInlineUi = false;
+		var previousPosition = -1;
 		
 		for (int position = 0; position < lineLength; position++)
 		{
@@ -310,30 +326,68 @@ public static class EventUtils
 		    {
 		    	if (previousCharacterWidth > 1)
 		    	{
-		    		var prevVis = visualLength - previousCharacterWidth;
+		    		var visualLengthPrevious = visualLength - previousCharacterWidth;
 		    		
-		    		if (columnIndexDouble - prevVis > visualLength - columnIndexDouble)
+		    		// If distance from left side to event is smaller than distance from right side to event
+		    		// then put cursor on the left side
+		    		// else put cursor on the right side.
+		    		if (columnIndexDouble - visualLengthPrevious < visualLength - columnIndexDouble)
 		    		{
+		    			// Represent a '\t' with 4 character width as "--->",
+		    			// a cursor by "|",
+		    			// and the side closest to the event with "==" then:
+		    			//
+		    			//  ==
+		    			// |--->
+		    			if (previousCharacterWidthIsInlineUi)
+		    			{
+		    				viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Left;
+		    			}
+		    			else
+		    			{
+		    				literalLength = literalLength - 1;
+		    			}
 		    			break;
 		    		}
 		    		else
 		    		{
-		    			literalLength = literalLength - 1;
+		    			// Represent a '\t' with 4 character width as "--->",
+		    			// a cursor by "|",
+		    			// and the side closest to the event with "==" then:
+		    			//
+		    			//    ==
+		    			//  --->|
+		    			if (previousCharacterWidthIsInlineUi)
+		    			{
+		    				viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Right;
+		    			}
 		    			break;
 		    		}
 		    	}
 		    
 		    	break;
 		    }
-		
-		    literalLength += 1;
 		    
-		    previousCharacterWidth = GetCharacterWidth(
-		    	modelModifier.RichCharacterList[
-		    		lineInformation.StartPositionIndexInclusive + position]
-		    	.Value);
-		    
-		    visualLength += previousCharacterWidth;
+		    if (inlineUiLineAndColumnPositionIndices.columnIndex == position && previousPosition != position)
+		    {
+		    	previousCharacterWidth = 3;
+		    	previousCharacterWidthIsInlineUi = true;
+		    	previousPosition = position;
+		    	position--;
+		    	visualLength += previousCharacterWidth;
+		    }
+			else
+			{
+			    literalLength += 1;
+			    
+			    previousCharacterWidth = GetCharacterWidth(
+			    	modelModifier.RichCharacterList[
+			    		lineInformation.StartPositionIndexInclusive + position]
+			    	.Value);
+			    
+			    visualLength += previousCharacterWidth;
+			    previousCharacterWidthIsInlineUi = false;
+		    }
 		}
 		
 		int GetCharacterWidth(char character)
