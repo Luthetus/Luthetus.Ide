@@ -255,9 +255,9 @@
 							'!= 0' because the struct's int property will default to '0',
 							and if there is no text then the property is unchanged from its default value.
 						*@
-						@if (virtualizationLine.VirtualizationSpanEndExclusiveIndex != 0)
+						@if (virtualizationLine.VirtualizationSpan_EndExclusiveIndex != 0)
 						{
-							for (int i = virtualizationLine.VirtualizationSpanStartInclusiveIndex; i < virtualizationLine.VirtualizationSpanEndExclusiveIndex; i++)
+							for (int i = virtualizationLine.VirtualizationSpan_StartInclusiveIndex; i < virtualizationLine.VirtualizationSpan_EndExclusiveIndex; i++)
 							{
 								<span class="@_componentData._activeRenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
 						            @(_componentData._activeRenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)

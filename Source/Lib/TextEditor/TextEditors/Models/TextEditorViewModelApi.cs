@@ -1133,10 +1133,10 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						linesTaken++;
 						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
-							positionStartInclusiveIndex: positionStartInclusiveIndex,
-							positionEndExclusiveIndex: positionEndExclusiveIndex,
-							virtualizationSpanStartInclusiveIndex: 0,
-							virtualizationSpanEndExclusiveIndex: 0,
+							position_StartInclusiveIndex: positionStartInclusiveIndex,
+							position_EndExclusiveIndex: positionEndExclusiveIndex,
+							virtualizationSpan_StartInclusiveIndex: 0,
+							virtualizationSpan_EndExclusiveIndex: 0,
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
@@ -1174,10 +1174,10 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						linesTaken++;
 						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
-							positionStartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
-							positionEndExclusiveIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
-							virtualizationSpanStartInclusiveIndex: 0,
-							virtualizationSpanEndExclusiveIndex: 0,
+							position_StartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+							position_EndExclusiveIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
+							virtualizationSpan_StartInclusiveIndex: 0,
+							virtualizationSpan_EndExclusiveIndex: 0,
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							0,

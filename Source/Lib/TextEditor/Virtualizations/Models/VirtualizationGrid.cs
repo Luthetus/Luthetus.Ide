@@ -193,7 +193,7 @@ public record VirtualizationGrid
 					inlineUi = inlineUiTuple.InlineUi;
 			}
 			
-			virtualizationEntry.VirtualizationSpanStartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 			
 			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionStartInclusiveIndex].DecorationByte;
 		    
@@ -293,7 +293,7 @@ public record VirtualizationGrid
 	    		text: textEditorService.__StringBuilder.ToString()));
 			textEditorService.__StringBuilder.Clear();
 			
-			virtualizationEntry.VirtualizationSpanEndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
 		}
