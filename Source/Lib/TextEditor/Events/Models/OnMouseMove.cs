@@ -44,30 +44,30 @@ public struct OnMouseMove
 				editContext)
 			.ConfigureAwait(false);
 			
-		if (rowAndColumnIndex.positionX < -4 &&
-			rowAndColumnIndex.positionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
+		if (rowAndColumnIndex.PositionX < -4 &&
+			rowAndColumnIndex.PositionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
 		{
-			var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.lineIndex);
+			var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.LineIndex);
 			
 			if (virtualizedIndexCollapsePoint != -1)
 				goto finalize;
 		}
 		else
 		{
-			var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.lineIndex);
+			var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.LineIndex);
 			
-			if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+			if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 			{
 				// Check for collision with non-tab inline UI
 				foreach (var collapsePoint in viewModel.AllCollapsePointList)
 				{
-					if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.lineIndex ||
+					if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.LineIndex ||
 					    !collapsePoint.IsCollapsed)
 					{
 						continue;
 				    }
 				
-					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
 						var lastHiddenLineInformation = modelModifier.GetLineInformation(collapsePoint.EndExclusiveLineIndex - 1);
 						primaryCursorModifier.LineIndex = lastHiddenLineInformation.Index;
@@ -78,9 +78,9 @@ public struct OnMouseMove
 			}
 		}
 
-        primaryCursorModifier.LineIndex = rowAndColumnIndex.lineIndex;
-        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+        primaryCursorModifier.LineIndex = rowAndColumnIndex.LineIndex;
+        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.ColumnIndex;
+        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.ColumnIndex;
 
 		// editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 

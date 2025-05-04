@@ -930,13 +930,13 @@ public sealed class TextEditorComponentData
 	        var virtualLowerBoundInclusiveRowIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
 	        var virtualUpperBoundExclusiveRowIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 	
-	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
+	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.LowerRowIndexInclusive
 	            ? virtualLowerBoundInclusiveRowIndex
-	            : selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+	            : selectionBoundsInRowIndexUnits.LowerRowIndexInclusive;
 	
-	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.upperRowIndexExclusive
+	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.UpperRowIndexExclusive
 	            ? virtualUpperBoundExclusiveRowIndex
-            	: selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+            	: selectionBoundsInRowIndexUnits.UpperRowIndexExclusive;
             
             var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;

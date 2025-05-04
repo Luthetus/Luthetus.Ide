@@ -285,8 +285,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    scrollbarDimensions.ScrollTop);
 
         var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-            lineAndColumnIndex.lineIndex,
-            lineAndColumnIndex.columnIndex,
+            lineAndColumnIndex.LineIndex,
+            lineAndColumnIndex.ColumnIndex,
             true));
 
         var foundMatch = false;

@@ -250,7 +250,7 @@ public static class EventUtils
                 !keymapArgs.CtrlKey;
     }
 
-	public static async Task<(int lineIndex, int columnIndex, double positionX, double positionY)> CalculateLineAndColumnIndex(
+	public static async Task<(int LineIndex, int ColumnIndex, double PositionX, double PositionY)> CalculateLineAndColumnIndex(
 		ResourceUri resourceUri,
 		Key<TextEditorViewModel> viewModelKey,
 		MouseEventArgs mouseEventArgs,

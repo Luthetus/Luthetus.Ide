@@ -340,11 +340,11 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
                     var lowerLineInformation = modelModifier.GetLineInformationFromPositionIndex(
-                        selectionBounds.lowerPositionIndexInclusive);
+                        selectionBounds.LowerPositionIndexInclusive);
 
                     cursorModifier.LineIndex = lowerLineInformation.Index;
 
-                    cursorModifier.ColumnIndex = selectionBounds.lowerPositionIndexInclusive -
+                    cursorModifier.ColumnIndex = selectionBounds.LowerPositionIndexInclusive -
                         lowerLineInformation.StartPositionIndexInclusive;
                 }
                 else
@@ -466,7 +466,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
                     var upperLineMetaData = modelModifier.GetLineInformationFromPositionIndex(
-                        selectionBounds.upperPositionIndexExclusive);
+                        selectionBounds.UpperPositionIndexExclusive);
 
                     cursorModifier.LineIndex = upperLineMetaData.Index;
 
@@ -481,7 +481,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
                     else
                     {
                         cursorModifier.ColumnIndex =
-                            selectionBounds.upperPositionIndexExclusive - upperLineMetaData.StartPositionIndexInclusive;
+                            selectionBounds.UpperPositionIndexExclusive - upperLineMetaData.StartPositionIndexInclusive;
                     }
                 }
                 else

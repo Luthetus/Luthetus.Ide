@@ -54,8 +54,8 @@ public struct OnDoubleClick
 			.ConfigureAwait(false);
 
         var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-            lineAndColumnIndex.lineIndex,
-            lineAndColumnIndex.columnIndex,
+            lineAndColumnIndex.LineIndex,
+            lineAndColumnIndex.ColumnIndex,
             true);
 
         lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
@@ -63,25 +63,25 @@ public struct OnDoubleClick
             : lowerColumnIndexExpansion;
 
         var higherColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-            lineAndColumnIndex.lineIndex,
-            lineAndColumnIndex.columnIndex,
+            lineAndColumnIndex.LineIndex,
+            lineAndColumnIndex.ColumnIndex,
             false);
 
         higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-            ? modelModifier.GetLineLength(lineAndColumnIndex.lineIndex)
+            ? modelModifier.GetLineLength(lineAndColumnIndex.LineIndex)
             : higherColumnIndexExpansion;
 
         // Move user's cursor position to the higher expansion
         {
-            primaryCursorModifier.LineIndex = lineAndColumnIndex.lineIndex;
+            primaryCursorModifier.LineIndex = lineAndColumnIndex.LineIndex;
             primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
-            primaryCursorModifier.PreferredColumnIndex = lineAndColumnIndex.columnIndex;
+            primaryCursorModifier.PreferredColumnIndex = lineAndColumnIndex.ColumnIndex;
         }
 
         // Set text selection ending to higher expansion
         {
             var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
-                lineAndColumnIndex.lineIndex,
+                lineAndColumnIndex.LineIndex,
                 higherColumnIndexExpansion);
 
             primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
@@ -90,7 +90,7 @@ public struct OnDoubleClick
         // Set text selection anchor to lower expansion
         {
             var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
-                lineAndColumnIndex.lineIndex,
+                lineAndColumnIndex.LineIndex,
                 lowerColumnIndexExpansion);
 
             primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;

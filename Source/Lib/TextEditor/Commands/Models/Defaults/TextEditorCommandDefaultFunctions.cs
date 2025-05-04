@@ -295,8 +295,8 @@ public class TextEditorCommandDefaultFunctions
             modelModifier,
             selectionBoundsInPositionIndexUnits);
 
-        for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
-             i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+        for (var i = selectionBoundsInRowIndexUnits.LowerRowIndexInclusive;
+             i < selectionBoundsInRowIndexUnits.UpperRowIndexExclusive;
              i++)
         {
             var insertionCursor = new TextEditorCursor(i, 0, true);
@@ -313,8 +313,8 @@ public class TextEditorCommandDefaultFunctions
 
         var lowerBoundPositionIndexChange = 1;
 
-        var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.upperRowIndexExclusive -
-            selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
+        var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.UpperRowIndexExclusive -
+            selectionBoundsInRowIndexUnits.LowerRowIndexInclusive;
 
         if (primaryCursorModifier.SelectionAnchorPositionIndex < primaryCursorModifier.SelectionEndingPositionIndex)
         {
@@ -338,7 +338,7 @@ public class TextEditorCommandDefaultFunctions
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	
-    	(int lowerRowIndexInclusive, int upperRowIndexExclusive) selectionBoundsInRowIndexUnits;
+    	(int LowerRowIndexInclusive, int UpperRowIndexExclusive) selectionBoundsInRowIndexUnits;
     
     	if (primaryCursorModifier.SelectionAnchorPositionIndex == -1)
     	{
@@ -355,8 +355,8 @@ public class TextEditorCommandDefaultFunctions
 
         bool isFirstLoop = true;
 
-        for (var i = selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
-             i < selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
+        for (var i = selectionBoundsInRowIndexUnits.LowerRowIndexInclusive;
+             i < selectionBoundsInRowIndexUnits.UpperRowIndexExclusive;
              i++)
         {
             var rowPositionIndex = modelModifier.GetPositionIndex(i, 0);
