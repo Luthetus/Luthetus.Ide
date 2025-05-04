@@ -69,7 +69,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				default:
-		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 			    	break;
 	    	}
 		}
@@ -78,7 +78,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				default:
-		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 			    	break;
 			}
 		}
@@ -450,7 +450,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				case "PageDown":
-		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.ScrollPageDown(
 		                editContext,
 		                modelModifier,
@@ -458,7 +458,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag);
 		            break;
 		        case "PageUp":
-		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.ScrollPageUp(
 		                editContext,
 		                modelModifier,
