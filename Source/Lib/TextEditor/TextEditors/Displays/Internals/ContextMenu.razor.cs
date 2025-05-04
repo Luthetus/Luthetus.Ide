@@ -176,6 +176,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         var paste = new MenuOptionRecord("Paste (Ctrl v)", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
         menuOptionRecordsList.Add(paste);
         
+        var toggleCollapse = new MenuOptionRecord("Toggle Collapse (Ctrl m)", MenuOptionKind.Other, () => SelectMenuOption(ToggleCollapseOption));
+        menuOptionRecordsList.Add(toggleCollapse);
+        
         var findInTextEditor = new MenuOptionRecord("Find (Ctrl f)", MenuOptionKind.Other, () => SelectMenuOption(FindInTextEditor));
         menuOptionRecordsList.Add(findInTextEditor);
         
@@ -311,6 +314,46 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 			        viewModelModifier,
 			        cursorModifierBag,
 			        ClipboardService);
+            });
+        return Task.CompletedTask;
+    }
+
+	public Task ToggleCollapseOption()
+    {
+    	var renderBatch = GetRenderBatch();
+    	if (!renderBatch.ConstructorWasInvoked)
+    		return Task.CompletedTask;
+
+        TextEditorService.WorkerArbitrary.PostUnique(
+            nameof(TextEditorCommandDefaultFunctions.ToggleCollapsePoint),
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+        		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+        		var primaryCursorModifier = cursorModifierBag.CursorModifier;
+        		
+        		CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
+
+				foreach (var collapsePoint in viewModelModifier.AllCollapsePointList)
+				{
+					for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex; lineOffset++)
+					{
+						if (primaryCursorModifier.LineIndex == collapsePoint.AppendToLineIndex + lineOffset)
+							encompassingCollapsePoint = collapsePoint;
+					}
+				}
+				
+            	if (encompassingCollapsePoint.AppendToLineIndex != -1)
+            	{
+            		_ = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(
+	            		encompassingCollapsePoint.AppendToLineIndex,
+            			modelModifier,
+            			viewModelModifier,
+            			primaryCursorModifier);
+            	}
+            
+                return ValueTask.CompletedTask;
             });
         return Task.CompletedTask;
     }

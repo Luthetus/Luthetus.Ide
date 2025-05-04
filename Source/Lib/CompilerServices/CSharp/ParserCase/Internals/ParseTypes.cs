@@ -119,7 +119,7 @@ public static class ParseTypes
 
             var arraySyntaxTokenTextSpan = syntaxToken.TextSpan with
             {
-                EndingIndexExclusive = closeSquareBracketToken.TextSpan.EndingIndexExclusive
+                EndExclusiveIndex = closeSquareBracketToken.TextSpan.EndExclusiveIndex
             };
 
             var arraySyntaxToken = new ArraySyntaxToken(arraySyntaxTokenTextSpan);

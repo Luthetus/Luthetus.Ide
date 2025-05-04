@@ -10,7 +10,7 @@
 @using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
 @using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 @using Luthetus.TextEditor.RazorLib.Cursors.Models
-@using Luthetus.TextEditor.RazorLib.Rows.Models;
+@using Luthetus.TextEditor.RazorLib.Lines.Models;
 @using Luthetus.TextEditor.RazorLib.Options.Models;
 @using Luthetus.TextEditor.RazorLib.Htmls.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
@@ -54,40 +54,38 @@
 			</div>
             @* Virtualization Close *@
 		    
-		    @foreach (var virtualizedRow in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
+		    @foreach (var virtualizedLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
-		             style="@(_componentData.GetGutterStyleCss(virtualizedRow.TopCssStyle))">
-		            @(virtualizedRow.LineIndex + 1)
+		             style="@(_componentData.GetGutterStyleCss(virtualizedLine.TopCssStyle))">
+		            @(virtualizedLine.LineIndex + 1)
 		            
-		            @*
 		            @{
-		            	var gutterChevron = new GutterChevron(-1, false, string.Empty, 0, 0, -1);
+		            	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
 		            	
-		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedGutterChevronList.Count; i++)
+		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
 		            	{
-		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedGutterChevronList[i].LineIndex == virtualizedRow.LineIndex)
+		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedLine.LineIndex)
 		            		{
-		            			gutterChevron = _componentData._activeRenderBatch.ViewModel.VirtualizedGutterChevronList[i];
+		            			collapsePoint = _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i];
 		            			break;
 		            		}
 		            	}
 		            }
 
-    				@if (gutterChevron.LineIndex == virtualizedRow.LineIndex)
+    				@if (collapsePoint.AppendToLineIndex == virtualizedLine.LineIndex)
     				{
 					    <span class="luth_te_gutter-chevron">
-					    	@if (gutterChevron.IsExpanded)
-					    	{
-					    		@IconChevronDownFragment.Render(_iconDriver)
-					    	}
-					    	else
+					    	@if (collapsePoint.IsCollapsed)
 					    	{
 					    		@IconChevronRightFragment.Render(_iconDriver)
 					    	}
+					    	else
+					    	{
+					    		@IconChevronDownFragment.Render(_iconDriver)
+					    	}
 						</span>
     				}
-    				*@
 		        </div>
 		    }
 		    
@@ -178,7 +176,7 @@
 				</div>
                 @* Virtualization Close *@
                 
-                @*<div class="luth_te_three-dots-section">
+                <div class="luth_te_three-dots-section">
                 	@foreach (var entry in _componentData._activeRenderBatch.ViewModel.InlineUiList)
                 	{
                 		var lineAndColumnIndices = _componentData._activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
@@ -199,7 +197,7 @@
                 			...
                 		</div>
                 	}
-                </div>*@
+                </div>
 							                           
 				@*  PresentationAndSelection Open *@
 				<div class="luth_te_first-render-presentation-layer-group">
@@ -207,7 +205,7 @@
 					{
 						var presentationLayerTuple = _componentData.firstPresentationLayerGroupList[groupIndex];
 						<div class="@presentationLayerTuple.CssClassString">
-							@for (int textSpanIndex = presentationLayerTuple.IndexInclusiveStart; textSpanIndex < presentationLayerTuple.IndexExclusiveEnd; textSpanIndex++)
+							@for (int textSpanIndex = presentationLayerTuple.StartInclusiveIndex; textSpanIndex < presentationLayerTuple.EndExclusiveIndex; textSpanIndex++)
 							{
 								var textSpanTuple = _componentData.firstPresentationLayerTextSpanList[textSpanIndex];
 								<div class="@textSpanTuple.PresentationCssClass"
@@ -236,7 +234,7 @@
 					{
 						var presentationLayerTuple = _componentData.lastPresentationLayerGroupList[groupIndex];
 						<div class="@presentationLayerTuple.CssClassString">
-							@for (int textSpanIndex = presentationLayerTuple.IndexInclusiveStart; textSpanIndex < presentationLayerTuple.IndexExclusiveEnd; textSpanIndex++)
+							@for (int textSpanIndex = presentationLayerTuple.StartInclusiveIndex; textSpanIndex < presentationLayerTuple.EndExclusiveIndex; textSpanIndex++)
 							{
 								var textSpanTuple = _componentData.lastPresentationLayerTextSpanList[textSpanIndex];
 								<div class="@textSpanTuple.PresentationCssClass"
@@ -257,9 +255,9 @@
 							'!= 0' because the struct's int property will default to '0',
 							and if there is no text then the property is unchanged from its default value.
 						*@
-						@if (virtualizationLine.VirtualizationSpanIndexExclusiveEnd != 0)
+						@if (virtualizationLine.VirtualizationSpan_EndExclusiveIndex != 0)
 						{
-							for (int i = virtualizationLine.VirtualizationSpanIndexInclusiveStart; i < virtualizationLine.VirtualizationSpanIndexExclusiveEnd; i++)
+							for (int i = virtualizationLine.VirtualizationSpan_StartInclusiveIndex; i < virtualizationLine.VirtualizationSpan_EndExclusiveIndex; i++)
 							{
 								<span class="@_componentData._activeRenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
 						            @(_componentData._activeRenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
@@ -271,9 +269,9 @@
 						{
 							var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / _componentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
 							
-							var lengthOfRow = _componentData._activeRenderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
+							var lengthOfLine = _componentData._activeRenderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
 							
-							if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
+							if (amountOfLeftInCharacterWidthUnits <= lengthOfLine)
 							{
 							    var rowEndingTuple = _componentData._activeRenderBatch.Model.LineEndList[virtualizationLine.LineIndex];
 							

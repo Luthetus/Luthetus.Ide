@@ -64,7 +64,8 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 						ExtensionNoPeriodFacts.TERMINAL,
 						"initialContent:TestExplorerDetailsTextEditorResourceUri",
 	                    terminalDecorationMapper,
-	                    terminalCompilerService);
+	                    terminalCompilerService,
+	                    TextEditorService);
 	
 					TextEditorService.ModelApi.RegisterCustom(editContext, model);
 	

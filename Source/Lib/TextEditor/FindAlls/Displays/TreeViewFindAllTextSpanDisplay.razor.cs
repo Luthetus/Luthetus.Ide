@@ -27,23 +27,23 @@ public partial class TreeViewFindAllTextSpanDisplay : ComponentBase
 		
 		var distanceOffset = 15;
 		
-		var startingIndexInclusive = localTreeView.Item.StartingIndexInclusive - distanceOffset;
+		var startingIndexInclusive = localTreeView.Item.StartInclusiveIndex - distanceOffset;
 		startingIndexInclusive = Math.Max(0, startingIndexInclusive);
 		
-    	var endingIndexExclusive = localTreeView.Item.EndingIndexExclusive + distanceOffset;
+    	var endingIndexExclusive = localTreeView.Item.EndExclusiveIndex + distanceOffset;
   	  endingIndexExclusive = Math.Min(localTreeView.Item.SourceText.Length, endingIndexExclusive);
     	
     	var earlierTextSpan = new TextEditorTextSpan(
 		    startingIndexInclusive,
-		    startingIndexInclusive + localTreeView.Item.StartingIndexInclusive - startingIndexInclusive,
+		    startingIndexInclusive + localTreeView.Item.StartInclusiveIndex - startingIndexInclusive,
 		    0,
 		    localTreeView.Item.ResourceUri,
 		    localTreeView.Item.SourceText);
 		localTreeView.PreviewEarlierNearbyText = earlierTextSpan.GetText();
 		
 		var laterTextSpan = new TextEditorTextSpan(
-		    localTreeView.Item.EndingIndexExclusive,
-		    localTreeView.Item.EndingIndexExclusive + endingIndexExclusive - localTreeView.Item.EndingIndexExclusive,
+		    localTreeView.Item.EndExclusiveIndex,
+		    localTreeView.Item.EndExclusiveIndex + endingIndexExclusive - localTreeView.Item.EndExclusiveIndex,
 		    0,
 		    localTreeView.Item.ResourceUri,
 		    localTreeView.Item.SourceText);

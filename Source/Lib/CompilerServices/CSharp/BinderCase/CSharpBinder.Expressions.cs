@@ -1301,8 +1301,8 @@ public partial class CSharpBinder
 		if (token.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
 		{
 			var textSpan = new TextEditorTextSpan(
-				token.TextSpan.StartingIndexInclusive,
-			    token.TextSpan.EndingIndexExclusive,
+				token.TextSpan.StartInclusiveIndex,
+			    token.TextSpan.EndExclusiveIndex,
 			    (byte)GenericDecorationKind.None,
 			    token.TextSpan.ResourceUri,
 			    token.TextSpan.SourceText);
@@ -2186,7 +2186,7 @@ public partial class CSharpBinder
 		        
 		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
 		        	symbolId,
-		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive));
+		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));
 		        
 		    	expressionPrimary = variableReferenceNode;
 			}
@@ -2217,7 +2217,7 @@ public partial class CSharpBinder
 		        
 		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
 		        	symbolId,
-		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive));
+		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));
 		        
 		        // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
 		        // TODO: Method group if next token is not '<' or '('
@@ -2363,8 +2363,8 @@ public partial class CSharpBinder
 		var identifierToken = new SyntaxToken(
 			SyntaxKind.IdentifierToken,
 			new TextEditorTextSpan(
-			    ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartingIndexInclusive,
-			    token.TextSpan.EndingIndexExclusive,
+			    ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
+			    token.TextSpan.EndExclusiveIndex,
 			    default(byte),
 			    token.TextSpan.ResourceUri,
 			    token.TextSpan.SourceText));

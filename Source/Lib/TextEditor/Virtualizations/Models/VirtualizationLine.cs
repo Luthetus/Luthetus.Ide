@@ -11,10 +11,10 @@ public record struct VirtualizationLine
 {
 	public VirtualizationLine(
 	    int lineIndex,
-	    int positionIndexInclusiveStart,
-	    int positionIndexExclusiveEnd,
-	    int virtualizationSpanIndexInclusiveStart,
-	    int virtualizationSpanIndexExclusiveEnd,
+	    int position_StartInclusiveIndex,
+	    int position_EndExclusiveIndex,
+	    int virtualizationSpan_StartInclusiveIndex,
+	    int virtualizationSpan_EndExclusiveIndex,
 	    double widthInPixels,
 	    double heightInPixels,
 	    double leftInPixels,
@@ -22,10 +22,10 @@ public record struct VirtualizationLine
 	    StringBuilder stringBuilder)
 	{
 		LineIndex = lineIndex;
-	    PositionIndexInclusiveStart = positionIndexInclusiveStart;
-	    PositionIndexExclusiveEnd = positionIndexExclusiveEnd;
-	    VirtualizationSpanIndexInclusiveStart = virtualizationSpanIndexInclusiveStart;
-	    VirtualizationSpanIndexExclusiveEnd = virtualizationSpanIndexExclusiveEnd;
+	    Position_StartInclusiveIndex = position_StartInclusiveIndex;
+	    Position_EndExclusiveIndex = position_EndExclusiveIndex;
+	    VirtualizationSpan_StartInclusiveIndex = virtualizationSpan_StartInclusiveIndex;
+	    VirtualizationSpan_EndExclusiveIndex = virtualizationSpan_EndExclusiveIndex;
 	    WidthInPixels = widthInPixels;
 	    HeightInPixels = heightInPixels;
 	    LeftInPixels = leftInPixels;
@@ -41,10 +41,10 @@ public record struct VirtualizationLine
 	}
 	
 	public int LineIndex { get; }
-    public int PositionIndexInclusiveStart { get; }
-    public int PositionIndexExclusiveEnd { get; }
-    public int VirtualizationSpanIndexInclusiveStart { get; set; }
-    public int VirtualizationSpanIndexExclusiveEnd { get; set; }
+    public int Position_StartInclusiveIndex { get; }
+    public int Position_EndExclusiveIndex { get; }
+    public int VirtualizationSpan_StartInclusiveIndex { get; set; }
+    public int VirtualizationSpan_EndExclusiveIndex { get; set; }
     public double WidthInPixels { get; }
     public double HeightInPixels { get; }
     public double LeftInPixels { get; }

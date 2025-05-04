@@ -1,9 +1,9 @@
 using System.Text;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Lines.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -51,23 +51,25 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
 		// An NRE will be caught by the IBackgroundTaskService so don't bother checking 'viewModel is null'.
         var viewModel = editContext.GetViewModelModifier(onKeyDown.ViewModelKey);
-        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-        if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+        if (viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
 		var menuKind = MenuKind.None;
 		var shouldClearTooltip = false;
 		var shouldRevealCursor = false;
 		var shouldApplySyntaxHighlighting = false;
+		
+		TextEditorModel? modelModifier;
 
 		if (onKeyDown.KeymapArgs.MetaKey)
 		{
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				default:
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 			    	break;
 	    	}
 		}
@@ -76,6 +78,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				default:
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 			    	break;
 			}
 		}
@@ -84,12 +87,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		    switch (onKeyDown.KeymapArgs.Code)
 		    {
 		    	case "KeyR":
+		    		modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		    		onKeyDown.ComponentData.ThrottleApplySyntaxHighlighting(modelModifier);
 		            TextEditorCommandDefaultFunctions.TriggerRemeasure(
 		                editContext,
 		                viewModel);
 		            break;
 		    	case "KeyS":
+		    		modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		            TextEditorCommandDefaultFunctions.TriggerSave(
 		                editContext,
 		                modelModifier,
@@ -102,6 +107,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            
 		            break;
 		        case "KeyC":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		            await TextEditorCommandDefaultFunctions.CopyAsync(
 		                editContext,
 		                modelModifier,
@@ -110,6 +116,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                onKeyDown.ComponentData.ClipboardService);
 		            break;
 		        case "KeyV":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		            await TextEditorCommandDefaultFunctions.PasteAsync(
 		                editContext,
 		                modelModifier,
@@ -120,6 +127,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "KeyX":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		            await TextEditorCommandDefaultFunctions.CutAsync(
 		                editContext,
 		                modelModifier,
@@ -130,6 +138,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "KeyA":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		            TextEditorCommandDefaultFunctions.SelectAll(
 		                editContext,
 		                modelModifier,
@@ -137,6 +146,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag);
 		            break;
 		        case "KeyZ":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		            TextEditorCommandDefaultFunctions.Undo(
 		                editContext,
 		                modelModifier,
@@ -146,6 +156,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "KeyY":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		            TextEditorCommandDefaultFunctions.Redo(
 		                editContext,
 		                modelModifier,
@@ -155,6 +166,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "KeyD":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		            TextEditorCommandDefaultFunctions.Duplicate(
 		                editContext,
 		                modelModifier,
@@ -164,6 +176,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            shouldApplySyntaxHighlighting = true;
 		            break;
 		        case "ArrowDown":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 		            TextEditorCommandDefaultFunctions.ScrollLineDown(
 		                editContext,
 		                modelModifier,
@@ -171,6 +184,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag);
 		            break;
 		        case "ArrowUp":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 		            TextEditorCommandDefaultFunctions.ScrollLineUp(
 		                editContext,
 		                modelModifier,
@@ -178,6 +192,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag);
 		            break;
 		        case "PageDown":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.CursorMovePageBottom(
 		                editContext,
 		                modelModifier,
@@ -185,6 +200,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag);
 		            break;
 		        case "PageUp":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.CursorMovePageTop(
 		                editContext,
 		                modelModifier,
@@ -192,6 +208,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag);
 		            break;
 		        case "Slash":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					await TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
 		                editContext,
 		                modelModifier,
@@ -202,7 +219,32 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                onKeyDown.ComponentData.TextEditorComponentRenderers);
 		            shouldRevealCursor = true;
 		            break;
+	            case "KeyM":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+            		CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
+
+					foreach (var collapsePoint in viewModel.AllCollapsePointList)
+					{
+						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex; lineOffset++)
+						{
+							if (primaryCursorModifier.LineIndex == collapsePoint.AppendToLineIndex + lineOffset)
+								encompassingCollapsePoint = collapsePoint;
+						}
+					}
+					
+	            	if (encompassingCollapsePoint.AppendToLineIndex != -1)
+	            	{
+	            		_ = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(
+		            		encompassingCollapsePoint.AppendToLineIndex,
+	            			modelModifier,
+	            			viewModel,
+	            			primaryCursorModifier);
+	            	}
+					
+		            shouldRevealCursor = true;
+		            break;
 		        case "KeyF":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
 		        		TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
@@ -226,6 +268,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            
 		            break;
 	            case "KeyH":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
 		        		/*TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
@@ -254,6 +297,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "ArrowRight":
 	            case "Home":
 	            case "End":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 					editContext.TextEditorService.ViewModelApi.MoveCursor(
                 		onKeyDown.KeymapArgs,
 				        editContext,
@@ -271,6 +315,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
 	                break;
 	            case "Backspace":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					modelModifier.Delete(
 	                    cursorModifierBag,
 	                    1,
@@ -280,6 +325,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                shouldRevealCursor = true;
 					break;
 				case "Delete":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					modelModifier.Delete(
 	                    cursorModifierBag,
 	                    1,
@@ -289,13 +335,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                shouldRevealCursor = true;
 	                break;
 	            case "Enter":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					var valueToInsert = modelModifier.LineEndKindPreference.AsCharacters();
 			
 					// Match indentation on newline keystroke
 					var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 		
-					var cursorPositionIndex = line.StartPositionIndexInclusive + primaryCursorModifier.ColumnIndex;
-					var indentationPositionIndex = line.StartPositionIndexInclusive;
+					var cursorPositionIndex = line.Position_StartInclusiveIndex + primaryCursorModifier.ColumnIndex;
+					var indentationPositionIndex = line.Position_StartInclusiveIndex;
 		
 					_indentationBuilder.Clear();
 					
@@ -331,6 +378,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            shouldApplySyntaxHighlighting = true;
 	                break;
 	            case "BracketRight":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 	            	TextEditorCommandDefaultFunctions.GoToMatchingCharacter(
 		                editContext,
 		                modelModifier,
@@ -340,6 +388,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            	shouldRevealCursor = true;
 	            	break;
 	            case "Space":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 	            	if (onKeyDown.KeymapArgs.ShiftKey)
 	            	{
 	            		await modelModifier.CompilerService.ShowCallingSignature(
@@ -363,6 +412,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            }
 	            	break;
 	            case "Period":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 	            	await TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
 				        editContext,
 				        modelModifier,
@@ -373,6 +423,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        onKeyDown.ComponentData.DropdownService);
 	            	break;
 	            default:
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		    		break;
 		    }
 		}
@@ -381,6 +432,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				case "F12":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		        	TextEditorCommandDefaultFunctions.GoToDefinition(
 		        		editContext,
 				        modelModifier,
@@ -389,6 +441,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
         				new Category("CodeSearchService"));
 			        break;
 				default:
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 			    	break;
 	    	}
 		}
@@ -397,6 +450,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			switch (onKeyDown.KeymapArgs.Code)
 			{
 				case "PageDown":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.ScrollPageDown(
 		                editContext,
 		                modelModifier,
@@ -404,6 +458,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                cursorModifierBag);
 		            break;
 		        case "PageUp":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.ScrollPageUp(
 		                editContext,
 		                modelModifier,
@@ -416,6 +471,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "ArrowRight":
 	            case "Home":
 	            case "End":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
 	            	if (("ArrowDown" == onKeyDown.KeymapArgs.Code || "ArrowUp" == onKeyDown.KeymapArgs.Code) &&
 	                    viewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                {
@@ -449,6 +505,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					    break;
 		            }
 		        case "F12":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
 		        		await ShiftF12Func.Invoke(
@@ -468,6 +525,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        }
 			        break;
 		        case "F10":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		        	if (onKeyDown.KeymapArgs.ShiftKey)
 		        	{
 		        		menuKind = MenuKind.ContextMenu;
@@ -477,6 +535,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	}
 		        	break;
 		        case "F7":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		        	await TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
 				        editContext,
 				        modelModifier,
@@ -489,11 +548,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        onKeyDown.ComponentData.DropdownService);
 				    break;
 		        case "ContextMenu":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 		        	menuKind = MenuKind.ContextMenu;
 	                shouldRevealCursor = true;
 	                shouldClearTooltip = true;
 				    break;
 				case "CapsLock":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					/*
 					On Linux the 'CapsLock' to 'Escape' setting is returning:
 						event.code == CapsLock
@@ -507,10 +568,12 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					}
 					break;
 				case "Escape":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					menuKind = MenuKind.None;
 					shouldClearTooltip = true;
 					break;
 				case "Backspace":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					modelModifier.Delete(
 	                    cursorModifierBag,
 	                    1,
@@ -522,6 +585,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                shouldClearTooltip = true;
 					break;
 				case "Delete":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					modelModifier.Delete(
 	                    cursorModifierBag,
 	                    1,
@@ -533,13 +597,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                shouldClearTooltip = true;
 					break;
 				case "Enter":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					var valueToInsert = modelModifier.LineEndKindPreference.AsCharacters();
 			
 					// Match indentation on newline keystroke
 					var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 		
-					var cursorPositionIndex = line.StartPositionIndexInclusive + primaryCursorModifier.ColumnIndex;
-					var indentationPositionIndex = line.StartPositionIndexInclusive;
+					var cursorPositionIndex = line.Position_StartInclusiveIndex + primaryCursorModifier.ColumnIndex;
+					var indentationPositionIndex = line.Position_StartInclusiveIndex;
 		
 					_indentationBuilder.Clear();
 					
@@ -573,6 +638,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            shouldApplySyntaxHighlighting = true;
 	                break;
 				case "Tab":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
 		        	{
 		        		if (onKeyDown.KeymapArgs.ShiftKey)
@@ -621,6 +687,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            }
 	                break;
 				case "Space":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 	            	modelModifier.Insert(
 	                    " ",
 	                    cursorModifierBag,
@@ -642,6 +709,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				case "Slash":
 				case "Minus":
 				case "Equal":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					modelModifier.Insert(
 	                    onKeyDown.KeymapArgs.Key,
 	                    cursorModifierBag,
@@ -687,6 +755,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "KeyX":
 	            case "KeyY":
 	            case "KeyZ":
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 	            	modelModifier.Insert(
 	                    onKeyDown.KeymapArgs.Key,
 	                    cursorModifierBag,
@@ -695,6 +764,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                menuKind = MenuKind.AutoCompleteMenu;
 	                shouldClearTooltip = true;
 	                break;
+				default:
+		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+		        	break;
 			}
 		}
 		

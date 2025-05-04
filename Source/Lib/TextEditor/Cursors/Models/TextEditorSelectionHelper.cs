@@ -57,8 +57,8 @@ public static class TextEditorSelectionHelper
             var selectionBounds = GetSelectionBounds(anchorPositionIndex, endingPositionIndex);
 
             var result = textEditorModel.GetString(
-                selectionBounds.lowerPositionIndexInclusive,
-                selectionBounds.upperPositionIndexExclusive - selectionBounds.lowerPositionIndexInclusive);
+                selectionBounds.Position_LowerInclusiveIndex,
+                selectionBounds.Position_UpperExclusiveIndex - selectionBounds.Position_LowerInclusiveIndex);
 
             return result.Length != 0 ? result : null;
         }
@@ -68,13 +68,13 @@ public static class TextEditorSelectionHelper
 
     public static TextEditorCursor SelectLinesRange(
         TextEditorModel textEditorModel,
-        int startingRowIndex,
+        int startingLineIndex,
         int count)
     {
         throw new NotImplementedException("TODO: (2023-12-13) Writing immutability for text editor");
     }
 
-    public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
+    public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(
         TextEditorSelection textEditorSelection)
     {
         return GetSelectionBounds(
@@ -82,7 +82,7 @@ public static class TextEditorSelectionHelper
             textEditorSelection.EndingPositionIndex);
     }
     
-    public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
+    public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(
         TextEditorCursorModifier cursorModifier)
     {
         return GetSelectionBounds(
@@ -90,7 +90,7 @@ public static class TextEditorSelectionHelper
             cursorModifier.SelectionEndingPositionIndex);
     }
 
-    public static (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) GetSelectionBounds(
+    public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(
         int anchorPositionIndex,
         int endingPositionIndex)
     {
@@ -100,37 +100,37 @@ public static class TextEditorSelectionHelper
                 $"{nameof(anchorPositionIndex)} was null.");
         }
 
-        var lowerPositionIndexInclusive = anchorPositionIndex;
-        var upperPositionIndexExclusive = endingPositionIndex;
+        var positionLowerInclusiveIndex = anchorPositionIndex;
+        var positionUpperExclusiveIndex = endingPositionIndex;
 
-        if (lowerPositionIndexInclusive > upperPositionIndexExclusive) // Swap the values around
-            (lowerPositionIndexInclusive, upperPositionIndexExclusive) = (upperPositionIndexExclusive, lowerPositionIndexInclusive);
+        if (positionLowerInclusiveIndex > positionUpperExclusiveIndex) // Swap the values around
+            (positionLowerInclusiveIndex, positionUpperExclusiveIndex) = (positionUpperExclusiveIndex, positionLowerInclusiveIndex);
 
-        return (lowerPositionIndexInclusive, upperPositionIndexExclusive);
+        return (positionLowerInclusiveIndex, positionUpperExclusiveIndex);
     }
 
-    public static (int lowerRowIndexInclusive, int upperRowIndexExclusive) ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+    public static (int Line_LowerInclusiveIndex, int Line_UpperExclusiveIndex) ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
         TextEditorModel textEditorModel,
-        (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) positionIndexBounds)
+        (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) positionIndexBounds)
     {
-        var firstRowToSelectDataInclusive = textEditorModel.GetLineInformationFromPositionIndex(
-            positionIndexBounds.lowerPositionIndexInclusive);
+        var firstLineToSelectDataInclusive = textEditorModel.GetLineInformationFromPositionIndex(
+            positionIndexBounds.Position_LowerInclusiveIndex);
 
-        var lastRowToSelectDataExclusive = textEditorModel.GetLineInformationFromPositionIndex(
-            positionIndexBounds.upperPositionIndexExclusive);
+        var lastLineToSelectDataExclusive = textEditorModel.GetLineInformationFromPositionIndex(
+            positionIndexBounds.Position_UpperExclusiveIndex);
 
-        var upperRowIndexExclusive = lastRowToSelectDataExclusive.Index + 1;
+        var upperLineIndexExclusive = lastLineToSelectDataExclusive.Index + 1;
 
-        if (lastRowToSelectDataExclusive.StartPositionIndexInclusive == positionIndexBounds.upperPositionIndexExclusive)
+        if (lastLineToSelectDataExclusive.Position_StartInclusiveIndex == positionIndexBounds.Position_UpperExclusiveIndex)
         {
             // If the selection ends at the start of a row, then an extra row
             // will be erroneously indended. This occurs because the '+1' logic
             // is used to ensure partially selected rows still get indented.
-            upperRowIndexExclusive--;
+            upperLineIndexExclusive--;
         }
 
         return (
-            firstRowToSelectDataInclusive.Index,
-            upperRowIndexExclusive);
+            firstLineToSelectDataInclusive.Index,
+            upperLineIndexExclusive);
     }
 }

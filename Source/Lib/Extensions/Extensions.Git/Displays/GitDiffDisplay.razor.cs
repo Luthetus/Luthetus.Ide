@@ -123,7 +123,8 @@ public partial class GitDiffDisplay : ComponentBase
 	            absolutePath.ExtensionNoPeriod,
 	            content,
 	            decorationMapper,
-	            compilerService);
+	            compilerService,
+	            TextEditorService);
 	            
 	        var modelModifier = new TextEditorModel(model);
 	        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
@@ -325,11 +326,11 @@ public partial class GitDiffDisplay : ComponentBase
 			            	
 			            	var lineInformation = modelModifier.GetLineInformation(lineIndex);
 			            	
-			            	Console.WriteLine($"lineIndex: {lineIndex} | ({lineInformation.StartPositionIndexInclusive} to {lineInformation.UpperLineEnd.StartPositionIndexInclusive})");
+			            	Console.WriteLine($"lineIndex: {lineIndex} | ({lineInformation.Position_StartInclusiveIndex} to {lineInformation.UpperLineEnd.Position_StartInclusiveIndex})");
 			            	
 			            	outResultTextSpanList.Add(new TextEditorTextSpan(
-			            		lineInformation.StartPositionIndexInclusive,
-			            		lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+			            		lineInformation.Position_StartInclusiveIndex,
+			            		lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
 							    (byte)TextEditorDiffDecorationKind.InsertionLine,
 							    originalResourceUri,
 							    outPresentationModel.PendingCalculation.ContentAtRequest));

@@ -345,7 +345,7 @@ public class DotNetSolutionLexer
             var propertyNameTextSpan = new TextEditorTextSpan(propertyNameStartPosition, _stringWalker, (byte)HtmlDecorationKind.AttributeName);
             propertyNameTextSpan = propertyNameTextSpan with
             {
-                EndingIndexExclusive = propertyNameTextSpan.EndingIndexExclusive - nameTrailingWhitespaceCount
+                EndExclusiveIndex = propertyNameTextSpan.EndExclusiveIndex - nameTrailingWhitespaceCount
             };
 
             _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, propertyNameTextSpan));
@@ -367,7 +367,7 @@ public class DotNetSolutionLexer
 
             propertyValueTextSpan = propertyValueTextSpan with
             {
-                EndingIndexExclusive = propertyValueTextSpan.EndingIndexExclusive - valueTrailingWhitespaceCount
+                EndExclusiveIndex = propertyValueTextSpan.EndExclusiveIndex - valueTrailingWhitespaceCount
             };
 
             _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedValueToken, propertyValueTextSpan));

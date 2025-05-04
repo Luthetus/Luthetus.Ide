@@ -250,15 +250,13 @@ public static class EventUtils
                 !keymapArgs.CtrlKey;
     }
 
-	public static async Task<(int rowIndex, int columnIndex, double positionX, double positionY)> CalculateRowAndColumnIndex(
-		ResourceUri resourceUri,
-		Key<TextEditorViewModel> viewModelKey,
+	public static async Task<(int LineIndex, int ColumnIndex, double PositionX, double PositionY)> CalculateLineAndColumnIndex(
+		TextEditorModel modelModifier,
+		TextEditorViewModel viewModel,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
 		TextEditorEditContext editContext)
     {
-        var modelModifier = editContext.GetModelModifier(resourceUri);
-        var viewModel = editContext.GetViewModelModifier(viewModelKey);
         var globalTextEditorOptions = editContext.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
 
         if (modelModifier is null || viewModel is null)
@@ -275,57 +273,121 @@ public static class EventUtils
         positionX += scrollbarDimensions.ScrollLeft;
         positionY += scrollbarDimensions.ScrollTop;
         
-        var rowIndex = (int)(positionY / charMeasurements.LineHeight);
+        var lineIndex = (int)(positionY / charMeasurements.LineHeight);
         
-        rowIndex = rowIndex > modelModifier.LineCount - 1
+        var hiddenLineCount = 0;
+        
+		for (int i = 0; i <= lineIndex; i++)
+		{
+			if (viewModel.HiddenLineIndexHashSet.Contains(i))
+				lineIndex++;
+		}
+        
+        lineIndex = lineIndex > modelModifier.LineCount - 1
             ? modelModifier.LineCount - 1
-            : rowIndex;
+            : lineIndex;
             
         var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
         int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
         
-        var lineLength = modelModifier.GetLineLength(rowIndex);
+        var inlineUi = default(InlineUi);
+        (int lineIndex, int columnIndex) inlineUiLineAndColumnPositionIndices = (-1, -1);
         
-        rowIndex = Math.Max(rowIndex, 0);
+        foreach (var inlineUiTuple in viewModel.InlineUiList)
+        {
+        	inlineUiLineAndColumnPositionIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
+        	
+        	if (inlineUiLineAndColumnPositionIndices.lineIndex == lineIndex)
+        	{
+        		inlineUi = inlineUiTuple.InlineUi;
+        		break;
+        	}
+        }
+        
+        var lineLength = modelModifier.GetLineLength(lineIndex);
+        
+        lineIndex = Math.Max(lineIndex, 0);
         columnIndexInt = Math.Max(columnIndexInt, 0);
         
-        var lineInformation = modelModifier.GetLineInformation(rowIndex);
+        var lineInformation = modelModifier.GetLineInformation(lineIndex);
         
         int literalLength = 0;
 		int visualLength = 0;
 		
 		var previousCharacterWidth = 1;
+		var previousCharacterWidthIsInlineUi = false;
+		var previousPosition = -1;
 		
-		for (int position = 0; position < lineLength; position++)
+		for (int columnIndex = 0; columnIndex < lineLength; columnIndex++)
 		{
 			if (visualLength >= columnIndexInt)
 		    {
 		    	if (previousCharacterWidth > 1)
 		    	{
-		    		var prevVis = visualLength - previousCharacterWidth;
+		    		var visualLengthPrevious = visualLength - previousCharacterWidth;
 		    		
-		    		if (columnIndexDouble - prevVis > visualLength - columnIndexDouble)
+		    		// If distance from left side to event is smaller than distance from right side to event
+		    		// then put cursor on the left side
+		    		// else put cursor on the right side.
+		    		if (columnIndexDouble - visualLengthPrevious < visualLength - columnIndexDouble)
 		    		{
+		    			// Represent a '\t' with 4 character width as "--->",
+		    			// a cursor by "|",
+		    			// and the side closest to the event with "==" then:
+		    			//
+		    			//  ==
+		    			// |--->
+		    			if (previousCharacterWidthIsInlineUi)
+		    			{
+		    				viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Left;
+		    			}
+		    			else
+		    			{
+		    				literalLength = literalLength - 1;
+		    			}
 		    			break;
 		    		}
 		    		else
 		    		{
-		    			literalLength = literalLength - 1;
+		    			// Represent a '\t' with 4 character width as "--->",
+		    			// a cursor by "|",
+		    			// and the side closest to the event with "==" then:
+		    			//
+		    			//    ==
+		    			//  --->|
+		    			if (previousCharacterWidthIsInlineUi)
+		    			{
+		    				viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Right;
+		    			}
 		    			break;
 		    		}
 		    	}
 		    
 		    	break;
 		    }
-		
-		    literalLength += 1;
 		    
-		    previousCharacterWidth = GetCharacterWidth(
-		    	modelModifier.RichCharacterList[
-		    		lineInformation.StartPositionIndexInclusive + position]
-		    	.Value);
-		    
-		    visualLength += previousCharacterWidth;
+		    if (inlineUiLineAndColumnPositionIndices.lineIndex == lineIndex &&
+		    	inlineUiLineAndColumnPositionIndices.columnIndex == columnIndex &&
+		    	previousPosition != columnIndex)
+		    {
+		    	previousCharacterWidth = 3;
+		    	previousCharacterWidthIsInlineUi = true;
+		    	previousPosition = columnIndex;
+		    	columnIndex--;
+		    	visualLength += previousCharacterWidth;
+		    }
+			else
+			{
+			    literalLength += 1;
+			    
+			    previousCharacterWidth = GetCharacterWidth(
+			    	modelModifier.RichCharacterList[
+			    		lineInformation.Position_StartInclusiveIndex + columnIndex]
+			    	.Value);
+			    
+			    visualLength += previousCharacterWidth;
+			    previousCharacterWidthIsInlineUi = false;
+		    }
 		}
 		
 		int GetCharacterWidth(char character)
@@ -340,6 +402,6 @@ public static class EventUtils
             ? lineLength
             : columnIndexInt;
         
-        return (rowIndex, literalLength, positionX, positionY);
+        return (lineIndex, literalLength, positionX, positionY);
     }
 }

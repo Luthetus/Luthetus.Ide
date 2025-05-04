@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public sealed class TextEditorPartition
+public struct TextEditorPartition
 {
     public TextEditorPartition(List<RichCharacter> richCharacterList)
     {

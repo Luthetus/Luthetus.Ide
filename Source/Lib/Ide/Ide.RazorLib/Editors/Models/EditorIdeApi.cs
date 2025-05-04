@@ -169,7 +169,8 @@ public class EditorIdeApi : IBackgroundTaskGroup
             absolutePath.ExtensionNoPeriod,
             content,
             decorationMapper,
-            compilerService);
+            compilerService,
+            _textEditorService);
             
         var modelModifier = new TextEditorModel(model);
         modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);

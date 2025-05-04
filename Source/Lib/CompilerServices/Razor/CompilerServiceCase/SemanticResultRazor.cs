@@ -58,16 +58,16 @@ public record SemanticResultRazor
     {
         var adhocTextInsertion = CodebehindClassInsertions
                 .SingleOrDefault(x =>
-                    textSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                    textSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
+                    textSpan.StartInclusiveIndex >= x.Insertion_StartInclusiveIndex &&
+                    textSpan.EndExclusiveIndex <= x.Insertion_EndExclusiveIndex);
 
         // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
         if (adhocTextInsertion is null)
         {
             adhocTextInsertion = CodebehindRenderFunctionInsertions
                 .SingleOrDefault(x =>
-                    textSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                    textSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
+                    textSpan.StartInclusiveIndex >= x.Insertion_StartInclusiveIndex &&
+                    textSpan.EndExclusiveIndex <= x.Insertion_EndExclusiveIndex);
         }
 
         if (adhocTextInsertion is null)
@@ -76,20 +76,20 @@ public record SemanticResultRazor
             return null;
         }
 
-        var symbolSourceTextStartingIndexInclusive =
-                    adhocTextInsertion.SourceTextStartingIndexInclusive +
-                    (textSpan.StartingIndexInclusive - adhocTextInsertion.InsertionStartingIndexInclusive);
+        var symbolSourceText_StartInclusiveIndex =
+                    adhocTextInsertion.SourceText_StartInclusiveIndex +
+                    (textSpan.StartInclusiveIndex - adhocTextInsertion.Insertion_StartInclusiveIndex);
 
-        var symbolSourceTextEndingIndexExclusive =
-            symbolSourceTextStartingIndexInclusive +
-            (textSpan.EndingIndexExclusive - textSpan.StartingIndexInclusive);
+        var symbolSourceText_EndExclusiveIndex =
+            symbolSourceText_StartInclusiveIndex +
+            (textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
 
         return textSpan with
         {
             ResourceUri = sourceResourceUri,
             SourceText = sourceText,
-            StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
-            EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
+            StartInclusiveIndex = symbolSourceText_StartInclusiveIndex,
+            EndExclusiveIndex = symbolSourceText_EndExclusiveIndex,
         };
     }
 }

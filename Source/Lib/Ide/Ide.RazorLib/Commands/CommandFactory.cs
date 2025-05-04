@@ -629,8 +629,8 @@ public class CommandFactory : ICommandFactory
         
         foreach (var symbol in symbolList)
         {
-            if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+            if (cursorPositionIndex >= symbol.TextSpan.StartInclusiveIndex &&
+                cursorPositionIndex < symbol.TextSpan.EndExclusiveIndex)
             {
                 foundMatch = true;
 				foundSymbol = symbol;
@@ -654,7 +654,7 @@ public class CommandFactory : ICommandFactory
 		
 		var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
 		resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
-		indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+		indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
 		
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return;

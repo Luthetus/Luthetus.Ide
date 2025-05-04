@@ -40,7 +40,7 @@ public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 				editContext,
 				treeViewCodeSearchTextSpan.AbsolutePath.Value,
 				true,
-				treeViewCodeSearchTextSpan.Item.StartingIndexInclusive,
+				treeViewCodeSearchTextSpan.Item.StartInclusiveIndex,
 				new Category("main"),
 				Key<TextEditorViewModel>.NewKey());
 		});

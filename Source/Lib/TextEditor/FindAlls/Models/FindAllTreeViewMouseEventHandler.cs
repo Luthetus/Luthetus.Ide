@@ -39,7 +39,7 @@ public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
     			editContext,
     			treeViewFindAllTextSpan.AbsolutePath.Value,
 				true,
-				treeViewFindAllTextSpan.Item.StartingIndexInclusive,
+				treeViewFindAllTextSpan.Item.StartInclusiveIndex,
 				new Category("main"),
 				Key<TextEditorViewModel>.NewKey());
     	});

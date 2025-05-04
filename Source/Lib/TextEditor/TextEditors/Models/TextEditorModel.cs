@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.Lines.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -33,10 +33,15 @@ public partial class TextEditorModel
         string content,
         IDecorationMapper? decorationMapper,
         ICompilerService? compilerService,
+        ITextEditorService textEditorService,
 		int partitionSize = 4_096)
     {
     	if (partitionSize < MINIMUM_PARTITION_SIZE)
             throw new LuthetusTextEditorException($"{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
+    
+    	__LocalLineEndList = textEditorService.__LocalLineEndList;
+        __LocalTabPositionList = textEditorService.__LocalTabPositionList;
+        __TextEditorViewModelLiason = textEditorService.__TextEditorViewModelLiason;
     
     	// Initialize
 	    _partitionList = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
@@ -45,7 +50,7 @@ public partial class TextEditorModel
 	    ViewModelKeyList = new();
 	    LineEndList = new();
 	    PresentationModelList = new();
-	    InlineUiList = new();
+	    TabCharPositionIndexList = new();
 	    OnlyLineEndKind = LineEndKind.Unset;
 	    LineEndKindPreference = LineEndKind.Unset;
 	    ResourceUri = resourceUri;
@@ -63,7 +68,7 @@ public partial class TextEditorModel
 	    _allText = string.Empty;
 	    _charCount = 0;
         // LineCount => LineEndList.Count;
-
+        
 		SetContent(content);
 		IsDirty = false;
 	}
@@ -75,6 +80,10 @@ public partial class TextEditorModel
 		// Some are "safe" from causing an enumeration was modified
 		// if copied between the model instances as they get edited
 		// because the UI doesn't use them.
+		
+		__LocalLineEndList = other.__LocalLineEndList;
+		__LocalTabPositionList = other.__LocalTabPositionList;
+		__TextEditorViewModelLiason = other.__TextEditorViewModelLiason;
 
 	    _partitionList = other.PartitionList;
 	    _richCharacterList = other.RichCharacterList;
@@ -82,7 +91,7 @@ public partial class TextEditorModel
 	    ViewModelKeyList = other.ViewModelKeyList;
 	    LineEndList = other.LineEndList;
 	    PresentationModelList = other.PresentationModelList;
-	    InlineUiList = other.InlineUiList;
+	    TabCharPositionIndexList = other.TabCharPositionIndexList;
         OnlyLineEndKind = other.OnlyLineEndKind;
 	    LineEndKindPreference = other.LineEndKindPreference;
 	    ResourceUri = other.ResourceUri;
@@ -236,7 +245,21 @@ public partial class TextEditorModel
     private bool _presentationModelListIsShallowCopy;
     public List<TextEditorPresentationModel> PresentationModelList { get; set; }
     
-    public List<InlineUi> InlineUiList { get; set; }
+    public List<int> TabCharPositionIndexList { get; set; }
+    
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    private List<LineEnd> __LocalLineEndList;
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    private List<int> __LocalTabPositionList;
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    private TextEditorViewModelLiason __TextEditorViewModelLiason;
+    
     public LineEndKind OnlyLineEndKind { get; set; }
     public LineEndKind LineEndKindPreference { get; private set; }
     public ResourceUri ResourceUri { get; set; }
@@ -326,7 +349,7 @@ public partial class TextEditorModel
             new LineEnd(0, 0, LineEndKind.EndOfFile)
         };
 
-        InlineUiList = new List<InlineUi>();
+        TabCharPositionIndexList = new();
 
         SetIsDirtyTrue();
     }
@@ -368,8 +391,8 @@ public partial class TextEditorModel
 				// GOAL: Match indentation on newline keystroke (2024-07-04)
 				var line = this.GetLineInformation(cursorModifierBag.CursorModifier.LineIndex);
 
-				var cursorPositionIndex = line.StartPositionIndexInclusive + cursorModifierBag.CursorModifier.ColumnIndex;
-				var indentationPositionIndex = line.StartPositionIndexInclusive;
+				var cursorPositionIndex = line.Position_StartInclusiveIndex + cursorModifierBag.CursorModifier.ColumnIndex;
+				var indentationPositionIndex = line.Position_StartInclusiveIndex;
 
 				var indentationBuilder = new StringBuilder();
 
@@ -497,156 +520,85 @@ public partial class TextEditorModel
 		}
 		
         var rowIndex = 0;
-        var charactersOnRow = 0;
-
-        
+        var charactersOnLine = 0;
 
         List<RichCharacter> richCharacterList = new();
-
         var richCharacterIndex = 0;
-
-        
 
         for (var contentIndex = 0; contentIndex < content.Length; contentIndex++)
         {
             var character = content[contentIndex];
-
-            charactersOnRow++;
-
-            
+            charactersOnLine++;
 
             LineEndKind currentLineEndKind = LineEndKind.Unset;
 
-            
-
             if ((character == '\r') && (contentIndex < content.Length - 1) && (content[contentIndex + 1] == '\n'))
-
             {
-
             	contentIndex++;
-
             	currentLineEndKind = LineEndKind.CarriageReturnLineFeed;
 
-            	
-
             	if (LineEndKindPreference == LineEndKind.Unset)
-
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
 
             }
-
             else if (character == '\r')
-
             {
-
             	currentLineEndKind = LineEndKind.CarriageReturn;
 
-            	
-
             	if (LineEndKindPreference == LineEndKind.Unset)
 
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
-
             }
-
             else if (character == '\n')
-
             {
-
             	currentLineEndKind = LineEndKind.LineFeed;
 
-            	
-
             	if (LineEndKindPreference == LineEndKind.Unset)
-
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
-
             }
-
-            
 
             if (currentLineEndKind != LineEndKind.Unset)
-
             {
-
-				if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-
-					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
-
-            
+				if (charactersOnLine > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnLine + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
             	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
-
             	{
-
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, LineEndKind.CarriageReturnLineFeed));
-
 	            	richCharacterList.Add(new(character, default));
-
 	            	richCharacterList.Add(new('\n', default));
-
 	            	richCharacterIndex += 2;
-
             	}
-
             	else if (LineEndKindPreference == LineEndKind.CarriageReturn)
-
             	{
-
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.CarriageReturn));
-
 					richCharacterList.Add(new(character, default));
-
 	            	richCharacterIndex++;
-
             	}
-
             	else if (LineEndKindPreference == LineEndKind.LineFeed)
-
             	{
-
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.LineFeed));
-
 					richCharacterList.Add(new(character, default));
-
 	            	richCharacterIndex++;
-
             	}
-
             	else
-
             	{
-
             		throw new NotImplementedException("only CarriageReturnLineFeed, CarriageReturn, and LineFeed are expected.");
-
             	}
-
-				
 
 				rowIndex++;
-
-	            charactersOnRow = 0;
-
+	            charactersOnLine = 0;
             }
 			else if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-
 			{
-                InlineUiList.Add(new InlineUi(richCharacterIndex, InlineUiKind.Tab));
-
+                TabCharPositionIndexList.Add(richCharacterIndex);
                 richCharacterList.Add(new(character, default));
-
             	richCharacterIndex++;
-
             }
-
             else
-
             {
-
             	richCharacterList.Add(new(character, default));
-
             	richCharacterIndex++;
-
             }
         }
         
@@ -684,8 +636,8 @@ public partial class TextEditorModel
             throw new LuthetusTextEditorException($"The text editor model is malformed; the final entry of {nameof(LineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
         LineEndList[^1] = endOfFile with
 		{
-			StartPositionIndexInclusive = richCharacterList.Count,
-			EndPositionIndexExclusive = richCharacterList.Count,
+			Position_StartInclusiveIndex = richCharacterList.Count,
+			Position_EndExclusiveIndex = richCharacterList.Count,
 		};
 
         SetIsDirtyTrue();
@@ -967,7 +919,7 @@ public partial class TextEditorModel
 	/// <inheritdoc cref="TextEditorModel"/>
 	/// </summary>
 
-	public void ClearOnlyRowEndingKind()
+	public void ClearOnlyLineEndKind()
     {
         OnlyLineEndKind = LineEndKind.Unset;
     }
@@ -1016,7 +968,7 @@ public partial class TextEditorModel
     public void ClearAllStatesButKeepEditHistory()
     {
         ClearContent();
-        ClearOnlyRowEndingKind();
+        ClearOnlyLineEndKind();
         SetLineEndKindPreference(LineEndKind.Unset);
     }     
 
@@ -1171,22 +1123,22 @@ public partial class TextEditorModel
         //       method because this specific metadata is being calculated by counting the characters, which
         //       in the case of 'InsertMetadata(...)' wouldn't have been inserted yet.
         //
-        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+        // TODO: Fix tracking the MostCharactersOnASingleLineTuple this way is possibly inefficient - should instead only check the rows that changed
         {
-            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
+            (int rowIndex, int rowLength) localMostCharactersOnASingleLineTuple = (0, 0);
 
             for (var i = 0; i < LineEndList.Count; i++)
             {
-                var lengthOfRow = this.GetLineLength(i);
+                var lengthOfLine = this.GetLineLength(i);
 
-                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
-                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+                if (lengthOfLine > localMostCharactersOnASingleLineTuple.rowLength)
+                    localMostCharactersOnASingleLineTuple = (i, lengthOfLine);
             }
 
-            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
-                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+            localMostCharactersOnASingleLineTuple = (localMostCharactersOnASingleLineTuple.rowIndex,
+                localMostCharactersOnASingleLineTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-            MostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
+            MostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
         }
 
         SetIsDirtyTrue();
@@ -1209,8 +1161,10 @@ public partial class TextEditorModel
         bool isCarriageReturnLineFeed = false;
 
 		// Use 'int.MinValue' to represent null.
-        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, new());
-        (int index, List<InlineUi> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, new());
+		__LocalLineEndList.Clear();
+		__LocalTabPositionList.Clear();
+        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, __LocalLineEndList);
+        (int index, List<int> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, __LocalTabPositionList);
 
         var lineEndingsChangedValueBuilder = new StringBuilder();
 
@@ -1296,14 +1250,14 @@ public partial class TextEditorModel
                 {
                     if (tabPositionLazyInsertRange.index == int.MinValue)
                     {
-                        tabPositionLazyInsertRange.index = InlineUiList.FindIndex(x => x.PositionIndex >= initialCursorPositionIndex);
+                        tabPositionLazyInsertRange.index = TabCharPositionIndexList.FindIndex(x => x >= initialCursorPositionIndex);
 
                         if (tabPositionLazyInsertRange.index == -1)
-                            tabPositionLazyInsertRange.index = InlineUiList.Count;
+                            tabPositionLazyInsertRange.index = TabCharPositionIndexList.Count;
                     }
 
                     tabPositionLazyInsertRange.localTabPositionList.Add(
-                    	new InlineUi(initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length, InlineUiKind.Tab));
+                    	initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length);
                 }
 
                 lineEndingsChangedValueBuilder.Append(charValue);
@@ -1311,7 +1265,7 @@ public partial class TextEditorModel
             }
         }
 
-        // Reposition the Row Endings
+        // Reposition the Line Endings
         {
             for (var i = initialCursorLineIndex; i < LineEndList.Count; i++)
             {
@@ -1319,21 +1273,22 @@ public partial class TextEditorModel
 
                 LineEndList[i] = rowEndingTuple with
                 {
-                    StartPositionIndexInclusive = rowEndingTuple.StartPositionIndexInclusive + lineEndingsChangedValueBuilder.Length,
-                    EndPositionIndexExclusive = rowEndingTuple.EndPositionIndexExclusive + lineEndingsChangedValueBuilder.Length,
+                    Position_StartInclusiveIndex = rowEndingTuple.Position_StartInclusiveIndex + lineEndingsChangedValueBuilder.Length,
+                    Position_EndExclusiveIndex = rowEndingTuple.Position_EndExclusiveIndex + lineEndingsChangedValueBuilder.Length,
                 };
             }
         }
 
         // Reposition the Tabs
         {
-            var firstTabKeyPositionIndexToModify = InlineUiList.FindIndex(x => x.PositionIndex >= initialCursorPositionIndex);
+            var firstTabKeyPositionIndexToModify = TabCharPositionIndexList.FindIndex(x => x >= initialCursorPositionIndex);
 
             if (firstTabKeyPositionIndexToModify != -1)
             {
-                for (var i = firstTabKeyPositionIndexToModify; i < InlineUiList.Count; i++)
+                for (var i = firstTabKeyPositionIndexToModify; i < TabCharPositionIndexList.Count; i++)
                 {
-                    InlineUiList[i] = InlineUiList[i].WithIncrementPositionIndex(lineEndingsChangedValueBuilder.Length);
+                	var tabCharPositionIndex = TabCharPositionIndexList[i];
+                    TabCharPositionIndexList[i] = tabCharPositionIndex + lineEndingsChangedValueBuilder.Length;
                 }
             }
         }
@@ -1355,6 +1310,14 @@ public partial class TextEditorModel
                 presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
             }
         }
+        
+        // Reposition the ViewModel InlineUiList
+        {
+        	__TextEditorViewModelLiason.InsertRepositionInlineUiList(
+        		initialCursorPositionIndex,
+        		lineEndingsChangedValueBuilder.Length,
+        		ViewModelKeyList);
+        }
 
         // Add in any new metadata
         {
@@ -1367,7 +1330,7 @@ public partial class TextEditorModel
 
             if (tabPositionLazyInsertRange.index != int.MinValue)
             {
-                InlineUiList.InsertRange(
+                TabCharPositionIndexList.InsertRange(
                     tabPositionLazyInsertRange.index,
                     tabPositionLazyInsertRange.localTabPositionList);
             }
@@ -1564,19 +1527,19 @@ public partial class TextEditorModel
             // If user's cursor has a selection, then set the variables so the positionIndex is the
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
             // and that the 'DeleteKind.Delete' logic runs.
-            var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+            var (position_LowerIndexInclusive, position_UpperIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-            var lowerLineData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
-            var lowerColumnIndex = lowerPositionIndexInclusive - lowerLineData.StartPositionIndexInclusive;
+            var lowerLineData = this.GetLineInformationFromPositionIndex(position_LowerIndexInclusive);
+            var lowerColumnIndex = position_LowerIndexInclusive - lowerLineData.Position_StartInclusiveIndex;
 
             cursorModifier.LineIndex = lowerLineData.Index;
             initialLineIndex = cursorModifier.LineIndex;
             cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
-            positionIndex = lowerPositionIndexInclusive;
+            positionIndex = position_LowerIndexInclusive;
 
             // The deletion of a selection logic does not check for multibyte characters.
             // Therefore, later in this method, if a multibyte character is found, the columnCount must be reduced. (2024-05-01)
-            columnCount = upperPositionIndexExclusive - lowerPositionIndexInclusive;
+            columnCount = position_UpperIndexExclusive - position_LowerIndexInclusive;
             deleteKind = DeleteKind.Delete;
 
             cursorModifier.SelectionAnchorPositionIndex = -1;
@@ -1626,7 +1589,7 @@ public partial class TextEditorModel
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
                     var indexLineEnd = LineEndList.FindIndex(
-                        x => x.StartPositionIndexInclusive == toDeletePositionIndex);
+                        x => x.Position_StartInclusiveIndex == toDeletePositionIndex);
 
                     var lineEnd = LineEndList[indexLineEnd];
 
@@ -1658,8 +1621,7 @@ public partial class TextEditorModel
 
                     if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                     {
-                        var indexTabKey = InlineUiList.FindIndex(
-                            x => x.PositionIndex == toDeletePositionIndex);
+                        var indexTabKey = TabCharPositionIndexList.FindIndex(x => x == toDeletePositionIndex);
 
                         // Delete starts at the lowest index, therefore use '??=' to only assign once.
                         tabPositionLazyRemoveRange.index ??= indexTabKey;
@@ -1703,9 +1665,9 @@ public partial class TextEditorModel
                     // is a starting index, and a count.
                     var indexLineEnd = LineEndList.FindIndex(
                         // Check for '\n' or '\r'
-                        x => x.EndPositionIndexExclusive == toDeletePositionIndex + 1 ||
+                        x => x.Position_EndExclusiveIndex == toDeletePositionIndex + 1 ||
                         // Check for "\r\n"
-                        x.EndPositionIndexExclusive == toDeletePositionIndex + 2);
+                        x.Position_EndExclusiveIndex == toDeletePositionIndex + 2);
 
                     var lineEnd = LineEndList[indexLineEnd];
 
@@ -1730,8 +1692,7 @@ public partial class TextEditorModel
 
                     if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
                     {
-                        var indexTabKey = InlineUiList.FindIndex(
-                            x => x.PositionIndex == toDeletePositionIndex);
+                        var indexTabKey = TabCharPositionIndexList.FindIndex(x => x == toDeletePositionIndex);
 
                         // Backspace starts at the highest index, therefore use '=' to only assign everytime.
                         tabPositionLazyRemoveRange.index = indexTabKey;
@@ -1753,21 +1714,22 @@ public partial class TextEditorModel
 
                 LineEndList[i] = lineEnd with
                 {
-                    StartPositionIndexInclusive = lineEnd.StartPositionIndexInclusive - charCount,
-                    EndPositionIndexExclusive = lineEnd.EndPositionIndexExclusive - charCount,
+                    Position_StartInclusiveIndex = lineEnd.Position_StartInclusiveIndex - charCount,
+                    Position_EndExclusiveIndex = lineEnd.Position_EndExclusiveIndex - charCount,
                 };
             }
         }
 
         // Reposition the Tab(s)
         {
-            var firstTabKeyPositionIndexToModify = InlineUiList.FindIndex(x => x.PositionIndex >= positionIndex);
+            var firstTabKeyPositionIndexToModify = TabCharPositionIndexList.FindIndex(x => x >= positionIndex);
 
             if (firstTabKeyPositionIndexToModify != -1)
             {
-                for (var i = firstTabKeyPositionIndexToModify; i < InlineUiList.Count; i++)
+                for (var i = firstTabKeyPositionIndexToModify; i < TabCharPositionIndexList.Count; i++)
                 {
-                    InlineUiList[i] = InlineUiList[i].WithDecrementPositionIndex(charCount);
+                	var tabCharPositionIndex = TabCharPositionIndexList[i];
+                    TabCharPositionIndexList[i] = tabCharPositionIndex - charCount;
                 }
             }
         }
@@ -1789,6 +1751,14 @@ public partial class TextEditorModel
                 presentationModel.PendingCalculation?.TextModificationsSinceRequestList.Add(textModification);
             }
         }
+        
+        // Reposition the ViewModel InlineUiList
+        {
+        	__TextEditorViewModelLiason.DeleteRepositionInlineUiList(
+        		positionIndex,
+        		positionIndex + charCount,
+        		ViewModelKeyList);
+        }
 
 		// Delete metadata
         {
@@ -1801,7 +1771,7 @@ public partial class TextEditorModel
 
             if (tabPositionLazyRemoveRange.index is not null)
             {
-                InlineUiList.RemoveRange(
+                TabCharPositionIndexList.RemoveRange(
                     tabPositionLazyRemoveRange.index.Value,
                     tabPositionLazyRemoveRange.count);
             }
@@ -1865,7 +1835,7 @@ public partial class TextEditorModel
             lineIndex = 0;
 
         var line = GetLineInformation(lineIndex);
-        var lineLengthWithLineEndings = line.EndPositionIndexExclusive - line.StartPositionIndexInclusive;
+        var lineLengthWithLineEndings = line.Position_EndExclusiveIndex - line.Position_StartInclusiveIndex;
 
         if (includeLineEndingCharacters)
             return lineLengthWithLineEndings;
@@ -1901,8 +1871,8 @@ public partial class TextEditorModel
         for (var i = startingLineIndex; i < endingLineIndexExclusive; i++)
         {
             // Previous line's end-position-exclusive is this row's start.
-            var startOfLineInclusive = GetLineInformation(i).StartPositionIndexInclusive;
-            var endOfLineExclusive = LineEndList[i].EndPositionIndexExclusive;
+            var startOfLineInclusive = GetLineInformation(i).Position_StartInclusiveIndex;
+            var endOfLineExclusive = LineEndList[i].Position_EndExclusiveIndex;
 
 			// TODO: LINQ used in a hot path (the virtualization invokes this method)
             var line = RichCharacterList
@@ -1925,14 +1895,14 @@ public partial class TextEditorModel
         var count = 0;
         var foundSpan = false;
         
-        foreach (var inlineUi in InlineUiList)
+        foreach (var tabCharPositionIndex in TabCharPositionIndexList)
         {
-        	if (!foundSpan && inlineUi.PositionIndex < line.StartPositionIndexInclusive)
+        	if (!foundSpan && tabCharPositionIndex < line.Position_StartInclusiveIndex)
         		continue;
         	else
         		foundSpan = true;
         		
-        	if (inlineUi.PositionIndex < line.StartPositionIndexInclusive + columnIndex)
+        	if (tabCharPositionIndex < line.Position_StartInclusiveIndex + columnIndex)
         		count++;
         	else
         		break;
@@ -1965,7 +1935,7 @@ public partial class TextEditorModel
 
         AssertColumnIndex(line, columnIndex);
 
-        return line.StartPositionIndexInclusive + columnIndex;
+        return line.Position_StartInclusiveIndex + columnIndex;
     }
 
     public (int lineIndex, int columnIndex) GetLineAndColumnIndicesFromPositionIndex(
@@ -1975,7 +1945,7 @@ public partial class TextEditorModel
 
         return (
             lineInformation.Index,
-            positionIndex - lineInformation.StartPositionIndexInclusive);
+            positionIndex - lineInformation.Position_StartInclusiveIndex);
     }
 
     /// <summary>
@@ -2042,7 +2012,7 @@ public partial class TextEditorModel
         var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
 
         var lineInformation = GetLineInformationFromPositionIndex(positionIndex);
-        var columnIndex = positionIndex - lineInformation.StartPositionIndexInclusive;
+        var columnIndex = positionIndex - lineInformation.Position_StartInclusiveIndex;
 
         if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
         {
@@ -2063,8 +2033,8 @@ public partial class TextEditorModel
                 wordColumnIndexEndExclusive = GetLineLength(lineInformation.Index);
 
             return new TextEditorTextSpan(
-                wordColumnIndexStartInclusive + lineInformation.StartPositionIndexInclusive,
-                wordColumnIndexEndExclusive + lineInformation.StartPositionIndexInclusive,
+                wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
+                wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
                 0,
                 ResourceUri,
                 GetAllText());
@@ -2080,8 +2050,8 @@ public partial class TextEditorModel
                 wordColumnIndexEndExclusive = GetLineLength(lineInformation.Index);
 
             return new TextEditorTextSpan(
-                columnIndex + lineInformation.StartPositionIndexInclusive,
-                wordColumnIndexEndExclusive + lineInformation.StartPositionIndexInclusive,
+                columnIndex + lineInformation.Position_StartInclusiveIndex,
+                wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
                 0,
                 ResourceUri,
                 GetAllText());
@@ -2097,8 +2067,8 @@ public partial class TextEditorModel
                 wordColumnIndexStartInclusive = 0;
 
             return new TextEditorTextSpan(
-                wordColumnIndexStartInclusive + lineInformation.StartPositionIndexInclusive,
-                columnIndex + lineInformation.StartPositionIndexInclusive,
+                wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
+                columnIndex + lineInformation.Position_StartInclusiveIndex,
                 0,
                 ResourceUri,
                 GetAllText());
@@ -2188,8 +2158,8 @@ public partial class TextEditorModel
 
         return new LineInformation(
             lineIndex,
-            lineEndLower.EndPositionIndexExclusive,
-            lineEndUpper.EndPositionIndexExclusive,
+            lineEndLower.Position_EndExclusiveIndex,
+            lineEndUpper.Position_EndExclusiveIndex,
             lineEndLower,
             lineEndUpper);
     }
@@ -2201,11 +2171,11 @@ public partial class TextEditorModel
         int GetLineIndexFromPositionIndex()
         {
             // StartOfFile
-            if (LineEndList[0].EndPositionIndexExclusive > positionIndex)
+            if (LineEndList[0].Position_EndExclusiveIndex > positionIndex)
                 return 0;
 
             // EndOfFile
-            if (LineEndList[^1].EndPositionIndexExclusive <= positionIndex)
+            if (LineEndList[^1].Position_EndExclusiveIndex <= positionIndex)
                 return LineEndList.Count - 1;
 
             // In-between
@@ -2213,7 +2183,7 @@ public partial class TextEditorModel
             {
                 var lineEndTuple = LineEndList[i];
 
-                if (lineEndTuple.EndPositionIndexExclusive > positionIndex)
+                if (lineEndTuple.Position_EndExclusiveIndex > positionIndex)
                     return i;
             }
 
@@ -2238,12 +2208,12 @@ public partial class TextEditorModel
             ? -1
             : 1;
 
-        var lineStartPositionIndex = GetLineInformation(lineIndex).StartPositionIndexInclusive;
+        var lineStartPositionIndex = GetLineInformation(lineIndex).Position_StartInclusiveIndex;
 
         if (lineIndex > LineEndList.Count - 1)
             return -1;
 
-        var lastPositionIndexOnRow = LineEndList[lineIndex].EndPositionIndexExclusive - 1;
+        var lastPositionIndexOnLine = LineEndList[lineIndex].Position_EndExclusiveIndex - 1;
         var positionIndex = GetPositionIndex(lineIndex, columnIndex);
 
         if (moveBackwards)
@@ -2262,7 +2232,7 @@ public partial class TextEditorModel
         while (true)
         {
             if (positionIndex >= RichCharacterList.Length ||
-                positionIndex > lastPositionIndexOnRow ||
+                positionIndex > lastPositionIndexOnLine ||
                 positionIndex < lineStartPositionIndex)
             {
                 return -1;
@@ -2383,14 +2353,14 @@ public partial class TextEditorModel
     public string GetTextOffsettingCursor(TextEditorCursor textEditorCursor)
     {
         var cursorPositionIndex = GetPositionIndex(textEditorCursor);
-        var lineStartPositionIndexInclusive = GetLineInformation(textEditorCursor.LineIndex).StartPositionIndexInclusive;
+        var lineStartPositionIndexInclusive = GetLineInformation(textEditorCursor.LineIndex).Position_StartInclusiveIndex;
 
         return GetString(lineStartPositionIndexInclusive, cursorPositionIndex - lineStartPositionIndexInclusive);
     }
 
     public string GetLineText(int lineIndex)
     {
-        var lineStartPositionIndexInclusive = GetLineInformation(lineIndex).StartPositionIndexInclusive;
+        var lineStartPositionIndexInclusive = GetLineInformation(lineIndex).Position_StartInclusiveIndex;
         var lengthOfLine = GetLineLength(lineIndex, true);
 
         return GetString(lineStartPositionIndexInclusive, lengthOfLine);
@@ -2440,7 +2410,7 @@ public partial class TextEditorModel
 
         for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = PartitionList[i];
+            TextEditorPartition partition = PartitionList[i];
 
             if (runningCount + partition.Count >= globalPositionIndex)
             {
@@ -2494,7 +2464,7 @@ public partial class TextEditorModel
 
         for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = PartitionList[i];
+            TextEditorPartition partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -2533,7 +2503,7 @@ public partial class TextEditorModel
 
         for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = PartitionList[i];
+            TextEditorPartition partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -2574,7 +2544,7 @@ public partial class TextEditorModel
 
         for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = PartitionList[i];
+            TextEditorPartition partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -2679,7 +2649,7 @@ public partial class TextEditorModel
             int indexOfPartitionWithAvailableSpace = -1;
             int relativePositionIndex = -1;
             var runningCount = 0;
-            TextEditorPartition? partition;
+            TextEditorPartition partition;
 
             for (int i = 0; i < PartitionList.Count; i++)
             {
