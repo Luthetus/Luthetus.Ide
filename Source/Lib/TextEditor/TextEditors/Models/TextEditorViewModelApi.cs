@@ -231,7 +231,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartInclusiveIndex);
         var lineIndex = lineInformation.Index;
-        var columnIndex = textSpan.StartInclusiveIndex - lineInformation.PositionStartInclusiveIndex;
+        var columnIndex = textSpan.StartInclusiveIndex - lineInformation.Position_StartInclusiveIndex;
 
         // Unit of measurement is pixels (px)
         var scrollLeft = columnIndex *
@@ -340,12 +340,12 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
                     var lowerLineInformation = modelModifier.GetLineInformationFromPositionIndex(
-                        selectionBounds.PositionLowerInclusiveIndex);
+                        selectionBounds.Position_LowerInclusiveIndex);
 
                     cursorModifier.LineIndex = lowerLineInformation.Index;
 
-                    cursorModifier.ColumnIndex = selectionBounds.PositionLowerInclusiveIndex -
-                        lowerLineInformation.PositionStartInclusiveIndex;
+                    cursorModifier.ColumnIndex = selectionBounds.Position_LowerInclusiveIndex -
+                        lowerLineInformation.Position_StartInclusiveIndex;
                 }
                 else
                 {
@@ -466,7 +466,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
                     var upperLineMetaData = modelModifier.GetLineInformationFromPositionIndex(
-                        selectionBounds.PositionUpperExclusiveIndex);
+                        selectionBounds.Position_UpperExclusiveIndex);
 
                     cursorModifier.LineIndex = upperLineMetaData.Index;
 
@@ -481,7 +481,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
                     else
                     {
                         cursorModifier.ColumnIndex =
-                            selectionBounds.PositionUpperExclusiveIndex - upperLineMetaData.PositionStartInclusiveIndex;
+                            selectionBounds.Position_UpperExclusiveIndex - upperLineMetaData.Position_StartInclusiveIndex;
                     }
                 }
                 else
@@ -574,7 +574,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					var originalPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
 					
 					var lineInformation = modelModifier.GetLineInformation(cursorModifier.LineIndex);
-					var lastValidPositionIndex = lineInformation.PositionStartInclusiveIndex + lineInformation.LastValidColumnIndex;
+					var lastValidPositionIndex = lineInformation.Position_StartInclusiveIndex + lineInformation.LastValidColumnIndex;
 					
 					cursorModifier.ColumnIndex = 0; // This column index = 0 is needed for the while loop below.
 					var indentationPositionIndexExclusiveEnd = modelModifier.GetPositionIndex(cursorModifier);
@@ -602,7 +602,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						cursorModifier.SetColumnIndexAndPreferred(0);
 					else
 						cursorModifier.SetColumnIndexAndPreferred(
-							indentationPositionIndexExclusiveEnd - lineInformation.PositionStartInclusiveIndex);
+							indentationPositionIndexExclusiveEnd - lineInformation.Position_StartInclusiveIndex);
 				}
 
                 break;
@@ -1026,11 +1026,11 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    
-					var linePositionStartInclusiveIndex = lineInformation.PositionStartInclusiveIndex;
+					var linePositionStartInclusiveIndex = lineInformation.Position_StartInclusiveIndex;
 					var lineEnd = modelModifier.LineEndList[lineIndex];
 					
 					// TODO: Was this code using length including line ending or excluding? (2024-12-29)
-					var lineLength = lineInformation.PositionEndExclusiveIndex - lineInformation.PositionStartInclusiveIndex;
+					var lineLength = lineInformation.Position_EndExclusiveIndex - lineInformation.Position_StartInclusiveIndex;
 					
 					// Don't bother with the extra width due to tabs until the very end.
 					// It is thought to be too costly on average to get the tab count for the line in order to take less text overall
@@ -1053,11 +1053,11 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						for (int i = 0; i < tabCharPositionIndexListCount; i++)
 						{
 							var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
-							var tabKeyColumnIndex = tabCharPositionIndex - line.PositionStartInclusiveIndex;
+							var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
 						
 							if (!foundLine)
 							{
-								if (tabCharPositionIndex >= line.PositionStartInclusiveIndex)
+								if (tabCharPositionIndex >= line.Position_StartInclusiveIndex)
 								{
 									firstInlineUiOnLineIndex = i;
 									foundLine = true;
@@ -1091,7 +1091,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							{
 								var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
 								
-								var tabKeyColumnIndex = tabCharPositionIndex - line.PositionStartInclusiveIndex;
+								var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
 								
 								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
 									break;
@@ -1127,8 +1127,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						var positionStartInclusiveIndex = linePositionStartInclusiveIndex + localHorizontalStartingIndex;
 						
 						var positionEndExclusiveIndex = positionStartInclusiveIndex + localHorizontalTake;
-						if (positionEndExclusiveIndex > lineInformation.UpperLineEnd.PositionStartInclusiveIndex)
-							positionEndExclusiveIndex = lineInformation.UpperLineEnd.PositionStartInclusiveIndex;
+						if (positionEndExclusiveIndex > lineInformation.UpperLineEnd.Position_StartInclusiveIndex)
+							positionEndExclusiveIndex = lineInformation.UpperLineEnd.Position_StartInclusiveIndex;
 						
 						linesTaken++;
 						virtualizedLineList.Add(new VirtualizationLine(
@@ -1155,7 +1155,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						{
 							if (!foundLine)
 							{
-								if (tabCharPositionIndex >= line.PositionStartInclusiveIndex)
+								if (tabCharPositionIndex >= line.Position_StartInclusiveIndex)
 									foundLine = true;
 							}
 							
@@ -1174,8 +1174,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						linesTaken++;
 						virtualizedLineList.Add(new VirtualizationLine(
 							lineIndex,
-							positionStartInclusiveIndex: lineInformation.PositionStartInclusiveIndex,
-							positionEndExclusiveIndex: lineInformation.UpperLineEnd.PositionStartInclusiveIndex,
+							positionStartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+							positionEndExclusiveIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
 							virtualizationSpanStartInclusiveIndex: 0,
 							virtualizationSpanEndExclusiveIndex: 0,
 							widthInPixels,

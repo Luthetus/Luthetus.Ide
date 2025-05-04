@@ -137,7 +137,7 @@ public sealed class TextEditorComponentData
     
     public int useLowerBoundInclusiveRowIndex;
     public int useUpperBoundExclusiveRowIndex;
-    public (int PositionLowerInclusiveIndex, int PositionUpperExclusiveIndex) selectionBoundsInPositionIndexUnits;
+    public (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) selectionBoundsInPositionIndexUnits;
     
     public List<(string CssClassString, int IndexInclusiveStart, int IndexExclusiveEnd)> firstPresentationLayerGroupList = new();
 	public List<(string PresentationCssClass, string PresentationCssStyle)> firstPresentationLayerTextSpanList = new();
@@ -593,19 +593,19 @@ public sealed class TextEditorComponentData
         var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
 
         var startingColumnIndex = 0;
-        var endingColumnIndex = line.PositionEndExclusiveIndex - 1;
+        var endingColumnIndex = line.Position_EndExclusiveIndex - 1;
 
         var fullWidthOfRowIsSelected = true;
 
-        if (positionLowerInclusiveIndex > line.PositionStartInclusiveIndex)
+        if (positionLowerInclusiveIndex > line.Position_StartInclusiveIndex)
         {
-            startingColumnIndex = positionLowerInclusiveIndex - line.PositionStartInclusiveIndex;
+            startingColumnIndex = positionLowerInclusiveIndex - line.Position_StartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (positionUpperExclusiveIndex < line.PositionEndExclusiveIndex)
+        if (positionUpperExclusiveIndex < line.Position_EndExclusiveIndex)
         {
-            endingColumnIndex = positionUpperExclusiveIndex - line.PositionStartInclusiveIndex;
+            endingColumnIndex = positionUpperExclusiveIndex - line.Position_StartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -678,7 +678,7 @@ public sealed class TextEditorComponentData
             _uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
             _uiStringBuilder.Append("px;");
         }
-        else if (startingColumnIndex != 0 && positionUpperExclusiveIndex > line.PositionEndExclusiveIndex - 1)
+        else if (startingColumnIndex != 0 && positionUpperExclusiveIndex > line.Position_EndExclusiveIndex - 1)
         {
         	_uiStringBuilder.Append("calc(");
         	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
@@ -725,8 +725,8 @@ public sealed class TextEditorComponentData
             {
             	var textSpan = inTextSpanList[i];
             	
-                if (lowerLine.PositionStartInclusiveIndex <= textSpan.StartInclusiveIndex &&
-                    upperLine.PositionEndExclusiveIndex >= textSpan.StartInclusiveIndex)
+                if (lowerLine.Position_StartInclusiveIndex <= textSpan.StartInclusiveIndex &&
+                    upperLine.Position_EndExclusiveIndex >= textSpan.StartInclusiveIndex)
                 {
                 	_virtualizedTextSpanList.Add(textSpan);
                 }
@@ -808,19 +808,19 @@ public sealed class TextEditorComponentData
         var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
 
         var selectionStartingColumnIndex = 0;
-        var selectionEndingColumnIndex = line.PositionEndExclusiveIndex - 1;
+        var selectionEndingColumnIndex = line.Position_EndExclusiveIndex - 1;
 
         var fullWidthOfRowIsSelected = true;
 
-        if (positionLowerInclusiveIndex > line.PositionStartInclusiveIndex)
+        if (positionLowerInclusiveIndex > line.Position_StartInclusiveIndex)
         {
-            selectionStartingColumnIndex = positionLowerInclusiveIndex - line.PositionStartInclusiveIndex;
+            selectionStartingColumnIndex = positionLowerInclusiveIndex - line.Position_StartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (positionUpperExclusiveIndex < line.PositionEndExclusiveIndex)
+        if (positionUpperExclusiveIndex < line.Position_EndExclusiveIndex)
         {
-            selectionEndingColumnIndex = positionUpperExclusiveIndex - line.PositionStartInclusiveIndex;
+            selectionEndingColumnIndex = positionUpperExclusiveIndex - line.Position_StartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -896,7 +896,7 @@ public sealed class TextEditorComponentData
         	_uiStringBuilder.Append("px;");
         }
         else if (selectionStartingColumnIndex != 0 &&
-                 positionUpperExclusiveIndex > line.PositionEndExclusiveIndex - 1)
+                 positionUpperExclusiveIndex > line.Position_EndExclusiveIndex - 1)
         {
         	_uiStringBuilder.Append("calc(");
         	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
@@ -958,8 +958,8 @@ public sealed class TextEditorComponentData
 	        	}
 	        	
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
-		     	   selectionBoundsInPositionIndexUnits.PositionLowerInclusiveIndex,
-		     	   selectionBoundsInPositionIndexUnits.PositionUpperExclusiveIndex,
+		     	   selectionBoundsInPositionIndexUnits.Position_LowerInclusiveIndex,
+		     	   selectionBoundsInPositionIndexUnits.Position_UpperExclusiveIndex,
 		     	   rowIndex: i,
 		     	   hiddenLineCount));
 	        }

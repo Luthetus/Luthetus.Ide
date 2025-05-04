@@ -261,8 +261,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	if (token.TextSpan.ResourceUri != modelModifier.ResourceUri)
     		return;
     
-    	if (lowerLine.PositionStartInclusiveIndex <= token.TextSpan.StartInclusiveIndex &&
-    	    upperLine.PositionEndExclusiveIndex >= token.TextSpan.EndExclusiveIndex)
+    	if (lowerLine.Position_StartInclusiveIndex <= token.TextSpan.StartInclusiveIndex &&
+    	    upperLine.Position_EndExclusiveIndex >= token.TextSpan.EndExclusiveIndex)
     	{
     		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
     			token.TextSpan.StartInclusiveIndex);

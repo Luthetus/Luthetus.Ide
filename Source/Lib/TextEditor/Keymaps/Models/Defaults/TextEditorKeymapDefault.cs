@@ -317,8 +317,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					// Match indentation on newline keystroke
 					var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 		
-					var cursorPositionIndex = line.PositionStartInclusiveIndex + primaryCursorModifier.ColumnIndex;
-					var indentationPositionIndex = line.PositionStartInclusiveIndex;
+					var cursorPositionIndex = line.Position_StartInclusiveIndex + primaryCursorModifier.ColumnIndex;
+					var indentationPositionIndex = line.Position_StartInclusiveIndex;
 		
 					_indentationBuilder.Clear();
 					
@@ -561,8 +561,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					// Match indentation on newline keystroke
 					var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 		
-					var cursorPositionIndex = line.PositionStartInclusiveIndex + primaryCursorModifier.ColumnIndex;
-					var indentationPositionIndex = line.PositionStartInclusiveIndex;
+					var cursorPositionIndex = line.Position_StartInclusiveIndex + primaryCursorModifier.ColumnIndex;
+					var indentationPositionIndex = line.Position_StartInclusiveIndex;
 		
 					_indentationBuilder.Clear();
 					
