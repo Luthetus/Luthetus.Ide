@@ -135,8 +135,8 @@ public sealed class TextEditorComponentData
     
     public bool MenuShouldTakeFocus { get; set; }
     
-    public int useLowerBoundInclusiveRowIndex;
-    public int useUpperBoundExclusiveRowIndex;
+    public int useLowerBoundInclusiveLineIndex;
+    public int useUpperBoundExclusiveLineIndex;
     public (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) selectionBoundsInPositionIndexUnits;
     
     public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> firstPresentationLayerGroupList = new();
@@ -283,7 +283,7 @@ public sealed class TextEditorComponentData
     }
     
     /* RowSection.razor Open */
-    public string RowSection_GetRowStyleCss(string topCssStyle, double virtualizedRowLeftInPixels)
+    public string RowSection_GetRowStyleCss(string topCssStyle, double virtualizedLineLeftInPixels)
     {
     	_uiStringBuilder.Clear();
     
@@ -291,11 +291,11 @@ public sealed class TextEditorComponentData
 
         _uiStringBuilder.Append(_lineHeightStyleCssString);
 
-		if (virtualizedRowLeftInPixels > 0)
+		if (virtualizedLineLeftInPixels > 0)
 		{
-	        var virtualizedRowLeftInPixelsInvariantCulture = virtualizedRowLeftInPixels.ToCssValue();
+	        var virtualizedLineLeftInPixelsInvariantCulture = virtualizedLineLeftInPixels.ToCssValue();
 	        _uiStringBuilder.Append("left: ");
-	        _uiStringBuilder.Append(virtualizedRowLeftInPixelsInvariantCulture);
+	        _uiStringBuilder.Append(virtualizedLineLeftInPixelsInvariantCulture);
 	        _uiStringBuilder.Append("px;");
         }
 
@@ -330,7 +330,7 @@ public sealed class TextEditorComponentData
 					
 					// Tab key column offset
 			        {
-			            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+			            var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
 			                collapsePoint.AppendToLineIndex,
 			                appendToLineInformation.LastValidColumnIndex);
 			
@@ -339,7 +339,7 @@ public sealed class TextEditorComponentData
 			            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 			
 			            leftInPixels += extraWidthPerTabKey *
-			                tabsOnSameRowBeforeCursor *
+			                tabsOnSameLineBeforeCursor *
 			                measurements.CharacterWidth;
 			        }
 			        
@@ -363,7 +363,7 @@ public sealed class TextEditorComponentData
 		{
 	        // Tab key column offset
 	        {
-	            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+	            var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
 	                _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex,
 	                _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex);
 	
@@ -372,7 +372,7 @@ public sealed class TextEditorComponentData
 	            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 	
 	            leftInPixels += extraWidthPerTabKey *
-	                tabsOnSameRowBeforeCursor *
+	                tabsOnSameLineBeforeCursor *
 	                measurements.CharacterWidth;
 	        }
 	        
@@ -595,18 +595,18 @@ public sealed class TextEditorComponentData
         var startingColumnIndex = 0;
         var endingColumnIndex = line.Position_EndExclusiveIndex - 1;
 
-        var fullWidthOfRowIsSelected = true;
+        var fullWidthOfLineIsSelected = true;
 
         if (position_LowerInclusiveIndex > line.Position_StartInclusiveIndex)
         {
             startingColumnIndex = position_LowerInclusiveIndex - line.Position_StartInclusiveIndex;
-            fullWidthOfRowIsSelected = false;
+            fullWidthOfLineIsSelected = false;
         }
 
         if (position_UpperExclusiveIndex < line.Position_EndExclusiveIndex)
         {
             endingColumnIndex = position_UpperExclusiveIndex - line.Position_StartInclusiveIndex;
-            fullWidthOfRowIsSelected = false;
+            fullWidthOfLineIsSelected = false;
         }
 
         var topInPixelsInvariantCulture = ((rowIndex - hiddenLineCount) * charMeasurements.LineHeight).ToCssValue();
@@ -633,14 +633,14 @@ public sealed class TextEditorComponentData
 
         // startInPixels offset from Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+            var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 startingColumnIndex);
 
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
-            startInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+            startInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * charMeasurements.CharacterWidth;
         }
 
         var startInPixelsInvariantCulture = startInPixels.ToCssValue();
@@ -652,14 +652,14 @@ public sealed class TextEditorComponentData
 
         // Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+            var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 line.LastValidColumnIndex);
 
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
-            widthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+            widthInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * charMeasurements.CharacterWidth;
         }
 
         _uiStringBuilder.Append("width: ");
@@ -673,7 +673,7 @@ public sealed class TextEditorComponentData
 
         var widthInPixelsInvariantCulture = widthInPixels.ToCssValue();
 
-        if (fullWidthOfRowIsSelected)
+        if (fullWidthOfLineIsSelected)
         {
             _uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
             _uiStringBuilder.Append("px;");
@@ -781,19 +781,19 @@ public sealed class TextEditorComponentData
         return _outTextSpansList;
     }
     
-    public (int FirstRowToSelectDataInclusive, int LastRowToSelectDataExclusive) PresentationGetBoundsInRowIndexUnits(
+    public (int FirstLineToSelectDataInclusive, int LastLineToSelectDataExclusive) PresentationGetBoundsInLineIndexUnits(
     	(int StartInclusiveIndex, int EndExclusiveIndex) boundsInPositionIndexUnits)
     {
-        var firstRowToSelectDataInclusive = _activeRenderBatch.Model
+        var firstLineToSelectDataInclusive = _activeRenderBatch.Model
             .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartInclusiveIndex)
             .Index;
 
-        var lastRowToSelectDataExclusive = _activeRenderBatch.Model
+        var lastLineToSelectDataExclusive = _activeRenderBatch.Model
             .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndExclusiveIndex)
             .Index +
             1;
 
-        return (firstRowToSelectDataInclusive, lastRowToSelectDataExclusive);
+        return (firstLineToSelectDataInclusive, lastLineToSelectDataExclusive);
     }
     
     public string GetTextSelectionStyleCss(
@@ -810,18 +810,18 @@ public sealed class TextEditorComponentData
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = line.Position_EndExclusiveIndex - 1;
 
-        var fullWidthOfRowIsSelected = true;
+        var fullWidthOfLineIsSelected = true;
 
         if (position_LowerInclusiveIndex > line.Position_StartInclusiveIndex)
         {
             selectionStartingColumnIndex = position_LowerInclusiveIndex - line.Position_StartInclusiveIndex;
-            fullWidthOfRowIsSelected = false;
+            fullWidthOfLineIsSelected = false;
         }
 
         if (position_UpperExclusiveIndex < line.Position_EndExclusiveIndex)
         {
             selectionEndingColumnIndex = position_UpperExclusiveIndex - line.Position_StartInclusiveIndex;
-            fullWidthOfRowIsSelected = false;
+            fullWidthOfLineIsSelected = false;
         }
 
         var charMeasurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
@@ -839,7 +839,7 @@ public sealed class TextEditorComponentData
 
         // selectionStartInPixels offset from Tab keys a width of many characters
         {
-            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+            var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 selectionStartingColumnIndex);
 
@@ -847,7 +847,7 @@ public sealed class TextEditorComponentData
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
             selectionStartInPixels += 
-                extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+                extraWidthPerTabKey * tabsOnSameLineBeforeCursor * charMeasurements.CharacterWidth;
         }
 
         var selectionStartInPixelsInvariantCulture = selectionStartInPixels.ToCssValue();
@@ -866,14 +866,14 @@ public sealed class TextEditorComponentData
                 selectionEndingColumnIndex,
                 lineInformation.LastValidColumnIndex);
 
-            var tabsOnSameRowBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+            var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
                 rowIndex,
                 selectionEndingColumnIndex);
 
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
-            selectionWidthInPixels += extraWidthPerTabKey * tabsOnSameRowBeforeCursor * charMeasurements.CharacterWidth;
+            selectionWidthInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * charMeasurements.CharacterWidth;
         }
 
         _uiStringBuilder.Append("width: ");
@@ -890,7 +890,7 @@ public sealed class TextEditorComponentData
 
         var selectionWidthInPixelsInvariantCulture = selectionWidthInPixels.ToCssValue();
 
-        if (fullWidthOfRowIsSelected)
+        if (fullWidthOfLineIsSelected)
         {
         	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
         	_uiStringBuilder.Append("px;");
@@ -927,27 +927,27 @@ public sealed class TextEditorComponentData
                 _activeRenderBatch.Model,
                 selectionBoundsInPositionIndexUnits);
 	
-	        var virtualLowerBoundInclusiveRowIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
-	        var virtualUpperBoundExclusiveRowIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+	        var virtualLowerBoundInclusiveLineIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
+	        var virtualUpperBoundExclusiveLineIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 	
-	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
-	            ? virtualLowerBoundInclusiveRowIndex
+	        useLowerBoundInclusiveLineIndex = virtualLowerBoundInclusiveLineIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
+	            ? virtualLowerBoundInclusiveLineIndex
 	            : selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
 	
-	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex
-	            ? virtualUpperBoundExclusiveRowIndex
+	        useUpperBoundExclusiveLineIndex = virtualUpperBoundExclusiveLineIndex <= selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex
+	            ? virtualUpperBoundExclusiveLineIndex
             	: selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex;
             
             var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;
             
-            for (; checkHiddenLineIndex < useLowerBoundInclusiveRowIndex; checkHiddenLineIndex++)
+            for (; checkHiddenLineIndex < useLowerBoundInclusiveLineIndex; checkHiddenLineIndex++)
             {
             	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
             		hiddenLineCount++;
             }
             
-            for (var i = useLowerBoundInclusiveRowIndex; i < useUpperBoundExclusiveRowIndex; i++)
+            for (var i = useLowerBoundInclusiveLineIndex; i < useUpperBoundExclusiveLineIndex; i++)
 	        {
 	        	checkHiddenLineIndex++;
 	        
@@ -1107,16 +1107,16 @@ public sealed class TextEditorComponentData
             {
                 var boundsInPositionIndexUnits = (textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex);
 
-                var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(boundsInPositionIndexUnits);
+                var boundsInLineIndexUnits = PresentationGetBoundsInLineIndexUnits(boundsInPositionIndexUnits);
                 
-                for (; checkHiddenLineIndex < boundsInRowIndexUnits.FirstRowToSelectDataInclusive; checkHiddenLineIndex++)
+                for (; checkHiddenLineIndex < boundsInLineIndexUnits.FirstLineToSelectDataInclusive; checkHiddenLineIndex++)
                 {
                 	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
                 		hiddenLineCount++;
                 }
 
-                for (var i = boundsInRowIndexUnits.FirstRowToSelectDataInclusive;
-                     i < boundsInRowIndexUnits.LastRowToSelectDataExclusive;
+                for (var i = boundsInLineIndexUnits.FirstLineToSelectDataInclusive;
+                     i < boundsInLineIndexUnits.LastLineToSelectDataExclusive;
                      i++)
                 {
                 	checkHiddenLineIndex++;

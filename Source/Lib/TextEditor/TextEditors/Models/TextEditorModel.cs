@@ -520,7 +520,7 @@ public partial class TextEditorModel
 		}
 		
         var rowIndex = 0;
-        var charactersOnRow = 0;
+        var charactersOnLine = 0;
 
         List<RichCharacter> richCharacterList = new();
         var richCharacterIndex = 0;
@@ -528,7 +528,7 @@ public partial class TextEditorModel
         for (var contentIndex = 0; contentIndex < content.Length; contentIndex++)
         {
             var character = content[contentIndex];
-            charactersOnRow++;
+            charactersOnLine++;
 
             LineEndKind currentLineEndKind = LineEndKind.Unset;
 
@@ -559,8 +559,8 @@ public partial class TextEditorModel
 
             if (currentLineEndKind != LineEndKind.Unset)
             {
-				if (charactersOnRow > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
-					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnRow + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+				if (charactersOnLine > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
+					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnLine + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
             	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
             	{
@@ -587,7 +587,7 @@ public partial class TextEditorModel
             	}
 
 				rowIndex++;
-	            charactersOnRow = 0;
+	            charactersOnLine = 0;
             }
 			else if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
 			{
@@ -919,7 +919,7 @@ public partial class TextEditorModel
 	/// <inheritdoc cref="TextEditorModel"/>
 	/// </summary>
 
-	public void ClearOnlyRowEndingKind()
+	public void ClearOnlyLineEndKind()
     {
         OnlyLineEndKind = LineEndKind.Unset;
     }
@@ -968,7 +968,7 @@ public partial class TextEditorModel
     public void ClearAllStatesButKeepEditHistory()
     {
         ClearContent();
-        ClearOnlyRowEndingKind();
+        ClearOnlyLineEndKind();
         SetLineEndKindPreference(LineEndKind.Unset);
     }     
 
@@ -1123,22 +1123,22 @@ public partial class TextEditorModel
         //       method because this specific metadata is being calculated by counting the characters, which
         //       in the case of 'InsertMetadata(...)' wouldn't have been inserted yet.
         //
-        // TODO: Fix tracking the MostCharactersOnASingleRowTuple this way is possibly inefficient - should instead only check the rows that changed
+        // TODO: Fix tracking the MostCharactersOnASingleLineTuple this way is possibly inefficient - should instead only check the rows that changed
         {
-            (int rowIndex, int rowLength) localMostCharactersOnASingleRowTuple = (0, 0);
+            (int rowIndex, int rowLength) localMostCharactersOnASingleLineTuple = (0, 0);
 
             for (var i = 0; i < LineEndList.Count; i++)
             {
-                var lengthOfRow = this.GetLineLength(i);
+                var lengthOfLine = this.GetLineLength(i);
 
-                if (lengthOfRow > localMostCharactersOnASingleRowTuple.rowLength)
-                    localMostCharactersOnASingleRowTuple = (i, lengthOfRow);
+                if (lengthOfLine > localMostCharactersOnASingleLineTuple.rowLength)
+                    localMostCharactersOnASingleLineTuple = (i, lengthOfLine);
             }
 
-            localMostCharactersOnASingleRowTuple = (localMostCharactersOnASingleRowTuple.rowIndex,
-                localMostCharactersOnASingleRowTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
+            localMostCharactersOnASingleLineTuple = (localMostCharactersOnASingleLineTuple.rowIndex,
+                localMostCharactersOnASingleLineTuple.rowLength + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-            MostCharactersOnASingleLineTuple = localMostCharactersOnASingleRowTuple;
+            MostCharactersOnASingleLineTuple = localMostCharactersOnASingleLineTuple;
         }
 
         SetIsDirtyTrue();
@@ -1265,7 +1265,7 @@ public partial class TextEditorModel
             }
         }
 
-        // Reposition the Row Endings
+        // Reposition the Line Endings
         {
             for (var i = initialCursorLineIndex; i < LineEndList.Count; i++)
             {
@@ -2213,7 +2213,7 @@ public partial class TextEditorModel
         if (lineIndex > LineEndList.Count - 1)
             return -1;
 
-        var lastPositionIndexOnRow = LineEndList[lineIndex].Position_EndExclusiveIndex - 1;
+        var lastPositionIndexOnLine = LineEndList[lineIndex].Position_EndExclusiveIndex - 1;
         var positionIndex = GetPositionIndex(lineIndex, columnIndex);
 
         if (moveBackwards)
@@ -2232,7 +2232,7 @@ public partial class TextEditorModel
         while (true)
         {
             if (positionIndex >= RichCharacterList.Length ||
-                positionIndex > lastPositionIndexOnRow ||
+                positionIndex > lastPositionIndexOnLine ||
                 positionIndex < lineStartPositionIndex)
             {
                 return -1;
