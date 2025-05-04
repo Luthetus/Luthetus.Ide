@@ -217,10 +217,10 @@ public class TextEditorCommandDefaultFunctions
 			var primaryCursorModifier = cursorModifierBag.CursorModifier;
         
             var lastEntry = viewModel.VirtualizationResult.EntryList.Last();
-            var lastEntriesRowLength = modelModifier.GetLineLength(lastEntry.LineIndex);
+            var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.LineIndex);
 
             primaryCursorModifier.LineIndex = lastEntry.LineIndex;
-            primaryCursorModifier.ColumnIndex = lastEntriesRowLength;
+            primaryCursorModifier.ColumnIndex = lastEntriesLineLength;
         }
     }
 
@@ -291,12 +291,12 @@ public class TextEditorCommandDefaultFunctions
 
         var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 
-        var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+        var selectionBoundsInLineIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
             modelModifier,
             selectionBoundsInPositionIndexUnits);
 
-        for (var i = selectionBoundsInRowIndexUnits.Row_LowerInclusiveIndex;
-             i < selectionBoundsInRowIndexUnits.Row_UpperExclusiveIndex;
+        for (var i = selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
+             i < selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex;
              i++)
         {
             var insertionCursor = new TextEditorCursor(i, 0, true);
@@ -313,8 +313,8 @@ public class TextEditorCommandDefaultFunctions
 
         var lowerBoundPositionIndexChange = 1;
 
-        var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.Row_UpperExclusiveIndex -
-            selectionBoundsInRowIndexUnits.Row_LowerInclusiveIndex;
+        var upperBoundPositionIndexChange = selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex -
+            selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
 
         if (primaryCursorModifier.SelectionAnchorPositionIndex < primaryCursorModifier.SelectionEndingPositionIndex)
         {
@@ -338,32 +338,32 @@ public class TextEditorCommandDefaultFunctions
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	
-    	(int Row_LowerIndexInclusive, int Row_UpperIndexExclusive) selectionBoundsInRowIndexUnits;
+    	(int Line_LowerIndexInclusive, int Line_UpperIndexExclusive) selectionBoundsInLineIndexUnits;
     
     	if (primaryCursorModifier.SelectionAnchorPositionIndex == -1)
     	{
-    		selectionBoundsInRowIndexUnits = (primaryCursorModifier.LineIndex, primaryCursorModifier.LineIndex + 1);
+    		selectionBoundsInLineIndexUnits = (primaryCursorModifier.LineIndex, primaryCursorModifier.LineIndex + 1);
     	}
     	else
     	{
 	        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 	
-	        selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+	        selectionBoundsInLineIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
 	            modelModifier,
 	            selectionBoundsInPositionIndexUnits);
         }
 
         bool isFirstLoop = true;
 
-        for (var i = selectionBoundsInRowIndexUnits.Row_LowerIndexInclusive;
-             i < selectionBoundsInRowIndexUnits.Row_UpperIndexExclusive;
+        for (var i = selectionBoundsInLineIndexUnits.Line_LowerIndexInclusive;
+             i < selectionBoundsInLineIndexUnits.Line_UpperIndexExclusive;
              i++)
         {
             var rowPositionIndex = modelModifier.GetPositionIndex(i, 0);
             var characterReadCount = TextEditorModel.TAB_WIDTH;
-            var lengthOfRow = modelModifier.GetLineLength(i);
+            var lengthOfLine = modelModifier.GetLineLength(i);
 
-            characterReadCount = Math.Min(lengthOfRow, characterReadCount);
+            characterReadCount = Math.Min(lengthOfLine, characterReadCount);
 
             var readResult = modelModifier.GetString(rowPositionIndex, characterReadCount);
             var removeCharacterCount = 0;
@@ -445,10 +445,10 @@ public class TextEditorCommandDefaultFunctions
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
         primaryCursorModifier.SelectionAnchorPositionIndex = -1;
 
-        var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
+        var lengthOfLine = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
 
         primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
-        primaryCursorModifier.ColumnIndex = lengthOfRow;
+        primaryCursorModifier.ColumnIndex = lengthOfLine;
         
         // NOTE: keep the value to insert as '\n' because this will be changed to the user's
         //       preferred line ending upon insertion.
@@ -1298,7 +1298,7 @@ public class TextEditorCommandDefaultFunctions
         	leftOffset = primaryCursor.ColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth;
 	        
 	        // Tab key column offset
-            var tabsOnSameRowBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
+            var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
                 primaryCursor.LineIndex,
                 primaryCursor.ColumnIndex);
 
@@ -1306,7 +1306,7 @@ public class TextEditorCommandDefaultFunctions
             var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
 
             leftOffset += extraWidthPerTabKey *
-                tabsOnSameRowBeforeCursor *
+                tabsOnSameLineBeforeCursor *
                 viewModel.CharAndLineMeasurements.CharacterWidth;
                 
             leftOffset -= viewModel.ScrollbarDimensions.ScrollLeft;

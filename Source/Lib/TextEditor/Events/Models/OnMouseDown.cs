@@ -52,7 +52,7 @@ public struct OnMouseDown
 		}
 
         // Remember the current cursor position prior to doing anything
-        var inRowIndex = primaryCursorModifier.LineIndex;
+        var inLineIndex = primaryCursorModifier.LineIndex;
         var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
         // Move the cursor position
@@ -124,7 +124,7 @@ public struct OnMouseDown
             {
                 // If user does not yet have a selection then place the text selection anchor were they were
                 primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
-                    .GetPositionIndex(inRowIndex, inColumnIndex);
+                    .GetPositionIndex(inLineIndex, inColumnIndex);
             }
 
             // If user ALREADY has a selection then do not modify the text selection anchor

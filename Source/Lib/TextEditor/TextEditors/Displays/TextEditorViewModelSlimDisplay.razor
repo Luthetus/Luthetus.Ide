@@ -54,18 +54,18 @@
 			</div>
             @* Virtualization Close *@
 		    
-		    @foreach (var virtualizedRow in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
+		    @foreach (var virtualizedLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
-		             style="@(_componentData.GetGutterStyleCss(virtualizedRow.TopCssStyle))">
-		            @(virtualizedRow.LineIndex + 1)
+		             style="@(_componentData.GetGutterStyleCss(virtualizedLine.TopCssStyle))">
+		            @(virtualizedLine.LineIndex + 1)
 		            
 		            @{
 		            	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
 		            	
 		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
 		            	{
-		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedRow.LineIndex)
+		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedLine.LineIndex)
 		            		{
 		            			collapsePoint = _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i];
 		            			break;
@@ -73,7 +73,7 @@
 		            	}
 		            }
 
-    				@if (collapsePoint.AppendToLineIndex == virtualizedRow.LineIndex)
+    				@if (collapsePoint.AppendToLineIndex == virtualizedLine.LineIndex)
     				{
 					    <span class="luth_te_gutter-chevron">
 					    	@if (collapsePoint.IsCollapsed)
@@ -269,9 +269,9 @@
 						{
 							var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / _componentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
 							
-							var lengthOfRow = _componentData._activeRenderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
+							var lengthOfLine = _componentData._activeRenderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
 							
-							if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
+							if (amountOfLeftInCharacterWidthUnits <= lengthOfLine)
 							{
 							    var rowEndingTuple = _componentData._activeRenderBatch.Model.LineEndList[virtualizationLine.LineIndex];
 							

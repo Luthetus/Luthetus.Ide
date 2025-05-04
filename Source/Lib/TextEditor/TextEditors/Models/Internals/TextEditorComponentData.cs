@@ -923,20 +923,20 @@ public sealed class TextEditorComponentData
 	        selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
 	            _activeRenderBatch.ViewModel.PrimaryCursor.Selection);
 	
-	        var selectionBoundsInRowIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+	        var selectionBoundsInLineIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
                 _activeRenderBatch.Model,
                 selectionBoundsInPositionIndexUnits);
 	
 	        var virtualLowerBoundInclusiveRowIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
 	        var virtualUpperBoundExclusiveRowIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 	
-	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.Row_LowerInclusiveIndex
+	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
 	            ? virtualLowerBoundInclusiveRowIndex
-	            : selectionBoundsInRowIndexUnits.Row_LowerInclusiveIndex;
+	            : selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
 	
-	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.Row_UpperExclusiveIndex
+	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex
 	            ? virtualUpperBoundExclusiveRowIndex
-            	: selectionBoundsInRowIndexUnits.Row_UpperExclusiveIndex;
+            	: selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex;
             
             var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;

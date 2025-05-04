@@ -68,7 +68,7 @@ public static class TextEditorSelectionHelper
 
     public static TextEditorCursor SelectLinesRange(
         TextEditorModel textEditorModel,
-        int startingRowIndex,
+        int startingLineIndex,
         int count)
     {
         throw new NotImplementedException("TODO: (2023-12-13) Writing immutability for text editor");
@@ -109,28 +109,28 @@ public static class TextEditorSelectionHelper
         return (positionLowerInclusiveIndex, positionUpperExclusiveIndex);
     }
 
-    public static (int Row_LowerInclusiveIndex, int Row_UpperExclusiveIndex) ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+    public static (int Line_LowerInclusiveIndex, int Line_UpperExclusiveIndex) ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
         TextEditorModel textEditorModel,
         (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) positionIndexBounds)
     {
-        var firstRowToSelectDataInclusive = textEditorModel.GetLineInformationFromPositionIndex(
+        var firstLineToSelectDataInclusive = textEditorModel.GetLineInformationFromPositionIndex(
             positionIndexBounds.Position_LowerInclusiveIndex);
 
-        var lastRowToSelectDataExclusive = textEditorModel.GetLineInformationFromPositionIndex(
+        var lastLineToSelectDataExclusive = textEditorModel.GetLineInformationFromPositionIndex(
             positionIndexBounds.Position_UpperExclusiveIndex);
 
-        var upperRowIndexExclusive = lastRowToSelectDataExclusive.Index + 1;
+        var upperLineIndexExclusive = lastLineToSelectDataExclusive.Index + 1;
 
-        if (lastRowToSelectDataExclusive.Position_StartInclusiveIndex == positionIndexBounds.Position_UpperExclusiveIndex)
+        if (lastLineToSelectDataExclusive.Position_StartInclusiveIndex == positionIndexBounds.Position_UpperExclusiveIndex)
         {
             // If the selection ends at the start of a row, then an extra row
             // will be erroneously indended. This occurs because the '+1' logic
             // is used to ensure partially selected rows still get indented.
-            upperRowIndexExclusive--;
+            upperLineIndexExclusive--;
         }
 
         return (
-            firstRowToSelectDataInclusive.Index,
-            upperRowIndexExclusive);
+            firstLineToSelectDataInclusive.Index,
+            upperLineIndexExclusive);
     }
 }

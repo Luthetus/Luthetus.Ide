@@ -67,7 +67,7 @@ public static class LineEndKindExtensions
         };
     }
 
-    public static List<LineEndKind> GetRowEndingsUserAllowedToUse(this LineEndKind rowEndingKind)
+    public static List<LineEndKind> GetLineEndKindsUserAllowedToUse(this LineEndKind rowEndingKind)
     {
         return _rowEndingsUserAllowedToUse;
 	}

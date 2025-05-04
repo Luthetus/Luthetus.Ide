@@ -101,10 +101,10 @@
 	                <div class="luth_te_text-editor-footer-entry">
 	                    <select @bind="SelectedLineEndKindString"
 	                            title="Line ending kind">
-	                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
+	                        @foreach (var lineEndKind in LineEndKind.LineFeed.GetLineEndKindsUserAllowedToUse())
 	                        {
-	                            <option value="@rowEndingKind.AsEnumName()">
-	                                @rowEndingKind.AsFriendlyName()
+	                            <option value="@lineEndKind.AsEnumName()">
+	                                @lineEndKind.AsFriendlyName()
 	                            </option>
 	                        }
 	                    </select>
