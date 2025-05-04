@@ -139,10 +139,10 @@ public sealed class TextEditorComponentData
     public int useUpperBoundExclusiveRowIndex;
     public (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) selectionBoundsInPositionIndexUnits;
     
-    public List<(string CssClassString, int IndexInclusiveStart, int IndexExclusiveEnd)> firstPresentationLayerGroupList = new();
+    public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> firstPresentationLayerGroupList = new();
 	public List<(string PresentationCssClass, string PresentationCssStyle)> firstPresentationLayerTextSpanList = new();
 	
-    public List<(string CssClassString, int IndexInclusiveStart, int IndexExclusiveEnd)> lastPresentationLayerGroupList = new();
+    public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> lastPresentationLayerGroupList = new();
 	public List<(string PresentationCssClass, string PresentationCssStyle)> lastPresentationLayerTextSpanList = new();
     
     public List<string> SelectionStyleList = new List<string>();
@@ -578,8 +578,8 @@ public sealed class TextEditorComponentData
     }
     
     public string PresentationGetCssStyleString(
-        int positionLowerInclusiveIndex,
-        int positionUpperExclusiveIndex,
+        int position_LowerInclusiveIndex,
+        int position_UpperExclusiveIndex,
         int rowIndex,
         int hiddenLineCount)
     {
@@ -597,15 +597,15 @@ public sealed class TextEditorComponentData
 
         var fullWidthOfRowIsSelected = true;
 
-        if (positionLowerInclusiveIndex > line.Position_StartInclusiveIndex)
+        if (position_LowerInclusiveIndex > line.Position_StartInclusiveIndex)
         {
-            startingColumnIndex = positionLowerInclusiveIndex - line.Position_StartInclusiveIndex;
+            startingColumnIndex = position_LowerInclusiveIndex - line.Position_StartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (positionUpperExclusiveIndex < line.Position_EndExclusiveIndex)
+        if (position_UpperExclusiveIndex < line.Position_EndExclusiveIndex)
         {
-            endingColumnIndex = positionUpperExclusiveIndex - line.Position_StartInclusiveIndex;
+            endingColumnIndex = position_UpperExclusiveIndex - line.Position_StartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -678,7 +678,7 @@ public sealed class TextEditorComponentData
             _uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
             _uiStringBuilder.Append("px;");
         }
-        else if (startingColumnIndex != 0 && positionUpperExclusiveIndex > line.Position_EndExclusiveIndex - 1)
+        else if (startingColumnIndex != 0 && position_UpperExclusiveIndex > line.Position_EndExclusiveIndex - 1)
         {
         	_uiStringBuilder.Append("calc(");
         	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
@@ -797,8 +797,8 @@ public sealed class TextEditorComponentData
     }
     
     public string GetTextSelectionStyleCss(
-        int positionLowerInclusiveIndex,
-        int positionUpperExclusiveIndex,
+        int position_LowerInclusiveIndex,
+        int position_UpperExclusiveIndex,
         int rowIndex,
         int hiddenLineCount)
     {
@@ -812,15 +812,15 @@ public sealed class TextEditorComponentData
 
         var fullWidthOfRowIsSelected = true;
 
-        if (positionLowerInclusiveIndex > line.Position_StartInclusiveIndex)
+        if (position_LowerInclusiveIndex > line.Position_StartInclusiveIndex)
         {
-            selectionStartingColumnIndex = positionLowerInclusiveIndex - line.Position_StartInclusiveIndex;
+            selectionStartingColumnIndex = position_LowerInclusiveIndex - line.Position_StartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (positionUpperExclusiveIndex < line.Position_EndExclusiveIndex)
+        if (position_UpperExclusiveIndex < line.Position_EndExclusiveIndex)
         {
-            selectionEndingColumnIndex = positionUpperExclusiveIndex - line.Position_StartInclusiveIndex;
+            selectionEndingColumnIndex = position_UpperExclusiveIndex - line.Position_StartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -896,7 +896,7 @@ public sealed class TextEditorComponentData
         	_uiStringBuilder.Append("px;");
         }
         else if (selectionStartingColumnIndex != 0 &&
-                 positionUpperExclusiveIndex > line.Position_EndExclusiveIndex - 1)
+                 position_UpperExclusiveIndex > line.Position_EndExclusiveIndex - 1)
         {
         	_uiStringBuilder.Append("calc(");
         	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
@@ -930,13 +930,13 @@ public sealed class TextEditorComponentData
 	        var virtualLowerBoundInclusiveRowIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
 	        var virtualUpperBoundExclusiveRowIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 	
-	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.RowLowerInclusiveIndex
+	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.Row_LowerInclusiveIndex
 	            ? virtualLowerBoundInclusiveRowIndex
-	            : selectionBoundsInRowIndexUnits.RowLowerInclusiveIndex;
+	            : selectionBoundsInRowIndexUnits.Row_LowerInclusiveIndex;
 	
-	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.RowUpperExclusiveIndex
+	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.Row_UpperExclusiveIndex
 	            ? virtualUpperBoundExclusiveRowIndex
-            	: selectionBoundsInRowIndexUnits.RowUpperExclusiveIndex;
+            	: selectionBoundsInRowIndexUnits.Row_UpperExclusiveIndex;
             
             var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;
@@ -1072,7 +1072,7 @@ public sealed class TextEditorComponentData
     }
     
     private void GetPresentationLayer(
-    	List<(string CssClassString, int IndexInclusiveStart, int IndexExclusiveEnd)> presentationLayerGroupList,
+    	List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> presentationLayerGroupList,
     	List<(string PresentationCssClass, string PresentationCssStyle)> presentationLayerTextSpanList)
     {
     	presentationLayerGroupList.Clear();

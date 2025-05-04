@@ -218,7 +218,7 @@ public static class TestExplorerHelper
 			}
 
 			var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartInclusiveIndex);
-			var columnIndex = definitionTextSpan.StartInclusiveIndex - rowData.PositionStartInclusiveIndex;
+			var columnIndex = definitionTextSpan.StartInclusiveIndex - rowData.Position_StartInclusiveIndex;
 
 			definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
 			definitionPrimaryCursorModifier.LineIndex = rowData.Index;

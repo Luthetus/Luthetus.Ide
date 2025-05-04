@@ -109,7 +109,7 @@ public static class TextEditorSelectionHelper
         return (positionLowerInclusiveIndex, positionUpperExclusiveIndex);
     }
 
-    public static (int RowLowerInclusiveIndex, int RowUpperExclusiveIndex) ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
+    public static (int Row_LowerInclusiveIndex, int Row_UpperExclusiveIndex) ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
         TextEditorModel textEditorModel,
         (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) positionIndexBounds)
     {

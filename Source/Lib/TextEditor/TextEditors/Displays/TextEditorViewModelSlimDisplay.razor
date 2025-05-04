@@ -205,7 +205,7 @@
 					{
 						var presentationLayerTuple = _componentData.firstPresentationLayerGroupList[groupIndex];
 						<div class="@presentationLayerTuple.CssClassString">
-							@for (int textSpanIndex = presentationLayerTuple.IndexInclusiveStart; textSpanIndex < presentationLayerTuple.IndexExclusiveEnd; textSpanIndex++)
+							@for (int textSpanIndex = presentationLayerTuple.StartInclusiveIndex; textSpanIndex < presentationLayerTuple.EndExclusiveIndex; textSpanIndex++)
 							{
 								var textSpanTuple = _componentData.firstPresentationLayerTextSpanList[textSpanIndex];
 								<div class="@textSpanTuple.PresentationCssClass"
@@ -234,7 +234,7 @@
 					{
 						var presentationLayerTuple = _componentData.lastPresentationLayerGroupList[groupIndex];
 						<div class="@presentationLayerTuple.CssClassString">
-							@for (int textSpanIndex = presentationLayerTuple.IndexInclusiveStart; textSpanIndex < presentationLayerTuple.IndexExclusiveEnd; textSpanIndex++)
+							@for (int textSpanIndex = presentationLayerTuple.StartInclusiveIndex; textSpanIndex < presentationLayerTuple.EndExclusiveIndex; textSpanIndex++)
 							{
 								var textSpanTuple = _componentData.lastPresentationLayerTextSpanList[textSpanIndex];
 								<div class="@textSpanTuple.PresentationCssClass"

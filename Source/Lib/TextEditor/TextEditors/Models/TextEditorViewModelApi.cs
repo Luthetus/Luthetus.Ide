@@ -1026,7 +1026,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    
-					var linePositionStartInclusiveIndex = lineInformation.Position_StartInclusiveIndex;
+					var line_PositionStartInclusiveIndex = lineInformation.Position_StartInclusiveIndex;
 					var lineEnd = modelModifier.LineEndList[lineIndex];
 					
 					// TODO: Was this code using length including line ending or excluding? (2024-12-29)
@@ -1124,7 +1124,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	
 						var topInPixels = lineIndex * viewModel.CharAndLineMeasurements.LineHeight;
 
-						var positionStartInclusiveIndex = linePositionStartInclusiveIndex + localHorizontalStartingIndex;
+						var positionStartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
 						
 						var positionEndExclusiveIndex = positionStartInclusiveIndex + localHorizontalTake;
 						if (positionEndExclusiveIndex > lineInformation.UpperLineEnd.Position_StartInclusiveIndex)

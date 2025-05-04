@@ -93,8 +93,8 @@ public class RazorSyntaxTree
 
         foreach (var renderFunctionInsertion in _codebehindRenderFunctionInsertions)
         {
-            renderFunctionInsertion.InsertionStartInclusiveIndex +=
-                renderFunctionAdhocTextInsertion.InsertionStartInclusiveIndex;
+            renderFunctionInsertion.Insertion_StartInclusiveIndex +=
+                renderFunctionAdhocTextInsertion.Insertion_StartInclusiveIndex;
         }
 
         _codebehindClassBuilder.Append("\n\t}\n}");
@@ -1311,14 +1311,14 @@ public class RazorSyntaxTree
 
     private List<IHtmlSyntaxNode> ParseCSharpWithAdhocClassWrapping(
         string cSharpText,
-        int sourceTextStartInclusiveIndex,
+        int sourceText_StartInclusiveIndex,
         StringWalker stringWalker)
     {
         // Testing something
         {
             var adhocTextInsertion = AdhocTextInsertion.PerformInsertion(
                 cSharpText,
-                sourceTextStartInclusiveIndex,
+                sourceText_StartInclusiveIndex,
                 _codebehindClassBuilder,
                 stringWalker);
 
@@ -1333,19 +1333,19 @@ public class RazorSyntaxTree
         return ParseCSharp(
             injectedLanguageString,
             classTemplateOpening.Length,
-            sourceTextStartInclusiveIndex);
+            sourceText_StartInclusiveIndex);
     }
 
     private List<IHtmlSyntaxNode> ParseCSharpWithAdhocMethodWrapping(
         string cSharpText,
-        int sourceTextStartInclusiveIndex,
+        int sourceText_StartInclusiveIndex,
         StringWalker stringWalker)
     {
         // Testing something
         {
             var adhocTextInsertion = AdhocTextInsertion.PerformInsertion(
                 cSharpText,
-                sourceTextStartInclusiveIndex,
+                sourceText_StartInclusiveIndex,
                 _codebehindRenderFunctionBuilder,
                 stringWalker);
 
@@ -1360,7 +1360,7 @@ public class RazorSyntaxTree
         return ParseCSharp(
             injectedLanguageString,
             classTemplateOpening.Length,
-            sourceTextStartInclusiveIndex);
+            sourceText_StartInclusiveIndex);
     }
 
     /// <summary> If Lexing C# from a razor code block one must either use <see cref="ParseCSharpWithAdhocClassWrapping"/> for an @code{} section or <see cref="ParseCSharpWithAdhocMethodWrapping"/> for a basic @{} block</summary>
@@ -1431,7 +1431,7 @@ public class RazorSyntaxTree
                         //     {
                         //         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageVariable,
                         //         StartInclusiveIndex = startInclusiveIndex,
-                        //         EndExclusiveIndex = endingIndexExclusive,
+                        //         EndExclusiveIndex = endExclusiveIndex,
                         //     };
                         //
                         //     injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentSyntax(

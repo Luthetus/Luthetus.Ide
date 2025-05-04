@@ -179,7 +179,7 @@ public record VirtualizationGrid
 		{
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
 			
-			if (virtualizationEntry.PositionEndExclusiveIndex - virtualizationEntry.PositionStartInclusiveIndex <= 0)
+			if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
 				continue;
 			
 			(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
@@ -195,9 +195,9 @@ public record VirtualizationGrid
 			
 			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 			
-			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionStartInclusiveIndex].DecorationByte;
+			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.Position_StartInclusiveIndex].DecorationByte;
 		    
-		    for (int i = virtualizationEntry.PositionStartInclusiveIndex; i < virtualizationEntry.PositionEndExclusiveIndex; i++)
+		    for (int i = virtualizationEntry.Position_StartInclusiveIndex; i < virtualizationEntry.Position_EndExclusiveIndex; i++)
 		    {
 		    	if (inlineUi.InlineUiKind != InlineUiKind.None && inlineUi.PositionIndex == i)
 		    	{

@@ -1527,19 +1527,19 @@ public partial class TextEditorModel
             // If user's cursor has a selection, then set the variables so the positionIndex is the
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
             // and that the 'DeleteKind.Delete' logic runs.
-            var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+            var (position_LowerIndexInclusive, position_UpperIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
-            var lowerLineData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
-            var lowerColumnIndex = lowerPositionIndexInclusive - lowerLineData.Position_StartInclusiveIndex;
+            var lowerLineData = this.GetLineInformationFromPositionIndex(position_LowerIndexInclusive);
+            var lowerColumnIndex = position_LowerIndexInclusive - lowerLineData.Position_StartInclusiveIndex;
 
             cursorModifier.LineIndex = lowerLineData.Index;
             initialLineIndex = cursorModifier.LineIndex;
             cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
-            positionIndex = lowerPositionIndexInclusive;
+            positionIndex = position_LowerIndexInclusive;
 
             // The deletion of a selection logic does not check for multibyte characters.
             // Therefore, later in this method, if a multibyte character is found, the columnCount must be reduced. (2024-05-01)
-            columnCount = upperPositionIndexExclusive - lowerPositionIndexInclusive;
+            columnCount = position_UpperIndexExclusive - position_LowerIndexInclusive;
             deleteKind = DeleteKind.Delete;
 
             cursorModifier.SelectionAnchorPositionIndex = -1;

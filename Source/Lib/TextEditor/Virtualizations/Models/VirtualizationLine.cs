@@ -22,8 +22,8 @@ public record struct VirtualizationLine
 	    StringBuilder stringBuilder)
 	{
 		LineIndex = lineIndex;
-	    PositionStartInclusiveIndex = position_StartInclusiveIndex;
-	    PositionEndExclusiveIndex = position_EndExclusiveIndex;
+	    Position_StartInclusiveIndex = position_StartInclusiveIndex;
+	    Position_EndExclusiveIndex = position_EndExclusiveIndex;
 	    VirtualizationSpan_StartInclusiveIndex = virtualizationSpan_StartInclusiveIndex;
 	    VirtualizationSpan_EndExclusiveIndex = virtualizationSpan_EndExclusiveIndex;
 	    WidthInPixels = widthInPixels;
@@ -41,8 +41,8 @@ public record struct VirtualizationLine
 	}
 	
 	public int LineIndex { get; }
-    public int PositionStartInclusiveIndex { get; }
-    public int PositionEndExclusiveIndex { get; }
+    public int Position_StartInclusiveIndex { get; }
+    public int Position_EndExclusiveIndex { get; }
     public int VirtualizationSpan_StartInclusiveIndex { get; set; }
     public int VirtualizationSpan_EndExclusiveIndex { get; set; }
     public double WidthInPixels { get; }

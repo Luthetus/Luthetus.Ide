@@ -295,8 +295,8 @@ public class TextEditorCommandDefaultFunctions
             modelModifier,
             selectionBoundsInPositionIndexUnits);
 
-        for (var i = selectionBoundsInRowIndexUnits.RowLowerInclusiveIndex;
-             i < selectionBoundsInRowIndexUnits.RowUpperExclusiveIndex;
+        for (var i = selectionBoundsInRowIndexUnits.Row_LowerInclusiveIndex;
+             i < selectionBoundsInRowIndexUnits.Row_UpperExclusiveIndex;
              i++)
         {
             var insertionCursor = new TextEditorCursor(i, 0, true);
@@ -313,8 +313,8 @@ public class TextEditorCommandDefaultFunctions
 
         var lowerBoundPositionIndexChange = 1;
 
-        var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.RowUpperExclusiveIndex -
-            selectionBoundsInRowIndexUnits.RowLowerInclusiveIndex;
+        var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.Row_UpperExclusiveIndex -
+            selectionBoundsInRowIndexUnits.Row_LowerInclusiveIndex;
 
         if (primaryCursorModifier.SelectionAnchorPositionIndex < primaryCursorModifier.SelectionEndingPositionIndex)
         {
@@ -338,7 +338,7 @@ public class TextEditorCommandDefaultFunctions
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	
-    	(int LowerRowIndexInclusive, int UpperRowIndexExclusive) selectionBoundsInRowIndexUnits;
+    	(int Row_LowerIndexInclusive, int Row_UpperIndexExclusive) selectionBoundsInRowIndexUnits;
     
     	if (primaryCursorModifier.SelectionAnchorPositionIndex == -1)
     	{
@@ -355,8 +355,8 @@ public class TextEditorCommandDefaultFunctions
 
         bool isFirstLoop = true;
 
-        for (var i = selectionBoundsInRowIndexUnits.LowerRowIndexInclusive;
-             i < selectionBoundsInRowIndexUnits.UpperRowIndexExclusive;
+        for (var i = selectionBoundsInRowIndexUnits.Row_LowerIndexInclusive;
+             i < selectionBoundsInRowIndexUnits.Row_UpperIndexExclusive;
              i++)
         {
             var rowPositionIndex = modelModifier.GetPositionIndex(i, 0);
