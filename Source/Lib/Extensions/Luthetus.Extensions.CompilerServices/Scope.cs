@@ -10,14 +10,14 @@ public struct Scope
 		ICodeBlockOwner codeBlockOwner,
 		int indexKey,
 		int parentIndexKey,
-		int startingIndexInclusive,
-		int endingIndexExclusive)
+		int startInclusiveIndex,
+		int endExclusiveIndex)
 	{
 		CodeBlockOwner = codeBlockOwner;
 		IndexKey = indexKey;
 		ParentIndexKey = parentIndexKey;
-		StartingIndexInclusive = startingIndexInclusive;
-		EndingIndexExclusive = endingIndexExclusive;
+		StartInclusiveIndex = startInclusiveIndex;
+		EndExclusiveIndex = endExclusiveIndex;
 	}
 
 	public bool ConstructorWasInvoked => CodeBlockOwner is not null;
@@ -88,11 +88,11 @@ public struct Scope
 	public int IndexKey { get; }
 	/// <inheritdoc cref="IndexKey"/>
 	public int ParentIndexKey { get; }
-	public int StartingIndexInclusive { get; }
+	public int StartInclusiveIndex { get; }
 	/// <summary>
 	/// Beware of this property's setter,
 	/// as a hack to set the ending index later on in this
 	/// type's lifecycle because it isn't immediately known.
 	/// </summary>
-	public int EndingIndexExclusive { get; set; }
+	public int EndExclusiveIndex { get; set; }
 }

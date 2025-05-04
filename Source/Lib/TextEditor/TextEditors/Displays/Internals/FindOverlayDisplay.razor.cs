@@ -333,8 +333,8 @@ public partial class FindOverlayDisplay : ComponentBase
                     	{
                     		var x = presentationModel.CompletedCalculation.TextSpanList[i];
                     		
-                    		if (x.StartingIndexInclusive == decorationByteChangedTargetTextSpanLocal.Value.StartingIndexInclusive &&
-	                            x.EndingIndexExclusive == decorationByteChangedTargetTextSpanLocal.Value.EndingIndexExclusive &&
+                    		if (x.StartInclusiveIndex == decorationByteChangedTargetTextSpanLocal.Value.StartInclusiveIndex &&
+	                            x.EndExclusiveIndex == decorationByteChangedTargetTextSpanLocal.Value.EndExclusiveIndex &&
 	                            x.ResourceUri == decorationByteChangedTargetTextSpanLocal.Value.ResourceUri &&
 	                            x.GetText() == decorationByteChangedTargetTextSpanLocal.Value.GetText())
                     		{
@@ -433,7 +433,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 var targetTextSpan = presentationModel.CompletedCalculation.TextSpanList[localActiveIndexMatchedTextSpan.Value];
                 
                 var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-                	targetTextSpan.StartingIndexInclusive);
+                	targetTextSpan.StartInclusiveIndex);
                 	
                 cursorModifierBag.CursorModifier.LineIndex = lineIndex;
                 cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
@@ -492,7 +492,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 	var targetTextSpan = presentationModel.CompletedCalculation.TextSpanList[i];
                 	
 	                var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-	                	targetTextSpan.StartingIndexInclusive);
+	                	targetTextSpan.StartInclusiveIndex);
 	                	
 	                cursorModifierBag.CursorModifier.LineIndex = lineIndex;
 	                cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);

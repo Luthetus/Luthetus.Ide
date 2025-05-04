@@ -533,8 +533,8 @@ public partial class CSharpBinder
         	codeBlockOwner,
         	indexKey: parserModel.GetNextIndexKey(),
 		    parentIndexKey: parserModel.CurrentScopeIndexKey,
-		    textSpan.StartingIndexInclusive,
-		    endingIndexExclusive: -1);
+		    textSpan.StartInclusiveIndex,
+		    endExclusiveIndex: -1);
 
         compilationUnit.ScopeList.Insert(scope.IndexKey, scope);
         parserModel.CurrentScopeIndexKey = scope.IndexKey;
@@ -577,8 +577,8 @@ public partial class CSharpBinder
         	codeBlockOwner,
         	indexKey: 0,
 		    parentIndexKey: -1,
-		    textSpan.StartingIndexInclusive,
-		    endingIndexExclusive: -1);
+		    textSpan.StartInclusiveIndex,
+		    endExclusiveIndex: -1);
 
         compilationUnit.ScopeList.Insert(scope.IndexKey, scope);
         
@@ -663,7 +663,7 @@ public partial class CSharpBinder
     	// Update Scope
     	{
 	    	var scope = compilationUnit.ScopeList[parserModel.CurrentScopeIndexKey];
-	    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
+	    	scope.EndExclusiveIndex = textSpan.EndExclusiveIndex;
 	    	compilationUnit.ScopeList[parserModel.CurrentScopeIndexKey] = scope;
 	    	
 	    	// Restore Parent Scope
@@ -905,7 +905,7 @@ public partial class CSharpBinder
 
     public Scope GetScope(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan)
     {
-    	return GetScopeByPositionIndex(compilationUnit, textSpan.ResourceUri, textSpan.StartingIndexInclusive);
+    	return GetScopeByPositionIndex(compilationUnit, textSpan.ResourceUri, textSpan.StartInclusiveIndex);
     }
     
     public Scope GetScopeByPositionIndex(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int positionIndex)
@@ -919,9 +919,9 @@ public partial class CSharpBinder
         
         var possibleScopes = scopeList.Where(x =>
         {
-            return x.StartingIndexInclusive <= positionIndex &&
+            return x.StartInclusiveIndex <= positionIndex &&
             	   // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
-                   (x.EndingIndexExclusive >= positionIndex || x.EndingIndexExclusive == -1);
+                   (x.EndExclusiveIndex >= positionIndex || x.EndExclusiveIndex == -1);
         });
 
 		if (!possibleScopes.Any())
@@ -930,7 +930,7 @@ public partial class CSharpBinder
 		}
 		else
 		{
-			return possibleScopes.MinBy(x => positionIndex - x.StartingIndexInclusive);
+			return possibleScopes.MinBy(x => positionIndex - x.StartInclusiveIndex);
 		}
     }
     
@@ -1238,8 +1238,8 @@ public partial class CSharpBinder
 		
         foreach (var symbol in symbolList)
         {
-            if (textSpan.StartingIndexInclusive >= symbol.TextSpan.StartingIndexInclusive &&
-                textSpan.StartingIndexInclusive < symbol.TextSpan.EndingIndexExclusive)
+            if (textSpan.StartInclusiveIndex >= symbol.TextSpan.StartInclusiveIndex &&
+                textSpan.StartInclusiveIndex < symbol.TextSpan.EndExclusiveIndex)
             {
                 foundSymbol = symbol;
                 break;
@@ -1413,7 +1413,7 @@ public partial class CSharpBinder
         				
         			if (fallbackTextSpan is not null && compilerServiceResource is not null)
         			{
-        				var fallbackScope = GetScopeByPositionIndex(cSharpCompilationUnit, resourceUri, fallbackTextSpan.Value.StartingIndexInclusive);
+        				var fallbackScope = GetScopeByPositionIndex(cSharpCompilationUnit, resourceUri, fallbackTextSpan.Value.StartInclusiveIndex);
         				// RETROSPECTIVE: Shouldn't it be checking the 'fallbackScope.ConstructorWasInvoked'?
         				if (scope.ConstructorWasInvoked)
         					return GetFallbackNode(cSharpCompilationUnit, positionIndex, resourceUri, compilerServiceResource, fallbackScope);
@@ -1450,8 +1450,8 @@ public partial class CSharpBinder
     		
     			if (variableDeclarationNode.TypeReference.TypeIdentifierToken.ConstructorWasInvoked)
     			{
-    				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
-        				variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
+    				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex <= positionIndex &&
+        				variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex  &&
     			    	variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
         			{
         				return new TypeClauseNode(variableDeclarationNode.TypeReference);
@@ -1460,8 +1460,8 @@ public partial class CSharpBinder
         			{
         				foreach (var entry in variableDeclarationNode.TypeReference.GenericParameterListing.GenericParameterEntryList)
         				{
-        					if (entry.TypeReference.TypeIdentifierToken.TextSpan.StartingIndexInclusive <= positionIndex &&
-		        				entry.TypeReference.TypeIdentifierToken.TextSpan.EndingIndexExclusive >= positionIndex  &&
+        					if (entry.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex <= positionIndex &&
+		        				entry.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex  &&
 		    			    	entry.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
 		        			{
 		        				return new TypeClauseNode(entry.TypeReference);
@@ -1492,8 +1492,8 @@ public partial class CSharpBinder
 		
         foreach (var symbol in symbolList)
         {
-            if (positionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                positionIndex < symbol.TextSpan.EndingIndexExclusive)
+            if (positionIndex >= symbol.TextSpan.StartInclusiveIndex &&
+                positionIndex < symbol.TextSpan.EndExclusiveIndex)
             {
                 foundSymbol = symbol;
                 break;
@@ -1577,7 +1577,7 @@ public partial class CSharpBinder
     			var typeDefinitionNode = (TypeDefinitionNode)syntaxNode;
     			
     			if (typeDefinitionNode.TypeIdentifierToken.ConstructorWasInvoked)
-    				return (typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive, typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive);
+    				return (typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.EndExclusiveIndex);
     			
     			goto default;
     		}
@@ -1586,7 +1586,7 @@ public partial class CSharpBinder
     			var functionDefinitionNode = (FunctionDefinitionNode)syntaxNode;
     			
     			if (functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
-    				return (functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive, functionDefinitionNode.FunctionIdentifierToken.TextSpan.EndingIndexExclusive);
+    				return (functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.EndExclusiveIndex);
     			
     			goto default;
     		}
@@ -1595,7 +1595,7 @@ public partial class CSharpBinder
     			var constructorDefinitionNode = (ConstructorDefinitionNode)syntaxNode;
     			
     			if (constructorDefinitionNode.FunctionIdentifier.ConstructorWasInvoked)
-    				return (constructorDefinitionNode.FunctionIdentifier.TextSpan.StartingIndexInclusive, constructorDefinitionNode.FunctionIdentifier.TextSpan.EndingIndexExclusive);
+    				return (constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex, constructorDefinitionNode.FunctionIdentifier.TextSpan.EndExclusiveIndex);
     			
     			goto default;
     		}
@@ -1609,15 +1609,15 @@ public partial class CSharpBinder
     			if (variableDeclarationNode.TypeReference.TypeIdentifierToken.ConstructorWasInvoked &&
     			    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
     			{
-    				startingIndexInclusive = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
-    				endingIndexExclusive = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndingIndexExclusive;
+    				startingIndexInclusive = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
+    				endingIndexExclusive = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex;
     			}
     			
     			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked &&
     			    variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri == resourceUri)
     			{
-    				startingIndexInclusive ??= variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
-    				endingIndexExclusive = variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive;
+    				startingIndexInclusive ??= variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
+    				endingIndexExclusive = variableDeclarationNode.IdentifierToken.TextSpan.EndExclusiveIndex;
     			}
     			
     			if (startingIndexInclusive is not null && endingIndexExclusive is not null)
@@ -1630,7 +1630,7 @@ public partial class CSharpBinder
     			var variableReferenceNode = (VariableReferenceNode)syntaxNode;
     			
     			if (variableReferenceNode.VariableIdentifierToken.ConstructorWasInvoked)
-    				return (variableReferenceNode.VariableIdentifierToken.TextSpan.StartingIndexInclusive, variableReferenceNode.VariableIdentifierToken.TextSpan.EndingIndexExclusive);
+    				return (variableReferenceNode.VariableIdentifierToken.TextSpan.StartInclusiveIndex, variableReferenceNode.VariableIdentifierToken.TextSpan.EndExclusiveIndex);
     			
     			goto default;
     		}

@@ -229,9 +229,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         TextEditorViewModel viewModel,
         TextEditorTextSpan textSpan)
     {
-        var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive);
+        var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartInclusiveIndex);
         var lineIndex = lineInformation.Index;
-        var columnIndex = textSpan.StartingIndexInclusive - lineInformation.StartPositionIndexInclusive;
+        var columnIndex = textSpan.StartInclusiveIndex - lineInformation.StartPositionIndexInclusive;
 
         // Unit of measurement is pixels (px)
         var scrollLeft = columnIndex *

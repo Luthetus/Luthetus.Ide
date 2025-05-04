@@ -63,9 +63,9 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
                 }
 
 				var rowInfo = modelModifier.GetLineInformationFromPositionIndex(
-					localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive);
+					localTextSpanTuple.TextEditorTextSpan.StartInclusiveIndex);
 
-				var columnIndex = localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive -
+				var columnIndex = localTextSpanTuple.TextEditorTextSpan.StartInclusiveIndex -
 					rowInfo.StartPositionIndexInclusive;
 
 				var cursor = new TextEditorCursor(
@@ -74,8 +74,8 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 					columnIndex,
 					true,
 					new TextEditorSelection(
-						localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive,
-						localTextSpanTuple.TextEditorTextSpan.EndingIndexExclusive));
+						localTextSpanTuple.TextEditorTextSpan.StartInclusiveIndex,
+						localTextSpanTuple.TextEditorTextSpan.EndExclusiveIndex));
 
 				var cursorModifierBag = new CursorModifierBagTextEditor(
 					Key<TextEditorViewModel>.Empty,

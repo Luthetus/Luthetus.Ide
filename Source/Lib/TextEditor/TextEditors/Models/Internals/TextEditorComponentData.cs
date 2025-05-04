@@ -725,8 +725,8 @@ public sealed class TextEditorComponentData
             {
             	var textSpan = inTextSpanList[i];
             	
-                if (lowerLine.StartPositionIndexInclusive <= textSpan.StartingIndexInclusive &&
-                    upperLine.EndPositionIndexExclusive >= textSpan.StartingIndexInclusive)
+                if (lowerLine.StartPositionIndexInclusive <= textSpan.StartInclusiveIndex &&
+                    upperLine.EndPositionIndexExclusive >= textSpan.StartInclusiveIndex)
                 {
                 	_virtualizedTextSpanList.Add(textSpan);
                 }
@@ -742,8 +742,8 @@ public sealed class TextEditorComponentData
         {
             foreach (var textSpan in _virtualizedTextSpanList)
             {
-                var startingIndexInclusive = textSpan.StartingIndexInclusive;
-                var endingIndexExclusive = textSpan.EndingIndexExclusive;
+                var startingIndexInclusive = textSpan.StartInclusiveIndex;
+                var endingIndexExclusive = textSpan.EndExclusiveIndex;
 
 				// Awkward enumeration was modified 'for loop' (2025-01-22)
 				// Also, this shouldn't be done here, it should be done during the editContext.
@@ -754,7 +754,7 @@ public sealed class TextEditorComponentData
                 
                     if (textModification.WasInsertion)
                     {
-                        if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
+                        if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartInclusiveIndex)
                         {
                             startingIndexInclusive += textModification.TextEditorTextSpan.Length;
                             endingIndexExclusive += textModification.TextEditorTextSpan.Length;
@@ -762,7 +762,7 @@ public sealed class TextEditorComponentData
                     }
                     else // was deletion
                     {
-                        if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartingIndexInclusive)
+                        if (startingIndexInclusive >= textModification.TextEditorTextSpan.StartInclusiveIndex)
                         {
                             startingIndexInclusive -= textModification.TextEditorTextSpan.Length;
                             endingIndexExclusive -= textModification.TextEditorTextSpan.Length;
@@ -772,8 +772,8 @@ public sealed class TextEditorComponentData
 
                 _outTextSpansList.Add(textSpan with
                 {
-                    StartingIndexInclusive = startingIndexInclusive,
-                    EndingIndexExclusive = endingIndexExclusive
+                    StartInclusiveIndex = startingIndexInclusive,
+                    EndExclusiveIndex = endingIndexExclusive
                 });
             }
         }
@@ -782,10 +782,10 @@ public sealed class TextEditorComponentData
     }
     
     public (int FirstRowToSelectDataInclusive, int LastRowToSelectDataExclusive) PresentationGetBoundsInRowIndexUnits(
-    	(int StartingIndexInclusive, int EndingIndexExclusive) boundsInPositionIndexUnits)
+    	(int StartInclusiveIndex, int EndingIndexExclusive) boundsInPositionIndexUnits)
     {
         var firstRowToSelectDataInclusive = _activeRenderBatch.Model
-            .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive)
+            .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartInclusiveIndex)
             .Index;
 
         var lastRowToSelectDataExclusive = _activeRenderBatch.Model
@@ -1105,7 +1105,7 @@ public sealed class TextEditorComponentData
 
             foreach (var textSpan in textSpansList)
             {
-                var boundsInPositionIndexUnits = (textSpan.StartingIndexInclusive, textSpan.EndingIndexExclusive);
+                var boundsInPositionIndexUnits = (textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex);
 
                 var boundsInRowIndexUnits = PresentationGetBoundsInRowIndexUnits(boundsInPositionIndexUnits);
                 
@@ -1130,8 +1130,8 @@ public sealed class TextEditorComponentData
                 	presentationLayerTextSpanList.Add((
                 		PresentationGetCssClass(presentationLayer, textSpan.DecorationByte),
                 		PresentationGetCssStyleString(
-                            boundsInPositionIndexUnits.StartingIndexInclusive,
-                            boundsInPositionIndexUnits.EndingIndexExclusive,
+                            boundsInPositionIndexUnits.StartInclusiveIndex,
+                            boundsInPositionIndexUnits.EndExclusiveIndex,
                             rowIndex: i,
                             hiddenLineCount)));
                 }

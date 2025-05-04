@@ -240,7 +240,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
         foreach (var textEditorTextSpan in textSpans)
         {
-            for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
+            for (var i = textEditorTextSpan.StartInclusiveIndex; i < textEditorTextSpan.EndExclusiveIndex; i++)
             {
                 if (i < 0 || i >= localRichCharacterList.Length)
                     continue;

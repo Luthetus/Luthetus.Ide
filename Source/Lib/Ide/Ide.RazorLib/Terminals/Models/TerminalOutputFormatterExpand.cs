@@ -93,8 +93,8 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 			    outTextSpanList.AddRange(parsedCommandTextSpanList.Select(
 			    	textSpan => textSpan with
 			    	{
-					    StartingIndexInclusive = textSpan.StartingIndexInclusive + outputBuilder.Length,
-					    EndingIndexExclusive = textSpan.EndingIndexExclusive + outputBuilder.Length,
+					    StartInclusiveIndex = textSpan.StartInclusiveIndex + outputBuilder.Length,
+					    EndExclusiveIndex = textSpan.EndExclusiveIndex + outputBuilder.Length,
 			    	}));
 			}
 			

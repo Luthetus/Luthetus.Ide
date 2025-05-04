@@ -58,16 +58,16 @@ public record SemanticResultRazor
     {
         var adhocTextInsertion = CodebehindClassInsertions
                 .SingleOrDefault(x =>
-                    textSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                    textSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
+                    textSpan.StartInclusiveIndex >= x.InsertionStartingIndexInclusive &&
+                    textSpan.EndExclusiveIndex <= x.InsertionEndingIndexExclusive);
 
         // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
         if (adhocTextInsertion is null)
         {
             adhocTextInsertion = CodebehindRenderFunctionInsertions
                 .SingleOrDefault(x =>
-                    textSpan.StartingIndexInclusive >= x.InsertionStartingIndexInclusive &&
-                    textSpan.EndingIndexExclusive <= x.InsertionEndingIndexExclusive);
+                    textSpan.StartInclusiveIndex >= x.InsertionStartingIndexInclusive &&
+                    textSpan.EndExclusiveIndex <= x.InsertionEndingIndexExclusive);
         }
 
         if (adhocTextInsertion is null)
@@ -78,18 +78,18 @@ public record SemanticResultRazor
 
         var symbolSourceTextStartingIndexInclusive =
                     adhocTextInsertion.SourceTextStartingIndexInclusive +
-                    (textSpan.StartingIndexInclusive - adhocTextInsertion.InsertionStartingIndexInclusive);
+                    (textSpan.StartInclusiveIndex - adhocTextInsertion.InsertionStartingIndexInclusive);
 
         var symbolSourceTextEndingIndexExclusive =
             symbolSourceTextStartingIndexInclusive +
-            (textSpan.EndingIndexExclusive - textSpan.StartingIndexInclusive);
+            (textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
 
         return textSpan with
         {
             ResourceUri = sourceResourceUri,
             SourceText = sourceText,
-            StartingIndexInclusive = symbolSourceTextStartingIndexInclusive,
-            EndingIndexExclusive = symbolSourceTextEndingIndexExclusive,
+            StartInclusiveIndex = symbolSourceTextStartingIndexInclusive,
+            EndExclusiveIndex = symbolSourceTextEndingIndexExclusive,
         };
     }
 }

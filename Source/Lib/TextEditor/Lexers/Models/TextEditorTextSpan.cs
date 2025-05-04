@@ -54,8 +54,8 @@ namespace Luthetus.TextEditor.RazorLib.Lexers.Models;
 /// So the instantiation/lifecycle of this type is lending it to being a struct. (2024-010-02)
 /// </summary>
 public record struct TextEditorTextSpan(
-    int StartingIndexInclusive,
-    int EndingIndexExclusive,
+    int StartInclusiveIndex,
+    int EndExclusiveIndex,
     byte DecorationByte,
     ResourceUri ResourceUri,
     string SourceText)
@@ -68,11 +68,11 @@ public record struct TextEditorTextSpan(
     /// of a <see cref="StringWalker"/>.
     /// </summary>
     public TextEditorTextSpan(
-            int StartingIndexInclusive,
+            int StartInclusiveIndex,
             StringWalker stringWalker,
             byte decorationByte)
         : this(
-              StartingIndexInclusive,
+              StartInclusiveIndex,
               stringWalker.PositionIndex,
               decorationByte,
               stringWalker.ResourceUri,
@@ -87,11 +87,11 @@ public record struct TextEditorTextSpan(
     /// of a <see cref="StringWalker"/>.
     /// </summary>
     public TextEditorTextSpan(
-            int StartingIndexInclusive,
+            int StartInclusiveIndex,
             ref StringWalkerStruct stringWalker,
             byte decorationByte)
         : this(
-              StartingIndexInclusive,
+              StartInclusiveIndex,
               stringWalker.PositionIndex,
               decorationByte,
               stringWalker.ResourceUri,
@@ -113,15 +113,15 @@ public record struct TextEditorTextSpan(
     /// otherwise.
     /// </summary>
     public TextEditorTextSpan(
-            int startingIndexInclusive,
-		    int endingIndexExclusive,
+            int startInclusiveIndex,
+		    int endExclusiveIndex,
 		    byte decorationByte,
 		    ResourceUri resourceUri,
 		    string sourceText,
 		    string getTextPrecalculatedResult)
         : this(
-              startingIndexInclusive,
-              endingIndexExclusive,
+              startInclusiveIndex,
+              endExclusiveIndex,
               decorationByte,
               resourceUri,
               sourceText)
@@ -129,12 +129,12 @@ public record struct TextEditorTextSpan(
 		_text = getTextPrecalculatedResult;
     }
 
-    public int Length => EndingIndexExclusive - StartingIndexInclusive;
+    public int Length => EndExclusiveIndex - StartInclusiveIndex;
     public bool ConstructorWasInvoked => ResourceUri.Value is not null;
 
     public string GetText()
     {
-        return _text ??= SourceText.Substring(StartingIndexInclusive, Length);
+        return _text ??= SourceText.Substring(StartInclusiveIndex, Length);
     }
     
     /// <summary>

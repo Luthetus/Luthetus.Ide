@@ -726,7 +726,7 @@ public static class CSharpLexer
     {
     	if (lexerOutput.MiscTextSpanList.Count > 0)
     	{
-    		if (previousEscapeCharacterTextSpan.EndingIndexExclusive == textSpan.StartingIndexInclusive &&
+    		if (previousEscapeCharacterTextSpan.EndExclusiveIndex == textSpan.StartInclusiveIndex &&
     			previousEscapeCharacterTextSpan.DecorationByte == (byte)GenericDecorationKind.EscapeCharacterPrimary)
     		{
     			textSpan = textSpan with

@@ -144,8 +144,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		if (!targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
     		{
     			textSpanStart = new TextEditorTextSpan(
-		            targetScope.StartingIndexInclusive,
-		            targetScope.StartingIndexInclusive + 1,
+		            targetScope.StartInclusiveIndex,
+		            targetScope.StartInclusiveIndex + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
 				    resourceUri,
 				    sourceText: string.Empty,
@@ -154,8 +154,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		else
     		{
     			textSpanStart = new TextEditorTextSpan(
-		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartingIndexInclusive,
-		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartingIndexInclusive + 1,
+		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartInclusiveIndex,
+		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartInclusiveIndex + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
 				    resourceUri,
 				    sourceText: string.Empty,
@@ -163,15 +163,15 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		}
 
 			int useStartingIndexInclusive;
-			if (targetScope.EndingIndexExclusive == -1)
+			if (targetScope.EndExclusiveIndex == -1)
 				useStartingIndexInclusive = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
 			else
-				useStartingIndexInclusive = targetScope.EndingIndexExclusive -1;
+				useStartingIndexInclusive = targetScope.EndExclusiveIndex - 1;
 
 			if (useStartingIndexInclusive < 0)
 				useStartingIndexInclusive = 0;
 
-			var useEndingIndexExclusive = targetScope.EndingIndexExclusive;
+			var useEndingIndexExclusive = targetScope.EndExclusiveIndex;
     		if (useEndingIndexExclusive == -1)
     			useEndingIndexExclusive = presentationModel.PendingCalculation.ContentAtRequest.Length;
     			
@@ -261,11 +261,11 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	if (token.TextSpan.ResourceUri != modelModifier.ResourceUri)
     		return;
     
-    	if (lowerLine.StartPositionIndexInclusive <= token.TextSpan.StartingIndexInclusive &&
-    	    upperLine.EndPositionIndexExclusive >= token.TextSpan.EndingIndexExclusive)
+    	if (lowerLine.StartPositionIndexInclusive <= token.TextSpan.StartInclusiveIndex &&
+    	    upperLine.EndPositionIndexExclusive >= token.TextSpan.EndExclusiveIndex)
     	{
     		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-    			token.TextSpan.StartingIndexInclusive);
+    			token.TextSpan.StartInclusiveIndex);
     		
     		var indexPreviousChevron = viewModelModifier.AllCollapsePointList.FindIndex(
     			x => x.AppendToLineIndex == lineAndColumnIndices.lineIndex);
@@ -291,7 +291,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			}
     		
     		var closeCodeBlockLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-    			closeCodeBlockTextSpan.StartingIndexInclusive);
+    			closeCodeBlockTextSpan.StartInclusiveIndex);
     		
     		var newCollapsePoint = new CollapsePoint(
     			lineAndColumnIndices.lineIndex,

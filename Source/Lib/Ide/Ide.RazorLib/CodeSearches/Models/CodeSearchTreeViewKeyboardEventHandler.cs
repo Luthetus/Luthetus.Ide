@@ -59,7 +59,7 @@ public class CodeSearchTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandl
 				editContext,
 				treeViewCodeSearchTextSpan.AbsolutePath.Value,
 				shouldSetFocusToEditor,
-				treeViewCodeSearchTextSpan.Item.StartingIndexInclusive,
+				treeViewCodeSearchTextSpan.Item.StartInclusiveIndex,
 				new Category("main"),
 				Key<TextEditorViewModel>.NewKey());
 		});
