@@ -64,7 +64,7 @@ public record struct TextEditorTextSpan(
 
     /// <summary>
     /// This constructor is used for text spans where their
-    /// <see cref="EndingIndexExclusive"/> is the current position
+    /// <see cref="EndExclusiveIndex"/> is the current position
     /// of a <see cref="StringWalker"/>.
     /// </summary>
     public TextEditorTextSpan(
@@ -83,7 +83,7 @@ public record struct TextEditorTextSpan(
     
     /// <summary>
     /// This constructor is used for text spans where their
-    /// <see cref="EndingIndexExclusive"/> is the current position
+    /// <see cref="EndExclusiveIndex"/> is the current position
     /// of a <see cref="StringWalker"/>.
     /// </summary>
     public TextEditorTextSpan(

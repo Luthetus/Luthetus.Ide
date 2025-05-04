@@ -11,10 +11,10 @@ public record struct VirtualizationLine
 {
 	public VirtualizationLine(
 	    int lineIndex,
-	    int positionIndexInclusiveStart,
-	    int positionIndexExclusiveEnd,
-	    int virtualizationSpanIndexInclusiveStart,
-	    int virtualizationSpanIndexExclusiveEnd,
+	    int positionStartInclusiveIndex,
+	    int positionEndExclusiveIndex,
+	    int virtualizationSpanStartInclusiveIndex,
+	    int virtualizationSpanEndExclusiveIndex,
 	    double widthInPixels,
 	    double heightInPixels,
 	    double leftInPixels,
@@ -22,10 +22,10 @@ public record struct VirtualizationLine
 	    StringBuilder stringBuilder)
 	{
 		LineIndex = lineIndex;
-	    PositionIndexInclusiveStart = positionIndexInclusiveStart;
-	    PositionIndexExclusiveEnd = positionIndexExclusiveEnd;
-	    VirtualizationSpanIndexInclusiveStart = virtualizationSpanIndexInclusiveStart;
-	    VirtualizationSpanIndexExclusiveEnd = virtualizationSpanIndexExclusiveEnd;
+	    PositionStartInclusiveIndex = positionStartInclusiveIndex;
+	    PositionEndExclusiveIndex = positionEndExclusiveIndex;
+	    VirtualizationSpanStartInclusiveIndex = virtualizationSpanStartInclusiveIndex;
+	    VirtualizationSpanEndExclusiveIndex = virtualizationSpanEndExclusiveIndex;
 	    WidthInPixels = widthInPixels;
 	    HeightInPixels = heightInPixels;
 	    LeftInPixels = leftInPixels;
@@ -41,10 +41,10 @@ public record struct VirtualizationLine
 	}
 	
 	public int LineIndex { get; }
-    public int PositionIndexInclusiveStart { get; }
-    public int PositionIndexExclusiveEnd { get; }
-    public int VirtualizationSpanIndexInclusiveStart { get; set; }
-    public int VirtualizationSpanIndexExclusiveEnd { get; set; }
+    public int PositionStartInclusiveIndex { get; }
+    public int PositionEndExclusiveIndex { get; }
+    public int VirtualizationSpanStartInclusiveIndex { get; set; }
+    public int VirtualizationSpanEndExclusiveIndex { get; set; }
     public double WidthInPixels { get; }
     public double HeightInPixels { get; }
     public double LeftInPixels { get; }

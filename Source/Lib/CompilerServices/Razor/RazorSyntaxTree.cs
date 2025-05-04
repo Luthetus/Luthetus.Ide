@@ -93,8 +93,8 @@ public class RazorSyntaxTree
 
         foreach (var renderFunctionInsertion in _codebehindRenderFunctionInsertions)
         {
-            renderFunctionInsertion.InsertionStartingIndexInclusive +=
-                renderFunctionAdhocTextInsertion.InsertionStartingIndexInclusive;
+            renderFunctionInsertion.InsertionStartInclusiveIndex +=
+                renderFunctionAdhocTextInsertion.InsertionStartInclusiveIndex;
         }
 
         _codebehindClassBuilder.Append("\n\t}\n}");
@@ -1311,14 +1311,14 @@ public class RazorSyntaxTree
 
     private List<IHtmlSyntaxNode> ParseCSharpWithAdhocClassWrapping(
         string cSharpText,
-        int sourceTextStartingIndexInclusive,
+        int sourceTextStartInclusiveIndex,
         StringWalker stringWalker)
     {
         // Testing something
         {
             var adhocTextInsertion = AdhocTextInsertion.PerformInsertion(
                 cSharpText,
-                sourceTextStartingIndexInclusive,
+                sourceTextStartInclusiveIndex,
                 _codebehindClassBuilder,
                 stringWalker);
 
@@ -1333,19 +1333,19 @@ public class RazorSyntaxTree
         return ParseCSharp(
             injectedLanguageString,
             classTemplateOpening.Length,
-            sourceTextStartingIndexInclusive);
+            sourceTextStartInclusiveIndex);
     }
 
     private List<IHtmlSyntaxNode> ParseCSharpWithAdhocMethodWrapping(
         string cSharpText,
-        int sourceTextStartingIndexInclusive,
+        int sourceTextStartInclusiveIndex,
         StringWalker stringWalker)
     {
         // Testing something
         {
             var adhocTextInsertion = AdhocTextInsertion.PerformInsertion(
                 cSharpText,
-                sourceTextStartingIndexInclusive,
+                sourceTextStartInclusiveIndex,
                 _codebehindRenderFunctionBuilder,
                 stringWalker);
 
@@ -1360,7 +1360,7 @@ public class RazorSyntaxTree
         return ParseCSharp(
             injectedLanguageString,
             classTemplateOpening.Length,
-            sourceTextStartingIndexInclusive);
+            sourceTextStartInclusiveIndex);
     }
 
     /// <summary> If Lexing C# from a razor code block one must either use <see cref="ParseCSharpWithAdhocClassWrapping"/> for an @code{} section or <see cref="ParseCSharpWithAdhocMethodWrapping"/> for a basic @{} block</summary>
@@ -1375,7 +1375,7 @@ public class RazorSyntaxTree
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))
         {
-            var startingIndexInclusive = lexedTokenTextSpan.StartInclusiveIndex +
+            var startInclusiveIndex = lexedTokenTextSpan.StartInclusiveIndex +
                                          offsetPositionIndex -
                                          adhocTemplateOpeningLength;
 
@@ -1383,7 +1383,7 @@ public class RazorSyntaxTree
                                        offsetPositionIndex -
                                        adhocTemplateOpeningLength;
 
-            // startingIndexInclusive < 0 means it was part of the class template that was prepended so roslyn would recognize methods
+            // startInclusiveIndex < 0 means it was part of the class template that was prepended so roslyn would recognize methods
             if (lexedTokenTextSpan.StartInclusiveIndex - adhocTemplateOpeningLength
                 < 0)
                 continue;
@@ -1399,7 +1399,7 @@ public class RazorSyntaxTree
                         var razorMethodTextSpan = lexedTokenTextSpan with
                         {
                             DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageMethod,
-                            StartInclusiveIndex = startingIndexInclusive,
+                            StartInclusiveIndex = startInclusiveIndex,
                             EndExclusiveIndex = endingIndexExclusive,
                         };
 
@@ -1414,8 +1414,8 @@ public class RazorSyntaxTree
                         //     var razorTypeTextSpan = lexedTokenTextSpan with
                         //     {
                         //         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType,
-                        //         StartingIndexInclusive = startingIndexInclusive,
-                        //         EndExclusiveIndex = endingIndexExclusive,
+                        //         StartInclusiveIndex = startInclusiveIndex,
+                        //         EndExclusiveIndex = endExclusiveIndex,
                         //     };
                         //
                         //     injectedLanguageFragmentSyntaxes.Add(new InjectedLanguageFragmentSyntax(
@@ -1430,7 +1430,7 @@ public class RazorSyntaxTree
                         //     var razorVariableTextSpan = lexedTokenTextSpan with
                         //     {
                         //         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageVariable,
-                        //         StartingIndexInclusive = startingIndexInclusive,
+                        //         StartInclusiveIndex = startInclusiveIndex,
                         //         EndExclusiveIndex = endingIndexExclusive,
                         //     };
                         //
@@ -1446,7 +1446,7 @@ public class RazorSyntaxTree
                         var razorStringLiteralTextSpan = lexedTokenTextSpan with
                         {
                             DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageStringLiteral,
-                            StartInclusiveIndex = startingIndexInclusive,
+                            StartInclusiveIndex = startInclusiveIndex,
                             EndExclusiveIndex = endingIndexExclusive,
                         };
 
@@ -1461,7 +1461,7 @@ public class RazorSyntaxTree
                         var razorKeywordTextSpan = lexedTokenTextSpan with
                         {
                             DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageKeyword,
-                            StartInclusiveIndex = startingIndexInclusive,
+                            StartInclusiveIndex = startInclusiveIndex,
                             EndExclusiveIndex = endingIndexExclusive,
                         };
 
@@ -1476,7 +1476,7 @@ public class RazorSyntaxTree
                         var razorCommentTextSpan = lexedTokenTextSpan with
                         {
                             DecorationByte = (byte)HtmlDecorationKind.Comment,
-                            StartInclusiveIndex = startingIndexInclusive,
+                            StartInclusiveIndex = startInclusiveIndex,
                             EndExclusiveIndex = endingIndexExclusive,
                         };
 
@@ -1491,7 +1491,7 @@ public class RazorSyntaxTree
                         var razorCommentTextSpan = lexedTokenTextSpan with
                         {
                             DecorationByte = (byte)HtmlDecorationKind.Comment,
-                            StartInclusiveIndex = startingIndexInclusive,
+                            StartInclusiveIndex = startInclusiveIndex,
                             EndExclusiveIndex = endingIndexExclusive,
                         };
 

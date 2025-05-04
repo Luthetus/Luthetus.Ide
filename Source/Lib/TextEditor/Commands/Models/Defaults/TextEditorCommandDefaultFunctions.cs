@@ -67,8 +67,8 @@ public class TextEditorCommandDefaultFunctions
             var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
             var lineInformation = modelModifier.GetLineInformationFromPositionIndex(positionIndex);
 
-            primaryCursorModifier.SelectionAnchorPositionIndex = lineInformation.StartPositionIndexInclusive;
-            primaryCursorModifier.SelectionEndingPositionIndex = lineInformation.EndPositionIndexExclusive;
+            primaryCursorModifier.SelectionAnchorPositionIndex = lineInformation.PositionStartInclusiveIndex;
+            primaryCursorModifier.SelectionEndingPositionIndex = lineInformation.PositionEndExclusiveIndex;
         }
 
         var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier) ?? string.Empty;
@@ -295,8 +295,8 @@ public class TextEditorCommandDefaultFunctions
             modelModifier,
             selectionBoundsInPositionIndexUnits);
 
-        for (var i = selectionBoundsInRowIndexUnits.LowerRowIndexInclusive;
-             i < selectionBoundsInRowIndexUnits.UpperRowIndexExclusive;
+        for (var i = selectionBoundsInRowIndexUnits.RowLowerInclusiveIndex;
+             i < selectionBoundsInRowIndexUnits.RowUpperExclusiveIndex;
              i++)
         {
             var insertionCursor = new TextEditorCursor(i, 0, true);
@@ -313,8 +313,8 @@ public class TextEditorCommandDefaultFunctions
 
         var lowerBoundPositionIndexChange = 1;
 
-        var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.UpperRowIndexExclusive -
-            selectionBoundsInRowIndexUnits.LowerRowIndexInclusive;
+        var upperBoundPositionIndexChange = selectionBoundsInRowIndexUnits.RowUpperExclusiveIndex -
+            selectionBoundsInRowIndexUnits.RowLowerInclusiveIndex;
 
         if (primaryCursorModifier.SelectionAnchorPositionIndex < primaryCursorModifier.SelectionEndingPositionIndex)
         {
@@ -458,8 +458,8 @@ public class TextEditorCommandDefaultFunctions
         {
 			var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 
-			var cursorPositionIndex = line.StartPositionIndexInclusive + primaryCursorModifier.ColumnIndex;
-			var indentationPositionIndex = line.StartPositionIndexInclusive;
+			var cursorPositionIndex = line.PositionStartInclusiveIndex + primaryCursorModifier.ColumnIndex;
+			var indentationPositionIndex = line.PositionStartInclusiveIndex;
 
 			var indentationBuilder = new StringBuilder();
 
@@ -503,8 +503,8 @@ public class TextEditorCommandDefaultFunctions
         {
 			var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 
-			var cursorPositionIndex = line.StartPositionIndexInclusive + originalColumnIndex;
-			var indentationPositionIndex = line.StartPositionIndexInclusive;
+			var cursorPositionIndex = line.PositionStartInclusiveIndex + originalColumnIndex;
+			var indentationPositionIndex = line.PositionStartInclusiveIndex;
 
 			var indentationBuilder = new StringBuilder();
 
@@ -566,8 +566,8 @@ public class TextEditorCommandDefaultFunctions
 			primaryCursorModifier.ColumnIndex = 0;
 			
 			var currentLineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
-			var columnCount = currentLineInformation.EndPositionIndexExclusive -
-				currentLineInformation.StartPositionIndexInclusive;
+			var columnCount = currentLineInformation.PositionEndExclusiveIndex -
+				currentLineInformation.PositionStartInclusiveIndex;
 
 			var innerCursorModifierBag = new CursorModifierBagTextEditor(
 		        Key<TextEditorViewModel>.Empty,
@@ -620,8 +620,8 @@ public class TextEditorCommandDefaultFunctions
 			primaryCursorModifier.ColumnIndex = 0;
 			
 			var currentLineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
-			var columnCount = currentLineInformation.EndPositionIndexExclusive -
-				currentLineInformation.StartPositionIndexInclusive;
+			var columnCount = currentLineInformation.PositionEndExclusiveIndex -
+				currentLineInformation.PositionStartInclusiveIndex;
 
 			var innerCursorModifierBag = new CursorModifierBagTextEditor(
 		        Key<TextEditorViewModel>.Empty,
@@ -1066,7 +1066,7 @@ public class TextEditorCommandDefaultFunctions
     				var lineInformation = modelModifier.GetLineInformation(virtualizedCollapsePoint.AppendToLineIndex);
     				
     				var inlineUi = new InlineUi(
-    					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+    					positionIndex: lineInformation.UpperLineEnd.PositionStartInclusiveIndex,
     					InlineUiKind.ThreeDotsExpandInlineUiThing);
     				
     				viewModel.InlineUiList.Add(

@@ -137,7 +137,7 @@ public sealed class TextEditorComponentData
     
     public int useLowerBoundInclusiveRowIndex;
     public int useUpperBoundExclusiveRowIndex;
-    public (int lowerPositionIndexInclusive, int upperPositionIndexExclusive) selectionBoundsInPositionIndexUnits;
+    public (int PositionLowerInclusiveIndex, int PositionUpperExclusiveIndex) selectionBoundsInPositionIndexUnits;
     
     public List<(string CssClassString, int IndexInclusiveStart, int IndexExclusiveEnd)> firstPresentationLayerGroupList = new();
 	public List<(string PresentationCssClass, string PresentationCssStyle)> firstPresentationLayerTextSpanList = new();
@@ -578,8 +578,8 @@ public sealed class TextEditorComponentData
     }
     
     public string PresentationGetCssStyleString(
-        int lowerPositionIndexInclusive,
-        int upperPositionIndexExclusive,
+        int positionLowerInclusiveIndex,
+        int positionUpperExclusiveIndex,
         int rowIndex,
         int hiddenLineCount)
     {
@@ -593,19 +593,19 @@ public sealed class TextEditorComponentData
         var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
 
         var startingColumnIndex = 0;
-        var endingColumnIndex = line.EndPositionIndexExclusive - 1;
+        var endingColumnIndex = line.PositionEndExclusiveIndex - 1;
 
         var fullWidthOfRowIsSelected = true;
 
-        if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
+        if (positionLowerInclusiveIndex > line.PositionStartInclusiveIndex)
         {
-            startingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
+            startingColumnIndex = positionLowerInclusiveIndex - line.PositionStartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
+        if (positionUpperExclusiveIndex < line.PositionEndExclusiveIndex)
         {
-            endingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
+            endingColumnIndex = positionUpperExclusiveIndex - line.PositionStartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -678,7 +678,7 @@ public sealed class TextEditorComponentData
             _uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
             _uiStringBuilder.Append("px;");
         }
-        else if (startingColumnIndex != 0 && upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
+        else if (startingColumnIndex != 0 && positionUpperExclusiveIndex > line.PositionEndExclusiveIndex - 1)
         {
         	_uiStringBuilder.Append("calc(");
         	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
@@ -725,8 +725,8 @@ public sealed class TextEditorComponentData
             {
             	var textSpan = inTextSpanList[i];
             	
-                if (lowerLine.StartPositionIndexInclusive <= textSpan.StartInclusiveIndex &&
-                    upperLine.EndPositionIndexExclusive >= textSpan.StartInclusiveIndex)
+                if (lowerLine.PositionStartInclusiveIndex <= textSpan.StartInclusiveIndex &&
+                    upperLine.PositionEndExclusiveIndex >= textSpan.StartInclusiveIndex)
                 {
                 	_virtualizedTextSpanList.Add(textSpan);
                 }
@@ -782,14 +782,14 @@ public sealed class TextEditorComponentData
     }
     
     public (int FirstRowToSelectDataInclusive, int LastRowToSelectDataExclusive) PresentationGetBoundsInRowIndexUnits(
-    	(int StartInclusiveIndex, int EndingIndexExclusive) boundsInPositionIndexUnits)
+    	(int StartInclusiveIndex, int EndExclusiveIndex) boundsInPositionIndexUnits)
     {
         var firstRowToSelectDataInclusive = _activeRenderBatch.Model
             .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartInclusiveIndex)
             .Index;
 
         var lastRowToSelectDataExclusive = _activeRenderBatch.Model
-            .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive)
+            .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndExclusiveIndex)
             .Index +
             1;
 
@@ -797,8 +797,8 @@ public sealed class TextEditorComponentData
     }
     
     public string GetTextSelectionStyleCss(
-        int lowerPositionIndexInclusive,
-        int upperPositionIndexExclusive,
+        int positionLowerInclusiveIndex,
+        int positionUpperExclusiveIndex,
         int rowIndex,
         int hiddenLineCount)
     {
@@ -808,19 +808,19 @@ public sealed class TextEditorComponentData
         var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
 
         var selectionStartingColumnIndex = 0;
-        var selectionEndingColumnIndex = line.EndPositionIndexExclusive - 1;
+        var selectionEndingColumnIndex = line.PositionEndExclusiveIndex - 1;
 
         var fullWidthOfRowIsSelected = true;
 
-        if (lowerPositionIndexInclusive > line.StartPositionIndexInclusive)
+        if (positionLowerInclusiveIndex > line.PositionStartInclusiveIndex)
         {
-            selectionStartingColumnIndex = lowerPositionIndexInclusive - line.StartPositionIndexInclusive;
+            selectionStartingColumnIndex = positionLowerInclusiveIndex - line.PositionStartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
-        if (upperPositionIndexExclusive < line.EndPositionIndexExclusive)
+        if (positionUpperExclusiveIndex < line.PositionEndExclusiveIndex)
         {
-            selectionEndingColumnIndex = upperPositionIndexExclusive - line.StartPositionIndexInclusive;
+            selectionEndingColumnIndex = positionUpperExclusiveIndex - line.PositionStartInclusiveIndex;
             fullWidthOfRowIsSelected = false;
         }
 
@@ -896,7 +896,7 @@ public sealed class TextEditorComponentData
         	_uiStringBuilder.Append("px;");
         }
         else if (selectionStartingColumnIndex != 0 &&
-                 upperPositionIndexExclusive > line.EndPositionIndexExclusive - 1)
+                 positionUpperExclusiveIndex > line.PositionEndExclusiveIndex - 1)
         {
         	_uiStringBuilder.Append("calc(");
         	_uiStringBuilder.Append(fullWidthValueInPixelsInvariantCulture);
@@ -930,13 +930,13 @@ public sealed class TextEditorComponentData
 	        var virtualLowerBoundInclusiveRowIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
 	        var virtualUpperBoundExclusiveRowIndex = 1 + _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 	
-	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.LowerRowIndexInclusive
+	        useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.RowLowerInclusiveIndex
 	            ? virtualLowerBoundInclusiveRowIndex
-	            : selectionBoundsInRowIndexUnits.LowerRowIndexInclusive;
+	            : selectionBoundsInRowIndexUnits.RowLowerInclusiveIndex;
 	
-	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.UpperRowIndexExclusive
+	        useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.RowUpperExclusiveIndex
 	            ? virtualUpperBoundExclusiveRowIndex
-            	: selectionBoundsInRowIndexUnits.UpperRowIndexExclusive;
+            	: selectionBoundsInRowIndexUnits.RowUpperExclusiveIndex;
             
             var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;
@@ -958,8 +958,8 @@ public sealed class TextEditorComponentData
 	        	}
 	        	
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
-		     	   selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive,
-		     	   selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
+		     	   selectionBoundsInPositionIndexUnits.PositionLowerInclusiveIndex,
+		     	   selectionBoundsInPositionIndexUnits.PositionUpperExclusiveIndex,
 		     	   rowIndex: i,
 		     	   hiddenLineCount));
 	        }

@@ -384,7 +384,7 @@ public static class EventUtils
 			    
 			    previousCharacterWidth = GetCharacterWidth(
 			    	modelModifier.RichCharacterList[
-			    		lineInformation.StartPositionIndexInclusive + columnIndex]
+			    		lineInformation.PositionStartInclusiveIndex + columnIndex]
 			    	.Value);
 			    
 			    visualLength += previousCharacterWidth;

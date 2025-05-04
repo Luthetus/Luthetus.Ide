@@ -58,16 +58,16 @@ public record SemanticResultRazor
     {
         var adhocTextInsertion = CodebehindClassInsertions
                 .SingleOrDefault(x =>
-                    textSpan.StartInclusiveIndex >= x.InsertionStartingIndexInclusive &&
-                    textSpan.EndExclusiveIndex <= x.InsertionEndingIndexExclusive);
+                    textSpan.StartInclusiveIndex >= x.InsertionStartInclusiveIndex &&
+                    textSpan.EndExclusiveIndex <= x.InsertionEndExclusiveIndex);
 
         // TODO: Fix for spans that go 2 adhocTextInsertions worth of length?
         if (adhocTextInsertion is null)
         {
             adhocTextInsertion = CodebehindRenderFunctionInsertions
                 .SingleOrDefault(x =>
-                    textSpan.StartInclusiveIndex >= x.InsertionStartingIndexInclusive &&
-                    textSpan.EndExclusiveIndex <= x.InsertionEndingIndexExclusive);
+                    textSpan.StartInclusiveIndex >= x.InsertionStartInclusiveIndex &&
+                    textSpan.EndExclusiveIndex <= x.InsertionEndExclusiveIndex);
         }
 
         if (adhocTextInsertion is null)
@@ -76,20 +76,20 @@ public record SemanticResultRazor
             return null;
         }
 
-        var symbolSourceTextStartingIndexInclusive =
-                    adhocTextInsertion.SourceTextStartingIndexInclusive +
-                    (textSpan.StartInclusiveIndex - adhocTextInsertion.InsertionStartingIndexInclusive);
+        var symbolSourceTextStartInclusiveIndex =
+                    adhocTextInsertion.SourceTextStartInclusiveIndex +
+                    (textSpan.StartInclusiveIndex - adhocTextInsertion.InsertionStartInclusiveIndex);
 
-        var symbolSourceTextEndingIndexExclusive =
-            symbolSourceTextStartingIndexInclusive +
+        var symbolSourceTextEndExclusiveIndex =
+            symbolSourceTextStartInclusiveIndex +
             (textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
 
         return textSpan with
         {
             ResourceUri = sourceResourceUri,
             SourceText = sourceText,
-            StartInclusiveIndex = symbolSourceTextStartingIndexInclusive,
-            EndExclusiveIndex = symbolSourceTextEndingIndexExclusive,
+            StartInclusiveIndex = symbolSourceTextStartInclusiveIndex,
+            EndExclusiveIndex = symbolSourceTextEndExclusiveIndex,
         };
     }
 }

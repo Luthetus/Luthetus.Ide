@@ -1603,25 +1603,25 @@ public partial class CSharpBinder
     		{
     			var variableDeclarationNode = (VariableDeclarationNode)syntaxNode;
     			
-    			int? startingIndexInclusive = null;
-    			int? endingIndexExclusive = null;
+				int? startInclusiveIndex = null;
+    			int? endExclusiveIndex = null;
     			
     			if (variableDeclarationNode.TypeReference.TypeIdentifierToken.ConstructorWasInvoked &&
     			    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
     			{
-    				startingIndexInclusive = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
-    				endingIndexExclusive = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex;
+    				startInclusiveIndex = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
+    				endExclusiveIndex = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex;
     			}
     			
     			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked &&
     			    variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri == resourceUri)
     			{
-    				startingIndexInclusive ??= variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-    				endingIndexExclusive = variableDeclarationNode.IdentifierToken.TextSpan.EndExclusiveIndex;
+    				startInclusiveIndex ??= variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
+    				endExclusiveIndex = variableDeclarationNode.IdentifierToken.TextSpan.EndExclusiveIndex;
     			}
     			
-    			if (startingIndexInclusive is not null && endingIndexExclusive is not null)
-    				return (startingIndexInclusive.Value, endingIndexExclusive.Value);
+    			if (startInclusiveIndex is not null && endExclusiveIndex is not null)
+    				return (startInclusiveIndex.Value, endExclusiveIndex.Value);
     			
     			goto default;
     		}

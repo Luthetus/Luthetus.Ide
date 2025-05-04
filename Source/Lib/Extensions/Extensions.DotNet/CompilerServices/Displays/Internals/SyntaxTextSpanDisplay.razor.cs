@@ -66,7 +66,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 					localTextSpanTuple.TextEditorTextSpan.StartInclusiveIndex);
 
 				var columnIndex = localTextSpanTuple.TextEditorTextSpan.StartInclusiveIndex -
-					rowInfo.StartPositionIndexInclusive;
+					rowInfo.PositionStartInclusiveIndex;
 
 				var cursor = new TextEditorCursor(
 					rowInfo.Index,

@@ -179,7 +179,7 @@ public record VirtualizationGrid
 		{
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
 			
-			if (virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart <= 0)
+			if (virtualizationEntry.PositionEndExclusiveIndex - virtualizationEntry.PositionStartInclusiveIndex <= 0)
 				continue;
 			
 			(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
@@ -193,11 +193,11 @@ public record VirtualizationGrid
 					inlineUi = inlineUiTuple.InlineUi;
 			}
 			
-			virtualizationEntry.VirtualizationSpanIndexInclusiveStart = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			virtualizationEntry.VirtualizationSpanStartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 			
-			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
+			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionStartInclusiveIndex].DecorationByte;
 		    
-		    for (int i = virtualizationEntry.PositionIndexInclusiveStart; i < virtualizationEntry.PositionIndexExclusiveEnd; i++)
+		    for (int i = virtualizationEntry.PositionStartInclusiveIndex; i < virtualizationEntry.PositionEndExclusiveIndex; i++)
 		    {
 		    	if (inlineUi.InlineUiKind != InlineUiKind.None && inlineUi.PositionIndex == i)
 		    	{
@@ -293,7 +293,7 @@ public record VirtualizationGrid
 	    		text: textEditorService.__StringBuilder.ToString()));
 			textEditorService.__StringBuilder.Clear();
 			
-			virtualizationEntry.VirtualizationSpanIndexExclusiveEnd = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			virtualizationEntry.VirtualizationSpanEndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
 		}

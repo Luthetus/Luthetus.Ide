@@ -391,8 +391,8 @@ public partial class TextEditorModel
 				// GOAL: Match indentation on newline keystroke (2024-07-04)
 				var line = this.GetLineInformation(cursorModifierBag.CursorModifier.LineIndex);
 
-				var cursorPositionIndex = line.StartPositionIndexInclusive + cursorModifierBag.CursorModifier.ColumnIndex;
-				var indentationPositionIndex = line.StartPositionIndexInclusive;
+				var cursorPositionIndex = line.PositionStartInclusiveIndex + cursorModifierBag.CursorModifier.ColumnIndex;
+				var indentationPositionIndex = line.PositionStartInclusiveIndex;
 
 				var indentationBuilder = new StringBuilder();
 
@@ -636,8 +636,8 @@ public partial class TextEditorModel
             throw new LuthetusTextEditorException($"The text editor model is malformed; the final entry of {nameof(LineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
         LineEndList[^1] = endOfFile with
 		{
-			StartPositionIndexInclusive = richCharacterList.Count,
-			EndPositionIndexExclusive = richCharacterList.Count,
+			PositionStartInclusiveIndex = richCharacterList.Count,
+			PositionEndExclusiveIndex = richCharacterList.Count,
 		};
 
         SetIsDirtyTrue();
@@ -1273,8 +1273,8 @@ public partial class TextEditorModel
 
                 LineEndList[i] = rowEndingTuple with
                 {
-                    StartPositionIndexInclusive = rowEndingTuple.StartPositionIndexInclusive + lineEndingsChangedValueBuilder.Length,
-                    EndPositionIndexExclusive = rowEndingTuple.EndPositionIndexExclusive + lineEndingsChangedValueBuilder.Length,
+                    PositionStartInclusiveIndex = rowEndingTuple.PositionStartInclusiveIndex + lineEndingsChangedValueBuilder.Length,
+                    PositionEndExclusiveIndex = rowEndingTuple.PositionEndExclusiveIndex + lineEndingsChangedValueBuilder.Length,
                 };
             }
         }
@@ -1530,7 +1530,7 @@ public partial class TextEditorModel
             var (lowerPositionIndexInclusive, upperPositionIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
             var lowerLineData = this.GetLineInformationFromPositionIndex(lowerPositionIndexInclusive);
-            var lowerColumnIndex = lowerPositionIndexInclusive - lowerLineData.StartPositionIndexInclusive;
+            var lowerColumnIndex = lowerPositionIndexInclusive - lowerLineData.PositionStartInclusiveIndex;
 
             cursorModifier.LineIndex = lowerLineData.Index;
             initialLineIndex = cursorModifier.LineIndex;
@@ -1589,7 +1589,7 @@ public partial class TextEditorModel
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
                     var indexLineEnd = LineEndList.FindIndex(
-                        x => x.StartPositionIndexInclusive == toDeletePositionIndex);
+                        x => x.PositionStartInclusiveIndex == toDeletePositionIndex);
 
                     var lineEnd = LineEndList[indexLineEnd];
 
@@ -1665,9 +1665,9 @@ public partial class TextEditorModel
                     // is a starting index, and a count.
                     var indexLineEnd = LineEndList.FindIndex(
                         // Check for '\n' or '\r'
-                        x => x.EndPositionIndexExclusive == toDeletePositionIndex + 1 ||
+                        x => x.PositionEndExclusiveIndex == toDeletePositionIndex + 1 ||
                         // Check for "\r\n"
-                        x.EndPositionIndexExclusive == toDeletePositionIndex + 2);
+                        x.PositionEndExclusiveIndex == toDeletePositionIndex + 2);
 
                     var lineEnd = LineEndList[indexLineEnd];
 
@@ -1714,8 +1714,8 @@ public partial class TextEditorModel
 
                 LineEndList[i] = lineEnd with
                 {
-                    StartPositionIndexInclusive = lineEnd.StartPositionIndexInclusive - charCount,
-                    EndPositionIndexExclusive = lineEnd.EndPositionIndexExclusive - charCount,
+                    PositionStartInclusiveIndex = lineEnd.PositionStartInclusiveIndex - charCount,
+                    PositionEndExclusiveIndex = lineEnd.PositionEndExclusiveIndex - charCount,
                 };
             }
         }
@@ -1835,7 +1835,7 @@ public partial class TextEditorModel
             lineIndex = 0;
 
         var line = GetLineInformation(lineIndex);
-        var lineLengthWithLineEndings = line.EndPositionIndexExclusive - line.StartPositionIndexInclusive;
+        var lineLengthWithLineEndings = line.PositionEndExclusiveIndex - line.PositionStartInclusiveIndex;
 
         if (includeLineEndingCharacters)
             return lineLengthWithLineEndings;
@@ -1871,8 +1871,8 @@ public partial class TextEditorModel
         for (var i = startingLineIndex; i < endingLineIndexExclusive; i++)
         {
             // Previous line's end-position-exclusive is this row's start.
-            var startOfLineInclusive = GetLineInformation(i).StartPositionIndexInclusive;
-            var endOfLineExclusive = LineEndList[i].EndPositionIndexExclusive;
+            var startOfLineInclusive = GetLineInformation(i).PositionStartInclusiveIndex;
+            var endOfLineExclusive = LineEndList[i].PositionEndExclusiveIndex;
 
 			// TODO: LINQ used in a hot path (the virtualization invokes this method)
             var line = RichCharacterList
@@ -1897,12 +1897,12 @@ public partial class TextEditorModel
         
         foreach (var tabCharPositionIndex in TabCharPositionIndexList)
         {
-        	if (!foundSpan && tabCharPositionIndex < line.StartPositionIndexInclusive)
+        	if (!foundSpan && tabCharPositionIndex < line.PositionStartInclusiveIndex)
         		continue;
         	else
         		foundSpan = true;
         		
-        	if (tabCharPositionIndex < line.StartPositionIndexInclusive + columnIndex)
+        	if (tabCharPositionIndex < line.PositionStartInclusiveIndex + columnIndex)
         		count++;
         	else
         		break;
@@ -1935,7 +1935,7 @@ public partial class TextEditorModel
 
         AssertColumnIndex(line, columnIndex);
 
-        return line.StartPositionIndexInclusive + columnIndex;
+        return line.PositionStartInclusiveIndex + columnIndex;
     }
 
     public (int lineIndex, int columnIndex) GetLineAndColumnIndicesFromPositionIndex(
@@ -1945,7 +1945,7 @@ public partial class TextEditorModel
 
         return (
             lineInformation.Index,
-            positionIndex - lineInformation.StartPositionIndexInclusive);
+            positionIndex - lineInformation.PositionStartInclusiveIndex);
     }
 
     /// <summary>
@@ -2012,7 +2012,7 @@ public partial class TextEditorModel
         var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(currentCharacter);
 
         var lineInformation = GetLineInformationFromPositionIndex(positionIndex);
-        var columnIndex = positionIndex - lineInformation.StartPositionIndexInclusive;
+        var columnIndex = positionIndex - lineInformation.PositionStartInclusiveIndex;
 
         if (previousCharacterKind == CharacterKind.LetterOrDigit && currentCharacterKind == CharacterKind.LetterOrDigit)
         {
@@ -2033,8 +2033,8 @@ public partial class TextEditorModel
                 wordColumnIndexEndExclusive = GetLineLength(lineInformation.Index);
 
             return new TextEditorTextSpan(
-                wordColumnIndexStartInclusive + lineInformation.StartPositionIndexInclusive,
-                wordColumnIndexEndExclusive + lineInformation.StartPositionIndexInclusive,
+                wordColumnIndexStartInclusive + lineInformation.PositionStartInclusiveIndex,
+                wordColumnIndexEndExclusive + lineInformation.PositionStartInclusiveIndex,
                 0,
                 ResourceUri,
                 GetAllText());
@@ -2050,8 +2050,8 @@ public partial class TextEditorModel
                 wordColumnIndexEndExclusive = GetLineLength(lineInformation.Index);
 
             return new TextEditorTextSpan(
-                columnIndex + lineInformation.StartPositionIndexInclusive,
-                wordColumnIndexEndExclusive + lineInformation.StartPositionIndexInclusive,
+                columnIndex + lineInformation.PositionStartInclusiveIndex,
+                wordColumnIndexEndExclusive + lineInformation.PositionStartInclusiveIndex,
                 0,
                 ResourceUri,
                 GetAllText());
@@ -2067,8 +2067,8 @@ public partial class TextEditorModel
                 wordColumnIndexStartInclusive = 0;
 
             return new TextEditorTextSpan(
-                wordColumnIndexStartInclusive + lineInformation.StartPositionIndexInclusive,
-                columnIndex + lineInformation.StartPositionIndexInclusive,
+                wordColumnIndexStartInclusive + lineInformation.PositionStartInclusiveIndex,
+                columnIndex + lineInformation.PositionStartInclusiveIndex,
                 0,
                 ResourceUri,
                 GetAllText());
@@ -2158,8 +2158,8 @@ public partial class TextEditorModel
 
         return new LineInformation(
             lineIndex,
-            lineEndLower.EndPositionIndexExclusive,
-            lineEndUpper.EndPositionIndexExclusive,
+            lineEndLower.PositionEndExclusiveIndex,
+            lineEndUpper.PositionEndExclusiveIndex,
             lineEndLower,
             lineEndUpper);
     }
@@ -2171,11 +2171,11 @@ public partial class TextEditorModel
         int GetLineIndexFromPositionIndex()
         {
             // StartOfFile
-            if (LineEndList[0].EndPositionIndexExclusive > positionIndex)
+            if (LineEndList[0].PositionEndExclusiveIndex > positionIndex)
                 return 0;
 
             // EndOfFile
-            if (LineEndList[^1].EndPositionIndexExclusive <= positionIndex)
+            if (LineEndList[^1].PositionEndExclusiveIndex <= positionIndex)
                 return LineEndList.Count - 1;
 
             // In-between
@@ -2183,7 +2183,7 @@ public partial class TextEditorModel
             {
                 var lineEndTuple = LineEndList[i];
 
-                if (lineEndTuple.EndPositionIndexExclusive > positionIndex)
+                if (lineEndTuple.PositionEndExclusiveIndex > positionIndex)
                     return i;
             }
 
@@ -2208,12 +2208,12 @@ public partial class TextEditorModel
             ? -1
             : 1;
 
-        var lineStartPositionIndex = GetLineInformation(lineIndex).StartPositionIndexInclusive;
+        var lineStartPositionIndex = GetLineInformation(lineIndex).PositionStartInclusiveIndex;
 
         if (lineIndex > LineEndList.Count - 1)
             return -1;
 
-        var lastPositionIndexOnRow = LineEndList[lineIndex].EndPositionIndexExclusive - 1;
+        var lastPositionIndexOnRow = LineEndList[lineIndex].PositionEndExclusiveIndex - 1;
         var positionIndex = GetPositionIndex(lineIndex, columnIndex);
 
         if (moveBackwards)
@@ -2353,14 +2353,14 @@ public partial class TextEditorModel
     public string GetTextOffsettingCursor(TextEditorCursor textEditorCursor)
     {
         var cursorPositionIndex = GetPositionIndex(textEditorCursor);
-        var lineStartPositionIndexInclusive = GetLineInformation(textEditorCursor.LineIndex).StartPositionIndexInclusive;
+        var lineStartPositionIndexInclusive = GetLineInformation(textEditorCursor.LineIndex).PositionStartInclusiveIndex;
 
         return GetString(lineStartPositionIndexInclusive, cursorPositionIndex - lineStartPositionIndexInclusive);
     }
 
     public string GetLineText(int lineIndex)
     {
-        var lineStartPositionIndexInclusive = GetLineInformation(lineIndex).StartPositionIndexInclusive;
+        var lineStartPositionIndexInclusive = GetLineInformation(lineIndex).PositionStartInclusiveIndex;
         var lengthOfLine = GetLineLength(lineIndex, true);
 
         return GetString(lineStartPositionIndexInclusive, lengthOfLine);

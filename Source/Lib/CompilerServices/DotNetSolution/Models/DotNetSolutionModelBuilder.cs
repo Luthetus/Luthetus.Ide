@@ -102,31 +102,31 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                 if (lastValidProjectToken is null || lastValidProjectToken.CloseAssociatedGroupToken is null)
                     return this;
 
-                var openStartingIndexInclusive =
+                var openStartInclusiveIndex =
                     lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan.EndExclusiveIndex;
 
-                var openEndingIndexExclusive = openStartingIndexInclusive +
+                var openEndExclusiveIndex = openStartInclusiveIndex +
                     LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN.Length;
 
                 var openTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan with
                 {
-                    StartInclusiveIndex = openStartingIndexInclusive,
-                    EndExclusiveIndex = openEndingIndexExclusive + solutionProjectEntry.Length
+                    StartInclusiveIndex = openStartInclusiveIndex,
+                    EndExclusiveIndex = openEndExclusiveIndex + solutionProjectEntry.Length
                 };
                 
                 dotNetProject.OpenAssociatedGroupToken = new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, openTextSpan);
                 
-                var closeEndingIndexExclusive =
+                var closeEndExclusiveIndex =
                     lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan.EndExclusiveIndex +
                     solutionProjectEntry.Length;
 
-                var closeStartingIndexInclusive = closeEndingIndexExclusive -
+                var closeStartInclusiveIndex = closeEndExclusiveIndex -
                     LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length;
 
                 var closeTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan with
                 {
-                    StartInclusiveIndex = closeStartingIndexInclusive,
-                    EndExclusiveIndex = closeEndingIndexExclusive
+                    StartInclusiveIndex = closeStartInclusiveIndex,
+                    EndExclusiveIndex = closeEndExclusiveIndex
                 };
                 
                 dotNetProject.CloseAssociatedGroupToken = new SyntaxToken(SyntaxKind.CloseAssociatedGroupToken, closeTextSpan);
@@ -140,12 +140,12 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                 if (global.OpenAssociatedGroupToken is null)
                     return this;
                 
-                var newProjectTextSpanStartingIndexInclusive = global.OpenAssociatedGroupToken.Value.TextSpan.StartInclusiveIndex;
+                var newProjectTextSpanStartInclusiveIndex = global.OpenAssociatedGroupToken.Value.TextSpan.StartInclusiveIndex;
 
                 var newProjectTextSpan = global.OpenAssociatedGroupToken.Value.TextSpan with
                 {
-                    StartInclusiveIndex = newProjectTextSpanStartingIndexInclusive,
-                    EndExclusiveIndex = newProjectTextSpanStartingIndexInclusive + solutionProjectEntry.Length
+                    StartInclusiveIndex = newProjectTextSpanStartInclusiveIndex,
+                    EndExclusiveIndex = newProjectTextSpanStartInclusiveIndex + solutionProjectEntry.Length
                 };
 
                 dotNetProject.OpenAssociatedGroupToken = new SyntaxToken(SyntaxKind.OpenAssociatedGroupToken, newProjectTextSpan);

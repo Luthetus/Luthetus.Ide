@@ -162,22 +162,22 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				    getTextPrecalculatedResult: string.Empty);
     		}
 
-			int useStartingIndexInclusive;
+			int useStartInclusiveIndex;
 			if (targetScope.EndExclusiveIndex == -1)
-				useStartingIndexInclusive = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
+				useStartInclusiveIndex = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
 			else
-				useStartingIndexInclusive = targetScope.EndExclusiveIndex - 1;
+				useStartInclusiveIndex = targetScope.EndExclusiveIndex - 1;
 
-			if (useStartingIndexInclusive < 0)
-				useStartingIndexInclusive = 0;
+			if (useStartInclusiveIndex < 0)
+				useStartInclusiveIndex = 0;
 
-			var useEndingIndexExclusive = targetScope.EndExclusiveIndex;
-    		if (useEndingIndexExclusive == -1)
-    			useEndingIndexExclusive = presentationModel.PendingCalculation.ContentAtRequest.Length;
+			var useEndExclusiveIndex = targetScope.EndExclusiveIndex;
+    		if (useEndExclusiveIndex == -1)
+    			useEndExclusiveIndex = presentationModel.PendingCalculation.ContentAtRequest.Length;
     			
 			var textSpanEnd = new TextEditorTextSpan(
-	            useStartingIndexInclusive,
-			    useEndingIndexExclusive,
+	            useStartInclusiveIndex,
+			    useEndExclusiveIndex,
 			    (byte)TextEditorDevToolsDecorationKind.Scope,
 			    resourceUri,
 			    sourceText: string.Empty,
@@ -261,8 +261,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	if (token.TextSpan.ResourceUri != modelModifier.ResourceUri)
     		return;
     
-    	if (lowerLine.StartPositionIndexInclusive <= token.TextSpan.StartInclusiveIndex &&
-    	    upperLine.EndPositionIndexExclusive >= token.TextSpan.EndExclusiveIndex)
+    	if (lowerLine.PositionStartInclusiveIndex <= token.TextSpan.StartInclusiveIndex &&
+    	    upperLine.PositionEndExclusiveIndex >= token.TextSpan.EndExclusiveIndex)
     	{
     		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
     			token.TextSpan.StartInclusiveIndex);

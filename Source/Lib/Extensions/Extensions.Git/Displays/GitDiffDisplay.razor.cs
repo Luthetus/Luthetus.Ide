@@ -326,11 +326,11 @@ public partial class GitDiffDisplay : ComponentBase
 			            	
 			            	var lineInformation = modelModifier.GetLineInformation(lineIndex);
 			            	
-			            	Console.WriteLine($"lineIndex: {lineIndex} | ({lineInformation.StartPositionIndexInclusive} to {lineInformation.UpperLineEnd.StartPositionIndexInclusive})");
+			            	Console.WriteLine($"lineIndex: {lineIndex} | ({lineInformation.PositionStartInclusiveIndex} to {lineInformation.UpperLineEnd.PositionStartInclusiveIndex})");
 			            	
 			            	outResultTextSpanList.Add(new TextEditorTextSpan(
-			            		lineInformation.StartPositionIndexInclusive,
-			            		lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+			            		lineInformation.PositionStartInclusiveIndex,
+			            		lineInformation.UpperLineEnd.PositionStartInclusiveIndex,
 							    (byte)TextEditorDiffDecorationKind.InsertionLine,
 							    originalResourceUri,
 							    outPresentationModel.PendingCalculation.ContentAtRequest));

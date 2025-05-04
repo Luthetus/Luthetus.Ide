@@ -8,32 +8,32 @@ public class AdhocTextInsertion
 {
     public AdhocTextInsertion(
         string content,
-        int sourceTextStartingIndexInclusive,
-        int insertionStartingIndexInclusive,
+        int sourceTextStartInclusiveIndex,
+        int insertionStartInclusiveIndex,
         StringWalker stringWalker)
     {
         Content = content;
-        SourceTextStartingIndexInclusive = sourceTextStartingIndexInclusive;
-        InsertionStartingIndexInclusive = insertionStartingIndexInclusive;
+        SourceTextStartInclusiveIndex = sourceTextStartInclusiveIndex;
+        InsertionStartInclusiveIndex = insertionStartInclusiveIndex;
         StringWalker = stringWalker;
     }
 
     public string Content { get; }
-    public int SourceTextStartingIndexInclusive { get; }
-    public int InsertionStartingIndexInclusive { get; set; }
+    public int SourceTextStartInclusiveIndex { get; }
+    public int InsertionStartInclusiveIndex { get; set; }
     public StringWalker StringWalker { get; }
 
-    public int InsertionEndingIndexExclusive => InsertionStartingIndexInclusive + Content.Length;
+    public int InsertionEndExclusiveIndex => InsertionStartInclusiveIndex + Content.Length;
 
     public static AdhocTextInsertion PerformInsertion(
         string content,
-        int sourceTextStartingIndexInclusive,
+        int sourceTextStartInclusiveIndex,
         StringBuilder stringBuilder,
         StringWalker stringWalker)
     {
         var adhocTextInsertion = new AdhocTextInsertion(
 			content,
-			sourceTextStartingIndexInclusive,
+			sourceTextStartInclusiveIndex,
 			stringBuilder.Length,
 			stringWalker);
 
