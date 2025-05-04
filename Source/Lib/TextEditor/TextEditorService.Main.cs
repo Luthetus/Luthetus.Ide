@@ -219,7 +219,7 @@ public partial class TextEditorService : ITextEditorService
             
             if (viewModelModifier.ShouldRevealCursor)
             {
-            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
             	
             	if (!cursorModifierBag.ConstructorWasInvoked)
             		cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
@@ -317,7 +317,7 @@ public partial class TextEditorService : ITextEditorService
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
 	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
 	            	editContext,
-	            	editContext.GetModelModifier(viewModelModifier.ResourceUri),
+	            	editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true),
 			        viewModelModifier,
 			        CancellationToken.None);
 			}
@@ -372,7 +372,7 @@ public partial class TextEditorService : ITextEditorService
 		TextEditorViewModel viewModelModifier,
 		bool textEditorDimensionsChanged)
 	{	
-		var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+		var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
     	
     	if (modelModifier is null)
     		return;

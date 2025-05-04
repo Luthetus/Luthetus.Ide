@@ -21,7 +21,7 @@ public struct TextEditorEditContext
 	/// </summary>
     public TextEditorModel? GetModelModifier(
         ResourceUri modelResourceUri,
-        bool isReadonly = false)
+        bool isReadOnly = false)
     {
     	if (modelResourceUri == ResourceUri.Empty)
     		return null;
@@ -30,7 +30,8 @@ public struct TextEditorEditContext
     		
     	for (int i = 0; i < TextEditorService.__ModelList.Count; i++)
     	{
-    		modelModifier = TextEditorService.__ModelList[i];
+    		if (TextEditorService.__ModelList[i].ResourceUri == modelResourceUri)
+    			modelModifier = TextEditorService.__ModelList[i];
     	}
     	
     	if (modelModifier is null)
@@ -39,7 +40,7 @@ public struct TextEditorEditContext
 				modelResourceUri,
 				out var model);
     		
-    		if (isReadonly || model is null)
+    		if (isReadOnly || model is null)
     			return model;
     		
 			modelModifier = model is null ? null : new(model);
@@ -51,7 +52,7 @@ public struct TextEditorEditContext
 
     public TextEditorModel? GetModelModifierByViewModelKey(
         Key<TextEditorViewModel> viewModelKey,
-        bool isReadonly = false)
+        bool isReadOnly = false)
     {
         if (viewModelKey != Key<TextEditorViewModel>.Empty)
         {
@@ -71,7 +72,7 @@ public struct TextEditorEditContext
 
     public TextEditorViewModel? GetViewModelModifier(
         Key<TextEditorViewModel> viewModelKey,
-        bool isReadonly = false)
+        bool isReadOnly = false)
     {
     	if (viewModelKey == Key<TextEditorViewModel>.Empty)
     		return null;
@@ -80,7 +81,8 @@ public struct TextEditorEditContext
     		
     	for (int i = 0; i < TextEditorService.__ViewModelList.Count; i++)
     	{
-    		viewModelModifier = TextEditorService.__ViewModelList[i];
+    		if (TextEditorService.__ViewModelList[i].ViewModelKey == viewModelKey)
+    			viewModelModifier = TextEditorService.__ViewModelList[i];
     	}
     	
     	if (viewModelModifier is null)
@@ -89,7 +91,7 @@ public struct TextEditorEditContext
 				viewModelKey,
 				out var viewModel);
     		
-    		if (isReadonly || viewModel is null)
+    		if (isReadOnly || viewModel is null)
     			return viewModel;
     		
 			viewModelModifier = viewModel is null ? null : new(viewModel);
@@ -141,7 +143,7 @@ public struct TextEditorEditContext
 
     public TextEditorDiffModelModifier? GetDiffModelModifier(
         Key<TextEditorDiffModel> diffModelKey,
-        bool isReadonly = false)
+        bool isReadOnly = false)
     {
         if (diffModelKey != Key<TextEditorDiffModel>.Empty)
         {
@@ -153,7 +155,7 @@ public struct TextEditorEditContext
                 TextEditorService.__DiffModelCache.Add(diffModelKey, diffModelModifier);
             }
 
-            if (!isReadonly && diffModelModifier is not null)
+            if (!isReadOnly && diffModelModifier is not null)
                 diffModelModifier.WasModified = true;
 
             return diffModelModifier;
