@@ -268,8 +268,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     {
     	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
         var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
-				resourceUri,
-				viewModelModifier.ViewModelKey,
+				modelModifier,
+				viewModelModifier,
 				mouseEventArgs,
 				componentData,
 				editContext)

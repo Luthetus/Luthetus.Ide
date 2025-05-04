@@ -29,7 +29,7 @@ public struct OnMouseDown
     	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelSlimDisplay.TextEditorService);
     
     	var viewModel = editContext.GetViewModelModifier(ViewModelKey);
-        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, true);
+        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
@@ -60,8 +60,8 @@ public struct OnMouseDown
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 		// Reason being, these are likely to be huge optimizations (2024-05-29).
         var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
-				viewModel.ResourceUri,
-				ViewModelKey,
+				modelModifier,
+				viewModel,
 				MouseEventArgs,
 				ComponentData,
 				editContext)

@@ -251,14 +251,12 @@ public static class EventUtils
     }
 
 	public static async Task<(int LineIndex, int ColumnIndex, double PositionX, double PositionY)> CalculateLineAndColumnIndex(
-		ResourceUri resourceUri,
-		Key<TextEditorViewModel> viewModelKey,
+		TextEditorModel modelModifier,
+		TextEditorViewModel viewModel,
 		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
 		TextEditorEditContext editContext)
     {
-        var modelModifier = editContext.GetModelModifier(resourceUri);
-        var viewModel = editContext.GetViewModelModifier(viewModelKey);
         var globalTextEditorOptions = editContext.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
 
         if (modelModifier is null || viewModel is null)
