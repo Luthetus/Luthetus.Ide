@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.Rows.Models;
+namespace Luthetus.TextEditor.RazorLib.Lines.Models;
 
 /// <param name="LowerLineEnd">
 /// The smaller positionIndex.

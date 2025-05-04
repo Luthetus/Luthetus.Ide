@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.Rows.Models;
+namespace Luthetus.TextEditor.RazorLib.Lines.Models;
 
 public record struct LineEnd
 {
