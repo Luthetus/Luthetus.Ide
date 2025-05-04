@@ -922,8 +922,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     	
         try
 		{
-			var virtualizationResult = viewModel.VirtualizationResult;
-			
 			var verticalStartingIndex = (int)Math.Floor(
 				viewModel.ScrollbarDimensions.ScrollTop /
 				viewModel.CharAndLineMeasurements.LineHeight);
@@ -1225,7 +1223,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				totalHeight += marginScrollHeight;
 			}
 			
-			virtualizationResult = new VirtualizationGrid(
+			var virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
         		new List<VirtualizationSpan>(),
 				totalWidth: totalWidth,

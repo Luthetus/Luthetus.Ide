@@ -45,7 +45,7 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 ///       i.e.: contiguous decoration bytes being grouped in the same '<span>'.
 /// 
 /// </summary>
-public record VirtualizationGrid
+public struct VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
         new(),
