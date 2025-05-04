@@ -202,7 +202,8 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                 absolutePath.ExtensionNoPeriod,
                 content,
                 decorationMapper,
-                compilerService);
+                compilerService,
+                _textEditorService);
 
             _textEditorService.WorkerArbitrary.PostUnique(
                 nameof(_textEditorService.ModelApi.AddPresentationModel),
