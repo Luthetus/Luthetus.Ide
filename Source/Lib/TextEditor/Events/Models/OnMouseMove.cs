@@ -36,7 +36,7 @@ public struct OnMouseMove
 
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 		// Reason being, these are likely to be huge optimizations (2024-05-29).
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+        var rowAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
 				viewModel.ResourceUri,
 				ViewModelKey,
 				MouseEventArgs,
@@ -47,21 +47,21 @@ public struct OnMouseMove
 		if (rowAndColumnIndex.positionX < -4 &&
 			rowAndColumnIndex.positionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
 		{
-			var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.rowIndex);
+			var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.lineIndex);
 			
 			if (virtualizedIndexCollapsePoint != -1)
 				goto finalize;
 		}
 		else
 		{
-			var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.rowIndex);
+			var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.lineIndex);
 			
 			if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 			{
 				// Check for collision with non-tab inline UI
 				foreach (var collapsePoint in viewModel.AllCollapsePointList)
 				{
-					if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.rowIndex ||
+					if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.lineIndex ||
 					    !collapsePoint.IsCollapsed)
 					{
 						continue;
@@ -78,7 +78,7 @@ public struct OnMouseMove
 			}
 		}
 
-        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
+        primaryCursorModifier.LineIndex = rowAndColumnIndex.lineIndex;
         primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
         primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 

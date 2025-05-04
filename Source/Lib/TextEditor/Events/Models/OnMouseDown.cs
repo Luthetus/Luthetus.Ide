@@ -59,7 +59,7 @@ public struct OnMouseDown
 		//
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 		// Reason being, these are likely to be huge optimizations (2024-05-29).
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+        var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
 				viewModel.ResourceUri,
 				ViewModelKey,
 				MouseEventArgs,
@@ -67,33 +67,33 @@ public struct OnMouseDown
 				editContext)
 			.ConfigureAwait(false);
 			
-		if (rowAndColumnIndex.positionX < -4 &&
-			rowAndColumnIndex.positionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
+		if (lineAndColumnIndex.positionX < -4 &&
+			lineAndColumnIndex.positionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
 		{
-			var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(rowAndColumnIndex.rowIndex, modelModifier, viewModel, primaryCursorModifier);
+			var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.lineIndex, modelModifier, viewModel, primaryCursorModifier);
 			if (shouldGotoFinalize)
 				goto finalize;
 		}
 		else
 		{
-			var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.rowIndex);
+			var lineInformation = modelModifier.GetLineInformation(lineAndColumnIndex.lineIndex);
 			
-			if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+			if (lineAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 			{
 				// Check for collision with non-tab inline UI
 				foreach (var collapsePoint in viewModel.AllCollapsePointList)
 				{
-					if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.rowIndex ||
+					if (collapsePoint.AppendToLineIndex != lineAndColumnIndex.lineIndex ||
 					    !collapsePoint.IsCollapsed)
 					{
 						continue;
 				    }
 				
-					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					if (lineAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
-						if (rowAndColumnIndex.positionX < (lineInformation.LastValidColumnIndex + 3) * viewModel.CharAndLineMeasurements.CharacterWidth)
+						if (lineAndColumnIndex.positionX < (lineInformation.LastValidColumnIndex + 3) * viewModel.CharAndLineMeasurements.CharacterWidth)
 						{
-							var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(rowAndColumnIndex.rowIndex, modelModifier, viewModel, primaryCursorModifier);
+							var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.lineIndex, modelModifier, viewModel, primaryCursorModifier);
 							if (shouldGotoFinalize)
 								goto finalize;
 						}
@@ -109,13 +109,13 @@ public struct OnMouseDown
 			}
 		}
 
-        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
-        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+        primaryCursorModifier.LineIndex = lineAndColumnIndex.lineIndex;
+        primaryCursorModifier.ColumnIndex = lineAndColumnIndex.columnIndex;
+        primaryCursorModifier.PreferredColumnIndex = lineAndColumnIndex.columnIndex;
 
         var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
+            lineAndColumnIndex.lineIndex,
+            lineAndColumnIndex.columnIndex,
             true));
 
         if (MouseEventArgs.ShiftKey)

@@ -45,7 +45,7 @@ public struct OnDoubleClick
 
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 		// Reason being, these are likely to be huge optimizations (2024-05-29).
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+        var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
 				viewModel.ResourceUri,
 				ViewModelKey,
 				MouseEventArgs,
@@ -54,8 +54,8 @@ public struct OnDoubleClick
 			.ConfigureAwait(false);
 
         var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
+            lineAndColumnIndex.lineIndex,
+            lineAndColumnIndex.columnIndex,
             true);
 
         lowerColumnIndexExpansion = lowerColumnIndexExpansion == -1
@@ -63,25 +63,25 @@ public struct OnDoubleClick
             : lowerColumnIndexExpansion;
 
         var higherColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
+            lineAndColumnIndex.lineIndex,
+            lineAndColumnIndex.columnIndex,
             false);
 
         higherColumnIndexExpansion = higherColumnIndexExpansion == -1
-            ? modelModifier.GetLineLength(rowAndColumnIndex.rowIndex)
+            ? modelModifier.GetLineLength(lineAndColumnIndex.lineIndex)
             : higherColumnIndexExpansion;
 
         // Move user's cursor position to the higher expansion
         {
-            primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
+            primaryCursorModifier.LineIndex = lineAndColumnIndex.lineIndex;
             primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
-            primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+            primaryCursorModifier.PreferredColumnIndex = lineAndColumnIndex.columnIndex;
         }
 
         // Set text selection ending to higher expansion
         {
             var cursorPositionOfHigherExpansion = modelModifier.GetPositionIndex(
-                rowAndColumnIndex.rowIndex,
+                lineAndColumnIndex.lineIndex,
                 higherColumnIndexExpansion);
 
             primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
@@ -90,7 +90,7 @@ public struct OnDoubleClick
         // Set text selection anchor to lower expansion
         {
             var cursorPositionOfLowerExpansion = modelModifier.GetPositionIndex(
-                rowAndColumnIndex.rowIndex,
+                lineAndColumnIndex.lineIndex,
                 lowerColumnIndexExpansion);
 
             primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;

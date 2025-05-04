@@ -250,7 +250,7 @@ public static class EventUtils
                 !keymapArgs.CtrlKey;
     }
 
-	public static async Task<(int rowIndex, int columnIndex, double positionX, double positionY)> CalculateRowAndColumnIndex(
+	public static async Task<(int lineIndex, int columnIndex, double positionX, double positionY)> CalculateLineAndColumnIndex(
 		ResourceUri resourceUri,
 		Key<TextEditorViewModel> viewModelKey,
 		MouseEventArgs mouseEventArgs,
@@ -275,19 +275,19 @@ public static class EventUtils
         positionX += scrollbarDimensions.ScrollLeft;
         positionY += scrollbarDimensions.ScrollTop;
         
-        var rowIndex = (int)(positionY / charMeasurements.LineHeight);
+        var lineIndex = (int)(positionY / charMeasurements.LineHeight);
         
         var hiddenLineCount = 0;
         
-		for (int i = 0; i <= rowIndex; i++)
+		for (int i = 0; i <= lineIndex; i++)
 		{
 			if (viewModel.HiddenLineIndexHashSet.Contains(i))
-				rowIndex++;
+				lineIndex++;
 		}
         
-        rowIndex = rowIndex > modelModifier.LineCount - 1
+        lineIndex = lineIndex > modelModifier.LineCount - 1
             ? modelModifier.LineCount - 1
-            : rowIndex;
+            : lineIndex;
             
         var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
         int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
@@ -299,19 +299,19 @@ public static class EventUtils
         {
         	inlineUiLineAndColumnPositionIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
         	
-        	if (inlineUiLineAndColumnPositionIndices.lineIndex == rowIndex)
+        	if (inlineUiLineAndColumnPositionIndices.lineIndex == lineIndex)
         	{
         		inlineUi = inlineUiTuple.InlineUi;
         		break;
         	}
         }
         
-        var lineLength = modelModifier.GetLineLength(rowIndex);
+        var lineLength = modelModifier.GetLineLength(lineIndex);
         
-        rowIndex = Math.Max(rowIndex, 0);
+        lineIndex = Math.Max(lineIndex, 0);
         columnIndexInt = Math.Max(columnIndexInt, 0);
         
-        var lineInformation = modelModifier.GetLineInformation(rowIndex);
+        var lineInformation = modelModifier.GetLineInformation(lineIndex);
         
         int literalLength = 0;
 		int visualLength = 0;
@@ -320,7 +320,7 @@ public static class EventUtils
 		var previousCharacterWidthIsInlineUi = false;
 		var previousPosition = -1;
 		
-		for (int position = 0; position < lineLength; position++)
+		for (int columnIndex = 0; columnIndex < lineLength; columnIndex++)
 		{
 			if (visualLength >= columnIndexInt)
 		    {
@@ -368,14 +368,14 @@ public static class EventUtils
 		    	break;
 		    }
 		    
-		    if (inlineUiLineAndColumnPositionIndices.lineIndex == rowIndex &&
-		    	inlineUiLineAndColumnPositionIndices.columnIndex == position &&
-		    	previousPosition != position)
+		    if (inlineUiLineAndColumnPositionIndices.lineIndex == lineIndex &&
+		    	inlineUiLineAndColumnPositionIndices.columnIndex == columnIndex &&
+		    	previousPosition != columnIndex)
 		    {
 		    	previousCharacterWidth = 3;
 		    	previousCharacterWidthIsInlineUi = true;
-		    	previousPosition = position;
-		    	position--;
+		    	previousPosition = columnIndex;
+		    	columnIndex--;
 		    	visualLength += previousCharacterWidth;
 		    }
 			else
@@ -384,7 +384,7 @@ public static class EventUtils
 			    
 			    previousCharacterWidth = GetCharacterWidth(
 			    	modelModifier.RichCharacterList[
-			    		lineInformation.StartPositionIndexInclusive + position]
+			    		lineInformation.StartPositionIndexInclusive + columnIndex]
 			    	.Value);
 			    
 			    visualLength += previousCharacterWidth;
@@ -404,6 +404,6 @@ public static class EventUtils
             ? lineLength
             : columnIndexInt;
         
-        return (rowIndex, literalLength, positionX, positionY);
+        return (lineIndex, literalLength, positionX, positionY);
     }
 }

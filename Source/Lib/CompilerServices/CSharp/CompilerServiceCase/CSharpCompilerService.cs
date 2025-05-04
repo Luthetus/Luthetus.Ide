@@ -267,7 +267,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         ResourceUri resourceUri)
     {
     	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+        var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
 				resourceUri,
 				viewModelModifier.ViewModelKey,
 				mouseEventArgs,
@@ -285,8 +285,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    scrollbarDimensions.ScrollTop);
 
         var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
+            lineAndColumnIndex.lineIndex,
+            lineAndColumnIndex.columnIndex,
             true));
 
         var foundMatch = false;
