@@ -30,8 +30,8 @@ public class AttributeNode : IHtmlSyntaxNode
     public IReadOnlyList<IHtmlSyntax> Children { get; }
 
     public TextEditorTextSpan TextEditorTextSpan => new(
-        AttributeNameSyntax.TextEditorTextSpan.StartingIndexInclusive,
-        AttributeValueSyntax.TextEditorTextSpan.EndingIndexExclusive,
+        AttributeNameSyntax.TextEditorTextSpan.StartInclusiveIndex,
+        AttributeValueSyntax.TextEditorTextSpan.EndExclusiveIndex,
         (byte)GenericDecorationKind.None,
         AttributeNameSyntax.TextEditorTextSpan.ResourceUri,
         AttributeNameSyntax.TextEditorTextSpan.SourceText);

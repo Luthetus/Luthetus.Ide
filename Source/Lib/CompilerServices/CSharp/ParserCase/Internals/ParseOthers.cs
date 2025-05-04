@@ -41,7 +41,7 @@ public static class ParseOthers
                 {
                 	textSpan = textSpan with
 			        {
-			            EndingIndexExclusive = matchedToken.TextSpan.EndingIndexExclusive
+			            EndExclusiveIndex = matchedToken.TextSpan.EndExclusiveIndex
 			        };
 			        textSpan.ClearTextCache();
 			        

@@ -35,8 +35,8 @@ public partial class SymbolDisplay : ComponentBase
     	try
     	{
 	    	var outShouldRenderHashCode = HashCode.Combine(
-	    		Symbol.TextSpan.StartingIndexInclusive,
-	    		Symbol.TextSpan.EndingIndexExclusive,
+	    		Symbol.TextSpan.StartInclusiveIndex,
+	    		Symbol.TextSpan.EndExclusiveIndex,
 	    		Symbol.TextSpan.DecorationByte,
 	    		Symbol.TextSpan.ResourceUri.Value);
 	    		
@@ -93,7 +93,7 @@ public partial class SymbolDisplay : ComponentBase
 	    		return null;
 	
 	    	return extendedCompilerService.GetSyntaxNode(
-	    		symbolLocal.TextSpan.StartingIndexInclusive,
+	    		symbolLocal.TextSpan.StartInclusiveIndex,
 	    		compilerServiceResource.ResourceUri,
 	    		compilerServiceResource);
     	}

@@ -116,14 +116,14 @@
 	cursor: pointer;
 }
 
-.luth_te_measure-character-width-and-row-height-wrapper {
+.luth_te_measure-character-width-and-line-height-wrapper {
     top: 0;
     left: 0;
     visibility: hidden;
     overflow: hidden;
 }
 
-.luth_te_measure-character-width-and-row-height {
+.luth_te_measure-character-width-and-line-height {
     top: 0;
     left: 0;
     visibility: hidden;

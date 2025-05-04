@@ -217,8 +217,8 @@ public static class TestExplorerHelper
 				return ValueTask.CompletedTask;
 			}
 
-			var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
-			var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
+			var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartInclusiveIndex);
+			var columnIndex = definitionTextSpan.StartInclusiveIndex - rowData.Position_StartInclusiveIndex;
 
 			definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
 			definitionPrimaryCursorModifier.LineIndex = rowData.Index;

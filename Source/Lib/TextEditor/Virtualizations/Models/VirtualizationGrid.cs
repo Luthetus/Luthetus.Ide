@@ -45,7 +45,7 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 ///       i.e.: contiguous decoration bytes being grouped in the same '<span>'.
 /// 
 /// </summary>
-public record VirtualizationGrid
+public struct VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
         new(),
@@ -179,15 +179,31 @@ public record VirtualizationGrid
 		{
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
 			
-			if (virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart <= 0)
+			if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
 				continue;
-				
-			virtualizationEntry.VirtualizationSpanIndexInclusiveStart = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 			
-			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
+			(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
+			var inlineUi = new InlineUi(0, InlineUiKind.None);
+			
+			foreach (var inlineUiTuple in viewModel.InlineUiList)
+			{
+				lineAndColumnIndices = model.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
+				
+				if (lineAndColumnIndices.lineIndex == virtualizationEntry.LineIndex)
+					inlineUi = inlineUiTuple.InlineUi;
+			}
+			
+			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			
+			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.Position_StartInclusiveIndex].DecorationByte;
 		    
-		    for (int i = virtualizationEntry.PositionIndexInclusiveStart; i < virtualizationEntry.PositionIndexExclusiveEnd; i++)
+		    for (int i = virtualizationEntry.Position_StartInclusiveIndex; i < virtualizationEntry.Position_EndExclusiveIndex; i++)
 		    {
+		    	if (inlineUi.InlineUiKind != InlineUiKind.None && inlineUi.PositionIndex == i)
+		    	{
+		    		textEditorService.__StringBuilder.Append("&nbsp;&nbsp;&nbsp;");
+		    	}
+		    	
 		    	var richCharacter = model.RichCharacterList[i];
 		    	 
 				if (currentDecorationByte == richCharacter.DecorationByte)
@@ -277,7 +293,7 @@ public record VirtualizationGrid
 	    		text: textEditorService.__StringBuilder.ToString()));
 			textEditorService.__StringBuilder.Clear();
 			
-			virtualizationEntry.VirtualizationSpanIndexExclusiveEnd = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
 		}

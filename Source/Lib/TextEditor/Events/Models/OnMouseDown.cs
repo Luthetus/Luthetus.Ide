@@ -29,7 +29,7 @@ public struct OnMouseDown
     	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelSlimDisplay.TextEditorService);
     
     	var viewModel = editContext.GetViewModelModifier(ViewModelKey);
-        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, true);
+        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
@@ -52,57 +52,70 @@ public struct OnMouseDown
 		}
 
         // Remember the current cursor position prior to doing anything
-        var inRowIndex = primaryCursorModifier.LineIndex;
+        var inLineIndex = primaryCursorModifier.LineIndex;
         var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
         // Move the cursor position
 		//
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 		// Reason being, these are likely to be huge optimizations (2024-05-29).
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
-				viewModel.ResourceUri,
-				ViewModelKey,
+        var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
+				modelModifier,
+				viewModel,
 				MouseEventArgs,
 				ComponentData,
 				editContext)
 			.ConfigureAwait(false);
 			
-		/*if (rowAndColumnIndex.positionX < 0)
+		if (lineAndColumnIndex.PositionX < -4 &&
+			lineAndColumnIndex.PositionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
 		{
-			var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel);
+			var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel, primaryCursorModifier);
 			if (shouldGotoFinalize)
 				goto finalize;
 		}
 		else
 		{
-			// Check for collision with non-tab inline UI
-			foreach (var entry in viewModel.InlineUiList)
+			var lineInformation = modelModifier.GetLineInformation(lineAndColumnIndex.LineIndex);
+			
+			if (lineAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 			{
-				if (entry.InlineUi.InlineUiKind == InlineUiKind.Tab)
-					continue;
-			
-				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
-				var lineInformation = modelModifier.GetLineInformation(lineAndColumnIndices.lineIndex);
-			
-				if (rowAndColumnIndex.rowIndex == lineInformation.Index)
+				// Check for collision with non-tab inline UI
+				foreach (var collapsePoint in viewModel.AllCollapsePointList)
 				{
-					if (rowAndColumnIndex.positionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					if (collapsePoint.AppendToLineIndex != lineAndColumnIndex.LineIndex ||
+					    !collapsePoint.IsCollapsed)
 					{
-						var shouldGotoFinalize = Toggle(rowAndColumnIndex, modelModifier, viewModel);
-						if (shouldGotoFinalize)
+						continue;
+				    }
+				
+					if (lineAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					{
+						if (lineAndColumnIndex.PositionX < (lineInformation.LastValidColumnIndex + 3) * viewModel.CharAndLineMeasurements.CharacterWidth)
+						{
+							var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel, primaryCursorModifier);
+							if (shouldGotoFinalize)
+								goto finalize;
+						}
+						else
+						{
+							var lastHiddenLineInformation = modelModifier.GetLineInformation(collapsePoint.EndExclusiveLineIndex - 1);
+							primaryCursorModifier.LineIndex = lastHiddenLineInformation.Index;
+							primaryCursorModifier.SetColumnIndexAndPreferred(lastHiddenLineInformation.LastValidColumnIndex);
 							goto finalize;
+						}
 					}
 				}
 			}
-		}*/
+		}
 
-        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
-        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+        primaryCursorModifier.LineIndex = lineAndColumnIndex.LineIndex;
+        primaryCursorModifier.ColumnIndex = lineAndColumnIndex.ColumnIndex;
+        primaryCursorModifier.PreferredColumnIndex = lineAndColumnIndex.ColumnIndex;
 
         var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
+            lineAndColumnIndex.LineIndex,
+            lineAndColumnIndex.ColumnIndex,
             true));
 
         if (MouseEventArgs.ShiftKey)
@@ -111,7 +124,7 @@ public struct OnMouseDown
             {
                 // If user does not yet have a selection then place the text selection anchor were they were
                 primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
-                    .GetPositionIndex(inRowIndex, inColumnIndex);
+                    .GetPositionIndex(inLineIndex, inColumnIndex);
             }
 
             // If user ALREADY has a selection then do not modify the text selection anchor
@@ -131,69 +144,4 @@ public struct OnMouseDown
         	.FinalizePost(editContext)
         	.ConfigureAwait(false);
     }
-    
-    /*
-    /// <summary>
-    /// Returns whether you should goto finalize.
-    /// </summary>
-    private bool Toggle(
-    	(int rowIndex, int columnIndex, double positionX, double positionY) rowAndColumnIndex,
-    	TextEditorModel modelModifier,
-    	TextEditorViewModel viewModel)
-    {
-    	var virtualizedIndexGutterChevron = viewModel.VirtualizedGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
-		if (virtualizedIndexGutterChevron != -1)
-		{
-			var allIndexGutterChevron = viewModel.AllGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
-			if (allIndexGutterChevron != -1)
-			{
-				var virtualizedGutterChevron = viewModel.VirtualizedGutterChevronList[virtualizedIndexGutterChevron];
-				virtualizedGutterChevron.IsExpanded = !virtualizedGutterChevron.IsExpanded;
-				viewModel.VirtualizedGutterChevronList[virtualizedIndexGutterChevron] = virtualizedGutterChevron;
-				
-				var allGutterChevron = viewModel.AllGutterChevronList[allIndexGutterChevron];
-				allGutterChevron.IsExpanded = virtualizedGutterChevron.IsExpanded;
-				viewModel.AllGutterChevronList[allIndexGutterChevron] = allGutterChevron;
-				
-				if (virtualizedGutterChevron.IsExpanded)
-    			{
-    				// TODO: Bad, this only permits one name regardless of scope
-    				var indexTagMatchedInlineUi = viewModel.InlineUiList.FindIndex(
-    					x => x.Tag == virtualizedGutterChevron.Identifier);
-    					
-    				if (indexTagMatchedInlineUi != -1)
-    				{
-        				var indexModelInlineUi = modelModifier.InlineUiList.FindIndex(
-    						x => x.PositionIndex == viewModel.InlineUiList[indexTagMatchedInlineUi].InlineUi.PositionIndex);
-    					modelModifier.InlineUiList.RemoveAt(indexModelInlineUi);
-        				
-        				viewModel.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
-    				}
-    			}
-    			else
-    			{
-					virtualizedIndexGutterChevron = viewModel.VirtualizedGutterChevronList.FindIndex(x => x.LineIndex == rowAndColumnIndex.rowIndex);
-    				
-    				var lineInformation = modelModifier.GetLineInformation(virtualizedGutterChevron.LineIndex);
-    				
-    				var inlineUi = new InlineUi(
-    					positionIndex: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
-    					InlineUiKind.ThreeDotsExpandInlineUiThing);
-    				
-    				modelModifier.InlineUiList.Add(inlineUi);
-    				viewModel.InlineUiList.Add(
-    					(
-    						inlineUi,
-            				Tag: virtualizedGutterChevron.Identifier
-            			));
-    			}
-				
-				viewModel.ShouldReloadVirtualizationResult = true;
-				return true;
-			}
-		}
-		
-		return false;
-    }
-    */
 }

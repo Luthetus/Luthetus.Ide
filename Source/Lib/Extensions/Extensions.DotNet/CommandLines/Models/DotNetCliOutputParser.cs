@@ -400,17 +400,17 @@ public class DotNetCliOutputParser
 				/*
 				var startPositionIndex = stringWalker.PositionIndex;
 				
-				var templateNameStartInclusiveIndex = 0;
-				var templateNameEndExclusiveIndex = templateNameStartInclusiveIndex + NewListModelSession.LengthOfTemplateNameColumn;
+				var templateName_StartInclusiveIndex = 0;
+				var templateName_EndExclusiveIndex = templateName_StartInclusiveIndex + NewListModelSession.LengthOfTemplateNameColumn;
 				
-				var shortNameStartInclusiveIndex = templateNameEndExclusiveIndex + spaceBetweenColumnsCount;
-				var shortNameEndExclusiveIndex = shortNameStartInclusiveIndex + NewListModelSession.LengthOfShortNameColumn;
+				var shortName_StartInclusiveIndex = templateName_EndExclusiveIndex + spaceBetweenColumnsCount;
+				var shortName_EndExclusiveIndex = shortName_StartInclusiveIndex + NewListModelSession.LengthOfShortNameColumn;
 				
-				var languageStartInclusiveIndex = shortNameEndExclusiveIndex + spaceBetweenColumnsCount;
-				var languageEndExclusiveIndex = languageStartInclusiveIndex + NewListModelSession.LengthOfLanguageColumn;
+				var language_StartInclusiveIndex = shortName_EndExclusiveIndex + spaceBetweenColumnsCount;
+				var language_EndExclusiveIndex = language_StartInclusiveIndex + NewListModelSession.LengthOfLanguageColumn;
 				
-				var tagsStartInclusiveIndex = languageEndExclusiveIndex + spaceBetweenColumnsCount;
-				var tagsEndExclusiveIndex = tagsStartInclusiveIndex + NewListModelSession.LengthOfTagsColumn;
+				var tags_StartInclusiveIndex = language_EndExclusiveIndex + spaceBetweenColumnsCount;
+				var tags_EndExclusiveIndex = tags_StartInclusiveIndex + NewListModelSession.LengthOfTagsColumn;
 				
 				var columnWasEmpty = false;
 				*/

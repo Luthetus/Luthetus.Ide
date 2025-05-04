@@ -258,7 +258,7 @@ public struct StringWalkerStruct
 
 	/// <summary>
 	/// This method will return immediately upon encountering whitespace.
-	/// Returns a text span with its <see cref="TextEditorTextSpan.StartingIndexInclusive"/> equal to '-1' if no word was found.
+	/// Returns a text span with its <see cref="TextEditorTextSpan.StartInclusiveIndex"/> equal to '-1' if no word was found.
 	/// </summary>
 	public (TextEditorTextSpan textSpan, string value) ReadWordTuple(char[]? additionalCharactersToBreakOnList = null)
 	{
@@ -267,8 +267,8 @@ public struct StringWalkerStruct
 		// The wordBuilder is appended to everytime a character is consumed.
 		var wordBuilder = new StringBuilder();
 
-		// wordBuilderStartingIndexInclusive == -1 is to mean that wordBuilder is empty.
-		var wordBuilderStartingIndexInclusive = -1;
+		// wordBuilderStartInclusiveIndex == -1 is to mean that wordBuilder is empty.
+		var wordBuilderStartInclusiveIndex = -1;
 
 		while (!IsEof)
 		{
@@ -278,10 +278,10 @@ public struct StringWalkerStruct
 				break;
 			}
 
-			if (wordBuilderStartingIndexInclusive == -1)
+			if (wordBuilderStartInclusiveIndex == -1)
 			{
 				// This is the start of a word as opposed to the continuation of a word
-				wordBuilderStartingIndexInclusive = PositionIndex;
+				wordBuilderStartInclusiveIndex = PositionIndex;
 			}
 
 			wordBuilder.Append(CurrentCharacter);
@@ -290,7 +290,7 @@ public struct StringWalkerStruct
 		}
 
 		return (new TextEditorTextSpan(
-				wordBuilderStartingIndexInclusive,
+				wordBuilderStartInclusiveIndex,
 				PositionIndex,
 				0,
 				ResourceUri,

@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.RazorLib.Rows.Models;
+namespace Luthetus.TextEditor.RazorLib.Lines.Models;
 
 /// <param name="LowerLineEnd">
 /// The smaller positionIndex.
@@ -8,8 +8,8 @@ namespace Luthetus.TextEditor.RazorLib.Rows.Models;
 /// </param>
 public record struct LineInformation(
     int Index,
-    int StartPositionIndexInclusive,
-    int EndPositionIndexExclusive,
+    int Position_StartInclusiveIndex,
+    int Position_EndExclusiveIndex,
     LineEnd LowerLineEnd,
     LineEnd UpperLineEnd)
 {
@@ -20,5 +20,5 @@ public record struct LineInformation(
     /// Reason: The last valid column index is the index between the content and the line ending.
     ///         Think of a cursor, rendered in the text editor. Would it be allowed to go "there".
     /// </summary>
-    public int LastValidColumnIndex => UpperLineEnd.StartPositionIndexInclusive - LowerLineEnd.EndPositionIndexExclusive;
+    public int LastValidColumnIndex => UpperLineEnd.Position_StartInclusiveIndex - LowerLineEnd.Position_EndExclusiveIndex;
 }

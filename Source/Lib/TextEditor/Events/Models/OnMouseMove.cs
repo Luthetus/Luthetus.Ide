@@ -27,7 +27,7 @@ public struct OnMouseMove
     	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelSlimDisplay.TextEditorService);
     
         var viewModel = editContext.GetViewModelModifier(ViewModelKey);
-        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, true);
+        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
@@ -36,21 +36,57 @@ public struct OnMouseMove
 
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 		// Reason being, these are likely to be huge optimizations (2024-05-29).
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
-				viewModel.ResourceUri,
-				ViewModelKey,
+        var rowAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
+				modelModifier,
+				viewModel,
 				MouseEventArgs,
 				ComponentData,
 				editContext)
 			.ConfigureAwait(false);
+			
+		if (rowAndColumnIndex.PositionX < -4 &&
+			rowAndColumnIndex.PositionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
+		{
+			var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.LineIndex);
+			
+			if (virtualizedIndexCollapsePoint != -1)
+				goto finalize;
+		}
+		else
+		{
+			var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.LineIndex);
+			
+			if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+			{
+				// Check for collision with non-tab inline UI
+				foreach (var collapsePoint in viewModel.AllCollapsePointList)
+				{
+					if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.LineIndex ||
+					    !collapsePoint.IsCollapsed)
+					{
+						continue;
+				    }
+				
+					if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					{
+						var lastHiddenLineInformation = modelModifier.GetLineInformation(collapsePoint.EndExclusiveLineIndex - 1);
+						primaryCursorModifier.LineIndex = lastHiddenLineInformation.Index;
+						primaryCursorModifier.SetColumnIndexAndPreferred(lastHiddenLineInformation.LastValidColumnIndex);
+						goto finalize;
+					}
+				}
+			}
+		}
 
-        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
-        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+        primaryCursorModifier.LineIndex = rowAndColumnIndex.LineIndex;
+        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.ColumnIndex;
+        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.ColumnIndex;
 
 		// editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 
         primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+        
+        finalize:
 	
 		editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 	

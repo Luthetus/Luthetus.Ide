@@ -38,7 +38,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     private const int TEST_STRING_REPEAT_COUNT = 6;
     
     private int _countOfTestCharacters;
-    private string _measureCharacterWidthAndRowHeightElementId = "luth_te_measure-character-width-and-row-height";
+    private string _measureCharacterWidthAndLineHeightElementId = "luth_te_measure-character-width-and-line-height";
     
     private string _wrapperCssClass;
     private string _wrapperCssStyle;
@@ -106,7 +106,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
             {
             	var charAndLineMeasurements = await TextEditorService.JsRuntimeTextEditorApi
 		            .GetCharAndLineMeasurementsInPixelsById(
-		                _measureCharacterWidthAndRowHeightElementId,
+		                _measureCharacterWidthAndLineHeightElementId,
 		                _countOfTestCharacters)
 		            .ConfigureAwait(false);
 		            

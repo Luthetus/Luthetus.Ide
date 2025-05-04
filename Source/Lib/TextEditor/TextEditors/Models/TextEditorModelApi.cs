@@ -3,7 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.Lines.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -43,7 +43,8 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
             overrideDisplayTextForFileExtension ?? extensionNoPeriod,
             initialContent,
             _textEditorRegistryWrap.DecorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
-            _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod));
+            _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod),
+            _textEditorService);
 
         _textEditorService.RegisterModel(editContext, model);
     }
@@ -239,7 +240,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
 
         foreach (var textEditorTextSpan in textSpans)
         {
-            for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
+            for (var i = textEditorTextSpan.StartInclusiveIndex; i < textEditorTextSpan.EndExclusiveIndex; i++)
             {
                 if (i < 0 || i >= localRichCharacterList.Length)
                     continue;

@@ -98,31 +98,31 @@ public struct SyntaxViewModel
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)DefinitionNode;
 			resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
 			var variableDeclarationNode = (VariableDeclarationNode)DefinitionNode;
 			resourceUriValue = variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 		{
 			var namespaceStatementNode = (NamespaceStatementNode)DefinitionNode;
 			resourceUriValue = namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = (FunctionDefinitionNode)DefinitionNode;
 			resourceUriValue = functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = (ConstructorDefinitionNode)DefinitionNode;
 			resourceUriValue = constructorDefinitionNode.FunctionIdentifier.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
 		}
 		
 		if (resourceUriValue is null || indexInclusiveStart == -1)

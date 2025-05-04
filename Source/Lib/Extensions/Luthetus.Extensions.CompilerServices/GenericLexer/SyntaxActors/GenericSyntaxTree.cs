@@ -231,7 +231,7 @@ public class GenericSyntaxTree
 			return true;
 		}
 
-		if (wordTuple.textSpan.StartingIndexInclusive != -1)
+		if (wordTuple.textSpan.StartInclusiveIndex != -1)
 		{
 			// backtrack to the original starting position
 			stringWalker.BacktrackRange(stringWalker.PositionIndex - startingPositionIndex);

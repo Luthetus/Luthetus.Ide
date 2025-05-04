@@ -267,9 +267,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         ResourceUri resourceUri)
     {
     	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
-        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
-				resourceUri,
-				viewModelModifier.ViewModelKey,
+        var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
+				modelModifier,
+				viewModelModifier,
 				mouseEventArgs,
 				componentData,
 				editContext)
@@ -285,8 +285,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    scrollbarDimensions.ScrollTop);
 
         var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-            rowAndColumnIndex.rowIndex,
-            rowAndColumnIndex.columnIndex,
+            lineAndColumnIndex.LineIndex,
+            lineAndColumnIndex.ColumnIndex,
             true));
 
         var foundMatch = false;
@@ -301,8 +301,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             foreach (var diagnostic in diagnostics)
             {
-                if (cursorPositionIndex >= diagnostic.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < diagnostic.TextSpan.EndingIndexExclusive)
+                if (cursorPositionIndex >= diagnostic.TextSpan.StartInclusiveIndex &&
+                    cursorPositionIndex < diagnostic.TextSpan.EndExclusiveIndex)
                 {
                     // Prefer showing a diagnostic over a symbol when both exist at the mouse location.
                     foundMatch = true;
@@ -329,8 +329,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             foreach (var symbol in symbols)
             {
-                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+                if (cursorPositionIndex >= symbol.TextSpan.StartInclusiveIndex &&
+                    cursorPositionIndex < symbol.TextSpan.EndExclusiveIndex)
                 {
                     foundMatch = true;
 
@@ -423,7 +423,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         var symbols = compilationUnitLocal.SymbolList;
         
-        var cursorPositionIndex = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartingIndexInclusive;
+        var cursorPositionIndex = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex;
         
         var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex);
         
@@ -453,8 +453,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             foreach (var symbol in symbols)
             {
-                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive &&
+                if (cursorPositionIndex >= symbol.TextSpan.StartInclusiveIndex &&
+                    cursorPositionIndex < symbol.TextSpan.EndExclusiveIndex &&
                     symbol.SyntaxKind == SyntaxKind.FunctionSymbol)
                 {
                     foundMatch = true;
@@ -506,8 +506,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         foreach (var symbol in symbolList)
         {
-            if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+            if (cursorPositionIndex >= symbol.TextSpan.StartInclusiveIndex &&
+                cursorPositionIndex < symbol.TextSpan.EndExclusiveIndex)
             {
                 foundMatch = true;
 				foundSymbol = symbol;
@@ -533,31 +533,31 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
 			resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
 			var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
 			resourceUriValue = variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 		{
 			var namespaceStatementNode = (NamespaceStatementNode)definitionNode;
 			resourceUriValue = namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = (FunctionDefinitionNode)definitionNode;
 			resourceUriValue = functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = (ConstructorDefinitionNode)definitionNode;
 			resourceUriValue = constructorDefinitionNode.FunctionIdentifier.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartingIndexInclusive;
+			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
 		}
 		
 		if (resourceUriValue is null || indexInclusiveStart == -1)
@@ -762,7 +762,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	
 	    	var targetNode = __CSharpBinder.GetSyntaxNode(
 	    		(CSharpCompilationUnit)compilerServiceResource.CompilationUnit,
-	    		textSpan.StartingIndexInclusive - 1,
+	    		textSpan.StartInclusiveIndex - 1,
 	    		textSpan.ResourceUri,
 	    		(CSharpResource)compilerServiceResource);
 	    		

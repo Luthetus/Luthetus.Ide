@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.Lines.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -57,6 +58,8 @@ public partial class TextEditorService : ITextEditorService
 		IAppDimensionService appDimensionService,
 		IServiceProvider serviceProvider)
     {
+    	__TextEditorViewModelLiason = new(this);
+    
     	WorkerUi = new(this);
     	WorkerArbitrary = new(this);
     
@@ -154,6 +157,19 @@ public partial class TextEditorService : ITextEditorService
 	/// </summary>
     public List<TextEditorViewModel?> __ViewModelList { get; } = new();
     
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    public List<LineEnd> __LocalLineEndList { get; } = new();
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    public List<int> __LocalTabPositionList { get; } = new();
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+	/// </summary>
+    public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
+    
     public event Action? TextEditorStateChanged;
 
 	public async ValueTask FinalizePost(TextEditorEditContext editContext)
@@ -203,7 +219,7 @@ public partial class TextEditorService : ITextEditorService
             
             if (viewModelModifier.ShouldRevealCursor)
             {
-            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
             	
             	if (!cursorModifierBag.ConstructorWasInvoked)
             		cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
@@ -301,7 +317,7 @@ public partial class TextEditorService : ITextEditorService
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
 	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
 	            	editContext,
-	            	editContext.GetModelModifier(viewModelModifier.ResourceUri),
+	            	editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true),
 			        viewModelModifier,
 			        CancellationToken.None);
 			}
@@ -356,7 +372,7 @@ public partial class TextEditorService : ITextEditorService
 		TextEditorViewModel viewModelModifier,
 		bool textEditorDimensionsChanged)
 	{	
-		var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+		var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
     	
     	if (modelModifier is null)
     		return;
