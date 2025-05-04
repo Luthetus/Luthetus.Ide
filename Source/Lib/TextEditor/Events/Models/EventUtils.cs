@@ -293,7 +293,7 @@ public static class EventUtils
         int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
         
         var inlineUi = default(InlineUi);
-        (int lineIndex, int columnIndex) inlineUiLineAndColumnPositionIndices = (0, 0);
+        (int lineIndex, int columnIndex) inlineUiLineAndColumnPositionIndices = (-1, -1);
         
         foreach (var inlineUiTuple in viewModel.InlineUiList)
         {
@@ -368,7 +368,9 @@ public static class EventUtils
 		    	break;
 		    }
 		    
-		    if (inlineUiLineAndColumnPositionIndices.columnIndex == position && previousPosition != position)
+		    if (inlineUiLineAndColumnPositionIndices.lineIndex == rowIndex &&
+		    	inlineUiLineAndColumnPositionIndices.columnIndex == position &&
+		    	previousPosition != position)
 		    {
 		    	previousCharacterWidth = 3;
 		    	previousCharacterWidthIsInlineUi = true;
