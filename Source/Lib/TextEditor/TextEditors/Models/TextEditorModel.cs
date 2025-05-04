@@ -2410,7 +2410,7 @@ public partial class TextEditorModel
 
         for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = PartitionList[i];
+            TextEditorPartition partition = PartitionList[i];
 
             if (runningCount + partition.Count >= globalPositionIndex)
             {
@@ -2464,7 +2464,7 @@ public partial class TextEditorModel
 
         for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = PartitionList[i];
+            TextEditorPartition partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -2503,7 +2503,7 @@ public partial class TextEditorModel
 
         for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = PartitionList[i];
+            TextEditorPartition partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -2544,7 +2544,7 @@ public partial class TextEditorModel
 
         for (int i = 0; i < PartitionList.Count; i++)
         {
-            TextEditorPartition? partition = PartitionList[i];
+            TextEditorPartition partition = PartitionList[i];
 
             if (runningCount + partition.Count > globalPositionIndex)
             {
@@ -2649,7 +2649,7 @@ public partial class TextEditorModel
             int indexOfPartitionWithAvailableSpace = -1;
             int relativePositionIndex = -1;
             var runningCount = 0;
-            TextEditorPartition? partition;
+            TextEditorPartition partition;
 
             for (int i = 0; i < PartitionList.Count; i++)
             {
