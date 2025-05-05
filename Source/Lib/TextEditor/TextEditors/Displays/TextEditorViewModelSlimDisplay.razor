@@ -177,25 +177,11 @@
                 @* Virtualization Close *@
                 
                 <div class="luth_te_three-dots-section">
-                	@foreach (var entry in _componentData._activeRenderBatch.ViewModel.InlineUiList)
+                	@foreach (var entry in _componentData.inlineUiStyleList)
                 	{
-                		var lineAndColumnIndices = _componentData._activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
-                		
-                		var leftPixels = lineAndColumnIndices.columnIndex * _componentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
-                		var leftCssValue = leftPixels.ToCssValue();
-                		
-                		var topPixels = lineAndColumnIndices.lineIndex * _componentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
-                		var topCssValue = topPixels.ToCssValue();
-                		
-                		var widthPixels = _componentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth * 3;
-                		var widthCssValue = widthPixels.ToCssValue();
-                		
-                		var heightPixels = _componentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
-                		var heightCssValue = heightPixels.ToCssValue();
-                		
-                		<div class="luth_te_three-dots" style="position: absolute; left: @(leftCssValue)px; top: @(topCssValue)px; width: @(widthCssValue)px; height: @(heightCssValue)px;">
-                			...
-                		</div>
+                		<div class="luth_te_three-dots" style="@entry">
+			    			...
+			    		</div>
                 	}
                 </div>
 							                           

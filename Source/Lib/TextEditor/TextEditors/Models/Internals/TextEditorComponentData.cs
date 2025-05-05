@@ -76,7 +76,11 @@ public sealed class TextEditorComponentData
 		ServiceProvider = serviceProvider;
 		
 		ComponentDataKey = new Key<TextEditorComponentData>(TextEditorHtmlElementId);
+		
+		
 	}
+	
+	public string? inlineUiWidthStyleCssString;
 
 	/*public TextEditorComponentData(
 		TextEditorComponentData otherComponentData,
@@ -144,6 +148,8 @@ public sealed class TextEditorComponentData
 	
     public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> lastPresentationLayerGroupList = new();
 	public List<(string PresentationCssClass, string PresentationCssStyle)> lastPresentationLayerTextSpanList = new();
+	
+	public List<string> inlineUiStyleList = new();
     
     public List<string> SelectionStyleList = new List<string>();
     
@@ -1146,11 +1152,62 @@ public sealed class TextEditorComponentData
 	    }
     }
     
+    private void GetInlineUiStyleList()
+    {
+    	if (inlineUiWidthStyleCssString is null)
+    	{
+	    	var widthPixels = _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth * 3;
+			var widthCssValue = widthPixels.ToCssValue();
+			inlineUiWidthStyleCssString = $"width: {widthCssValue}px;";
+			// width: @(widthCssValue)px;
+		}
+    
+    	inlineUiStyleList.Clear();
+    	
+    	foreach (var entry in _activeRenderBatch.ViewModel.InlineUiList)
+    	{
+    		var lineAndColumnIndices = _activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
+    		
+    		var leftCssValue = (lineAndColumnIndices.columnIndex * _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth).ToCssValue();
+    		
+    		var hiddenLineCount = 0;
+    		
+    		// TODO: Maintain the _activeRenderBatch.ViewModel.InlineUiList sorted.
+            for (int i = 0; i < lineAndColumnIndices.lineIndex; i++)
+            {
+            	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+            		hiddenLineCount++;
+            }
+    		
+    		var topCssValue = ((lineAndColumnIndices.lineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue();
+
+    		_uiStringBuilder.Clear();
+    		
+    		_uiStringBuilder.Append("position: absolute;");
+    		
+    		_uiStringBuilder.Append("left: ");
+    		_uiStringBuilder.Append(leftCssValue);
+    		_uiStringBuilder.Append("px;");
+    		
+    		_uiStringBuilder.Append("top: ");
+    		_uiStringBuilder.Append(topCssValue);
+    		_uiStringBuilder.Append("px;");
+    		
+    		_uiStringBuilder.Append(inlineUiWidthStyleCssString);
+    		
+    		_uiStringBuilder.Append(_lineHeightStyleCssString);
+    		
+    		inlineUiStyleList.Add(_uiStringBuilder.ToString());
+    	}
+    }
+    
     public void CreateUi()
     {
     	if (!_activeRenderBatch.ConstructorWasInvoked)
     		return;
     
+    	// Somewhat hacky second try-catch so the presentations
+    	// don't clobber the text editor's default behavior when they throw an exception.
     	try
     	{
 	        GetCursorAndCaretRowStyleCss();
@@ -1158,6 +1215,8 @@ public sealed class TextEditorComponentData
 	        
 	        GetPresentationLayer(firstPresentationLayerGroupList, firstPresentationLayerTextSpanList);
 	        GetPresentationLayer(lastPresentationLayerGroupList, lastPresentationLayerTextSpanList);
+	        
+	        GetInlineUiStyleList();
         }
         catch (Exception e)
         {

@@ -1069,6 +1069,18 @@ public class TextEditorCommandDefaultFunctions
     					positionIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
     					InlineUiKind.ThreeDotsExpandInlineUiThing);
     				
+    				/*// TODO: Increment position of any InlineUi that have a position >= the new inlineUi.
+    				for (int i = 0; i < viewModel.InlineUiList.Count; i++)
+    				{
+    					var inlineUiTuple = viewModel.InlineUiList[i];
+    					
+    					if (inlineUiTuple.InlineUi.PositionIndex >= lineInformation.UpperLineEnd.Position_StartInclusiveIndex)
+    					{
+    						inlineUiTuple.InlineUi = inlineUiTuple.InlineUi.WithIncrementPositionIndex(3);
+    						viewModel.InlineUiList[i] = inlineUiTuple;
+    					}
+    				}*/
+    				
     				viewModel.InlineUiList.Add(
     					(
     						inlineUi,
@@ -1081,8 +1093,22 @@ public class TextEditorCommandDefaultFunctions
     				var indexTagMatchedInlineUi = viewModel.InlineUiList.FindIndex(
     					x => x.Tag == virtualizedCollapsePoint.Identifier);
     					
+    				// var inlineUiTupleToRemove = viewModel.InlineUiList[indexTagMatchedInlineUi];
+    					
     				if (indexTagMatchedInlineUi != -1)
         				viewModel.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
+        				
+    				/*// TODO: Decrement position of any InlineUi that have a position >= the removed inlineUi.
+    				for (int i = 0; i < viewModel.InlineUiList.Count; i++)
+    				{
+    					var inlineUiTuple = viewModel.InlineUiList[i];
+    					
+    					if (inlineUiTuple.InlineUi.PositionIndex >= inlineUiTupleToRemove.InlineUi.PositionIndex)
+    					{
+    						inlineUiTuple.InlineUi = inlineUiTuple.InlineUi.WithDecrementPositionIndex(3);
+    						viewModel.InlineUiList[i] = inlineUiTuple;
+    					}
+    				}*/
     			}
 				
 				viewModel.ShouldReloadVirtualizationResult = true;
@@ -1312,9 +1338,20 @@ public class TextEditorCommandDefaultFunctions
             leftOffset -= viewModel.ScrollbarDimensions.ScrollLeft;
         }
         
-        topOffset ??= (primaryCursor.LineIndex + 1) *
-        	viewModel.CharAndLineMeasurements.LineHeight -
-        	viewModel.ScrollbarDimensions.ScrollTop;
+        if (topOffset is null)
+        {
+        	var hiddenLineCount = 0;
+	
+			for (int i = 0; i < primaryCursor.LineIndex; i++)
+			{
+				if (viewModel.HiddenLineIndexHashSet.Contains(i))
+					hiddenLineCount++;
+			}
+        
+        	topOffset ??= ((primaryCursor.LineIndex - hiddenLineCount) + 1) *
+	        	viewModel.CharAndLineMeasurements.LineHeight -
+	        	viewModel.ScrollbarDimensions.ScrollTop;
+        }
 		
 		var dropdownRecord = new DropdownRecord(
 			dropdownKey,
