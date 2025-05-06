@@ -58,7 +58,7 @@
 		    {
 		        <div class="luth_te_gutter"
 		             style="@(_componentData.GetGutterStyleCss(virtualizedLine.TopCssStyle))">
-		            @(virtualizedLine.LineIndex + 1)
+		            @(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].LineNumberString)
 		            
 		            @{
 		            	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);

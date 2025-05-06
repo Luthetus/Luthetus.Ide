@@ -1150,7 +1150,7 @@ public sealed class TextEditorComponentData
     	}
     }
     
-    private Dictionary<int, TextEditorLineIndexCacheEntry> LineIndexCacheEntryMap = new();
+    public Dictionary<int, TextEditorLineIndexCacheEntry> LineIndexCacheEntryMap = new();
     private HashSet<int> LineIndexCacheUsageHashSet = new();
     private List<int> LineIndexKeyList = new();
     
