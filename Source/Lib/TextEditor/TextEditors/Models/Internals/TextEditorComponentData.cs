@@ -334,7 +334,7 @@ public sealed class TextEditorComponentData
 			        // +3 for the 3 dots: '[...]'
 			        leftInPixels += measurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
 			        
-			        topInPixelsInvariantCulture = LineIndexToTopCssValue(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex);
+			        topInPixelsInvariantCulture = LineIndexCacheEntryMap[_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex].TopCssValue;
 				}
 			}
 		}
@@ -387,7 +387,7 @@ public sealed class TextEditorComponentData
         _uiStringBuilder.Append("px;");
 
 		if (!shouldAppearAfterCollapsePoint)
-			topInPixelsInvariantCulture = LineIndexToTopCssValue(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex);
+			topInPixelsInvariantCulture = LineIndexCacheEntryMap[_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex].TopCssValue;
 
 		_uiStringBuilder.Append("top: ");
 		_uiStringBuilder.Append(topInPixelsInvariantCulture);
@@ -576,7 +576,7 @@ public sealed class TextEditorComponentData
             fullWidthOfLineIsSelected = false;
         }
 
-        var topInPixelsInvariantCulture = LineIndexToTopCssValue(lineIndex);
+        var topInPixelsInvariantCulture = LineIndexCacheEntryMap[lineIndex].TopCssValue;
         
         _uiStringBuilder.Clear();
         _uiStringBuilder.Append("position: absolute; ");
@@ -794,7 +794,7 @@ public sealed class TextEditorComponentData
 
         _uiStringBuilder.Clear();
         
-        var topInPixelsInvariantCulture = LineIndexToTopCssValue(lineIndex);
+        var topInPixelsInvariantCulture = LineIndexCacheEntryMap[lineIndex].TopCssValue;
         _uiStringBuilder.Append("top: ");
         _uiStringBuilder.Append(topInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
@@ -926,7 +926,7 @@ public sealed class TextEditorComponentData
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
 		     	   selectionBoundsInPositionIndexUnits.Position_LowerInclusiveIndex,
 		     	   selectionBoundsInPositionIndexUnits.Position_UpperExclusiveIndex,
-		     	   rowIndex: i));
+		     	   lineIndex: i));
 	        }
 	    }
     }
@@ -1097,7 +1097,7 @@ public sealed class TextEditorComponentData
                 		PresentationGetCssStyleString(
                             boundsInPositionIndexUnits.StartInclusiveIndex,
                             boundsInPositionIndexUnits.EndExclusiveIndex,
-                            rowIndex: i)));
+                            lineIndex: i)));
                 }
             }
             
@@ -1128,7 +1128,7 @@ public sealed class TextEditorComponentData
     		
     		var leftCssValue = (lineAndColumnIndices.columnIndex * _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth).ToCssValue();
     		
-    		var topCssValue = LineIndexToTopCssValue(lineAndColumnIndices.lineIndex);
+    		var topCssValue = LineIndexCacheEntryMap[lineAndColumnIndices.lineIndex].TopCssValue;
 
     		_uiStringBuilder.Clear();
     		
@@ -1154,7 +1154,7 @@ public sealed class TextEditorComponentData
     private HashSet<int> LineIndexCacheUsageHashSet = new();
     private List<int> LineIndexKeyList = new();
     
-    private string LineIndexToTopCssValue(int lineIndex)
+    /*private string LineIndexToTopCssValue(int lineIndex)
     {
     	TextEditorLineIndexCacheEntry cacheEntry = new TextEditorLineIndexCacheEntry(
 			topCssValue: null,
@@ -1247,8 +1247,6 @@ public sealed class TextEditorComponentData
             	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
             		hiddenLineCount++;
             }
-    		
-    		var topCssValue = ((lineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue();
     	
     		cacheEntry.HiddenLineCount = hiddenLineCount;
     		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
@@ -1256,6 +1254,47 @@ public sealed class TextEditorComponentData
     	
     	LineIndexCacheUsageHashSet.Add(lineIndex);
     	return cacheEntry.HiddenLineCount;
+    }*/
+    
+    private void CreateCache()
+    {
+    	var hiddenLineCount = 0;
+    	var checkHiddenLineIndex = 0;
+    	
+    	foreach (var virtualizedLine in _activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
+    	{
+    		for (; checkHiddenLineIndex < virtualizedLine.LineIndex; checkHiddenLineIndex++)
+            {
+            	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
+            		hiddenLineCount++;
+            }
+            
+            LineIndexCacheUsageHashSet.Add(virtualizedLine.LineIndex);
+            
+            if (LineIndexCacheEntryMap.ContainsKey(virtualizedLine.LineIndex))
+	    	{
+	    		var cacheEntry = LineIndexCacheEntryMap[virtualizedLine.LineIndex];
+	    		
+	    		if (hiddenLineCount != cacheEntry.HiddenLineCount)
+	            {
+	            	cacheEntry.TopCssValue = ((virtualizedLine.LineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight)
+	            		.ToCssValue();
+	            		
+	            	cacheEntry.HiddenLineCount = hiddenLineCount;
+	            	
+	            	LineIndexCacheEntryMap[virtualizedLine.LineIndex] = cacheEntry;
+	            }
+	    	}
+	    	else
+	    	{
+	    		LineIndexKeyList.Add(virtualizedLine.LineIndex);
+	    		
+	    		LineIndexCacheEntryMap.Add(virtualizedLine.LineIndex, new TextEditorLineIndexCacheEntry(
+	    			topCssValue: ((virtualizedLine.LineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
+					lineNumberString: (virtualizedLine.LineIndex + 1).ToString(),
+					hiddenLineCount: hiddenLineCount));
+	    	}
+    	}
     }
     
     public void CreateUi()
@@ -1264,6 +1303,8 @@ public sealed class TextEditorComponentData
     		return;
     		
     	LineIndexCacheUsageHashSet.Clear();
+    	
+    	CreateCache();
     
     	// Somewhat hacky second try-catch so the presentations
     	// don't clobber the text editor's default behavior when they throw an exception.
