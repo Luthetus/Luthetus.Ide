@@ -76,28 +76,10 @@ public sealed class TextEditorComponentData
 		ServiceProvider = serviceProvider;
 		
 		ComponentDataKey = new Key<TextEditorComponentData>(TextEditorHtmlElementId);
-		
-		
 	}
 	
 	public string? inlineUiWidthStyleCssString;
 
-	/*public TextEditorComponentData(
-		TextEditorComponentData otherComponentData,
-		Keymap keymap)
-	{
-		TextEditorHtmlElementId = otherComponentData.TextEditorHtmlElementId;
-		ViewModelDisplayOptions = otherComponentData.ViewModelDisplayOptions;
-
-		Options = otherComponentData.Options with
-		{
-			Keymap = keymap
-		};
-
-		TextEditorViewModelSlimDisplay = otherComponentData.TextEditorViewModelSlimDisplay;
-		ServiceProvider = otherComponentData.ServiceProvider;
-	}*/
-	
 	// Active is the one given to the UI after the current was validated and found to be valid.
     public TextEditorRenderBatch _currentRenderBatch;
     public TextEditorRenderBatch _previousRenderBatch;
@@ -1201,10 +1183,97 @@ public sealed class TextEditorComponentData
     	}
     }
     
+    private Dictionary<int, TextEditorLineIndexCacheEntry> LineIndexCacheEntryMap = new();
+    private HashSet<int> LineIndexCacheUsageHashSet = new();
+    private List<int> LineIndexKeyList = new();
+    
+    private string LineIndexToTopCssValue(int lineIndex)
+    {
+    	TextEditorLineIndexCacheEntry cacheEntry = new TextEditorLineIndexCacheEntry(
+			topCssValue: null,
+			lineNumberString: null,
+			collapsedLineCount: -1);
+    
+    	if (LineIndexCacheEntryMap.ContainsKey(lineIndex))
+    	{
+    		cacheEntry = LineIndexCacheEntryMap[lineIndex];
+    	}
+    	else
+    	{
+    		LineIndexKeyList.Add(lineIndex);
+    		LineIndexCacheEntryMap.Add(lineIndex, cacheEntry);
+    	}
+    	
+    	if (cacheEntry.TopCssValue is null)
+    	{
+    		cacheEntry.TopCssValue = ;
+    		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
+    	}
+    	
+    	LineIndexCacheUsageHashSet.Add(lineIndex);
+    	return cacheEntry.TopCssValue;
+    }
+    
+    private string LineIndexToLineNumberString(int lineIndex)
+    {
+    	TextEditorLineIndexCacheEntry cacheEntry = new TextEditorLineIndexCacheEntry(
+			topCssValue: null,
+			lineNumberString: null,
+			collapsedLineCount: -1);
+    
+    	if (LineIndexCacheEntryMap.ContainsKey(lineIndex))
+    	{
+    		cacheEntry = LineIndexCacheEntryMap[lineIndex];
+    	}
+    	else
+    	{
+    		LineIndexKeyList.Add(lineIndex);
+    		LineIndexCacheEntryMap.Add(lineIndex, cacheEntry);
+    	}
+    	
+    	if (cacheEntry.LineNumberString is null)
+    	{
+    		cacheEntry.LineNumberString = ;
+    		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
+    	}
+    	
+    	LineIndexCacheUsageHashSet.Add(lineIndex);
+    	return cacheEntry.LineNumberString;
+    }
+
+    private int LineIndexToCollapsedLineCount(int lineIndex)
+    {
+    	TextEditorLineIndexCacheEntry cacheEntry = new TextEditorLineIndexCacheEntry(
+			topCssValue: null,
+			lineNumberString: null,
+			collapsedLineCount: -1);
+    
+    	if (LineIndexCacheEntryMap.ContainsKey(lineIndex))
+    	{
+    		cacheEntry = LineIndexCacheEntryMap[lineIndex];
+    	}
+    	else
+    	{
+    		LineIndexKeyList.Add(lineIndex);
+    		LineIndexCacheEntryMap.Add(lineIndex, cacheEntry);
+    	}
+    	
+    	if (cacheEntry.CollapsedLineCount == -1)
+    	{
+    		cacheEntry.CollapsedLineCount = ;
+    		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
+    	}
+    	
+    	LineIndexCacheUsageHashSet.Add(lineIndex);
+    	return cacheEntry.CollapsedLineCount;
+    }
+    
     public void CreateUi()
     {
     	if (!_activeRenderBatch.ConstructorWasInvoked)
     		return;
+    		
+    	LineIndexCacheUsageHashSet.Clear();
     
     	// Somewhat hacky second try-catch so the presentations
     	// don't clobber the text editor's default behavior when they throw an exception.
@@ -1363,6 +1432,15 @@ public sealed class TextEditorComponentData
 			{
 				valueTooltipRelativeY = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY;
 				tooltipRelativeY = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
+			}
+		}
+		
+		for (int i = LineIndexKeyList.Count - 1; i >= 0; i--)
+		{
+			if (!LineIndexCacheUsageHashSet.Contains(LineIndexKeyList[i]))
+			{
+				LineIndexKeyList.RemoveAt(i);
+				LineIndexCacheEntryMap.Remove(LineIndexKeyList[i]);
 			}
 		}
     }
