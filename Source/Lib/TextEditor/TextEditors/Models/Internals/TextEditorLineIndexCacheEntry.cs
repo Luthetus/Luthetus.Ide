@@ -5,14 +5,14 @@ public struct TextEditorLineIndexCacheEntry
 	public TextEditorLineIndexCacheEntry(
 		string topCssValue,
 		string lineNumberString,
-		int collapsedLineCount)
+		int hiddenLineCount)
 	{
 		TopCssValue = topCssValue;
 		LineNumberString = lineNumberString;
-		CollapsedLineCount = collapsedLineCount;
+		HiddenLineCount = hiddenLineCount;
 	}
 
     public string TopCssValue { get; set; }
     public string LineNumberString { get; set; }
-    public int CollapsedLineCount { get; set; }
+    public int HiddenLineCount { get; set; }
 }

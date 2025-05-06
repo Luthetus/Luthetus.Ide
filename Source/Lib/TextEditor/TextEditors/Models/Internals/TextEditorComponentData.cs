@@ -297,7 +297,7 @@ public sealed class TextEditorComponentData
     	var shouldAppearAfterCollapsePoint = false;
     	
     	var leftInPixels = 0d;
-    	var topInPixels = 0d;
+    	var topInPixelsInvariantCulture = string.Empty;
 
 		foreach (var collapsePoint in _activeRenderBatch.ViewModel.AllCollapsePointList)
 		{
@@ -334,15 +334,7 @@ public sealed class TextEditorComponentData
 			        // +3 for the 3 dots: '[...]'
 			        leftInPixels += measurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
 			        
-			        var hiddenLineCount = 0;
-	
-					for (int i = 0; i < collapsePoint.AppendToLineIndex; i++)
-					{
-						if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
-							hiddenLineCount++;
-					}
-			        
-			        topInPixels = measurements.LineHeight * (collapsePoint.AppendToLineIndex - hiddenLineCount);
+			        topInPixelsInvariantCulture = LineIndexToTopCssValue(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex);
 				}
 			}
 		}
@@ -395,19 +387,7 @@ public sealed class TextEditorComponentData
         _uiStringBuilder.Append("px;");
 
 		if (!shouldAppearAfterCollapsePoint)
-		{
-			var hiddenLineCount = 0;
-	
-			for (int i = 0; i < _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex; i++)
-			{
-				if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
-					hiddenLineCount++;
-			}
-			
-			topInPixels = measurements.LineHeight * (_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex - hiddenLineCount);
-		}
-
-        var topInPixelsInvariantCulture = topInPixels.ToCssValue();
+			topInPixelsInvariantCulture = LineIndexToTopCssValue(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex);
 
 		_uiStringBuilder.Append("top: ");
 		_uiStringBuilder.Append(topInPixelsInvariantCulture);
@@ -568,17 +548,16 @@ public sealed class TextEditorComponentData
     public string PresentationGetCssStyleString(
         int position_LowerInclusiveIndex,
         int position_UpperExclusiveIndex,
-        int rowIndex,
-        int hiddenLineCount)
+        int lineIndex)
     {
         var charMeasurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
 		var textEditorDimensions = _activeRenderBatch.ViewModel.TextEditorDimensions;
         var scrollbarDimensions = _activeRenderBatch.ViewModel.ScrollbarDimensions;
 
-        if (rowIndex >= _activeRenderBatch.Model.LineEndList.Count)
+        if (lineIndex >= _activeRenderBatch.Model.LineEndList.Count)
             return string.Empty;
 
-        var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
+        var line = _activeRenderBatch.Model.GetLineInformation(lineIndex);
 
         var startingColumnIndex = 0;
         var endingColumnIndex = line.Position_EndExclusiveIndex - 1;
@@ -597,7 +576,7 @@ public sealed class TextEditorComponentData
             fullWidthOfLineIsSelected = false;
         }
 
-        var topInPixelsInvariantCulture = ((rowIndex - hiddenLineCount) * charMeasurements.LineHeight).ToCssValue();
+        var topInPixelsInvariantCulture = LineIndexToTopCssValue(lineIndex);
         
         _uiStringBuilder.Clear();
         _uiStringBuilder.Append("position: absolute; ");
@@ -622,7 +601,7 @@ public sealed class TextEditorComponentData
         // startInPixels offset from Tab keys a width of many characters
         {
             var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-                rowIndex,
+                lineIndex,
                 startingColumnIndex);
 
             // 1 of the character width is already accounted for
@@ -641,7 +620,7 @@ public sealed class TextEditorComponentData
         // Tab keys a width of many characters
         {
             var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-                rowIndex,
+                lineIndex,
                 line.LastValidColumnIndex);
 
             // 1 of the character width is already accounted for
@@ -787,13 +766,12 @@ public sealed class TextEditorComponentData
     public string GetTextSelectionStyleCss(
         int position_LowerInclusiveIndex,
         int position_UpperExclusiveIndex,
-        int rowIndex,
-        int hiddenLineCount)
+        int lineIndex)
     {
-        if (rowIndex >= _activeRenderBatch.Model.LineEndList.Count)
+        if (lineIndex >= _activeRenderBatch.Model.LineEndList.Count)
             return string.Empty;
 
-        var line = _activeRenderBatch.Model.GetLineInformation(rowIndex);
+        var line = _activeRenderBatch.Model.GetLineInformation(lineIndex);
 
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = line.Position_EndExclusiveIndex - 1;
@@ -816,7 +794,7 @@ public sealed class TextEditorComponentData
 
         _uiStringBuilder.Clear();
         
-        var topInPixelsInvariantCulture = ((rowIndex - hiddenLineCount) * charMeasurements.LineHeight).ToCssValue();
+        var topInPixelsInvariantCulture = LineIndexToTopCssValue(lineIndex);
         _uiStringBuilder.Append("top: ");
         _uiStringBuilder.Append(topInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
@@ -828,7 +806,7 @@ public sealed class TextEditorComponentData
         // selectionStartInPixels offset from Tab keys a width of many characters
         {
             var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-                rowIndex,
+                lineIndex,
                 selectionStartingColumnIndex);
 
             // 1 of the character width is already accounted for
@@ -848,14 +826,14 @@ public sealed class TextEditorComponentData
 
         // Tab keys a width of many characters
         {
-            var lineInformation = _activeRenderBatch.Model.GetLineInformation(rowIndex);
+            var lineInformation = _activeRenderBatch.Model.GetLineInformation(lineIndex);
 
             selectionEndingColumnIndex = Math.Min(
                 selectionEndingColumnIndex,
                 lineInformation.LastValidColumnIndex);
 
             var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-                rowIndex,
+                lineIndex,
                 selectionEndingColumnIndex);
 
             // 1 of the character width is already accounted for
@@ -948,8 +926,7 @@ public sealed class TextEditorComponentData
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
 		     	   selectionBoundsInPositionIndexUnits.Position_LowerInclusiveIndex,
 		     	   selectionBoundsInPositionIndexUnits.Position_UpperExclusiveIndex,
-		     	   rowIndex: i,
-		     	   hiddenLineCount));
+		     	   rowIndex: i));
 	        }
 	    }
     }
@@ -1120,8 +1097,7 @@ public sealed class TextEditorComponentData
                 		PresentationGetCssStyleString(
                             boundsInPositionIndexUnits.StartInclusiveIndex,
                             boundsInPositionIndexUnits.EndExclusiveIndex,
-                            rowIndex: i,
-                            hiddenLineCount)));
+                            rowIndex: i)));
                 }
             }
             
@@ -1152,16 +1128,7 @@ public sealed class TextEditorComponentData
     		
     		var leftCssValue = (lineAndColumnIndices.columnIndex * _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth).ToCssValue();
     		
-    		var hiddenLineCount = 0;
-    		
-    		// TODO: Maintain the _activeRenderBatch.ViewModel.InlineUiList sorted.
-            for (int i = 0; i < lineAndColumnIndices.lineIndex; i++)
-            {
-            	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
-            		hiddenLineCount++;
-            }
-    		
-    		var topCssValue = ((lineAndColumnIndices.lineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue();
+    		var topCssValue = LineIndexToTopCssValue(lineAndColumnIndices.lineIndex);
 
     		_uiStringBuilder.Clear();
     		
@@ -1206,7 +1173,19 @@ public sealed class TextEditorComponentData
     	
     	if (cacheEntry.TopCssValue is null)
     	{
-    		cacheEntry.TopCssValue = ;
+    		var hiddenLineCount = 0;
+    		
+    		// TODO: Maintain the _activeRenderBatch.ViewModel.InlineUiList sorted.
+            for (int i = 0; i < lineIndex; i++)
+            {
+            	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+            		hiddenLineCount++;
+            }
+    		
+    		var topCssValue = ((lineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue();
+    	
+    		cacheEntry.HiddenLineCount = hiddenLineCount;
+    		cacheEntry.TopCssValue = topCssValue;
     		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
     	}
     	
@@ -1233,7 +1212,7 @@ public sealed class TextEditorComponentData
     	
     	if (cacheEntry.LineNumberString is null)
     	{
-    		cacheEntry.LineNumberString = ;
+    		cacheEntry.LineNumberString = (lineIndex + 1).ToString();
     		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
     	}
     	
@@ -1241,7 +1220,7 @@ public sealed class TextEditorComponentData
     	return cacheEntry.LineNumberString;
     }
 
-    private int LineIndexToCollapsedLineCount(int lineIndex)
+    private int LineIndexToHiddenLineCount(int lineIndex)
     {
     	TextEditorLineIndexCacheEntry cacheEntry = new TextEditorLineIndexCacheEntry(
 			topCssValue: null,
@@ -1258,14 +1237,25 @@ public sealed class TextEditorComponentData
     		LineIndexCacheEntryMap.Add(lineIndex, cacheEntry);
     	}
     	
-    	if (cacheEntry.CollapsedLineCount == -1)
+    	if (cacheEntry.HiddenLineCount == -1)
     	{
-    		cacheEntry.CollapsedLineCount = ;
+    		var hiddenLineCount = 0;
+    		
+    		// TODO: Maintain the _activeRenderBatch.ViewModel.InlineUiList sorted.
+            for (int i = 0; i < lineIndex; i++)
+            {
+            	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+            		hiddenLineCount++;
+            }
+    		
+    		var topCssValue = ((lineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue();
+    	
+    		cacheEntry.HiddenLineCount = hiddenLineCount;
     		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
     	}
     	
     	LineIndexCacheUsageHashSet.Add(lineIndex);
-    	return cacheEntry.CollapsedLineCount;
+    	return cacheEntry.HiddenLineCount;
     }
     
     public void CreateUi()
