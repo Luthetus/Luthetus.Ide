@@ -1261,37 +1261,44 @@ public sealed class TextEditorComponentData
     	var hiddenLineCount = 0;
     	var checkHiddenLineIndex = 0;
     	
-    	foreach (var virtualizedLine in _activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
+    	for (int i = -1; i < _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count; i++)
     	{
-    		for (; checkHiddenLineIndex < virtualizedLine.LineIndex; checkHiddenLineIndex++)
+    		int lineIndex;
+    		
+    		if (i == -1)
+    			lineIndex = _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex;
+    		else
+    			lineIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList[i].LineIndex;
+    		
+    		for (; checkHiddenLineIndex < lineIndex; checkHiddenLineIndex++)
             {
             	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
             		hiddenLineCount++;
             }
             
-            LineIndexCacheUsageHashSet.Add(virtualizedLine.LineIndex);
+            LineIndexCacheUsageHashSet.Add(lineIndex);
             
-            if (LineIndexCacheEntryMap.ContainsKey(virtualizedLine.LineIndex))
+            if (LineIndexCacheEntryMap.ContainsKey(lineIndex))
 	    	{
-	    		var cacheEntry = LineIndexCacheEntryMap[virtualizedLine.LineIndex];
+	    		var cacheEntry = LineIndexCacheEntryMap[lineIndex];
 	    		
 	    		if (hiddenLineCount != cacheEntry.HiddenLineCount)
 	            {
-	            	cacheEntry.TopCssValue = ((virtualizedLine.LineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight)
+	            	cacheEntry.TopCssValue = ((lineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight)
 	            		.ToCssValue();
 	            		
 	            	cacheEntry.HiddenLineCount = hiddenLineCount;
 	            	
-	            	LineIndexCacheEntryMap[virtualizedLine.LineIndex] = cacheEntry;
+	            	LineIndexCacheEntryMap[lineIndex] = cacheEntry;
 	            }
 	    	}
 	    	else
 	    	{
-	    		LineIndexKeyList.Add(virtualizedLine.LineIndex);
+	    		LineIndexKeyList.Add(lineIndex);
 	    		
-	    		LineIndexCacheEntryMap.Add(virtualizedLine.LineIndex, new TextEditorLineIndexCacheEntry(
-	    			topCssValue: ((virtualizedLine.LineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
-					lineNumberString: (virtualizedLine.LineIndex + 1).ToString(),
+	    		LineIndexCacheEntryMap.Add(lineIndex, new TextEditorLineIndexCacheEntry(
+	    			topCssValue: ((lineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
+					lineNumberString: (lineIndex + 1).ToString(),
 					hiddenLineCount: hiddenLineCount));
 	    	}
     	}
@@ -1470,8 +1477,8 @@ public sealed class TextEditorComponentData
 		{
 			if (!LineIndexCacheUsageHashSet.Contains(LineIndexKeyList[i]))
 			{
-				LineIndexKeyList.RemoveAt(i);
 				LineIndexCacheEntryMap.Remove(LineIndexKeyList[i]);
+				LineIndexKeyList.RemoveAt(i);
 			}
 		}
     }
