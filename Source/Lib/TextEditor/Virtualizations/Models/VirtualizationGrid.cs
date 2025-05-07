@@ -219,6 +219,8 @@ public struct VirtualizationGrid
 			
 			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 			
+			componentData.VirtualizedLineCacheUsageHashSet.Add(virtualizationEntry.LineIndex);
+			
 			if (useAll && inlineUi.InlineUiKind == InlineUiKind.None)
 			{
 				var useThis = componentData.VirtualizedLineCacheEntryMap.ContainsKey(virtualizationEntry.LineIndex) &&
@@ -357,6 +359,7 @@ public struct VirtualizationGrid
 			}
 			else
 			{
+				componentData.VirtualizedLineIndexKeyList.Add(virtualizationEntry.LineIndex);
 				componentData.VirtualizedLineCacheEntryMap.Add(virtualizationEntry.LineIndex, virtualizationEntry);
 			}
 			
@@ -368,6 +371,15 @@ public struct VirtualizationGrid
 		componentData.VirtualizedLineCacheViewModelKey = viewModel.ViewModelKey;
 		componentData.VirtualizedLineCacheSpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
 		componentData.VirtualizedLineCacheCreatedWithScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
+		
+		for (var i = componentData.VirtualizedLineIndexKeyList.Count - 1; i >= 0; i--)
+		{
+			if (!componentData.VirtualizedLineCacheUsageHashSet.Contains(componentData.VirtualizedLineIndexKeyList[i]))
+			{
+				componentData.VirtualizedLineCacheEntryMap.Remove(componentData.VirtualizedLineIndexKeyList[i]);
+				componentData.VirtualizedLineIndexKeyList.RemoveAt(i);
+			}
+		}
 		
 		Console.WriteLine($"(r{reUsedLines}, e{emptyLines}, c{calculatedLines}) (reUsedLines, emptyLines, calculatedLines)");
 		
