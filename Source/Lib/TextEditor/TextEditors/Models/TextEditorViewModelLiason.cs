@@ -58,11 +58,11 @@ public class TextEditorViewModelLiason
 			
 			if (lineEndPositionWasAdded && viewModel.DisplayTracker.ComponentData is not null)
 			{
-				viewModel.VisualizationLineCacheIsInvalid = true;
+				viewModel.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
 			}
 			else
 			{
-				viewModel.VirtualizedLineLineIndexWithModificationList.Add(initialCursorLineIndex);
+				viewModel.DisplayTracker.ComponentData.VirtualizedLineLineIndexWithModificationList.Add(initialCursorLineIndex);
 			}
 		}
 	}
@@ -98,11 +98,11 @@ public class TextEditorViewModelLiason
 			
 			if (lineEndPositionWasAdded && viewModel.DisplayTracker.ComponentData is not null)
 			{
-				viewModel.VisualizationLineCacheIsInvalid = true;
+				viewModel.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
 			}
 			else
 			{
-				viewModel.VirtualizedLineLineIndexWithModificationList.Add(initialCursorLineIndex);
+				viewModel.DisplayTracker.ComponentData.VirtualizedLineLineIndexWithModificationList.Add(initialCursorLineIndex);
 			}
 		}
 	}

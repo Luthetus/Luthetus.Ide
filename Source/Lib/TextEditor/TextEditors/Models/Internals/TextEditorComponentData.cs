@@ -1212,20 +1212,39 @@ public sealed class TextEditorComponentData
     ///
     /// Then, 'virtualizationSpan_StartInclusiveIndex' and 'virtualizationSpan_EndExclusiveIndex'
     /// indicate the section of the flat list that relates to each individual line.
+    ///
+    /// This points to a TextEditorViewModel('s) VirtualizationGrid('s) list directly.
+	/// If you clear it that'll cause a UI race condition exception.
     /// </summary>
     public List<VirtualizationSpan> VirtualizedLineCacheSpanList = new();
+    private List<VirtualizationSpan> _emptyVirtualizedLineCacheSpanList = new();
     public HashSet<int> VirtualizedLineCacheUsageHashSet = new();
     public List<int> VirtualizedLineIndexKeyList = new();
     public Key<TextEditorViewModel> VirtualizedLineCacheViewModelKey = Key<TextEditorViewModel>.Empty;
+    public bool VisualizationLineCacheIsInvalid { get; set; }
+    /// <summary>
+    /// If a line index is in the cache, but also in this list, then you need to throw away
+    /// the cached result for that particular line.
+    ///
+    /// Any edit that changes the line endings in terms of "existence"
+    /// will require throwing away of all cached results (it just won't initially be supported).
+    /// </summary>
+    public List<int> VirtualizedLineLineIndexWithModificationList { get; set; } = new();
     
     public void VirtualizationLineCacheClear()
     {
 	    VirtualizedLineCacheCreatedWithScrollLeft = -1;
 	    VirtualizedLineCacheEntryMap.Clear();
-	    VirtualizedLineCacheSpanList.Clear();
+	    
+	    // This points to a TextEditorViewModel('s) VirtualizationGrid('s) list directly.
+	    // If you clear it that'll cause a UI race condition exception.
+	    VirtualizedLineCacheSpanList = _emptyVirtualizedLineCacheSpanList;
+	    
 	    VirtualizedLineCacheUsageHashSet.Clear();
 	    VirtualizedLineIndexKeyList.Clear();
 	    VirtualizedLineCacheViewModelKey = Key<TextEditorViewModel>.Empty;
+	    VisualizationLineCacheIsInvalid = false;
+	    VirtualizedLineLineIndexWithModificationList.Clear();
     }
     
     public void CreateUi()

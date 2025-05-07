@@ -410,6 +410,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                     nextViewModel.ShouldRevealCursor = true;
             }
             
+            _componentData.VirtualizationLineCacheClear();
+            
             return ValueTask.CompletedTask;
     	});
     }

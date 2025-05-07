@@ -115,8 +115,6 @@ public sealed class TextEditorViewModel : IDisposable
 		InlineUiList = other.InlineUiList;
 		VirtualAssociativityKind = other.VirtualAssociativityKind;
 		CreateCacheWasInvoked = other.CreateCacheWasInvoked;
-		VisualizationLineCacheIsInvalid = other.VisualizationLineCacheIsInvalid;
-		VirtualizedLineLineIndexWithModificationList = new(other.VirtualizedLineLineIndexWithModificationList);
 	    
 	    BodyElementId = other.BodyElementId;
 	    PrimaryCursorContentId = other.PrimaryCursorContentId;
@@ -274,15 +272,6 @@ public sealed class TextEditorViewModel : IDisposable
     public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; } = new(); // { (new InlineUi(10, InlineUiKind.ThreeDotsExpandInlineUiThing), "aaa") };
     public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
     public bool CreateCacheWasInvoked { get; set; }
-    public bool VisualizationLineCacheIsInvalid { get; set; }
-    /// <summary>
-    /// If a line index is in the cache, but also in this list, then you need to throw away
-    /// the cached result for that particular line.
-    ///
-    /// Any edit that changes the line endings in terms of "existence"
-    /// will require throwing away of all cached results (it just won't initially be supported).
-    /// </summary>
-    public List<int> VirtualizedLineLineIndexWithModificationList { get; set; } = new();
     
     public bool ScrollWasModified { get; set; }
 	/// <summary>

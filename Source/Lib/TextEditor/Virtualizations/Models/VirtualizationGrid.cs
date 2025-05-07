@@ -175,14 +175,11 @@ public struct VirtualizationGrid
 		
 		var componentData = viewModel.DisplayTracker.ComponentData;
 		
-		if (viewModel.VisualizationLineCacheIsInvalid)
-		{
-			viewModel.VisualizationLineCacheIsInvalid = false;
+		if (componentData.VisualizationLineCacheIsInvalid)
 			componentData.VirtualizationLineCacheClear();
-		}
 		
 		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollbarDimensions.ScrollLeft);
-		var useAll = absDiffScrollLeft < 0.01;
+		var useAll = absDiffScrollLeft < 0.01 && componentData.VirtualizedLineCacheViewModelKey == viewModel.ViewModelKey;
 		Console.Write($"useAll: {useAll}; ");
 		
 		var reUsedLines = 0;
@@ -224,26 +221,30 @@ public struct VirtualizationGrid
 			if (useAll && inlineUi.InlineUiKind == InlineUiKind.None)
 			{
 				var useThis = componentData.VirtualizedLineCacheEntryMap.ContainsKey(virtualizationEntry.LineIndex) &&
-							  !viewModel.VirtualizedLineLineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
+							  !componentData.VirtualizedLineLineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
 				
 				if (useThis)
 				{
 					var previous = componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex];
-				
-					for (int i = previous.VirtualizationSpan_StartInclusiveIndex; i < previous.VirtualizationSpan_EndExclusiveIndex; i++)
-					{
-						viewModel.VirtualizationResult.VirtualizationSpanList.Add(componentData.VirtualizedLineCacheSpanList[i]);
-					}
 					
-					// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
-					virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
-					viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
-					
-					componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex] = virtualizationEntry;
-					
-					reUsedLines++;
-					
-					continue;
+					//if (previous.VirtualizationSpan_EndExclusiveIndex != 0 &&
+					//	previous.VirtualizationSpan_StartInclusiveIndex != previous.VirtualizationSpan_EndExclusiveIndex)
+					//{
+						for (int i = previous.VirtualizationSpan_StartInclusiveIndex; i < previous.VirtualizationSpan_EndExclusiveIndex; i++)
+						{
+							viewModel.VirtualizationResult.VirtualizationSpanList.Add(componentData.VirtualizedLineCacheSpanList[i]);
+						}
+						
+						// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
+						virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+						viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+						
+						componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+						
+						reUsedLines++;
+						
+						continue;
+					//}
 				}
 			}
 			
@@ -359,7 +360,7 @@ public struct VirtualizationGrid
 			}
 		}
 		
-		viewModel.VirtualizedLineLineIndexWithModificationList.Clear();
+		componentData.VirtualizedLineLineIndexWithModificationList.Clear();
 		
 		componentData.VirtualizedLineCacheViewModelKey = viewModel.ViewModelKey;
 		componentData.VirtualizedLineCacheSpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
