@@ -18,6 +18,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -1154,108 +1155,6 @@ public sealed class TextEditorComponentData
     private HashSet<int> LineIndexCacheUsageHashSet = new();
     private List<int> LineIndexKeyList = new();
     
-    /*private string LineIndexToTopCssValue(int lineIndex)
-    {
-    	TextEditorLineIndexCacheEntry cacheEntry = new TextEditorLineIndexCacheEntry(
-			topCssValue: null,
-			lineNumberString: null,
-			collapsedLineCount: -1);
-    
-    	if (LineIndexCacheEntryMap.ContainsKey(lineIndex))
-    	{
-    		cacheEntry = LineIndexCacheEntryMap[lineIndex];
-    	}
-    	else
-    	{
-    		LineIndexKeyList.Add(lineIndex);
-    		LineIndexCacheEntryMap.Add(lineIndex, cacheEntry);
-    	}
-    	
-    	if (cacheEntry.TopCssValue is null)
-    	{
-    		var hiddenLineCount = 0;
-    		
-    		// TODO: Maintain the _activeRenderBatch.ViewModel.InlineUiList sorted.
-            for (int i = 0; i < lineIndex; i++)
-            {
-            	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
-            		hiddenLineCount++;
-            }
-    		
-    		var topCssValue = ((lineIndex - hiddenLineCount) * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue();
-    	
-    		cacheEntry.HiddenLineCount = hiddenLineCount;
-    		cacheEntry.TopCssValue = topCssValue;
-    		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
-    	}
-    	
-    	LineIndexCacheUsageHashSet.Add(lineIndex);
-    	return cacheEntry.TopCssValue;
-    }
-    
-    private string LineIndexToLineNumberString(int lineIndex)
-    {
-    	TextEditorLineIndexCacheEntry cacheEntry = new TextEditorLineIndexCacheEntry(
-			topCssValue: null,
-			lineNumberString: null,
-			collapsedLineCount: -1);
-    
-    	if (LineIndexCacheEntryMap.ContainsKey(lineIndex))
-    	{
-    		cacheEntry = LineIndexCacheEntryMap[lineIndex];
-    	}
-    	else
-    	{
-    		LineIndexKeyList.Add(lineIndex);
-    		LineIndexCacheEntryMap.Add(lineIndex, cacheEntry);
-    	}
-    	
-    	if (cacheEntry.LineNumberString is null)
-    	{
-    		cacheEntry.LineNumberString = (lineIndex + 1).ToString();
-    		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
-    	}
-    	
-    	LineIndexCacheUsageHashSet.Add(lineIndex);
-    	return cacheEntry.LineNumberString;
-    }
-
-    private int LineIndexToHiddenLineCount(int lineIndex)
-    {
-    	TextEditorLineIndexCacheEntry cacheEntry = new TextEditorLineIndexCacheEntry(
-			topCssValue: null,
-			lineNumberString: null,
-			collapsedLineCount: -1);
-    
-    	if (LineIndexCacheEntryMap.ContainsKey(lineIndex))
-    	{
-    		cacheEntry = LineIndexCacheEntryMap[lineIndex];
-    	}
-    	else
-    	{
-    		LineIndexKeyList.Add(lineIndex);
-    		LineIndexCacheEntryMap.Add(lineIndex, cacheEntry);
-    	}
-    	
-    	if (cacheEntry.HiddenLineCount == -1)
-    	{
-    		var hiddenLineCount = 0;
-    		
-    		// TODO: Maintain the _activeRenderBatch.ViewModel.InlineUiList sorted.
-            for (int i = 0; i < lineIndex; i++)
-            {
-            	if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
-            		hiddenLineCount++;
-            }
-    	
-    		cacheEntry.HiddenLineCount = hiddenLineCount;
-    		LineIndexCacheEntryMap[lineIndex] = cacheEntry;
-    	}
-    	
-    	LineIndexCacheUsageHashSet.Add(lineIndex);
-    	return cacheEntry.HiddenLineCount;
-    }*/
-    
     private void CreateCache()
     {
     	var hiddenLineCount = 0;
@@ -1303,6 +1202,28 @@ public sealed class TextEditorComponentData
 	    	}
     	}
     }
+    
+    /// <summary>If the scroll left changes you have to discard the virtualized line cache.</summary>
+    public double VirtualizedLineCacheCreatedWithScrollLeft = -1;
+    /// <summary></summary>
+    public Dictionary<int, VirtualizationLine> VirtualizedLineCacheEntryMap = new();
+    /// <summary>
+    /// Every virtualized line has its "spans" stored in this flat list.
+    ///
+    /// Then, 'virtualizationSpan_StartInclusiveIndex' and 'virtualizationSpan_EndExclusiveIndex'
+    /// indicate the section of the flat list that relates to each individual line.
+    /// </summary>
+    public List<VirtualizationSpan> VirtualizedLineCacheSpanList = new();
+    public HashSet<int> VirtualizedLineCacheUsageHashSet = new();
+    public List<int> VirtualizedLineIndexKeyList = new();
+    /// <summary>
+    /// If a line index is in the cache, but also in this list, then you need to throw away
+    /// the cached result for that particular line.
+    ///
+    /// Any edit that changes the line endings in terms of "existence"
+    /// will require throwing away of all cached results (it just won't initially be supported).
+    /// </summary>
+    public List<int> VirtualizedLineLineIndexWithModificationList = new();
     
     public void CreateUi()
     {

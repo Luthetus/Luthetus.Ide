@@ -122,8 +122,6 @@ public struct VirtualizationGrid
     public double VirtualTop { get; init; }
     
     public int CollapsedLineCount { get; init; }
-    
-    public bool CreateCacheWasInvoked { get; set; }
 
     /// <summary>
     ///
@@ -160,12 +158,31 @@ public struct VirtualizationGrid
     	#if DEBUG
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
+    	
+    	viewModel.CreateCacheWasInvoked = true;
     
     	if (viewModel.VirtualizationResult.EntryList.Count == 0)
 			return;
+			
+		/*
+	    Dictionary<int, VirtualizationLine> VirtualizedLineCacheEntryMap;
+	    int VirtualizedLineCacheCreatedWithScrollLeft;
+	    List<VirtualizationSpan> VirtualizedLineCacheSpanList;
+	    HashSet<int> VirtualizedLineCacheUsageHashSet;
+	    List<int> VirtualizedLineIndexKeyList;
+	    List<int> VirtualizedLineLineIndexWithModificationList;
+		*/
+		
+		var componentData = viewModel.DisplayTracker.ComponentData;
+		
+		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollbarDimensions.ScrollLeft);
+		var useAll = absDiffScrollLeft < 0.01;
+		// Console.Write($"useAll: {useAll}; ");
 		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	    var spaceKeyOutput = "&nbsp;";
+	    
+	    var reUsedLines = 0;
 
 		if (textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
 	    {
@@ -194,6 +211,32 @@ public struct VirtualizationGrid
 			}
 			
 			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			
+			/*if (useAll && inlineUi.InlineUiKind == InlineUiKind.None)
+			{
+				var useThis = componentData.VirtualizedLineCacheEntryMap.ContainsKey(virtualizationEntry.LineIndex) &&
+							  !componentData.VirtualizedLineLineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
+				
+				if (useThis)
+				{
+					var previous = componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex];
+				
+					for (int i = previous.VirtualizationSpan_StartInclusiveIndex; i < previous.VirtualizationSpan_EndExclusiveIndex; i++)
+					{
+						viewModel.VirtualizationResult.VirtualizationSpanList.Add(componentData.VirtualizedLineCacheSpanList[i]);
+					}
+					
+					// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
+					virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+					viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+					
+					componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+					
+					reUsedLines++;
+					
+					continue;
+				}
+			}*/
 			
 			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.Position_StartInclusiveIndex].DecorationByte;
 		    
@@ -293,10 +336,24 @@ public struct VirtualizationGrid
 	    		text: textEditorService.__StringBuilder.ToString()));
 			textEditorService.__StringBuilder.Clear();
 			
+			// WARNING CODE DUPLICATION (this also exists when copying a virtualizationEntry from cache).
 			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
-		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+			
+			if (componentData.VirtualizedLineCacheEntryMap.ContainsKey(virtualizationEntry.LineIndex))
+			{
+				componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+			}
+			else
+			{
+				componentData.VirtualizedLineCacheEntryMap.Add(virtualizationEntry.LineIndex, virtualizationEntry);
+			}
 		}
+		
+		componentData.VirtualizedLineCacheSpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
+		componentData.VirtualizedLineCacheCreatedWithScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
+		
+		// Console.WriteLine($"reUsedLines: {reUsedLines}");
 		
 		#if DEBUG
 		LuthetusDebugSomething.SetTextEditorVirtualizationGrid(Stopwatch.GetElapsedTime(startTime));

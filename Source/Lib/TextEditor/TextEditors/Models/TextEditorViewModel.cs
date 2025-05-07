@@ -114,6 +114,7 @@ public sealed class TextEditorViewModel : IDisposable
 		HiddenLineIndexHashSet = other.HiddenLineIndexHashSet;
 		InlineUiList = other.InlineUiList;
 		VirtualAssociativityKind = other.VirtualAssociativityKind;
+		CreateCacheWasInvoked = other.CreateCacheWasInvoked;
 	    
 	    BodyElementId = other.BodyElementId;
 	    PrimaryCursorContentId = other.PrimaryCursorContentId;
@@ -270,6 +271,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// </summary>
     public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; } = new(); // { (new InlineUi(10, InlineUiKind.ThreeDotsExpandInlineUiThing), "aaa") };
     public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
+    public bool CreateCacheWasInvoked { get; set; }
     
     public bool ScrollWasModified { get; set; }
 	/// <summary>

@@ -1236,6 +1236,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		        collapsedLineCount: hiddenCount);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
+			viewModel.CreateCacheWasInvoked = false;
 			
 			viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions with
 			{

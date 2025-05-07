@@ -290,7 +290,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             model_viewmodel_tuple.ViewModel,
             _textEditorRenderBatchConstants);
         
-        if (!renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCacheWasInvoked &&
+        if (!renderBatchUnsafe.ViewModel.CreateCacheWasInvoked &&
         	renderBatchUnsafe.Model is not null && renderBatchUnsafe.ViewModel is not null)
         {
         	renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCache(
