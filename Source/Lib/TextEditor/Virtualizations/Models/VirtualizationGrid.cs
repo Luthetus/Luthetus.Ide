@@ -359,6 +359,8 @@ public struct VirtualizationGrid
 			}
 		}
 		
+		viewModel.VirtualizedLineLineIndexWithModificationList.Clear();
+		
 		componentData.VirtualizedLineCacheViewModelKey = viewModel.ViewModelKey;
 		componentData.VirtualizedLineCacheSpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
 		componentData.VirtualizedLineCacheCreatedWithScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
