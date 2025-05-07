@@ -31,7 +31,8 @@ public class TextEditorViewModelLiason
 	public void InsertRepositionInlineUiList(
 		int initialCursorPositionIndex,
 		int insertionLength,
-		List<Key<TextEditorViewModel>> viewModelKeyList)
+		List<Key<TextEditorViewModel>> viewModelKeyList,
+		bool lineEndPositionWasAdded)
 	{
 		var editContext = new TextEditorEditContext(_textEditorService);
 		
@@ -52,6 +53,11 @@ public class TextEditorViewModelLiason
 					inlineUiTuple.InlineUi = viewModel.InlineUiList[i].InlineUi.WithIncrementPositionIndex(insertionLength);
 					viewModel.InlineUiList[i] = inlineUiTuple;
 				}
+			}
+			
+			if (lineEndPositionWasAdded && viewModel.DisplayTracker.ComponentData is not null)
+			{
+				viewModel.DisplayTracker.ComponentData.VirtualizationLineCacheClear();
 			}
 		}
 	}

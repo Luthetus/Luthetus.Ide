@@ -1316,7 +1316,8 @@ public partial class TextEditorModel
         	__TextEditorViewModelLiason.InsertRepositionInlineUiList(
         		initialCursorPositionIndex,
         		lineEndingsChangedValueBuilder.Length,
-        		ViewModelKeyList);
+        		ViewModelKeyList,
+        		lineEndPositionWasAdded: lineEndPositionLazyInsertRange.index != int.MinValue);
         }
 
         // Add in any new metadata

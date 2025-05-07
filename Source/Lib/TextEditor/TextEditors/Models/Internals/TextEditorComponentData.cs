@@ -1224,6 +1224,17 @@ public sealed class TextEditorComponentData
     /// will require throwing away of all cached results (it just won't initially be supported).
     /// </summary>
     public List<int> VirtualizedLineLineIndexWithModificationList = new();
+    public Key<TextEditorViewModel> VirtualizedLineCacheViewModelKey = Key<TextEditorViewModel>.Empty;
+    
+    public void VirtualizationLineCacheClear()
+    {
+	    VirtualizedLineCacheCreatedWithScrollLeft = -1;
+	    VirtualizedLineCacheEntryMap.Clear();
+	    VirtualizedLineCacheSpanList.Clear();
+	    VirtualizedLineCacheUsageHashSet.Clear();
+	    VirtualizedLineIndexKeyList.Clear();
+	    VirtualizedLineLineIndexWithModificationList.Clear();
+    }
     
     public void CreateUi()
     {

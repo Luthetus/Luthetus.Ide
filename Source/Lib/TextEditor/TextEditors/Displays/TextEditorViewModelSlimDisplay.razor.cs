@@ -293,6 +293,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (!renderBatchUnsafe.ViewModel.CreateCacheWasInvoked &&
         	renderBatchUnsafe.Model is not null && renderBatchUnsafe.ViewModel is not null)
         {
+        	if (_componentData.VirtualizedLineCacheViewModelKey != renderBatchUnsafe.ViewModel.ViewModelKey)
+        		_componentData.VirtualizationLineCacheClear();
+        	
         	renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCache(
         		TextEditorService,
         		renderBatchUnsafe.Model,

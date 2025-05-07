@@ -177,7 +177,7 @@ public struct VirtualizationGrid
 		
 		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollbarDimensions.ScrollLeft);
 		var useAll = absDiffScrollLeft < 0.01;
-		// Console.Write($"useAll: {useAll}; ");
+		Console.Write($"useAll: {useAll}; ");
 		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	    var spaceKeyOutput = "&nbsp;";
@@ -212,7 +212,7 @@ public struct VirtualizationGrid
 			
 			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 			
-			/*if (useAll && inlineUi.InlineUiKind == InlineUiKind.None)
+			if (useAll && inlineUi.InlineUiKind == InlineUiKind.None)
 			{
 				var useThis = componentData.VirtualizedLineCacheEntryMap.ContainsKey(virtualizationEntry.LineIndex) &&
 							  !componentData.VirtualizedLineLineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
@@ -236,7 +236,7 @@ public struct VirtualizationGrid
 					
 					continue;
 				}
-			}*/
+			}
 			
 			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.Position_StartInclusiveIndex].DecorationByte;
 		    
@@ -350,10 +350,11 @@ public struct VirtualizationGrid
 			}
 		}
 		
+		componentData.VirtualizedLineCacheViewModelKey = viewModel.ViewModelKey;
 		componentData.VirtualizedLineCacheSpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
 		componentData.VirtualizedLineCacheCreatedWithScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
 		
-		// Console.WriteLine($"reUsedLines: {reUsedLines}");
+		Console.WriteLine($"reUsedLines: {reUsedLines}");
 		
 		#if DEBUG
 		LuthetusDebugSomething.SetTextEditorVirtualizationGrid(Stopwatch.GetElapsedTime(startTime));
