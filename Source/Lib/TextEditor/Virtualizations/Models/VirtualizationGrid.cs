@@ -122,8 +122,6 @@ public struct VirtualizationGrid
     public double VirtualTop { get; init; }
     
     public int CollapsedLineCount { get; init; }
-    
-    public bool CreateCacheWasInvoked { get; set; }
 
     /// <summary>
     ///
@@ -160,9 +158,25 @@ public struct VirtualizationGrid
     	#if DEBUG
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
+    	
+    	viewModel.CreateCacheWasInvoked = true;
     
     	if (viewModel.VirtualizationResult.EntryList.Count == 0)
 			return;
+			
+		var componentData = viewModel.DisplayTracker.ComponentData;
+		
+		if (componentData.VisualizationLineCacheIsInvalid)
+			componentData.VirtualizationLineCacheClear();
+		else
+			componentData.VirtualizedLineCacheUsageHashSet.Clear();
+		
+		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollbarDimensions.ScrollLeft);
+		var useAll = absDiffScrollLeft < 0.01 && componentData.VirtualizedLineCacheViewModelKey == viewModel.ViewModelKey;
+		
+		var reUsedLines = 0;
+		var emptyLines = 0;
+		var calculatedLines = 0;
 		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	    var spaceKeyOutput = "&nbsp;";
@@ -180,7 +194,10 @@ public struct VirtualizationGrid
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
 			
 			if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
+			{
+				emptyLines++;
 				continue;
+			}
 			
 			(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
 			var inlineUi = new InlineUi(0, InlineUiKind.None);
@@ -194,6 +211,38 @@ public struct VirtualizationGrid
 			}
 			
 			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			
+			componentData.VirtualizedLineCacheUsageHashSet.Add(virtualizationEntry.LineIndex);
+			
+			if (useAll && inlineUi.InlineUiKind == InlineUiKind.None)
+			{
+				var useThis = componentData.VirtualizedLineCacheEntryMap.ContainsKey(virtualizationEntry.LineIndex) &&
+							  !componentData.VirtualizedLineLineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
+				
+				if (useThis)
+				{
+					var previous = componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex];
+					
+					//if (previous.VirtualizationSpan_EndExclusiveIndex != 0 &&
+					//	previous.VirtualizationSpan_StartInclusiveIndex != previous.VirtualizationSpan_EndExclusiveIndex)
+					//{
+						for (int i = previous.VirtualizationSpan_StartInclusiveIndex; i < previous.VirtualizationSpan_EndExclusiveIndex; i++)
+						{
+							viewModel.VirtualizationResult.VirtualizationSpanList.Add(componentData.VirtualizedLineCacheSpanList[i]);
+						}
+						
+						// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
+						virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+						viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+						
+						componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+						
+						reUsedLines++;
+						
+						continue;
+					//}
+				}
+			}
 			
 			var currentDecorationByte = model.RichCharacterList[virtualizationEntry.Position_StartInclusiveIndex].DecorationByte;
 		    
@@ -293,10 +342,39 @@ public struct VirtualizationGrid
 	    		text: textEditorService.__StringBuilder.ToString()));
 			textEditorService.__StringBuilder.Clear();
 			
+			// WARNING CODE DUPLICATION (this also exists when copying a virtualizationEntry from cache).
 			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
-		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+			
+			if (componentData.VirtualizedLineCacheEntryMap.ContainsKey(virtualizationEntry.LineIndex))
+			{
+				componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+			}
+			else
+			{
+				componentData.VirtualizedLineIndexKeyList.Add(virtualizationEntry.LineIndex);
+				componentData.VirtualizedLineCacheEntryMap.Add(virtualizationEntry.LineIndex, virtualizationEntry);
+			}
+			
+			calculatedLines++;
 		}
+		
+		componentData.VirtualizedLineLineIndexWithModificationList.Clear();
+		
+		componentData.VirtualizedLineCacheViewModelKey = viewModel.ViewModelKey;
+		componentData.VirtualizedLineCacheSpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
+		componentData.VirtualizedLineCacheCreatedWithScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
+		
+		for (var i = componentData.VirtualizedLineIndexKeyList.Count - 1; i >= 0; i--)
+		{
+			if (!componentData.VirtualizedLineCacheUsageHashSet.Contains(componentData.VirtualizedLineIndexKeyList[i]))
+			{
+				componentData.VirtualizedLineCacheEntryMap.Remove(componentData.VirtualizedLineIndexKeyList[i]);
+				componentData.VirtualizedLineIndexKeyList.RemoveAt(i);
+			}
+		}
+		
+		// Console.WriteLine($"(r{reUsedLines}, e{emptyLines}, c{calculatedLines}) (reUsedLines, emptyLines, calculatedLines)");
 		
 		#if DEBUG
 		LuthetusDebugSomething.SetTextEditorVirtualizationGrid(Stopwatch.GetElapsedTime(startTime));

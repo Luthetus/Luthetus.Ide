@@ -1211,7 +1211,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					viewModel.CharAndLineMeasurements.CharacterWidth);
 			}
 
-			var totalHeight = (int)Math.Ceiling(modelModifier.LineEndList.Count *
+			var totalHeight = (int)Math.Ceiling(
+				(modelModifier.LineEndList.Count - hiddenCount) *
 				viewModel.CharAndLineMeasurements.LineHeight);
 
 			// Add vertical margin so the user can scroll beyond the final line of content
@@ -1235,6 +1236,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		        collapsedLineCount: hiddenCount);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
+			viewModel.CreateCacheWasInvoked = false;
 			
 			viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions with
 			{
@@ -1247,7 +1249,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
 			#endif
 			
-			// virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
+			if (viewModel.DisplayTracker.ComponentData is not null)
+				virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
 		}
 		catch (LuthetusTextEditorException exception)
 		{

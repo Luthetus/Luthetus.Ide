@@ -290,13 +290,37 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             model_viewmodel_tuple.ViewModel,
             _textEditorRenderBatchConstants);
         
-        if (!renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCacheWasInvoked &&
+        if (!renderBatchUnsafe.ViewModel.CreateCacheWasInvoked &&
         	renderBatchUnsafe.Model is not null && renderBatchUnsafe.ViewModel is not null)
         {
-        	renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCache(
-        		TextEditorService,
-        		renderBatchUnsafe.Model,
-        		renderBatchUnsafe.ViewModel);
+        	/*
+	        if (_componentData.VirtualizedLineCacheViewModelKey != renderBatchUnsafe.ViewModel.ViewModelKey)
+				_componentData.VirtualizationLineCacheClear();
+			*/
+		
+        	TextEditorService.WorkerArbitrary.PostUnique(nameof(ConstructRenderBatch), editContext =>
+        	{
+        		try
+        		{
+        			var localTextEditorState = TextEditorService.TextEditorState;
+    
+					var inViewModel = localTextEditorState._viewModelMap[TextEditorViewModelKey];
+					var inModel = localTextEditorState._modelMap[inViewModel.ResourceUri];
+			    
+			    	(TextEditorModel Model, TextEditorViewModel ViewModel) model_viewmodel_tuple = (inModel, inViewModel);
+        		
+        			renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCache(
+		        		TextEditorService,
+		        		model_viewmodel_tuple.Model,
+		        		model_viewmodel_tuple.ViewModel);
+        		}
+        		catch (Exception e)
+        		{
+        			Console.WriteLine(e);
+        		}
+        		
+        		return ValueTask.CompletedTask;
+        	});
         }
         
         _componentData._previousRenderBatch = _componentData._currentRenderBatch;
@@ -385,6 +409,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 if (nextViewModel is not null)
                     nextViewModel.ShouldRevealCursor = true;
             }
+            
+            _componentData.VirtualizationLineCacheClear();
             
             return ValueTask.CompletedTask;
     	});
