@@ -74,7 +74,9 @@ public class TextEditorViewModelLiason
 	public void DeleteRepositionInlineUiList(
 		int startInclusiveIndex,
 		int endExclusiveIndex,
-		List<Key<TextEditorViewModel>> viewModelKeyList)
+		List<Key<TextEditorViewModel>> viewModelKeyList,
+		int initialCursorLineIndex,
+		bool lineEndPositionWasAdded)
 	{
 		var editContext = new TextEditorEditContext(_textEditorService);
 		
@@ -92,6 +94,15 @@ public class TextEditorViewModelLiason
 					inlineUiTuple.InlineUi = viewModel.InlineUiList[i].InlineUi.WithDecrementPositionIndex(endExclusiveIndex - startInclusiveIndex);
 					viewModel.InlineUiList[i] = inlineUiTuple;
 				}
+			}
+			
+			if (lineEndPositionWasAdded && viewModel.DisplayTracker.ComponentData is not null)
+			{
+				viewModel.VisualizationLineCacheIsInvalid = true;
+			}
+			else
+			{
+				viewModel.VirtualizedLineLineIndexWithModificationList.Add(initialCursorLineIndex);
 			}
 		}
 	}

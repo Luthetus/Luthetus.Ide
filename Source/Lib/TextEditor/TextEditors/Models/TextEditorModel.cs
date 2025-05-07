@@ -1759,7 +1759,9 @@ public partial class TextEditorModel
         	__TextEditorViewModelLiason.DeleteRepositionInlineUiList(
         		positionIndex,
         		positionIndex + charCount,
-        		ViewModelKeyList);
+        		ViewModelKeyList,
+        		initialLineIndex,
+        		lineEndPositionLazyRemoveRange.index is not null);
         }
 
 		// Delete metadata
