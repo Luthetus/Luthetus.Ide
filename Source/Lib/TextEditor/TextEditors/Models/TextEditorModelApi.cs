@@ -269,6 +269,12 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
         if (compilerServiceResource is null)
         	return;
+        
+        foreach (var viewModelKey in modelModifier.ViewModelKeyList)
+        {
+        	var viewModel = editContext.GetViewModelModifier(viewModelKey);
+        	viewModel.VisualizationLineCacheIsInvalid = true;
+        }
 
         ApplyDecorationRange(
 	        editContext,
