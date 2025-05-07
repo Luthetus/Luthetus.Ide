@@ -1317,6 +1317,7 @@ public partial class TextEditorModel
         		initialCursorPositionIndex,
         		lineEndingsChangedValueBuilder.Length,
         		ViewModelKeyList,
+        		initialCursorLineIndex,
         		lineEndPositionWasAdded: lineEndPositionLazyInsertRange.index != int.MinValue);
         }
 

@@ -32,6 +32,7 @@ public class TextEditorViewModelLiason
 		int initialCursorPositionIndex,
 		int insertionLength,
 		List<Key<TextEditorViewModel>> viewModelKeyList,
+		int initialCursorLineIndex,
 		bool lineEndPositionWasAdded)
 	{
 		var editContext = new TextEditorEditContext(_textEditorService);
@@ -57,7 +58,11 @@ public class TextEditorViewModelLiason
 			
 			if (lineEndPositionWasAdded && viewModel.DisplayTracker.ComponentData is not null)
 			{
-				viewModel.DisplayTracker.ComponentData.VirtualizationLineCacheClear();
+				viewModel.VisualizationLineCacheIsInvalid = true;
+			}
+			else
+			{
+				viewModel.VirtualizedLineLineIndexWithModificationList.Add(initialCursorLineIndex);
 			}
 		}
 	}

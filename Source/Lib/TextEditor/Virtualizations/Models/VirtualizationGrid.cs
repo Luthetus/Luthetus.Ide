@@ -175,14 +175,20 @@ public struct VirtualizationGrid
 		
 		var componentData = viewModel.DisplayTracker.ComponentData;
 		
+		if (viewModel.VisualizationLineCacheIsInvalid)
+		{
+			viewModel.VisualizationLineCacheIsInvalid = false;
+			componentData.VirtualizationLineCacheClear();
+		}
+		
 		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollbarDimensions.ScrollLeft);
 		var useAll = absDiffScrollLeft < 0.01;
 		Console.Write($"useAll: {useAll}; ");
 		
+		var reUsedLines = 0;
+		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	    var spaceKeyOutput = "&nbsp;";
-	    
-	    var reUsedLines = 0;
 
 		if (textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
 	    {
@@ -197,7 +203,10 @@ public struct VirtualizationGrid
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
 			
 			if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
+			{
+				reUsedLines++;
 				continue;
+			}
 			
 			(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
 			var inlineUi = new InlineUi(0, InlineUiKind.None);
@@ -215,7 +224,7 @@ public struct VirtualizationGrid
 			if (useAll && inlineUi.InlineUiKind == InlineUiKind.None)
 			{
 				var useThis = componentData.VirtualizedLineCacheEntryMap.ContainsKey(virtualizationEntry.LineIndex) &&
-							  !componentData.VirtualizedLineLineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
+							  !viewModel.VirtualizedLineLineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
 				
 				if (useThis)
 				{

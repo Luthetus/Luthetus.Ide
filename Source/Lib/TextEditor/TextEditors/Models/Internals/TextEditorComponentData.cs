@@ -1216,14 +1216,6 @@ public sealed class TextEditorComponentData
     public List<VirtualizationSpan> VirtualizedLineCacheSpanList = new();
     public HashSet<int> VirtualizedLineCacheUsageHashSet = new();
     public List<int> VirtualizedLineIndexKeyList = new();
-    /// <summary>
-    /// If a line index is in the cache, but also in this list, then you need to throw away
-    /// the cached result for that particular line.
-    ///
-    /// Any edit that changes the line endings in terms of "existence"
-    /// will require throwing away of all cached results (it just won't initially be supported).
-    /// </summary>
-    public List<int> VirtualizedLineLineIndexWithModificationList = new();
     public Key<TextEditorViewModel> VirtualizedLineCacheViewModelKey = Key<TextEditorViewModel>.Empty;
     
     public void VirtualizationLineCacheClear()
@@ -1233,7 +1225,7 @@ public sealed class TextEditorComponentData
 	    VirtualizedLineCacheSpanList.Clear();
 	    VirtualizedLineCacheUsageHashSet.Clear();
 	    VirtualizedLineIndexKeyList.Clear();
-	    VirtualizedLineLineIndexWithModificationList.Clear();
+	    VirtualizedLineCacheViewModelKey = Key<TextEditorViewModel>.Empty;
     }
     
     public void CreateUi()
