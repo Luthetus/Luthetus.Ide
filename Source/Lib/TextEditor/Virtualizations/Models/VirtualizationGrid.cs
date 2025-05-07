@@ -180,9 +180,10 @@ public struct VirtualizationGrid
 		
 		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollbarDimensions.ScrollLeft);
 		var useAll = absDiffScrollLeft < 0.01 && componentData.VirtualizedLineCacheViewModelKey == viewModel.ViewModelKey;
-		Console.Write($"useAll: {useAll}; ");
 		
 		var reUsedLines = 0;
+		var emptyLines = 0;
+		var calculatedLines = 0;
 		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	    var spaceKeyOutput = "&nbsp;";
@@ -201,7 +202,7 @@ public struct VirtualizationGrid
 			
 			if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
 			{
-				reUsedLines++;
+				emptyLines++;
 				continue;
 			}
 			
@@ -358,6 +359,8 @@ public struct VirtualizationGrid
 			{
 				componentData.VirtualizedLineCacheEntryMap.Add(virtualizationEntry.LineIndex, virtualizationEntry);
 			}
+			
+			calculatedLines++;
 		}
 		
 		componentData.VirtualizedLineLineIndexWithModificationList.Clear();
@@ -366,7 +369,7 @@ public struct VirtualizationGrid
 		componentData.VirtualizedLineCacheSpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
 		componentData.VirtualizedLineCacheCreatedWithScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
 		
-		Console.WriteLine($"reUsedLines: {reUsedLines}");
+		Console.WriteLine($"(r{reUsedLines}, e{emptyLines}, c{calculatedLines}) (reUsedLines, emptyLines, calculatedLines)");
 		
 		#if DEBUG
 		LuthetusDebugSomething.SetTextEditorVirtualizationGrid(Stopwatch.GetElapsedTime(startTime));
