@@ -164,19 +164,12 @@ public struct VirtualizationGrid
     	if (viewModel.VirtualizationResult.EntryList.Count == 0)
 			return;
 			
-		/*
-	    Dictionary<int, VirtualizationLine> VirtualizedLineCacheEntryMap;
-	    int VirtualizedLineCacheCreatedWithScrollLeft;
-	    List<VirtualizationSpan> VirtualizedLineCacheSpanList;
-	    HashSet<int> VirtualizedLineCacheUsageHashSet;
-	    List<int> VirtualizedLineIndexKeyList;
-	    List<int> VirtualizedLineLineIndexWithModificationList;
-		*/
-		
 		var componentData = viewModel.DisplayTracker.ComponentData;
 		
 		if (componentData.VisualizationLineCacheIsInvalid)
 			componentData.VirtualizationLineCacheClear();
+		else
+			componentData.VirtualizedLineCacheUsageHashSet.Clear();
 		
 		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollbarDimensions.ScrollLeft);
 		var useAll = absDiffScrollLeft < 0.01 && componentData.VirtualizedLineCacheViewModelKey == viewModel.ViewModelKey;
@@ -381,7 +374,7 @@ public struct VirtualizationGrid
 			}
 		}
 		
-		Console.WriteLine($"(r{reUsedLines}, e{emptyLines}, c{calculatedLines}) (reUsedLines, emptyLines, calculatedLines)");
+		// Console.WriteLine($"(r{reUsedLines}, e{emptyLines}, c{calculatedLines}) (reUsedLines, emptyLines, calculatedLines)");
 		
 		#if DEBUG
 		LuthetusDebugSomething.SetTextEditorVirtualizationGrid(Stopwatch.GetElapsedTime(startTime));

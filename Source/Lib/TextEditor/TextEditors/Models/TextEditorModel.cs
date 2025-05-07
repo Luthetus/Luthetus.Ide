@@ -504,6 +504,10 @@ public partial class TextEditorModel
         }
     }
 
+	/// <summary>
+	/// Does this work with 'TextEditorComponentData.VirtualizedLineCacheSpanList'?
+	/// (it seems to but this needs to be investigated further).
+	/// </summary>
 	public void SetContent(string content)
     {
         ClearAllStatesButKeepEditHistory();

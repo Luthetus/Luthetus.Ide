@@ -40,7 +40,7 @@
      class="@_componentData._personalWrapperCssClass"
      tabindex="-1">
     
-    @if (ViewModelDisplayOptions.IncludeGutterComponent && _componentData._activeRenderBatch.ConstructorWasInvoked)
+    @if (ViewModelDisplayOptions.IncludeGutterComponent && _componentData._activeRenderBatch.ConstructorWasInvoked && _componentData.LineIndexCacheEntryMap.Count != 0)
     {
         <div class="luth_te_gutter-section"
 		      style="@_componentData._gutterWidthStyleCssString"
@@ -58,6 +58,7 @@
 		    {
 		        <div class="luth_te_gutter"
 		             style="@(_componentData.GetGutterStyleCss(virtualizedLine.TopCssStyle))">
+		             
 		            @(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].LineNumberString)
 		            
 		            @{
@@ -156,7 +157,7 @@
 		</div>
     }
 
-    @if (_componentData._activeRenderBatch.ConstructorWasInvoked)
+    @if (_componentData._activeRenderBatch.ConstructorWasInvoked && _componentData.LineIndexCacheEntryMap.Count != 0)
     {
     	<div class="luth_te_body-section"
 	 		style="@_componentData._bodyStyle">
