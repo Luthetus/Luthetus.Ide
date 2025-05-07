@@ -504,6 +504,10 @@ public partial class TextEditorModel
         }
     }
 
+	/// <summary>
+	/// Does this work with 'TextEditorComponentData.VirtualizedLineCacheSpanList'?
+	/// (it seems to but this needs to be investigated further).
+	/// </summary>
 	public void SetContent(string content)
     {
         ClearAllStatesButKeepEditHistory();
@@ -1316,7 +1320,9 @@ public partial class TextEditorModel
         	__TextEditorViewModelLiason.InsertRepositionInlineUiList(
         		initialCursorPositionIndex,
         		lineEndingsChangedValueBuilder.Length,
-        		ViewModelKeyList);
+        		ViewModelKeyList,
+        		initialCursorLineIndex,
+        		lineEndPositionWasAdded: lineEndPositionLazyInsertRange.index != int.MinValue);
         }
 
         // Add in any new metadata
@@ -1757,7 +1763,9 @@ public partial class TextEditorModel
         	__TextEditorViewModelLiason.DeleteRepositionInlineUiList(
         		positionIndex,
         		positionIndex + charCount,
-        		ViewModelKeyList);
+        		ViewModelKeyList,
+        		initialLineIndex,
+        		lineEndPositionLazyRemoveRange.index is not null);
         }
 
 		// Delete metadata
