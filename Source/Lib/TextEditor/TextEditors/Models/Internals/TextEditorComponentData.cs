@@ -311,44 +311,49 @@ public sealed class TextEditorComponentData
 			
 				var lastLineIndex = collapsePoint.EndExclusiveLineIndex - 1;
 				
-				var lastLineInformation = _activeRenderBatch.Model.GetLineInformation(lastLineIndex);
-				
-				var appendToLineInformation = _activeRenderBatch.Model.GetLineInformation(collapsePoint.AppendToLineIndex);
-				
-				// Tab key column offset
-		        {
-		            var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
-		                collapsePoint.AppendToLineIndex,
-		                appendToLineInformation.LastValidColumnIndex);
-		
-		            // 1 of the character width is already accounted for
-		
-		            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-		
-		            leftInPixels += extraWidthPerTabKey *
-		                tabsOnSameLineBeforeCursor *
-		                measurements.CharacterWidth;
-		        }
-		        
-		        // +3 for the 3 dots: '[...]'
-		        leftInPixels += measurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
-		        
-		        if (LineIndexCacheEntryMap.ContainsKey(collapsePoint.AppendToLineIndex))
-		        {
-		        	topInPixelsInvariantCulture = LineIndexCacheEntryMap[collapsePoint.AppendToLineIndex].TopCssValue;
-		        }
-		        else
-		        {
-		        	if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
-		        	{
-		        		var firstEntry = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First();
-		        		topInPixelsInvariantCulture = LineIndexCacheEntryMap[firstEntry.LineIndex].TopCssValue;
-		        	}
-		        	else
-		        	{
-		        		topInPixelsInvariantCulture = 0.ToCssValue();
-		        	}
-		        }
+				if (lastLineIndex == _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex)
+				{
+					var lastLineInformation = _activeRenderBatch.Model.GetLineInformation(lastLineIndex);
+					
+					var appendToLineInformation = _activeRenderBatch.Model.GetLineInformation(collapsePoint.AppendToLineIndex);
+					
+					// Tab key column offset
+			        {
+			            var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+			                collapsePoint.AppendToLineIndex,
+			                appendToLineInformation.LastValidColumnIndex);
+			
+			            // 1 of the character width is already accounted for
+			
+			            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+			
+			            leftInPixels += extraWidthPerTabKey *
+			                tabsOnSameLineBeforeCursor *
+			                measurements.CharacterWidth;
+			        }
+			        
+			        // +3 for the 3 dots: '[...]'
+			        leftInPixels += measurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
+			        
+			        if (LineIndexCacheEntryMap.ContainsKey(collapsePoint.AppendToLineIndex))
+			        {
+			        	topInPixelsInvariantCulture = LineIndexCacheEntryMap[collapsePoint.AppendToLineIndex].TopCssValue;
+			        }
+			        else
+			        {
+			        	if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+			        	{
+			        		var firstEntry = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.First();
+			        		topInPixelsInvariantCulture = LineIndexCacheEntryMap[firstEntry.LineIndex].TopCssValue;
+			        	}
+			        	else
+			        	{
+			        		topInPixelsInvariantCulture = 0.ToCssValue();
+			        	}
+			        }
+			        
+			        break;
+				}
 			}
 		}
 
