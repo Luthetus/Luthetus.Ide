@@ -1167,6 +1167,9 @@ public sealed class TextEditorComponentData
     	{
     		var lineAndColumnIndices = _activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
     		
+    		if (!LineIndexCacheEntryMap.ContainsKey(lineAndColumnIndices.lineIndex))
+    			continue;
+    		
     		var leftInPixels = lineAndColumnIndices.columnIndex * _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
     		
     		// Tab key column offset
