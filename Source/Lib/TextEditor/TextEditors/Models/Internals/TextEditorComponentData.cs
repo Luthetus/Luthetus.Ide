@@ -1226,6 +1226,38 @@ public sealed class TextEditorComponentData
 	    			cursorIsOnHiddenLine = true;
 	    	}
     	}
+    	
+    	if (!handledCursor)
+    	{
+    		LineIndexCacheUsageHashSet.Add(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex);
+    		
+    		if (LineIndexCacheEntryMap.ContainsKey(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex))
+	    	{
+	    		var cacheEntry = LineIndexCacheEntryMap[_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex];
+	    		
+	    		if (hiddenLineCount != cacheEntry.HiddenLineCount)
+	            {
+	            	cacheEntry.TopCssValue = (_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex* _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight)
+	            		.ToCssValue();
+	            		
+	            	cacheEntry.HiddenLineCount = 0;
+	            	
+	            	LineIndexCacheEntryMap[_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex] = cacheEntry;
+	            }
+	    	}
+	    	else
+	    	{
+	    		LineIndexKeyList.Add(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex);
+	    		
+	    		LineIndexCacheEntryMap.Add(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex, new TextEditorLineIndexCacheEntry(
+	    			topCssValue: (_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex * _activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
+					lineNumberString: (_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex + 1).ToString(),
+					hiddenLineCount: 0));
+	    	}
+	    		
+    		if (_activeRenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex))
+	    		cursorIsOnHiddenLine = true;
+    	}
     }
     
     /// <summary>If the scroll left changes you have to discard the virtualized line cache.</summary>
