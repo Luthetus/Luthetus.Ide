@@ -190,54 +190,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
 				
-			var resource = extendedCompilerService.GetResource(modelModifier.ResourceUri);
-			
-			var virtualizedCollapsePointList = new List<CollapsePoint>();
-			
-			if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit &&
-				viewModelModifier.VirtualizationResult.EntryList.Any())
-			{
-	            var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.First().LineIndex;
-	            var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.Last().LineIndex;
-	            
-	            var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
-	            var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
-			
-				if (extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
-				{
-					foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
-					{
-						Aaa(
-					    	viewModelModifier,
-					    	modelModifier,
-					    	extendedCompilationUnit,
-					    	virtualizedCollapsePointList,
-					    	entry.TypeIdentifierToken,
-					    	lowerLine,
-					    	upperLine,
-					    	entry.CloseCodeBlockTextSpan);
-					}
-				}
-				
-				if (extendedCompilationUnit.ScopeFunctionDefinitionMap is not null)
-				{
-					foreach (var entry in extendedCompilationUnit.ScopeFunctionDefinitionMap.Values)
-					{
-						Aaa(
-					    	viewModelModifier,
-					    	modelModifier,
-					    	extendedCompilationUnit,
-					    	virtualizedCollapsePointList,
-					    	entry.FunctionIdentifierToken,
-					    	lowerLine,
-					    	upperLine,
-					    	entry.CloseCodeBlockTextSpan);
-					}
-				}
-			}
-			
-			viewModelModifier.VirtualizedCollapsePointList = virtualizedCollapsePointList;
-				
 			if (_codeBlockOwner != targetScope.CodeBlockOwner)
 			{
 				_codeBlockOwner = targetScope.CodeBlockOwner;
@@ -246,63 +198,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			
 			await InvokeAsync(StateHasChanged);
     	});
-    }
-    
-    private void Aaa(
-    	TextEditorViewModel viewModelModifier,
-    	TextEditorModel modelModifier,
-    	IExtendedCompilationUnit extendedCompilationUnit,
-    	List<CollapsePoint> virtualizedCollapsePointList,
-    	SyntaxToken token,
-    	LineInformation lowerLine,
-    	LineInformation upperLine,
-    	TextEditorTextSpan closeCodeBlockTextSpan)
-    {
-    	if (token.TextSpan.ResourceUri != modelModifier.ResourceUri)
-    		return;
-    
-    	if (lowerLine.Position_StartInclusiveIndex <= token.TextSpan.StartInclusiveIndex &&
-    	    upperLine.Position_EndExclusiveIndex >= token.TextSpan.EndExclusiveIndex)
-    	{
-    		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-    			token.TextSpan.StartInclusiveIndex);
-    		
-    		var indexPreviousChevron = viewModelModifier.AllCollapsePointList.FindIndex(
-    			x => x.AppendToLineIndex == lineAndColumnIndices.lineIndex);
-    			
-    		bool isCollapsed;
-    		bool shouldAddToAll = false;
-    			
-			if (indexPreviousChevron != -1)
-			{
-				var previousChevron = viewModelModifier.AllCollapsePointList[indexPreviousChevron];
-				isCollapsed = viewModelModifier.AllCollapsePointList[indexPreviousChevron].IsCollapsed;
-				
-				if (previousChevron.Identifier != token.TextSpan.GetText())
-				{
-					viewModelModifier.AllCollapsePointList.RemoveAt(indexPreviousChevron);
-					shouldAddToAll = true;
-				}
-			}
-			else
-			{
-				isCollapsed = false;
-				shouldAddToAll = true;
-			}
-    		
-    		var closeCodeBlockLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-    			closeCodeBlockTextSpan.StartInclusiveIndex);
-    		
-    		var newCollapsePoint = new CollapsePoint(
-    			lineAndColumnIndices.lineIndex,
-    			isCollapsed,
-    			token.TextSpan.GetText(),
-    			closeCodeBlockLineAndColumnIndices.lineIndex + 1);
-    		
-    		virtualizedCollapsePointList.Add(newCollapsePoint);
-			if (shouldAddToAll)
-				viewModelModifier.AllCollapsePointList.Add(newCollapsePoint);
-    	}
     }
 
 	public void Dispose()
