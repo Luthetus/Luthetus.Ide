@@ -252,17 +252,40 @@ public sealed class TextEditorComponentData
         return _uiStringBuilder.ToString();
     }
     
-    public string GetGutterStyleCssImaginary(int index)
+    public string GetGutterStyleCssImaginary()
     {
-    	_uiStringBuilder.Clear();
-    
-        var measurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
-
-        var topInPixelsInvariantCulture = (index * measurements.LineHeight).ToCssValue();
-        _uiStringBuilder.Append("top: ");
-        _uiStringBuilder.Append(topInPixelsInvariantCulture);
-        _uiStringBuilder.Append("px;");
-
+    	int lastIndex;
+					
+		if (_activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+		{
+			lastIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+		}
+		else
+		{
+			lastIndex = -1;
+		}
+		
+		_uiStringBuilder.Clear();
+		
+		if (lastIndex == -1)
+		{
+			int topValue = 0;
+	        _uiStringBuilder.Append("top: ");
+	        _uiStringBuilder.Append(topValue);
+	        _uiStringBuilder.Append("px;");
+		}
+    	else
+    	{
+    		var measurements = _activeRenderBatch.ViewModel.CharAndLineMeasurements;
+    		
+    		var lastLineCacheEntry = LineIndexCacheEntryMap[lastIndex];
+	
+	        var topInPixelsInvariantCulture = ((lastIndex + 1 - lastLineCacheEntry.HiddenLineCount) * measurements.LineHeight).ToCssValue();
+	        _uiStringBuilder.Append("top: ");
+	        _uiStringBuilder.Append(topInPixelsInvariantCulture);
+	        _uiStringBuilder.Append("px;");
+    	}
+    	
         _uiStringBuilder.Append(_gutterHeightWidthPaddingStyleCssString);
 
         return _uiStringBuilder.ToString();
@@ -1183,10 +1206,10 @@ public sealed class TextEditorComponentData
     	{
     		int lineIndex = _activeRenderBatch.ViewModel.VirtualizationResult.EntryList[i].LineIndex;
     		
-    		if (lineIndex >_activeRenderBatch.ViewModel.PrimaryCursor.LineIndex && !handledCursor)
+    		if (lineIndex >= _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex && !handledCursor)
     		{
-    			isHandlingCursor = true;
-    			lineIndex = _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex;
+    		 	isHandlingCursor = true;
+    		 	lineIndex = _activeRenderBatch.ViewModel.PrimaryCursor.LineIndex;
 			}
     		
     		for (; checkHiddenLineIndex < lineIndex; checkHiddenLineIndex++)
@@ -1308,6 +1331,8 @@ public sealed class TextEditorComponentData
 	    VisualizationLineCacheIsInvalid = false;
 	    VirtualizedLineLineIndexWithModificationList.Clear();
     }
+    
+    private int _counter;
     
     public void CreateUi()
     {

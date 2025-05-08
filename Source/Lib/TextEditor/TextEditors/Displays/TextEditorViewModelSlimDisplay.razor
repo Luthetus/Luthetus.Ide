@@ -135,22 +135,9 @@
 		                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 		            
 		            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
-		
-					int lastIndex;
-					
-					if (_componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
-					{
-						lastIndex = _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
-					}
-					else
-					{
-						lastIndex = -1;
-					}
-		
-		            var imaginaryNextIndex = lastIndex + 1 - _componentData._activeRenderBatch.ViewModel.VirtualizationResult.CollapsedLineCount;
 		            
 		            <div class="luth_te_gutter"
-		                 style="@(_componentData.GetGutterStyleCssImaginary(imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
+		                 style="@(_componentData.GetGutterStyleCssImaginary()) height: @(remainingHeightToFillInvariantCulture)px;">
 		            </div>
 		        }
 		    }
