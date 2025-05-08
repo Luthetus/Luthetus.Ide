@@ -1167,7 +1167,23 @@ public sealed class TextEditorComponentData
     	{
     		var lineAndColumnIndices = _activeRenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
     		
-    		var leftCssValue = (lineAndColumnIndices.columnIndex * _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth).ToCssValue();
+    		var leftInPixels = lineAndColumnIndices.columnIndex * _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+    		
+    		// Tab key column offset
+    		{
+	    		var tabsOnSameLineBeforeCursor = _activeRenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+				    lineAndColumnIndices.lineIndex,
+				    lineAndColumnIndices.columnIndex);
+				
+				// 1 of the character width is already accounted for
+				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+				
+				leftInPixels += extraWidthPerTabKey *
+				    tabsOnSameLineBeforeCursor *
+				    _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+			}
+    		
+    		var leftCssValue = leftInPixels.ToCssValue();
     		
     		var topCssValue = LineIndexCacheEntryMap[lineAndColumnIndices.lineIndex].TopCssValue;
 
