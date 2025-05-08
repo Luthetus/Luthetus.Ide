@@ -38,6 +38,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     private readonly Dictionary<ResourceUri, CSharpResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
+    private readonly HashSet<string> _collapsePointUsedIdentifierHashSet = new();
     
     // Service dependencies
     private readonly ITextEditorService _textEditorService;
@@ -1060,6 +1061,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     private void CreateCollapsePoints(TextEditorEditContext editContext, TextEditorModel modelModifier)
     {
+    	_collapsePointUsedIdentifierHashSet.Clear();
+    
     	var resource = GetResource(modelModifier.ResourceUri);
 			
 		var collapsePointList = new List<CollapsePoint>();
@@ -1071,7 +1074,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
 				{
 					if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri)
-			    		continue;
+		    			continue;
+			    		
+			    	if (!_collapsePointUsedIdentifierHashSet.Add(entry.TypeIdentifierToken.TextSpan.GetText()))
+		    			continue;
 					
 					collapsePointList.Add(new CollapsePoint(
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.TypeIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
@@ -1087,6 +1093,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				{
 					if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri)
 			    		continue;
+			    		
+					if (!_collapsePointUsedIdentifierHashSet.Add(entry.FunctionIdentifierToken.TextSpan.GetText()))
+		    			continue;
 					
 					collapsePointList.Add(new CollapsePoint(
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.FunctionIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
