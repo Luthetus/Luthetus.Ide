@@ -954,13 +954,14 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				if (viewModel.HiddenLineIndexHashSet.Contains(i))
 				{
 					hiddenCount++;
+					verticalStartingIndex++;
 				}
 			}
 			
 			/*Console.WriteLine($"\tindexCollapsePoint: {indexCollapsePoint}");
 			Console.WriteLine($"\thiddenCount: {hiddenCount}");*/
 			
-			verticalStartingIndex += hiddenCount;
+			//verticalStartingIndex += hiddenCount;
 			
 			verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 			

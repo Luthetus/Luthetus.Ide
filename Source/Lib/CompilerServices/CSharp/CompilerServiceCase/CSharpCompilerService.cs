@@ -643,6 +643,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
 					editContext,
 					modelModifier);
+					
+				CreateCollapsePoints(
+					editContext,
+					modelModifier);
 			}
 
 			ResourceParsed?.Invoke();
@@ -1052,5 +1056,76 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	        }));
 	        
 	    return Task.CompletedTask;
+    }
+    
+    private void CreateCollapsePoints(TextEditorEditContext editContext, TextEditorModel modelModifier)
+    {
+    	var resource = GetResource(modelModifier.ResourceUri);
+			
+		var collapsePointList = new List<CollapsePoint>();
+		
+		if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
+		{
+			if (extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
+			{
+				foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
+				{
+					if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri)
+			    		continue;
+					
+					collapsePointList.Add(new CollapsePoint(
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.TypeIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
+						false,
+						entry.TypeIdentifierToken.TextSpan.GetText(),
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
+				}
+			}
+			
+			if (extendedCompilationUnit.ScopeFunctionDefinitionMap is not null)
+			{
+				foreach (var entry in extendedCompilationUnit.ScopeFunctionDefinitionMap.Values)
+				{
+					if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri)
+			    		continue;
+					
+					collapsePointList.Add(new CollapsePoint(
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.FunctionIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
+						false,
+						entry.FunctionIdentifierToken.TextSpan.GetText(),
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
+				}
+			}
+			
+			foreach (var viewModelKey in modelModifier.ViewModelKeyList)
+			{
+				if (modelModifier.ViewModelKeyList.Count > 1)
+					collapsePointList = new(collapsePointList);
+				
+				var viewModel = editContext.GetViewModelModifier(viewModelKey);
+			
+				for (int i = 0; i < collapsePointList.Count; i++)
+				{
+					var collapsePoint = collapsePointList[i];
+					
+					var indexPreviousCollapsePoint = viewModel.AllCollapsePointList.FindIndex(
+						x => x.Identifier == collapsePoint.Identifier);
+						
+					bool isCollapsed;
+						
+					if (indexPreviousCollapsePoint != -1)
+					{
+						if (viewModel.AllCollapsePointList[indexPreviousCollapsePoint].IsCollapsed)
+						{
+							collapsePoint.IsCollapsed = true;
+							collapsePointList[i] = collapsePoint;
+						}
+					}
+				}
+				
+				viewModel.AllCollapsePointList = collapsePointList;
+				
+				viewModel.ApplyCollapsePointState(editContext);
+			}
+		}
     }
 }

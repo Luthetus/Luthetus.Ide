@@ -78,7 +78,24 @@ public struct OnMouseDown
 		{
 			var lineInformation = modelModifier.GetLineInformation(lineAndColumnIndex.LineIndex);
 			
-			if (lineAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+			var lastValidColumnLeft = lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth;
+			
+			// Tab key column offset
+	        {
+	            var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
+	                lineAndColumnIndex.LineIndex,
+	                lineInformation.LastValidColumnIndex);
+	
+	            // 1 of the character width is already accounted for
+	
+	            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+	
+	            lastValidColumnLeft += extraWidthPerTabKey *
+	                tabsOnSameLineBeforeCursor *
+	                viewModel.CharAndLineMeasurements.CharacterWidth;
+	        }
+			
+			if (lineAndColumnIndex.PositionX > lastValidColumnLeft + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 			{
 				// Check for collision with non-tab inline UI
 				foreach (var collapsePoint in viewModel.AllCollapsePointList)
@@ -89,9 +106,9 @@ public struct OnMouseDown
 						continue;
 				    }
 				
-					if (lineAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					if (lineAndColumnIndex.PositionX > lastValidColumnLeft + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
-						if (lineAndColumnIndex.PositionX < (lineInformation.LastValidColumnIndex + 3) * viewModel.CharAndLineMeasurements.CharacterWidth)
+						if (lineAndColumnIndex.PositionX < lastValidColumnLeft + 3 * viewModel.CharAndLineMeasurements.CharacterWidth)
 						{
 							var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel, primaryCursorModifier);
 							if (shouldGotoFinalize)
