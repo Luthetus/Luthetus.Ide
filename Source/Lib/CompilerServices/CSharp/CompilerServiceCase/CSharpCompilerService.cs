@@ -1071,11 +1071,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
 				{
 					if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri)
-			    		return;
+			    		continue;
 					
 					collapsePointList.Add(new CollapsePoint(
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.TypeIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
-						true,
+						false,
 						entry.TypeIdentifierToken.TextSpan.GetText(),
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
 				}
@@ -1086,11 +1086,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				foreach (var entry in extendedCompilationUnit.ScopeFunctionDefinitionMap.Values)
 				{
 					if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri)
-			    		return;
+			    		continue;
 					
 					collapsePointList.Add(new CollapsePoint(
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.FunctionIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
-						true,
+						false,
 						entry.FunctionIdentifierToken.TextSpan.GetText(),
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
 				}

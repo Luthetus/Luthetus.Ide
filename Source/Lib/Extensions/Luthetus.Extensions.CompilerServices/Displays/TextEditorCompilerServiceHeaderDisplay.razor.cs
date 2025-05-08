@@ -189,6 +189,26 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				TextEditorDevToolsPresentationFacts.PresentationKey,
 				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
+			
+			if (viewModelModifier.VirtualizationResult.EntryList.Any())
+			{
+				var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.First().LineIndex;
+	            var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.Last().LineIndex;
+	            
+	            var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
+	            var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
+				
+				viewModelModifier.VirtualizedCollapsePointList = new();
+				
+				foreach (var collapsePoint in viewModelModifier.AllCollapsePointList)
+				{
+					if (lowerLine.Index <= collapsePoint.AppendToLineIndex &&
+		    	    	upperLine.Index >= collapsePoint.AppendToLineIndex)
+		    	    {
+		    	    	viewModelModifier.VirtualizedCollapsePointList.Add(collapsePoint);
+		    	    }
+				}
+			}
 				
 			if (_codeBlockOwner != targetScope.CodeBlockOwner)
 			{
