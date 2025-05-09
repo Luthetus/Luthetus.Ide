@@ -107,7 +107,6 @@ public sealed class TextEditorViewModel : IDisposable
 	    FindOverlayValueExternallyChangedMarker = other.FindOverlayValueExternallyChangedMarker;
 	    ShouldSetFocusAfterNextRender = other.ShouldSetFocusAfterNextRender;
 	    ShouldRevealCursor = other.ShouldRevealCursor;
-	    CursorIsIntersecting = other.CursorIsIntersecting;
 	    DynamicViewModelAdapter = other.DynamicViewModelAdapter;
 		AllCollapsePointList = other.AllCollapsePointList;
 		VirtualizedCollapsePointList = other.VirtualizedCollapsePointList;
@@ -241,10 +240,6 @@ public sealed class TextEditorViewModel : IDisposable
     /// </summary>
     public bool ShouldSetFocusAfterNextRender { get; set; }
     public bool ShouldRevealCursor { get; set; }
-    /// <summary>
-    /// Relates to whether the cursor is within the viewable area of the Text Editor on the UI
-    /// </summary>
-    public bool CursorIsIntersecting { get; set; }
     /// <summary>
     /// This property contains all data, and logic, necessary to render a text editor from within a dialog,
     /// a panel tab, or a text editor group tab.
