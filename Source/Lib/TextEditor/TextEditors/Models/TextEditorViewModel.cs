@@ -41,8 +41,7 @@ public sealed class TextEditorViewModel : IDisposable
         VirtualizationGrid virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		ScrollbarDimensions scrollbarDimensions,
-        bool displayCommandBar,
-        Category category)
+		Category category)
     {
         ViewModelKey = viewModelKey;
         ResourceUri = resourceUri;
@@ -51,13 +50,11 @@ public sealed class TextEditorViewModel : IDisposable
 		TextEditorDimensions = textEditorDimensions;
 		ScrollbarDimensions = scrollbarDimensions;
         CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
-        ShowCommandBar = displayCommandBar;
         Category = category;
         
         FirstPresentationLayerKeysList = new();
         LastPresentationLayerKeysList = new();
         
-        CommandBarValue = string.Empty;
         FindOverlayValue = string.Empty;
 
         PrimaryCursor = new TextEditorCursor(true);
@@ -91,7 +88,6 @@ public sealed class TextEditorViewModel : IDisposable
 		TextEditorDimensions = other.TextEditorDimensions;
 		ScrollbarDimensions = other.ScrollbarDimensions;
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
-	    ShowCommandBar = other.ShowCommandBar;
 	    MenuKind = other.MenuKind;
 	    TooltipViewModel = other.TooltipViewModel;
 	    Category = other.Category;
@@ -102,7 +98,6 @@ public sealed class TextEditorViewModel : IDisposable
 	    GetTabDisplayNameFunc = other.GetTabDisplayNameFunc;
 	    FirstPresentationLayerKeysList = other.FirstPresentationLayerKeysList;
 	    LastPresentationLayerKeysList = other.LastPresentationLayerKeysList;
-	    CommandBarValue = other.CommandBarValue;
 	    FindOverlayValue = other.FindOverlayValue;
 	    FindOverlayValueExternallyChangedMarker = other.FindOverlayValueExternallyChangedMarker;
 	    ShouldSetFocusAfterNextRender = other.ShouldSetFocusAfterNextRender;
@@ -158,10 +153,6 @@ public sealed class TextEditorViewModel : IDisposable
 	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
 	/// </summary>
     public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
-    /// <summary>
-    /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
-    /// </summary>
-    public bool ShowCommandBar { get; set; }
 	/// <summary>
 	/// This property determines the menu that is shown in the text editor.
 	///
@@ -203,12 +194,6 @@ public sealed class TextEditorViewModel : IDisposable
     /// not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysList"/>.
     /// </summary>
     public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; set; }
-    /// <summary>
-    /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
-    /// In the command line program "Vim" one can hit 'colon' to bring up a command bar.
-    /// This property is what the input element binds to
-    /// </summary>
-    public string CommandBarValue { get; set; }
     /// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
     /// This property is what the find overlay input element binds to.

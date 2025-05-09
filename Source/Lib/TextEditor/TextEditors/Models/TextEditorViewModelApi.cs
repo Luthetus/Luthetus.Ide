@@ -111,7 +111,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
 			new ScrollbarDimensions(0, 0, 0, 0, 0),
-			false,
 			category);
 			
 		_textEditorService.RegisterViewModel(editContext, viewModel);

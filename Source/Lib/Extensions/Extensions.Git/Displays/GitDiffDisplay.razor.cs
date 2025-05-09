@@ -157,7 +157,6 @@ public partial class GitDiffDisplay : ComponentBase
 	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
-	            false,
 	            category);
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
@@ -211,7 +210,6 @@ public partial class GitDiffDisplay : ComponentBase
 	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
-	            false,
 	            category);
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>

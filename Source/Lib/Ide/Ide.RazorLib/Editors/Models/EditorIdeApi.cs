@@ -223,7 +223,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
             VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
 			new ScrollbarDimensions(0, 0, 0, 0, 0),
-            false,
             registerViewModelArgs.Category);
 
         var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
