@@ -8,6 +8,6 @@ namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 /// </summary>
 public record TextEditorPresentationModelCalculation(string ContentAtRequest)
 {
-    public List<TextEditorTextModification> TextModificationsSinceRequestList { get; set; } = new();
-    public IReadOnlyList<TextEditorTextSpan> TextSpanList { get; set; } = Array.Empty<TextEditorTextSpan>();
+    public List<TextEditorTextModification> TextModificationsSinceRequestList = new();
+    public IReadOnlyList<TextEditorTextSpan> TextSpanList = Array.Empty<TextEditorTextSpan>();
 }

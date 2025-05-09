@@ -9,12 +9,12 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public sealed class TextEditorModelApi : ITextEditorModelApi
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public TextEditorModelApi(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IBackgroundTaskService backgroundTaskService)
     {

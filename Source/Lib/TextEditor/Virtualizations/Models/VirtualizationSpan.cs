@@ -25,6 +25,6 @@ public struct VirtualizationSpan
 		MarkupStringText = new MarkupString(text);
 	}
 	
-	public string CssClass { get; }
-	public MarkupString MarkupStringText { get; }
+	public string CssClass;
+	public MarkupString MarkupStringText;
 }

@@ -28,7 +28,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
 
     public DynamicViewModelAdapterTextEditor(
         Key<TextEditorViewModel> viewModelKey,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IPanelService panelService,
         IDialogService dialogService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
@@ -56,7 +56,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
         DialogFocusPointHtmlElementId = $"luth_dialog-focus-point_{DynamicViewModelKey.Guid}";
     }
 
-    public ITextEditorService TextEditorService { get; }
+    public TextEditorService TextEditorService { get; }
     public IPanelService PanelService { get; }
     public IDialogService DialogService { get; }
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; }

@@ -15,13 +15,13 @@ public class TextEditorCursorModifier
         Key = cursor.Key;
     }
 
-    public int LineIndex { get; set; }
-    public int ColumnIndex {get; set; }
-    public int PreferredColumnIndex {get; set; }
-    public bool IsPrimaryCursor {get; set; }
-    public int SelectionAnchorPositionIndex { get; set; }
-    public int SelectionEndingPositionIndex { get; set; }
-    public Key<TextEditorCursor> Key { get; set; }
+    public int LineIndex;
+    public int ColumnIndex;
+    public int PreferredColumnIndex;
+    public bool IsPrimaryCursor;
+    public int SelectionAnchorPositionIndex;
+    public int SelectionEndingPositionIndex;
+    public Key<TextEditorCursor> Key;
 
     public TextEditorCursor ToCursor()
     {

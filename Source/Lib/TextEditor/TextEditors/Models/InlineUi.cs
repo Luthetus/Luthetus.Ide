@@ -11,8 +11,8 @@ public struct InlineUi
 		InlineUiKind = inlineUiKind;
 	}
 
-    public int PositionIndex { get; private set; }
-    public InlineUiKind InlineUiKind { get; }
+    public int PositionIndex;
+    public InlineUiKind InlineUiKind;
     
     public InlineUi WithIncrementPositionIndex(int amount)
     {

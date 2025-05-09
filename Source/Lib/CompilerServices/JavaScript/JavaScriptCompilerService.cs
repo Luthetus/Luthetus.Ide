@@ -18,12 +18,12 @@ namespace Luthetus.CompilerServices.JavaScript;
 
 public sealed class JavaScriptCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, JavaScriptResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public JavaScriptCompilerService(ITextEditorService textEditorService)
+	public JavaScriptCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

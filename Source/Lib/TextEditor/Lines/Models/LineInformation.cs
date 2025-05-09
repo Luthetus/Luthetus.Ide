@@ -6,13 +6,28 @@ namespace Luthetus.TextEditor.RazorLib.Lines.Models;
 /// <param name="UpperLineEnd">
 /// The larger positionIndex.
 /// </param>
-public record struct LineInformation(
-    int Index,
-    int Position_StartInclusiveIndex,
-    int Position_EndExclusiveIndex,
-    LineEnd LowerLineEnd,
-    LineEnd UpperLineEnd)
+public struct LineInformation
 {
+	public LineInformation(
+		int index,
+	    int position_StartInclusiveIndex,
+	    int position_EndExclusiveIndex,
+	    LineEnd lowerLineEnd,
+	    LineEnd upperLineEnd)
+	{
+		Index = index;
+		Position_StartInclusiveIndex = position_StartInclusiveIndex;
+		Position_EndExclusiveIndex = position_EndExclusiveIndex;
+		LowerLineEnd = lowerLineEnd;
+		UpperLineEnd = upperLineEnd;
+	}
+	
+	public int Index;
+    public int Position_StartInclusiveIndex;
+    public int Position_EndExclusiveIndex;
+    public LineEnd LowerLineEnd;
+    public LineEnd UpperLineEnd;
+
     /// <summary>
     /// Given: "Abc\r\n", the last valid column index is between "Abc" and "\r\n".
     ///         i.e. column index of 3.<br/>

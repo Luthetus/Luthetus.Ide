@@ -23,7 +23,18 @@ namespace Luthetus.TextEditor.RazorLib.Cursors.Models;
 /// If <see cref="AnchorPositionIndex" /> is -1 then
 /// no selection is active.
 /// </summary>
-public record struct TextEditorSelection(int AnchorPositionIndex, int EndingPositionIndex)
+public struct TextEditorSelection
 {
+	public TextEditorSelection(
+		int anchorPositionIndex,
+	    int endingPositionIndex)
+	{
+		AnchorPositionIndex = anchorPositionIndex;
+		EndingPositionIndex = endingPositionIndex;
+	}
+
     public static readonly TextEditorSelection Empty = new TextEditorSelection(-1, 0);
+    
+    public int AnchorPositionIndex;
+    public int EndingPositionIndex;
 }

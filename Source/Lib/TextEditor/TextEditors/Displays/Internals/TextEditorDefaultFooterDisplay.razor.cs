@@ -11,7 +11,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class TextEditorDefaultFooterDisplay : ComponentBase
 {
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }

@@ -18,12 +18,12 @@ namespace Luthetus.CompilerServices.TypeScript;
 
 public sealed class TypeScriptCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, TypeScriptResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public TypeScriptCompilerService(ITextEditorService textEditorService)
+	public TypeScriptCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

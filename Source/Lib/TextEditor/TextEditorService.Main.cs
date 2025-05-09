@@ -28,7 +28,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
-public partial class TextEditorService : ITextEditorService
+public partial class TextEditorService
 {
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IPanelService _panelService;
@@ -108,78 +108,48 @@ public partial class TextEditorService : ITextEditorService
 
     public string ThemeCssClassString { get; set; }
 
-    public ITextEditorModelApi ModelApi { get; }
-    public ITextEditorViewModelApi ViewModelApi { get; }
-    public ITextEditorGroupApi GroupApi { get; }
-    public ITextEditorDiffApi DiffApi { get; }
-    public ITextEditorOptionsApi OptionsApi { get; }
+    public ITextEditorModelApi ModelApi;
+    public ITextEditorViewModelApi ViewModelApi;
+    public ITextEditorGroupApi GroupApi;
+    public ITextEditorDiffApi DiffApi;
+    public ITextEditorOptionsApi OptionsApi;
     
-    public TextEditorState TextEditorState { get; }
+    public TextEditorState TextEditorState;
     
-    public TextEditorWorkerUi WorkerUi { get; }
-	public TextEditorWorkerArbitrary WorkerArbitrary { get; }
+    public TextEditorWorkerUi WorkerUi;
+	public TextEditorWorkerArbitrary WorkerArbitrary;
     
     public IBackgroundTaskService BackgroundTaskService => _backgroundTaskService;
-    
-    /// <summary>
-	/// Do not touch this property, it is used for the VirtualizationGrid.
-	/// </summary>
-	public StringBuilder __StringBuilder { get; } = new StringBuilder();
+
+	public StringBuilder __StringBuilder = new StringBuilder();
 	
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-	public TextEditorCursorModifier __CursorModifier { get; } = new(new TextEditorCursor(isPrimaryCursor: true));
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-	public bool __IsAvailableCursorModifier { get; set; } = true;
+	public TextEditorCursorModifier __CursorModifier = new(new TextEditorCursor(isPrimaryCursor: true));
+	public bool __IsAvailableCursorModifier = true;
 	
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache { get; } = new();
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor> __CursorModifierBagCache { get; } = new();
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> __DiffModelCache { get; } = new();
- 
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-	public List<TextEditorModel> __ModelList { get; } = new();   
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public List<TextEditorViewModel?> __ViewModelList { get; } = new();
+    public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache = new();
+    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor> __CursorModifierBagCache = new();
+    public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> __DiffModelCache = new();
+
+	public List<TextEditorModel> __modelList = new();
+	
+    public List<TextEditorViewModel> __viewModelList = new();
     
-    /// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
-    public List<LineEnd> __LocalLineEndList { get; } = new();
-    /// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
-    public List<int> __LocalTabPositionList { get; } = new();
-    /// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
-    public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
+    public List<LineEnd> __LocalLineEndList = new();
+    public List<int> __LocalTabPositionList = new();
+    
+    public TextEditorViewModelLiason __TextEditorViewModelLiason;
     
     public event Action? TextEditorStateChanged;
 
 	public async ValueTask FinalizePost(TextEditorEditContext editContext)
 	{
-        foreach (var modelModifier in __ModelList)
+        for (int i = 0; i < __modelList.Count; i++)
         {
-            foreach (var viewModelKey in modelModifier.ViewModelKeyList)
+        	var modelModifier = __modelList[i];
+            for (int j = 0; j < modelModifier.ViewModelKeyList.Count; j++)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
-                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(modelModifier.ViewModelKeyList[j]);
 
 				if (!viewModelModifier.ShouldReloadVirtualizationResult)
 					viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
@@ -197,8 +167,10 @@ public partial class TextEditorService : ITextEditorService
             }
         }
 		
-        foreach (var viewModelModifier in __ViewModelList)
+        for (int i = 0; i < __viewModelList.Count; i++)
         {
+        	var viewModelModifier = __viewModelList[i];
+        	
         	TextEditorModel? modelModifier = null;
         	if (viewModelModifier.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
         		modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
@@ -679,8 +651,9 @@ public partial class TextEditorService : ITextEditorService
 		var inState = TextEditorState;
 
 		// Models
-		foreach (var kvpModelModifier in __ModelList)
+		for (int i = 0; i < __modelList.Count; i++)
 		{
+			var kvpModelModifier = __modelList[i];
 			var exists = inState._modelMap.TryGetValue(
 				kvpModelModifier.ResourceUri, out var inModel);
 
@@ -691,8 +664,9 @@ public partial class TextEditorService : ITextEditorService
 		}
 
 		// ViewModels
-		foreach (var kvpViewModelModifier in __ViewModelList)
+		for (int i = 0; i < __viewModelList.Count; i ++)
 		{
+			var kvpViewModelModifier = __viewModelList[i];
 			var exists = inState._viewModelMap.TryGetValue(
 				kvpViewModelModifier.ViewModelKey, out var inViewModel);
 
@@ -702,8 +676,8 @@ public partial class TextEditorService : ITextEditorService
 			inState._viewModelMap[kvpViewModelModifier.ViewModelKey] = kvpViewModelModifier;
 		}
 
-		__ModelList.Clear();
-		__ViewModelList.Clear();
+		__modelList.Clear();
+		__viewModelList.Clear();
         TextEditorStateChanged?.Invoke();
     }
 }

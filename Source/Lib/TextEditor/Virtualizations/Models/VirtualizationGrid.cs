@@ -78,45 +78,45 @@ public struct VirtualizationGrid
         VirtualTop = top;
     }
 
-    public List<VirtualizationLine> EntryList { get; init; }
-    public List<VirtualizationSpan> VirtualizationSpanList { get; init; }
+    public List<VirtualizationLine> EntryList;
+    public List<VirtualizationSpan> VirtualizationSpanList;
     
     /// <summary>
     /// Measurements are in pixels.
     ///
     /// Width (including non-rendered elements).
     /// </summary>
-    public double TotalWidth { get; init; }
+    public double TotalWidth;
     /// <summary>
     /// Measurements are in pixels
     ///
     /// Height (including non-rendered elements).
     /// </summary>
-    public double TotalHeight { get; init; }
+    public double TotalHeight;
     /// <summary>
     /// Measurements are in pixels
     ///
     /// Width (only rendered elements).
     /// </summary>
-    public double VirtualWidth { get; init; }
+    public double VirtualWidth;
     /// <summary>
     /// Measurements are in pixels
     ///
     /// Height (only rendered elements).
     /// </summary>
-    public double VirtualHeight { get; init; }
+    public double VirtualHeight;
     /// <summary>
     /// Measurements are in pixels
     ///
     /// Lowest 'left' point where a rendered element is displayed.
     /// </summary>
-    public double VirtualLeft { get; init; }
+    public double VirtualLeft;
     /// <summary>
     /// Measurements are in pixels
     ///
     /// Lowest 'top' point where a rendered element is displayed.
     /// </summary>
-    public double VirtualTop { get; init; }
+    public double VirtualTop;
 
     /// <summary>
     ///
@@ -148,7 +148,7 @@ public struct VirtualizationGrid
     /// I have not tested if referencing the properties through an implicit/explicit 'this' keyword
     /// would correctly update the List that the struct is contained in.
     /// </summary>
-    public void CreateCache(ITextEditorService textEditorService, TextEditorModel model, TextEditorViewModel viewModel)
+    public void CreateCache(TextEditorService textEditorService, TextEditorModel model, TextEditorViewModel viewModel)
     {
     	#if DEBUG
     	var startTime = Stopwatch.GetTimestamp();

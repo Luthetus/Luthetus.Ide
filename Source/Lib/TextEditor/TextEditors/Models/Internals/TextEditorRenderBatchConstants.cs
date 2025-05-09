@@ -18,9 +18,9 @@ public class TextEditorRenderBatchConstants
 		ComponentData = componentData;
 	}
 
-	public TextEditorOptions TextEditorOptions { get; }
-	public string FontFamily { get; }
-	public int FontSizeInPixels  { get; }
-	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
-	public TextEditorComponentData ComponentData { get; }
+	public TextEditorOptions TextEditorOptions;
+	public string FontFamily;
+	public int FontSizeInPixels;
+	public ViewModelDisplayOptions ViewModelDisplayOptions;
+	public TextEditorComponentData ComponentData;
 }

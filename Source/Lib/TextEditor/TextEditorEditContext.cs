@@ -8,12 +8,12 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public struct TextEditorEditContext
 {
-    public TextEditorEditContext(ITextEditorService textEditorService)
+    public TextEditorEditContext(TextEditorService textEditorService)
     {
         TextEditorService = textEditorService;
     }
 
-    public ITextEditorService TextEditorService { get; }
+    public TextEditorService TextEditorService;
 
 	/// <summary>
 	/// 'isReadOnly == true' will not allocate a new TextEditorModel as well,
@@ -28,10 +28,10 @@ public struct TextEditorEditContext
     		
     	TextEditorModel? modelModifier = null;
     		
-    	for (int i = 0; i < TextEditorService.__ModelList.Count; i++)
+    	for (int i = 0; i < TextEditorService.__modelList.Count; i++)
     	{
-    		if (TextEditorService.__ModelList[i].ResourceUri == modelResourceUri)
-    			modelModifier = TextEditorService.__ModelList[i];
+    		if (TextEditorService.__modelList[i].ResourceUri == modelResourceUri)
+    			modelModifier = TextEditorService.__modelList[i];
     	}
     	
     	if (modelModifier is null)
@@ -44,7 +44,7 @@ public struct TextEditorEditContext
     			return model;
     		
 			modelModifier = model is null ? null : new(model);
-        	TextEditorService.__ModelList.Add(modelModifier);
+        	TextEditorService.__modelList.Add(modelModifier);
     	}
 
         return modelModifier;
@@ -79,10 +79,10 @@ public struct TextEditorEditContext
     		
     	TextEditorViewModel? viewModelModifier = null;
     		
-    	for (int i = 0; i < TextEditorService.__ViewModelList.Count; i++)
+    	for (int i = 0; i < TextEditorService.__viewModelList.Count; i++)
     	{
-    		if (TextEditorService.__ViewModelList[i].ViewModelKey == viewModelKey)
-    			viewModelModifier = TextEditorService.__ViewModelList[i];
+    		if (TextEditorService.__viewModelList[i].ViewModelKey == viewModelKey)
+    			viewModelModifier = TextEditorService.__viewModelList[i];
     	}
     	
     	if (viewModelModifier is null)
@@ -95,7 +95,7 @@ public struct TextEditorEditContext
     			return viewModel;
     		
 			viewModelModifier = viewModel is null ? null : new(viewModel);
-        	TextEditorService.__ViewModelList.Add(viewModelModifier);
+        	TextEditorService.__viewModelList.Add(viewModelModifier);
     	}
 
         return viewModelModifier;

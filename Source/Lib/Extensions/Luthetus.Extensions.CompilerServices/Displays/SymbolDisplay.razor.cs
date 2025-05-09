@@ -11,7 +11,7 @@ namespace Luthetus.Extensions.CompilerServices.Displays;
 public partial class SymbolDisplay : ComponentBase
 {
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Symbol Symbol { get; set; }
@@ -78,7 +78,7 @@ public partial class SymbolDisplay : ComponentBase
 	///
 	/// The 'targetNode' is whichever node the ISymbol directly mapped to.
 	/// </summary>
-    public static ISyntaxNode? GetTargetNode(ITextEditorService textEditorService, Symbol symbolLocal)
+    public static ISyntaxNode? GetTargetNode(TextEditorService textEditorService, Symbol symbolLocal)
     {
     	try
     	{
@@ -109,7 +109,7 @@ public partial class SymbolDisplay : ComponentBase
 	///
 	/// Otherwise, ask the IBinder for the definition node:
 	/// </summary>
-    public static ISyntaxNode? GetDefinitionNode(ITextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode)
+    public static ISyntaxNode? GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode)
     {
     	try
     	{

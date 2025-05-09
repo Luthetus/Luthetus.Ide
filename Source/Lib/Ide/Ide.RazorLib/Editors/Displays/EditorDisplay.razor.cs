@@ -18,7 +18,7 @@ namespace Luthetus.Ide.RazorLib.Editors.Displays;
 public partial class EditorDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]

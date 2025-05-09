@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class CommandBarDisplay : ComponentBase
 {
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorRenderBatch RenderBatch { get; set; }

@@ -18,12 +18,12 @@ namespace Luthetus.CompilerServices.Xml;
 
 public sealed class XmlCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, XmlResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public XmlCompilerService(ITextEditorService textEditorService)
+	public XmlCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

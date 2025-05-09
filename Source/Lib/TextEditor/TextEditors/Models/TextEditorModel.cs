@@ -33,7 +33,7 @@ public partial class TextEditorModel
         string content,
         IDecorationMapper? decorationMapper,
         ICompilerService? compilerService,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
 		int partitionSize = 4_096)
     {
     	if (partitionSize < MINIMUM_PARTITION_SIZE)
@@ -238,14 +238,14 @@ public partial class TextEditorModel
     	}
     }
 
-    public List<TextEditorEdit> EditBlockList { get; set; }
-    public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; }
-    public List<LineEnd> LineEndList { get; set; }
+    public List<TextEditorEdit> EditBlockList;
+    public List<Key<TextEditorViewModel>> ViewModelKeyList;
+    public List<LineEnd> LineEndList;
     
     private bool _presentationModelListIsShallowCopy;
-    public List<TextEditorPresentationModel> PresentationModelList { get; set; }
+    public List<TextEditorPresentationModel> PresentationModelList;
     
-    public List<int> TabCharPositionIndexList { get; set; }
+    public List<int> TabCharPositionIndexList;
     
     /// <summary>
 	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
@@ -260,38 +260,38 @@ public partial class TextEditorModel
 	/// </summary>
     private TextEditorViewModelLiason __TextEditorViewModelLiason;
     
-    public LineEndKind OnlyLineEndKind { get; set; }
-    public LineEndKind LineEndKindPreference { get; private set; }
-    public ResourceUri ResourceUri { get; set; }
-    public DateTime ResourceLastWriteTime { get; set; }
-    public string FileExtension { get; set; }
-    public IDecorationMapper DecorationMapper { get; set; }
-    public ICompilerService CompilerService { get; set; }
-    public SaveFileHelper TextEditorSaveFileHelper { get; set; }
-    public int EditBlockIndex { get; set; }
-    public bool IsDirty { get; set; }
+    public LineEndKind OnlyLineEndKind;
+    public LineEndKind LineEndKindPreference;
+    public ResourceUri ResourceUri;
+    public DateTime ResourceLastWriteTime;
+    public string FileExtension;
+    public IDecorationMapper DecorationMapper;
+    public ICompilerService CompilerService;
+    public SaveFileHelper TextEditorSaveFileHelper;
+    public int EditBlockIndex;
+    public bool IsDirty;
     /// <summary>
     /// Used to allow edits of 'TextEditorEditKind.Other' to span
     /// a count of edits which is greater than the MAXIMUM_EDIT_BLOCKS.
     /// </summary>
-    public string TagDoNotRemove { get; set; }
-    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; set; }
-    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple { get; set; }
-    public int RenderStateSequence { get; set; }
+    public string TagDoNotRemove;
+    public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple;
+    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple;
+    public int RenderStateSequence;
 
-    public int PreviousLineCount { get; set; }
+    public int PreviousLineCount;
     
     /// <summary>
     /// Be sure to set this to true in order to have the override used.
     /// See 'UnsetOverrideLineEndKind'.
     /// To get this applied on the initial 'SetContent(...)' invocation, use object initialization syntax.
     /// </summary>
-    public bool UseUnsetOverride { get; set; }
+    public bool UseUnsetOverride;
     /// <summary>
     /// Be sure to set 'UseUnsetOverride' to true in order to have the override used.
     /// To get this applied on the initial 'SetContent(...)' invocation, use object initialization syntax.
     /// </summary>
-    public LineEndKind UnsetOverrideLineEndKind { get; set; } = LineEndKind.LineFeed;
+    public LineEndKind UnsetOverrideLineEndKind = LineEndKind.LineFeed;
     
     public int LineCount => LineEndList.Count;
 
@@ -299,14 +299,14 @@ public partial class TextEditorModel
     /// This property optimizes the dirty state tracking. If _wasDirty != _isDirty then track the state change.
     /// This involves writing to dependency injectable state, then triggering a re-render in the <see cref="Edits.Displays.DirtyResourceUriInteractiveIconDisplay"/>
     /// </summary>
-    public bool WasDirty { get; }
+    public bool WasDirty;
 
-    private int PartitionSize { get; }
-	
+    private int PartitionSize;
+    	
 	/// <summary>
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
 	/// </summary>
-    public bool ShouldReloadVirtualizationResult { get; set; }
+    public bool ShouldReloadVirtualizationResult;
 
     public int DocumentLength => RichCharacterList.Length;
     

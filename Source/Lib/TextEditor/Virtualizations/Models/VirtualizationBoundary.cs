@@ -6,6 +6,14 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 /// (I'm not even sure that anyone was using the null value?
 //  (back when this was nullable))
 /// </summary>
-public record struct VirtualizationBoundary(
-    double WidthInPixels,
-    double HeightInPixels);
+public struct VirtualizationBoundary
+{
+	public VirtualizationBoundary(double widthInPixels, double heightInPixels)
+	{
+		WidthInPixels = widthInPixels;
+		HeightInPixels = heightInPixels;
+	}
+
+	public double WidthInPixels;
+    public double HeightInPixels;
+}

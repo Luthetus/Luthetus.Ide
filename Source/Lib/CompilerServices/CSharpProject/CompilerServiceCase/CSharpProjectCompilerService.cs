@@ -18,12 +18,12 @@ namespace Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 
 public sealed class CSharpProjectCompilerService : ICompilerService
 {
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	
 	private readonly Dictionary<ResourceUri, CSharpProjectResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public CSharpProjectCompilerService(ITextEditorService textEditorService)
+	public CSharpProjectCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

@@ -1,6 +1,6 @@
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public class CollapsePoint
+public struct CollapsePoint
 {
 	public CollapsePoint(
 		int appendToLineIndex,
@@ -14,8 +14,8 @@ public class CollapsePoint
 		EndExclusiveLineIndex = endExclusiveLineIndex;
 	}
 
-	public int AppendToLineIndex { get; }
-	public bool IsCollapsed { get; set; }
-	public string Identifier { get; }
-	public int EndExclusiveLineIndex { get; }
+	public int AppendToLineIndex;
+	public bool IsCollapsed;
+	public string Identifier;
+	public int EndExclusiveLineIndex;
 }

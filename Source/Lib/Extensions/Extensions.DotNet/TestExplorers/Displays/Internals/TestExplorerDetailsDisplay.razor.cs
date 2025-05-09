@@ -19,7 +19,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 

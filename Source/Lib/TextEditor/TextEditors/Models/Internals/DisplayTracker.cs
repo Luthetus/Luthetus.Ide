@@ -16,12 +16,12 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 public sealed class DisplayTracker : IDisposable
 {
     private readonly object _componentLock = new();
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
 	private readonly ResourceUri _resourceUri;
     private readonly Key<TextEditorViewModel> _viewModelKey;
 
     public DisplayTracker(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {

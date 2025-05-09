@@ -21,7 +21,7 @@ public struct CursorModifierBagTextEditor
     /// <summary>
     /// The Key of the view model on which the cursors are being rendered.
     /// </summary>
-    public Key<TextEditorViewModel> ViewModelKey { get; }
-    public TextEditorCursorModifier CursorModifier { get; }
+    public Key<TextEditorViewModel> ViewModelKey;
+    public TextEditorCursorModifier CursorModifier;
     public bool ConstructorWasInvoked => CursorModifier is not null;
 }

@@ -8,11 +8,11 @@ public struct RichCharacter
 		DecorationByte = decorationByte;
 	}
 
-    public char Value { get; }
+    public char Value;
     
     /// <summary>
     /// The decoration byte is expected to change "on the fly"
     /// its solely for the UI to color the text and therefore has a setter.
     /// </summary>
-    public byte DecorationByte { get; set; }
+    public byte DecorationByte;
 }

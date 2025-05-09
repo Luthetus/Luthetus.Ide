@@ -37,7 +37,7 @@ namespace Luthetus.Ide.RazorLib.Commands;
 public class CommandFactory : ICommandFactory
 {
     private readonly IContextService _contextService;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
@@ -50,7 +50,7 @@ public class CommandFactory : ICommandFactory
 
     public CommandFactory(
     	IContextService contextService,
-		ITextEditorService textEditorService,
+		TextEditorService textEditorService,
 		ITreeViewService treeViewService,
 		IDialogService dialogService,
 		IPanelService panelService,

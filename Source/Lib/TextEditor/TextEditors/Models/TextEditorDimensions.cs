@@ -8,8 +8,42 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// <param name="Height">The unit of measurement is Pixels (px)</param>
 /// <param name="BoundingClientRectLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="BoundingClientRectTop">The unit of measurement is Pixels (px)</param>
-public record struct TextEditorDimensions(
-    double Width,
-    double Height,
-	double BoundingClientRectLeft,
-	double BoundingClientRectTop);
+public struct TextEditorDimensions
+{
+	public TextEditorDimensions(
+		double width,
+	    double height,
+		double boundingClientRectLeft,
+		double boundingClientRectTop)
+	{
+		Width = width;
+	    Height = height;
+		BoundingClientRectLeft = boundingClientRectLeft;
+		BoundingClientRectTop = boundingClientRectTop;
+	}
+
+	public double Width;
+    public double Height;
+	public double BoundingClientRectLeft;
+	public double BoundingClientRectTop;
+}
+
+public struct TextEditorDimensionsDto
+{
+	public TextEditorDimensionsDto(
+		double width,
+	    double height,
+		double boundingClientRectLeft,
+		double boundingClientRectTop)
+	{
+		Width = width;
+	    Height = height;
+		BoundingClientRectLeft = boundingClientRectLeft;
+		BoundingClientRectTop = boundingClientRectTop;
+	}
+
+	public double Width { get; set; }
+    public double Height { get; set; }
+	public double BoundingClientRectLeft { get; set; }
+	public double BoundingClientRectTop { get; set; }
+}

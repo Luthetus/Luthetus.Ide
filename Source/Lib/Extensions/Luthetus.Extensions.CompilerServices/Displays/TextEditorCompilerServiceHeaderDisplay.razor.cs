@@ -21,7 +21,7 @@ namespace Luthetus.Extensions.CompilerServices.Displays;
 public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITextEditorDependentComponent
 {
 	[Inject]
-	public ITextEditorService TextEditorService { get; set; } = null!;
+	public TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 

@@ -44,9 +44,9 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 public class TextEditorWorkerUi : IBackgroundTaskGroup
 {
 	private readonly object _workKindQueueLock = new();
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	
-	public TextEditorWorkerUi(ITextEditorService textEditorService)
+	public TextEditorWorkerUi(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

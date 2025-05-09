@@ -27,7 +27,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
     public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToList();
 
     public ConfigCompilerServiceRegistry(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IEnvironmentProvider environmentProvider,
         ITerminalService terminalService,
         IClipboardService clipboardService)

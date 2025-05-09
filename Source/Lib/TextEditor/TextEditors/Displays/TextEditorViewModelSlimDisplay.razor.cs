@@ -47,7 +47,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
-    public ITextEditorService TextEditorService { get; set; } = null!;
+    public TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     public IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
@@ -109,7 +109,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private IconDriver _iconDriver = new IconDriver(widthInPixels: 15, heightInPixels: 15);
     
-    private string ContentElementId { get; set; }
+    private string ContentElementId;
     
 	/// <summary>
 	/// Unit of measurement is pixels (px).

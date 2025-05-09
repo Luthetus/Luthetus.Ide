@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 public partial class TextEditorViewModelDisplay : ComponentBase
 {
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;

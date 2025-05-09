@@ -18,12 +18,12 @@ namespace Luthetus.CompilerServices.FSharp;
 
 public sealed class FSharpCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, FSharpResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public FSharpCompilerService(ITextEditorService textEditorService)
+	public FSharpCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

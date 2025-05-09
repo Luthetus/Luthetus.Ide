@@ -83,7 +83,7 @@ public struct SyntaxViewModel
 	public bool ShowPrefixText { get; } = false;
 	public bool ShouldTryResolveNullDefinitionNode { get; } = false;
 	
-	public Task HandleOnClick(ITextEditorService textEditorService, SyntaxKind syntaxKindExpected)
+	public Task HandleOnClick(TextEditorService textEditorService, SyntaxKind syntaxKindExpected)
 	{
 		if (DefinitionNode is null ||
 			DefinitionNode.SyntaxKind != syntaxKindExpected)

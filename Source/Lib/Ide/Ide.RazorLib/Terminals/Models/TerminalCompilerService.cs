@@ -17,13 +17,13 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public sealed class TerminalCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly ITerminalService _terminalService;
     
     private readonly Dictionary<ResourceUri, TerminalResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public TerminalCompilerService(ITextEditorService textEditorService, ITerminalService terminalService)
+	public TerminalCompilerService(TextEditorService textEditorService, ITerminalService terminalService)
 	{
 		_textEditorService = textEditorService;
 		_terminalService = terminalService;

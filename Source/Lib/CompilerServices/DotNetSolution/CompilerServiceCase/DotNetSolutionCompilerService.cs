@@ -18,12 +18,12 @@ namespace Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 
 public sealed class DotNetSolutionCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, DotNetSolutionResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public DotNetSolutionCompilerService(ITextEditorService textEditorService)
+	public DotNetSolutionCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

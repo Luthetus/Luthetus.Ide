@@ -12,11 +12,11 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 
 	public SolutionExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
-			ITextEditorService textEditorService,
+			TextEditorService textEditorService,
 			ITreeViewService treeViewService,
 			IBackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)

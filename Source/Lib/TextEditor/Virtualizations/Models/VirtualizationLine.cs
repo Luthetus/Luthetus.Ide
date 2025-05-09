@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 /// This type is intended to represent a line within a flat list.
 /// The 'LineIndex' is just a marker for the offset within the flat list, not actually multi-dimensional list.
 /// </summary>
-public record struct VirtualizationLine
+public struct VirtualizationLine
 {
 	public VirtualizationLine(
 	    int lineIndex,
@@ -31,13 +31,13 @@ public record struct VirtualizationLine
 	    TopInPixels = topInPixels;
 	}
 	
-	public int LineIndex { get; }
-    public int Position_StartInclusiveIndex { get; }
-    public int Position_EndExclusiveIndex { get; }
-    public int VirtualizationSpan_StartInclusiveIndex { get; set; }
-    public int VirtualizationSpan_EndExclusiveIndex { get; set; }
-    public double WidthInPixels { get; }
-    public double HeightInPixels { get; }
-    public double LeftInPixels { get; }
-    public double TopInPixels { get; }
+	public int LineIndex;
+    public int Position_StartInclusiveIndex;
+    public int Position_EndExclusiveIndex;
+    public int VirtualizationSpan_StartInclusiveIndex;
+    public int VirtualizationSpan_EndExclusiveIndex;
+    public double WidthInPixels;
+    public double HeightInPixels;
+    public double LeftInPixels;
+    public double TopInPixels;
 }

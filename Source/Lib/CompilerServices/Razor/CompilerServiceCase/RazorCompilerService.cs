@@ -18,7 +18,7 @@ namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
 public sealed class RazorCompilerService : ICompilerService
 {
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
     private readonly CSharpCompilerService _cSharpCompilerService;
     private readonly IEnvironmentProvider _environmentProvider;
     
@@ -26,7 +26,7 @@ public sealed class RazorCompilerService : ICompilerService
     private readonly object _resourceMapLock = new();
 
     public RazorCompilerService(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         CSharpCompilerService cSharpCompilerService,
         IEnvironmentProvider environmentProvider)
     {

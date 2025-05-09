@@ -12,7 +12,7 @@ public struct TextEditorLineIndexCacheEntry
 		HiddenLineCount = hiddenLineCount;
 	}
 
-    public string TopCssValue { get; set; }
-    public string LineNumberString { get; set; }
-    public int HiddenLineCount { get; set; }
+    public string TopCssValue;
+    public string LineNumberString;
+    public int HiddenLineCount;
 }

@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 public partial class TextEditorSettingsPreview : ComponentBase
 {
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter]
     public string TopLevelDivElementCssClassString { get; set; } = string.Empty;

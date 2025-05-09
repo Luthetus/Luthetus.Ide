@@ -22,7 +22,7 @@ public class CodeSearchService : ICodeSearchService
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ITreeViewService _treeViewService;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IServiceProvider _serviceProvider;
     
@@ -34,7 +34,7 @@ public class CodeSearchService : ICodeSearchService
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         ITreeViewService treeViewService,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         LuthetusTextEditorConfig textEditorConfig,
         IServiceProvider serviceProvider)
     {

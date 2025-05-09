@@ -54,7 +54,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     private readonly ITreeViewService _treeViewService;
     private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly ITerminalService _terminalService;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
@@ -84,7 +84,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         ITreeViewService treeViewService,
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         ITerminalService terminalService,
         IDecorationMapperRegistry decorationMapperRegistry,
         IDialogService dialogService,

@@ -81,10 +81,10 @@ public class LuthetusTextEditorJavaScriptInteropApi
             scrollTopInPixels);
     }
 
-    public ValueTask<TextEditorDimensions> GetTextEditorMeasurementsInPixelsById(
+    public ValueTask<TextEditorDimensionsDto> GetTextEditorMeasurementsInPixelsById(
         string elementId)
     {
-        return _jsRuntime.InvokeAsync<TextEditorDimensions>(
+        return _jsRuntime.InvokeAsync<TextEditorDimensionsDto>(
             "luthetusTextEditor.getTextEditorMeasurementsInPixelsById",
             elementId);
     }

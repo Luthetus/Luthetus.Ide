@@ -9,13 +9,28 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// <param name="ScrollWidth">The unit of measurement is Pixels (px)</param>
 /// <param name="ScrollHeight">The unit of measurement is Pixels (px)</param>
 /// <param name="MarginScrollHeight">The unit of measurement is Pixels (px)</param>
-public record struct ScrollbarDimensions(
-	double ScrollLeft,
-    double ScrollTop,
-    double ScrollWidth,
-    double ScrollHeight,
-    double MarginScrollHeight)
+public struct ScrollbarDimensions
 {
+	public ScrollbarDimensions(
+		double scrollLeft,
+	    double scrollTop,
+	    double scrollWidth,
+	    double scrollHeight,
+	    double marginScrollHeight)
+	{
+		ScrollLeft = scrollLeft;
+	    ScrollTop = scrollTop;
+	    ScrollWidth = scrollWidth;
+	    ScrollHeight = scrollHeight;
+	    MarginScrollHeight = marginScrollHeight;
+	}
+	
+	public double ScrollLeft;
+    public double ScrollTop;
+    public double ScrollWidth;
+    public double ScrollHeight;
+    public double MarginScrollHeight;
+
 	public ScrollbarDimensions WithMutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
 		WithSetScrollLeft((int)Math.Ceiling(ScrollLeft + pixels), textEditorDimensions);
 

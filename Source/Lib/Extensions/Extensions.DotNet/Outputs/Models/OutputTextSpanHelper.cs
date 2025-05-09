@@ -10,7 +10,7 @@ public static class OutputTextSpanHelper
 	public static Task OpenInEditorOnClick(
 		TreeViewDiagnosticLine treeViewDiagnosticLine,
 		bool shouldSetFocusToEditor,
-		ITextEditorService textEditorService)
+		TextEditorService textEditorService)
 	{
 		var lineAndColumnIndicesString = treeViewDiagnosticLine.Item.LineAndColumnIndicesTextSpan.Text;
 		var position = 0;

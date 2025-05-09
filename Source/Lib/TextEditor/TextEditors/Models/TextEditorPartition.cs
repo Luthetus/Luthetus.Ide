@@ -9,7 +9,7 @@ public struct TextEditorPartition
         RichCharacterList = richCharacterList;
     }
 
-    public List<RichCharacter> RichCharacterList { get; }
+    public List<RichCharacter> RichCharacterList;
 
     /// <summary>
     /// This is the count of rich characters in THIS particular partition, the <see cref="TextEditorModel.DocumentLength"/>

@@ -18,7 +18,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
@@ -26,7 +26,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorViewModelApi(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDialogService dialogService,
@@ -157,9 +157,15 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public async ValueTask<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
     {
-        return await _textEditorService.JsRuntimeTextEditorApi
+        var dto = await _textEditorService.JsRuntimeTextEditorApi
             .GetTextEditorMeasurementsInPixelsById(elementId)
             .ConfigureAwait(false);
+            
+        return new TextEditorDimensions(
+        	dto.Width,
+			dto.Height,
+			dto.BoundingClientRectLeft,
+			dto.BoundingClientRectTop);
     }
     #endregion
 

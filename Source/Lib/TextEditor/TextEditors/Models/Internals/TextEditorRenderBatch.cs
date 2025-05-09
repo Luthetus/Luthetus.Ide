@@ -18,17 +18,17 @@ public struct TextEditorRenderBatch
 	    TextEditorRenderBatchConstants = textEditorRenderBatchConstants;
 	}
 
-    public TextEditorModel? Model { get; set; }
-    public TextEditorViewModel? ViewModel { get; set; }
-    public TextEditorRenderBatchConstants TextEditorRenderBatchConstants { get; set; }
+    public TextEditorModel? Model;
+    public TextEditorViewModel? ViewModel;
+    public TextEditorRenderBatchConstants TextEditorRenderBatchConstants;
     
     public bool ConstructorWasInvoked => Model is not null &&
 								         ViewModel is not null &&
 								         TextEditorRenderBatchConstants.TextEditorOptions is not null;
 
-    public double GutterWidthInPixels { get; private set; }
+    public double GutterWidthInPixels;
 
-    public bool IsValid { get; private set; }
+    public bool IsValid;
         
     public bool Validate()
     {

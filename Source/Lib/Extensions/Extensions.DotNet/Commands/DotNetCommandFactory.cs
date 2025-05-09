@@ -17,14 +17,14 @@ namespace Luthetus.Extensions.DotNet.Commands;
 
 public class DotNetCommandFactory : IDotNetCommandFactory
 {
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	private readonly IPanelService _panelService;
 	private readonly ITreeViewService _treeViewService;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
 	public DotNetCommandFactory(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IPanelService panelService,
         ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,

@@ -10,7 +10,7 @@ namespace Luthetus.TextEditor.RazorLib.Groups.Displays;
 public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
 
     /// <summary>
     /// If the provided <see cref="TextEditorGroupKey"/> is registered using the

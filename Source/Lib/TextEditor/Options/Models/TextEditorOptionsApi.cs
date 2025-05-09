@@ -17,7 +17,7 @@ namespace Luthetus.TextEditor.RazorLib.Options.Models;
 
 public class TextEditorOptionsApi : ITextEditorOptionsApi
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IStorageService _storageService;
     private readonly IDialogService _dialogService;
@@ -26,7 +26,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorOptionsApi(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         LuthetusTextEditorConfig textEditorConfig,
         IStorageService storageService,
         IDialogService dialogService,

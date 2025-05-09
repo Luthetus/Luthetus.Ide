@@ -17,12 +17,12 @@ namespace Luthetus.CompilerServices.C;
 
 public sealed class CCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, CResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public CCompilerService(ITextEditorService textEditorService)
+	public CCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

@@ -30,7 +30,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
     
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
@@ -46,7 +46,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
     public EditorIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         ICommonComponentRenderers commonComponentRenderers,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IIdeComponentRenderers ideComponentRenderers,

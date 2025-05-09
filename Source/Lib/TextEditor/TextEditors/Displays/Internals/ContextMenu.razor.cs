@@ -25,7 +25,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]

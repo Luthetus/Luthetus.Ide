@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 
@@ -13,6 +13,6 @@ public record TextEditorPresentationModel(
     string CssClassString,
     IDecorationMapper DecorationMapper)
 {
-    public TextEditorPresentationModelCalculation? CompletedCalculation { get; init; }
-    public TextEditorPresentationModelCalculation? PendingCalculation { get; init; }
+    public TextEditorPresentationModelCalculation? CompletedCalculation;
+    public TextEditorPresentationModelCalculation? PendingCalculation;
 }
