@@ -1,6 +1,6 @@
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public class CollapsePoint
+public struct CollapsePoint
 {
 	public CollapsePoint(
 		int appendToLineIndex,
