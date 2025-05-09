@@ -51,7 +51,7 @@ public record TextEditorState
 			_ = _viewModelMap.TryGetValue(viewModelKey, out inViewModel);
 			
 			if (inViewModel is not null)
-				_ = _modelMap.TryGetValue(inViewModel.ResourceUri, out inModel);
+				_ = _modelMap.TryGetValue(inViewModel.PersistentState.ResourceUri, out inModel);
 		}
 		catch (Exception e)
 		{
@@ -113,7 +113,7 @@ public record TextEditorState
     	try
     	{
     		return _viewModelMap.Values
-    			.Where(x => x.ResourceUri == resourceUri)
+    			.Where(x => x.PersistentState.ResourceUri == resourceUri)
             	.ToList();
     	}
     	catch (Exception e)

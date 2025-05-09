@@ -119,7 +119,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
 					if (viewModelModifier.MenuKind != MenuKind.None)
 					{
@@ -241,7 +241,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 					nameof(AutocompleteMenu),
 					editContext =>
 					{
-						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 	
 						if (viewModelModifier.MenuKind != MenuKind.None)
 						{
@@ -296,8 +296,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             nameof(InsertAutocompleteMenuOption),
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var primaryCursorModifier = cursorModifierBag.CursorModifier;
 

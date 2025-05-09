@@ -100,7 +100,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                                 viewModelList.Add(viewModel);
 
                                 var absolutePath = _environmentProvider.AbsolutePathFactory(
-                                    viewModel.ResourceUri.Value,
+                                    viewModel.PersistentState.ResourceUri.Value,
                                     false);
 
                                 menuOptionList.Add(new MenuOptionRecord(
@@ -116,7 +116,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 	                                            true,
 	                                            cursorPositionIndex: null,
 	                                            new Category("main"),
-	                                            viewModel.ViewModelKey);
+	                                            viewModel.PersistentState.ViewModelKey);
                                     	});
                                     	return Task.CompletedTask;
                                     }));

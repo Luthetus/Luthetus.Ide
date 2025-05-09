@@ -57,7 +57,7 @@ public partial class FindOverlayDisplay : ComponentBase
                     nameof(FindOverlayDisplay),
                     editContext =>
                     {
-                        var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                        var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                         if (viewModelModifier is null)
                             return ValueTask.CompletedTask;
@@ -119,7 +119,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 nameof(FindOverlayDisplay),
                 editContext =>
                 {
-                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                     if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
@@ -148,7 +148,7 @@ public partial class FindOverlayDisplay : ComponentBase
             	becameShown = true;
             	
                 await CommonBackgroundTaskApi.JsRuntimeCommonApi
-                    .FocusHtmlElementById(renderBatchLocal.ViewModel.FindOverlayId)
+                    .FocusHtmlElementById(renderBatchLocal.ViewModel.PersistentState.FindOverlayId)
                     .ConfigureAwait(false);
             }
         }
@@ -173,16 +173,16 @@ public partial class FindOverlayDisplay : ComponentBase
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             await CommonBackgroundTaskApi.JsRuntimeCommonApi
-                .FocusHtmlElementById(renderBatchLocal.ViewModel.PrimaryCursorContentId)
+                .FocusHtmlElementById(renderBatchLocal.ViewModel.PersistentState.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
             TextEditorService.WorkerArbitrary.PostRedundant(
                 nameof(FindOverlayDisplay),
-				renderBatchLocal.ViewModel.ResourceUri,
-                renderBatchLocal.ViewModel.ViewModelKey,
+				renderBatchLocal.ViewModel.PersistentState.ResourceUri,
+                renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
                 editContext =>
                 {
-                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                     if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
@@ -306,7 +306,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 if (localActiveIndexMatchedTextSpan is null)
                     return ValueTask.CompletedTask;
 
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                 if (viewModelModifier is null)
                     return ValueTask.CompletedTask;
@@ -389,11 +389,11 @@ public partial class FindOverlayDisplay : ComponentBase
     	
     	TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
+			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
+            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                 if (viewModelModifier is null)
                     return ValueTask.CompletedTask;
@@ -412,12 +412,12 @@ public partial class FindOverlayDisplay : ComponentBase
     
     	TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
+			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
+            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
@@ -461,12 +461,12 @@ public partial class FindOverlayDisplay : ComponentBase
     
     	TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
+			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
+            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 

@@ -142,7 +142,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         if (viewModel is null)
             return null;
 
-        return _textEditorService.ModelApi.GetOrDefault(viewModel.ResourceUri);
+        return _textEditorService.ModelApi.GetOrDefault(viewModel.PersistentState.ResourceUri);
     }
 
     public string? GetAllText(Key<TextEditorViewModel> viewModelKey)
@@ -1217,7 +1217,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
 			#endif
 			
-			if (viewModel.DisplayTracker.ComponentData is not null)
+			if (viewModel.PersistentState.DisplayTracker.ComponentData is not null)
 				virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
 		}
 		catch (LuthetusTextEditorException exception)
@@ -1267,7 +1267,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         var options = _textEditorService.OptionsApi.GetOptions();
 		
 		var textEditorMeasurements = await _textEditorService.ViewModelApi
-			.GetTextEditorMeasurementsAsync(viewModel.BodyElementId)
+			.GetTextEditorMeasurementsAsync(viewModel.PersistentState.BodyElementId)
 			.ConfigureAwait(false);
 
 		viewModel.CharAndLineMeasurements = options.CharAndLineMeasurements;
@@ -1284,7 +1284,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         // (or more non-sense than it previously did)
         // Because we get a viewModel passed in to this method as an argument.
         // So this seems quite silly.
-		_ = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+		_ = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
     }
     #endregion
 

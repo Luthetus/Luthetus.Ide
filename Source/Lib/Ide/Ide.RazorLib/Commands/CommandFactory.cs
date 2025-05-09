@@ -333,7 +333,7 @@ public class CommandFactory : ICommandFactory
                         return;
 
                     await _commonBackgroundTaskApi.JsRuntimeCommonApi
-                        .FocusHtmlElementById(activeViewModel.PrimaryCursorContentId)
+                        .FocusHtmlElementById(activeViewModel.PersistentState.PrimaryCursorContentId)
                         .ConfigureAwait(false);
                 });
 
@@ -529,14 +529,14 @@ public class CommandFactory : ICommandFactory
             if (activeViewModel is null)
                 return;
         
-            var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.ViewModelKey);
+            var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.PersistentState.ViewModelKey);
             if (viewModelModifier is null)
                 return;
 
 			// If the user has an active text selection,
 			// then populate the code search with their selection.
 			
-			var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+			var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
             var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             var primaryCursorModifier = cursorModifierBag.CursorModifier;
 

@@ -81,7 +81,7 @@ public struct TextEditorEditContext
     		
     	for (int i = 0; i < TextEditorService.__ViewModelList.Count; i++)
     	{
-    		if (TextEditorService.__ViewModelList[i].ViewModelKey == viewModelKey)
+    		if (TextEditorService.__ViewModelList[i].PersistentState.ViewModelKey == viewModelKey)
     			viewModelModifier = TextEditorService.__ViewModelList[i];
     	}
     	
@@ -105,7 +105,7 @@ public struct TextEditorEditContext
     {
         if (viewModel is not null)
         {
-            if (!TextEditorService.__CursorModifierBagCache.TryGetValue(viewModel.ViewModelKey, out var cursorModifierBag))
+            if (!TextEditorService.__CursorModifierBagCache.TryGetValue(viewModel.PersistentState.ViewModelKey, out var cursorModifierBag))
             {
             	TextEditorCursorModifier cursorModifier;
             	
@@ -129,10 +129,10 @@ public struct TextEditorEditContext
     			}
             
                 cursorModifierBag = new CursorModifierBagTextEditor(
-                    viewModel.ViewModelKey,
+                    viewModel.PersistentState.ViewModelKey,
                     cursorModifier);
 
-                TextEditorService.__CursorModifierBagCache.Add(viewModel.ViewModelKey, cursorModifierBag);
+                TextEditorService.__CursorModifierBagCache.Add(viewModel.PersistentState.ViewModelKey, cursorModifierBag);
             }
 
             return cursorModifierBag;

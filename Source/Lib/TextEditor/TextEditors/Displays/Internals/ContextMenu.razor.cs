@@ -106,7 +106,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
 					if (viewModelModifier.MenuKind != MenuKind.None)
 					{
@@ -133,7 +133,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
 					if (viewModelModifier.MenuKind != MenuKind.None)
 					{
@@ -220,7 +220,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					nameof(ContextMenu),
 					editContext =>
 					{
-						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 	
 						if (viewModelModifier.MenuKind != MenuKind.None)
 						{
@@ -257,7 +257,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 				
                 return TextEditorCommandDefaultFunctions.CutAsync(
@@ -281,7 +281,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
 		        var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             	
                 return TextEditorCommandDefaultFunctions.CopyAsync(
@@ -305,7 +305,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
         		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
                 return TextEditorCommandDefaultFunctions.PasteAsync(
@@ -329,7 +329,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
         		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
         		var primaryCursorModifier = cursorModifierBag.CursorModifier;
         		
@@ -369,7 +369,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
         		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 
         		if (viewModelModifier is null)
@@ -399,7 +399,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
         		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 
         		if (viewModelModifier is null)
@@ -429,7 +429,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
                 return TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
@@ -455,7 +455,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             	var primaryCursor = cursorModifierBag.CursorModifier;
             
@@ -481,7 +481,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             	var primaryCursor = cursorModifierBag.CursorModifier;
             
@@ -505,7 +505,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
                 return TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(

@@ -266,8 +266,8 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         {
         	var viewModel = editContext.GetViewModelModifier(viewModelKey);
         	
-        	if (viewModel.DisplayTracker.ComponentData is not null)
-        		viewModel.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
+        	if (viewModel.PersistentState.DisplayTracker.ComponentData is not null)
+        		viewModel.PersistentState.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
         }
 
         ApplyDecorationRange(

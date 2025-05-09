@@ -208,10 +208,10 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
         var viewModel = _textEditorService.ModelApi
             .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
-            .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
+            .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
 
         if (viewModel is not null)
-		    return viewModel.ViewModelKey;
+		    return viewModel.PersistentState.ViewModelKey;
 
         viewModel = new TextEditorViewModel(
             viewModelKey,
@@ -236,9 +236,9 @@ public class EditorIdeApi : IBackgroundTaskGroup
             false);
             
         viewModel.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
-        viewModel.OnSaveRequested = HandleOnSaveRequested;
-        viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
-        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+        viewModel.PersistentState.OnSaveRequested = HandleOnSaveRequested;
+        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
         
         _textEditorService.ViewModelApi.Register(registerViewModelArgs.EditContext, viewModel);
         return viewModelKey;
@@ -291,7 +291,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
         if (viewModel is null)
             return false;
 
-        if (viewModel.Category == new Category("main") &&
+        if (viewModel.PersistentState.Category == new Category("main") &&
             showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
         {
             showViewModelArgs = new TryShowViewModelArgs(

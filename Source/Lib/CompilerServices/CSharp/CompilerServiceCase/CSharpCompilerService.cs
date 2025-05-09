@@ -429,7 +429,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex);
         
         var elementPositionInPixels = await _textEditorService.JsRuntimeTextEditorApi
-            .GetBoundingClientRect(viewModelModifier.PrimaryCursorContentId)
+            .GetBoundingClientRect(viewModelModifier.PersistentState.PrimaryCursorContentId)
             .ConfigureAwait(false);
 
         elementPositionInPixels = elementPositionInPixels with
@@ -1008,13 +1008,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	
 	            var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
 	            
-	            var viewModel = viewModelList.FirstOrDefault(x => x.Category.Value == "main")
+	            var viewModel = viewModelList.FirstOrDefault(x => x.PersistentState.Category.Value == "main")
 	            	?? viewModelList.FirstOrDefault();
 	            
 	            if (viewModel is null)
 	            	return ValueTask.CompletedTask;
 	            	
-	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
 	            var primaryCursorModifier = editContext.GetCursorModifierBag(viewModelModifier).CursorModifier;
 	            

@@ -43,77 +43,66 @@ public sealed class TextEditorViewModel : IDisposable
 		ScrollbarDimensions scrollbarDimensions,
 		Category category)
     {
-        ViewModelKey = viewModelKey;
-        ResourceUri = resourceUri;
-        TextEditorService = textEditorService;
+    	PersistentState = new TextEditorViewModelPersistentState(
+			new DisplayTracker(
+	            textEditorService,
+	            resourceUri,
+	            viewModelKey),
+		    viewModelKey,
+		    resourceUri,
+		    textEditorService,
+		    category,
+		    onSaveRequested: null,
+		    getTabDisplayNameFunc: null,
+		    firstPresentationLayerKeysList: new(),
+		    lastPresentationLayerKeysList: new(),
+		    new DynamicViewModelAdapterTextEditor(
+	            viewModelKey,
+	            textEditorService,
+	            panelService,
+	            dialogService,
+	            commonBackgroundTaskApi),
+		    bodyElementId: $"luth_te_text-editor-content_{viewModelKey.Guid}",
+		    primaryCursorContentId: $"luth_te_text-editor-content_{viewModelKey.Guid}_primary-cursor",
+		    gutterElementId: $"luth_te_text-editor-gutter_{viewModelKey.Guid}",
+		    findOverlayId: $"luth_te_find-overlay_{viewModelKey.Guid}");
+    
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;
 		ScrollbarDimensions = scrollbarDimensions;
         CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
-        Category = category;
-        
-        FirstPresentationLayerKeysList = new();
-        LastPresentationLayerKeysList = new();
         
         FindOverlayValue = string.Empty;
 
         PrimaryCursor = new TextEditorCursor(true);
-
-        DisplayTracker = new(
-            textEditorService,
-            resourceUri,
-            viewModelKey);
-        
-        DynamicViewModelAdapter = new DynamicViewModelAdapterTextEditor(
-            ViewModelKey,
-            TextEditorService,
-            panelService,
-            dialogService,
-            commonBackgroundTaskApi);
-	
-		BodyElementId = $"luth_te_text-editor-content_{ViewModelKey.Guid}";
-	    PrimaryCursorContentId = $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
-	    GutterElementId = $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
-	    FindOverlayId = $"luth_te_find-overlay_{ViewModelKey.Guid}";
 	}
 	
 	public TextEditorViewModel(TextEditorViewModel other)
 	{
+		PersistentState = other.PersistentState;
 	    PrimaryCursor = other.PrimaryCursor;
-	    DisplayTracker = other.DisplayTracker;
-	    ViewModelKey = other.ViewModelKey;
-	    ResourceUri = other.ResourceUri;
-	    TextEditorService = other.TextEditorService;
 	    VirtualizationResult = other.VirtualizationResult;
 		TextEditorDimensions = other.TextEditorDimensions;
 		ScrollbarDimensions = other.ScrollbarDimensions;
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
 	    MenuKind = other.MenuKind;
 	    TooltipViewModel = other.TooltipViewModel;
-	    Category = other.Category;
+	    
 	    ShowFindOverlay = other.ShowFindOverlay;
 	    ReplaceValueInFindOverlay = other.ReplaceValueInFindOverlay;
 	    ShowReplaceButtonInFindOverlay = other.ShowReplaceButtonInFindOverlay;
-	    OnSaveRequested = other.OnSaveRequested;
-	    GetTabDisplayNameFunc = other.GetTabDisplayNameFunc;
-	    FirstPresentationLayerKeysList = other.FirstPresentationLayerKeysList;
-	    LastPresentationLayerKeysList = other.LastPresentationLayerKeysList;
+	    
 	    FindOverlayValue = other.FindOverlayValue;
 	    FindOverlayValueExternallyChangedMarker = other.FindOverlayValueExternallyChangedMarker;
 	    ShouldSetFocusAfterNextRender = other.ShouldSetFocusAfterNextRender;
 	    ShouldRevealCursor = other.ShouldRevealCursor;
-	    DynamicViewModelAdapter = other.DynamicViewModelAdapter;
+	    
 		AllCollapsePointList = other.AllCollapsePointList;
 		VirtualizedCollapsePointList = other.VirtualizedCollapsePointList;
 		HiddenLineIndexHashSet = other.HiddenLineIndexHashSet;
 		InlineUiList = other.InlineUiList;
 		VirtualAssociativityKind = other.VirtualAssociativityKind;
 		CreateCacheWasInvoked = other.CreateCacheWasInvoked;
-	    
-	    BodyElementId = other.BodyElementId;
-	    PrimaryCursorContentId = other.PrimaryCursorContentId;
-	    GutterElementId = other.GutterElementId;
-	    FindOverlayId = other.FindOverlayId;
 	    
 	    /*
 	    // Don't copy these properties
@@ -123,24 +112,6 @@ public sealed class TextEditorViewModel : IDisposable
 	}
 
     public TextEditorCursor PrimaryCursor { get; set; }
-    /// <summary>
-    /// This tracks which view models are actively rendered from Blazor's perspective. Thus, using this allows lazy recalculation
-    /// of view model state when an underlying model changes.
-    /// </summary>
-    public DisplayTracker DisplayTracker { get; }
-    /// <summary>
-    /// The main unique identifier for a <see cref="TextEditorViewModel"/>, used in many API.
-    /// </summary>
-    public Key<TextEditorViewModel> ViewModelKey { get; set; }
-    /// <summary>
-    /// The unique identifier for a <see cref="TextEditorModel"/>. The model is to say a representation of the file on a filesystem.
-    /// The contents and such. Whereas the viewmodel is to track state regarding a rendered editor for that file, for example the cursor position.
-    /// </summary>
-    public ResourceUri ResourceUri { get; set; }
-    /// <summary>
-    /// Most API invocation (if not all) occurs through the <see cref="ITextEditorService"/>
-    /// </summary>
-    public ITextEditorService TextEditorService { get; set; }
     /// <summary>
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
@@ -165,35 +136,10 @@ public sealed class TextEditorViewModel : IDisposable
 	/// </summary>
     public TooltipViewModel? TooltipViewModel { get; set; }
     /// <summary>
-    /// <inheritdoc cref="Models.Category"/>
-    /// </summary>
-    public Category Category { get; set; }
-    /// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
     /// </summary>
     public bool ShowFindOverlay { get; set; }
     public bool ShowReplaceButtonInFindOverlay { get; set; }
-    /// <summary>
-    /// If one hits the keymap { Ctrl + s } when browser focus is within a text editor.
-    /// </summary>
-    public Action<TextEditorModel>? OnSaveRequested { get; set; }
-    /// <summary>
-    /// When a view model is rendered within a <see cref="TextEditorGroup"/>, this Func can be used to render a more friendly tab name, than the resource uri path.
-    /// </summary>
-    public Func<TextEditorModel, string>? GetTabDisplayNameFunc { get; set; }
-    /// <summary>
-    /// <see cref="FirstPresentationLayerKeysList"/> is painted prior to any internal workings of the text editor.<br/><br/>
-    /// Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysList"/>.<br/><br/>
-    /// When using the <see cref="FirstPresentationLayerKeysList"/> one might find their css overriden by for example, text being selected.
-    /// </summary>
-    public List<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; set; }
-    /// <summary>
-    /// <see cref="LastPresentationLayerKeysList"/> is painted after any internal workings of the text editor.<br/><br/>
-    /// Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysList"/>.<br/><br/>
-    /// When using the <see cref="LastPresentationLayerKeysList"/> one might find the selected text background
-    /// not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysList"/>.
-    /// </summary>
-    public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; set; }
     /// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
     /// This property is what the find overlay input element binds to.
@@ -225,11 +171,6 @@ public sealed class TextEditorViewModel : IDisposable
     /// </summary>
     public bool ShouldSetFocusAfterNextRender { get; set; }
     public bool ShouldRevealCursor { get; set; }
-    /// <summary>
-    /// This property contains all data, and logic, necessary to render a text editor from within a dialog,
-    /// a panel tab, or a text editor group tab.
-    /// </summary>
-    public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
     public List<CollapsePoint> AllCollapsePointList { get; set; } = new();
     /// <summary>
     /// TODO: This does not belong here move this to the 'TextEditorViewModelSlimDisplay.razor'.
@@ -259,14 +200,11 @@ public sealed class TextEditorViewModel : IDisposable
 	/// </summary>
     public bool ShouldReloadVirtualizationResult { get; set; }
 
-	public string BodyElementId { get; }
-    public string PrimaryCursorContentId { get; }
-    public string GutterElementId { get; }
-    public string FindOverlayId { get; }
+	public TextEditorViewModelPersistentState PersistentState { get; set; }
 
     public ValueTask FocusAsync()
     {
-        return TextEditorService.ViewModelApi.FocusPrimaryCursorAsync(PrimaryCursorContentId);
+        return PersistentState.TextEditorService.ViewModelApi.FocusPrimaryCursorAsync(PersistentState.PrimaryCursorContentId);
     }
     
     public void ApplyCollapsePointState(TextEditorEditContext editContext)
@@ -288,6 +226,6 @@ public sealed class TextEditorViewModel : IDisposable
 
     public void Dispose()
     {
-        DisplayTracker.Dispose();
+        PersistentState.DisplayTracker.Dispose();
     }
 }

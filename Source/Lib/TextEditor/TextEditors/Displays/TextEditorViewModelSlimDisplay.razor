@@ -44,7 +44,7 @@
     {
         <div class="luth_te_gutter-section"
 		      style="@_componentData._gutterWidthStyleCssString"
-		      id="@_componentData._activeRenderBatch.ViewModel.GutterElementId">
+		      id="@_componentData._activeRenderBatch.ViewModel.PersistentState.GutterElementId">
 		      
             @* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
             
@@ -151,7 +151,7 @@
 	 		
 			@* RowSection.razor Open *@
 			<div class="luth_te_row-section"
-				id="@_componentData._activeRenderBatch.ViewModel.BodyElementId">
+				id="@_componentData._activeRenderBatch.ViewModel.PersistentState.BodyElementId">
 					    
 				@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
 				@* Virtualization Open *@
@@ -257,7 +257,7 @@
 					</div>
 				}
 								
-				<textarea id="@_componentData._activeRenderBatch.ViewModel.PrimaryCursorContentId"
+				<textarea id="@_componentData._activeRenderBatch.ViewModel.PersistentState.PrimaryCursorContentId"
 							tabindex="@_componentData._activeRenderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex"
 							class="@_componentData.BlinkAnimationCssClass"
 							style="@_componentData._previousGetCursorStyleCss">

@@ -124,7 +124,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 					FindOverlayPresentationFacts.PresentationKey,
 				};
 
-				viewModelModifier.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+				viewModelModifier.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 				
 				return ValueTask.CompletedTask;
 			});

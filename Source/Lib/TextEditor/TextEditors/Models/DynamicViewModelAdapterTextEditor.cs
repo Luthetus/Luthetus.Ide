@@ -125,7 +125,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
         }
         else
         {
-            var displayName = viewModel.GetTabDisplayNameFunc?.Invoke(model)
+            var displayName = viewModel.PersistentState.GetTabDisplayNameFunc?.Invoke(model)
                 ?? model.ResourceUri.Value;
 
             if (model.IsDirty)

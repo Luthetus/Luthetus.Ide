@@ -168,8 +168,8 @@ public partial class GitDiffDisplay : ComponentBase
 	            
 	        viewModel.ShouldSetFocusAfterNextRender = false;
 		
-	        viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
-	        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+	        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 	        
 	        TextEditorService.ViewModelApi.Register(editContext, viewModel);
 	        
@@ -221,8 +221,8 @@ public partial class GitDiffDisplay : ComponentBase
 	            
 	        viewModel.ShouldSetFocusAfterNextRender = false;
 		
-	        viewModel.GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension;
-	        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+	        viewModel.PersistentState.GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension;
+	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 	        
 	        TextEditorService.ViewModelApi.Register(editContext, viewModel);
 		});

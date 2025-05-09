@@ -201,7 +201,7 @@ public partial class TextEditorService : ITextEditorService
         {
         	TextEditorModel? modelModifier = null;
         	if (viewModelModifier.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
-        		modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
+        		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
         
             var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             if (cursorModifierBag.ConstructorWasInvoked)
@@ -234,8 +234,8 @@ public partial class TextEditorService : ITextEditorService
             {
                 await JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
-		                viewModelModifier.BodyElementId,
-		                viewModelModifier.GutterElementId,
+		                viewModelModifier.PersistentState.BodyElementId,
+		                viewModelModifier.PersistentState.GutterElementId,
 		                viewModelModifier.ScrollbarDimensions.ScrollLeft,
 		                viewModelModifier.ScrollbarDimensions.ScrollTop)
 		            .ConfigureAwait(false);
@@ -636,22 +636,22 @@ public partial class TextEditorService : ITextEditorService
 	    var inState = TextEditorState;
 	
 	    var modelExisting = inState._modelMap.TryGetValue(
-	        viewModel.ResourceUri,
+	        viewModel.PersistentState.ResourceUri,
 	        out var model);
 	
 	    if (!modelExisting)
 	        return;
 	
-	    if (viewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
+	    if (viewModel.PersistentState.ViewModelKey == Key<TextEditorViewModel>.Empty)
 	        throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
 	
-	    var viewModelExisting = inState.ViewModelGetOrDefault(viewModel.ViewModelKey);
+	    var viewModelExisting = inState.ViewModelGetOrDefault(viewModel.PersistentState.ViewModelKey);
 	    if (viewModelExisting is not null)
 	        return;
 	
-	    model.ViewModelKeyList.Add(viewModel.ViewModelKey);
+	    model.ViewModelKeyList.Add(viewModel.PersistentState.ViewModelKey);
 	
-	    inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
+	    inState._viewModelMap.Add(viewModel.PersistentState.ViewModelKey, viewModel);
 	
 	    TextEditorStateChanged?.Invoke();
 	}
@@ -664,12 +664,12 @@ public partial class TextEditorService : ITextEditorService
 	    if (viewModel is null)
 	        return;
 	    
-	    inState._viewModelMap.Remove(viewModel.ViewModelKey);
+	    inState._viewModelMap.Remove(viewModel.PersistentState.ViewModelKey);
 	    viewModel.Dispose();
 	
-	    var model = inState.ModelGetOrDefault(viewModel.ResourceUri);
+	    var model = inState.ModelGetOrDefault(viewModel.PersistentState.ResourceUri);
 	    if (model is not null)
-	        model.ViewModelKeyList.Remove(viewModel.ViewModelKey);
+	        model.ViewModelKeyList.Remove(viewModel.PersistentState.ViewModelKey);
 	    
 	    TextEditorStateChanged?.Invoke();
 	}
@@ -688,8 +688,8 @@ public partial class TextEditorService : ITextEditorService
 
 		foreach (var viewModel in __ViewModelList)
 		{
-			if (TextEditorState._viewModelMap.ContainsKey(viewModel.ViewModelKey))
-				TextEditorState._viewModelMap[viewModel.ViewModelKey] = viewModel;
+			if (TextEditorState._viewModelMap.ContainsKey(viewModel.PersistentState.ViewModelKey))
+				TextEditorState._viewModelMap[viewModel.PersistentState.ViewModelKey] = viewModel;
 		}
 
 		__ModelList.Clear();

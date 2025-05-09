@@ -174,17 +174,17 @@ public sealed class DisplayTracker : IDisposable
 		_textEditorService.WorkerArbitrary.PostRedundant(
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,
-            viewModel.ViewModelKey,
+            viewModel.PersistentState.ViewModelKey,
 			async editContext =>
 			{
-				var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
-				var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+				var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 				
 	            if (modelModifier is null || viewModelModifier is null)
 	                return;
 				
 				var textEditorMeasurements = await _textEditorService.ViewModelApi
-					.GetTextEditorMeasurementsAsync(viewModelModifier.BodyElementId)
+					.GetTextEditorMeasurementsAsync(viewModelModifier.PersistentState.BodyElementId)
 					.ConfigureAwait(false);
 		
 				viewModelModifier.TextEditorDimensions = textEditorMeasurements;

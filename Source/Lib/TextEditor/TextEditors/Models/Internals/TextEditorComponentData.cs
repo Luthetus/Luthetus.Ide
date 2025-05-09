@@ -1068,7 +1068,7 @@ public sealed class TextEditorComponentData
     	presentationLayerGroupList.Clear();
     	presentationLayerTextSpanList.Clear();
     
-    	foreach (var presentationKey in _activeRenderBatch.ViewModel.FirstPresentationLayerKeysList)
+    	foreach (var presentationKey in _activeRenderBatch.ViewModel.PersistentState.FirstPresentationLayerKeysList)
 	    {
 	    	var presentationLayer = _activeRenderBatch.Model.PresentationModelList.FirstOrDefault(
 	    		x => x.TextEditorPresentationKey == presentationKey);
@@ -1394,7 +1394,7 @@ public sealed class TextEditorComponentData
 		        _uiStringBuilder.Append("px;");
         		_bodyStyle = _uiStringBuilder.ToString();
 
-        		_activeRenderBatch.ViewModel.DisplayTracker.PostScrollAndRemeasure();
+        		_activeRenderBatch.ViewModel.PersistentState.DisplayTracker.PostScrollAndRemeasure();
         		return;
         	}
 		}

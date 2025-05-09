@@ -69,7 +69,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         DiffPresentationFacts.InPresentationKey,
                     };
 
-                    viewModelModifier.FirstPresentationLayerKeysList = presentationKeys;
+                    viewModelModifier.PersistentState.FirstPresentationLayerKeysList = presentationKeys;
 	            }
 	            
 	            // "Out" Registrations
@@ -110,7 +110,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         DiffPresentationFacts.OutPresentationKey,
                     };
 
-                    viewModelModifier.FirstPresentationLayerKeysList = presentationKeys;
+                    viewModelModifier.PersistentState.FirstPresentationLayerKeysList = presentationKeys;
 	            }
 	
 	            TextEditorService.DiffApi.Register(

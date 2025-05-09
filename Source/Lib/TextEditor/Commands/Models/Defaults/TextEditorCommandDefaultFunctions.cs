@@ -104,7 +104,7 @@ public class TextEditorCommandDefaultFunctions
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	
-    	if (viewModel.OnSaveRequested is null)
+    	if (viewModel.PersistentState.OnSaveRequested is null)
     	{
     		NotificationHelper.DispatchError(
 		        nameof(TriggerSave),
@@ -115,7 +115,7 @@ public class TextEditorCommandDefaultFunctions
     	}
     	else
     	{
-    		viewModel.OnSaveRequested.Invoke(modelModifier);
+    		viewModel.PersistentState.OnSaveRequested.Invoke(modelModifier);
         	modelModifier.SetIsDirtyFalse();
     	}
     }
@@ -755,7 +755,7 @@ public class TextEditorCommandDefaultFunctions
         IDropdownService dropdownService)
     {
 		var cursorDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(viewModel.PrimaryCursorContentId)
+			.MeasureElementById(viewModel.PersistentState.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
 		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
@@ -869,7 +869,7 @@ public class TextEditorCommandDefaultFunctions
         IDropdownService dropdownService)
     {
 		var cursorDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(viewModel.PrimaryCursorContentId)
+			.MeasureElementById(viewModel.PersistentState.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
 		var primaryCursorModifier = cursorModifierBag.CursorModifier;
@@ -957,7 +957,7 @@ public class TextEditorCommandDefaultFunctions
         ILuthetusTextEditorComponentRenderers textEditorComponentRenderers)
     {
         var elementPositionInPixels = await textEditorService.JsRuntimeTextEditorApi
-            .GetBoundingClientRect(viewModel.PrimaryCursorContentId)
+            .GetBoundingClientRect(viewModel.PersistentState.PrimaryCursorContentId)
             .ConfigureAwait(false);
 
         elementPositionInPixels = elementPositionInPixels with
@@ -1312,7 +1312,7 @@ public class TextEditorCommandDefaultFunctions
         Type componentType,
         Dictionary<string, object?>? componentParameters)
     {
-        var dropdownKey = new Key<DropdownRecord>(viewModel.ViewModelKey.Guid);
+        var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
         
         if (leftOffset is null)
         {
@@ -1369,7 +1369,7 @@ public class TextEditorCommandDefaultFunctions
     {
     	viewModel.MenuKind = MenuKind.None;
     
-		var dropdownKey = new Key<DropdownRecord>(viewModel.ViewModelKey.Guid);
+		var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
 		dropdownService.ReduceDisposeAction(dropdownKey);
 	}
 	
@@ -1454,7 +1454,7 @@ public class TextEditorCommandDefaultFunctions
         if (viewModel.ShowFindOverlay)
         {
             await commonJavaScriptInteropApi
-                .FocusHtmlElementById(viewModel.FindOverlayId)
+                .FocusHtmlElementById(viewModel.PersistentState.FindOverlayId)
                 .ConfigureAwait(false);
         }
         else
