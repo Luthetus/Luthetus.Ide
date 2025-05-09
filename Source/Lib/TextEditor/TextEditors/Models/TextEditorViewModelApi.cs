@@ -940,13 +940,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				viewModel.TextEditorDimensions.Width /
 				viewModel.CharAndLineMeasurements.CharacterWidth);
 			
-			/*Console.WriteLine($"{nameof(CalculateVirtualizationResult)}-Dump");
-			Console.WriteLine($"\tverticalStartingIndex: {verticalStartingIndex}");
-			Console.WriteLine($"\tverticalTake: {verticalTake}");*/
-			
 			var hiddenCount = 0;
-			var indexCollapsePoint = 0;
-			var previousEndExclusiveLineIndex = 0; // For nested chevrons
 			
 			for (int i = 0; i < verticalStartingIndex; i++)
 			{
@@ -956,11 +950,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					verticalStartingIndex++;
 				}
 			}
-			
-			/*Console.WriteLine($"\tindexCollapsePoint: {indexCollapsePoint}");
-			Console.WriteLine($"\thiddenCount: {hiddenCount}");*/
-			
-			//verticalStartingIndex += hiddenCount;
 			
 			verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 			
@@ -1008,19 +997,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					if (viewModel.HiddenLineIndexHashSet.Contains(lineIndex))
 					{
 						hiddenCount++;
-						
-						// Console.WriteLine($"\t\thiddenCount: {hiddenCount}");
 						continue;
 					}
-
-					/*var isCollapsed = false;
-					for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
-					{
-						Console.WriteLine($"\t======== LOOP 2 Start ccplCount:{viewModel.CollapsedCollapsePointList.Count} ========");
-						Console.WriteLine($"\t======== LOOP 2 End ========");
-					}
-					if (isCollapsed)
-						continue;*/
 					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    
@@ -1088,7 +1066,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							for (int i = firstInlineUiOnLineIndex; i < tabCharPositionIndexListCount; i++)
 							{
 								var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
-								
 								var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
 								
 								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
@@ -1121,7 +1098,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						leftInPixels = Math.Max(0, leftInPixels);
 	
 						var topInPixels = lineIndex * viewModel.CharAndLineMeasurements.LineHeight;
-
 						var positionStartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
 						
 						var positionEndExclusiveIndex = positionStartInclusiveIndex + localHorizontalTake;
@@ -1138,8 +1114,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
-							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount),
-							_textEditorService.__StringBuilder));
+							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount)));
 					}
 					else
 					{
@@ -1179,8 +1154,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							0,
-							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount),
-							_textEditorService.__StringBuilder));
+							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount)));
 					}
 				}
 			}
@@ -1216,13 +1190,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				viewModel.CharAndLineMeasurements.LineHeight);
 
 			// Add vertical margin so the user can scroll beyond the final line of content
-			int marginScrollHeight;
-			{
-				var percentOfMarginScrollHeightByPageUnit = 0.4;
-
-				marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
-				totalHeight += marginScrollHeight;
-			}
+			var percentOfMarginScrollHeightByPageUnit = 0.4;
+			int marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
+			totalHeight += marginScrollHeight;
 			
 			var virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
@@ -1232,8 +1202,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		        resultWidth: horizontalTake * viewModel.CharAndLineMeasurements.CharacterWidth,
 		        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
 		        left: horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth,
-		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight,
-		        collapsedLineCount: hiddenCount);
+		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
 			viewModel.CreateCacheWasInvoked = false;

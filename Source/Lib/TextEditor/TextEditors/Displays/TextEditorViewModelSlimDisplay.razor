@@ -57,7 +57,7 @@
 		    @foreach (var virtualizedLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
-		             style="@(_componentData.GetGutterStyleCss(virtualizedLine.TopCssStyle))">
+		             style="@(_componentData.GetGutterStyleCss(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].TopCssValue))">
 		             
 		            @(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].LineNumberString)
 		            
@@ -223,7 +223,7 @@
 				@foreach (var virtualizationLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 				{
 					<div class="luth_te_row"
-						 style="@_componentData.RowSection_GetRowStyleCss(virtualizationLine.TopCssStyle, virtualizationLine.LeftInPixels)">
+						 style="@_componentData.RowSection_GetRowStyleCss(_componentData.LineIndexCacheEntryMap[virtualizationLine.LineIndex].TopCssValue, virtualizationLine.LeftInPixels)">
 					
 						@*
 							'!= 0' because the struct's int property will default to '0',

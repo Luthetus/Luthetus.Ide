@@ -242,11 +242,14 @@ public sealed class TextEditorComponentData
     /// </summary>
     public StringBuilder _uiStringBuilder = new();
     
-    public string GetGutterStyleCss(string topCssStyle)
+    public string GetGutterStyleCss(string topCssValue)
     {
     	_uiStringBuilder.Clear();
     
-        _uiStringBuilder.Append(topCssStyle);
+    	_uiStringBuilder.Append("top: ");
+        _uiStringBuilder.Append(topCssValue);
+        _uiStringBuilder.Append("px;");
+    
         _uiStringBuilder.Append(_gutterHeightWidthPaddingStyleCssString);
 
         return _uiStringBuilder.ToString();
@@ -297,11 +300,13 @@ public sealed class TextEditorComponentData
     }
     
     /* RowSection.razor Open */
-    public string RowSection_GetRowStyleCss(string topCssStyle, double virtualizedLineLeftInPixels)
+    public string RowSection_GetRowStyleCss(string topCssValue, double virtualizedLineLeftInPixels)
     {
     	_uiStringBuilder.Clear();
     
-        _uiStringBuilder.Append(topCssStyle);
+        _uiStringBuilder.Append("top: ");
+        _uiStringBuilder.Append(topCssValue);
+        _uiStringBuilder.Append("px;");
 
         _uiStringBuilder.Append(_lineHeightStyleCssString);
 

@@ -55,8 +55,7 @@ public struct VirtualizationGrid
         resultWidth: 0,
         resultHeight: 0,
         left: 0,
-        top: 0,
-        collapsedLineCount: 0);
+        top: 0);
 
 	/// <summary>Measurements are in pixels</summary>
     public VirtualizationGrid(
@@ -67,8 +66,7 @@ public struct VirtualizationGrid
         double resultWidth,
         double resultHeight,
         double left,
-        double top,
-        int collapsedLineCount)
+        double top)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -78,7 +76,6 @@ public struct VirtualizationGrid
         VirtualHeight = resultHeight;
         VirtualLeft = left;
         VirtualTop = top;
-        CollapsedLineCount = collapsedLineCount;
     }
 
     public List<VirtualizationLine> EntryList { get; init; }
@@ -120,8 +117,6 @@ public struct VirtualizationGrid
     /// Lowest 'top' point where a rendered element is displayed.
     /// </summary>
     public double VirtualTop { get; init; }
-    
-    public int CollapsedLineCount { get; init; }
 
     /// <summary>
     ///
@@ -223,24 +218,20 @@ public struct VirtualizationGrid
 				{
 					var previous = componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex];
 					
-					//if (previous.VirtualizationSpan_EndExclusiveIndex != 0 &&
-					//	previous.VirtualizationSpan_StartInclusiveIndex != previous.VirtualizationSpan_EndExclusiveIndex)
-					//{
-						for (int i = previous.VirtualizationSpan_StartInclusiveIndex; i < previous.VirtualizationSpan_EndExclusiveIndex; i++)
-						{
-							viewModel.VirtualizationResult.VirtualizationSpanList.Add(componentData.VirtualizedLineCacheSpanList[i]);
-						}
-						
-						// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
-						virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
-						viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
-						
-						componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex] = virtualizationEntry;
-						
-						reUsedLines++;
-						
-						continue;
-					//}
+					for (int i = previous.VirtualizationSpan_StartInclusiveIndex; i < previous.VirtualizationSpan_EndExclusiveIndex; i++)
+					{
+						viewModel.VirtualizationResult.VirtualizationSpanList.Add(componentData.VirtualizedLineCacheSpanList[i]);
+					}
+					
+					// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
+					virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+					viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+					
+					componentData.VirtualizedLineCacheEntryMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+					
+					reUsedLines++;
+					
+					continue;
 				}
 			}
 			
@@ -249,9 +240,7 @@ public struct VirtualizationGrid
 		    for (int i = virtualizationEntry.Position_StartInclusiveIndex; i < virtualizationEntry.Position_EndExclusiveIndex; i++)
 		    {
 		    	if (inlineUi.InlineUiKind != InlineUiKind.None && inlineUi.PositionIndex == i)
-		    	{
 		    		textEditorService.__StringBuilder.Append("&nbsp;&nbsp;&nbsp;");
-		    	}
 		    	
 		    	var richCharacter = model.RichCharacterList[i];
 		    	 
