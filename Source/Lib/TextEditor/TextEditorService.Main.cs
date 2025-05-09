@@ -200,14 +200,14 @@ public partial class TextEditorService : ITextEditorService
         foreach (var viewModelModifier in __ViewModelList)
         {
         	TextEditorModel? modelModifier = null;
-        	if (viewModelModifier.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
+        	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
         		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
         
             var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             if (cursorModifierBag.ConstructorWasInvoked)
             {
                 viewModelModifier.PrimaryCursor = cursorModifierBag.CursorModifier.ToCursor();
-            	if (viewModelModifier.ShouldRevealCursor)
+            	if (viewModelModifier.PersistentState.ShouldRevealCursor)
 	            {
             		ViewModelApi.RevealCursor(
 	            		editContext,
@@ -463,7 +463,7 @@ public partial class TextEditorService : ITextEditorService
 		primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
 		primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
 		
-		viewModelModifier.ShouldRevealCursor = true;
+		viewModelModifier.PersistentState.ShouldRevealCursor = true;
 		
 		_ = Task.Run(async () =>
 		{
@@ -471,7 +471,7 @@ public partial class TextEditorService : ITextEditorService
 			WorkerArbitrary.PostUnique(nameof(OpenInEditorAsync), editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				viewModelModifier.ShouldRevealCursor = true;
+				viewModelModifier.PersistentState.ShouldRevealCursor = true;
 				return ValueTask.CompletedTask;
 			});
 		});
@@ -527,7 +527,7 @@ public partial class TextEditorService : ITextEditorService
 		if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
 			primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 			
-		viewModelModifier.ShouldRevealCursor = true;
+		viewModelModifier.PersistentState.ShouldRevealCursor = true;
 		
 		_ = Task.Run(async () =>
 		{
@@ -535,7 +535,7 @@ public partial class TextEditorService : ITextEditorService
 			WorkerArbitrary.PostUnique(nameof(OpenInEditorAsync), editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				viewModelModifier.ShouldRevealCursor = true;
+				viewModelModifier.PersistentState.ShouldRevealCursor = true;
 				return ValueTask.CompletedTask;
 			});
 		});

@@ -235,7 +235,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						if (lineIndexOriginal != primaryCursorModifier.LineIndex ||
 							columnIndexOriginal != primaryCursorModifier.ColumnIndex)
 						{
-							viewModelModifier.ShouldRevealCursor = true;
+							viewModelModifier.PersistentState.ShouldRevealCursor = true;
 						}
 					}
 					

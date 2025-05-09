@@ -28,6 +28,10 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// The main text editor is one <see cref="TextEditorViewModel"/> and the peek window is a separate <see cref="TextEditorViewModel"/>.
 /// Both of those <see cref="TextEditorViewModel"/>(s) are referencing the same <see cref="TextEditorModel"/>.
 /// Therefore typing into the peek window will also result in the main text editor re-rendering with the updated text and vice versa.
+///
+/// Do not use object initializers because the cloning of the TextEditorViewModel
+/// will redundantly take time to perform the object initialization.
+/// Instead, add "object initialization" to the constructor of the original instance.
 /// </summary>
 public sealed class TextEditorViewModel : IDisposable
 {
@@ -65,44 +69,47 @@ public sealed class TextEditorViewModel : IDisposable
 		    bodyElementId: $"luth_te_text-editor-content_{viewModelKey.Guid}",
 		    primaryCursorContentId: $"luth_te_text-editor-content_{viewModelKey.Guid}_primary-cursor",
 		    gutterElementId: $"luth_te_text-editor-gutter_{viewModelKey.Guid}",
-		    findOverlayId: $"luth_te_find-overlay_{viewModelKey.Guid}");
+		    findOverlayId: $"luth_te_find-overlay_{viewModelKey.Guid}",
+		    showFindOverlay: false,
+		    replaceValueInFindOverlay: string.Empty,
+		    showReplaceButtonInFindOverlay: false,
+		    findOverlayValue: string.Empty,
+		    findOverlayValueExternallyChangedMarker: false,
+		    menuKind: MenuKind.None,
+	    	tooltipViewModel: null,
+	    	shouldSetFocusAfterNextRender: false,
+		    shouldRevealCursor: false,
+			virtualAssociativityKind: VirtualAssociativityKind.None);
     
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;
 		ScrollbarDimensions = scrollbarDimensions;
         CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         
-        FindOverlayValue = string.Empty;
-
         PrimaryCursor = new TextEditorCursor(true);
+        
+        AllCollapsePointList = new();
+		VirtualizedCollapsePointList = new();
+		HiddenLineIndexHashSet = new();
+		InlineUiList = new();
 	}
 	
 	public TextEditorViewModel(TextEditorViewModel other)
 	{
 		PersistentState = other.PersistentState;
+		
 	    PrimaryCursor = other.PrimaryCursor;
 	    VirtualizationResult = other.VirtualizationResult;
 		TextEditorDimensions = other.TextEditorDimensions;
 		ScrollbarDimensions = other.ScrollbarDimensions;
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
-	    MenuKind = other.MenuKind;
-	    TooltipViewModel = other.TooltipViewModel;
-	    
-	    ShowFindOverlay = other.ShowFindOverlay;
-	    ReplaceValueInFindOverlay = other.ReplaceValueInFindOverlay;
-	    ShowReplaceButtonInFindOverlay = other.ShowReplaceButtonInFindOverlay;
-	    
-	    FindOverlayValue = other.FindOverlayValue;
-	    FindOverlayValueExternallyChangedMarker = other.FindOverlayValueExternallyChangedMarker;
-	    ShouldSetFocusAfterNextRender = other.ShouldSetFocusAfterNextRender;
-	    ShouldRevealCursor = other.ShouldRevealCursor;
-	    
+		
+		CreateCacheWasInvoked = other.CreateCacheWasInvoked;
+		
 		AllCollapsePointList = other.AllCollapsePointList;
 		VirtualizedCollapsePointList = other.VirtualizedCollapsePointList;
 		HiddenLineIndexHashSet = other.HiddenLineIndexHashSet;
 		InlineUiList = other.InlineUiList;
-		VirtualAssociativityKind = other.VirtualAssociativityKind;
-		CreateCacheWasInvoked = other.CreateCacheWasInvoked;
 	    
 	    /*
 	    // Don't copy these properties
@@ -110,6 +117,8 @@ public sealed class TextEditorViewModel : IDisposable
 	    ShouldReloadVirtualizationResult { get; set; }
 	    */
 	}
+	
+	public TextEditorViewModelPersistentState PersistentState { get; set; }
 
     public TextEditorCursor PrimaryCursor { get; set; }
     /// <summary>
@@ -124,74 +133,7 @@ public sealed class TextEditorViewModel : IDisposable
 	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
 	/// </summary>
     public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
-	/// <summary>
-	/// This property determines the menu that is shown in the text editor.
-	///
-	/// For example, when this property is <see cref="MenuKind.AutoCompleteMenu"/>,
-	/// then the autocomplete menu is displayed in the text editor.
-	/// </summary>
-    public MenuKind MenuKind { get; set; }
-	/// <summary>
-	/// This property determines the tooltip that is shown in the text editor.
-	/// </summary>
-    public TooltipViewModel? TooltipViewModel { get; set; }
-    /// <summary>
-    /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
-    /// </summary>
-    public bool ShowFindOverlay { get; set; }
-    public bool ShowReplaceButtonInFindOverlay { get; set; }
-    /// <summary>
-    /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
-    /// This property is what the find overlay input element binds to.
-    /// </summary>
-    public string FindOverlayValue { get; set; }
-    /// <summary>
-    /// If the user presses the keybind to show the FindOverlayDisplay while focused on the Text Editor,
-    /// check if the user has a text selection.
-    ///
-    /// If they do have a text selection, then populate the FindOverlayDisplay with their selection.
-    ///
-    /// The issue arises however, how does one know whether FindOverlayValue changed due to
-    /// the input element itself being typed into, versus some 'background action'.
-    ///
-    /// Because the UI already will update properly if the input element itself is interacted with.
-    ///
-    /// We only need to solve the case where it was a 'background action'.
-    ///
-    /// So, if this bool toggles to a different value than what the UI last saw,
-    /// then the UI is to set the input element's value equal to the 'FindOverlayValue'
-    /// because a 'background action' modified the value.
-    /// </summary>
-    public bool FindOverlayValueExternallyChangedMarker { get; set; }
-    public string ReplaceValueInFindOverlay { get; set; }
-	/// <summary>
-    /// If one opens a file with the 'Enter' key, they might want focus to then be set on that
-    /// newly opened file. However, perhaps one wants the 'Space' key to also open the file,
-    /// but not set focus to it.
-    /// </summary>
-    public bool ShouldSetFocusAfterNextRender { get; set; }
-    public bool ShouldRevealCursor { get; set; }
-    public List<CollapsePoint> AllCollapsePointList { get; set; } = new();
-    /// <summary>
-    /// TODO: This does not belong here move this to the 'TextEditorViewModelSlimDisplay.razor'.
-    /// </summary>
-    public List<CollapsePoint> VirtualizedCollapsePointList { get; set; } = new();
-    public bool HiddenLineIndexHashSetIsShallowCopy { get; set; }
-    public HashSet<int> HiddenLineIndexHashSet { get; set; } = new();
-    /// <summary>
-    /// For the time being, this similarly named list on the TextEditorModel will be added
-    /// to alongside this one of the viewmodel.
-    ///
-    /// By adding to the model, the model's tab positioning logic can "just work" for the
-    /// 3 dots thing.
-    ///
-    /// But, the 3 dots thing shouldn't be on the model long term since it is tied to
-    /// the collapse/expand state and it was decided that
-    /// separate viewmodels that reference the same underlying model
-    /// should have different collapse/expand states.
-    /// </summary>
-    public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; } = new(); // { (new InlineUi(10, InlineUiKind.ThreeDotsExpandInlineUiThing), "aaa") };
-    public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
+	
     public bool CreateCacheWasInvoked { get; set; }
     
     public bool ScrollWasModified { get; set; }
@@ -199,8 +141,12 @@ public sealed class TextEditorViewModel : IDisposable
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
 	/// </summary>
     public bool ShouldReloadVirtualizationResult { get; set; }
-
-	public TextEditorViewModelPersistentState PersistentState { get; set; }
+    
+    public List<CollapsePoint> AllCollapsePointList { get; set; }
+	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
+	public bool HiddenLineIndexHashSetIsShallowCopy { get; set; }
+	public HashSet<int> HiddenLineIndexHashSet { get; set; }
+	public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; }
 
     public ValueTask FocusAsync()
     {

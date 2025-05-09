@@ -316,7 +316,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.TooltipViewModel = new(
+                    viewModelModifier.PersistentState.TooltipViewModel = new(
 	                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
 	                    parameterMap,
 	                    relativeCoordinatesOnClick,
@@ -343,7 +343,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.TooltipViewModel = new(
+                    viewModelModifier.PersistentState.TooltipViewModel = new(
                         typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
                         parameters,
                         relativeCoordinatesOnClick,
@@ -355,7 +355,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (!foundMatch)
         {
-			viewModelModifier.TooltipViewModel = null;
+			viewModelModifier.PersistentState.TooltipViewModel = null;
         }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
@@ -468,7 +468,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.TooltipViewModel = new(
+                    viewModelModifier.PersistentState.TooltipViewModel = new(
                         typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
                         parameters,
                         relativeCoordinatesOnClick,
@@ -482,7 +482,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (!foundMatch)
         {
-			viewModelModifier.TooltipViewModel = null;
+			viewModelModifier.PersistentState.TooltipViewModel = null;
         }
     }
     

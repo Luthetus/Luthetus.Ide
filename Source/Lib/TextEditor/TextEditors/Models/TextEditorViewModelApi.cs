@@ -298,7 +298,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	        cursorModifierBag,
 	        cursorModifierBag.CursorModifier);
 
-        viewModel.ShouldRevealCursor = true;
+        viewModel.PersistentState.ShouldRevealCursor = true;
     }
 
     public void MoveCursorUnsafe(
@@ -456,9 +456,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-            	if (viewModel.VirtualAssociativityKind == VirtualAssociativityKind.Left)
+            	if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Left)
             	{
-            		viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Right;
+            		viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
             	}
                 else if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keymapArgs.ShiftKey)
                 {
@@ -785,14 +785,14 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			}
 		}
 		
-		if (viewModel.VirtualAssociativityKind == VirtualAssociativityKind.None &&
+		if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.None &&
 			inlineUi.InlineUiKind != InlineUiKind.None)
 		{
-			viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Left;
+			viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Left;
 		}
 		
 		if (inlineUi.InlineUiKind == InlineUiKind.None)
-			viewModel.VirtualAssociativityKind = VirtualAssociativityKind.None;
+			viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.None;
 
         if (keymapArgs.ShiftKey)
         {
@@ -875,10 +875,10 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     {
     	try
     	{
-    		if (!viewModel.ShouldRevealCursor)
+    		if (!viewModel.PersistentState.ShouldRevealCursor)
     			return;
     			
-    		viewModel.ShouldRevealCursor = false;
+    		viewModel.PersistentState.ShouldRevealCursor = false;
     	
     		var cursorIsVisible = false;
     		

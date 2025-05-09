@@ -108,7 +108,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 				{
 					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
-					if (viewModelModifier.MenuKind != MenuKind.None)
+					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 					{
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
@@ -135,7 +135,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 				{
 					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
-					if (viewModelModifier.MenuKind != MenuKind.None)
+					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 					{
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
@@ -222,7 +222,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					{
 						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 	
-						if (viewModelModifier.MenuKind != MenuKind.None)
+						if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 						{
 							TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
@@ -375,7 +375,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         		if (viewModelModifier is null)
         			return ValueTask.CompletedTask;
                 
-                viewModelModifier.ShouldRevealCursor = true;
+                viewModelModifier.PersistentState.ShouldRevealCursor = true;
                 
                 TextEditorCommandDefaultFunctions.GoToDefinition(
                 	editContext,
@@ -405,7 +405,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         		if (viewModelModifier is null)
         			return ValueTask.CompletedTask;
                 
-                viewModelModifier.ShouldRevealCursor = true;
+                viewModelModifier.PersistentState.ShouldRevealCursor = true;
                 
                 TextEditorCommandDefaultFunctions.GoToDefinition(
                 	editContext,

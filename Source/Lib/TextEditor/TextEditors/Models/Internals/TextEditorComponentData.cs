@@ -410,7 +410,7 @@ public sealed class TextEditorComponentData
 				{
 					if (lineAndColumnIndices.columnIndex == _activeRenderBatch.ViewModel.PrimaryCursor.ColumnIndex)
 					{
-						if (_activeRenderBatch.ViewModel.VirtualAssociativityKind == VirtualAssociativityKind.Right)
+						if (_activeRenderBatch.ViewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Right)
 						{
 							leftInPixels += _activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth * 3;
 						}
@@ -1491,18 +1491,18 @@ public sealed class TextEditorComponentData
     
     	ConstructVirtualizationStyleCssStrings();
     	
-    	if (_activeRenderBatch.ViewModel.TooltipViewModel is not null)
+    	if (_activeRenderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
 		{
-			if (valueTooltipRelativeX != _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeX)
+			if (valueTooltipRelativeX != _activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX)
 			{
-				valueTooltipRelativeX = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeX;
-				tooltipRelativeX = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeX.ToCssValue();
+				valueTooltipRelativeX = _activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX;
+				tooltipRelativeX = _activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX.ToCssValue();
 			}
 		
-			if (valueTooltipRelativeY != _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY)
+			if (valueTooltipRelativeY != _activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY)
 			{
-				valueTooltipRelativeY = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY;
-				tooltipRelativeY = _activeRenderBatch.ViewModel.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
+				valueTooltipRelativeY = _activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY;
+				tooltipRelativeY = _activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
 			}
 		}
 		

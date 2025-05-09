@@ -315,19 +315,19 @@
 			@* ScrollbarSection.razor Close *@
 		    
 		    @* TooltipDisplay.razor Open *@
-		    @if (_componentData._activeRenderBatch.ViewModel.TooltipViewModel is not null)
+		    @if (_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
 		    {
-		        <div class="luth_te_tooltip luth_set-selectable @(_componentData._activeRenderBatch.ViewModel.TooltipViewModel.CssClassString ?? string.Empty)"
+		        <div class="luth_te_tooltip luth_set-selectable @(_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.CssClassString ?? string.Empty)"
 		             style="left: @(_componentData.tooltipRelativeX)px; top: @(_componentData.tooltipRelativeY)px;"
-		             @onmouseover="_componentData._activeRenderBatch.ViewModel.TooltipViewModel.OnMouseOver"
+		             @onmouseover="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.OnMouseOver"
 		             @onmousedown:stopPropagation="true"
 		             @onmousemove:stopPropagation="true"
 		             @ondblclick:stopPropagation="true"
 		             @onclick:stopPropagation="true"
 		             @oncontextmenu:stopPropagation="true">
 		
-		            <DynamicComponent Type="_componentData._activeRenderBatch.ViewModel.TooltipViewModel.RendererType"
-		                              Parameters="_componentData._activeRenderBatch.ViewModel.TooltipViewModel.ParameterMap" />
+		            <DynamicComponent Type="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RendererType"
+		                              Parameters="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.ParameterMap" />
 		        </div>
 		    }
 		    @* TooltipDisplay.razor Close *@

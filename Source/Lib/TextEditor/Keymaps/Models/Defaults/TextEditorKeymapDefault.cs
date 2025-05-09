@@ -281,7 +281,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	}
 		        	else
 		        	{
-		        		viewModel.ShowReplaceButtonInFindOverlay = true;
+		        		viewModel.PersistentState.ShowReplaceButtonInFindOverlay = true;
 		        	
 						await TextEditorCommandDefaultFunctions.ShowFindOverlay(
 			                editContext,
@@ -305,7 +305,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        viewModel,
 				        cursorModifierBag);
 				        
-				    if (viewModel.MenuKind != MenuKind.None)
+				    if (viewModel.PersistentState.MenuKind != MenuKind.None)
 				    {
 				    	TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
@@ -470,7 +470,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "End":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
 	            	if (("ArrowDown" == onKeyDown.KeymapArgs.Code || "ArrowUp" == onKeyDown.KeymapArgs.Code) &&
-	                    viewModel.MenuKind == MenuKind.AutoCompleteMenu)
+	                    viewModel.PersistentState.MenuKind == MenuKind.AutoCompleteMenu)
 	                {
 	                	// TODO: Focusing the menu from here isn't working?
 	                	await editContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
@@ -491,7 +491,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					        viewModel,
 					        cursorModifierBag);
 					        
-					    if (viewModel.MenuKind != MenuKind.None)
+					    if (viewModel.PersistentState.MenuKind != MenuKind.None)
 					    {
 					    	TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
@@ -760,7 +760,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			}
 		}
 		
-		if (viewModel.MenuKind != menuKind)
+		if (viewModel.PersistentState.MenuKind != menuKind)
 		{
 			switch (menuKind)
 			{
@@ -795,15 +795,15 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		
 		if (shouldClearTooltip)
 		{
-			if (viewModel.TooltipViewModel is not null)
+			if (viewModel.PersistentState.TooltipViewModel is not null)
 			{
-				viewModel.TooltipViewModel = null;
+				viewModel.PersistentState.TooltipViewModel = null;
 			}
 		}
 		
 		if (shouldRevealCursor)
 		{
-			viewModel.ShouldRevealCursor = true;
+			viewModel.PersistentState.ShouldRevealCursor = true;
 		}
 		
 		if (shouldApplySyntaxHighlighting)

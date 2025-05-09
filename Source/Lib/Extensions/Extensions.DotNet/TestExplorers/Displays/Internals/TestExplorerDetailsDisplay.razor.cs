@@ -146,7 +146,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 							modelModifier);
 					}
 
-					viewModelModifier.ShouldRevealCursor = true;
+					viewModelModifier.PersistentState.ShouldRevealCursor = true;
 					return ValueTask.CompletedTask;
 				});
 		}

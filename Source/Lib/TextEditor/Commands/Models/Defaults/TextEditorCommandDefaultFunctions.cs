@@ -1367,7 +1367,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         IDropdownService dropdownService)
     {
-    	viewModel.MenuKind = MenuKind.None;
+    	viewModel.PersistentState.MenuKind = MenuKind.None;
     
 		var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
 		dropdownService.ReduceDisposeAction(dropdownKey);
@@ -1382,7 +1382,7 @@ public class TextEditorCommandDefaultFunctions
         IDropdownService dropdownService,
         TextEditorComponentData componentData)
     {
-    	viewModel.MenuKind = MenuKind.ContextMenu;
+    	viewModel.PersistentState.MenuKind = MenuKind.ContextMenu;
     
     	ShowDropdown(
     		editContext,
@@ -1412,7 +1412,7 @@ public class TextEditorCommandDefaultFunctions
         IDropdownService dropdownService,
         TextEditorComponentData componentData)
     {
-    	viewModel.MenuKind = MenuKind.AutoCompleteMenu;
+    	viewModel.PersistentState.MenuKind = MenuKind.AutoCompleteMenu;
     
     	ShowDropdown(
     		editContext,
@@ -1447,11 +1447,11 @@ public class TextEditorCommandDefaultFunctions
         var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursor, modelModifier);
 		if (selectedText is not null)
 		{
-			viewModel.FindOverlayValue = selectedText;
-            viewModel.FindOverlayValueExternallyChangedMarker = !viewModel.FindOverlayValueExternallyChangedMarker;
+			viewModel.PersistentState.FindOverlayValue = selectedText;
+            viewModel.PersistentState.FindOverlayValueExternallyChangedMarker = !viewModel.PersistentState.FindOverlayValueExternallyChangedMarker;
 		}
 
-        if (viewModel.ShowFindOverlay)
+        if (viewModel.PersistentState.ShowFindOverlay)
         {
             await commonJavaScriptInteropApi
                 .FocusHtmlElementById(viewModel.PersistentState.FindOverlayId)
@@ -1459,7 +1459,7 @@ public class TextEditorCommandDefaultFunctions
         }
         else
         {
-            viewModel.ShowFindOverlay = true;
+            viewModel.PersistentState.ShowFindOverlay = true;
         }
     }
     

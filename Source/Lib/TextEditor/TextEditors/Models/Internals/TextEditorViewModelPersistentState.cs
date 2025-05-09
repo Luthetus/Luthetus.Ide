@@ -24,7 +24,17 @@ public class TextEditorViewModelPersistentState
 	    string bodyElementId,
 	    string primaryCursorContentId,
 	    string gutterElementId,
-	    string findOverlayId)
+	    string findOverlayId,
+	    bool showFindOverlay,
+	    string replaceValueInFindOverlay,
+	    bool showReplaceButtonInFindOverlay,
+	    string findOverlayValue,
+	    bool findOverlayValueExternallyChangedMarker,
+	    MenuKind menuKind,
+	    TooltipViewModel tooltipViewModel,
+	    bool shouldSetFocusAfterNextRender,
+	    bool shouldRevealCursor,
+		VirtualAssociativityKind virtualAssociativityKind)
 	{
 		DisplayTracker = displayTracker;
 	    ViewModelKey = viewModelKey;
@@ -40,6 +50,19 @@ public class TextEditorViewModelPersistentState
 	    PrimaryCursorContentId = primaryCursorContentId;
 	    GutterElementId = gutterElementId;
 	    FindOverlayId = findOverlayId;
+	    
+	    ShowFindOverlay = showFindOverlay;
+	    ReplaceValueInFindOverlay = replaceValueInFindOverlay;
+	    ShowReplaceButtonInFindOverlay = showReplaceButtonInFindOverlay;
+	    FindOverlayValue = findOverlayValue;
+	    FindOverlayValueExternallyChangedMarker = findOverlayValueExternallyChangedMarker;
+	    
+	    MenuKind = menuKind;
+	    TooltipViewModel = tooltipViewModel;
+	    
+	    ShouldSetFocusAfterNextRender = shouldSetFocusAfterNextRender;
+	    ShouldRevealCursor = shouldRevealCursor;
+		VirtualAssociativityKind = virtualAssociativityKind;
 	}
 	
     
@@ -95,4 +118,55 @@ public class TextEditorViewModelPersistentState
 	public string PrimaryCursorContentId { get; }
 	public string GutterElementId { get; }
 	public string FindOverlayId { get; }
+	
+	/// <summary>
+    /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
+    /// </summary>
+    public bool ShowFindOverlay { get; set; }
+    public bool ShowReplaceButtonInFindOverlay { get; set; }
+    /// <summary>
+    /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
+    /// This property is what the find overlay input element binds to.
+    /// </summary>
+    public string FindOverlayValue { get; set; }
+    /// <summary>
+    /// If the user presses the keybind to show the FindOverlayDisplay while focused on the Text Editor,
+    /// check if the user has a text selection.
+    ///
+    /// If they do have a text selection, then populate the FindOverlayDisplay with their selection.
+    ///
+    /// The issue arises however, how does one know whether FindOverlayValue changed due to
+    /// the input element itself being typed into, versus some 'background action'.
+    ///
+    /// Because the UI already will update properly if the input element itself is interacted with.
+    ///
+    /// We only need to solve the case where it was a 'background action'.
+    ///
+    /// So, if this bool toggles to a different value than what the UI last saw,
+    /// then the UI is to set the input element's value equal to the 'FindOverlayValue'
+    /// because a 'background action' modified the value.
+    /// </summary>
+    public bool FindOverlayValueExternallyChangedMarker { get; set; }
+    public string ReplaceValueInFindOverlay { get; set; }
+    
+    /// <summary>
+	/// This property determines the menu that is shown in the text editor.
+	///
+	/// For example, when this property is <see cref="MenuKind.AutoCompleteMenu"/>,
+	/// then the autocomplete menu is displayed in the text editor.
+	/// </summary>
+    public MenuKind MenuKind { get; set; }
+	/// <summary>
+	/// This property determines the tooltip that is shown in the text editor.
+	/// </summary>
+    public TooltipViewModel? TooltipViewModel { get; set; }
+    
+    /// <summary>
+    /// If one opens a file with the 'Enter' key, they might want focus to then be set on that
+    /// newly opened file. However, perhaps one wants the 'Space' key to also open the file,
+    /// but not set focus to it.
+    /// </summary>
+    public bool ShouldSetFocusAfterNextRender { get; set; }
+    public bool ShouldRevealCursor { get; set; }
+    public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
 }

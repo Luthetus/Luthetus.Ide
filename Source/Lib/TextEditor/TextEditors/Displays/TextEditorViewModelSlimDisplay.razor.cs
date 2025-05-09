@@ -228,9 +228,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             QueueCalculateVirtualizationResultBackgroundTask(_componentData._currentRenderBatch);
         }
 
-        if (_componentData._currentRenderBatch.ViewModel is not null && _componentData._currentRenderBatch.ViewModel.ShouldSetFocusAfterNextRender)
+        if (_componentData._currentRenderBatch.ViewModel is not null && _componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender)
         {
-            _componentData._currentRenderBatch.ViewModel.ShouldSetFocusAfterNextRender = false;
+            _componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -407,7 +407,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 _linkedViewModel = nextViewModel;
 
                 if (nextViewModel is not null)
-                    nextViewModel.ShouldRevealCursor = true;
+                    nextViewModel.PersistentState.ShouldRevealCursor = true;
             }
             
             _componentData.VirtualizationLineCacheClear();
@@ -518,7 +518,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                                 if (viewModelModifier is null)
                                     return ValueTask.CompletedTask;
 
-                                viewModelModifier.TooltipViewModel = null;
+                                viewModelModifier.PersistentState.TooltipViewModel = null;
 
 								return ValueTask.CompletedTask;
 							});

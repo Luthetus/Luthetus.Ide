@@ -48,7 +48,7 @@ public class TextEditorViewModelLiason
 				
 				if (initialCursorPositionIndex <= inlineUiTuple.InlineUi.PositionIndex)
 				{
-					if (viewModel.VirtualAssociativityKind == VirtualAssociativityKind.Right)
+					if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Right)
 						continue;
 				
 					inlineUiTuple.InlineUi = viewModel.InlineUiList[i].InlineUi.WithIncrementPositionIndex(insertionLength);

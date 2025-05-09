@@ -235,7 +235,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             registerViewModelArgs.ResourceUri.Value,
             false);
             
-        viewModel.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+        viewModel.PersistentState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
         viewModel.PersistentState.OnSaveRequested = HandleOnSaveRequested;
         viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
         viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
@@ -321,7 +321,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	        {
 	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
 	        	
-	        	viewModelModifier.ShouldSetFocusAfterNextRender = showViewModelArgs.ShouldSetFocusToEditor;
+	        	viewModelModifier.PersistentState.ShouldSetFocusAfterNextRender = showViewModelArgs.ShouldSetFocusToEditor;
 	        		
 	        	return viewModel.FocusAsync();
 	        });

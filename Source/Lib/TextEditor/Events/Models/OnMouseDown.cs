@@ -36,14 +36,14 @@ public struct OnMouseDown
         if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
             return;
 
-        viewModel.ShouldRevealCursor = false;
+        viewModel.PersistentState.ShouldRevealCursor = false;
 
         var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 
         if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
             return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
-		if (viewModel.MenuKind != MenuKind.None)
+		if (viewModel.PersistentState.MenuKind != MenuKind.None)
 		{
 			TextEditorCommandDefaultFunctions.RemoveDropdown(
 		        editContext,

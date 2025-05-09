@@ -3,7 +3,7 @@
 @{ var renderBatchLocal = RenderBatch; }
 
 @if (renderBatchLocal.ConstructorWasInvoked &&
-	 renderBatchLocal.ViewModel.ShowFindOverlay)
+	 renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay)
 {
 	var appOptionsState = AppOptionsService.GetAppOptionsState();
 
