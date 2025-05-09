@@ -320,8 +320,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    cursorModifierBag,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
-	                    TextEditorModel.DeleteKind.Backspace,
-	                    CancellationToken.None);
+	                    TextEditorModel.DeleteKind.Backspace);
 	                shouldRevealCursor = true;
 					break;
 				case "Delete":
@@ -330,8 +329,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    cursorModifierBag,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
-	                    TextEditorModel.DeleteKind.Delete,
-	                    CancellationToken.None);
+	                    TextEditorModel.DeleteKind.Delete);
 	                shouldRevealCursor = true;
 	                break;
 	            case "Enter":
@@ -365,8 +363,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					
 					modelModifier.Insert(
 			            valueToInsert,
-			            cursorModifierBag,
-			            cancellationToken: CancellationToken.None);
+			            cursorModifierBag);
 			            
 			        if (primaryCursorModifier.LineIndex > 1)
 			        {
@@ -578,8 +575,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    cursorModifierBag,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
-	                    TextEditorModel.DeleteKind.Backspace,
-	                    CancellationToken.None);
+	                    TextEditorModel.DeleteKind.Backspace);
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.None;
 	                shouldClearTooltip = true;
@@ -590,8 +586,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    cursorModifierBag,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
-	                    TextEditorModel.DeleteKind.Delete,
-	                    CancellationToken.None);
+	                    TextEditorModel.DeleteKind.Delete);
 					shouldRevealCursor = true;
 					menuKind = MenuKind.None;
 	                shouldClearTooltip = true;
@@ -629,8 +624,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					
 					modelModifier.Insert(
 			            valueToInsert,
-			            cursorModifierBag,
-			            cancellationToken: CancellationToken.None);
+			            cursorModifierBag);
 			            
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.None;
@@ -675,8 +669,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        	{
 			            	modelModifier.Insert(
 			                    "\t",
-			                    cursorModifierBag,
-			                    cancellationToken: CancellationToken.None);
+			                    cursorModifierBag);
 			                    
 			                menuKind = MenuKind.None;
 			                shouldClearTooltip = true;
@@ -690,8 +683,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 	            	modelModifier.Insert(
 	                    " ",
-	                    cursorModifierBag,
-	                    cancellationToken: CancellationToken.None);
+	                    cursorModifierBag);
 	                    
 	                shouldRevealCursor = true;
 	                shouldClearTooltip = true;
@@ -712,8 +704,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 					modelModifier.Insert(
 	                    onKeyDown.KeymapArgs.Key,
-	                    cursorModifierBag,
-	                    cancellationToken: CancellationToken.None);
+	                    cursorModifierBag);
 	                
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.None;
@@ -758,8 +749,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 	            	modelModifier.Insert(
 	                    onKeyDown.KeymapArgs.Key,
-	                    cursorModifierBag,
-	                    cancellationToken: CancellationToken.None);
+	                    cursorModifierBag);
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.AutoCompleteMenu;
 	                shouldClearTooltip = true;

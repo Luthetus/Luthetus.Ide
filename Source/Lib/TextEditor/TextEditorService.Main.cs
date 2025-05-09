@@ -199,42 +199,23 @@ public partial class TextEditorService : ITextEditorService
 		
         foreach (var viewModelModifier in __ViewModelList)
         {
-			bool successCursorModifierBag;
-			CursorModifierBagTextEditor cursorModifierBag;
-			
-			if (__CursorModifierBagCache is null)
-			{
-				successCursorModifierBag = false;
-				cursorModifierBag = default;
-			}
-			else
-			{
-	            successCursorModifierBag = __CursorModifierBagCache.TryGetValue(
-	                viewModelModifier.ViewModelKey,
-	                out cursorModifierBag);
-	        }
-
-            if (successCursorModifierBag && cursorModifierBag.ConstructorWasInvoked)
-                viewModelModifier.PrimaryCursor = cursorModifierBag.CursorModifier.ToCursor();
-            
-            if (viewModelModifier.ShouldRevealCursor)
+        	TextEditorModel? modelModifier = null;
+        	if (viewModelModifier.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
+        		modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
+        
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+            if (cursorModifierBag.ConstructorWasInvoked)
             {
-            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
-            	
-            	if (!cursorModifierBag.ConstructorWasInvoked)
-            		cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-            	
-            	var cursorModifier = cursorModifierBag.CursorModifier;
-            	
-            	if (modelModifier is not null)
-            	{
+                viewModelModifier.PrimaryCursor = cursorModifierBag.CursorModifier.ToCursor();
+            	if (viewModelModifier.ShouldRevealCursor)
+	            {
             		ViewModelApi.RevealCursor(
 	            		editContext,
 				        modelModifier,
 				        viewModelModifier,
 				        cursorModifierBag,
-				        cursorModifier);
-            	}
+				        cursorModifierBag.CursorModifier);
+	            }
             }
             
             // This if expression exists below, to check if 'CalculateVirtualizationResult(...)' should be invoked.
@@ -246,7 +227,7 @@ public partial class TextEditorService : ITextEditorService
             // which go on to scroll the editor.
             if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
-				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: false);
+				ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: false);
 			}
 
             if (viewModelModifier.ScrollWasModified)
@@ -305,9 +286,7 @@ public partial class TextEditorService : ITextEditorService
 						var bigLeft = scrollLeft + viewModelModifier.TextEditorDimensions.Width;
             			
             			if (bigLeft > viewModelModifier.VirtualizationResult.VirtualLeft + viewModelModifier.VirtualizationResult.VirtualWidth)
-            			{
             				viewModelModifier.ShouldReloadVirtualizationResult = true;
-            			}
             		}
             	}
             }
@@ -317,9 +296,8 @@ public partial class TextEditorService : ITextEditorService
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
 	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
 	            	editContext,
-	            	editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true),
-			        viewModelModifier,
-			        CancellationToken.None);
+	            	modelModifier,
+			        viewModelModifier);
 			}
         }
 	    
@@ -328,19 +306,6 @@ public partial class TextEditorService : ITextEditorService
 	    __DiffModelCache.Clear();
 	    
 	    __IsAvailableCursorModifier = true;
-	    
-	    /*foreach (var viewModel in __ViewModelList)
-	    {
-	    	if (viewModel.UiOutdated || viewModel.DisplayTracker.ComponentData is not null)
-	    	{
-	    		viewModel.UiOutdated = false;
-	    		viewModel.DisplayTracker.ComponentData.CalculateUi(editContext);
-	    	}
-	    	else
-	    	{
-	    		viewModel.UiOutdated = true;
-	    	}
-	    }*/
 	    
 	    SetModelAndViewModelRange(editContext);
 	}
@@ -369,11 +334,10 @@ public partial class TextEditorService : ITextEditorService
 	/// </summary>
 	public void ValidateMaximumScrollLeftAndScrollTop(
 		TextEditorEditContext editContext,
+		TextEditorModel? modelModifier,
 		TextEditorViewModel viewModelModifier,
 		bool textEditorDimensionsChanged)
-	{	
-		var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
-    	
+	{
     	if (modelModifier is null)
     		return;
 		

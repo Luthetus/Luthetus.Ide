@@ -123,80 +123,72 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        string content,
-        CancellationToken cancellationToken)
+        string content)
     {
-        modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
+        modelModifier.Insert(content, cursorModifierBag);
     }
 
     public void InsertTextUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        string content,
-        CancellationToken cancellationToken)
+        string content)
     {
-        modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
+        modelModifier.Insert(content, cursorModifierBag);
     }
 
     public void HandleKeyboardEvent(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeymapArgs keymapArgs,
-        CancellationToken cancellationToken)
+        KeymapArgs keymapArgs)
     {
-        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag, cancellationToken);
+        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag);
     }
 
     public void HandleKeyboardEventUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeymapArgs keymapArgs,
-        CancellationToken cancellationToken)
+        KeymapArgs keymapArgs)
     {
-        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag, cancellationToken);
+        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag);
     }
 
     public void DeleteTextByRange(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        int count,
-        CancellationToken cancellationToken)
+        int count)
     {
-        modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
+        modelModifier.DeleteByRange(count, cursorModifierBag);
     }
 
     public void DeleteTextByRangeUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        int count,
-        CancellationToken cancellationToken)
+        int count)
     {
-        modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
+        modelModifier.DeleteByRange(count, cursorModifierBag);
     }
 
     public void DeleteTextByMotion(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        MotionKind motionKind,
-        CancellationToken cancellationToken)
+        MotionKind motionKind)
     {
-        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
+        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag);
     }
 
     public void DeleteTextByMotionUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        MotionKind motionKind,
-        CancellationToken cancellationToken)
+        MotionKind motionKind)
     {
-        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
+        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag);
     }
 
     public void AddPresentationModel(

@@ -356,8 +356,7 @@ public partial class TextEditorModel
 
 	public void HandleKeyboardEvent(
         KeymapArgs keymapArgs,
-        CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
         {
@@ -367,8 +366,7 @@ public partial class TextEditorModel
                 	cursorModifierBag,
                     1,
                     keymapArgs.CtrlKey,
-                    DeleteKind.Backspace,
-                    cancellationToken);
+                    DeleteKind.Backspace);
             }
             else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
             {
@@ -376,8 +374,7 @@ public partial class TextEditorModel
                     cursorModifierBag,
                     1,
                     keymapArgs.CtrlKey,
-                    DeleteKind.Delete,
-                    cancellationToken);
+                    DeleteKind.Delete);
             }
         }
         else
@@ -415,8 +412,7 @@ public partial class TextEditorModel
 
             Insert(
                 valueToInsert,
-                cursorModifierBag,
-                cancellationToken: cancellationToken);
+                cursorModifierBag);
         }
     }
 
@@ -428,7 +424,7 @@ public partial class TextEditorModel
 		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
 		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 		
-		Insert(content, cursorModifierBag, CancellationToken.None, shouldCreateEditHistory: false);
+		Insert(content, cursorModifierBag, shouldCreateEditHistory: false);
 	}
 
 	private void PerformBackspace(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
@@ -444,7 +440,6 @@ public partial class TextEditorModel
 			count,
 			false,
 			DeleteKind.Backspace,
-			CancellationToken.None,
 			shouldCreateEditHistory: false,
 			usePositionIndex: true);
 	}
@@ -462,15 +457,13 @@ public partial class TextEditorModel
 			count,
 			false,
 			DeleteKind.Delete,
-			CancellationToken.None,
 			shouldCreateEditHistory: false,
 			usePositionIndex: true);
 	}
 
 	public void DeleteTextByMotion(
         MotionKind motionKind,
-        CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         var keymapArgs = motionKind switch
         {
@@ -481,14 +474,12 @@ public partial class TextEditorModel
 
         HandleKeyboardEvent(
             keymapArgs,
-            cursorModifierBag,
-            CancellationToken.None);
+            cursorModifierBag);
     }
 
 	public void DeleteByRange(
         int count,
-        CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
         for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
@@ -499,8 +490,7 @@ public partial class TextEditorModel
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,
                     Key = KeyboardKeyFacts.MetaKeys.DELETE,
                 },
-                cursorModifierBag,
-                CancellationToken.None);
+                cursorModifierBag);
         }
     }
 
@@ -1079,7 +1069,6 @@ public partial class TextEditorModel
     public void Insert(
         string value,
         CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken = default,
 		bool shouldCreateEditHistory = true)
     {
         var cursorModifier = cursorModifierBag.CursorModifier;
@@ -1093,8 +1082,7 @@ public partial class TextEditorModel
                 cursorModifierBag,
                 1,
                 false,
-                DeleteKind.Delete,
-                CancellationToken.None);
+                DeleteKind.Delete);
         }
 
         // Remember the cursorPositionIndex
@@ -1105,12 +1093,12 @@ public partial class TextEditorModel
         // Metadata must be done prior to 'InsertValue'
         //
         // 'value' is replaced by the original with any line endings changed (based on 'useLineEndKindPreference').
-        value = InsertMetadata(value, cursorModifier, cancellationToken);
+        value = InsertMetadata(value, cursorModifier);
 
         // Now the text still needs to be inserted.
         // The cursorModifier is invalid, because the metadata step moved its position.
         // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
-        InsertValue(value, initialCursorPositionIndex, cancellationToken);
+        InsertValue(value, initialCursorPositionIndex);
 
 		if (shouldCreateEditHistory)
 		{
@@ -1151,8 +1139,7 @@ public partial class TextEditorModel
 
 	private string InsertMetadata(
         string value,
-        TextEditorCursorModifier cursorModifier,
-        CancellationToken cancellationToken)
+        TextEditorCursorModifier cursorModifier)
     {
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
         var initialCursorLineIndex = cursorModifier.LineIndex;
@@ -1347,8 +1334,7 @@ public partial class TextEditorModel
 
 	private void InsertValue(
         string value,
-        int cursorPositionIndex,
-        CancellationToken cancellationToken)
+        int cursorPositionIndex)
     {
         // If cursor is out of bounds then continue
         if (cursorPositionIndex > CharCount)
@@ -1393,7 +1379,6 @@ public partial class TextEditorModel
         int columnCount,
         bool expandWord,
         DeleteKind deleteKind,
-        CancellationToken cancellationToken = default,
 		bool shouldCreateEditHistory = true,
 		bool usePositionIndex = false)
 	{
@@ -1406,7 +1391,7 @@ public partial class TextEditorModel
 		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
 		var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 
-        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, usePositionIndex, cancellationToken);
+        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, usePositionIndex);
 
         if (tuple is null)
         {
@@ -1418,7 +1403,7 @@ public partial class TextEditorModel
 
 		var textRemoved = this.GetString(calculatedPositionIndex, charCount);
 
-        DeleteValue(calculatedPositionIndex, charCount, cancellationToken);
+        DeleteValue(calculatedPositionIndex, charCount);
 
 		if (shouldCreateEditHistory)
 		{
@@ -1514,15 +1499,14 @@ public partial class TextEditorModel
     /// where as one tells the <see cref="TextEditorPartition"/> to delete 2 char values.<br/><br/>
     /// 
     /// This method returns the 'int charValueCount', so that it can be used
-    /// in the <see cref="DeleteValue(int, int, CancellationToken)"/> method.
+    /// in the <see cref="DeleteValue(int, int)"/> method.
     /// </summary>
 	private (int positionIndex, int charCount)? DeleteMetadata(
         int columnCount,
         TextEditorCursorModifier cursorModifier,
         bool expandWord,
         DeleteKind deleteKind,
-        bool usePositionIndex,
-        CancellationToken cancellationToken)
+        bool usePositionIndex)
 	{
         var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
         var initialLineIndex = cursorModifier.LineIndex;
@@ -1816,7 +1800,7 @@ public partial class TextEditorModel
         }
     }
 
-	private void DeleteValue(int positionIndex, int count, CancellationToken cancellationToken)
+	private void DeleteValue(int positionIndex, int count)
     {
         // If cursor is out of bounds then continue
         if (positionIndex >= CharCount)

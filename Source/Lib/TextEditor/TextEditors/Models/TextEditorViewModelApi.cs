@@ -913,8 +913,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CalculateVirtualizationResult(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-		TextEditorViewModel viewModel,
-        CancellationToken cancellationToken)
+		TextEditorViewModel viewModel)
     {
     	#if DEBUG
     	var startTime = Stopwatch.GetTimestamp();
@@ -1295,8 +1294,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public async ValueTask RemeasureAsync(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModel,
-        CancellationToken cancellationToken)
+        TextEditorViewModel viewModel)
     {
         var options = _textEditorService.OptionsApi.GetOptions();
 		
@@ -1310,8 +1308,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void ForceRender(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModel,
-        CancellationToken cancellationToken)
+        TextEditorViewModel viewModel)
     {
         // Getting the ViewModel from the 'editContext' triggers a re-render
         //

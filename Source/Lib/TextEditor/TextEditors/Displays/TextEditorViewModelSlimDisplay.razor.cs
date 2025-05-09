@@ -686,8 +686,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
             	return TextEditorService.ViewModelApi.RemeasureAsync(
             		editContext,
-			        viewModelModifier,
-			        CancellationToken.None);
+			        viewModelModifier);
 	        });
     }
 
@@ -715,8 +714,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             	TextEditorService.ViewModelApi.CalculateVirtualizationResult(
             		editContext,
 			        modelModifier,
-			        viewModelModifier,
-			        CancellationToken.None);
+			        viewModelModifier);
 			    return ValueTask.CompletedTask;
             });
     }

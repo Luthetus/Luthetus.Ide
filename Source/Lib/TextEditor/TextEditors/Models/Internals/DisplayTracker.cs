@@ -192,7 +192,7 @@ public sealed class DisplayTracker : IDisposable
 				viewModelModifier.ShouldReloadVirtualizationResult = true;
 				
 				// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
-				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: true);
+				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: true);
 			});
 	}
 

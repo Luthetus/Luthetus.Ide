@@ -78,8 +78,7 @@ public class TextEditorCommandDefaultFunctions
 
         modelModifier.HandleKeyboardEvent(
             new KeymapArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-            cursorModifierBag,
-            CancellationToken.None);
+            cursorModifierBag);
     }
 
     public static async ValueTask PasteAsync(
@@ -92,7 +91,7 @@ public class TextEditorCommandDefaultFunctions
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     
     	var clipboard = await clipboardService.ReadClipboard().ConfigureAwait(false);
-        modelModifier.Insert(clipboard, cursorModifierBag, cancellationToken: CancellationToken.None);
+        modelModifier.Insert(clipboard, cursorModifierBag);
     }
 
     public static void TriggerSave(
@@ -274,8 +273,7 @@ public class TextEditorCommandDefaultFunctions
 
         modelModifier.Insert(
             selectedText,
-            new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForInsertion)),
-            cancellationToken: CancellationToken.None);
+            new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForInsertion)));
     }
 
     public static void IndentMore(
@@ -307,8 +305,7 @@ public class TextEditorCommandDefaultFunctions
 
             modelModifier.Insert(
                 KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
-                insertionCursorModifierBag,
-                cancellationToken: CancellationToken.None);
+                insertionCursorModifierBag);
         }
 
         var lowerBoundPositionIndexChange = 1;
@@ -376,8 +373,7 @@ public class TextEditorCommandDefaultFunctions
 
                 modelModifier.DeleteByRange(
                     removeCharacterCount, // Delete a single "Tab" character
-                    new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForDeletion)),
-                    CancellationToken.None);
+                    new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForDeletion)));
             }
             else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
             {
@@ -394,8 +390,7 @@ public class TextEditorCommandDefaultFunctions
 
                 modelModifier.DeleteByRange(
                     removeCharacterCount,
-                    new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForDeletion)),
-                    CancellationToken.None);
+                    new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForDeletion)));
             }
 
             // Modify the lower bound of user's text selection
@@ -476,7 +471,7 @@ public class TextEditorCommandDefaultFunctions
 			valueToInsert += indentationBuilder.ToString();
         }
 
-        modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
+        modelModifier.Insert(valueToInsert, cursorModifierBag);
     }
 
     public static void NewLineAbove(
@@ -522,7 +517,7 @@ public class TextEditorCommandDefaultFunctions
 			indentationLength = indentationBuilder.Length;
         }
 
-        modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
+        modelModifier.Insert(valueToInsert, cursorModifierBag);
 
         if (primaryCursorModifier.LineIndex > 1)
         {

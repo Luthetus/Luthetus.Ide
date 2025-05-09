@@ -150,18 +150,15 @@ public interface ITextEditorViewModelApi
     public void CalculateVirtualizationResult(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModelModifier,
-        CancellationToken cancellationToken);
+        TextEditorViewModel viewModelModifier);
 
     public ValueTask RemeasureAsync(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
-        CancellationToken cancellationToken);
+        TextEditorViewModel viewModelModifier);
 
     public void ForceRender(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModelModifier,
-        CancellationToken cancellationToken);
+        TextEditorViewModel viewModelModifier);
     #endregion
 
     #region DELETE_METHODS

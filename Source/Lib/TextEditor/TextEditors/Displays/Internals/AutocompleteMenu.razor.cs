@@ -308,8 +308,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             		editContext,
 			        modelModifier,
 			        cursorModifierBag,
-			        autocompleteEntry.DisplayName.Substring(word.Length),
-			        CancellationToken.None);
+			        autocompleteEntry.DisplayName.Substring(word.Length));
 			        
 	            return renderBatch.ViewModel.FocusAsync();
             });

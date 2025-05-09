@@ -1035,8 +1035,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            		
 	            modelModifier.Insert(
 	                textToInsert,
-	                cursorModifierBag,
-	                cancellationToken: CancellationToken.None);
+	                cursorModifierBag);
 	                
 	            if (behindPositionIndex > 0 && modelModifier.GetCharacter(behindPositionIndex) == 'p')
 	            {
