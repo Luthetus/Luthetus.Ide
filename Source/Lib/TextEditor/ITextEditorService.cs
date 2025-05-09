@@ -93,11 +93,11 @@ public partial interface ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-	public List<TextEditorModel?> __ModelList { get; }   
+	public List<TextEditorModel> __ModelList { get; }   
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public List<TextEditorViewModel?> __ViewModelList { get; }
+    public List<TextEditorViewModel> __ViewModelList { get; }
     
     /// <summary>
 	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.

@@ -155,7 +155,7 @@ public partial class TextEditorService : ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public List<TextEditorViewModel?> __ViewModelList { get; } = new();
+    public List<TextEditorViewModel> __ViewModelList { get; } = new();
     
     /// <summary>
 	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
@@ -676,30 +676,20 @@ public partial class TextEditorService : ITextEditorService
 	
 	public void SetModelAndViewModelRange(TextEditorEditContext editContext)
 	{
-		var inState = TextEditorState;
+		// TextEditorState isn't currently being re-instantiated after the state is modified, so I'm going to comment out this local reference.
+		// 
+		// var inState = TextEditorState;
 
-		// Models
-		foreach (var kvpModelModifier in __ModelList)
+		foreach (var model in __ModelList)
 		{
-			var exists = inState._modelMap.TryGetValue(
-				kvpModelModifier.ResourceUri, out var inModel);
-
-			if (!exists)
-				continue;
-
-			inState._modelMap[kvpModelModifier.ResourceUri] = kvpModelModifier;
+			if (TextEditorState._modelMap.ContainsKey(model.ResourceUri))
+				TextEditorState._modelMap[model.ResourceUri] = model;
 		}
 
-		// ViewModels
-		foreach (var kvpViewModelModifier in __ViewModelList)
+		foreach (var viewModel in __ViewModelList)
 		{
-			var exists = inState._viewModelMap.TryGetValue(
-				kvpViewModelModifier.ViewModelKey, out var inViewModel);
-
-			if (!exists)
-				continue;
-
-			inState._viewModelMap[kvpViewModelModifier.ViewModelKey] = kvpViewModelModifier;
+			if (TextEditorState._viewModelMap.ContainsKey(viewModel.ViewModelKey))
+				TextEditorState._viewModelMap[viewModel.ViewModelKey] = viewModel;
 		}
 
 		__ModelList.Clear();
