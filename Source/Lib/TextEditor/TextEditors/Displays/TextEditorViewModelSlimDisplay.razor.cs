@@ -219,6 +219,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		catch (Exception e)
 		{
 			Console.WriteLine(e);
+			return false;
 		}
     	
         return true;
@@ -390,6 +391,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     public void HandleTextEditorViewModelKeyChange()
     {
+    	// Avoid infinite loop if the viewmodel does not exist.
+    	if (TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey) is null)
+    		return;
+    	
     	TextEditorService.WorkerArbitrary.PostUnique(nameof(HandleTextEditorViewModelKeyChange), editContext =>
     	{
     		var localTextEditorViewModelKey = TextEditorViewModelKey;
