@@ -235,11 +235,11 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						if (lineIndexOriginal != primaryCursorModifier.LineIndex ||
 							columnIndexOriginal != primaryCursorModifier.ColumnIndex)
 						{
-							viewModelModifier.ShouldRevealCursor = true;
+							viewModelModifier.PersistentState.ShouldRevealCursor = true;
 						}
 					}
 					
-					var compilerServiceResource = modelModifier.CompilerService.GetResource(
+					var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
 						terminalOutputFormatterExpand.TextEditorModelResourceUri);
 
 					if (compilerServiceResource is TerminalResource terminalResource)

@@ -189,15 +189,15 @@ public sealed class RazorCompilerService : ICompilerService
     {
     	lock (_resourceMapLock)
 		{
-			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
 			{
-				var resource = _resourceMap[modelModifier.ResourceUri];
+				var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
 				resource.HtmlSymbols.Clear();
 			}
 		}
     
     	var lexer = new RazorLexer(
-    		modelModifier.ResourceUri,
+    		modelModifier.PersistentState.ResourceUri,
     		modelModifier.GetAllText(),
             this,
             _cSharpCompilerService,
@@ -207,9 +207,9 @@ public sealed class RazorCompilerService : ICompilerService
     
     	lock (_resourceMapLock)
 		{
-			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
 			{
-				var resource = _resourceMap[modelModifier.ResourceUri];
+				var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
 				
 	            resource.RazorSyntaxTree = lexer.RazorSyntaxTree;
 				

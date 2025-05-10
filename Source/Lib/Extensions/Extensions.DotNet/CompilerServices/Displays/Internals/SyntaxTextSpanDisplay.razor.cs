@@ -85,10 +85,9 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 					editContext,
 			        modelModifier,
 			        cursorModifierBag,
-			        localInputValue,
-			        CancellationToken.None);
+			        localInputValue);
 
-				modelModifier.CompilerService.ResourceWasModified(
+				modelModifier.PersistentState.CompilerService.ResourceWasModified(
 					_textSpanTuple.TextEditorTextSpan.ResourceUri,
 					Array.Empty<TextEditorTextSpan>());
                 return ValueTask.CompletedTask;

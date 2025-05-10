@@ -44,7 +44,7 @@
     {
         <div class="luth_te_gutter-section"
 		      style="@_componentData._gutterWidthStyleCssString"
-		      id="@_componentData._activeRenderBatch.ViewModel.GutterElementId">
+		      id="@_componentData._activeRenderBatch.ViewModel.PersistentState.GutterElementId">
 		      
             @* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
             
@@ -54,16 +54,16 @@
 			</div>
             @* Virtualization Close *@
 		    
+		    @{ var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1); }
+		    
 		    @foreach (var virtualizedLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
-		             style="@(_componentData.GetGutterStyleCss(virtualizedLine.TopCssStyle))">
+		             style="@(_componentData.GetGutterStyleCss(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].TopCssValue))">
 		             
 		            @(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].LineNumberString)
 		            
 		            @{
-		            	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
-		            	
 		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
 		            	{
 		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedLine.LineIndex)
@@ -151,7 +151,7 @@
 	 		
 			@* RowSection.razor Open *@
 			<div class="luth_te_row-section"
-				id="@_componentData._activeRenderBatch.ViewModel.BodyElementId">
+				id="@_componentData._activeRenderBatch.ViewModel.PersistentState.BodyElementId">
 					    
 				@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
 				@* Virtualization Open *@
@@ -223,7 +223,7 @@
 				@foreach (var virtualizationLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 				{
 					<div class="luth_te_row"
-						 style="@_componentData.RowSection_GetRowStyleCss(virtualizationLine.TopCssStyle, virtualizationLine.LeftInPixels)">
+						 style="@_componentData.RowSection_GetRowStyleCss(_componentData.LineIndexCacheEntryMap[virtualizationLine.LineIndex].TopCssValue, virtualizationLine.LeftInPixels)">
 					
 						@*
 							'!= 0' because the struct's int property will default to '0',
@@ -257,7 +257,7 @@
 					</div>
 				}
 								
-				<textarea id="@_componentData._activeRenderBatch.ViewModel.PrimaryCursorContentId"
+				<textarea id="@_componentData._activeRenderBatch.ViewModel.PersistentState.PrimaryCursorContentId"
 							tabindex="@_componentData._activeRenderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex"
 							class="@_componentData.BlinkAnimationCssClass"
 							style="@_componentData._previousGetCursorStyleCss">
@@ -315,30 +315,25 @@
 			@* ScrollbarSection.razor Close *@
 		    
 		    @* TooltipDisplay.razor Open *@
-		    @if (_componentData._activeRenderBatch.ViewModel.TooltipViewModel is not null)
+		    @if (_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
 		    {
-		        <div class="luth_te_tooltip luth_set-selectable @(_componentData._activeRenderBatch.ViewModel.TooltipViewModel.CssClassString ?? string.Empty)"
+		        <div class="luth_te_tooltip luth_set-selectable @(_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.CssClassString ?? string.Empty)"
 		             style="left: @(_componentData.tooltipRelativeX)px; top: @(_componentData.tooltipRelativeY)px;"
-		             @onmouseover="_componentData._activeRenderBatch.ViewModel.TooltipViewModel.OnMouseOver"
+		             @onmouseover="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.OnMouseOver"
 		             @onmousedown:stopPropagation="true"
 		             @onmousemove:stopPropagation="true"
 		             @ondblclick:stopPropagation="true"
 		             @onclick:stopPropagation="true"
 		             @oncontextmenu:stopPropagation="true">
 		
-		            <DynamicComponent Type="_componentData._activeRenderBatch.ViewModel.TooltipViewModel.RendererType"
-		                              Parameters="_componentData._activeRenderBatch.ViewModel.TooltipViewModel.ParameterMap" />
+		            <DynamicComponent Type="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RendererType"
+		                              Parameters="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.ParameterMap" />
 		        </div>
 		    }
 		    @* TooltipDisplay.razor Close *@
 		    
 		    <FindOverlayDisplay RenderBatch="_componentData._activeRenderBatch"/>
 		</div>
-		
-		if (_componentData._activeRenderBatch.ViewModel.ShowCommandBar)
-	    {
-	        <CommandBarDisplay RenderBatch="_componentData._activeRenderBatch"/>
-	    }
     }
     else
     {

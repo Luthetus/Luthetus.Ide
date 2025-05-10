@@ -180,7 +180,7 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	var lexer = new DotNetSolutionLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    	var lexer = new DotNetSolutionLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
     	lexer.Lex();
     	
         var parser = new DotNetSolutionParser(lexer);
@@ -188,9 +188,9 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
     
     	lock (_resourceMapLock)
 		{
-			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
 			{
-				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.PersistentState.ResourceUri];
 				
 				resource.CompilationUnit = new ExtendedCompilationUnit
 				{

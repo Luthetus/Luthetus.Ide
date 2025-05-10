@@ -78,8 +78,7 @@ public class TextEditorCommandDefaultFunctions
 
         modelModifier.HandleKeyboardEvent(
             new KeymapArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
-            cursorModifierBag,
-            CancellationToken.None);
+            cursorModifierBag);
     }
 
     public static async ValueTask PasteAsync(
@@ -92,7 +91,7 @@ public class TextEditorCommandDefaultFunctions
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     
     	var clipboard = await clipboardService.ReadClipboard().ConfigureAwait(false);
-        modelModifier.Insert(clipboard, cursorModifierBag, cancellationToken: CancellationToken.None);
+        modelModifier.Insert(clipboard, cursorModifierBag);
     }
 
     public static void TriggerSave(
@@ -105,7 +104,7 @@ public class TextEditorCommandDefaultFunctions
     {
     	var primaryCursorModifier = cursorModifierBag.CursorModifier;
     	
-    	if (viewModel.OnSaveRequested is null)
+    	if (viewModel.PersistentState.OnSaveRequested is null)
     	{
     		NotificationHelper.DispatchError(
 		        nameof(TriggerSave),
@@ -116,7 +115,7 @@ public class TextEditorCommandDefaultFunctions
     	}
     	else
     	{
-    		viewModel.OnSaveRequested.Invoke(modelModifier);
+    		viewModel.PersistentState.OnSaveRequested.Invoke(modelModifier);
         	modelModifier.SetIsDirtyFalse();
     	}
     }
@@ -274,8 +273,7 @@ public class TextEditorCommandDefaultFunctions
 
         modelModifier.Insert(
             selectedText,
-            new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForInsertion)),
-            cancellationToken: CancellationToken.None);
+            new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForInsertion)));
     }
 
     public static void IndentMore(
@@ -307,8 +305,7 @@ public class TextEditorCommandDefaultFunctions
 
             modelModifier.Insert(
                 KeyboardKeyFacts.WhitespaceCharacters.TAB.ToString(),
-                insertionCursorModifierBag,
-                cancellationToken: CancellationToken.None);
+                insertionCursorModifierBag);
         }
 
         var lowerBoundPositionIndexChange = 1;
@@ -376,8 +373,7 @@ public class TextEditorCommandDefaultFunctions
 
                 modelModifier.DeleteByRange(
                     removeCharacterCount, // Delete a single "Tab" character
-                    new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForDeletion)),
-                    CancellationToken.None);
+                    new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForDeletion)));
             }
             else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
             {
@@ -394,8 +390,7 @@ public class TextEditorCommandDefaultFunctions
 
                 modelModifier.DeleteByRange(
                     removeCharacterCount,
-                    new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForDeletion)),
-                    CancellationToken.None);
+                    new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, new(cursorForDeletion)));
             }
 
             // Modify the lower bound of user's text selection
@@ -476,7 +471,7 @@ public class TextEditorCommandDefaultFunctions
 			valueToInsert += indentationBuilder.ToString();
         }
 
-        modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
+        modelModifier.Insert(valueToInsert, cursorModifierBag);
     }
 
     public static void NewLineAbove(
@@ -522,7 +517,7 @@ public class TextEditorCommandDefaultFunctions
 			indentationLength = indentationBuilder.Length;
         }
 
-        modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
+        modelModifier.Insert(valueToInsert, cursorModifierBag);
 
         if (primaryCursorModifier.LineIndex > 1)
         {
@@ -760,10 +755,10 @@ public class TextEditorCommandDefaultFunctions
         IDropdownService dropdownService)
     {
 		var cursorDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(viewModel.PrimaryCursorContentId)
+			.MeasureElementById(viewModel.PersistentState.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
-		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
+		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
 		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
 	
 		var siblingFileStringList = Array.Empty<string>();
@@ -874,11 +869,11 @@ public class TextEditorCommandDefaultFunctions
         IDropdownService dropdownService)
     {
 		var cursorDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(viewModel.PrimaryCursorContentId)
+			.MeasureElementById(viewModel.PersistentState.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
 		var primaryCursorModifier = cursorModifierBag.CursorModifier;
-		var compilerService = modelModifier.CompilerService;
+		var compilerService = modelModifier.PersistentState.CompilerService;
 
 		var menu = await compilerService.GetQuickActionsSlashRefactorMenu(
 			editContext,
@@ -934,7 +929,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         Category category)
     {
-    	modelModifier.CompilerService.GoToDefinition(
+    	modelModifier.PersistentState.CompilerService.GoToDefinition(
 			editContext,
 	        modelModifier,
 	        viewModel,
@@ -962,7 +957,7 @@ public class TextEditorCommandDefaultFunctions
         ILuthetusTextEditorComponentRenderers textEditorComponentRenderers)
     {
         var elementPositionInPixels = await textEditorService.JsRuntimeTextEditorApi
-            .GetBoundingClientRect(viewModel.PrimaryCursorContentId)
+            .GetBoundingClientRect(viewModel.PersistentState.PrimaryCursorContentId)
             .ConfigureAwait(false);
 
         elementPositionInPixels = elementPositionInPixels with
@@ -982,7 +977,7 @@ public class TextEditorCommandDefaultFunctions
 	            },
 				componentData,
 				textEditorComponentRenderers,
-				modelModifier.ResourceUri)
+				modelModifier.PersistentState.ResourceUri)
 			.ConfigureAwait(false);
     }
     
@@ -1289,7 +1284,7 @@ public class TextEditorCommandDefaultFunctions
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
-    	return modelModifier.CompilerService.OnInspect(
+    	return modelModifier.PersistentState.CompilerService.OnInspect(
 			editContext,
 			modelModifier,
 			viewModel,
@@ -1317,7 +1312,7 @@ public class TextEditorCommandDefaultFunctions
         Type componentType,
         Dictionary<string, object?>? componentParameters)
     {
-        var dropdownKey = new Key<DropdownRecord>(viewModel.ViewModelKey.Guid);
+        var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
         
         if (leftOffset is null)
         {
@@ -1372,9 +1367,9 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         IDropdownService dropdownService)
     {
-    	viewModel.MenuKind = MenuKind.None;
+    	viewModel.PersistentState.MenuKind = MenuKind.None;
     
-		var dropdownKey = new Key<DropdownRecord>(viewModel.ViewModelKey.Guid);
+		var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
 		dropdownService.ReduceDisposeAction(dropdownKey);
 	}
 	
@@ -1387,7 +1382,7 @@ public class TextEditorCommandDefaultFunctions
         IDropdownService dropdownService,
         TextEditorComponentData componentData)
     {
-    	viewModel.MenuKind = MenuKind.ContextMenu;
+    	viewModel.PersistentState.MenuKind = MenuKind.ContextMenu;
     
     	ShowDropdown(
     		editContext,
@@ -1417,7 +1412,7 @@ public class TextEditorCommandDefaultFunctions
         IDropdownService dropdownService,
         TextEditorComponentData componentData)
     {
-    	viewModel.MenuKind = MenuKind.AutoCompleteMenu;
+    	viewModel.PersistentState.MenuKind = MenuKind.AutoCompleteMenu;
     
     	ShowDropdown(
     		editContext,
@@ -1452,19 +1447,19 @@ public class TextEditorCommandDefaultFunctions
         var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursor, modelModifier);
 		if (selectedText is not null)
 		{
-			viewModel.FindOverlayValue = selectedText;
-            viewModel.FindOverlayValueExternallyChangedMarker = !viewModel.FindOverlayValueExternallyChangedMarker;
+			viewModel.PersistentState.FindOverlayValue = selectedText;
+            viewModel.PersistentState.FindOverlayValueExternallyChangedMarker = !viewModel.PersistentState.FindOverlayValueExternallyChangedMarker;
 		}
 
-        if (viewModel.ShowFindOverlay)
+        if (viewModel.PersistentState.ShowFindOverlay)
         {
             await commonJavaScriptInteropApi
-                .FocusHtmlElementById(viewModel.FindOverlayId)
+                .FocusHtmlElementById(viewModel.PersistentState.FindOverlayId)
                 .ConfigureAwait(false);
         }
         else
         {
-            viewModel.ShowFindOverlay = true;
+            viewModel.PersistentState.ShowFindOverlay = true;
         }
     }
     

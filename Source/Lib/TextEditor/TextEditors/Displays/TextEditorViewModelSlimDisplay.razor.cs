@@ -203,7 +203,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	        if (ComponentData._currentRenderBatch.ViewModel is not null && ComponentData._currentRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is not null)
 	        {
-	            if (ComponentData._currentRenderBatch.ViewModel.DisplayTracker.ConsumeIsFirstDisplay())
+	            if (ComponentData._currentRenderBatch.ViewModel.PersistentState.DisplayTracker.ConsumeIsFirstDisplay())
 					QueueCalculateVirtualizationResultBackgroundTask(ComponentData._currentRenderBatch);
 	        
 				ComponentData.CreateUi();
@@ -228,9 +228,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             QueueCalculateVirtualizationResultBackgroundTask(_componentData._currentRenderBatch);
         }
 
-        if (_componentData._currentRenderBatch.ViewModel is not null && _componentData._currentRenderBatch.ViewModel.ShouldSetFocusAfterNextRender)
+        if (_componentData._currentRenderBatch.ViewModel is not null && _componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender)
         {
-            _componentData._currentRenderBatch.ViewModel.ShouldSetFocusAfterNextRender = false;
+            _componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -281,7 +281,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	var localTextEditorState = TextEditorService.TextEditorState;
     
 		var inViewModel = localTextEditorState._viewModelMap[TextEditorViewModelKey];
-		var inModel = localTextEditorState._modelMap[inViewModel.ResourceUri];
+		var inModel = localTextEditorState._modelMap[inViewModel.PersistentState.ResourceUri];
     
     	(TextEditorModel Model, TextEditorViewModel ViewModel) model_viewmodel_tuple = (inModel, inViewModel);
 		
@@ -305,7 +305,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         			var localTextEditorState = TextEditorService.TextEditorState;
     
 					var inViewModel = localTextEditorState._viewModelMap[TextEditorViewModelKey];
-					var inModel = localTextEditorState._modelMap[inViewModel.ResourceUri];
+					var inModel = localTextEditorState._modelMap[inViewModel.PersistentState.ResourceUri];
 			    
 			    	(TextEditorModel Model, TextEditorViewModel ViewModel) model_viewmodel_tuple = (inModel, inViewModel);
         		
@@ -394,20 +394,20 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             if (nextViewModel is null)
                 nextViewModelKey = Key<TextEditorViewModel>.Empty;
             else
-                nextViewModelKey = nextViewModel.ViewModelKey;
+                nextViewModelKey = nextViewModel.PersistentState.ViewModelKey;
 
-            var linkedViewModelKey = _linkedViewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
+            var linkedViewModelKey = _linkedViewModel?.PersistentState.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
             var viewKeyChanged = nextViewModelKey != linkedViewModelKey;
 
             if (viewKeyChanged)
             {
-                _linkedViewModel?.DisplayTracker.DisposeComponentData(_componentData);
-                nextViewModel?.DisplayTracker.RegisterComponentData(_componentData);
+                _linkedViewModel?.PersistentState.DisplayTracker.DisposeComponentData(_componentData);
+                nextViewModel?.PersistentState.DisplayTracker.RegisterComponentData(_componentData);
 
                 _linkedViewModel = nextViewModel;
 
                 if (nextViewModel is not null)
-                    nextViewModel.ShouldRevealCursor = true;
+                    nextViewModel.PersistentState.ShouldRevealCursor = true;
             }
             
             _componentData.VirtualizationLineCacheClear();
@@ -443,7 +443,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
-				var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+				var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
         		var primaryCursor = cursorModifierBag.CursorModifier;
 
@@ -518,7 +518,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                                 if (viewModelModifier is null)
                                     return ValueTask.CompletedTask;
 
-                                viewModelModifier.TooltipViewModel = null;
+                                viewModelModifier.PersistentState.TooltipViewModel = null;
 
 								return ValueTask.CompletedTask;
 							});
@@ -536,7 +536,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				            editContext =>
 				            {
 				            	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-				                var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri);
+				                var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
 				                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 				                var primaryCursorModifier = cursorModifierBag.CursorModifier;
 				                
@@ -550,7 +550,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				                    mouseMoveMouseEventArgs,
 				                    _componentData,
 				                    TextEditorComponentRenderers,
-				                    viewModelModifier.ResourceUri);
+				                    viewModelModifier.PersistentState.ResourceUri);
 				            });
 
                         break;
@@ -675,19 +675,18 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(QueueRemeasureBackgroundTask),
-			viewModel.ResourceUri,
-			viewModel.ViewModelKey,
+			viewModel.PersistentState.ResourceUri,
+			viewModel.PersistentState.ViewModelKey,
             editContext =>
             {
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
 				if (viewModelModifier is null)
 					return ValueTask.CompletedTask;
 
             	return TextEditorService.ViewModelApi.RemeasureAsync(
             		editContext,
-			        viewModelModifier,
-			        CancellationToken.None);
+			        viewModelModifier);
 	        });
     }
 
@@ -700,12 +699,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
-			viewModel.ResourceUri,
-			viewModel.ViewModelKey,
+			viewModel.PersistentState.ResourceUri,
+			viewModel.PersistentState.ViewModelKey,
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
 				if (modelModifier is null || viewModelModifier is null)
 					return ValueTask.CompletedTask;
@@ -715,8 +714,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             	TextEditorService.ViewModelApi.CalculateVirtualizationResult(
             		editContext,
 			        modelModifier,
-			        viewModelModifier,
-			        CancellationToken.None);
+			        viewModelModifier);
 			    return ValueTask.CompletedTask;
             });
     }
@@ -825,7 +823,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				onScrollHorizontal = new OnScrollHorizontal(
 					HORIZONTAL_scrollLeftOnMouseDown,
 					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
-					renderBatchLocal.ViewModel.ViewModelKey);
+					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 			}
 			else
 			{
@@ -847,7 +845,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				onScrollHorizontal = new OnScrollHorizontal(
 					scrollLeft,
 					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
-					renderBatchLocal.ViewModel.ViewModelKey);
+					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 			}
 
 			TextEditorService.WorkerUi.EnqueueOnScrollHorizontal(onScrollHorizontal);
@@ -885,7 +883,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				onScrollVertical = new OnScrollVertical(
 					VERTICAL_scrollTopOnMouseDown,
 					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
-					renderBatchLocal.ViewModel.ViewModelKey);
+					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 			}
 			else
 			{
@@ -907,7 +905,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				onScrollVertical = new OnScrollVertical(
 					scrollTop,
 					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
-					renderBatchLocal.ViewModel.ViewModelKey);
+					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 			}
 
 			TextEditorService.WorkerUi.EnqueueOnScrollVertical(onScrollVertical);
@@ -947,7 +945,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         {
             if (_linkedViewModel is not null)
             {
-                _linkedViewModel.DisplayTracker.DisposeComponentData(_componentData);
+                _linkedViewModel.PersistentState.DisplayTracker.DisposeComponentData(_componentData);
                 _linkedViewModel = null;
             }
         }

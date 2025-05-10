@@ -54,8 +54,8 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             if (inViewModel is null || outViewModel is null)
                 return Task.CompletedTask;
 
-            var inModelModifier = editContext.GetModelModifier(inViewModel.ResourceUri);
-            var outModelModifier = editContext.GetModelModifier(outViewModel.ResourceUri);
+            var inModelModifier = editContext.GetModelModifier(inViewModel.PersistentState.ResourceUri);
+            var outModelModifier = editContext.GetModelModifier(outViewModel.PersistentState.ResourceUri);
 
             if (inModelModifier is null || outModelModifier is null)
                 return Task.CompletedTask;
@@ -85,9 +85,9 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
 
             var diffResult = TextEditorDiffResult.Calculate(
-                inModelModifier.ResourceUri,
+                inModelModifier.PersistentState.ResourceUri,
                 inText,
-                outModelModifier.ResourceUri,
+                outModelModifier.PersistentState.ResourceUri,
                 outText);
 
             inModelModifier.CompletePendingCalculatePresentationModel(

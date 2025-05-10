@@ -111,7 +111,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
 			new ScrollbarDimensions(0, 0, 0, 0, 0),
-			false,
 			category);
 			
 		_textEditorService.RegisterViewModel(editContext, viewModel);
@@ -143,7 +142,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         if (viewModel is null)
             return null;
 
-        return _textEditorService.ModelApi.GetOrDefault(viewModel.ResourceUri);
+        return _textEditorService.ModelApi.GetOrDefault(viewModel.PersistentState.ResourceUri);
     }
 
     public string? GetAllText(Key<TextEditorViewModel> viewModelKey)
@@ -152,7 +151,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
         return textEditorModel is null
             ? null
-            : _textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
+            : _textEditorService.ModelApi.GetAllText(textEditorModel.PersistentState.ResourceUri);
     }
 
     public async ValueTask<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
@@ -236,9 +235,16 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         // Unit of measurement is pixels (px)
         var scrollLeft = columnIndex *
             viewModel.CharAndLineMeasurements.CharacterWidth;
+            
+        var hiddenLineCount = 0;
+        foreach (var index in viewModel.HiddenLineIndexHashSet)
+        {
+        	if (index < lineIndex)
+        		hiddenLineCount++;
+        }
 
         // Unit of measurement is pixels (px)
-        var scrollTop = lineIndex *
+        var scrollTop = (lineIndex - hiddenLineCount) *
             viewModel.CharAndLineMeasurements.LineHeight;
 
 		var currentScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
@@ -299,7 +305,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 	        cursorModifierBag,
 	        cursorModifierBag.CursorModifier);
 
-        viewModel.ShouldRevealCursor = true;
+        viewModel.PersistentState.ShouldRevealCursor = true;
     }
 
     public void MoveCursorUnsafe(
@@ -457,9 +463,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-            	if (viewModel.VirtualAssociativityKind == VirtualAssociativityKind.Left)
+            	if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Left)
             	{
-            		viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Right;
+            		viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
             	}
                 else if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keymapArgs.ShiftKey)
                 {
@@ -786,14 +792,14 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			}
 		}
 		
-		if (viewModel.VirtualAssociativityKind == VirtualAssociativityKind.None &&
+		if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.None &&
 			inlineUi.InlineUiKind != InlineUiKind.None)
 		{
-			viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Left;
+			viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Left;
 		}
 		
 		if (inlineUi.InlineUiKind == InlineUiKind.None)
-			viewModel.VirtualAssociativityKind = VirtualAssociativityKind.None;
+			viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.None;
 
         if (keymapArgs.ShiftKey)
         {
@@ -876,10 +882,10 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     {
     	try
     	{
-    		if (!viewModel.ShouldRevealCursor)
+    		if (!viewModel.PersistentState.ShouldRevealCursor)
     			return;
     			
-    		viewModel.ShouldRevealCursor = false;
+    		viewModel.PersistentState.ShouldRevealCursor = false;
     	
     		var cursorIsVisible = false;
     		
@@ -894,7 +900,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
                 cursorPositionIndex,
                 cursorPositionIndex + 1,
                 0,
-                modelModifier.ResourceUri,
+                modelModifier.PersistentState.ResourceUri,
                 sourceText: string.Empty,
                 getTextPrecalculatedResult: string.Empty);
 
@@ -913,8 +919,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CalculateVirtualizationResult(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-		TextEditorViewModel viewModel,
-        CancellationToken cancellationToken)
+		TextEditorViewModel viewModel)
     {
     	#if DEBUG
     	var startTime = Stopwatch.GetTimestamp();
@@ -941,13 +946,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				viewModel.TextEditorDimensions.Width /
 				viewModel.CharAndLineMeasurements.CharacterWidth);
 			
-			/*Console.WriteLine($"{nameof(CalculateVirtualizationResult)}-Dump");
-			Console.WriteLine($"\tverticalStartingIndex: {verticalStartingIndex}");
-			Console.WriteLine($"\tverticalTake: {verticalTake}");*/
-			
 			var hiddenCount = 0;
-			var indexCollapsePoint = 0;
-			var previousEndExclusiveLineIndex = 0; // For nested chevrons
 			
 			for (int i = 0; i < verticalStartingIndex; i++)
 			{
@@ -957,11 +956,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					verticalStartingIndex++;
 				}
 			}
-			
-			/*Console.WriteLine($"\tindexCollapsePoint: {indexCollapsePoint}");
-			Console.WriteLine($"\thiddenCount: {hiddenCount}");*/
-			
-			//verticalStartingIndex += hiddenCount;
 			
 			verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 			
@@ -1009,19 +1003,8 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 					if (viewModel.HiddenLineIndexHashSet.Contains(lineIndex))
 					{
 						hiddenCount++;
-						
-						// Console.WriteLine($"\t\thiddenCount: {hiddenCount}");
 						continue;
 					}
-
-					/*var isCollapsed = false;
-					for (; indexCollapsePoint < viewModel.CollapsedCollapsePointList.Count; indexCollapsePoint++)
-					{
-						Console.WriteLine($"\t======== LOOP 2 Start ccplCount:{viewModel.CollapsedCollapsePointList.Count} ========");
-						Console.WriteLine($"\t======== LOOP 2 End ========");
-					}
-					if (isCollapsed)
-						continue;*/
 					
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    
@@ -1089,7 +1072,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							for (int i = firstInlineUiOnLineIndex; i < tabCharPositionIndexListCount; i++)
 							{
 								var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
-								
 								var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
 								
 								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
@@ -1122,7 +1104,6 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 						leftInPixels = Math.Max(0, leftInPixels);
 	
 						var topInPixels = lineIndex * viewModel.CharAndLineMeasurements.LineHeight;
-
 						var positionStartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
 						
 						var positionEndExclusiveIndex = positionStartInclusiveIndex + localHorizontalTake;
@@ -1139,8 +1120,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
-							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount),
-							_textEditorService.__StringBuilder));
+							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount)));
 					}
 					else
 					{
@@ -1180,8 +1160,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
 							0,
-							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount),
-							_textEditorService.__StringBuilder));
+							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount)));
 					}
 				}
 			}
@@ -1217,13 +1196,9 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 				viewModel.CharAndLineMeasurements.LineHeight);
 
 			// Add vertical margin so the user can scroll beyond the final line of content
-			int marginScrollHeight;
-			{
-				var percentOfMarginScrollHeightByPageUnit = 0.4;
-
-				marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
-				totalHeight += marginScrollHeight;
-			}
+			var percentOfMarginScrollHeightByPageUnit = 0.4;
+			int marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
+			totalHeight += marginScrollHeight;
 			
 			var virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
@@ -1233,8 +1208,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 		        resultWidth: horizontalTake * viewModel.CharAndLineMeasurements.CharacterWidth,
 		        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
 		        left: horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth,
-		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight,
-		        collapsedLineCount: hiddenCount);
+		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
 			viewModel.CreateCacheWasInvoked = false;
@@ -1250,7 +1224,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
 			#endif
 			
-			if (viewModel.DisplayTracker.ComponentData is not null)
+			if (viewModel.PersistentState.DisplayTracker.ComponentData is not null)
 				virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModel);
 		}
 		catch (LuthetusTextEditorException exception)
@@ -1295,13 +1269,12 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public async ValueTask RemeasureAsync(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModel,
-        CancellationToken cancellationToken)
+        TextEditorViewModel viewModel)
     {
         var options = _textEditorService.OptionsApi.GetOptions();
 		
 		var textEditorMeasurements = await _textEditorService.ViewModelApi
-			.GetTextEditorMeasurementsAsync(viewModel.BodyElementId)
+			.GetTextEditorMeasurementsAsync(viewModel.PersistentState.BodyElementId)
 			.ConfigureAwait(false);
 
 		viewModel.CharAndLineMeasurements = options.CharAndLineMeasurements;
@@ -1310,8 +1283,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void ForceRender(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModel,
-        CancellationToken cancellationToken)
+        TextEditorViewModel viewModel)
     {
         // Getting the ViewModel from the 'editContext' triggers a re-render
         //
@@ -1319,7 +1291,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         // (or more non-sense than it previously did)
         // Because we get a viewModel passed in to this method as an argument.
         // So this seems quite silly.
-		_ = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+		_ = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
     }
     #endregion
 

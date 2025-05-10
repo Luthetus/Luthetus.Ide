@@ -135,8 +135,8 @@ public partial class GitDiffDisplay : ComponentBase
 	
 	        TextEditorService.ModelApi.RegisterCustom(editContext, model);
 	        
-			model.CompilerService.RegisterResource(
-				model.ResourceUri,
+			model.PersistentState.CompilerService.RegisterResource(
+				model.PersistentState.ResourceUri,
 				shouldTriggerResourceWasModified: true);
 				
 			// Create ViewModel
@@ -157,7 +157,6 @@ public partial class GitDiffDisplay : ComponentBase
 	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
-	            false,
 	            category);
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
@@ -167,10 +166,10 @@ public partial class GitDiffDisplay : ComponentBase
 	            DiffPresentationFacts.InPresentationKey,
 	        };
 	            
-	        viewModel.ShouldSetFocusAfterNextRender = false;
+	        viewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
 		
-	        viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
-	        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+	        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 	        
 	        TextEditorService.ViewModelApi.Register(editContext, viewModel);
 	        
@@ -211,7 +210,6 @@ public partial class GitDiffDisplay : ComponentBase
 	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
-	            false,
 	            category);
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
@@ -221,10 +219,10 @@ public partial class GitDiffDisplay : ComponentBase
 	            DiffPresentationFacts.OutPresentationKey,
 	        };
 	            
-	        viewModel.ShouldSetFocusAfterNextRender = false;
+	        viewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
 		
-	        viewModel.GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension;
-	        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+	        viewModel.PersistentState.GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension;
+	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 	        
 	        TextEditorService.ViewModelApi.Register(editContext, viewModel);
 		});

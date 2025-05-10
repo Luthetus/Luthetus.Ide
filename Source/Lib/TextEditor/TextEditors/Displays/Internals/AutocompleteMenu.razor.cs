@@ -119,9 +119,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
-					if (viewModelModifier.MenuKind != MenuKind.None)
+					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 					{
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
@@ -149,7 +149,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
         try
         {
-            return renderBatch.Model.CompilerService.GetAutocompleteMenu(renderBatch, this);
+            return renderBatch.Model.PersistentState.CompilerService.GetAutocompleteMenu(renderBatch, this);
         }
 		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
         catch (Exception e) when (e is LuthetusTextEditorException || e is InvalidOperationException)
@@ -241,9 +241,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 					nameof(AutocompleteMenu),
 					editContext =>
 					{
-						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 	
-						if (viewModelModifier.MenuKind != MenuKind.None)
+						if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 						{
 							TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
@@ -296,8 +296,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             nameof(InsertAutocompleteMenuOption),
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
@@ -308,8 +308,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             		editContext,
 			        modelModifier,
 			        cursorModifierBag,
-			        autocompleteEntry.DisplayName.Substring(word.Length),
-			        CancellationToken.None);
+			        autocompleteEntry.DisplayName.Substring(word.Length));
 			        
 	            return renderBatch.ViewModel.FocusAsync();
             });

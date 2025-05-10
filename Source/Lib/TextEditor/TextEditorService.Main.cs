@@ -155,7 +155,7 @@ public partial class TextEditorService : ITextEditorService
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public List<TextEditorViewModel?> __ViewModelList { get; } = new();
+    public List<TextEditorViewModel> __ViewModelList { get; } = new();
     
     /// <summary>
 	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
@@ -176,7 +176,7 @@ public partial class TextEditorService : ITextEditorService
 	{
         foreach (var modelModifier in __ModelList)
         {
-            foreach (var viewModelKey in modelModifier.ViewModelKeyList)
+            foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -187,54 +187,35 @@ public partial class TextEditorService : ITextEditorService
 
             if (modelModifier.WasDirty != modelModifier.IsDirty)
             {
-            	var model = ModelApi.GetOrDefault(modelModifier.ResourceUri);
+            	var model = ModelApi.GetOrDefault(modelModifier.PersistentState.ResourceUri);
             	model.IsDirty = modelModifier.IsDirty;
             
                 if (modelModifier.IsDirty)
-                    _dirtyResourceUriService.AddDirtyResourceUri(modelModifier.ResourceUri);
+                    _dirtyResourceUriService.AddDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
                 else
-                    _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.ResourceUri);
+                    _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
             }
         }
 		
         foreach (var viewModelModifier in __ViewModelList)
         {
-			bool successCursorModifierBag;
-			CursorModifierBagTextEditor cursorModifierBag;
-			
-			if (__CursorModifierBagCache is null)
-			{
-				successCursorModifierBag = false;
-				cursorModifierBag = default;
-			}
-			else
-			{
-	            successCursorModifierBag = __CursorModifierBagCache.TryGetValue(
-	                viewModelModifier.ViewModelKey,
-	                out cursorModifierBag);
-	        }
-
-            if (successCursorModifierBag && cursorModifierBag.ConstructorWasInvoked)
-                viewModelModifier.PrimaryCursor = cursorModifierBag.CursorModifier.ToCursor();
-            
-            if (viewModelModifier.ShouldRevealCursor)
+        	TextEditorModel? modelModifier = null;
+        	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
+        		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
+        
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+            if (cursorModifierBag.ConstructorWasInvoked)
             {
-            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
-            	
-            	if (!cursorModifierBag.ConstructorWasInvoked)
-            		cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-            	
-            	var cursorModifier = cursorModifierBag.CursorModifier;
-            	
-            	if (modelModifier is not null)
-            	{
+                viewModelModifier.PrimaryCursor = cursorModifierBag.CursorModifier.ToCursor();
+            	if (viewModelModifier.PersistentState.ShouldRevealCursor)
+	            {
             		ViewModelApi.RevealCursor(
 	            		editContext,
 				        modelModifier,
 				        viewModelModifier,
 				        cursorModifierBag,
-				        cursorModifier);
-            	}
+				        cursorModifierBag.CursorModifier);
+	            }
             }
             
             // This if expression exists below, to check if 'CalculateVirtualizationResult(...)' should be invoked.
@@ -246,15 +227,15 @@ public partial class TextEditorService : ITextEditorService
             // which go on to scroll the editor.
             if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
-				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: false);
+				ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: false);
 			}
 
             if (viewModelModifier.ScrollWasModified)
             {
                 await JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
-		                viewModelModifier.BodyElementId,
-		                viewModelModifier.GutterElementId,
+		                viewModelModifier.PersistentState.BodyElementId,
+		                viewModelModifier.PersistentState.GutterElementId,
 		                viewModelModifier.ScrollbarDimensions.ScrollLeft,
 		                viewModelModifier.ScrollbarDimensions.ScrollTop)
 		            .ConfigureAwait(false);
@@ -293,9 +274,7 @@ public partial class TextEditorService : ITextEditorService
             	// result when checking the vertical virtualization, then we check horizontal.
             	if (!viewModelModifier.ShouldReloadVirtualizationResult)
             	{
-            		// low end plus width of it
             		var scrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
-            		
             		if (scrollLeft < (viewModelModifier.VirtualizationResult.VirtualLeft))
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
@@ -303,11 +282,8 @@ public partial class TextEditorService : ITextEditorService
             		else
             		{
 						var bigLeft = scrollLeft + viewModelModifier.TextEditorDimensions.Width;
-            			
             			if (bigLeft > viewModelModifier.VirtualizationResult.VirtualLeft + viewModelModifier.VirtualizationResult.VirtualWidth)
-            			{
             				viewModelModifier.ShouldReloadVirtualizationResult = true;
-            			}
             		}
             	}
             }
@@ -317,9 +293,8 @@ public partial class TextEditorService : ITextEditorService
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
 	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
 	            	editContext,
-	            	editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true),
-			        viewModelModifier,
-			        CancellationToken.None);
+	            	modelModifier,
+			        viewModelModifier);
 			}
         }
 	    
@@ -328,19 +303,6 @@ public partial class TextEditorService : ITextEditorService
 	    __DiffModelCache.Clear();
 	    
 	    __IsAvailableCursorModifier = true;
-	    
-	    /*foreach (var viewModel in __ViewModelList)
-	    {
-	    	if (viewModel.UiOutdated || viewModel.DisplayTracker.ComponentData is not null)
-	    	{
-	    		viewModel.UiOutdated = false;
-	    		viewModel.DisplayTracker.ComponentData.CalculateUi(editContext);
-	    	}
-	    	else
-	    	{
-	    		viewModel.UiOutdated = true;
-	    	}
-	    }*/
 	    
 	    SetModelAndViewModelRange(editContext);
 	}
@@ -369,11 +331,10 @@ public partial class TextEditorService : ITextEditorService
 	/// </summary>
 	public void ValidateMaximumScrollLeftAndScrollTop(
 		TextEditorEditContext editContext,
+		TextEditorModel? modelModifier,
 		TextEditorViewModel viewModelModifier,
 		bool textEditorDimensionsChanged)
-	{	
-		var modelModifier = editContext.GetModelModifier(viewModelModifier.ResourceUri, isReadOnly: true);
-    	
+	{
     	if (modelModifier is null)
     		return;
 		
@@ -406,7 +367,8 @@ public partial class TextEditorService : ITextEditorService
 				viewModelModifier.CharAndLineMeasurements.CharacterWidth);
 		}
 
-		var totalHeight = (int)Math.Ceiling(modelModifier.LineEndList.Count *
+		var totalHeight = (int)Math.Ceiling(
+			(modelModifier.LineEndList.Count - viewModelModifier.HiddenLineIndexHashSet.Count) *
 			viewModelModifier.CharAndLineMeasurements.LineHeight);
 
 		// Add vertical margin so the user can scroll beyond the final line of content
@@ -502,7 +464,7 @@ public partial class TextEditorService : ITextEditorService
 		primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
 		primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
 		
-		viewModelModifier.ShouldRevealCursor = true;
+		viewModelModifier.PersistentState.ShouldRevealCursor = true;
 		
 		_ = Task.Run(async () =>
 		{
@@ -510,7 +472,7 @@ public partial class TextEditorService : ITextEditorService
 			WorkerArbitrary.PostUnique(nameof(OpenInEditorAsync), editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				viewModelModifier.ShouldRevealCursor = true;
+				viewModelModifier.PersistentState.ShouldRevealCursor = true;
 				return ValueTask.CompletedTask;
 			});
 		});
@@ -566,7 +528,7 @@ public partial class TextEditorService : ITextEditorService
 		if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
 			primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 			
-		viewModelModifier.ShouldRevealCursor = true;
+		viewModelModifier.PersistentState.ShouldRevealCursor = true;
 		
 		_ = Task.Run(async () =>
 		{
@@ -574,7 +536,7 @@ public partial class TextEditorService : ITextEditorService
 			WorkerArbitrary.PostUnique(nameof(OpenInEditorAsync), editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				viewModelModifier.ShouldRevealCursor = true;
+				viewModelModifier.PersistentState.ShouldRevealCursor = true;
 				return ValueTask.CompletedTask;
 			});
 		});
@@ -621,13 +583,13 @@ public partial class TextEditorService : ITextEditorService
 	    var inState = TextEditorState;
 	
 	    var exists = inState._modelMap.TryGetValue(
-	        model.ResourceUri,
+	        model.PersistentState.ResourceUri,
 	        out _);
 	
 	    if (exists)
 	        return;
 	
-	    inState._modelMap.Add(model.ResourceUri, model);
+	    inState._modelMap.Add(model.PersistentState.ResourceUri, model);
 	
 	    TextEditorStateChanged?.Invoke();
 	}
@@ -643,7 +605,7 @@ public partial class TextEditorService : ITextEditorService
 	    if (!exists)
 	        return;
 	        
-	    foreach (var viewModelKey in model.ViewModelKeyList)
+	    foreach (var viewModelKey in model.PersistentState.ViewModelKeyList)
 	    {
 	        DisposeViewModel(editContext, viewModelKey);
 	    }
@@ -660,12 +622,12 @@ public partial class TextEditorService : ITextEditorService
 		var inState = TextEditorState;
 
 		var exists = inState._modelMap.TryGetValue(
-			modelModifier.ResourceUri, out var inModel);
+			modelModifier.PersistentState.ResourceUri, out var inModel);
 
 		if (!exists)
             return;
 
-		inState._modelMap[inModel.ResourceUri] = modelModifier;
+		inState._modelMap[inModel.PersistentState.ResourceUri] = modelModifier;
 
         TextEditorStateChanged?.Invoke();
     }
@@ -675,22 +637,22 @@ public partial class TextEditorService : ITextEditorService
 	    var inState = TextEditorState;
 	
 	    var modelExisting = inState._modelMap.TryGetValue(
-	        viewModel.ResourceUri,
+	        viewModel.PersistentState.ResourceUri,
 	        out var model);
 	
 	    if (!modelExisting)
 	        return;
 	
-	    if (viewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
+	    if (viewModel.PersistentState.ViewModelKey == Key<TextEditorViewModel>.Empty)
 	        throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
 	
-	    var viewModelExisting = inState.ViewModelGetOrDefault(viewModel.ViewModelKey);
+	    var viewModelExisting = inState.ViewModelGetOrDefault(viewModel.PersistentState.ViewModelKey);
 	    if (viewModelExisting is not null)
 	        return;
 	
-	    model.ViewModelKeyList.Add(viewModel.ViewModelKey);
+	    model.PersistentState.ViewModelKeyList.Add(viewModel.PersistentState.ViewModelKey);
 	
-	    inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
+	    inState._viewModelMap.Add(viewModel.PersistentState.ViewModelKey, viewModel);
 	
 	    TextEditorStateChanged?.Invoke();
 	}
@@ -703,42 +665,32 @@ public partial class TextEditorService : ITextEditorService
 	    if (viewModel is null)
 	        return;
 	    
-	    inState._viewModelMap.Remove(viewModel.ViewModelKey);
+	    inState._viewModelMap.Remove(viewModel.PersistentState.ViewModelKey);
 	    viewModel.Dispose();
 	
-	    var model = inState.ModelGetOrDefault(viewModel.ResourceUri);
+	    var model = inState.ModelGetOrDefault(viewModel.PersistentState.ResourceUri);
 	    if (model is not null)
-	        model.ViewModelKeyList.Remove(viewModel.ViewModelKey);
+	        model.PersistentState.ViewModelKeyList.Remove(viewModel.PersistentState.ViewModelKey);
 	    
 	    TextEditorStateChanged?.Invoke();
 	}
 	
 	public void SetModelAndViewModelRange(TextEditorEditContext editContext)
 	{
-		var inState = TextEditorState;
+		// TextEditorState isn't currently being re-instantiated after the state is modified, so I'm going to comment out this local reference.
+		// 
+		// var inState = TextEditorState;
 
-		// Models
-		foreach (var kvpModelModifier in __ModelList)
+		foreach (var model in __ModelList)
 		{
-			var exists = inState._modelMap.TryGetValue(
-				kvpModelModifier.ResourceUri, out var inModel);
-
-			if (!exists)
-				continue;
-
-			inState._modelMap[kvpModelModifier.ResourceUri] = kvpModelModifier;
+			if (TextEditorState._modelMap.ContainsKey(model.PersistentState.ResourceUri))
+				TextEditorState._modelMap[model.PersistentState.ResourceUri] = model;
 		}
 
-		// ViewModels
-		foreach (var kvpViewModelModifier in __ViewModelList)
+		foreach (var viewModel in __ViewModelList)
 		{
-			var exists = inState._viewModelMap.TryGetValue(
-				kvpViewModelModifier.ViewModelKey, out var inViewModel);
-
-			if (!exists)
-				continue;
-
-			inState._viewModelMap[kvpViewModelModifier.ViewModelKey] = kvpViewModelModifier;
+			if (TextEditorState._viewModelMap.ContainsKey(viewModel.PersistentState.ViewModelKey))
+				TextEditorState._viewModelMap[viewModel.PersistentState.ViewModelKey] = viewModel;
 		}
 
 		__ModelList.Clear();

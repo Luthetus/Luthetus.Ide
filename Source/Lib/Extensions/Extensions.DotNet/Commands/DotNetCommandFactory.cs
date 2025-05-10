@@ -170,7 +170,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
             if (textEditorViewModel is not null)
             {
                 var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
-                    textEditorViewModel.ResourceUri.Value,
+                    textEditorViewModel.PersistentState.ResourceUri.Value,
                     false);
 
                 if (viewModelAbsolutePath.Value ==

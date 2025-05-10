@@ -106,9 +106,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
-					if (viewModelModifier.MenuKind != MenuKind.None)
+					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 					{
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
@@ -133,9 +133,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
-					if (viewModelModifier.MenuKind != MenuKind.None)
+					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 					{
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
@@ -160,7 +160,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (!renderBatch.ConstructorWasInvoked)
     		return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
     		
-    	return renderBatch.Model.CompilerService.GetContextMenu(renderBatch, this);
+    	return renderBatch.Model.PersistentState.CompilerService.GetContextMenu(renderBatch, this);
     }
     
     public MenuRecord GetDefaultMenuRecord()
@@ -220,9 +220,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					nameof(ContextMenu),
 					editContext =>
 					{
-						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 	
-						if (viewModelModifier.MenuKind != MenuKind.None)
+						if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 						{
 							TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
@@ -256,8 +256,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.CutAsync),
             editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+                var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 				
                 return TextEditorCommandDefaultFunctions.CutAsync(
@@ -280,8 +280,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.CopyAsync),
             editContext =>
             {
-		        var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+		        var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+			    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             	
                 return TextEditorCommandDefaultFunctions.CopyAsync(
@@ -304,8 +304,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.PasteAsync),
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
         		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
                 return TextEditorCommandDefaultFunctions.PasteAsync(
@@ -328,8 +328,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.ToggleCollapsePoint),
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
         		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
         		var primaryCursorModifier = cursorModifierBag.CursorModifier;
         		
@@ -368,14 +368,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.GoToDefinition),
             editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+                var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
         		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 
         		if (viewModelModifier is null)
         			return ValueTask.CompletedTask;
                 
-                viewModelModifier.ShouldRevealCursor = true;
+                viewModelModifier.PersistentState.ShouldRevealCursor = true;
                 
                 TextEditorCommandDefaultFunctions.GoToDefinition(
                 	editContext,
@@ -398,14 +398,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.GoToDefinition),
             editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+                var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
         		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
 
         		if (viewModelModifier is null)
         			return ValueTask.CompletedTask;
                 
-                viewModelModifier.ShouldRevealCursor = true;
+                viewModelModifier.PersistentState.ShouldRevealCursor = true;
                 
                 TextEditorCommandDefaultFunctions.GoToDefinition(
                 	editContext,
@@ -428,8 +428,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor),
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
                 return TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
@@ -454,8 +454,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.ShowFindOverlay),
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             	var primaryCursor = cursorModifierBag.CursorModifier;
             
@@ -480,8 +480,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(FindAllReferences),
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             	var primaryCursor = cursorModifierBag.CursorModifier;
             
@@ -504,8 +504,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             nameof(TextEditorCommandDefaultFunctions.RelatedFilesQuickPick),
             editContext =>
             {
-            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
                 return TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(

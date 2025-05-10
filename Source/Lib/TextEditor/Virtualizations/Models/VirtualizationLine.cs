@@ -18,8 +18,7 @@ public record struct VirtualizationLine
 	    double widthInPixels,
 	    double heightInPixels,
 	    double leftInPixels,
-	    double topInPixels,
-	    StringBuilder stringBuilder)
+	    double topInPixels)
 	{
 		LineIndex = lineIndex;
 	    Position_StartInclusiveIndex = position_StartInclusiveIndex;
@@ -30,14 +29,6 @@ public record struct VirtualizationLine
 	    HeightInPixels = heightInPixels;
 	    LeftInPixels = leftInPixels;
 	    TopInPixels = topInPixels;
-	    
-	    stringBuilder.Clear();
-    
-        var topInPixelsInvariantCulture = topInPixels.ToCssValue();
-        stringBuilder.Append("top: ");
-        stringBuilder.Append(topInPixelsInvariantCulture);
-        stringBuilder.Append("px;");
-        TopCssStyle = stringBuilder.ToString();
 	}
 	
 	public int LineIndex { get; }
@@ -49,5 +40,4 @@ public record struct VirtualizationLine
     public double HeightInPixels { get; }
     public double LeftInPixels { get; }
     public double TopInPixels { get; }
-    public string TopCssStyle { get; }
 }

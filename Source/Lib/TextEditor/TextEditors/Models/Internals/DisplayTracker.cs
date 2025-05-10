@@ -118,8 +118,8 @@ public sealed class DisplayTracker : IDisposable
 						editContext,
 						modelModifier);
 					
-					if (modelModifier.CompilerService is not null)	
-						modelModifier.CompilerService.ResourceWasModified(_resourceUri, Array.Empty<TextEditorTextSpan>());
+					if (modelModifier.PersistentState.CompilerService is not null)	
+						modelModifier.PersistentState.CompilerService.ResourceWasModified(_resourceUri, Array.Empty<TextEditorTextSpan>());
 
 					return ValueTask.CompletedTask;
 	            });
@@ -173,18 +173,18 @@ public sealed class DisplayTracker : IDisposable
 
 		_textEditorService.WorkerArbitrary.PostRedundant(
 			nameof(AppDimensionStateWrap_StateChanged),
-			model.ResourceUri,
-            viewModel.ViewModelKey,
+			model.PersistentState.ResourceUri,
+            viewModel.PersistentState.ViewModelKey,
 			async editContext =>
 			{
-				var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
-				var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+				var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 				
 	            if (modelModifier is null || viewModelModifier is null)
 	                return;
 				
 				var textEditorMeasurements = await _textEditorService.ViewModelApi
-					.GetTextEditorMeasurementsAsync(viewModelModifier.BodyElementId)
+					.GetTextEditorMeasurementsAsync(viewModelModifier.PersistentState.BodyElementId)
 					.ConfigureAwait(false);
 		
 				viewModelModifier.TextEditorDimensions = textEditorMeasurements;
@@ -192,7 +192,7 @@ public sealed class DisplayTracker : IDisposable
 				viewModelModifier.ShouldReloadVirtualizationResult = true;
 				
 				// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
-				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: true);
+				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: true);
 			});
 	}
 

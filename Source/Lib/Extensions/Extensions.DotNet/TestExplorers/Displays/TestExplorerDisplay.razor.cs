@@ -91,7 +91,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 			nameof(TextEditorService.ModelApi.AddPresentationModel),
 			editContext =>
 			{
-				var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+				var modelModifier = editContext.GetModelModifier(model.PersistentState.ResourceUri);
 			
 				TextEditorService.ModelApi.AddPresentationModel(
 					editContext,
@@ -108,8 +108,8 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 					modelModifier,
 					FindOverlayPresentationFacts.EmptyPresentationModel);
 
-				model.CompilerService.RegisterResource(
-					model.ResourceUri,
+				model.PersistentState.CompilerService.RegisterResource(
+					model.PersistentState.ResourceUri,
 					shouldTriggerResourceWasModified: true);
 
 				var viewModelModifier = editContext.GetViewModelModifier(TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey);
@@ -124,7 +124,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 					FindOverlayPresentationFacts.PresentationKey,
 				};
 
-				viewModelModifier.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+				viewModelModifier.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 				
 				return ValueTask.CompletedTask;
 			});

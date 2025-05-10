@@ -182,8 +182,8 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
         _textEditorService.ModelApi.RegisterCustom(registerModelArgs.EditContext, model);
         
-		model.CompilerService.RegisterResource(
-			model.ResourceUri,
+		model.PersistentState.CompilerService.RegisterResource(
+			model.PersistentState.ResourceUri,
 			shouldTriggerResourceWasModified: false);
     	
 		modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
@@ -208,10 +208,10 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
         var viewModel = _textEditorService.ModelApi
             .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
-            .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
+            .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
 
         if (viewModel is not null)
-		    return viewModel.ViewModelKey;
+		    return viewModel.PersistentState.ViewModelKey;
 
         viewModel = new TextEditorViewModel(
             viewModelKey,
@@ -223,7 +223,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
             VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
 			new ScrollbarDimensions(0, 0, 0, 0, 0),
-            false,
             registerViewModelArgs.Category);
 
         var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
@@ -236,10 +235,10 @@ public class EditorIdeApi : IBackgroundTaskGroup
             registerViewModelArgs.ResourceUri.Value,
             false);
             
-        viewModel.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
-        viewModel.OnSaveRequested = HandleOnSaveRequested;
-        viewModel.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
-        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+        viewModel.PersistentState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+        viewModel.PersistentState.OnSaveRequested = HandleOnSaveRequested;
+        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
         
         _textEditorService.ViewModelApi.Register(registerViewModelArgs.EditContext, viewModel);
         return viewModelKey;
@@ -250,10 +249,10 @@ public class EditorIdeApi : IBackgroundTaskGroup
         var innerContent = innerTextEditor.GetAllText();
         
         var absolutePath = _environmentProvider.AbsolutePathFactory(
-            innerTextEditor.ResourceUri.Value,
+            innerTextEditor.PersistentState.ResourceUri.Value,
             false);
 
-        var cancellationToken = innerTextEditor.TextEditorSaveFileHelper.GetCancellationToken();
+        var cancellationToken = innerTextEditor.PersistentState.TextEditorSaveFileHelper.GetCancellationToken();
 
         _ideBackgroundTaskApi.FileSystem.Enqueue_SaveFile(
             absolutePath,
@@ -266,7 +265,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
                         nameof(HandleOnSaveRequested),
                         editContext =>
                         {
-                        	var modelModifier = editContext.GetModelModifier(innerTextEditor.ResourceUri);
+                        	var modelModifier = editContext.GetModelModifier(innerTextEditor.PersistentState.ResourceUri);
                         	if (modelModifier is null)
                         		return ValueTask.CompletedTask;
                         
@@ -292,7 +291,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
         if (viewModel is null)
             return false;
 
-        if (viewModel.Category == new Category("main") &&
+        if (viewModel.PersistentState.Category == new Category("main") &&
             showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
         {
             showViewModelArgs = new TryShowViewModelArgs(
@@ -322,7 +321,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 	        {
 	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
 	        	
-	        	viewModelModifier.ShouldSetFocusAfterNextRender = showViewModelArgs.ShouldSetFocusToEditor;
+	        	viewModelModifier.PersistentState.ShouldSetFocusAfterNextRender = showViewModelArgs.ShouldSetFocusToEditor;
 	        		
 	        	return viewModel.FocusAsync();
 	        });
@@ -404,7 +403,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             nameof(CheckIfContentsWereModifiedAsync),
             editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+                var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
                 if (modelModifier is null)
                     return ValueTask.CompletedTask;
 

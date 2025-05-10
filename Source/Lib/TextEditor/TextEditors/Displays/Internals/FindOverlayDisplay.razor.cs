@@ -57,16 +57,16 @@ public partial class FindOverlayDisplay : ComponentBase
                     nameof(FindOverlayDisplay),
                     editContext =>
                     {
-                        var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                        var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                         if (viewModelModifier is null)
                             return ValueTask.CompletedTask;
 
                         var localInputValue = _inputValue;
 
-                        viewModelModifier.FindOverlayValue = localInputValue;
+                        viewModelModifier.PersistentState.FindOverlayValue = localInputValue;
 
-                        var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+                        var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
 
                         if (modelModifier is null)
                             return ValueTask.CompletedTask;
@@ -119,12 +119,12 @@ public partial class FindOverlayDisplay : ComponentBase
                 nameof(FindOverlayDisplay),
                 editContext =>
                 {
-                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                     if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
 
-                    viewModelModifier.ReplaceValueInFindOverlay = value;
+                    viewModelModifier.PersistentState.ReplaceValueInFindOverlay = value;
                     return ValueTask.CompletedTask;
                 });
         }
@@ -138,9 +138,9 @@ public partial class FindOverlayDisplay : ComponentBase
     		
     	var becameShown = false;
     		
-        if (_lastSeenShowFindOverlayValue != renderBatchLocal.ViewModel.ShowFindOverlay)
+        if (_lastSeenShowFindOverlayValue != renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay)
         {
-            _lastSeenShowFindOverlayValue = renderBatchLocal.ViewModel.ShowFindOverlay;
+            _lastSeenShowFindOverlayValue = renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay;
 
             // If it changes from 'false' to 'true', focus the input element
             if (_lastSeenShowFindOverlayValue)
@@ -148,17 +148,17 @@ public partial class FindOverlayDisplay : ComponentBase
             	becameShown = true;
             	
                 await CommonBackgroundTaskApi.JsRuntimeCommonApi
-                    .FocusHtmlElementById(renderBatchLocal.ViewModel.FindOverlayId)
+                    .FocusHtmlElementById(renderBatchLocal.ViewModel.PersistentState.FindOverlayId)
                     .ConfigureAwait(false);
             }
         }
         
         if (becameShown ||
-        	_lastFindOverlayValueExternallyChangedMarker != renderBatchLocal.ViewModel.FindOverlayValueExternallyChangedMarker)
+        	_lastFindOverlayValueExternallyChangedMarker != renderBatchLocal.ViewModel.PersistentState.FindOverlayValueExternallyChangedMarker)
         {
-        	_lastFindOverlayValueExternallyChangedMarker = renderBatchLocal.ViewModel.FindOverlayValueExternallyChangedMarker;
-        	InputValue = renderBatchLocal.ViewModel.FindOverlayValue;
-        	InputReplace = renderBatchLocal.ViewModel.ReplaceValueInFindOverlay;
+        	_lastFindOverlayValueExternallyChangedMarker = renderBatchLocal.ViewModel.PersistentState.FindOverlayValueExternallyChangedMarker;
+        	InputValue = renderBatchLocal.ViewModel.PersistentState.FindOverlayValue;
+        	InputReplace = renderBatchLocal.ViewModel.PersistentState.ReplaceValueInFindOverlay;
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -173,23 +173,23 @@ public partial class FindOverlayDisplay : ComponentBase
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             await CommonBackgroundTaskApi.JsRuntimeCommonApi
-                .FocusHtmlElementById(renderBatchLocal.ViewModel.PrimaryCursorContentId)
+                .FocusHtmlElementById(renderBatchLocal.ViewModel.PersistentState.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
             TextEditorService.WorkerArbitrary.PostRedundant(
                 nameof(FindOverlayDisplay),
-				renderBatchLocal.ViewModel.ResourceUri,
-                renderBatchLocal.ViewModel.ViewModelKey,
+				renderBatchLocal.ViewModel.PersistentState.ResourceUri,
+                renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
                 editContext =>
                 {
-                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                     if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
 
-                    viewModelModifier.ShowFindOverlay = false;
+                    viewModelModifier.PersistentState.ShowFindOverlay = false;
 
-                    var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+                    var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
 
                     if (modelModifier is null)
                         return ValueTask.CompletedTask;
@@ -306,12 +306,12 @@ public partial class FindOverlayDisplay : ComponentBase
                 if (localActiveIndexMatchedTextSpan is null)
                     return ValueTask.CompletedTask;
 
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                 if (viewModelModifier is null)
                     return ValueTask.CompletedTask;
                 
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
 
                 if (modelModifier is null)
                     return ValueTask.CompletedTask;
@@ -389,16 +389,16 @@ public partial class FindOverlayDisplay : ComponentBase
     	
     	TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
+			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
+            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 
                 if (viewModelModifier is null)
                     return ValueTask.CompletedTask;
 
-                viewModelModifier.ShowReplaceButtonInFindOverlay = !viewModelModifier.ShowReplaceButtonInFindOverlay;
+                viewModelModifier.PersistentState.ShowReplaceButtonInFindOverlay = !viewModelModifier.PersistentState.ShowReplaceButtonInFindOverlay;
 
                 return ValueTask.CompletedTask;
             });
@@ -412,12 +412,12 @@ public partial class FindOverlayDisplay : ComponentBase
     
     	TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
+			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
+            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
-            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
@@ -446,7 +446,7 @@ public partial class FindOverlayDisplay : ComponentBase
 			        TextEditorModel.DeleteKind.Delete);
 			        
 			    modelModifier.Insert(
-			        viewModelModifier.ReplaceValueInFindOverlay,
+			        viewModelModifier.PersistentState.ReplaceValueInFindOverlay,
 			        cursorModifierBag);
 
                 return ValueTask.CompletedTask;
@@ -461,12 +461,12 @@ public partial class FindOverlayDisplay : ComponentBase
     
     	TextEditorService.WorkerArbitrary.PostRedundant(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
+			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
+            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
-            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
@@ -505,7 +505,7 @@ public partial class FindOverlayDisplay : ComponentBase
 				        TextEditorModel.DeleteKind.Delete);
 				        
 				    modelModifier.Insert(
-				        viewModelModifier.ReplaceValueInFindOverlay,
+				        viewModelModifier.PersistentState.ReplaceValueInFindOverlay,
 				        cursorModifierBag);
                 }
                 

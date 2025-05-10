@@ -95,8 +95,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	{
     		var renderBatch = GetRenderBatch();
     	
-    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
             var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
@@ -106,13 +106,13 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
             _lineIndexPrevious = primaryCursorModifier.LineIndex;
             _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
             
-            if (!viewModelModifier.FirstPresentationLayerKeysList.Contains(
+            if (!viewModelModifier.PersistentState.FirstPresentationLayerKeysList.Contains(
             		TextEditorDevToolsPresentationFacts.PresentationKey))
             {
-				var copy = new List<Key<TextEditorPresentationModel>>(viewModelModifier.FirstPresentationLayerKeysList);
+				var copy = new List<Key<TextEditorPresentationModel>>(viewModelModifier.PersistentState.FirstPresentationLayerKeysList);
 				copy.Add(TextEditorDevToolsPresentationFacts.PresentationKey);
 
-				viewModelModifier.FirstPresentationLayerKeysList = copy;
+				viewModelModifier.PersistentState.FirstPresentationLayerKeysList = copy;
 	        }
     	
     		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
@@ -127,9 +127,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			if (presentationModel.PendingCalculation is null)
 				throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 	
-	        var resourceUri = modelModifier.ResourceUri;
+	        var resourceUri = modelModifier.PersistentState.ResourceUri;
 	
-			if (modelModifier.CompilerService is not IExtendedCompilerService extendedCompilerService)
+			if (modelModifier.PersistentState.CompilerService is not IExtendedCompilerService extendedCompilerService)
 				return;
 	
 			var targetScope = extendedCompilerService.GetScopeByPositionIndex(
