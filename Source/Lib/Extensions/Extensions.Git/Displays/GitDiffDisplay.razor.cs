@@ -135,8 +135,8 @@ public partial class GitDiffDisplay : ComponentBase
 	
 	        TextEditorService.ModelApi.RegisterCustom(editContext, model);
 	        
-			model.CompilerService.RegisterResource(
-				model.ResourceUri,
+			model.PersistentState.CompilerService.RegisterResource(
+				model.PersistentState.ResourceUri,
 				shouldTriggerResourceWasModified: true);
 				
 			// Create ViewModel

@@ -388,14 +388,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 	            	if (onKeyDown.KeymapArgs.ShiftKey)
 	            	{
-	            		await modelModifier.CompilerService.ShowCallingSignature(
+	            		await modelModifier.PersistentState.CompilerService.ShowCallingSignature(
 							editContext,
 							modelModifier,
 							viewModel,
 							modelModifier.GetPositionIndex(primaryCursorModifier),
 							onKeyDown.ComponentData,
 							onKeyDown.ComponentData.TextEditorComponentRenderers,
-					        modelModifier.ResourceUri);
+					        modelModifier.PersistentState.ResourceUri);
 	            	}
 	            	else
 	            	{

@@ -283,7 +283,7 @@ public struct VirtualizationGrid
 			    else
 			    {
 			    	viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
-			    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
+			    		cssClass: model.PersistentState.DecorationMapper.Map(currentDecorationByte),
 			    		text: textEditorService.__StringBuilder.ToString()));
 			        textEditorService.__StringBuilder.Clear();
 			        
@@ -327,7 +327,7 @@ public struct VirtualizationGrid
 		    
 			/* Final grouping of contiguous characters */
 			viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
-	    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
+	    		cssClass: model.PersistentState.DecorationMapper.Map(currentDecorationByte),
 	    		text: textEditorService.__StringBuilder.ToString()));
 			textEditorService.__StringBuilder.Clear();
 			

@@ -30,7 +30,7 @@ public struct TextEditorEditContext
     		
     	for (int i = 0; i < TextEditorService.__ModelList.Count; i++)
     	{
-    		if (TextEditorService.__ModelList[i].ResourceUri == modelResourceUri)
+    		if (TextEditorService.__ModelList[i].PersistentState.ResourceUri == modelResourceUri)
     			modelModifier = TextEditorService.__ModelList[i];
     	}
     	
@@ -59,7 +59,7 @@ public struct TextEditorEditContext
             if (!TextEditorService.__ViewModelToModelResourceUriCache.TryGetValue(viewModelKey, out var modelResourceUri))
             {
                 var model = TextEditorService.ViewModelApi.GetModelOrDefault(viewModelKey);
-                modelResourceUri = model?.ResourceUri;
+                modelResourceUri = model?.PersistentState.ResourceUri;
 
                 TextEditorService.__ViewModelToModelResourceUriCache.Add(viewModelKey, modelResourceUri);
             }

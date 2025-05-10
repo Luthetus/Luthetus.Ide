@@ -176,7 +176,7 @@ public partial class TextEditorService : ITextEditorService
 	{
         foreach (var modelModifier in __ModelList)
         {
-            foreach (var viewModelKey in modelModifier.ViewModelKeyList)
+            foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -187,13 +187,13 @@ public partial class TextEditorService : ITextEditorService
 
             if (modelModifier.WasDirty != modelModifier.IsDirty)
             {
-            	var model = ModelApi.GetOrDefault(modelModifier.ResourceUri);
+            	var model = ModelApi.GetOrDefault(modelModifier.PersistentState.ResourceUri);
             	model.IsDirty = modelModifier.IsDirty;
             
                 if (modelModifier.IsDirty)
-                    _dirtyResourceUriService.AddDirtyResourceUri(modelModifier.ResourceUri);
+                    _dirtyResourceUriService.AddDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
                 else
-                    _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.ResourceUri);
+                    _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
             }
         }
 		
@@ -582,13 +582,13 @@ public partial class TextEditorService : ITextEditorService
 	    var inState = TextEditorState;
 	
 	    var exists = inState._modelMap.TryGetValue(
-	        model.ResourceUri,
+	        model.PersistentState.ResourceUri,
 	        out _);
 	
 	    if (exists)
 	        return;
 	
-	    inState._modelMap.Add(model.ResourceUri, model);
+	    inState._modelMap.Add(model.PersistentState.ResourceUri, model);
 	
 	    TextEditorStateChanged?.Invoke();
 	}
@@ -604,7 +604,7 @@ public partial class TextEditorService : ITextEditorService
 	    if (!exists)
 	        return;
 	        
-	    foreach (var viewModelKey in model.ViewModelKeyList)
+	    foreach (var viewModelKey in model.PersistentState.ViewModelKeyList)
 	    {
 	        DisposeViewModel(editContext, viewModelKey);
 	    }
@@ -621,12 +621,12 @@ public partial class TextEditorService : ITextEditorService
 		var inState = TextEditorState;
 
 		var exists = inState._modelMap.TryGetValue(
-			modelModifier.ResourceUri, out var inModel);
+			modelModifier.PersistentState.ResourceUri, out var inModel);
 
 		if (!exists)
             return;
 
-		inState._modelMap[inModel.ResourceUri] = modelModifier;
+		inState._modelMap[inModel.PersistentState.ResourceUri] = modelModifier;
 
         TextEditorStateChanged?.Invoke();
     }
@@ -649,7 +649,7 @@ public partial class TextEditorService : ITextEditorService
 	    if (viewModelExisting is not null)
 	        return;
 	
-	    model.ViewModelKeyList.Add(viewModel.PersistentState.ViewModelKey);
+	    model.PersistentState.ViewModelKeyList.Add(viewModel.PersistentState.ViewModelKey);
 	
 	    inState._viewModelMap.Add(viewModel.PersistentState.ViewModelKey, viewModel);
 	
@@ -669,7 +669,7 @@ public partial class TextEditorService : ITextEditorService
 	
 	    var model = inState.ModelGetOrDefault(viewModel.PersistentState.ResourceUri);
 	    if (model is not null)
-	        model.ViewModelKeyList.Remove(viewModel.PersistentState.ViewModelKey);
+	        model.PersistentState.ViewModelKeyList.Remove(viewModel.PersistentState.ViewModelKey);
 	    
 	    TextEditorStateChanged?.Invoke();
 	}
@@ -682,8 +682,8 @@ public partial class TextEditorService : ITextEditorService
 
 		foreach (var model in __ModelList)
 		{
-			if (TextEditorState._modelMap.ContainsKey(model.ResourceUri))
-				TextEditorState._modelMap[model.ResourceUri] = model;
+			if (TextEditorState._modelMap.ContainsKey(model.PersistentState.ResourceUri))
+				TextEditorState._modelMap[model.PersistentState.ResourceUri] = model;
 		}
 
 		foreach (var viewModel in __ViewModelList)

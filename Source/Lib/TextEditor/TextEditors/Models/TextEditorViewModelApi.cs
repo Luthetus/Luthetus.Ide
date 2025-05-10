@@ -151,7 +151,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
 
         return textEditorModel is null
             ? null
-            : _textEditorService.ModelApi.GetAllText(textEditorModel.ResourceUri);
+            : _textEditorService.ModelApi.GetAllText(textEditorModel.PersistentState.ResourceUri);
     }
 
     public async ValueTask<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
@@ -893,7 +893,7 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
                 cursorPositionIndex,
                 cursorPositionIndex + 1,
                 0,
-                modelModifier.ResourceUri,
+                modelModifier.PersistentState.ResourceUri,
                 sourceText: string.Empty,
                 getTextPrecalculatedResult: string.Empty);
 

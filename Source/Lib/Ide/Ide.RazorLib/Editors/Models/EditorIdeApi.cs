@@ -182,8 +182,8 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
         _textEditorService.ModelApi.RegisterCustom(registerModelArgs.EditContext, model);
         
-		model.CompilerService.RegisterResource(
-			model.ResourceUri,
+		model.PersistentState.CompilerService.RegisterResource(
+			model.PersistentState.ResourceUri,
 			shouldTriggerResourceWasModified: false);
     	
 		modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
@@ -249,10 +249,10 @@ public class EditorIdeApi : IBackgroundTaskGroup
         var innerContent = innerTextEditor.GetAllText();
         
         var absolutePath = _environmentProvider.AbsolutePathFactory(
-            innerTextEditor.ResourceUri.Value,
+            innerTextEditor.PersistentState.ResourceUri.Value,
             false);
 
-        var cancellationToken = innerTextEditor.TextEditorSaveFileHelper.GetCancellationToken();
+        var cancellationToken = innerTextEditor.PersistentState.TextEditorSaveFileHelper.GetCancellationToken();
 
         _ideBackgroundTaskApi.FileSystem.Enqueue_SaveFile(
             absolutePath,
@@ -265,7 +265,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
                         nameof(HandleOnSaveRequested),
                         editContext =>
                         {
-                        	var modelModifier = editContext.GetModelModifier(innerTextEditor.ResourceUri);
+                        	var modelModifier = editContext.GetModelModifier(innerTextEditor.PersistentState.ResourceUri);
                         	if (modelModifier is null)
                         		return ValueTask.CompletedTask;
                         
@@ -403,7 +403,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             nameof(CheckIfContentsWereModifiedAsync),
             editContext =>
             {
-                var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+                var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
                 if (modelModifier is null)
                     return ValueTask.CompletedTask;
 

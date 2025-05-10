@@ -239,7 +239,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						}
 					}
 					
-					var compilerServiceResource = modelModifier.CompilerService.GetResource(
+					var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
 						terminalOutputFormatterExpand.TextEditorModelResourceUri);
 
 					if (compilerServiceResource is TerminalResource terminalResource)

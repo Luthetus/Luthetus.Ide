@@ -118,8 +118,8 @@ public sealed class DisplayTracker : IDisposable
 						editContext,
 						modelModifier);
 					
-					if (modelModifier.CompilerService is not null)	
-						modelModifier.CompilerService.ResourceWasModified(_resourceUri, Array.Empty<TextEditorTextSpan>());
+					if (modelModifier.PersistentState.CompilerService is not null)	
+						modelModifier.PersistentState.CompilerService.ResourceWasModified(_resourceUri, Array.Empty<TextEditorTextSpan>());
 
 					return ValueTask.CompletedTask;
 	            });
@@ -173,7 +173,7 @@ public sealed class DisplayTracker : IDisposable
 
 		_textEditorService.WorkerArbitrary.PostRedundant(
 			nameof(AppDimensionStateWrap_StateChanged),
-			model.ResourceUri,
+			model.PersistentState.ResourceUri,
             viewModel.PersistentState.ViewModelKey,
 			async editContext =>
 			{

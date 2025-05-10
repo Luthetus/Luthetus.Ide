@@ -180,14 +180,14 @@ public sealed class XmlCompilerService : ICompilerService
     
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	var lexer = new TextEditorXmlLexer(modelModifier.ResourceUri, modelModifier.GetAllText());
+    	var lexer = new TextEditorXmlLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
     	lexer.Lex();
     
     	lock (_resourceMapLock)
 		{
-			if (_resourceMap.ContainsKey(modelModifier.ResourceUri))
+			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
 			{
-				var resource = (CompilerServiceResource)_resourceMap[modelModifier.ResourceUri];
+				var resource = (CompilerServiceResource)_resourceMap[modelModifier.PersistentState.ResourceUri];
 				
 				resource.CompilationUnit = new ExtendedCompilationUnit
 				{

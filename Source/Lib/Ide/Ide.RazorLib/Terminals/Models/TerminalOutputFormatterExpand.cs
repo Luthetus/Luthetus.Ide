@@ -134,8 +134,8 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	        _textEditorService.ModelApi.RegisterCustom(editContext, model);
 	        
-			model.CompilerService.RegisterResource(
-				model.ResourceUri,
+			model.PersistentState.CompilerService.RegisterResource(
+				model.PersistentState.ResourceUri,
 				shouldTriggerResourceWasModified: true);
 				
 	        var viewModel = new TextEditorViewModel(

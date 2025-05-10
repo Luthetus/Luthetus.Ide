@@ -54,7 +54,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
     	
     	var fileExtensionLocal = model_viewmodel_tuple.Model is null
     		? string.Empty
-    		: model_viewmodel_tuple.Model.FileExtension;
+    		: model_viewmodel_tuple.Model.PersistentState.FileExtension;
     		
     	if (_fileExtensionCurrent != fileExtensionLocal)
     		_fileExtensionCurrent = fileExtensionLocal;

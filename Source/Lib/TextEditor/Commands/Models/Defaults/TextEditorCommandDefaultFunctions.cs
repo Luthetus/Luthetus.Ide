@@ -758,7 +758,7 @@ public class TextEditorCommandDefaultFunctions
 			.MeasureElementById(viewModel.PersistentState.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
-		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
+		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
 		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
 	
 		var siblingFileStringList = Array.Empty<string>();
@@ -873,7 +873,7 @@ public class TextEditorCommandDefaultFunctions
 			.ConfigureAwait(false);
 
 		var primaryCursorModifier = cursorModifierBag.CursorModifier;
-		var compilerService = modelModifier.CompilerService;
+		var compilerService = modelModifier.PersistentState.CompilerService;
 
 		var menu = await compilerService.GetQuickActionsSlashRefactorMenu(
 			editContext,
@@ -929,7 +929,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         Category category)
     {
-    	modelModifier.CompilerService.GoToDefinition(
+    	modelModifier.PersistentState.CompilerService.GoToDefinition(
 			editContext,
 	        modelModifier,
 	        viewModel,
@@ -977,7 +977,7 @@ public class TextEditorCommandDefaultFunctions
 	            },
 				componentData,
 				textEditorComponentRenderers,
-				modelModifier.ResourceUri)
+				modelModifier.PersistentState.ResourceUri)
 			.ConfigureAwait(false);
     }
     
@@ -1284,7 +1284,7 @@ public class TextEditorCommandDefaultFunctions
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
-    	return modelModifier.CompilerService.OnInspect(
+    	return modelModifier.PersistentState.CompilerService.OnInspect(
 			editContext,
 			modelModifier,
 			viewModel,

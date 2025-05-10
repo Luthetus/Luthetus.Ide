@@ -99,7 +99,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorModel modelModifier,
         DateTime resourceLastWriteTime)
     {
-        modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
+        modelModifier.SetResourceData(modelModifier.PersistentState.ResourceUri, resourceLastWriteTime);
     }
 
     public void Reload(
@@ -109,7 +109,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         DateTime resourceLastWriteTime)
     {
         modelModifier.SetContent(content);
-        modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
+        modelModifier.SetResourceData(modelModifier.PersistentState.ResourceUri, resourceLastWriteTime);
     }
 
     public void RedoEdit(
@@ -258,11 +258,11 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier)
     {
-        var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
+        var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(modelModifier.PersistentState.ResourceUri);
         if (compilerServiceResource is null)
         	return;
         
-        foreach (var viewModelKey in modelModifier.ViewModelKeyList)
+        foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
         {
         	var viewModel = editContext.GetViewModelModifier(viewModelKey);
         	

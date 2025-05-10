@@ -85,9 +85,9 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
 
             var diffResult = TextEditorDiffResult.Calculate(
-                inModelModifier.ResourceUri,
+                inModelModifier.PersistentState.ResourceUri,
                 inText,
-                outModelModifier.ResourceUri,
+                outModelModifier.PersistentState.ResourceUri,
                 outText);
 
             inModelModifier.CompletePendingCalculatePresentationModel(

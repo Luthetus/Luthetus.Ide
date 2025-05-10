@@ -145,7 +145,7 @@ public sealed class TextEditorComponentData
     {
         _throttleApplySyntaxHighlighting.Run(_ =>
         {
-            modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, Array.Empty<TextEditorTextSpan>());
+            modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
 			return Task.CompletedTask;
         });
     }

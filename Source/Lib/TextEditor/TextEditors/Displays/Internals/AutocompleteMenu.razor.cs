@@ -149,7 +149,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
         try
         {
-            return renderBatch.Model.CompilerService.GetAutocompleteMenu(renderBatch, this);
+            return renderBatch.Model.PersistentState.CompilerService.GetAutocompleteMenu(renderBatch, this);
         }
 		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
         catch (Exception e) when (e is LuthetusTextEditorException || e is InvalidOperationException)
