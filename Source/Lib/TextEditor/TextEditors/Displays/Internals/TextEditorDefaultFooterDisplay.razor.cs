@@ -50,11 +50,11 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	        {
 	            TextEditorService.WorkerArbitrary.PostRedundant(
 	                nameof(TextEditorService.ModelApi.SetUsingLineEndKind),
-	                viewModel.ResourceUri,
-					viewModel.ViewModelKey,
+	                viewModel.PersistentState.ResourceUri,
+					viewModel.PersistentState.ViewModelKey,
 	                editContext =>
 	                {
-	                	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+	                	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 	                	
 	                	if (modelModifier is null)
 	                		return ValueTask.CompletedTask;
@@ -108,9 +108,9 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 		{
 			var shouldSetSelectedLineEndKindString = false;
 			
-			if (_viewModelKeyPrevious != renderBatchLocal.ViewModel.ViewModelKey)
+			if (_viewModelKeyPrevious != renderBatchLocal.ViewModel.PersistentState.ViewModelKey)
 			{
-				_viewModelKeyPrevious = renderBatchLocal.ViewModel.ViewModelKey;
+				_viewModelKeyPrevious = renderBatchLocal.ViewModel.PersistentState.ViewModelKey;
 				shouldSetSelectedLineEndKindString = true;
 			}
 			else if (_lineEndKindPreferencePrevious != renderBatchLocal.Model.LineEndKindPreference)

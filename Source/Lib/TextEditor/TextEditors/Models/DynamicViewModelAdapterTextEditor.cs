@@ -72,7 +72,7 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
     public string Title => GetTitle();
 
 	public string TitleVerbose =>
-		TextEditorService.ViewModelApi.GetModelOrDefault(ViewModelKey)?.ResourceUri.Value
+		TextEditorService.ViewModelApi.GetModelOrDefault(ViewModelKey)?.PersistentState.ResourceUri.Value
 			?? Title;
 
     public Type ComponentType { get; }
@@ -125,8 +125,8 @@ public sealed class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTa
         }
         else
         {
-            var displayName = viewModel.GetTabDisplayNameFunc?.Invoke(model)
-                ?? model.ResourceUri.Value;
+            var displayName = viewModel.PersistentState.GetTabDisplayNameFunc?.Invoke(model)
+                ?? model.PersistentState.ResourceUri.Value;
 
             if (model.IsDirty)
                 displayName += '*';

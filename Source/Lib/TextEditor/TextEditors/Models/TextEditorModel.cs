@@ -37,34 +37,33 @@ public partial class TextEditorModel
 		int partitionSize = 4_096)
     {
     	if (partitionSize < MINIMUM_PARTITION_SIZE)
-            throw new LuthetusTextEditorException($"{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
+            throw new LuthetusTextEditorException($"{nameof(PersistentState.PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
     
-    	__LocalLineEndList = textEditorService.__LocalLineEndList;
-        __LocalTabPositionList = textEditorService.__LocalTabPositionList;
-        __TextEditorViewModelLiason = textEditorService.__TextEditorViewModelLiason;
+    	PersistentState = new TextEditorModelPersistentState(
+    		textEditorService,
+    		viewModelKeyList: new(),
+    		fileExtension,
+		    decorationMapper ?? new TextEditorDecorationMapperDefault(),
+		    compilerService ?? new CompilerServiceDoNothing(),
+		    textEditorSaveFileHelper: new(),
+		    partitionSize,
+		    resourceUri,
+		    editBlockList: new(),
+		    editBlockIndex: 0);
     
     	// Initialize
 	    _partitionList = new List<TextEditorPartition> { new TextEditorPartition(new List<RichCharacter>()) };
 	    _richCharacterList = Array.Empty<RichCharacter>();
-	    EditBlockList = new();
-	    ViewModelKeyList = new();
 	    LineEndList = new();
 	    PresentationModelList = new();
 	    TabCharPositionIndexList = new();
 	    OnlyLineEndKind = LineEndKind.Unset;
 	    LineEndKindPreference = LineEndKind.Unset;
-	    ResourceUri = resourceUri;
 	    ResourceLastWriteTime = resourceLastWriteTime;
-	    FileExtension = fileExtension;
-	    DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
-	    CompilerService = compilerService ?? new CompilerServiceDoNothing();
-	    TextEditorSaveFileHelper = new();
-	    EditBlockIndex = 0;
 	    MostCharactersOnASingleLineTuple = (0, 0);
 	    PreviousMostCharactersOnASingleLineTuple = (0, 0);
-	    RenderStateSequence = 0;
+
 	    PreviousLineCount = 0;
-	    PartitionSize = partitionSize;
 	    _allText = string.Empty;
 	    _charCount = 0;
         // LineCount => LineEndList.Count;
@@ -81,38 +80,23 @@ public partial class TextEditorModel
 		// if copied between the model instances as they get edited
 		// because the UI doesn't use them.
 		
-		__LocalLineEndList = other.__LocalLineEndList;
-		__LocalTabPositionList = other.__LocalTabPositionList;
-		__TextEditorViewModelLiason = other.__TextEditorViewModelLiason;
+		PersistentState = other.PersistentState;
 
 	    _partitionList = other.PartitionList;
 	    _richCharacterList = other.RichCharacterList;
-	    EditBlockList = other.EditBlockList;
-	    ViewModelKeyList = other.ViewModelKeyList;
 	    LineEndList = other.LineEndList;
 	    PresentationModelList = other.PresentationModelList;
 	    TabCharPositionIndexList = other.TabCharPositionIndexList;
         OnlyLineEndKind = other.OnlyLineEndKind;
 	    LineEndKindPreference = other.LineEndKindPreference;
-	    ResourceUri = other.ResourceUri;
 	    ResourceLastWriteTime = other.ResourceLastWriteTime;
-	    FileExtension = other.FileExtension;
-	    DecorationMapper = other.DecorationMapper;
-	    CompilerService = other.CompilerService;
-	    TextEditorSaveFileHelper = other.TextEditorSaveFileHelper;
-	    EditBlockIndex = other.EditBlockIndex;
 	    IsDirty = other.IsDirty;
 	    TagDoNotRemove = other.TagDoNotRemove;
 	    MostCharactersOnASingleLineTuple = other.MostCharactersOnASingleLineTuple;
 	    PreviousMostCharactersOnASingleLineTuple = other.MostCharactersOnASingleLineTuple;
-	    {
-	    	RenderStateSequence = other.RenderStateSequence == int.MaxValue - 1
-	    		? 0
-	    		: other.RenderStateSequence + 1;
-	    }
+	    
 	    PreviousLineCount = other.LineEndList.Count;
 	    WasDirty = other.IsDirty;
-        PartitionSize = other.PartitionSize;
 	    _allText = other._allText;
 	    _charCount = other._charCount;
 	    
@@ -237,9 +221,7 @@ public partial class TextEditorModel
     		return _charCount;
     	}
     }
-
-    public List<TextEditorEdit> EditBlockList { get; set; }
-    public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; }
+	
     public List<LineEnd> LineEndList { get; set; }
     
     private bool _presentationModelListIsShallowCopy;
@@ -247,28 +229,14 @@ public partial class TextEditorModel
     
     public List<int> TabCharPositionIndexList { get; set; }
     
-    /// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
-    private List<LineEnd> __LocalLineEndList;
-    /// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
-    private List<int> __LocalTabPositionList;
-    /// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
-    private TextEditorViewModelLiason __TextEditorViewModelLiason;
+    public TextEditorModelPersistentState PersistentState { get; set; }
     
     public LineEndKind OnlyLineEndKind { get; set; }
     public LineEndKind LineEndKindPreference { get; private set; }
-    public ResourceUri ResourceUri { get; set; }
+
     public DateTime ResourceLastWriteTime { get; set; }
-    public string FileExtension { get; set; }
-    public IDecorationMapper DecorationMapper { get; set; }
-    public ICompilerService CompilerService { get; set; }
-    public SaveFileHelper TextEditorSaveFileHelper { get; set; }
-    public int EditBlockIndex { get; set; }
+    
+    
     public bool IsDirty { get; set; }
     /// <summary>
     /// Used to allow edits of 'TextEditorEditKind.Other' to span
@@ -277,7 +245,6 @@ public partial class TextEditorModel
     public string TagDoNotRemove { get; set; }
     public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple { get; set; }
     public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple { get; set; }
-    public int RenderStateSequence { get; set; }
 
     public int PreviousLineCount { get; set; }
     
@@ -301,7 +268,7 @@ public partial class TextEditorModel
     /// </summary>
     public bool WasDirty { get; }
 
-    private int PartitionSize { get; }
+    
 	
 	/// <summary>
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
@@ -356,8 +323,7 @@ public partial class TextEditorModel
 
 	public void HandleKeyboardEvent(
         KeymapArgs keymapArgs,
-        CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
         {
@@ -367,8 +333,7 @@ public partial class TextEditorModel
                 	cursorModifierBag,
                     1,
                     keymapArgs.CtrlKey,
-                    DeleteKind.Backspace,
-                    cancellationToken);
+                    DeleteKind.Backspace);
             }
             else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
             {
@@ -376,8 +341,7 @@ public partial class TextEditorModel
                     cursorModifierBag,
                     1,
                     keymapArgs.CtrlKey,
-                    DeleteKind.Delete,
-                    cancellationToken);
+                    DeleteKind.Delete);
             }
         }
         else
@@ -415,8 +379,7 @@ public partial class TextEditorModel
 
             Insert(
                 valueToInsert,
-                cursorModifierBag,
-                cancellationToken: cancellationToken);
+                cursorModifierBag);
         }
     }
 
@@ -428,7 +391,7 @@ public partial class TextEditorModel
 		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
 		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
 		
-		Insert(content, cursorModifierBag, CancellationToken.None, shouldCreateEditHistory: false);
+		Insert(content, cursorModifierBag, shouldCreateEditHistory: false);
 	}
 
 	private void PerformBackspace(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
@@ -444,7 +407,6 @@ public partial class TextEditorModel
 			count,
 			false,
 			DeleteKind.Backspace,
-			CancellationToken.None,
 			shouldCreateEditHistory: false,
 			usePositionIndex: true);
 	}
@@ -462,15 +424,13 @@ public partial class TextEditorModel
 			count,
 			false,
 			DeleteKind.Delete,
-			CancellationToken.None,
 			shouldCreateEditHistory: false,
 			usePositionIndex: true);
 	}
 
 	public void DeleteTextByMotion(
         MotionKind motionKind,
-        CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         var keymapArgs = motionKind switch
         {
@@ -481,14 +441,12 @@ public partial class TextEditorModel
 
         HandleKeyboardEvent(
             keymapArgs,
-            cursorModifierBag,
-            CancellationToken.None);
+            cursorModifierBag);
     }
 
 	public void DeleteByRange(
         int count,
-        CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
         for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
@@ -499,8 +457,7 @@ public partial class TextEditorModel
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,
                     Key = KeyboardKeyFacts.MetaKeys.DELETE,
                 },
-                cursorModifierBag,
-                CancellationToken.None);
+                cursorModifierBag);
         }
     }
 
@@ -512,9 +469,9 @@ public partial class TextEditorModel
     {
         ClearAllStatesButKeepEditHistory();
 
-		if (EditBlockList.Count == 0 && EditBlockIndex == 0)
+		if (PersistentState.EditBlockList.Count == 0 && PersistentState.EditBlockIndex == 0)
 		{
-			EditBlockList.Add(new TextEditorEdit(
+			PersistentState.EditBlockList.Add(new TextEditorEdit(
 				TextEditorEditKind.Constructor,
 				tag: string.Empty,
 				0,
@@ -650,23 +607,23 @@ public partial class TextEditorModel
 
 	public void ClearEditBlocks()
     {
-        EditBlockIndex = 0;
-        EditBlockList.Clear();
+        PersistentState.EditBlockIndex = 0;
+        PersistentState.EditBlockList.Clear();
     }
     
 	public void EnsureUndoPoint(TextEditorEdit newEdit)
 	{
 		// Clear redo history
 		// TODO: Check how this interacts with an 'Other' edit group. (2025-04-20)
-		if (EditBlockIndex < EditBlockList.Count - 1)
+		if (PersistentState.EditBlockIndex < PersistentState.EditBlockList.Count - 1)
 		{
-			for (int i = EditBlockIndex + 1; i < EditBlockList.Count; i++)
+			for (int i = PersistentState.EditBlockIndex + 1; i < PersistentState.EditBlockList.Count; i++)
 			{
-				EditBlockList.RemoveAt(i);
+				PersistentState.EditBlockList.RemoveAt(i);
 			}
 		}
 
-		var previousEdit = EditBlockList[EditBlockIndex];
+		var previousEdit = PersistentState.EditBlockList[PersistentState.EditBlockIndex];
 		var shouldAddNewEdit = false;
 
 		switch (newEdit.EditKind)
@@ -734,20 +691,20 @@ public partial class TextEditorModel
 		
 		if (shouldAddNewEdit)
 		{
-			EditBlockList.Add(newEdit);
-			EditBlockIndex++;
+			PersistentState.EditBlockList.Add(newEdit);
+			PersistentState.EditBlockIndex++;
 		}
 		
-		while (EditBlockList.Count > MAXIMUM_EDIT_BLOCKS)
+		while (PersistentState.EditBlockList.Count > MAXIMUM_EDIT_BLOCKS)
 	    {
-	    	if ((EditBlockList[0].EditKind == TextEditorEditKind.OtherOpen || EditBlockList[0].EditKind == TextEditorEditKind.OtherClose) &&
-	    	    EditBlockList[0].Tag == TagDoNotRemove)
+	    	if ((PersistentState.EditBlockList[0].EditKind == TextEditorEditKind.OtherOpen || PersistentState.EditBlockList[0].EditKind == TextEditorEditKind.OtherClose) &&
+	    	    PersistentState.EditBlockList[0].Tag == TagDoNotRemove)
 	    	{
 	    		break;
 	    	}
 	    	
-	    	EditBlockIndex--;
-	        EditBlockList.RemoveAt(0);
+	    	PersistentState.EditBlockIndex--;
+	        PersistentState.EditBlockList.RemoveAt(0);
 	    }
 	    
 	    if (newEdit.EditKind == TextEditorEditKind.OtherClose)
@@ -765,16 +722,16 @@ public partial class TextEditorModel
 
 	public void UndoEditWithCursor(CursorModifierBagTextEditor cursorModifierBag)
 	{
-		if (EditBlockIndex <= 0)
+		if (PersistentState.EditBlockIndex <= 0)
 			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
 
-		var mostRecentEdit = EditBlockList[EditBlockIndex];
+		var mostRecentEdit = PersistentState.EditBlockList[PersistentState.EditBlockIndex];
 		var undoEdit = mostRecentEdit.ToUndo();
 		RestoreAfterCursor(cursorModifierBag, undoEdit);
 		
 		// In case the 'ToUndo(...)' throws an exception, the decrement to the EditIndex
 		// is being done only after a successful ToUndo(...)
-		EditBlockIndex--;
+		PersistentState.EditBlockIndex--;
 
 		switch (undoEdit.EditKind)
 		{
@@ -799,10 +756,10 @@ public partial class TextEditorModel
 			case TextEditorEditKind.OtherClose:
 				while (true)
 				{
-					if (EditBlockIndex <= 0)
+					if (PersistentState.EditBlockIndex <= 0)
 						break;
 				
-					mostRecentEdit = EditBlockList[EditBlockIndex];
+					mostRecentEdit = PersistentState.EditBlockList[PersistentState.EditBlockIndex];
 
 					if (mostRecentEdit.EditKind == TextEditorEditKind.OtherOpen)
 					{
@@ -832,15 +789,15 @@ public partial class TextEditorModel
 	public void RedoEditWithCursor(CursorModifierBagTextEditor cursorModifierBag, bool recursive = false)
 	{
 		// If there is no next then throw exception
-		if (EditBlockIndex >= EditBlockList.Count - 1)
+		if (PersistentState.EditBlockIndex >= PersistentState.EditBlockList.Count - 1)
 			throw new LuthetusTextEditorException("No edits are available to perform 'redo' on");
 
 		TextEditorEdit redoEdit;
 
-		if (recursive || EditBlockList[EditBlockIndex].EditKind != TextEditorEditKind.OtherOpen)
-			EditBlockIndex++;
+		if (recursive || PersistentState.EditBlockList[PersistentState.EditBlockIndex].EditKind != TextEditorEditKind.OtherOpen)
+			PersistentState.EditBlockIndex++;
 		
-		redoEdit = EditBlockList[EditBlockIndex];
+		redoEdit = PersistentState.EditBlockList[PersistentState.EditBlockIndex];
 		RestoreBeforeCursor(cursorModifierBag, redoEdit);
 		
 		switch (redoEdit.EditKind)
@@ -864,19 +821,19 @@ public partial class TextEditorModel
 			case TextEditorEditKind.OtherOpen:
 				while (true)
 				{
-					if (EditBlockIndex >= EditBlockList.Count - 1)
+					if (PersistentState.EditBlockIndex >= PersistentState.EditBlockList.Count - 1)
 						break;
 
-					var nextEdit = EditBlockList[EditBlockIndex + 1];
+					var nextEdit = PersistentState.EditBlockList[PersistentState.EditBlockIndex + 1];
 
 					if (nextEdit.EditKind == TextEditorEditKind.OtherOpen)
 					{
 						// Ignore nested 'OtherOpen'.
-						EditBlockIndex++;
+						PersistentState.EditBlockIndex++;
 					}
 					else if (nextEdit.EditKind == TextEditorEditKind.OtherClose)
 					{
-						EditBlockIndex++;
+						PersistentState.EditBlockIndex++;
 					
 						if (nextEdit.Tag == redoEdit.Tag)
 							break;
@@ -950,23 +907,23 @@ public partial class TextEditorModel
 
     public void SetResourceData(ResourceUri resourceUri, DateTime resourceLastWriteTime)
     {
-        ResourceUri = resourceUri;
+        PersistentState.ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;
     }
 
     public void SetDecorationMapper(IDecorationMapper decorationMapper)
     {
-        DecorationMapper = decorationMapper;
+        PersistentState.DecorationMapper = decorationMapper;
     }
 
     public void SetCompilerService(ICompilerService compilerService)
     {
-        CompilerService = compilerService;
+        PersistentState.CompilerService = compilerService;
     }
 
     public void SetTextEditorSaveFileHelper(SaveFileHelper textEditorSaveFileHelper)
     {
-        TextEditorSaveFileHelper = textEditorSaveFileHelper;
+        PersistentState.TextEditorSaveFileHelper = textEditorSaveFileHelper;
     }
 
     public void ClearAllStatesButKeepEditHistory()
@@ -1079,7 +1036,6 @@ public partial class TextEditorModel
     public void Insert(
         string value,
         CursorModifierBagTextEditor cursorModifierBag,
-        CancellationToken cancellationToken = default,
 		bool shouldCreateEditHistory = true)
     {
         var cursorModifier = cursorModifierBag.CursorModifier;
@@ -1093,8 +1049,7 @@ public partial class TextEditorModel
                 cursorModifierBag,
                 1,
                 false,
-                DeleteKind.Delete,
-                CancellationToken.None);
+                DeleteKind.Delete);
         }
 
         // Remember the cursorPositionIndex
@@ -1105,12 +1060,12 @@ public partial class TextEditorModel
         // Metadata must be done prior to 'InsertValue'
         //
         // 'value' is replaced by the original with any line endings changed (based on 'useLineEndKindPreference').
-        value = InsertMetadata(value, cursorModifier, cancellationToken);
+        value = InsertMetadata(value, cursorModifier);
 
         // Now the text still needs to be inserted.
         // The cursorModifier is invalid, because the metadata step moved its position.
         // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
-        InsertValue(value, initialCursorPositionIndex, cancellationToken);
+        InsertValue(value, initialCursorPositionIndex);
 
 		if (shouldCreateEditHistory)
 		{
@@ -1151,8 +1106,7 @@ public partial class TextEditorModel
 
 	private string InsertMetadata(
         string value,
-        TextEditorCursorModifier cursorModifier,
-        CancellationToken cancellationToken)
+        TextEditorCursorModifier cursorModifier)
     {
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
         var initialCursorLineIndex = cursorModifier.LineIndex;
@@ -1165,10 +1119,10 @@ public partial class TextEditorModel
         bool isCarriageReturnLineFeed = false;
 
 		// Use 'int.MinValue' to represent null.
-		__LocalLineEndList.Clear();
-		__LocalTabPositionList.Clear();
-        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, __LocalLineEndList);
-        (int index, List<int> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, __LocalTabPositionList);
+		PersistentState.__LocalLineEndList.Clear();
+		PersistentState.__LocalTabPositionList.Clear();
+        (int index, List<LineEnd> localLineEndList) lineEndPositionLazyInsertRange = (int.MinValue, PersistentState.__LocalLineEndList);
+        (int index, List<int> localTabPositionList) tabPositionLazyInsertRange = (int.MinValue, PersistentState.__LocalTabPositionList);
 
         var lineEndingsChangedValueBuilder = new StringBuilder();
 
@@ -1317,10 +1271,10 @@ public partial class TextEditorModel
         
         // Reposition the ViewModel InlineUiList
         {
-        	__TextEditorViewModelLiason.InsertRepositionInlineUiList(
+        	PersistentState.__TextEditorViewModelLiason.InsertRepositionInlineUiList(
         		initialCursorPositionIndex,
         		lineEndingsChangedValueBuilder.Length,
-        		ViewModelKeyList,
+        		PersistentState.ViewModelKeyList,
         		initialCursorLineIndex,
         		lineEndPositionWasAdded: lineEndPositionLazyInsertRange.index != int.MinValue);
         }
@@ -1347,8 +1301,7 @@ public partial class TextEditorModel
 
 	private void InsertValue(
         string value,
-        int cursorPositionIndex,
-        CancellationToken cancellationToken)
+        int cursorPositionIndex)
     {
         // If cursor is out of bounds then continue
         if (cursorPositionIndex > CharCount)
@@ -1393,7 +1346,6 @@ public partial class TextEditorModel
         int columnCount,
         bool expandWord,
         DeleteKind deleteKind,
-        CancellationToken cancellationToken = default,
 		bool shouldCreateEditHistory = true,
 		bool usePositionIndex = false)
 	{
@@ -1406,7 +1358,7 @@ public partial class TextEditorModel
 		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
 		var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
 
-        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, usePositionIndex, cancellationToken);
+        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, usePositionIndex);
 
         if (tuple is null)
         {
@@ -1418,7 +1370,7 @@ public partial class TextEditorModel
 
 		var textRemoved = this.GetString(calculatedPositionIndex, charCount);
 
-        DeleteValue(calculatedPositionIndex, charCount, cancellationToken);
+        DeleteValue(calculatedPositionIndex, charCount);
 
 		if (shouldCreateEditHistory)
 		{
@@ -1514,15 +1466,14 @@ public partial class TextEditorModel
     /// where as one tells the <see cref="TextEditorPartition"/> to delete 2 char values.<br/><br/>
     /// 
     /// This method returns the 'int charValueCount', so that it can be used
-    /// in the <see cref="DeleteValue(int, int, CancellationToken)"/> method.
+    /// in the <see cref="DeleteValue(int, int)"/> method.
     /// </summary>
 	private (int positionIndex, int charCount)? DeleteMetadata(
         int columnCount,
         TextEditorCursorModifier cursorModifier,
         bool expandWord,
         DeleteKind deleteKind,
-        bool usePositionIndex,
-        CancellationToken cancellationToken)
+        bool usePositionIndex)
 	{
         var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
         var initialLineIndex = cursorModifier.LineIndex;
@@ -1760,10 +1711,10 @@ public partial class TextEditorModel
         
         // Reposition the ViewModel InlineUiList
         {
-        	__TextEditorViewModelLiason.DeleteRepositionInlineUiList(
+        	PersistentState.__TextEditorViewModelLiason.DeleteRepositionInlineUiList(
         		positionIndex,
         		positionIndex + charCount,
-        		ViewModelKeyList,
+        		PersistentState.ViewModelKeyList,
         		initialLineIndex,
         		lineEndPositionLazyRemoveRange.index is not null);
         }
@@ -1816,7 +1767,7 @@ public partial class TextEditorModel
         }
     }
 
-	private void DeleteValue(int positionIndex, int count, CancellationToken cancellationToken)
+	private void DeleteValue(int positionIndex, int count)
     {
         // If cursor is out of bounds then continue
         if (positionIndex >= CharCount)
@@ -2044,7 +1995,7 @@ public partial class TextEditorModel
                 wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
                 wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
                 0,
-                ResourceUri,
+                PersistentState.ResourceUri,
                 GetAllText());
         }
         else if (currentCharacterKind == CharacterKind.LetterOrDigit)
@@ -2061,7 +2012,7 @@ public partial class TextEditorModel
                 columnIndex + lineInformation.Position_StartInclusiveIndex,
                 wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
                 0,
-                ResourceUri,
+                PersistentState.ResourceUri,
                 GetAllText());
         }
         else if (previousCharacterKind == CharacterKind.LetterOrDigit)
@@ -2078,7 +2029,7 @@ public partial class TextEditorModel
                 wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
                 columnIndex + lineInformation.Position_StartInclusiveIndex,
                 0,
-                ResourceUri,
+                PersistentState.ResourceUri,
                 GetAllText());
         }
 
@@ -2108,7 +2059,7 @@ public partial class TextEditorModel
                         outerI,
                         outerI + innerI,
                         (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
-                        ResourceUri,
+                        PersistentState.ResourceUri,
                         text));
                 }
             }
@@ -2262,12 +2213,12 @@ public partial class TextEditorModel
 
     public bool CanUndoEdit()
     {
-        return EditBlockIndex > 0;
+        return PersistentState.EditBlockIndex > 0;
     }
 
     public bool CanRedoEdit()
     {
-        return EditBlockIndex < EditBlockList.Count - 1;
+        return PersistentState.EditBlockIndex < PersistentState.EditBlockList.Count - 1;
     }
 
     public CharacterKind GetCharacterKind(int positionIndex)
@@ -2424,7 +2375,7 @@ public partial class TextEditorModel
             {
                 // This is the partition we want to modify.
                 // But, we must first check if it has available space.
-                if (partition.Count >= PartitionSize)
+                if (partition.Count >= PersistentState.PartitionSize)
                 {
                     __SplitIntoTwoPartitions(i);
                     i--;
@@ -2590,8 +2541,8 @@ public partial class TextEditorModel
     {
         var originalPartition = PartitionList[partitionIndex];
 
-        var firstUnevenSplit = PartitionSize / 2 + PartitionSize % 2;
-        var secondUnevenSplit = PartitionSize / 2;
+        var firstUnevenSplit = PersistentState.PartitionSize / 2 + PersistentState.PartitionSize % 2;
+        var secondUnevenSplit = PersistentState.PartitionSize / 2;
 
         // Validate multi-byte characters go on same partition (i.e.: '\r\n')
         {
@@ -2665,7 +2616,7 @@ public partial class TextEditorModel
 
                 if (runningCount + partition.Count >= globalPositionIndex)
                 {
-                    if (partition.Count >= PartitionSize)
+                    if (partition.Count >= PersistentState.PartitionSize)
                     {
                         __SplitIntoTwoPartitions(i);
                         i--;
@@ -2689,7 +2640,7 @@ public partial class TextEditorModel
                 throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
             partition = PartitionList[indexOfPartitionWithAvailableSpace];
-            var partitionAvailableSpace = PartitionSize - partition.Count;
+            var partitionAvailableSpace = PersistentState.PartitionSize - partition.Count;
 
             var richCharacterBatchInsertList = new List<RichCharacter> { richCharacterEnumerator.Current };
 

@@ -133,7 +133,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 					primaryCursorModifier.LineIndex = 0;
 					primaryCursorModifier.SetColumnIndexAndPreferred(0);
 
-					var compilerServiceResource = modelModifier.CompilerService.GetResource(
+					var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
 						ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 
 					if (compilerServiceResource is TerminalResource terminalResource)
@@ -146,7 +146,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 							modelModifier);
 					}
 
-					viewModelModifier.ShouldRevealCursor = true;
+					viewModelModifier.PersistentState.ShouldRevealCursor = true;
 					return ValueTask.CompletedTask;
 				});
 		}

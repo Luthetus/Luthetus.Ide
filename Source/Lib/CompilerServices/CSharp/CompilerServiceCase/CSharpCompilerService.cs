@@ -38,6 +38,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     private readonly Dictionary<ResourceUri, CSharpResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
+    private readonly HashSet<string> _collapsePointUsedIdentifierHashSet = new();
     
     // Service dependencies
     private readonly ITextEditorService _textEditorService;
@@ -166,7 +167,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             positionIndex - 1,
             positionIndex,
             0,
-            renderBatch.Model.ResourceUri,
+            renderBatch.Model.PersistentState.ResourceUri,
             renderBatch.Model.GetAllText());
 	
 		var compilerServiceAutocompleteEntryList = OBSOLETE_GetAutocompleteEntries(
@@ -183,11 +184,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         CursorModifierBagTextEditor cursorModifierBag)
     {
 		var primaryCursorModifier = cursorModifierBag.CursorModifier;
-		var compilerService = modelModifier.CompilerService;
+		var compilerService = modelModifier.PersistentState.CompilerService;
 	
 		var compilerServiceResource = viewModelModifier is null
 			? null
-			: compilerService.GetResource(modelModifier.ResourceUri);
+			: compilerService.GetResource(modelModifier.PersistentState.ResourceUri);
 
 		int? primaryCursorPositionIndex = modelModifier is null || viewModelModifier is null
 			? null
@@ -291,7 +292,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         var foundMatch = false;
         
-        var resource = GetResource(modelModifier.ResourceUri);
+        var resource = GetResource(modelModifier.PersistentState.ResourceUri);
         var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
         
         var symbols = compilationUnitLocal.SymbolList;
@@ -315,8 +316,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.TooltipViewModel = new(
-	                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
+                    viewModelModifier.PersistentState.TooltipViewModel = new(
+	                    modelModifier.PersistentState.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
 	                    parameterMap,
 	                    relativeCoordinatesOnClick,
 	                    null,
@@ -342,7 +343,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.TooltipViewModel = new(
+                    viewModelModifier.PersistentState.TooltipViewModel = new(
                         typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
                         parameters,
                         relativeCoordinatesOnClick,
@@ -354,7 +355,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (!foundMatch)
         {
-			viewModelModifier.TooltipViewModel = null;
+			viewModelModifier.PersistentState.TooltipViewModel = null;
         }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
@@ -418,7 +419,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	
     	var foundMatch = false;
         
-        var resource = modelModifier.ResourceUri;
+        var resource = modelModifier.PersistentState.ResourceUri;
         var compilationUnitLocal = compilationUnit;
         
         var symbols = compilationUnitLocal.SymbolList;
@@ -428,7 +429,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex);
         
         var elementPositionInPixels = await _textEditorService.JsRuntimeTextEditorApi
-            .GetBoundingClientRect(viewModelModifier.PrimaryCursorContentId)
+            .GetBoundingClientRect(viewModelModifier.PersistentState.PrimaryCursorContentId)
             .ConfigureAwait(false);
 
         elementPositionInPixels = elementPositionInPixels with
@@ -467,7 +468,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.TooltipViewModel = new(
+                    viewModelModifier.PersistentState.TooltipViewModel = new(
                         typeof(Luthetus.Extensions.CompilerServices.Displays.SymbolDisplay),
                         parameters,
                         relativeCoordinatesOnClick,
@@ -481,7 +482,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (!foundMatch)
         {
-			viewModelModifier.TooltipViewModel = null;
+			viewModelModifier.PersistentState.TooltipViewModel = null;
         }
     }
     
@@ -498,7 +499,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         var foundMatch = false;
         
-        var resource = GetResource(modelModifier.ResourceUri);
+        var resource = GetResource(modelModifier.PersistentState.ResourceUri);
         var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
         
         var symbolList = compilationUnitLocal.SymbolList;
@@ -591,7 +592,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
 	{
-		var resourceUri = modelModifier.ResourceUri;
+		var resourceUri = modelModifier.PersistentState.ResourceUri;
 	
 		if (!_resourceMap.ContainsKey(resourceUri))
 			return ValueTask.CompletedTask;
@@ -758,9 +759,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	    	if (textEditorModel is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
 	    	
-	    	var compilerService = textEditorModel.CompilerService;
+	    	var compilerService = textEditorModel.PersistentState.CompilerService;
 	    	
-	    	var compilerServiceResource = compilerService.GetResource(textEditorModel.ResourceUri);
+	    	var compilerServiceResource = compilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
 	    	if (compilerServiceResource is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
 	
@@ -1007,13 +1008,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	
 	            var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
 	            
-	            var viewModel = viewModelList.FirstOrDefault(x => x.Category.Value == "main")
+	            var viewModel = viewModelList.FirstOrDefault(x => x.PersistentState.Category.Value == "main")
 	            	?? viewModelList.FirstOrDefault();
 	            
 	            if (viewModel is null)
 	            	return ValueTask.CompletedTask;
 	            	
-	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
 	            var primaryCursorModifier = editContext.GetCursorModifierBag(viewModelModifier).CursorModifier;
 	            
@@ -1034,8 +1035,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            		
 	            modelModifier.Insert(
 	                textToInsert,
-	                cursorModifierBag,
-	                cancellationToken: CancellationToken.None);
+	                cursorModifierBag);
 	                
 	            if (behindPositionIndex > 0 && modelModifier.GetCharacter(behindPositionIndex) == 'p')
 	            {
@@ -1048,8 +1048,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         TextEditorModel.DeleteKind.Delete);
 	            }
 	
-	            modelModifier.CompilerService.ResourceWasModified(
-	            	(ResourceUri)modelModifier.ResourceUri,
+	            modelModifier.PersistentState.CompilerService.ResourceWasModified(
+	            	(ResourceUri)modelModifier.PersistentState.ResourceUri,
 	            	(IReadOnlyList<TextEditorTextSpan>)Array.Empty<TextEditorTextSpan>());
 	            	
 	            return ValueTask.CompletedTask;
@@ -1060,7 +1060,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     private void CreateCollapsePoints(TextEditorEditContext editContext, TextEditorModel modelModifier)
     {
-    	var resource = GetResource(modelModifier.ResourceUri);
+    	_collapsePointUsedIdentifierHashSet.Clear();
+    
+    	var resource = GetResource(modelModifier.PersistentState.ResourceUri);
 			
 		var collapsePointList = new List<CollapsePoint>();
 		
@@ -1070,8 +1072,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			{
 				foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
 				{
-					if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri)
-			    		continue;
+					if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
+		    			continue;
+			    		
+			    	if (!_collapsePointUsedIdentifierHashSet.Add(entry.TypeIdentifierToken.TextSpan.GetText()))
+		    			continue;
 					
 					collapsePointList.Add(new CollapsePoint(
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.TypeIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
@@ -1085,8 +1090,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			{
 				foreach (var entry in extendedCompilationUnit.ScopeFunctionDefinitionMap.Values)
 				{
-					if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.ResourceUri)
+					if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
 			    		continue;
+			    		
+					if (!_collapsePointUsedIdentifierHashSet.Add(entry.FunctionIdentifierToken.TextSpan.GetText()))
+		    			continue;
 					
 					collapsePointList.Add(new CollapsePoint(
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.FunctionIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
@@ -1096,9 +1104,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				}
 			}
 			
-			foreach (var viewModelKey in modelModifier.ViewModelKeyList)
+			foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
 			{
-				if (modelModifier.ViewModelKeyList.Count > 1)
+				if (modelModifier.PersistentState.ViewModelKeyList.Count > 1)
 					collapsePointList = new(collapsePointList);
 				
 				var viewModel = editContext.GetViewModelModifier(viewModelKey);

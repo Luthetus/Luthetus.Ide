@@ -134,8 +134,8 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	        _textEditorService.ModelApi.RegisterCustom(editContext, model);
 	        
-			model.CompilerService.RegisterResource(
-				model.ResourceUri,
+			model.PersistentState.CompilerService.RegisterResource(
+				model.PersistentState.ResourceUri,
 				shouldTriggerResourceWasModified: true);
 				
 	        var viewModel = new TextEditorViewModel(
@@ -148,7 +148,6 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
-	            false,
 	            new Category("terminal"));
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>()
@@ -158,7 +157,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            FindOverlayPresentationFacts.PresentationKey,
 	        };
 	            
-	        viewModel.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 	        
 	        _textEditorService.ViewModelApi.Register(editContext, viewModel);
 	        

@@ -339,7 +339,7 @@ public static class EventUtils
 		    			// |--->
 		    			if (previousCharacterWidthIsInlineUi)
 		    			{
-		    				viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Left;
+		    				viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Left;
 		    			}
 		    			else
 		    			{
@@ -357,7 +357,7 @@ public static class EventUtils
 		    			//  --->|
 		    			if (previousCharacterWidthIsInlineUi)
 		    			{
-		    				viewModel.VirtualAssociativityKind = VirtualAssociativityKind.Right;
+		    				viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
 		    			}
 		    			break;
 		    		}

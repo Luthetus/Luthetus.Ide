@@ -22,10 +22,10 @@
 	
 	            if (model is not null && viewModel is not null)
 	            {
-	                if (!string.IsNullOrWhiteSpace(model.FileExtension))
+	                if (!string.IsNullOrWhiteSpace(model.PersistentState.FileExtension))
 	                {
 	                    <div class="luth_te_text-editor-footer-entry">
-	                        @model.FileExtension
+	                        @model.PersistentState.FileExtension
 	                    </div>
 	                }
 	

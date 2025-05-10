@@ -28,7 +28,7 @@ public struct OnDoubleClick
     	var editContext = new TextEditorEditContext(ComponentData.TextEditorViewModelSlimDisplay.TextEditorService);
     
         var viewModel = editContext.GetViewModelModifier(ViewModelKey);
-        var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri, isReadOnly: true);
+        var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
         var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
         var primaryCursorModifier = cursorModifierBag.CursorModifier;
 

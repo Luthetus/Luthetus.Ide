@@ -99,7 +99,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorModel modelModifier,
         DateTime resourceLastWriteTime)
     {
-        modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
+        modelModifier.SetResourceData(modelModifier.PersistentState.ResourceUri, resourceLastWriteTime);
     }
 
     public void Reload(
@@ -109,7 +109,7 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         DateTime resourceLastWriteTime)
     {
         modelModifier.SetContent(content);
-        modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
+        modelModifier.SetResourceData(modelModifier.PersistentState.ResourceUri, resourceLastWriteTime);
     }
 
     public void RedoEdit(
@@ -123,80 +123,72 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        string content,
-        CancellationToken cancellationToken)
+        string content)
     {
-        modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
+        modelModifier.Insert(content, cursorModifierBag);
     }
 
     public void InsertTextUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        string content,
-        CancellationToken cancellationToken)
+        string content)
     {
-        modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
+        modelModifier.Insert(content, cursorModifierBag);
     }
 
     public void HandleKeyboardEvent(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeymapArgs keymapArgs,
-        CancellationToken cancellationToken)
+        KeymapArgs keymapArgs)
     {
-        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag, cancellationToken);
+        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag);
     }
 
     public void HandleKeyboardEventUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeymapArgs keymapArgs,
-        CancellationToken cancellationToken)
+        KeymapArgs keymapArgs)
     {
-        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag, cancellationToken);
+        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag);
     }
 
     public void DeleteTextByRange(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        int count,
-        CancellationToken cancellationToken)
+        int count)
     {
-        modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
+        modelModifier.DeleteByRange(count, cursorModifierBag);
     }
 
     public void DeleteTextByRangeUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        int count,
-        CancellationToken cancellationToken)
+        int count)
     {
-        modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
+        modelModifier.DeleteByRange(count, cursorModifierBag);
     }
 
     public void DeleteTextByMotion(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        MotionKind motionKind,
-        CancellationToken cancellationToken)
+        MotionKind motionKind)
     {
-        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
+        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag);
     }
 
     public void DeleteTextByMotionUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        MotionKind motionKind,
-        CancellationToken cancellationToken)
+        MotionKind motionKind)
     {
-        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
+        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag);
     }
 
     public void AddPresentationModel(
@@ -266,16 +258,16 @@ public sealed class TextEditorModelApi : ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier)
     {
-        var compilerServiceResource = modelModifier.CompilerService.GetResource(modelModifier.ResourceUri);
+        var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(modelModifier.PersistentState.ResourceUri);
         if (compilerServiceResource is null)
         	return;
         
-        foreach (var viewModelKey in modelModifier.ViewModelKeyList)
+        foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
         {
         	var viewModel = editContext.GetViewModelModifier(viewModelKey);
         	
-        	if (viewModel.DisplayTracker.ComponentData is not null)
-        		viewModel.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
+        	if (viewModel.PersistentState.DisplayTracker.ComponentData is not null)
+        		viewModel.PersistentState.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
         }
 
         ApplyDecorationRange(

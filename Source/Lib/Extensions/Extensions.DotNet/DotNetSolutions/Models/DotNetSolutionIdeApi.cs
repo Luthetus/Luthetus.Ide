@@ -800,7 +800,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				nameof(Do_Website_AddExistingProjectToSolution),
 				editContext =>
 				{
-					var modelModifier = editContext.GetModelModifier(solutionTextEditorModel.ResourceUri);
+					var modelModifier = editContext.GetModelModifier(solutionTextEditorModel.PersistentState.ResourceUri);
 					if (modelModifier is null)
 						return ValueTask.CompletedTask;
 				

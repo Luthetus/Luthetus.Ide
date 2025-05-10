@@ -93,8 +93,7 @@ public interface ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        string content,
-        CancellationToken cancellationToken);
+        string content);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="InsertTextFactory"/>
@@ -110,15 +109,13 @@ public interface ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        string content,
-        CancellationToken cancellationToken);
+        string content);
 
     public void HandleKeyboardEvent(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeymapArgs keymapArgs,
-        CancellationToken cancellationToken);
+        KeymapArgs keymapArgs);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="HandleKeyboardEvent"/>
@@ -134,15 +131,13 @@ public interface ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeymapArgs keymapArgs,
-        CancellationToken cancellationToken);
+        KeymapArgs keymapArgs);
 
     public void DeleteTextByRange(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        int count,
-        CancellationToken cancellationToken);
+        int count);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByRangeFactory"/>
@@ -158,15 +153,13 @@ public interface ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        int count,
-        CancellationToken cancellationToken);
+        int count);
 
     public void DeleteTextByMotion(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        MotionKind motionKind,
-        CancellationToken cancellationToken);
+        MotionKind motionKind);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="DeleteTextByMotionFactory"/>
@@ -182,8 +175,7 @@ public interface ITextEditorModelApi
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        MotionKind motionKind,
-        CancellationToken cancellationToken);
+        MotionKind motionKind);
 
     public void AddPresentationModel(
         TextEditorEditContext editContext,
