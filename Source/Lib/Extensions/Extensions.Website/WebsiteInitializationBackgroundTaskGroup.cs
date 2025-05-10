@@ -211,7 +211,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                 {
                 	_textEditorService.ModelApi.RegisterCustom(editContext, textEditorModel);
                 	
-                    var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+                    var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
 
                     if (modelModifier is null)
                         return ValueTask.CompletedTask;
@@ -236,8 +236,8 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                         modelModifier,
                         DiffPresentationFacts.EmptyOutPresentationModel);
 
-                    textEditorModel.CompilerService.RegisterResource(
-                        textEditorModel.ResourceUri,
+                    textEditorModel.PersistentState.CompilerService.RegisterResource(
+                        textEditorModel.PersistentState.ResourceUri,
                         shouldTriggerResourceWasModified: true);
                     return ValueTask.CompletedTask;
                 });
