@@ -54,6 +54,8 @@
 			</div>
             @* Virtualization Close *@
 		    
+		    @{ var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1); }
+		    
 		    @foreach (var virtualizedLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
@@ -62,8 +64,6 @@
 		            @(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].LineNumberString)
 		            
 		            @{
-		            	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
-		            	
 		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
 		            	{
 		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedLine.LineIndex)

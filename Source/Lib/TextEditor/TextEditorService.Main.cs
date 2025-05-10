@@ -367,7 +367,8 @@ public partial class TextEditorService : ITextEditorService
 				viewModelModifier.CharAndLineMeasurements.CharacterWidth);
 		}
 
-		var totalHeight = (int)Math.Ceiling(modelModifier.LineEndList.Count *
+		var totalHeight = (int)Math.Ceiling(
+			(modelModifier.LineEndList.Count - viewModelModifier.HiddenLineIndexHashSet.Count) *
 			viewModelModifier.CharAndLineMeasurements.LineHeight);
 
 		// Add vertical margin so the user can scroll beyond the final line of content

@@ -235,9 +235,16 @@ public sealed class TextEditorViewModelApi : ITextEditorViewModelApi
         // Unit of measurement is pixels (px)
         var scrollLeft = columnIndex *
             viewModel.CharAndLineMeasurements.CharacterWidth;
+            
+        var hiddenLineCount = 0;
+        foreach (var index in viewModel.HiddenLineIndexHashSet)
+        {
+        	if (index < lineIndex)
+        		hiddenLineCount++;
+        }
 
         // Unit of measurement is pixels (px)
-        var scrollTop = lineIndex *
+        var scrollTop = (lineIndex - hiddenLineCount) *
             viewModel.CharAndLineMeasurements.LineHeight;
 
 		var currentScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;

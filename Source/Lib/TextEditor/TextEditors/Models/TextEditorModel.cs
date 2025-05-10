@@ -221,7 +221,6 @@ public partial class TextEditorModel
     		return _charCount;
     	}
     }
-
 	
     public List<LineEnd> LineEndList { get; set; }
     
