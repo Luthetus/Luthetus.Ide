@@ -83,9 +83,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void OnIdeMainLayoutStateChanged()
     {
-        await _bodyAndFooterStateHasChangedBoundaryComponent
-        	.InvokeStateHasChangedAsync()
-        	.ConfigureAwait(false);
+    	var bodyAndFooterStateHasChangedBoundaryComponentLocal = _bodyAndFooterStateHasChangedBoundaryComponent;
+    	if (bodyAndFooterStateHasChangedBoundaryComponentLocal is not null)
+    	{
+    		await bodyAndFooterStateHasChangedBoundaryComponentLocal
+	        	.InvokeStateHasChangedAsync()
+	        	.ConfigureAwait(false);
+    	}
     }
 
     private async void TextEditorOptionsStateWrap_StateChanged()
