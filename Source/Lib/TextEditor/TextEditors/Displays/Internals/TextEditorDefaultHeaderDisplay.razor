@@ -6,7 +6,13 @@
 	var componentData = GetComponentData();
 }
 
-@if (renderBatch.ConstructorWasInvoked)
+@if (!renderBatch.ConstructorWasInvoked || componentData is null)
+{
+	<div class="luth_te_text-editor-header @componentData?.WrapperCssClass @TextEditorService.ThemeCssClassString"
+	     style="@componentData?.WrapperCssStyle">
+    </div>
+}
+else
 {
 	<div class="luth_te_text-editor-header @componentData.WrapperCssClass @TextEditorService.ThemeCssClassString"
 	     style="@componentData.WrapperCssStyle">

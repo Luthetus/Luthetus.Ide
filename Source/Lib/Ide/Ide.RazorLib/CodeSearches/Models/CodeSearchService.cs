@@ -205,7 +205,6 @@ public class CodeSearchService : ICodeSearchService
 
             await RecursiveHandleSearchEffect(startingAbsolutePathForSearch).ConfigureAwait(false);
             
-            // The use of '_codeSearchStateWrap.Value' is purposeful here
             ConstructTreeView(GetCodeSearchState());
 
             async Task RecursiveHandleSearchEffect(string directoryPathParent)

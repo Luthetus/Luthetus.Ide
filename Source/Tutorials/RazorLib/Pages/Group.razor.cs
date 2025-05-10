@@ -80,14 +80,15 @@ public record TextEditorGroup(/*...*/) : ITabGroup
 }
 ",
 	        genericDecorationMapper,
-	        cSharpCompilerService);
+	        cSharpCompilerService,
+	        TextEditorService);
 	
 		TextEditorService.WorkerArbitrary.PostUnique(nameof(Index), editContext =>
 		{
 			TextEditorService.ModelApi.RegisterCustom(editContext, model);
 		
 			cSharpCompilerService.RegisterResource(
-				model.ResourceUri,
+				model.PersistentState.ResourceUri,
 				shouldTriggerResourceWasModified: true);
 			
 			TextEditorService.ViewModelApi.Register(

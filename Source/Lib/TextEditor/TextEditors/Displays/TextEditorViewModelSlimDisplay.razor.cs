@@ -145,6 +145,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private Task _onMouseMoveTask = Task.CompletedTask;
 
 	public TextEditorComponentData ComponentData => _componentData;
+	
+	private bool _hasRanCssOnInitializedStepTwo;
 
     protected override void OnInitialized()
     {
@@ -169,14 +171,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
   	  try
   	  {
   	  	ConstructRenderBatch();
+  	  	CssOnInitializedStepTwo();
+  	  	_hasRanCssOnInitializedStepTwo = true;
   	  }
   	  catch (Exception e)
   	  {
   	  	Console.WriteLine(e);
   	  }
         
-        CssOnInitializedStepTwo();
-
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
         TextEditorService.OptionsApi.StaticStateChanged += OnOptionStaticStateChanged;
         TextEditorService.OptionsApi.MeasuredStateChanged += OnOptionMeasuredStateChanged;
@@ -200,6 +202,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	            HandleTextEditorViewModelKeyChange();
 	
 	        ConstructRenderBatch();
+	        if (!_hasRanCssOnInitializedStepTwo)
+	        {
+	        	CssOnInitializedStepTwo();
+  	  		_hasRanCssOnInitializedStepTwo = true;
+	        }
 	
 	        if (ComponentData._currentRenderBatch.ViewModel is not null && ComponentData._currentRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is not null)
 	        {
@@ -212,6 +219,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		catch (Exception e)
 		{
 			Console.WriteLine(e);
+			return false;
 		}
     	
         return true;
@@ -290,13 +298,15 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             model_viewmodel_tuple.ViewModel,
             _textEditorRenderBatchConstants);
         
-        if (!renderBatchUnsafe.ViewModel.CreateCacheWasInvoked &&
-        	renderBatchUnsafe.Model is not null && renderBatchUnsafe.ViewModel is not null)
+        if (renderBatchUnsafe.ViewModel is not null && !renderBatchUnsafe.ViewModel.CreateCacheWasInvoked &&
+        	renderBatchUnsafe.Model is not null)
         {
         	/*
 	        if (_componentData.VirtualizedLineCacheViewModelKey != renderBatchUnsafe.ViewModel.ViewModelKey)
 				_componentData.VirtualizationLineCacheClear();
 			*/
+			
+			renderBatchUnsafe.ViewModel = null;
 		
         	TextEditorService.WorkerArbitrary.PostUnique(nameof(ConstructRenderBatch), editContext =>
         	{
@@ -307,12 +317,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 					var inViewModel = localTextEditorState._viewModelMap[TextEditorViewModelKey];
 					var inModel = localTextEditorState._modelMap[inViewModel.PersistentState.ResourceUri];
 			    
-			    	(TextEditorModel Model, TextEditorViewModel ViewModel) model_viewmodel_tuple = (inModel, inViewModel);
-        		
-        			renderBatchUnsafe.ViewModel.VirtualizationResult.CreateCache(
+        			inViewModel.VirtualizationResult.CreateCache(
 		        		TextEditorService,
-		        		model_viewmodel_tuple.Model,
-		        		model_viewmodel_tuple.ViewModel);
+		        		inModel,
+		        		inViewModel);
         		}
         		catch (Exception e)
         		{
@@ -383,6 +391,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     public void HandleTextEditorViewModelKeyChange()
     {
+    	// Avoid infinite loop if the viewmodel does not exist.
+    	if (TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey) is null)
+    		return;
+    	
     	TextEditorService.WorkerArbitrary.PostUnique(nameof(HandleTextEditorViewModelKeyChange), editContext =>
     	{
     		var localTextEditorViewModelKey = TextEditorViewModelKey;

@@ -132,7 +132,12 @@ public sealed class DisplayTracker : IDisposable
     {
         lock (_componentLock)
         {
-        	if (componentData.TextEditorHtmlElementId != ComponentData.TextEditorHtmlElementId)
+        	if (componentData is null || ComponentData is null)
+        	{
+        		Console.WriteLine($"TODO: {nameof(DisplayTracker)} {nameof(DisposeComponentData)} - componentData is null || ComponentData is null.");
+    			return;
+        	}
+        	else if (componentData.TextEditorHtmlElementId != ComponentData.TextEditorHtmlElementId)
         	{
         		Console.WriteLine($"TODO: {nameof(DisplayTracker)} {nameof(DisposeComponentData)} - ComponentData.TextEditorHtmlElementId does not match.");
     			return;
