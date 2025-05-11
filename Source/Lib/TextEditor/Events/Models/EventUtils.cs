@@ -20,7 +20,7 @@ public static class EventUtils
 		TextEditorComponentData componentData,
         KeymapArgs keymapArgs,
         bool hasSelection,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         out CommandNoType command)
     {
         var eventIsCommand = CheckIfKeymapArgsMapsToCommand(
@@ -125,7 +125,7 @@ public static class EventUtils
 		TextEditorComponentData componentData,
         KeymapArgs keymapArgs,
         bool hasSelection,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         out Key<KeymapLayer> layerKey,
         out bool success,
         out CommandNoType command)

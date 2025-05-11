@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ILuthetusTextEditorComponentRenderers>(_textEditorComponentRenderers)
             .AddScoped<IAutocompleteService, WordAutocompleteService>()
             .AddScoped<IAutocompleteIndexer, WordAutocompleteIndexer>()
-            .AddScoped<ITextEditorService, TextEditorService>()
+            .AddScoped<TextEditorService>()
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>()
             .AddScoped<IFindAllService, FindAllService>()

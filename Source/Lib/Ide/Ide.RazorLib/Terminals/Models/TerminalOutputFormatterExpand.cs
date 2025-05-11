@@ -28,7 +28,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; }
 
 	private readonly ITerminal _terminal;
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDialogService _dialogService;
 	private readonly IPanelService _panelService;
@@ -36,7 +36,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
-		ITextEditorService textEditorService,
+		TextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDialogService dialogService,
 		IPanelService panelService,

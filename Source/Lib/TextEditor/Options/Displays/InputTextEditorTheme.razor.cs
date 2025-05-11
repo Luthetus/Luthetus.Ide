@@ -10,7 +10,7 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
     [Inject]
     private IThemeService ThemeService { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;

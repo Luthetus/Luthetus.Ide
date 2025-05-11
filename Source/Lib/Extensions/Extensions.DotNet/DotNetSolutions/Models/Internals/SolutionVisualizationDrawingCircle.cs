@@ -86,7 +86,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider)
 	{
-		var textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
+		var textEditorService = serviceProvider.GetRequiredService<TextEditorService>();
 		textEditorService.WorkerArbitrary.PostUnique(nameof(SolutionExplorerTreeViewMouseEventHandler), async editContext =>
 		{
 			await textEditorService.OpenInEditorAsync(

@@ -17,7 +17,7 @@ public record TextEditorGroup(
         Key<TextEditorViewModel> ActiveViewModelKey,
 		List<Key<TextEditorViewModel>> ViewModelKeyList,
         Category Category,
-        ITextEditorService TextEditorService,
+        TextEditorService TextEditorService,
         IPanelService PanelService,
         IDialogService DialogService,
         CommonBackgroundTaskApi CommonBackgroundTaskApi)

@@ -8,12 +8,12 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public struct TextEditorEditContext
 {
-    public TextEditorEditContext(ITextEditorService textEditorService)
+    public TextEditorEditContext(TextEditorService textEditorService)
     {
         TextEditorService = textEditorService;
     }
 
-    public ITextEditorService TextEditorService { get; }
+    public TextEditorService TextEditorService { get; }
 
 	/// <summary>
 	/// 'isReadOnly == true' will not allocate a new TextEditorModel as well,

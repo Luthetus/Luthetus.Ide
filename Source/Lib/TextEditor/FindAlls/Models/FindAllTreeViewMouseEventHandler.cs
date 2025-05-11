@@ -9,12 +9,12 @@ namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	private readonly LuthetusTextEditorConfig _textEditorConfig;
 	private readonly IServiceProvider _serviceProvider;
 
 	public FindAllTreeViewMouseEventHandler(
-			ITextEditorService textEditorService,
+			TextEditorService textEditorService,
 			LuthetusTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
 			ITreeViewService treeViewService,

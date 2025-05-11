@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 public partial class InputTextEditorShowWhitespace : ComponentBase, IDisposable
 {
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;

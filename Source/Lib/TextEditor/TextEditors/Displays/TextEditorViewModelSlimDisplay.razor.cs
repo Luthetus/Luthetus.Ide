@@ -47,7 +47,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
-    public ITextEditorService TextEditorService { get; set; } = null!;
+    public TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     public IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]

@@ -27,7 +27,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 

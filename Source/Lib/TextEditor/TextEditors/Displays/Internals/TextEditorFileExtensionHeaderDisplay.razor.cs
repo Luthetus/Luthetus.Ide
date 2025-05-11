@@ -10,7 +10,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase
 	[Inject]
 	private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; }

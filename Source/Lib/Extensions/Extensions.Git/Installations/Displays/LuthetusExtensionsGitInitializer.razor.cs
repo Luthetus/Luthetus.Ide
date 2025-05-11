@@ -10,7 +10,7 @@ public partial class LuthetusExtensionsGitInitializer : ComponentBase
 
     protected override void OnInitialized()
 	{
-        GitBackgroundTaskApi.Enqueue_LuthetusExtensionsGitInitializerOnInit();       
+        // GitBackgroundTaskApi.Enqueue_LuthetusExtensionsGitInitializerOnInit();       
         base.OnInitialized();
 	}
 }

@@ -12,14 +12,14 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	private readonly INotificationService _notificationService;
 	private readonly IServiceProvider _serviceProvider;
 
 	public TestExplorerTreeViewMouseEventHandler(
 			ICommonComponentRenderers commonComponentRenderers,
 			ICompilerServiceRegistry compilerServiceRegistry,
-			ITextEditorService textEditorService,
+			TextEditorService textEditorService,
 			INotificationService notificationService,
 			IServiceProvider serviceProvider,
 			ITreeViewService treeViewService,

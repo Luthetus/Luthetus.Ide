@@ -36,7 +36,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private LuthetusIdeConfig IdeConfig { get; set; } = null!;
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
