@@ -148,7 +148,7 @@ public struct VirtualizationGrid
     /// I have not tested if referencing the properties through an implicit/explicit 'this' keyword
     /// would correctly update the List that the struct is contained in.
     /// </summary>
-    public void CreateCache(ITextEditorService textEditorService, TextEditorModel model, TextEditorViewModel viewModel)
+    public void CreateCache(TextEditorService textEditorService, TextEditorModel model, TextEditorViewModel viewModel)
     {
     	#if DEBUG
     	var startTime = Stopwatch.GetTimestamp();

@@ -21,7 +21,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IMenuOptionsFactory _menuOptionsFactory;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	private readonly ITreeViewService _treeViewService;
 	private readonly INotificationService _notificationService;
 	private readonly IEnvironmentProvider _environmentProvider;
@@ -30,7 +30,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
 			ICommonComponentRenderers commonComponentRenderers,
-			ITextEditorService textEditorService,
+			TextEditorService textEditorService,
 			ITreeViewService treeViewService,
 			INotificationService notificationService,
 			IBackgroundTaskService backgroundTaskService,

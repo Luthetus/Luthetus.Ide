@@ -18,7 +18,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 

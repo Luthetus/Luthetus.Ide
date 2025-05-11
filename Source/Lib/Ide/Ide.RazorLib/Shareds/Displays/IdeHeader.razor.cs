@@ -40,7 +40,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
     [Inject]

@@ -22,7 +22,7 @@ public partial class TestExplorerScheduler : IStateScheduler
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly INotificationService _notificationService;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IFileSystemProvider _fileSystemProvider;
@@ -38,7 +38,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         INotificationService notificationService,
         IBackgroundTaskService backgroundTaskService,
         IFileSystemProvider fileSystemProvider,

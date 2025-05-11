@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 public class TextEditorModelPersistentState
 {
 	public TextEditorModelPersistentState(
-		ITextEditorService textEditorService,
+		TextEditorService textEditorService,
 		List<Key<TextEditorViewModel>> viewModelKeyList,
 		string fileExtension,
 	    IDecorationMapper decorationMapper,

@@ -19,7 +19,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         IKeymapService keymapService,
         LuthetusTextEditorConfig textEditorConfig,
         IThemeService themeService,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IEnvironmentProvider environmentProvider,
         IContextService contextService)
     {
@@ -45,7 +45,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     private readonly IKeymapService _keymapService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IThemeService _themeService;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IContextService _contextService;
 

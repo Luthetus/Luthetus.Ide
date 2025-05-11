@@ -19,7 +19,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAutocompleteService AutocompleteService { get; set; } = null!;
     [Inject]

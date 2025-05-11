@@ -9,7 +9,7 @@ public class AsyncTextEditorWork : IBackgroundTask
     private readonly Func<TextEditorEditContext, ValueTask> _textEditorFunc;
 
     public AsyncTextEditorWork(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         Func<TextEditorEditContext, ValueTask> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
@@ -21,7 +21,7 @@ public class AsyncTextEditorWork : IBackgroundTask
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = BackgroundTaskFacts.ContinuousQueueKey;
     public bool EarlyBatchEnabled { get; set; }
     public bool __TaskCompletionSourceWasCreated { get; set; }
-    public ITextEditorService TextEditorService { get; }
+    public TextEditorService TextEditorService { get; }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {

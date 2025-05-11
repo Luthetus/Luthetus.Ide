@@ -751,7 +751,7 @@ public class TextEditorCommandDefaultFunctions
         LuthetusCommonJavaScriptInteropApi jsRuntimeCommonApi,
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IDropdownService dropdownService)
     {
 		var cursorDimensions = await jsRuntimeCommonApi
@@ -865,7 +865,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
         LuthetusCommonJavaScriptInteropApi jsRuntimeCommonApi,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IDropdownService dropdownService)
     {
 		var cursorDimensions = await jsRuntimeCommonApi
@@ -942,7 +942,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
-        ITextEditorService textEditorService)
+        TextEditorService textEditorService)
     {
         textEditorService.OptionsApi.ShowFindAllDialog();
     }
@@ -952,7 +952,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CursorModifierBagTextEditor cursorModifierBag,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         TextEditorComponentData componentData,
         ILuthetusTextEditorComponentRenderers textEditorComponentRenderers)
     {

@@ -17,12 +17,12 @@ public class TerminalOutputFormatterAll : ITerminalOutputFormatter
     public static Key<TextEditorViewModel> TextEditorViewModelKey { get; } = new Key<TextEditorViewModel>(Id);
 
 	private readonly ITerminal _terminal;
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 
 	public TerminalOutputFormatterAll(
 		ITerminal terminal,
-		ITextEditorService textEditorService,
+		TextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry)
 	{
 		_terminal = terminal;

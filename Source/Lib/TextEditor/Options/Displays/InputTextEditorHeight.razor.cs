@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 public partial class InputTextEditorHeight : ComponentBase, IDisposable
 {
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter(Name = "InputElementCssClass")]
     public string CascadingInputElementCssClass { get; set; } = string.Empty;

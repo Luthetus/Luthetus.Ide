@@ -41,10 +41,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     private readonly HashSet<string> _collapsePointUsedIdentifierHashSet = new();
     
     // Service dependencies
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly IClipboardService _clipboardService;
     
-    public CSharpCompilerService(ITextEditorService textEditorService, IClipboardService clipboardService)
+    public CSharpCompilerService(TextEditorService textEditorService, IClipboardService clipboardService)
     {
     	_textEditorService = textEditorService;
     	_clipboardService = clipboardService;

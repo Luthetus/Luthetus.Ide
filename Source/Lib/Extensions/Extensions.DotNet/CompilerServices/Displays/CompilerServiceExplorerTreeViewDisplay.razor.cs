@@ -16,7 +16,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	[Inject]
 	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]

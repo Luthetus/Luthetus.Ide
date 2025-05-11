@@ -18,12 +18,12 @@ namespace Luthetus.CompilerServices.Css;
 
 public sealed class CssCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
 
 	private readonly Dictionary<ResourceUri, CssResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public CssCompilerService(ITextEditorService textEditorService)
+	public CssCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

@@ -33,7 +33,7 @@ public partial class TextEditorModel
         string content,
         IDecorationMapper? decorationMapper,
         ICompilerService? compilerService,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
 		int partitionSize = 4_096)
     {
     	if (partitionSize < MINIMUM_PARTITION_SIZE)

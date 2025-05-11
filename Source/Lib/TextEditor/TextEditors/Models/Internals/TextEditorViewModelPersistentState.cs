@@ -14,7 +14,7 @@ public class TextEditorViewModelPersistentState
 		DisplayTracker displayTracker,
 	    Key<TextEditorViewModel> viewModelKey,
 	    ResourceUri resourceUri,
-	    ITextEditorService textEditorService,
+	    TextEditorService textEditorService,
 	    Category category,
 	    Action<TextEditorModel>? onSaveRequested,
 	    Func<TextEditorModel, string>? getTabDisplayNameFunc,
@@ -83,7 +83,7 @@ public class TextEditorViewModelPersistentState
 	/// <summary>
 	/// Most API invocation (if not all) occurs through the <see cref="ITextEditorService"/>
 	/// </summary>
-	public ITextEditorService TextEditorService { get; set; }
+	public TextEditorService TextEditorService { get; set; }
 	/// <summary>
 	/// <inheritdoc cref="Models.Category"/>
 	/// </summary>

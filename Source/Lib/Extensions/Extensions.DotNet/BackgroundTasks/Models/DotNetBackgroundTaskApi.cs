@@ -60,7 +60,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IFileSystemProvider _fileSystemProvider;
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
 	// FindAllReferences
@@ -90,7 +90,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		IEnvironmentProvider environmentProvider,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		IFileSystemProvider fileSystemProvider,
-		ITextEditorService textEditorService,
+		TextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
 		// FindAllReferences
