@@ -4,13 +4,13 @@ using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-public class BackgroundTaskWorker : BackgroundService
+public sealed class BackgroundTaskWorker
 {
     private readonly ILogger _logger;
 
     public BackgroundTaskWorker(
-        IBackgroundTaskQueue queue,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskQueue queue,
+        BackgroundTaskService backgroundTaskService,
         ILoggerFactory loggerFactory,
         LuthetusHostingKind luthetusHostingKind)
     {
@@ -20,14 +20,14 @@ public class BackgroundTaskWorker : BackgroundService
         LuthetusHostingKind = luthetusHostingKind;
     }
     
-    private IBackgroundTask? _executingBackgroundTask;
+    // private IBackgroundTask? _executingBackgroundTask;
 
-    public IBackgroundTaskQueue Queue { get; }
-    public IBackgroundTaskService BackgroundTaskService { get; }
+    public BackgroundTaskQueue Queue { get; }
+    public BackgroundTaskService BackgroundTaskService { get; }
     public Task? StartAsyncTask { get; internal set; }
     public LuthetusHostingKind LuthetusHostingKind { get; }
 
-	public IBackgroundTask? ExecutingBackgroundTask
+	/*public IBackgroundTask? ExecutingBackgroundTask
     {
         get => _executingBackgroundTask;
         set
@@ -35,13 +35,13 @@ public class BackgroundTaskWorker : BackgroundService
             _executingBackgroundTask = value;
             ExecutingBackgroundTaskChanged?.Invoke();
         }
-    }
+    }*/
     
     public event Action? ExecutingBackgroundTaskChanged;
 
-    protected async override Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Queued Hosted Service is starting.");
+        _logger.LogInformation($"{nameof(BackgroundTaskWorker)} is starting.");
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -52,7 +52,7 @@ public class BackgroundTaskWorker : BackgroundService
             {
                 try
                 {
-                    ExecutingBackgroundTask = backgroundTask;
+                    // ExecutingBackgroundTask = backgroundTask;
                     
                     await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
                     await Task.Yield();
@@ -71,11 +71,11 @@ public class BackgroundTaskWorker : BackgroundService
                 	if (backgroundTask.__TaskCompletionSourceWasCreated)
                 		BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
                 	
-                    ExecutingBackgroundTask = null;
+                    // ExecutingBackgroundTask = null;
                 }
             }
         }
 
-        _logger.LogInformation("Queued Hosted Service is stopping.");
+        _logger.LogInformation("{nameof(BackgroundTaskWorker)} is stopping.");
     }
 }

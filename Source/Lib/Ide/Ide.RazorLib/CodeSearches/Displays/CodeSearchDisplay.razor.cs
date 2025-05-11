@@ -31,7 +31,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]

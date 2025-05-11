@@ -57,7 +57,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
-    public IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    public BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]

@@ -26,7 +26,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     
     private FindAllTreeViewKeyboardEventHandler _treeViewKeymap = null!;
 	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;

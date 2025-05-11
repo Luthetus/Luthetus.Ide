@@ -22,7 +22,7 @@ public record LuthetusHostingInformation
     public LuthetusHostingInformation(
         LuthetusHostingKind luthetusHostingKind,
         LuthetusPurposeKind luthetusPurposeKind,
-        IBackgroundTaskService backgroundTaskService)
+        BackgroundTaskService backgroundTaskService)
     {
         LuthetusHostingKind = luthetusHostingKind;
         LuthetusPurposeKind = luthetusPurposeKind;
@@ -31,7 +31,7 @@ public record LuthetusHostingInformation
 
     public LuthetusHostingKind LuthetusHostingKind { get; init; }
     public LuthetusPurposeKind LuthetusPurposeKind { get; init; }
-    public IBackgroundTaskService BackgroundTaskService { get; init; }
+    public BackgroundTaskService BackgroundTaskService { get; init; }
     /// <summary>
     /// If the main window hasn't been initialized yet, 0 is returned.
     /// Whether 0 returns at other points is uncertain.

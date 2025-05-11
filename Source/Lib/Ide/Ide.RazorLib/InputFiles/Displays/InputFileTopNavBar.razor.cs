@@ -25,7 +25,7 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
 

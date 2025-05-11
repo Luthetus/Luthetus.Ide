@@ -10,15 +10,15 @@ namespace Luthetus.Extensions.Config.BackgroundTasks.Models;
 public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
 {
     public ConfigBackgroundTaskApi(
-		IBackgroundTaskService backgroundTaskService,
+		BackgroundTaskService backgroundTaskService,
 		IIdeMainLayoutService ideMainLayoutService)
     {
         _backgroundTaskService = backgroundTaskService;
         _ideMainLayoutService = ideMainLayoutService;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(ConfigBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -27,7 +27,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
     private readonly Queue<ConfigWorkKind> _workKindQueue = new();
     private readonly object _workLock = new();
 
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IIdeMainLayoutService _ideMainLayoutService;
 
     public void Enqueue_InitializeFooterJustifyEndComponents()
@@ -74,7 +74,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
         return ValueTask.CompletedTask;
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
 	{
 		return null;
 	}

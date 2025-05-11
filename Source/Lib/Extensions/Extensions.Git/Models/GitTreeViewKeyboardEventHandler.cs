@@ -11,7 +11,7 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 
     public GitTreeViewKeyboardEventHandler(
             ITreeViewService treeViewService,
-            IBackgroundTaskService backgroundTaskService,
+            BackgroundTaskService backgroundTaskService,
             GitIdeApi gitIdeApi)
         : base(treeViewService, backgroundTaskService)
     {

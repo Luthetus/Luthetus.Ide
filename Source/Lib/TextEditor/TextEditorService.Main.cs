@@ -30,7 +30,7 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public sealed class TextEditorService
 {
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
@@ -44,7 +44,7 @@ public sealed class TextEditorService
         IFindAllService findAllService,
         IDirtyResourceUriService dirtyResourceUriService,
         IThemeService themeService,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         LuthetusTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
@@ -119,7 +119,7 @@ public sealed class TextEditorService
     public TextEditorWorkerUi WorkerUi { get; }
 	public TextEditorWorkerArbitrary WorkerArbitrary { get; }
     
-    public IBackgroundTaskService BackgroundTaskService => _backgroundTaskService;
+    public BackgroundTaskService BackgroundTaskService => _backgroundTaskService;
     
     /// <summary>
 	/// Do not touch this property, it is used for the VirtualizationGrid.

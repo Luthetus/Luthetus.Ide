@@ -12,7 +12,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 {
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly INotificationService _notificationService;
 	private readonly IEnvironmentProvider _environmentProvider;
@@ -23,7 +23,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		Func<TerminalIntegrated, ITerminalInteractive> terminalInteractiveFactory,
 		Func<TerminalIntegrated, ITerminalInput> terminalInputFactory,
 		Func<TerminalIntegrated, ITerminalOutput> terminalOutputFactory,
-		IBackgroundTaskService backgroundTaskService,
+		BackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
 		INotificationService notificationService,
 		IEnvironmentProvider environmentProvider,
@@ -41,8 +41,8 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		_pathToShellExecutable = pathToShellExecutable;
 	}
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.IndefiniteQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.IndefiniteQueueKey;
     public string Name { get; } = nameof(TerminalIntegrated);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -86,7 +86,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
 		return _backgroundTaskService.EnqueueAsync(
-			Key<IBackgroundTask>.NewKey(),
+			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
 			() => HandleCommand(terminalCommandRequest));
@@ -260,7 +260,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
         // _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 {
     public TextEditorInitializationBackgroundTaskGroup(
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         IKeymapService keymapService,
         LuthetusTextEditorConfig textEditorConfig,
         IThemeService themeService,
@@ -32,8 +32,8 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         _contextService = contextService;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(TextEditorInitializationBackgroundTaskGroup);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -41,7 +41,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 
     private readonly Queue<TextEditorInitializationBackgroundTaskGroupWorkKind> _workKindQueue = new();
     private readonly object _workLock = new();
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IKeymapService _keymapService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
     private readonly IThemeService _themeService;
@@ -134,7 +134,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         _keymapService.RegisterKeymapLayer(TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

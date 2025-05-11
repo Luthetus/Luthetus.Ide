@@ -11,7 +11,7 @@ namespace Luthetus.Extensions.DotNet.Outputs.Models;
 public partial class OutputScheduler : IStateScheduler
 {
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly ITreeViewService _treeViewService;
 	private readonly IEnvironmentProvider _environmentProvider;
@@ -19,7 +19,7 @@ public partial class OutputScheduler : IStateScheduler
 		
 	public OutputScheduler(
 		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
-		IBackgroundTaskService backgroundTaskService,
+		BackgroundTaskService backgroundTaskService,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,

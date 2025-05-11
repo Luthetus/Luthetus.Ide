@@ -24,7 +24,7 @@ public partial class TestExplorerScheduler : IStateScheduler
     private readonly ITreeViewService _treeViewService;
     private readonly TextEditorService _textEditorService;
     private readonly INotificationService _notificationService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITerminalService _terminalService;
 	private readonly ITestExplorerService _testExplorerService;
@@ -40,7 +40,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         ITreeViewService treeViewService,
         TextEditorService textEditorService,
         INotificationService notificationService,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         IFileSystemProvider fileSystemProvider,
         DotNetCliOutputParser dotNetCliOutputParser,
         IDotNetSolutionService dotNetSolutionService,

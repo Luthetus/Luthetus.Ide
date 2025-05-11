@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public class AsyncTextEditorWork : IBackgroundTask
+public class AsyncTextEditorWork : IBackgroundTaskGroup
 {
     private readonly Func<TextEditorEditContext, ValueTask> _textEditorFunc;
 
@@ -17,19 +17,19 @@ public class AsyncTextEditorWork : IBackgroundTask
     }
 
 	public string Name { get; } = nameof(AsyncTextEditorWork);
-    public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; set; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; set; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; set; } = BackgroundTaskFacts.ContinuousQueueKey;
     public bool EarlyBatchEnabled { get; set; }
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public TextEditorService TextEditorService { get; }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         // Keep both events
         return null;
     }
     
-    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? LateBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

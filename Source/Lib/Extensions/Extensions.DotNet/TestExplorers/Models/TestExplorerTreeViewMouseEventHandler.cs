@@ -23,7 +23,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			INotificationService notificationService,
 			IServiceProvider serviceProvider,
 			ITreeViewService treeViewService,
-			IBackgroundTaskService backgroundTaskService)
+			BackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)
 	{
 		_commonComponentRenderers = commonComponentRenderers;

@@ -38,11 +38,11 @@ public interface IInputFileService
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
 
     public void RefreshCurrentSelection(
-    	IBackgroundTaskService backgroundTaskService,
+    	BackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection);
 
     public void SetSearchQuery(string searchQuery);
@@ -52,10 +52,10 @@ public interface IInputFileService
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
     
     public void Enqueue_RefreshCurrentSelectionAction(
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection);
 }

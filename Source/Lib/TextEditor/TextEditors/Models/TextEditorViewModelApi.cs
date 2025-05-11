@@ -19,7 +19,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 public sealed class TextEditorViewModelApi
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IDialogService _dialogService;
     private readonly IPanelService _panelService;
 
@@ -27,7 +27,7 @@ public sealed class TextEditorViewModelApi
 
     public TextEditorViewModelApi(
         TextEditorService textEditorService,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDialogService dialogService,
         IPanelService panelService)

@@ -2,13 +2,13 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-public struct BackgroundTask : IBackgroundTask
+public struct BackgroundTask : IBackgroundTaskGroup
 {
     private readonly Func<ValueTask> _runFunc;
 
     public BackgroundTask(
-        Key<IBackgroundTask> backgroundTaskKey,
-        Key<IBackgroundTaskQueue> queueKey,
+        Key<IBackgroundTaskGroup> backgroundTaskKey,
+        Key<BackgroundTaskQueue> queueKey,
         string name,
         Func<ValueTask> runFunc)
     {
@@ -24,13 +24,13 @@ public struct BackgroundTask : IBackgroundTask
     /// - This disables any tracking.
     /// - this disables _taskCompletionSourceMap
     /// </summary>
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; }
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
     public bool EarlyBatchEnabled { get; init; }
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+	public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
 	{
 		return null;
 	}

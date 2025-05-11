@@ -22,7 +22,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]

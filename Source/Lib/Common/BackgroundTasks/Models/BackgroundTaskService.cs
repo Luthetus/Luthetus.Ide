@@ -3,10 +3,10 @@ using Luthetus.Common.RazorLib.Exceptions;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-public class BackgroundTaskService : IBackgroundTaskService
+public sealed class BackgroundTaskService
 {
-	private readonly Dictionary<Key<IBackgroundTaskQueue>, BackgroundTaskQueue> _queueContainerMap = new();
-    private readonly Dictionary<Key<IBackgroundTask>, TaskCompletionSource> _taskCompletionSourceMap = new();
+	private readonly Dictionary<Key<BackgroundTaskQueue>, BackgroundTaskQueue> _queueContainerMap = new();
+    private readonly Dictionary<Key<IBackgroundTaskGroup>, TaskCompletionSource> _taskCompletionSourceMap = new();
     
     private readonly object _taskCompletionSourceLock = new();
     
@@ -19,21 +19,21 @@ public class BackgroundTaskService : IBackgroundTaskService
 	/// </summary>
     public BackgroundTaskWorker IndefiniteTaskWorker { get; private set; }
 
-	public List<IBackgroundTaskQueue> GetQueues() => _queueContainerMap.Values.Select(x => (IBackgroundTaskQueue)x).ToList();
+	public List<BackgroundTaskQueue> GetQueues() => _queueContainerMap.Values.Select(x => (BackgroundTaskQueue)x).ToList();
 
 	public void EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup)
 	{
 		_queueContainerMap[backgroundTaskGroup.QueueKey].Enqueue(backgroundTaskGroup);
 	}
     
-    public Task EnqueueAsync(IBackgroundTask backgroundTask)
+    public Task EnqueueAsync(IBackgroundTaskGroup backgroundTask)
     {
     	backgroundTask.__TaskCompletionSourceWasCreated = true;
     	
-    	if (backgroundTask.BackgroundTaskKey == Key<IBackgroundTask>.Empty)
+    	if (backgroundTask.BackgroundTaskKey == Key<IBackgroundTaskGroup>.Empty)
     	{
     		throw new LuthetusCommonException(
-    			$"{nameof(EnqueueAsync)} cannot be invoked with an {nameof(IBackgroundTask)} that has a 'BackgroundTaskKey == Key<IBackgroundTask>.Empty'. An empty key disables tracking, and task completion source. The non-async Enqueue(...) will still work however.");
+    			$"{nameof(EnqueueAsync)} cannot be invoked with an {nameof(IBackgroundTaskGroup)} that has a 'BackgroundTaskKey == Key<IBackgroundTask>.Empty'. An empty key disables tracking, and task completion source. The non-async Enqueue(...) will still work however.");
     	}
 
         TaskCompletionSource taskCompletionSource = new();
@@ -65,12 +65,12 @@ public class BackgroundTaskService : IBackgroundTaskService
 		return taskCompletionSource.Task;
     }
 
-    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
+    public Task EnqueueAsync(Key<IBackgroundTaskGroup> taskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
     {
         return EnqueueAsync(new BackgroundTask(taskKey, queueKey, name, runFunc));
     }
     
-    public void CompleteTaskCompletionSource(Key<IBackgroundTask> backgroundTaskKey)
+    public void CompleteTaskCompletionSource(Key<IBackgroundTaskGroup> backgroundTaskKey)
     {
     	lock (_taskCompletionSourceLock)
 		{
@@ -88,14 +88,14 @@ public class BackgroundTaskService : IBackgroundTaskService
 		}
     }
 
-	public IBackgroundTask? Dequeue(Key<IBackgroundTaskQueue> queueKey)
+	public IBackgroundTaskGroup? Dequeue(Key<BackgroundTaskQueue> queueKey)
     {
         var queue = _queueContainerMap[queueKey];
         return queue.__DequeueOrDefault();
     }
 
-    public async Task<IBackgroundTask?> DequeueAsync(
-        Key<IBackgroundTaskQueue> queueKey,
+    public async Task<IBackgroundTaskGroup?> DequeueAsync(
+        Key<BackgroundTaskQueue> queueKey,
         CancellationToken cancellationToken)
     {
         var queue = _queueContainerMap[queueKey];
@@ -103,12 +103,12 @@ public class BackgroundTaskService : IBackgroundTaskService
         return queue.__DequeueOrDefault();
     }
 
-    public void RegisterQueue(IBackgroundTaskQueue queue)
+    public void RegisterQueue(BackgroundTaskQueue queue)
     {
         _queueContainerMap.Add(queue.Key, (BackgroundTaskQueue)queue);
     }
 
-    public IBackgroundTaskQueue GetQueue(Key<IBackgroundTaskQueue> queueKey)
+    public BackgroundTaskQueue GetQueue(Key<BackgroundTaskQueue> queueKey)
     {
         return _queueContainerMap[queueKey];
     }

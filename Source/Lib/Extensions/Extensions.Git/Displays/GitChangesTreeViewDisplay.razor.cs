@@ -28,7 +28,7 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;

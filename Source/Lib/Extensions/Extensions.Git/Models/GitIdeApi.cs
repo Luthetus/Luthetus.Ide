@@ -28,7 +28,7 @@ public class GitIdeApi : IBackgroundTaskGroup
     private readonly ITerminalService _terminalService;
 	private readonly GitCliOutputParser _gitCliOutputParser;
 	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly BackgroundTaskService _backgroundTaskService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly INotificationService _notificationService;
     
@@ -43,7 +43,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         ITerminalService terminalService,
 		GitCliOutputParser gitCliOutputParser,
 		IEnvironmentProvider environmentProvider,
-		IBackgroundTaskService backgroundTaskService,
+		BackgroundTaskService backgroundTaskService,
         ICommonComponentRenderers commonComponentRenderers,
         INotificationService notificationService)
     {
@@ -60,8 +60,8 @@ public class GitIdeApi : IBackgroundTaskGroup
         _notificationService = notificationService;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(GitIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -1146,7 +1146,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         return Task.CompletedTask;
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

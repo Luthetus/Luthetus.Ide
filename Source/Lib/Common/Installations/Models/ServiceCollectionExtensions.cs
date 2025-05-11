@@ -57,7 +57,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton(commonConfig)
             .AddSingleton(hostingInformation)
             .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
-			.AddScoped<IBackgroundTaskService>(sp => 
+			.AddScoped<BackgroundTaskService>(sp => 
             {
 				hostingInformation.BackgroundTaskService.SetContinuousTaskWorker(new BackgroundTaskWorker(
 				    continuousQueue,

@@ -33,7 +33,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			TextEditorService textEditorService,
 			ITreeViewService treeViewService,
 			INotificationService notificationService,
-			IBackgroundTaskService backgroundTaskService,
+			BackgroundTaskService backgroundTaskService,
 			IEnvironmentProvider environmentProvider)
 		: base(treeViewService, backgroundTaskService)
 	{
