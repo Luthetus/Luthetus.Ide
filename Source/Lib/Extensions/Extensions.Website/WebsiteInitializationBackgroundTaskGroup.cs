@@ -26,7 +26,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         IEnvironmentProvider environmentProvider,
         ITextEditorHeaderRegistry textEditorHeaderRegistry,
         DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IDecorationMapperRegistry decorationMapperRegistry,
         ICompilerServiceRegistry compilerServiceRegistry)
     {
@@ -56,7 +56,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ITextEditorHeaderRegistry _textEditorHeaderRegistry;
     private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 
