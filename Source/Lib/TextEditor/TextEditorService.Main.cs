@@ -135,14 +135,11 @@ public sealed class TextEditorService
 	/// </summary>
 	public bool __IsAvailableCursorModifier { get; set; } = true;
 	
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache { get; } = new();
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor> __CursorModifierBagCache { get; } = new();
+    public List<CursorModifierBagTextEditor> __CursorModifierBagCache { get; } = new();
+    
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -298,9 +295,8 @@ public sealed class TextEditorService
 			}
         }
 	    
-	    __ViewModelToModelResourceUriCache.Clear();
 	    __CursorModifierBagCache.Clear();
-	    __DiffModelCache.Clear();
+	    // __DiffModelCache.Clear();
 	    
 	    __IsAvailableCursorModifier = true;
 	    
