@@ -4,11 +4,11 @@ using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-public sealed class BackgroundTaskWorker
+public sealed class ContinuousBackgroundTaskWorker
 {
     private readonly ILogger _logger;
 
-    public BackgroundTaskWorker(
+    public ContinuousBackgroundTaskWorker(
         BackgroundTaskQueue queue,
         BackgroundTaskService backgroundTaskService,
         ILoggerFactory loggerFactory,
@@ -16,7 +16,7 @@ public sealed class BackgroundTaskWorker
     {
         Queue = queue;
         BackgroundTaskService = backgroundTaskService;
-        _logger = loggerFactory.CreateLogger<BackgroundTaskWorker>();
+        _logger = loggerFactory.CreateLogger<ContinuousBackgroundTaskWorker>();
         LuthetusHostingKind = luthetusHostingKind;
     }
     
@@ -41,7 +41,7 @@ public sealed class BackgroundTaskWorker
 
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"{nameof(BackgroundTaskWorker)} is starting.");
+        _logger.LogInformation($"{nameof(ContinuousBackgroundTaskWorker)} is starting.");
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -61,15 +61,8 @@ public sealed class BackgroundTaskWorker
                     ? "Task was cancelled {0}." // {0} => WorkItemName
                     : "Error occurred executing {0}."; // {0} => WorkItemName
 
-                _logger.LogError(ex, message, backgroundTask.Name);
-				Console.WriteLine($"ERROR on {backgroundTask.Name}: {ex.ToString()}");
-            }
-            finally
-            {
-            	if (backgroundTask.__TaskCompletionSourceWasCreated)
-            		BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
-            	
-                // ExecutingBackgroundTask = null;
+                _logger.LogError(ex, message, "(backgroundTask.Name was here)");
+				Console.WriteLine($"ERROR on (backgroundTask.Name was here): {ex.ToString()}");
             }
         }
 

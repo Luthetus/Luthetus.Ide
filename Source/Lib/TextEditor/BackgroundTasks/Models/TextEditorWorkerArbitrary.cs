@@ -111,11 +111,6 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 		}
 	}
 	
-	public Task EnqueueTextEditorWorkAsync(AsyncTextEditorWork asyncTextEditorWork)
-	{
-		return _textEditorService.BackgroundTaskService.EnqueueAsync(asyncTextEditorWork);
-	}
-	
 	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)
 	{
 		lock (_workKindQueueLock)

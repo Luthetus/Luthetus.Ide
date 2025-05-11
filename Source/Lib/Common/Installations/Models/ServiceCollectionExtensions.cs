@@ -59,13 +59,13 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
 			.AddScoped<BackgroundTaskService>(sp => 
             {
-				hostingInformation.BackgroundTaskService.SetContinuousTaskWorker(new BackgroundTaskWorker(
+				hostingInformation.BackgroundTaskService.SetContinuousTaskWorker(new ContinuousBackgroundTaskWorker(
 				    continuousQueue,
 					hostingInformation.BackgroundTaskService,
 				    sp.GetRequiredService<ILoggerFactory>(),
 				    hostingInformation.LuthetusHostingKind));
 
-				hostingInformation.BackgroundTaskService.SetIndefiniteTaskWorker(new BackgroundTaskWorker(
+				hostingInformation.BackgroundTaskService.SetIndefiniteTaskWorker(new IndefiniteBackgroundTaskWorker(
 				    indefiniteQueue,
 					hostingInformation.BackgroundTaskService,
 				    sp.GetRequiredService<ILoggerFactory>(),

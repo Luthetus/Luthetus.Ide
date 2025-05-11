@@ -13,11 +13,11 @@ public sealed class BackgroundTaskService
 	/// <summary>
 	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
 	/// </summary>
-	public BackgroundTaskWorker ContinuousTaskWorker { get; private set; }
+	public ContinuousBackgroundTaskWorker ContinuousTaskWorker { get; private set; }
 	/// <summary>
 	/// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
 	/// </summary>
-    public BackgroundTaskWorker IndefiniteTaskWorker { get; private set; }
+    public IndefiniteBackgroundTaskWorker IndefiniteTaskWorker { get; private set; }
 
 	public List<BackgroundTaskQueue> GetQueues() => _queueContainerMap.Values.Select(x => (BackgroundTaskQueue)x).ToList();
 
@@ -25,9 +25,30 @@ public sealed class BackgroundTaskService
 	{
 		_queueContainerMap[backgroundTaskGroup.QueueKey].Enqueue(backgroundTaskGroup);
 	}
+
+	public IBackgroundTaskGroup? Dequeue(Key<BackgroundTaskQueue> queueKey)
+    {
+        var queue = _queueContainerMap[queueKey];
+        return queue.__DequeueOrDefault();
+    }
+
+    public async Task<IBackgroundTaskGroup?> DequeueAsync(
+        Key<BackgroundTaskQueue> queueKey,
+        CancellationToken cancellationToken)
+    {
+        var queue = _queueContainerMap[queueKey];
+		await queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+        return queue.__DequeueOrDefault();
+    }
     
     public Task EnqueueAsync(IBackgroundTaskGroup backgroundTask)
     {
+    	if (backgroundTask.QueueKey == BackgroundTaskFacts.ContinuousQueueKey)
+    	{
+    		throw new LuthetusCommonException(
+    			$"Only the {nameof(IndefiniteBackgroundTaskWorker)} can use {nameof(TaskCompletionSource)}. The key provided was for {nameof(BackgroundTaskFacts.ContinuousQueueKey)}, use: '{nameof(BackgroundTaskFacts.IndefiniteQueueKey)}' instead. Or invoke '{nameof(EnqueueGroup)}' to execute the work item in the background.");
+    	}
+    
     	backgroundTask.__TaskCompletionSourceWasCreated = true;
     	
     	if (backgroundTask.BackgroundTaskKey == Key<IBackgroundTaskGroup>.Empty)
@@ -88,21 +109,6 @@ public sealed class BackgroundTaskService
 		}
     }
 
-	public IBackgroundTaskGroup? Dequeue(Key<BackgroundTaskQueue> queueKey)
-    {
-        var queue = _queueContainerMap[queueKey];
-        return queue.__DequeueOrDefault();
-    }
-
-    public async Task<IBackgroundTaskGroup?> DequeueAsync(
-        Key<BackgroundTaskQueue> queueKey,
-        CancellationToken cancellationToken)
-    {
-        var queue = _queueContainerMap[queueKey];
-		await queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-        return queue.__DequeueOrDefault();
-    }
-
     public void RegisterQueue(BackgroundTaskQueue queue)
     {
         _queueContainerMap.Add(queue.Key, (BackgroundTaskQueue)queue);
@@ -113,12 +119,12 @@ public sealed class BackgroundTaskService
         return _queueContainerMap[queueKey];
     }
     
-    public void SetContinuousTaskWorker(BackgroundTaskWorker continuousTaskWorker)
+    public void SetContinuousTaskWorker(ContinuousBackgroundTaskWorker continuousTaskWorker)
     {
     	ContinuousTaskWorker = continuousTaskWorker;
     }
     
-    public void SetIndefiniteTaskWorker(BackgroundTaskWorker indefiniteTaskWorker)
+    public void SetIndefiniteTaskWorker(IndefiniteBackgroundTaskWorker indefiniteTaskWorker)
     {
     	IndefiniteTaskWorker = indefiniteTaskWorker;
     }

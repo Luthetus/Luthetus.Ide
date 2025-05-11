@@ -20,7 +20,7 @@ namespace Luthetus.Website.RazorLib;
 public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 {
     public WebsiteInitializationBackgroundTaskGroup(
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         ITreeViewService treeViewService,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
@@ -41,8 +41,8 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         _compilerServiceRegistry = compilerServiceRegistry;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(ConfigBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -50,7 +50,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 
     private readonly Queue<WebsiteInitializationBackgroundTaskGroupWorkKind> _workKindQueue = new();
     private readonly object _workLock = new();
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly ITreeViewService _treeViewService;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -60,7 +60,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }
