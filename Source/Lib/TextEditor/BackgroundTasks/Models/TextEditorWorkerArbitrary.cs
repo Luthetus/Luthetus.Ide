@@ -51,8 +51,8 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 		_textEditorService = textEditorService;
 	}
 	
-	public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     
     // Nervous about this not being considered an interpolated constant string.
     public string Name { get; } = "TextEditorWorker";
@@ -70,7 +70,7 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 	/// </summary>
 	public Queue<TextEditorWorkArbitraryKind> WorkKindQueue { get; } = new();
 	
-	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+	public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
 	{
 		return null;
 	}
@@ -109,11 +109,6 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 			RedundantTextEditorWorkQueue.Enqueue(redundantTextEditorWork);
 			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 		}
-	}
-	
-	public Task EnqueueTextEditorWorkAsync(AsyncTextEditorWork asyncTextEditorWork)
-	{
-		return _textEditorService.BackgroundTaskService.EnqueueAsync(asyncTextEditorWork);
 	}
 	
 	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)

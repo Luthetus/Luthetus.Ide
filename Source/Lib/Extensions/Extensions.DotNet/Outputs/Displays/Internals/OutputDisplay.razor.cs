@@ -20,7 +20,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]

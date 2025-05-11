@@ -15,7 +15,7 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 {
     private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ICompilerServiceExplorerService _compilerServiceExplorerService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
@@ -25,7 +25,7 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 	public CompilerServiceIdeApi(
         DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
         IdeBackgroundTaskApi ideBackgroundTaskApi,
-		IBackgroundTaskService backgroundTaskService,
+		BackgroundTaskService backgroundTaskService,
 		ICompilerServiceExplorerService compilerServiceExplorerService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IIdeComponentRenderers ideComponentRenderers,
@@ -42,8 +42,8 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 		_treeViewService = treeViewService;
 	}
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(CompilerServiceIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -177,7 +177,7 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 			new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model));
 	}
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

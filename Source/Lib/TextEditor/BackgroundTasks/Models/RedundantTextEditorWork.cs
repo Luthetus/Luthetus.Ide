@@ -23,7 +23,7 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// For further control over the batching, one needs to implement <see cref="ITextEditorWork"/>
 /// and implement the method: <see cref="IBackgroundTask.BatchOrDefault"/>.
 /// </remarks>
-public struct RedundantTextEditorWork : IBackgroundTask
+public struct RedundantTextEditorWork : IBackgroundTaskGroup
 {
     private readonly Func<TextEditorEditContext, ValueTask> _textEditorFunc;
 
@@ -46,13 +46,13 @@ public struct RedundantTextEditorWork : IBackgroundTask
 	public string Name { get; set; }
 	public ResourceUri ResourceUri { get; set; }
     public Key<TextEditorViewModel> ViewModelKey { get; set; }
-    public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; set; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; set; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; set; } = BackgroundTaskFacts.ContinuousQueueKey;
     public bool EarlyBatchEnabled { get; set; } = true;
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public TextEditorService TextEditorService { get; }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         if (oldEvent is not RedundantTextEditorWork oldRedundantTextEditorWork)
         {
@@ -72,7 +72,7 @@ public struct RedundantTextEditorWork : IBackgroundTask
         return null;
     }
     
-    public IBackgroundTask? LateBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? LateBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
     	return null;
     }

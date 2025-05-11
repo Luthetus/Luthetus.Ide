@@ -50,26 +50,6 @@ public struct TextEditorEditContext
         return modelModifier;
     }
 
-    public TextEditorModel? GetModelModifierByViewModelKey(
-        Key<TextEditorViewModel> viewModelKey,
-        bool isReadOnly = false)
-    {
-        if (viewModelKey != Key<TextEditorViewModel>.Empty)
-        {
-            if (!TextEditorService.__ViewModelToModelResourceUriCache.TryGetValue(viewModelKey, out var modelResourceUri))
-            {
-                var model = TextEditorService.ViewModelApi.GetModelOrDefault(viewModelKey);
-                modelResourceUri = model?.PersistentState.ResourceUri;
-
-                TextEditorService.__ViewModelToModelResourceUriCache.Add(viewModelKey, modelResourceUri);
-            }
-
-            return GetModelModifier(modelResourceUri.Value);
-        }
-
-        return null;
-    }
-
     public TextEditorViewModel? GetViewModelModifier(
         Key<TextEditorViewModel> viewModelKey,
         bool isReadOnly = false)
@@ -105,9 +85,17 @@ public struct TextEditorEditContext
     {
         if (viewModel is not null)
         {
-            if (!TextEditorService.__CursorModifierBagCache.TryGetValue(viewModel.PersistentState.ViewModelKey, out var cursorModifierBag))
-            {
-            	TextEditorCursorModifier cursorModifier;
+        	CursorModifierBagTextEditor cursorModifierBag = default;
+        	
+        	for (int i = 0; i < TextEditorService.__CursorModifierBagCache.Count; i++)
+	    	{
+	    		if (TextEditorService.__CursorModifierBagCache[i].ViewModelKey == viewModel.PersistentState.ViewModelKey)
+	    			cursorModifierBag = TextEditorService.__CursorModifierBagCache[i];
+	    	}
+	    	
+	    	if (cursorModifierBag.CursorModifier is null)
+	    	{
+	    		TextEditorCursorModifier cursorModifier;
             	
     			if (TextEditorService.__IsAvailableCursorModifier)
     			{
@@ -132,8 +120,8 @@ public struct TextEditorEditContext
                     viewModel.PersistentState.ViewModelKey,
                     cursorModifier);
 
-                TextEditorService.__CursorModifierBagCache.Add(viewModel.PersistentState.ViewModelKey, cursorModifierBag);
-            }
+                TextEditorService.__CursorModifierBagCache.Add(cursorModifierBag);
+	    	}
 
             return cursorModifierBag;
         }

@@ -12,14 +12,14 @@ public class InputFileIdeApi : IBackgroundTaskGroup
 {
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IDialogService _dialogService;
     private readonly IInputFileService _inputFileService;
 
     public InputFileIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         IIdeComponentRenderers ideComponentRenderers,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         IDialogService dialogService,
         IInputFileService inputFileService)
     {
@@ -30,8 +30,8 @@ public class InputFileIdeApi : IBackgroundTaskGroup
         _inputFileService = inputFileService;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(InputFileIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -84,7 +84,7 @@ public class InputFileIdeApi : IBackgroundTaskGroup
         return ValueTask.CompletedTask;
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

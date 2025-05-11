@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Components;
+/*using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 
@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    public IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    public BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     private readonly Throttle _executingBackgroundTaskChangedThrottle = new(TimeSpan.FromMilliseconds(1000));
     private readonly List<IBackgroundTask> _seenBackgroundTasks = new List<IBackgroundTask>();
@@ -60,4 +60,4 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
     {
         BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTaskChanged -= ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
     }
-}
+}*/

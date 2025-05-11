@@ -30,7 +30,7 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public sealed class TextEditorService
 {
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
@@ -44,7 +44,7 @@ public sealed class TextEditorService
         IFindAllService findAllService,
         IDirtyResourceUriService dirtyResourceUriService,
         IThemeService themeService,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         LuthetusTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
@@ -108,18 +108,18 @@ public sealed class TextEditorService
 
     public string ThemeCssClassString { get; set; }
 
-    public ITextEditorModelApi ModelApi { get; }
-    public ITextEditorViewModelApi ViewModelApi { get; }
-    public ITextEditorGroupApi GroupApi { get; }
-    public ITextEditorDiffApi DiffApi { get; }
-    public ITextEditorOptionsApi OptionsApi { get; }
+    public TextEditorModelApi ModelApi { get; }
+    public TextEditorViewModelApi ViewModelApi { get; }
+    public TextEditorGroupApi GroupApi { get; }
+    public TextEditorDiffApi DiffApi { get; }
+    public TextEditorOptionsApi OptionsApi { get; }
     
     public TextEditorState TextEditorState { get; }
     
     public TextEditorWorkerUi WorkerUi { get; }
 	public TextEditorWorkerArbitrary WorkerArbitrary { get; }
     
-    public IBackgroundTaskService BackgroundTaskService => _backgroundTaskService;
+    public BackgroundTaskService BackgroundTaskService => _backgroundTaskService;
     
     /// <summary>
 	/// Do not touch this property, it is used for the VirtualizationGrid.
@@ -135,14 +135,11 @@ public sealed class TextEditorService
 	/// </summary>
 	public bool __IsAvailableCursorModifier { get; set; } = true;
 	
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, ResourceUri?> __ViewModelToModelResourceUriCache { get; } = new();
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
-    public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor> __CursorModifierBagCache { get; } = new();
+    public List<CursorModifierBagTextEditor> __CursorModifierBagCache { get; } = new();
+    
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -298,9 +295,8 @@ public sealed class TextEditorService
 			}
         }
 	    
-	    __ViewModelToModelResourceUriCache.Clear();
 	    __CursorModifierBagCache.Clear();
-	    __DiffModelCache.Clear();
+	    // __DiffModelCache.Clear();
 	    
 	    __IsAvailableCursorModifier = true;
 	    

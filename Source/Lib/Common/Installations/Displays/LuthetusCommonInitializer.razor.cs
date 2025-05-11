@@ -19,7 +19,7 @@ namespace Luthetus.Common.RazorLib.Installations.Displays;
 public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
@@ -46,7 +46,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 			if (BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask is null)
 			{
 				BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
-					() => BackgroundTaskService.ContinuousTaskWorker.StartAsync(token),
+					() => BackgroundTaskService.ContinuousTaskWorker.ExecuteAsync(token),
 					token);
 			}
 
@@ -55,7 +55,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 				if (BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask is null)
 				{
 					BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
-						() => BackgroundTaskService.IndefiniteTaskWorker.StartAsync(token),
+						() => BackgroundTaskService.IndefiniteTaskWorker.ExecuteAsync(token),
 						token);
 				}
 			}

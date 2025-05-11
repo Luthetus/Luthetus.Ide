@@ -15,7 +15,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         ITreeViewService treeViewService,
         IInputFileService inputFileService,
         Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
-		IBackgroundTaskService backgroundTaskService)
+		BackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)
     {
         _inputFileService = inputFileService;

@@ -17,8 +17,8 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
 	
 	public InputFileState GetInputFileState() => _inputFileState;
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(InputFileService);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -171,7 +171,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         lock (_stateModificationLock)
@@ -222,7 +222,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     }
 
     public void RefreshCurrentSelection(
-    	IBackgroundTaskService backgroundTaskService,
+    	BackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection)
     {
         lock (_stateModificationLock)
@@ -267,7 +267,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     }
 
     private readonly
-        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonComponentRenderers commonComponentRenderers, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider, IBackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
+        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonComponentRenderers commonComponentRenderers, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider, BackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
         _queue_OpenParentDirectoryAction = new();
 
     public void Enqueue_OpenParentDirectoryAction(
@@ -275,7 +275,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         if (parentDirectoryTreeViewModel is not null)
@@ -297,7 +297,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         if (parentDirectoryTreeViewModel is not null)
@@ -305,11 +305,11 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     }
 
     private readonly
-        Queue<(IBackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? currentSelection)>
+        Queue<(BackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? currentSelection)>
         _queue_RefreshCurrentSelectionAction = new();
 
     public void Enqueue_RefreshCurrentSelectionAction(
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection)
     {
         if (currentSelection is not null)
@@ -326,14 +326,14 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     }
     
     public async ValueTask Do_RefreshCurrentSelectionAction(
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
     	TreeViewAbsolutePath? currentSelection)
     {
         if (currentSelection is not null)
             await currentSelection.LoadChildListAsync().ConfigureAwait(false);
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

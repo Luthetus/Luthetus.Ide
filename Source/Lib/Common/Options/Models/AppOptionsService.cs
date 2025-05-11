@@ -11,12 +11,12 @@ namespace Luthetus.Common.RazorLib.Options.Models;
 public class AppOptionsService : IAppOptionsService
 {
     private readonly IStorageService _storageService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
 
     public AppOptionsService(
 		IThemeService themeService,
         IStorageService storageService,
-        IBackgroundTaskService backgroundTaskService)
+        BackgroundTaskService backgroundTaskService)
     {
         ThemeService = themeService;
         _storageService = storageService;

@@ -29,7 +29,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as

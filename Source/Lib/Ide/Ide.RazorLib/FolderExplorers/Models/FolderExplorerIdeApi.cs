@@ -18,7 +18,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IFolderExplorerService _folderExplorerService;
 
     public FolderExplorerIdeApi(
@@ -28,7 +28,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         IFolderExplorerService folderExplorerService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -41,8 +41,8 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
         _folderExplorerService = folderExplorerService;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(FolderExplorerIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -149,7 +149,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
             ]);
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

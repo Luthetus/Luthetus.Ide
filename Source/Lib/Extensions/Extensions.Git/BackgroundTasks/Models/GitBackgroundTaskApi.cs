@@ -26,7 +26,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ITreeViewService _treeViewService;
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 	private readonly INotificationService _notificationService;
@@ -40,7 +40,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		ITerminalService terminalService,
         IEnvironmentProvider environmentProvider,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         ICommonComponentRenderers commonComponentRenderers,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         INotificationService notificationService,
@@ -81,8 +81,8 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 	public GitIdeApi Git { get; }
 	public GitCliOutputParser GitCliOutputParser { get; }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(GitIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -131,7 +131,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
         _panelService.RegisterPanelTab(leftPanel.Key, gitPanel, false);
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
 	{
 		return null;
 	}

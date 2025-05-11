@@ -13,7 +13,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
 	public CompilerServiceExplorerTreeViewKeyboardEventHandler(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService)
+		BackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;

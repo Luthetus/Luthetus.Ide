@@ -54,8 +54,8 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	/*private TextEditorWorkUiKind _previousTextEditorWorkUiKind = TextEditorWorkUiKind.None;
 	private OnMouseMove _previousOnMouseMove = default;*/
 	
-	public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     
     // Nervous about this not being considered an interpolated constant string.
     public string Name { get; } = "TextEditorWorker";
@@ -79,7 +79,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	/// </summary>
 	public Queue<TextEditorWorkUiKind> WorkKindQueue { get; } = new();
 	
-	public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+	public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
 	{
 		return null;
 	}

@@ -21,7 +21,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	[Inject]
 	private IDropdownService DropdownService { get; set; } = null!;
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
