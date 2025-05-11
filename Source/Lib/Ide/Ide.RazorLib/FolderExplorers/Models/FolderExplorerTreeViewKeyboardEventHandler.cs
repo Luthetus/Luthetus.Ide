@@ -32,7 +32,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             IMenuOptionsFactory menuOptionsFactory,
             ICommonComponentRenderers commonComponentRenderers,
             ITreeViewService treeViewService,
-		    IBackgroundTaskService backgroundTaskService,
+		    BackgroundTaskService backgroundTaskService,
             IEnvironmentProvider environmentProvider,
             INotificationService notificationService)
         : base(treeViewService, backgroundTaskService)

@@ -18,7 +18,7 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			TextEditorService textEditorService,
 			ITreeViewService treeViewService,
-			IBackgroundTaskService backgroundTaskService)
+			BackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;

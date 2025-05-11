@@ -48,7 +48,7 @@ namespace Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
@@ -78,7 +78,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     public DotNetBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		IBackgroundTaskService backgroundTaskService,
+		BackgroundTaskService backgroundTaskService,
         IStorageService storageService,
         IAppDataService appDataService,
 		ICompilerServiceRegistry compilerServiceRegistry,
@@ -220,8 +220,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     public ICompilerServiceEditorService CompilerServiceEditorService { get; }
     public ICompilerServiceExplorerService CompilerServiceExplorerService { get; }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(DotNetBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -862,7 +862,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

@@ -12,14 +12,14 @@ public class FileSystemIdeApi : IBackgroundTaskGroup
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly INotificationService _notificationService;
 
     public FileSystemIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         IFileSystemProvider fileSystemProvider,
         ICommonComponentRenderers commonComponentRenderers,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         INotificationService notificationService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -29,8 +29,8 @@ public class FileSystemIdeApi : IBackgroundTaskGroup
         _notificationService = notificationService;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(FileSystemIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -93,7 +93,7 @@ public class FileSystemIdeApi : IBackgroundTaskGroup
             await onAfterSaveCompletedWrittenDateTimeFunc.Invoke(fileLastWriteTime);
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

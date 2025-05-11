@@ -16,7 +16,7 @@ public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
     public GitTreeViewMouseEventHandler(
             ITreeViewService treeViewService,
-            IBackgroundTaskService backgroundTaskService,
+            BackgroundTaskService backgroundTaskService,
             GitIdeApi gitIdeApi,
             IDialogService dialogService)
         : base(treeViewService, backgroundTaskService)

@@ -18,7 +18,7 @@ public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			LuthetusTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
 			ITreeViewService treeViewService,
-			IBackgroundTaskService backgroundTaskService)
+			BackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)
 	{
 		_textEditorService = textEditorService;

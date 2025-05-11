@@ -5,8 +5,8 @@ namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
 public partial class OutputScheduler : IBackgroundTaskGroup
 {
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(OutputScheduler);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -24,7 +24,7 @@ public partial class OutputScheduler : IBackgroundTaskGroup
         }
     }
     
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

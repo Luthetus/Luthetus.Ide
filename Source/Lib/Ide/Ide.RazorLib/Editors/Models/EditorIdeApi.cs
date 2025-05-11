@@ -29,7 +29,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
     public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
     
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly TextEditorService _textEditorService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
@@ -45,7 +45,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
     public EditorIdeApi(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         TextEditorService textEditorService,
         ICommonComponentRenderers commonComponentRenderers,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
@@ -75,8 +75,8 @@ public class EditorIdeApi : IBackgroundTaskGroup
         _serviceProvider = serviceProvider;
     }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(EditorIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -420,7 +420,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             });
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

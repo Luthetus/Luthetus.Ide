@@ -5,7 +5,7 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 /// <summary>
 /// This type is thread safe.<br/><br/>
 /// </summary>
-public class BackgroundTaskQueue : IBackgroundTaskQueue
+public sealed class BackgroundTaskQueue
 {
     /// <summary>
     /// The first item in this list, is the first item in the 'queue'.<br/><br/>
@@ -14,19 +14,19 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     /// The first item in this list, is the OLDEST item in the 'queue'<br/><br/>
     /// The last item in this list, is the MOST-RECENT item in the 'queue'<br/><br/>
     /// </summary>
-    private readonly Queue<IBackgroundTask> _queue = new();
+    private readonly Queue<IBackgroundTaskGroup> _queue = new();
     /// <summary>
     /// Used when enqueueing.
     /// </summary>
     private readonly object _modifyQueueLock = new();
 
-	public BackgroundTaskQueue(Key<IBackgroundTaskQueue> key, string displayName)
+	public BackgroundTaskQueue(Key<BackgroundTaskQueue> key, string displayName)
     {
         Key = key;
         DisplayName = displayName;
     }
     
-	public Key<IBackgroundTaskQueue> Key { get; }
+	public Key<BackgroundTaskQueue> Key { get; }
     public string DisplayName { get; }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
 
     public SemaphoreSlim __DequeueSemaphoreSlim { get; } = new(0);
 
-	public List<IBackgroundTask> GetBackgroundTaskList() => _queue.ToList();
+	public List<IBackgroundTaskGroup> GetBackgroundTaskList() => _queue.ToList();
 
     /// <summary>
     /// When enqueueing an event, a batchFunc is also provided.<br/><br/>
@@ -52,7 +52,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     /// 
     /// Each invocation of the 'batchFunc' will replace the 'to-be-queued' unless the 'batch event' returned was null.<br/><br/>
     /// </summary>
-    public void Enqueue(IBackgroundTask downstreamEvent)
+    public void Enqueue(IBackgroundTaskGroup downstreamEvent)
     {
 		lock (_modifyQueueLock)
 		{
@@ -64,7 +64,7 @@ public class BackgroundTaskQueue : IBackgroundTaskQueue
     /// <summary>
     /// Returns the first entry in the queue, according to 'first in first out'
     /// </summary>
-    public IBackgroundTask? __DequeueOrDefault()
+    public IBackgroundTaskGroup? __DequeueOrDefault()
     {
 		lock (_modifyQueueLock)
 		{

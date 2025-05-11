@@ -39,7 +39,7 @@ namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
 	private readonly ICompilerServiceExplorerService _compilerServiceExplorerService;
@@ -67,7 +67,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
 	public DotNetSolutionIdeApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		IBackgroundTaskService backgroundTaskService,
+		BackgroundTaskService backgroundTaskService,
 		IStorageService storageService,
 		IAppDataService appDataService,
 		ICompilerServiceExplorerService compilerServiceExplorerService,
@@ -116,8 +116,8 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		_serviceProvider = serviceProvider;
 	}
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(CompilerServiceIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -852,7 +852,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		});
 	}
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

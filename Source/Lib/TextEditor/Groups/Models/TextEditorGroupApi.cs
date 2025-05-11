@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 
-public class TextEditorGroupApi : ITextEditorGroupApi
+public sealed class TextEditorGroupApi
 {
 	private readonly object _stateModificationLock = new();
 

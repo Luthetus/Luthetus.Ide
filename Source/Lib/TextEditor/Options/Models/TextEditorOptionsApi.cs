@@ -15,7 +15,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Models;
 
-public class TextEditorOptionsApi : ITextEditorOptionsApi
+public sealed class TextEditorOptionsApi
 {
     private readonly TextEditorService _textEditorService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;

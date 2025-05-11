@@ -52,7 +52,7 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
-	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 

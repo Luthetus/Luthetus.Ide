@@ -46,7 +46,7 @@ namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 {
-    private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
@@ -75,7 +75,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IServiceProvider _serviceProvider;
 
     public IdeBackgroundTaskApi(
-        IBackgroundTaskService backgroundTaskService,
+        BackgroundTaskService backgroundTaskService,
         IStorageService storageService,
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
@@ -177,8 +177,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     public FolderExplorerIdeApi FolderExplorer { get; }
     public InputFileIdeApi InputFile { get; }
 
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(IdeBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -583,7 +583,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             menuOptionsList.Add(menuOptionCodeSearch);
         }
 
-        // Menu Option BackgroundTasks
+        /*// Menu Option BackgroundTasks
         {
             var menuOptionBackgroundTasks = new MenuOptionRecord(
                 "BackgroundTasks",
@@ -604,7 +604,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 });
 
             menuOptionsList.Add(menuOptionBackgroundTasks);
-        }
+        }*/
 
         //// Menu Option Solution Visualization
         //
@@ -709,7 +709,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideHeader.RenderRunDropdownOnClick()));
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
     {
         return null;
     }

@@ -23,7 +23,7 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 /// </summary>
 public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 {
-	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
     private readonly IAppOptionsService _appOptionsService;
     private readonly IContextService _contextService;
@@ -33,7 +33,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     private readonly LuthetusCommonConfig _commonConfig;
 
     public CommonBackgroundTaskApi(
-		IBackgroundTaskService backgroundTaskService,
+		BackgroundTaskService backgroundTaskService,
 		IStorageService storageService,
 		IAppOptionsService appOptionsService,
 		IContextService contextService,
@@ -62,8 +62,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 
     public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
     
-    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
-    public Key<IBackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(CommonBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
     
@@ -304,7 +304,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         }
     }
 
-    public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
 	{
 		return null;
 	}
