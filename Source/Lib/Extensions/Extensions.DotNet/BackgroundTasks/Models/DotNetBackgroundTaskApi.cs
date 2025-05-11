@@ -349,7 +349,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         _panelService.RegisterPanel(compilerServiceExplorerPanel);
         _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
 
-        // compilerServiceEditorPanel
+        /*// compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
             "Compiler Service Editor",
             Key<Panel>.NewKey(),
@@ -361,7 +361,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _dialogService,
             _commonBackgroundTaskApi);
         _panelService.RegisterPanel(compilerServiceEditorPanel);
-        _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceEditorPanel, false);
+        _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceEditorPanel, false);*/
     }
 
     private void InitializeBottomPanelTabs()
