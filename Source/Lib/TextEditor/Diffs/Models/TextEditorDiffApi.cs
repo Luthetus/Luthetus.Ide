@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
-public class TextEditorDiffApi : ITextEditorDiffApi
+public sealed class TextEditorDiffApi
 {
     private readonly TextEditorService _textEditorService;
 

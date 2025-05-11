@@ -108,11 +108,11 @@ public sealed class TextEditorService
 
     public string ThemeCssClassString { get; set; }
 
-    public ITextEditorModelApi ModelApi { get; }
-    public ITextEditorViewModelApi ViewModelApi { get; }
-    public ITextEditorGroupApi GroupApi { get; }
-    public ITextEditorDiffApi DiffApi { get; }
-    public ITextEditorOptionsApi OptionsApi { get; }
+    public TextEditorModelApi ModelApi { get; }
+    public TextEditorViewModelApi ViewModelApi { get; }
+    public TextEditorGroupApi GroupApi { get; }
+    public TextEditorDiffApi DiffApi { get; }
+    public TextEditorOptionsApi OptionsApi { get; }
     
     public TextEditorState TextEditorState { get; }
     

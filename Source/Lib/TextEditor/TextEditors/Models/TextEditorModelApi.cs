@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lines.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
-public sealed class TextEditorModelApi : ITextEditorModelApi
+public sealed class TextEditorModelApi
 {
     private readonly TextEditorService _textEditorService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
