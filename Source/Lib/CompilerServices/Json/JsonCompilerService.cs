@@ -18,12 +18,12 @@ namespace Luthetus.CompilerServices.Json;
 
 public sealed class JsonCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, JsonResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public JsonCompilerService(ITextEditorService textEditorService)
+	public JsonCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

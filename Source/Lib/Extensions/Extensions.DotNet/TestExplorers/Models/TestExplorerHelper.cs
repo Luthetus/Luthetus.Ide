@@ -24,7 +24,7 @@ public static class TestExplorerHelper
 		ICommonComponentRenderers commonComponentRenderers,
 		INotificationService notificationService,
 		ICompilerServiceRegistry compilerServiceRegistry,
-		ITextEditorService textEditorService,
+		TextEditorService textEditorService,
 		IServiceProvider serviceProvider)
 	{
 		return (editContext) =>

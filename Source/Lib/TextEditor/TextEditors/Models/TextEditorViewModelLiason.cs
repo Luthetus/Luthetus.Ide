@@ -4,9 +4,9 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public class TextEditorViewModelLiason
 {
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	
-	public TextEditorViewModelLiason(ITextEditorService textEditorService)
+	public TextEditorViewModelLiason(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

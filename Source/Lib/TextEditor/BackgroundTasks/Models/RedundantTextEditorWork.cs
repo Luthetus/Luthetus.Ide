@@ -31,7 +31,7 @@ public struct RedundantTextEditorWork : IBackgroundTask
         string name,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         Func<TextEditorEditContext, ValueTask> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
@@ -50,7 +50,7 @@ public struct RedundantTextEditorWork : IBackgroundTask
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = BackgroundTaskFacts.ContinuousQueueKey;
     public bool EarlyBatchEnabled { get; set; } = true;
     public bool __TaskCompletionSourceWasCreated { get; set; }
-    public ITextEditorService TextEditorService { get; }
+    public TextEditorService TextEditorService { get; }
 
     public IBackgroundTask? EarlyBatchOrDefault(IBackgroundTask oldEvent)
     {

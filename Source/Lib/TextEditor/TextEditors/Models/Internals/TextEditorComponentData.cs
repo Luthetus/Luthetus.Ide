@@ -54,7 +54,7 @@ public sealed class TextEditorComponentData
 		IClipboardService clipboardService,
 		ICommonComponentRenderers commonComponentRenderers,
 		INotificationService notificationService,
-		ITextEditorService textEditorService,
+		TextEditorService textEditorService,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
 		IFindAllService findAllService,
 		IEnvironmentProvider environmentProvider,
@@ -103,7 +103,7 @@ public sealed class TextEditorComponentData
 	public IClipboardService ClipboardService { get; }
 	public ICommonComponentRenderers CommonComponentRenderers { get; }
 	public INotificationService NotificationService { get; }
-	public ITextEditorService TextEditorService { get; }
+	public TextEditorService TextEditorService { get; }
 	public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; }
 	public IFindAllService FindAllService { get; }
 	public IEnvironmentProvider EnvironmentProvider { get; }

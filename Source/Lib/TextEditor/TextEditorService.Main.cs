@@ -28,7 +28,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
-public partial class TextEditorService : ITextEditorService
+public sealed class TextEditorService
 {
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IPanelService _panelService;

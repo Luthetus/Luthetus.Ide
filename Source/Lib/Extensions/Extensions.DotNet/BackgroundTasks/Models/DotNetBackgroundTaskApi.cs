@@ -60,7 +60,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IFileSystemProvider _fileSystemProvider;
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
 	// FindAllReferences
@@ -90,7 +90,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		IEnvironmentProvider environmentProvider,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		IFileSystemProvider fileSystemProvider,
-		ITextEditorService textEditorService,
+		TextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
 		// FindAllReferences
@@ -349,7 +349,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         _panelService.RegisterPanel(compilerServiceExplorerPanel);
         _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
 
-        // compilerServiceEditorPanel
+        /*// compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
             "Compiler Service Editor",
             Key<Panel>.NewKey(),
@@ -361,7 +361,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _dialogService,
             _commonBackgroundTaskApi);
         _panelService.RegisterPanel(compilerServiceEditorPanel);
-        _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceEditorPanel, false);
+        _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceEditorPanel, false);*/
     }
 
     private void InitializeBottomPanelTabs()

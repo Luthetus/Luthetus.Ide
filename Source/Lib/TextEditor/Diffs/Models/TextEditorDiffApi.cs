@@ -5,9 +5,9 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 public class TextEditorDiffApi : ITextEditorDiffApi
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
 
-    public TextEditorDiffApi(ITextEditorService textEditorService)
+    public TextEditorDiffApi(TextEditorService textEditorService)
     {
         _textEditorService = textEditorService;
     }

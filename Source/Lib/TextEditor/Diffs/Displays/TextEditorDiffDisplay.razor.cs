@@ -12,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
 

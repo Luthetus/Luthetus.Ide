@@ -17,12 +17,12 @@ namespace Luthetus.CompilerServices.Python;
 
 public sealed class PythonCompilerService : ICompilerService
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, PythonResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public PythonCompilerService(ITextEditorService textEditorService)
+	public PythonCompilerService(TextEditorService textEditorService)
 	{
 		_textEditorService = textEditorService;
 	}

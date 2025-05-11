@@ -30,7 +30,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     [Inject]
     private TextEditorInitializationBackgroundTaskGroup TextEditorInitializationBackgroundTaskGroup { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
 
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     

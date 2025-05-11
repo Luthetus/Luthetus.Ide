@@ -41,7 +41,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
 
     public ValueTask Do_InitializeFooterJustifyEndComponents()
     {
-        _ideMainLayoutService.RegisterFooterJustifyEndComponent(
+        /*_ideMainLayoutService.RegisterFooterJustifyEndComponent(
             new FooterJustifyEndComponent(
                 Key<FooterJustifyEndComponent>.NewKey(),
                 typeof(GitInteractiveIconDisplay),
@@ -51,7 +51,7 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
                         nameof(GitInteractiveIconDisplay.CssStyleString),
                         "margin-right: 15px;"
                     }
-                }));
+                }));*/
 
         _ideMainLayoutService.RegisterFooterJustifyEndComponent(
             new FooterJustifyEndComponent(

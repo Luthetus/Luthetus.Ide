@@ -8,12 +8,12 @@ namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
 public class RazorResource : ICompilerServiceResource
 {
-    private readonly ITextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
 
     public RazorResource(
         ResourceUri resourceUri,
         RazorCompilerService razorCompilerService,
-        ITextEditorService textEditorService)
+        TextEditorService textEditorService)
     {
     	ResourceUri = resourceUri;
     	CompilerService = razorCompilerService;

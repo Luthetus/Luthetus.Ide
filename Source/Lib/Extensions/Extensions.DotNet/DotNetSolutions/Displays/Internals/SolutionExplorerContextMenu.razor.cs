@@ -57,7 +57,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 

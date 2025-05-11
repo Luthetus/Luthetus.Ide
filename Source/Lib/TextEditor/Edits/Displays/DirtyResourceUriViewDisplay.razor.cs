@@ -13,7 +13,7 @@ public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
     
     protected override void OnInitialized()
 	{

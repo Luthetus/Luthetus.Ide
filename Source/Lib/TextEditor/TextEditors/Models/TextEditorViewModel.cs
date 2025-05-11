@@ -38,7 +38,7 @@ public sealed class TextEditorViewModel : IDisposable
 	public TextEditorViewModel(
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IPanelService panelService,
         IDialogService dialogService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,

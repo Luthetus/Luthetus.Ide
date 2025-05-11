@@ -11,13 +11,13 @@ public class TextEditorGroupApi : ITextEditorGroupApi
 {
 	private readonly object _stateModificationLock = new();
 
-	private readonly ITextEditorService _textEditorService;
+	private readonly TextEditorService _textEditorService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorGroupApi(
-        ITextEditorService textEditorService,
+        TextEditorService textEditorService,
         IPanelService panelService,
         IDialogService dialogService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
