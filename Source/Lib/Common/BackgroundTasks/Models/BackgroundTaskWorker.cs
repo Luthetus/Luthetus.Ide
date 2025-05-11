@@ -48,31 +48,28 @@ public sealed class BackgroundTaskWorker
         	await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
         	var backgroundTask = Queue.__DequeueOrDefault();
 
-            if (backgroundTask is not null)
+            try
             {
-                try
-                {
-                    // ExecutingBackgroundTask = backgroundTask;
-                    
-                    await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
-                    await Task.Yield();
-                }
-                catch (Exception ex)
-                {
-                    var message = ex is OperationCanceledException
-                        ? "Task was cancelled {0}." // {0} => WorkItemName
-                        : "Error occurred executing {0}."; // {0} => WorkItemName
+                // ExecutingBackgroundTask = backgroundTask;
+                
+                await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
+                await Task.Yield();
+            }
+            catch (Exception ex)
+            {
+                var message = ex is OperationCanceledException
+                    ? "Task was cancelled {0}." // {0} => WorkItemName
+                    : "Error occurred executing {0}."; // {0} => WorkItemName
 
-                    _logger.LogError(ex, message, backgroundTask.Name);
-					Console.WriteLine($"ERROR on {backgroundTask.Name}: {ex.ToString()}");
-                }
-                finally
-                {
-                	if (backgroundTask.__TaskCompletionSourceWasCreated)
-                		BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
-                	
-                    // ExecutingBackgroundTask = null;
-                }
+                _logger.LogError(ex, message, backgroundTask.Name);
+				Console.WriteLine($"ERROR on {backgroundTask.Name}: {ex.ToString()}");
+            }
+            finally
+            {
+            	if (backgroundTask.__TaskCompletionSourceWasCreated)
+            		BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
+            	
+                // ExecutingBackgroundTask = null;
             }
         }
 
