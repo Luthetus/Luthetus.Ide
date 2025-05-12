@@ -161,8 +161,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _backgroundTaskService,
             _fileSystemProvider,
             _dotNetCliOutputParser,
-            _terminalService,
-            TestExplorerService);
+            _terminalService);
 
         OutputService = new OutputService(this);
             

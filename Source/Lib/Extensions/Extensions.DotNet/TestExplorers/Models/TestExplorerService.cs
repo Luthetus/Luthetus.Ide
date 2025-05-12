@@ -31,7 +31,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITerminalService _terminalService;
-	private readonly ITestExplorerService _testExplorerService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 
     public TestExplorerService(
@@ -45,8 +44,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         BackgroundTaskService backgroundTaskService,
         IFileSystemProvider fileSystemProvider,
         DotNetCliOutputParser dotNetCliOutputParser,
-        ITerminalService terminalService,
-        ITestExplorerService testExplorerService)
+        ITerminalService terminalService)
 	{
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -58,7 +56,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 		_backgroundTaskService = backgroundTaskService;
 		_fileSystemProvider = fileSystemProvider;
 		_terminalService = terminalService;
-		_testExplorerService = testExplorerService;
         _dotNetCliOutputParser = dotNetCliOutputParser;
         
         _dotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
@@ -193,7 +190,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 			_intentToDiscoverTestsInSolutionFilePath = dotNetSolutionModel.AbsolutePath.Value;
 			_dotNetBackgroundTaskApi.TestExplorerService.Enqueue_DiscoverTests();
 		}
-
+		
 		return Task.CompletedTask;
 	}
 	
@@ -225,17 +222,28 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 	
 	private async void OnDotNetSolutionStateChanged()
 	{
+		var solutionFilePathWasNull = GetTestExplorerState().SolutionFilePath is null;
+		
 		ReduceWithAction(inState => inState with
 		{
 			SolutionFilePath = null
 		});
 		
-		_treeViewService.ReduceDisposeContainerAction(TestExplorerState.TreeViewTestExplorerKey);
-		
 		ContainsTestsTreeViewGroup.ChildList = new();
 		NoTestsTreeViewGroup.ChildList = new();
 		ThrewAnExceptionTreeViewGroup.ChildList = new();
 		NotValidProjectForUnitTestTreeViewGroup.ChildList = new();
+		
+		_treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, ContainsTestsTreeViewGroup);
+		
+		if (!solutionFilePathWasNull)
+		{
+			_ = Task.Run(async () =>
+			{
+				await HandleUserInterfaceWasInitializedEffect()
+					.ConfigureAwait(false);
+			});
+		}
 	}
 	
 	public void Dispose()
@@ -500,7 +508,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 	        if (dotNetSolutionModel is null)
 	            return;
 	    	
-	    	var localTestExplorerState = _testExplorerService.GetTestExplorerState();
+	    	var localTestExplorerState = GetTestExplorerState();
 	    	var cancellationTokenSource = new CancellationTokenSource();
 	    	var cancellationToken = cancellationTokenSource.Token;
 	    	
