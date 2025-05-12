@@ -34,7 +34,7 @@ public class RelativePathTests
             Assert.Equal("Math/", relativePath.NameWithExtension);
 
             var homeworkDirectory = relativePath.GetAncestorDirectoryList()[0];
-            var homeworkDirectoryRelativePath = environmentProvider.RelativePathFactory(homeworkDirectory.Value, true);
+            var homeworkDirectoryRelativePath = new RelativePath(homeworkDirectory.Path, true, environmentProvider);
             Assert.Equal("Homework", homeworkDirectoryRelativePath.NameNoExtension);
         }
 
@@ -53,7 +53,7 @@ public class RelativePathTests
             Assert.Equal("addition.txt", relativePath.NameWithExtension);
 
             var mathDirectory = relativePath.GetAncestorDirectoryList()[0];
-            var mathDirectoryRelativePath = environmentProvider.RelativePathFactory(mathDirectory.Value, true);
+            var mathDirectoryRelativePath = new RelativePath(mathDirectory.Path, true, environmentProvider);
             Assert.Equal("Math", mathDirectoryRelativePath.NameNoExtension);
         }
 

@@ -25,7 +25,7 @@ public class AbsolutePathTests
                 if (dirAbsolutePath.ParentDirectory is null)
                     throw new Exception();
 
-                Assert.Equal("/", dirAbsolutePath.ParentDirectory.Value);
+                Assert.Equal("/", dirAbsolutePath.ParentDirectory);
                 Assert.Equal(dirPath, dirAbsolutePath.ExactInput);
                 Assert.Equal(PathType.AbsolutePath, dirAbsolutePath.PathType);
                 Assert.Equal(isDirectory, dirAbsolutePath.IsDirectory);
@@ -62,7 +62,7 @@ public class AbsolutePathTests
                 if (fileAbsolutePath.ParentDirectory is null)
                     throw new Exception();
 
-                Assert.Equal($@"/{parentDirectoryName}/", fileAbsolutePath.ParentDirectory.Value);
+                Assert.Equal($@"/{parentDirectoryName}/", fileAbsolutePath.ParentDirectory);
                 Assert.Equal(filePath, fileAbsolutePath.ExactInput);
                 Assert.Equal(PathType.AbsolutePath, fileAbsolutePath.PathType);
                 Assert.Equal(isDirectory, fileAbsolutePath.IsDirectory);

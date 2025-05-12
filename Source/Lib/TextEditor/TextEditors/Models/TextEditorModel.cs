@@ -507,7 +507,6 @@ public partial class TextEditorModel
             	currentLineEndKind = LineEndKind.CarriageReturn;
 
             	if (LineEndKindPreference == LineEndKind.Unset)
-
         			LineEndKindPreference = currentLineEndKind; // Do not use 'SetLineEndKindPreference(...)' here.
             }
             else if (character == '\n')
