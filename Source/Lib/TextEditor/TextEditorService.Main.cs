@@ -227,15 +227,18 @@ public sealed class TextEditorService
 				ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: false);
 			}
 
-            if (viewModelModifier.ScrollWasModified)
+            if (viewModelModifier.ScrollWasModified &&
+            	viewModelModifier.PersistentState.DisplayTracker.ComponentData is not null)
             {
-                await JsRuntimeTextEditorApi
+            	Interlocked.Exchange(ref viewModelModifier.PersistentState.DisplayTracker.ComponentData.shouldScroll, 1);
+            	
+                /*await JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
 		                viewModelModifier.PersistentState.BodyElementId,
 		                viewModelModifier.PersistentState.GutterElementId,
 		                viewModelModifier.ScrollbarDimensions.ScrollLeft,
 		                viewModelModifier.ScrollbarDimensions.ScrollTop)
-		            .ConfigureAwait(false);
+		            .ConfigureAwait(false);*/
             }
             
             if (!viewModelModifier.ShouldReloadVirtualizationResult &&

@@ -160,6 +160,8 @@ public struct VirtualizationGrid
 			return;
 			
 		var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+		if (componentData is null)
+			return;
 		
 		if (componentData.VisualizationLineCacheIsInvalid)
 			componentData.VirtualizationLineCacheClear();

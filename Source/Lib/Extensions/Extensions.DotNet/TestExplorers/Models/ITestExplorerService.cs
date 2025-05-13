@@ -18,4 +18,9 @@ public interface ITestExplorerService
 	public Task HandleUserInterfaceWasInitializedEffect();
 	
 	public Task HandleShouldDiscoverTestsEffect();
+	
+	public void Enqueue_ConstructTreeView();
+    public void Enqueue_DiscoverTests();
+    
+    public void MoveNodeToCorrectBranch(TreeViewProjectTestModel treeViewProjectTestModel);
 }

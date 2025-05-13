@@ -28,11 +28,14 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	[Inject]
+	private ITerminalService TerminalService { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
 		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
 
 		_ = Task.Run(async () =>
 		{
@@ -140,6 +143,20 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		});
 	}
 	
+	private void KillExecutionProcessOnClick()
+	{
+		var terminalState = TerminalService.GetTerminalState();
+		var executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
+		executionTerminal.KillProcess();
+	}
+	
+	private bool GetIsKillProcessDisabled()
+	{
+		var terminalState = TerminalService.GetTerminalState();
+		var executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
+		return !executionTerminal.HasExecutingProcess;
+	}
+	
 	private async void OnTestExplorerStateChanged()
 	{
 		await InvokeAsync(StateHasChanged);
@@ -150,9 +167,15 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		await InvokeAsync(StateHasChanged);
 	}
 	
+	private async void OnTerminalStateChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
 	public void Dispose()
 	{
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
 		TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
+		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

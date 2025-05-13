@@ -153,22 +153,16 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		TestExplorerService = new TestExplorerService(
 			this,
 			_ideBackgroundTaskApi,
-			DotNetSolutionService);
-
-        TestExplorer = new TestExplorerScheduler(
-            this,
-            _ideBackgroundTaskApi,
+			DotNetSolutionService,
+			_treeViewService,
             _commonComponentRenderers,
-            _treeViewService,
             _textEditorService,
             _notificationService,
             _backgroundTaskService,
             _fileSystemProvider,
             _dotNetCliOutputParser,
-            DotNetSolutionService,
-            _terminalService,
-            TestExplorerService);
-            
+            _terminalService);
+
         OutputService = new OutputService(this);
             
         Output = new OutputScheduler(
@@ -211,7 +205,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
 	public DotNetSolutionIdeApi DotNetSolution { get; }
     public CompilerServiceIdeApi CompilerService { get; }
-    public TestExplorerScheduler TestExplorer { get; }
     public OutputScheduler Output { get; }
     public IOutputService OutputService { get; }
     public ITestExplorerService TestExplorerService { get; }

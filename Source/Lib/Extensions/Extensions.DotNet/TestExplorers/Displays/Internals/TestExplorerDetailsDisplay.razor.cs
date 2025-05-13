@@ -14,7 +14,7 @@ using Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
-public partial class TestExplorerDetailsDisplay : ComponentBase
+public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
@@ -34,6 +34,8 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	private string? _previousContent = string.Empty;
 	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
 	
+	private ITerminal _executionTerminal;
+	
 	private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
 		HeaderComponentType = null,
@@ -41,6 +43,15 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 		IncludeGutterComponent = false,
 		ContextRecord = ContextFacts.TerminalContext,
 	};
+	
+	protected override void OnInitialized()
+	{
+		var terminalState = TerminalService.GetTerminalState();
+		_executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
+		_executionTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
+		
+		base.OnInitialized();
+	}
 
 	protected override void OnParametersSet()
 	{
@@ -128,10 +139,61 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 					if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
 						return ValueTask.CompletedTask;
+					
+					var showingFinalLine = false;
+					
+					if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
+					{
+						var last = viewModelModifier.VirtualizationResult.EntryList.Last();
+						if (last.LineIndex == modelModifier.LineCount - 1)
+							showingFinalLine = true;
+					}
 
 					modelModifier.SetContent(newContent ?? string.Empty);
-					primaryCursorModifier.LineIndex = 0;
-					primaryCursorModifier.SetColumnIndexAndPreferred(0);
+					
+					var lineIndexOriginal = primaryCursorModifier.LineIndex;
+					var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
+					
+					// Move Cursor, try to preserve the current cursor position.
+					{
+						if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
+							primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+						
+						var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+						
+						if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+							primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+					}
+					
+					if (showingFinalLine)
+					{
+						var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+						
+						var originalScrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
+						
+						var textSpan = new TextEditorTextSpan(
+						    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+						    endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
+						    decorationByte: 0,
+						    modelModifier.PersistentState.ResourceUri,
+						    sourceText: string.Empty,
+						    getTextPrecalculatedResult: string.Empty);
+					
+						TextEditorService.ViewModelApi.ScrollIntoView(
+					        editContext,
+					        modelModifier,
+					        viewModelModifier,
+					        textSpan);
+					        
+				        viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithSetScrollLeft(
+				        	(int)originalScrollLeft,
+				        	viewModelModifier.TextEditorDimensions);
+					}
+					else if (lineIndexOriginal != primaryCursorModifier.LineIndex ||
+						     columnIndexOriginal != primaryCursorModifier.ColumnIndex)
+					{
+						viewModelModifier.PersistentState.ShouldRevealCursor = true;
+					}
 
 					var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
 						ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
@@ -146,7 +208,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 							modelModifier);
 					}
 
-					viewModelModifier.PersistentState.ShouldRevealCursor = true;
 					return ValueTask.CompletedTask;
 				});
 		}
@@ -260,5 +321,15 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 		}
 
 		return Task.FromResult(newContent ?? string.Empty);
+	}
+	
+	private async void OnWriteOutput()
+	{
+		_updateContentThrottle.Run(_ => UpdateContent());
+	}
+
+	public void Dispose()
+	{
+		_executionTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
 	}
 }
