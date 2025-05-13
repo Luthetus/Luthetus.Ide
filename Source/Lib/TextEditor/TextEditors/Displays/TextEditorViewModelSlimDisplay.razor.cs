@@ -146,6 +146,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
 	public TextEditorComponentData ComponentData => _componentData;
 	
+	private Key<TextEditorViewModel> _linkedViewModelKey = Key<TextEditorViewModel>.Empty;
+	
     protected override void OnInitialized()
     {
     	 _onKeyDownNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown);
@@ -175,20 +177,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         base.OnInitialized();
     }
     
-    protected override void OnParametersSet()
-    {
-    	HandleTextEditorViewModelKeyChange();
-    	base.OnParametersSet();
-    }
-
 	protected override bool ShouldRender()
     {
-		if (_linkedViewModel is null)
+    	if (_linkedViewModelKey != TextEditorViewModelKey)
             HandleTextEditorViewModelKeyChange();
-
-        // if (ComponentData._renderBatch.ViewModel.PersistentState.DisplayTracker.ConsumeIsFirstDisplay())
-		//	QueueCalculateVirtualizationResultBackgroundTask(ComponentData._renderBatch);
-    
+            
 		ComponentData.CreateUi();
         return true;
     }
@@ -309,13 +302,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			ViewModelDisplayOptions,
 			_componentData);
     }
-
-    private async void GeneralOnStateChangedEventHandler() =>
-        await InvokeAsync(StateHasChanged);
-        
-    private async void ViewModel_CursorShouldBlinkChanged() =>
-        await InvokeAsync(StateHasChanged);
-
+    
     public void HandleTextEditorViewModelKeyChange()
     {
     	// Avoid infinite loop if the viewmodel does not exist.
@@ -344,6 +331,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 nextViewModel?.PersistentState.DisplayTracker.RegisterComponentData(_componentData);
 
                 _linkedViewModel = nextViewModel;
+                _linkedViewModelKey = _linkedViewModel.PersistentState.ViewModelKey;
 
                 if (nextViewModel is not null)
                     nextViewModel.PersistentState.ShouldRevealCursor = true;
@@ -354,6 +342,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             return ValueTask.CompletedTask;
     	});
     }
+
+    private async void GeneralOnStateChangedEventHandler() => await InvokeAsync(StateHasChanged);
+        
+    private async void ViewModel_CursorShouldBlinkChanged() => await InvokeAsync(StateHasChanged);
     
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
