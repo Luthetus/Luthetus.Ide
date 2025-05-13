@@ -166,7 +166,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	SetComponentData();
     	_ = TextEditorService.TextEditorState._componentDataMap.TryAdd(_componentData.ComponentDataKey, _componentData);
     	
-    	CssOnInitializedStepOne();
+    	CssOnInitialized();
   	  
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
         TextEditorService.OptionsApi.StaticStateChanged += OnOptionStaticStateChanged;
@@ -229,9 +229,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
 	                .ConfigureAwait(false);
 			}
-        
-        	if (_componentData._renderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender)
-            	_componentData._renderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -245,7 +242,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	  	await nextViewModel.FocusAsync();
 	}
     
-    private void CssOnInitializedStepOne()
+    private void CssOnInitialized()
 	{
 		_componentData.SetWrapperCssAndStyle();
     	

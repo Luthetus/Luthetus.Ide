@@ -77,7 +77,6 @@ public sealed class TextEditorViewModel : IDisposable
 		    findOverlayValueExternallyChangedMarker: false,
 		    menuKind: MenuKind.None,
 	    	tooltipViewModel: null,
-	    	shouldSetFocusAfterNextRender: false,
 		    shouldRevealCursor: false,
 			virtualAssociativityKind: VirtualAssociativityKind.None);
     

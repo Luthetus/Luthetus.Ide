@@ -32,7 +32,6 @@ public class TextEditorViewModelPersistentState
 	    bool findOverlayValueExternallyChangedMarker,
 	    MenuKind menuKind,
 	    TooltipViewModel tooltipViewModel,
-	    bool shouldSetFocusAfterNextRender,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind)
 	{
@@ -59,8 +58,7 @@ public class TextEditorViewModelPersistentState
 	    
 	    MenuKind = menuKind;
 	    TooltipViewModel = tooltipViewModel;
-	    
-	    ShouldSetFocusAfterNextRender = shouldSetFocusAfterNextRender;
+
 	    ShouldRevealCursor = shouldRevealCursor;
 		VirtualAssociativityKind = virtualAssociativityKind;
 	}
@@ -161,12 +159,6 @@ public class TextEditorViewModelPersistentState
 	/// </summary>
     public TooltipViewModel? TooltipViewModel { get; set; }
     
-    /// <summary>
-    /// If one opens a file with the 'Enter' key, they might want focus to then be set on that
-    /// newly opened file. However, perhaps one wants the 'Space' key to also open the file,
-    /// but not set focus to it.
-    /// </summary>
-    public bool ShouldSetFocusAfterNextRender { get; set; }
     public bool ShouldRevealCursor { get; set; }
     public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
 }
