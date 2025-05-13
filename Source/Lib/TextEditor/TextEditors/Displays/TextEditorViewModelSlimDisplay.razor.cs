@@ -177,14 +177,21 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         base.OnInitialized();
     }
     
-	protected override bool ShouldRender()
+    protected override void OnParametersSet()
     {
     	if (_linkedViewModelKey != TextEditorViewModelKey)
             HandleTextEditorViewModelKeyChange();
             
+    	base.OnParametersSet();
+    }
+    
+	protected override bool ShouldRender()
+    {
 		ComponentData.CreateUi();
         return true;
     }
+    
+    private Key<TextEditorViewModel> _previousViewModelKey = Key<TextEditorViewModel>.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -199,8 +206,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         if (_componentData._renderBatch.ViewModel is not null)
         {
-        	if (_componentData.shouldScroll >= 1)
+        	if (_componentData.shouldScroll >= 1 || _previousViewModelKey != _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey)
 			{
+				_previousViewModelKey = _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey;
+				
 				Interlocked.Exchange(ref _componentData.shouldScroll, 0);
 				
 				// It is thought that you shouldn't '.ConfigureAwait(false)'
