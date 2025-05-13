@@ -236,9 +236,23 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             QueueCalculateVirtualizationResultBackgroundTask(_componentData._currentRenderBatch);
         }
 
-        if (_componentData._currentRenderBatch.ViewModel is not null && _componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender)
+        if (_componentData._currentRenderBatch.ViewModel is not null)
         {
-            _componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
+        	if (_componentData.shouldScroll >= 1)
+			{
+				Interlocked.Exchange(ref _componentData.shouldScroll, 0);
+			
+				await TextEditorService.JsRuntimeTextEditorApi
+		            .SetScrollPositionBoth(
+		                _componentData._currentRenderBatch.ViewModel.PersistentState.BodyElementId,
+		                _componentData._currentRenderBatch.ViewModel.PersistentState.GutterElementId,
+		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft,
+		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
+		            .ConfigureAwait(false);
+			}
+        
+        	if (_componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender)
+            	_componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
         }
 
         await base.OnAfterRenderAsync(firstRender);

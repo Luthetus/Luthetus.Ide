@@ -87,6 +87,8 @@ public sealed class TextEditorComponentData
     public TextEditorRenderBatch _currentRenderBatch;
     public TextEditorRenderBatch _previousRenderBatch;
     public TextEditorRenderBatch _activeRenderBatch;
+    
+    public int shouldScroll;
 
 	/// <summary>
 	/// This property contains the global options, with an extra step of overriding any specified options

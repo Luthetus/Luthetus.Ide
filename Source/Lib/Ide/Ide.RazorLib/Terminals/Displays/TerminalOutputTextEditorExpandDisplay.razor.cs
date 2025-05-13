@@ -7,8 +7,9 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
@@ -213,6 +214,15 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						return ValueTask.CompletedTask;
 
 					var localTerminal = Terminal;
+					
+					var showingFinalLine = false;
+    
+				    if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
+				    {
+				        var last = viewModelModifier.VirtualizationResult.EntryList.Last();
+				        if (last.LineIndex == modelModifier.LineCount - 1)
+				            showingFinalLine = true;
+				    }
 
 					var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.TerminalOutput
 						.GetOutputFormatted(nameof(TerminalOutputFormatterExpand));
@@ -231,13 +241,43 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						
 						if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
 							primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
-							
-						if (lineIndexOriginal != primaryCursorModifier.LineIndex ||
-							columnIndexOriginal != primaryCursorModifier.ColumnIndex)
-						{
-							viewModelModifier.PersistentState.ShouldRevealCursor = true;
-						}
 					}
+					
+					if (showingFinalLine)
+				    {
+				    	// Console.WriteLine($"showingFinalLine: {showingFinalLine}");
+				    
+				        var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+				        
+				        var originalScrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
+				        
+				        var textSpan = new TextEditorTextSpan(
+				            startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+				            endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
+				            decorationByte: 0,
+				            modelModifier.PersistentState.ResourceUri,
+				            sourceText: string.Empty,
+				            getTextPrecalculatedResult: string.Empty);
+				        
+				        TextEditorService.ViewModelApi.ScrollIntoView(
+				            editContext,
+				            modelModifier,
+				            viewModelModifier,
+				            textSpan);
+				        
+				        //viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithMutateScrollTop(
+				        //    (int)viewModelModifier.CharAndLineMeasurements.LineHeight,
+				        //    viewModelModifier.TextEditorDimensions);
+				        
+				        viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithSetScrollLeft(
+				            (int)originalScrollLeft,
+				            viewModelModifier.TextEditorDimensions);
+				    }
+				    else if (lineIndexOriginal != primaryCursorModifier.LineIndex ||
+						     columnIndexOriginal != primaryCursorModifier.ColumnIndex)
+					{
+						viewModelModifier.PersistentState.ShouldRevealCursor = true;
+					}  
 					
 					var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
 						terminalOutputFormatterExpand.TextEditorModelResourceUri);
