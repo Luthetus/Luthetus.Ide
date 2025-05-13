@@ -159,7 +159,7 @@ public class AbsolutePathTests_Snapshot
 	{
 		var environmentProvider = new InMemoryEnvironmentProvider();
 		
-		var absolutePath = new IEnvironmentProvider.AbsolutePath(absolutePathString, isDirectory, environmentProvider);
+		var absolutePath = new AbsolutePath(absolutePathString, isDirectory, environmentProvider);
 
         Assert.Equal(expectedNameNoExtension, absolutePath.NameNoExtension);
         Assert.Equal(expectedExtensionNoPeriod, absolutePath.ExtensionNoPeriod);

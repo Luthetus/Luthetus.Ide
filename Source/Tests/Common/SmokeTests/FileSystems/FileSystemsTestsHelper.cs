@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 
@@ -57,13 +58,12 @@ public class FileSystemsTestsHelper
             commonTreeViews);
 
         var services = new ServiceCollection()
-            .AddFluxor(options => options.ScanAssemblies(typeof(IEnvironmentProvider).Assembly))
             .AddScoped<ICommonComponentRenderers>(_ => commonComponentRenderers)
             .AddScoped<IEnvironmentProvider, InMemoryEnvironmentProvider>()
             .AddScoped<IFileSystemProvider>(serviceProvider => new InMemoryFileSystemProvider(
                 serviceProvider.GetRequiredService<IEnvironmentProvider>(),
                 serviceProvider.GetRequiredService<ICommonComponentRenderers>(),
-                serviceProvider.GetRequiredService<IDispatcher>()));
+                serviceProvider.GetRequiredService<INotificationService>()));
 
         serviceProvider = services.BuildServiceProvider();
 

@@ -1192,7 +1192,7 @@ public sealed class TextEditorViewModelApi
 			}
 
 			var totalHeight = (int)Math.Ceiling(
-				(modelModifier.LineEndList.Count - hiddenCount) *
+				(modelModifier.LineEndList.Count - viewModel.HiddenLineIndexHashSet.Count) *
 				viewModel.CharAndLineMeasurements.LineHeight);
 
 			// Add vertical margin so the user can scroll beyond the final line of content

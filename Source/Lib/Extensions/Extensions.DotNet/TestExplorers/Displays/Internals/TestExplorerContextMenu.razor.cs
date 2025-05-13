@@ -165,7 +165,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 					await treeViewProjectTestModel.LoadChildListAsync();
 					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
-					DotNetBackgroundTaskApi.TestExplorer.MoveNodeToCorrectBranch(treeViewProjectTestModel);
+					DotNetBackgroundTaskApi.TestExplorerService.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
 					DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState =>
 					{

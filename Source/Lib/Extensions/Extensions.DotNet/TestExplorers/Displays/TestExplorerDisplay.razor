@@ -60,6 +60,14 @@
 						@IconRefreshFragment.Render(iconDriver)
 					</button>
 					
+					<button class="luth_button"
+							style="display: inline;"
+							title="Stop current test"
+							disabled=@GetIsKillProcessDisabled()
+							@onclick="KillExecutionProcessOnClick">
+						@IconStopCircleFragment.Render(iconDriver)
+					</button>
+					
 					Total: @(renderBatchValidated.TestExplorerState.TotalTestCount);
 					<span class="luth_tree-view-warning">NotRan: @(renderBatchValidated.TestExplorerState.NotRanTestHashSet.Count);</span>
 					<em class="luth_em">Passed: @(renderBatchValidated.TestExplorerState.PassedTestHashSet.Count);</em>
