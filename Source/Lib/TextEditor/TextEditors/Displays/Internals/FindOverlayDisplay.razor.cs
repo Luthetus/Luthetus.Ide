@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -17,7 +18,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class FindOverlayDisplay : ComponentBase
+public partial class FindOverlayDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
@@ -29,7 +30,7 @@ public partial class FindOverlayDisplay : ComponentBase
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorRenderBatch RenderBatch { get; set; }
+    public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 
     private bool _lastSeenShowFindOverlayValue = false;
     private bool _lastFindOverlayValueExternallyChangedMarker = false;
@@ -39,13 +40,16 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private Throttle _throttleInputValueChange = new Throttle(TimeSpan.FromMilliseconds(150));
     private TextEditorTextSpan? _decorationByteChangedTargetTextSpan;
+    
+    private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
+    private TextEditorComponentData? _componentData;
 
     private string InputValue
     {
         get => _inputValue;
         set
         {
-	    	var renderBatchLocal = RenderBatch;
+	    	var renderBatchLocal = GetRenderBatch();
 	    	if (!renderBatchLocal.IsValid)
 	    		return;
         
@@ -109,7 +113,7 @@ public partial class FindOverlayDisplay : ComponentBase
         get => _inputReplace;
         set
         {
-	    	var renderBatchLocal = RenderBatch;
+	    	var renderBatchLocal = GetRenderBatch();
 	    	if (!renderBatchLocal.IsValid)
 	    		return;
         
@@ -130,9 +134,17 @@ public partial class FindOverlayDisplay : ComponentBase
         }
     }
 
+	protected override void OnInitialized()
+    {
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        OnCursorShouldBlinkChanged();
+        
+        base.OnInitialized();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-    	var renderBatchLocal = RenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (!renderBatchLocal.IsValid)
     		return;
     		
@@ -163,10 +175,34 @@ public partial class FindOverlayDisplay : ComponentBase
 
         await base.OnAfterRenderAsync(firstRender);
     }
+    
+    private TextEditorRenderBatch GetRenderBatch()
+    {
+    	return GetComponentData()?._renderBatch ?? default;
+    }
+    
+    private TextEditorComponentData? GetComponentData()
+    {
+    	if (_componentDataKeyPrevious != ComponentDataKey)
+    	{
+    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+    		    componentData is null)
+    		{
+    			_componentData = null;
+    		}
+    		else
+    		{
+    			_componentData = componentData;
+				_componentDataKeyPrevious = ComponentDataKey;
+    		}
+    	}
+    	
+		return _componentData;
+    }
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatchLocal = RenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (!renderBatchLocal.IsValid)
     		return;
     	
@@ -217,7 +253,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private async Task MoveActiveIndexMatchedTextSpanUp()
     {
-    	var renderBatchLocal = RenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (!renderBatchLocal.IsValid)
     		return;
     	
@@ -255,7 +291,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private async Task MoveActiveIndexMatchedTextSpanDown()
     {
-    	var renderBatchLocal = RenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (!renderBatchLocal.IsValid)
     		return;
     	
@@ -293,7 +329,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private Task HandleActiveIndexMatchedTextSpanChanged()
     {
-    	var renderBatchLocal = RenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     	
@@ -383,7 +419,7 @@ public partial class FindOverlayDisplay : ComponentBase
     
     private void ToggleShowReplace()
     {
-    	var renderBatchLocal = RenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (!renderBatchLocal.IsValid)
     		return;
     	
@@ -406,7 +442,7 @@ public partial class FindOverlayDisplay : ComponentBase
     
     private void ReplaceCurrent()
     {
-    	var renderBatchLocal = RenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (!renderBatchLocal.IsValid)
     		return;
     
@@ -455,7 +491,7 @@ public partial class FindOverlayDisplay : ComponentBase
     
     private void ReplaceAll()
     {
-    	var renderBatchLocal = RenderBatch;
+    	var renderBatchLocal = GetRenderBatch();
     	if (!renderBatchLocal.IsValid)
     		return;
     
@@ -519,5 +555,15 @@ public partial class FindOverlayDisplay : ComponentBase
 
                 return ValueTask.CompletedTask;
             });
+    }
+    
+    private async void OnCursorShouldBlinkChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+    	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
     }
 }

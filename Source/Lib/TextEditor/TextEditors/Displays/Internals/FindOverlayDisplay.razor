@@ -1,6 +1,6 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-@{ var renderBatchLocal = RenderBatch; }
+@{ var renderBatchLocal = GetRenderBatch(); }
 
 @if (renderBatchLocal.IsValid &&
 	 renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay)
