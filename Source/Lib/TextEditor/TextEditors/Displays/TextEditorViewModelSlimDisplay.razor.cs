@@ -256,8 +256,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		                _componentData._currentRenderBatch.ViewModel.PersistentState.BodyElementId,
 		                _componentData._currentRenderBatch.ViewModel.PersistentState.GutterElementId,
 		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft,
-		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollTop);
-	                //.ConfigureAwait(false);
+		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
+	                .ConfigureAwait(false);
 			}
         
         	if (_componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender)
