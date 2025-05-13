@@ -147,7 +147,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	public TextEditorComponentData ComponentData => _componentData;
 	
 	private bool _hasRanCssOnInitializedStepTwo;
-
+	
     protected override void OnInitialized()
     {
     	 _onKeyDownNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown);
@@ -241,14 +241,23 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         	if (_componentData.shouldScroll >= 1)
 			{
 				Interlocked.Exchange(ref _componentData.shouldScroll, 0);
-			
+				
+				// It is thought that you shouldn't '.ConfigureAwait(false)'
+				// because this could provide a "natural throttle for the scrolling"
+				// since more ITextEditorService edit contexts might have time to be calculated
+				// and thus not every single one of them need be scrolled to.
+				// This idea has not been proven yet.
+				//
+				// (the same is true for rendering the UI, it might avoid some renders
+				//  because the most recent should render took time to get executed).
+				//
 				await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
 		                _componentData._currentRenderBatch.ViewModel.PersistentState.BodyElementId,
 		                _componentData._currentRenderBatch.ViewModel.PersistentState.GutterElementId,
 		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft,
-		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
-		            .ConfigureAwait(false);
+		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollTop);
+	                //.ConfigureAwait(false);
 			}
         
         	if (_componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender)
