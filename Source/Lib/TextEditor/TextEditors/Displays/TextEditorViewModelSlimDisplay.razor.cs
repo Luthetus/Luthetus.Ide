@@ -194,7 +194,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
-            QueueCalculateVirtualizationResultBackgroundTask(_componentData._renderBatch);
+            QueueCalculateVirtualizationResultBackgroundTask();
         }
 
         if (_componentData._renderBatch.ViewModel is not null)
@@ -335,6 +335,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
                 if (nextViewModel is not null)
                     nextViewModel.PersistentState.ShouldRevealCursor = true;
+                    
+                QueueCalculateVirtualizationResultBackgroundTask();
             }
             
             _componentData.VirtualizationLineCacheClear();
@@ -621,8 +623,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	        });
     }
 
-    public void QueueCalculateVirtualizationResultBackgroundTask(
-		TextEditorRenderBatch localCurrentRenderBatch)
+    public void QueueCalculateVirtualizationResultBackgroundTask()
     {
         var viewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
         if (viewModel is null)
@@ -852,7 +853,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private async void OnOptionMeasuredStateChanged()
     {
     	_componentData.SetWrapperCssAndStyle();
-    	QueueCalculateVirtualizationResultBackgroundTask(_componentData._renderBatch);
+    	QueueCalculateVirtualizationResultBackgroundTask();
     }
     
     private async void OnOptionStaticStateChanged()
