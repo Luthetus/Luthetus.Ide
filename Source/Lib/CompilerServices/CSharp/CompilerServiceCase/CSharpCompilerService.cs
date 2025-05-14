@@ -429,7 +429,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex);
         
         var elementPositionInPixels = await _textEditorService.JsRuntimeTextEditorApi
-            .GetBoundingClientRect(viewModelModifier.PersistentState.PrimaryCursorContentId)
+            .GetBoundingClientRect(componentData.PrimaryCursorContentId)
             .ConfigureAwait(false);
 
         elementPositionInPixels = elementPositionInPixels with

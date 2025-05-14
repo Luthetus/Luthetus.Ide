@@ -234,8 +234,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
         var absolutePath = _environmentProvider.AbsolutePathFactory(
             registerViewModelArgs.ResourceUri.Value,
             false);
-            
-        viewModel.PersistentState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+
         viewModel.PersistentState.OnSaveRequested = HandleOnSaveRequested;
         viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
         viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
@@ -320,9 +319,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
         	_textEditorService.WorkerArbitrary.PostUnique(nameof(TryShowViewModelFunc), editContext =>
 	        {
 	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
-	        	
-	        	viewModelModifier.PersistentState.ShouldSetFocusAfterNextRender = showViewModelArgs.ShouldSetFocusToEditor;
-	        		
 	        	return viewModel.FocusAsync();
 	        });
         }

@@ -323,18 +323,20 @@ public class CommandFactory : ICommandFactory
                 async commandArgs =>
                 {
                     var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
-
                     if (group is null)
                         return;
 
                     var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
-
                     if (activeViewModel is null)
                         return;
 
-                    await _commonBackgroundTaskApi.JsRuntimeCommonApi
-                        .FocusHtmlElementById(activeViewModel.PersistentState.PrimaryCursorContentId)
-                        .ConfigureAwait(false);
+					var componentData = activeViewModel.PersistentState.DisplayTracker.ComponentData;
+					if (componentData is not null)
+					{
+						await _commonBackgroundTaskApi.JsRuntimeCommonApi
+	                        .FocusHtmlElementById(componentData.PrimaryCursorContentId)
+	                        .ConfigureAwait(false);
+					}
                 });
 
             _ = ContextFacts.GlobalContext.Keymap.TryRegister(

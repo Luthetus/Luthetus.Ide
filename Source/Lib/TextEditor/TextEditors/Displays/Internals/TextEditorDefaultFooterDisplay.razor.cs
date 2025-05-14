@@ -33,7 +33,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 		{
 			var renderBatchLocal = GetRenderBatch();
 		
-			if (!renderBatchLocal.ConstructorWasInvoked)
+			if (!renderBatchLocal.IsValid)
 	    		return;
 		    		
 	        var model = renderBatchLocal.Model;
@@ -79,7 +79,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
     
     private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._activeRenderBatch ?? default;
+    	return GetComponentData()?._renderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -104,7 +104,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
     private async void OnCursorShouldBlinkChanged()
     {
     	var renderBatchLocal = GetRenderBatch();
-		if (renderBatchLocal.ConstructorWasInvoked && renderBatchLocal.Model is not null && renderBatchLocal.ViewModel is not null)
+		if (renderBatchLocal.IsValid)
 		{
 			var shouldSetSelectedLineEndKindString = false;
 			

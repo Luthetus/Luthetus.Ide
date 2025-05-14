@@ -166,8 +166,6 @@ public partial class GitDiffDisplay : ComponentBase
 	            DiffPresentationFacts.InPresentationKey,
 	        };
 	            
-	        viewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
-		
 	        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
 	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 	        
@@ -219,8 +217,6 @@ public partial class GitDiffDisplay : ComponentBase
 	            DiffPresentationFacts.OutPresentationKey,
 	        };
 	            
-	        viewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
-		
 	        viewModel.PersistentState.GetTabDisplayNameFunc = _ => originalAbsolutePath.NameWithExtension;
 	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 	        

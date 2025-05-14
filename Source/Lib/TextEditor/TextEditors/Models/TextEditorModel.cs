@@ -602,6 +602,8 @@ public partial class TextEditorModel
 
         SetIsDirtyTrue();
 		ShouldReloadVirtualizationResult = true;
+		
+		PersistentState.__TextEditorViewModelLiason.SetContent(PersistentState.ViewModelKeyList);
     }
 
 	public void ClearEditBlocks()
