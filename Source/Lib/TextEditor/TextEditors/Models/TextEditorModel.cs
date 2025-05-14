@@ -21,7 +21,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 ///
 /// TODO: 2 interfaces, 1 mutable one readonly?
 /// </summary>
-public partial class TextEditorModel
+public sealed class TextEditorModel
 {
 	#region TextEditorModelMain
     

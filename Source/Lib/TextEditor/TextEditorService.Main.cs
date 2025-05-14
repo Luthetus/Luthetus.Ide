@@ -171,12 +171,14 @@ public sealed class TextEditorService
 
 	public async ValueTask FinalizePost(TextEditorEditContext editContext)
 	{
-        foreach (var modelModifier in __ModelList)
+        for (int modelIndex = 0; modelIndex < __ModelList.Count; modelIndex++)
         {
-            foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
+        	var modelModifier = __ModelList[modelIndex];
+        	
+            for (int viewModelIndex = 0; viewModelIndex < modelModifier.PersistentState.ViewModelKeyList.Count; viewModelIndex++)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
-                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(modelModifier.PersistentState.ViewModelKeyList[viewModelIndex]);
 
 				if (!viewModelModifier.ShouldReloadVirtualizationResult)
 					viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
@@ -192,10 +194,15 @@ public sealed class TextEditorService
                 else
                     _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
             }
+            
+            if (TextEditorState._modelMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
+				TextEditorState._modelMap[modelModifier.PersistentState.ResourceUri] = modelModifier;
         }
 		
-        foreach (var viewModelModifier in __ViewModelList)
+        for (int viewModelIndex = 0; viewModelIndex < __ViewModelList.Count; viewModelIndex++)
         {
+        	var viewModelModifier = __ViewModelList[viewModelIndex];
+        
         	TextEditorModel? modelModifier = null;
         	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
         		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
@@ -231,14 +238,6 @@ public sealed class TextEditorService
             	viewModelModifier.PersistentState.DisplayTracker.ComponentData is not null)
             {
             	Interlocked.Exchange(ref viewModelModifier.PersistentState.DisplayTracker.ComponentData.shouldScroll, 1);
-            	
-                /*await JsRuntimeTextEditorApi
-		            .SetScrollPositionBoth(
-		                viewModelModifier.PersistentState.BodyElementId,
-		                viewModelModifier.PersistentState.GutterElementId,
-		                viewModelModifier.ScrollbarDimensions.ScrollLeft,
-		                viewModelModifier.ScrollbarDimensions.ScrollTop)
-		            .ConfigureAwait(false);*/
             }
             
             if (!viewModelModifier.ShouldReloadVirtualizationResult &&
@@ -296,6 +295,9 @@ public sealed class TextEditorService
 	            	modelModifier,
 			        viewModelModifier);
 			}
+			
+			if (TextEditorState._viewModelMap.ContainsKey(viewModelModifier.PersistentState.ViewModelKey))
+				TextEditorState._viewModelMap[viewModelModifier.PersistentState.ViewModelKey] = viewModelModifier;
         }
 	    
 	    __CursorModifierBagCache.Clear();
@@ -303,7 +305,12 @@ public sealed class TextEditorService
 	    
 	    __IsAvailableCursorModifier = true;
 	    
-	    SetModelAndViewModelRange(editContext);
+	    __ModelList.Clear();
+		__ViewModelList.Clear();
+
+        TextEditorStateChanged?.Invoke();
+	    
+	    // SetModelAndViewModelRange(editContext);
 	}
 	
 	/// <summary>
@@ -680,20 +687,28 @@ public sealed class TextEditorService
 		// 
 		// var inState = TextEditorState;
 
-		foreach (var model in __ModelList)
+		if (__ModelList.Count > 0)
 		{
-			if (TextEditorState._modelMap.ContainsKey(model.PersistentState.ResourceUri))
-				TextEditorState._modelMap[model.PersistentState.ResourceUri] = model;
+			foreach (var model in __ModelList)
+			{
+				if (TextEditorState._modelMap.ContainsKey(model.PersistentState.ResourceUri))
+					TextEditorState._modelMap[model.PersistentState.ResourceUri] = model;
+			}
+			
+			__ModelList.Clear();
+		}
+		
+		if (__ViewModelList.Count > 0)
+		{
+			foreach (var viewModel in __ViewModelList)
+			{
+				if (TextEditorState._viewModelMap.ContainsKey(viewModel.PersistentState.ViewModelKey))
+					TextEditorState._viewModelMap[viewModel.PersistentState.ViewModelKey] = viewModel;
+			}
+			
+			__ViewModelList.Clear();
 		}
 
-		foreach (var viewModel in __ViewModelList)
-		{
-			if (TextEditorState._viewModelMap.ContainsKey(viewModel.PersistentState.ViewModelKey))
-				TextEditorState._viewModelMap[viewModel.PersistentState.ViewModelKey] = viewModel;
-		}
-
-		__ModelList.Clear();
-		__ViewModelList.Clear();
         TextEditorStateChanged?.Invoke();
     }
 }
