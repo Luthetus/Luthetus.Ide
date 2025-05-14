@@ -28,10 +28,8 @@ public struct OnMouseMove
     
         var viewModel = editContext.GetViewModelModifier(ViewModelKey);
         var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
-        var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-        if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+        if (modelModifier is null || viewModel is null)
             return;
 
 		// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
@@ -70,21 +68,21 @@ public struct OnMouseMove
 					if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
 						var lastHiddenLineInformation = modelModifier.GetLineInformation(collapsePoint.EndExclusiveLineIndex - 1);
-						primaryCursorModifier.LineIndex = lastHiddenLineInformation.Index;
-						primaryCursorModifier.SetColumnIndexAndPreferred(lastHiddenLineInformation.LastValidColumnIndex);
+						viewModel.LineIndex = lastHiddenLineInformation.Index;
+						viewModel.SetColumnIndexAndPreferred(lastHiddenLineInformation.LastValidColumnIndex);
 						goto finalize;
 					}
 				}
 			}
 		}
 
-        primaryCursorModifier.LineIndex = rowAndColumnIndex.LineIndex;
-        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.ColumnIndex;
-        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.ColumnIndex;
+        viewModel.LineIndex = rowAndColumnIndex.LineIndex;
+        viewModel.ColumnIndex = rowAndColumnIndex.ColumnIndex;
+        viewModel.PreferredColumnIndex = rowAndColumnIndex.ColumnIndex;
 
 		// editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 
-        primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+        viewModel.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(viewModel);
         
         finalize:
 	

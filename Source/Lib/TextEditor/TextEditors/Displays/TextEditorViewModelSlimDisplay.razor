@@ -208,7 +208,7 @@
 				</div>
 				
 				<div class="luth_te_text-selection-group">
-				    @if (TextEditorSelectionHelper.HasSelectedText(_componentData._renderBatch.ViewModel.PrimaryCursor.Selection) &&
+				    @if (TextEditorSelectionHelper.HasSelectedText(_componentData._renderBatch.ViewModel) &&
 				         _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 				    {
 				        for (var i = 0; i < _componentData.SelectionStyleList.Count; i++)

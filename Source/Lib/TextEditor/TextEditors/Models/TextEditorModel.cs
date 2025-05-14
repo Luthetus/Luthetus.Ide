@@ -21,7 +21,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 ///
 /// TODO: 2 interfaces, 1 mutable one readonly?
 /// </summary>
-public partial class TextEditorModel
+public sealed class TextEditorModel
 {
 	#region TextEditorModelMain
     
@@ -321,16 +321,14 @@ public partial class TextEditorModel
         SetIsDirtyTrue();
     }
 
-	public void HandleKeyboardEvent(
-        KeymapArgs keymapArgs,
-        CursorModifierBagTextEditor cursorModifierBag)
+	public void HandleKeyboardEvent(KeymapArgs keymapArgs, TextEditorViewModel viewModel)
     {
         if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
         {
             if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
             {
                 Delete(
-                	cursorModifierBag,
+                	viewModel,
                     1,
                     keymapArgs.CtrlKey,
                     DeleteKind.Backspace);
@@ -338,7 +336,7 @@ public partial class TextEditorModel
             else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
             {
                 Delete(
-                    cursorModifierBag,
+                    viewModel,
                     1,
                     keymapArgs.CtrlKey,
                     DeleteKind.Delete);
@@ -353,9 +351,9 @@ public partial class TextEditorModel
                 valueToInsert = LineEndKindPreference.AsCharacters();
 				
 				// GOAL: Match indentation on newline keystroke (2024-07-04)
-				var line = this.GetLineInformation(cursorModifierBag.CursorModifier.LineIndex);
+				var line = GetLineInformation(viewModel.LineIndex);
 
-				var cursorPositionIndex = line.Position_StartInclusiveIndex + cursorModifierBag.CursorModifier.ColumnIndex;
+				var cursorPositionIndex = line.Position_StartInclusiveIndex + viewModel.ColumnIndex;
 				var indentationPositionIndex = line.Position_StartInclusiveIndex;
 
 				var indentationBuilder = new StringBuilder();
@@ -379,31 +377,31 @@ public partial class TextEditorModel
 
             Insert(
                 valueToInsert,
-                cursorModifierBag);
+                viewModel);
         }
     }
 
-	private void PerformInsert(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, string content)
+	private void PerformInsert(TextEditorViewModel viewModel, int positionIndex, string content)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
 		
-		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
-		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
+		viewModel.LineIndex = lineIndex;
+		viewModel.SetColumnIndexAndPreferred(columnIndex);
+		viewModel.SelectionAnchorPositionIndex = -1;
 		
-		Insert(content, cursorModifierBag, shouldCreateEditHistory: false);
+		Insert(content, viewModel, shouldCreateEditHistory: false);
 	}
 
-	private void PerformBackspace(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
+	private void PerformBackspace(TextEditorViewModel viewModel, int positionIndex, int count)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
 		
-		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
-		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
+		viewModel.LineIndex = lineIndex;
+		viewModel.SetColumnIndexAndPreferred(columnIndex);
+		viewModel.SelectionAnchorPositionIndex = -1;
 
 		Delete(
-			cursorModifierBag,
+			viewModel,
 			count,
 			false,
 			DeleteKind.Backspace,
@@ -411,16 +409,16 @@ public partial class TextEditorModel
 			usePositionIndex: true);
 	}
 
-	private void PerformDelete(CursorModifierBagTextEditor cursorModifierBag, int positionIndex, int count)
+	private void PerformDelete(TextEditorViewModel viewModel, int positionIndex, int count)
 	{
 		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
 		
-		cursorModifierBag.CursorModifier.LineIndex = lineIndex;
-		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
+		viewModel.LineIndex = lineIndex;
+		viewModel.SetColumnIndexAndPreferred(columnIndex);
+		viewModel.SelectionAnchorPositionIndex = -1;
 
 		Delete(
-			cursorModifierBag,
+			viewModel,
 			count,
 			false,
 			DeleteKind.Delete,
@@ -428,9 +426,7 @@ public partial class TextEditorModel
 			usePositionIndex: true);
 	}
 
-	public void DeleteTextByMotion(
-        MotionKind motionKind,
-        CursorModifierBagTextEditor cursorModifierBag)
+	public void DeleteTextByMotion(MotionKind motionKind, TextEditorViewModel viewModel)
     {
         var keymapArgs = motionKind switch
         {
@@ -441,12 +437,10 @@ public partial class TextEditorModel
 
         HandleKeyboardEvent(
             keymapArgs,
-            cursorModifierBag);
+            viewModel);
     }
 
-	public void DeleteByRange(
-        int count,
-        CursorModifierBagTextEditor cursorModifierBag)
+	public void DeleteByRange(int count, TextEditorViewModel viewModel)
     {
         // TODO: This needs to be rewritten everything should be deleted at the same time not a foreach loop for each character
         for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
@@ -457,7 +451,7 @@ public partial class TextEditorModel
                     Code = KeyboardKeyFacts.MetaKeys.DELETE,
                     Key = KeyboardKeyFacts.MetaKeys.DELETE,
                 },
-                cursorModifierBag);
+                viewModel);
         }
     }
 
@@ -475,8 +469,16 @@ public partial class TextEditorModel
 				TextEditorEditKind.Constructor,
 				tag: string.Empty,
 				0,
-				TextEditorCursor.Empty,
-				TextEditorCursor.Empty,
+				before_LineIndex: 0,
+				before_ColumnIndex: 0,
+				before_PreferredColumnIndex: 0,
+				before_SelectionAnchorPositionIndex: -1,
+				before_SelectionEndingPositionIndex: 0,
+				after_LineIndex: 0,
+				after_ColumnIndex: 0,
+				after_PreferredColumnIndex: 0,
+				after_SelectionAnchorPositionIndex: -1,
+				after_SelectionEndingPositionIndex: 0,
 				editedTextBuilder: null));
 		}
 		
@@ -712,23 +714,23 @@ public partial class TextEditorModel
 			TagDoNotRemove = null;
 	}
 	
-	public void UndoEdit()
+	/*public void UndoEdit()
 	{
 		var cursorModifierBag = new CursorModifierBagTextEditor(
 			Key<TextEditorViewModel>.Empty,
 			new(TextEditorCursor.Empty));
 			
 		UndoEditWithCursor(cursorModifierBag);
-	}
+	}*/
 
-	public void UndoEditWithCursor(CursorModifierBagTextEditor cursorModifierBag)
+	public void UndoEditWithCursor(TextEditorViewModel viewModel)
 	{
 		if (PersistentState.EditBlockIndex <= 0)
 			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
 
 		var mostRecentEdit = PersistentState.EditBlockList[PersistentState.EditBlockIndex];
 		var undoEdit = mostRecentEdit.ToUndo();
-		RestoreAfterCursor(cursorModifierBag, undoEdit);
+		RestoreAfterCursor(viewModel, undoEdit);
 		
 		// In case the 'ToUndo(...)' throws an exception, the decrement to the EditIndex
 		// is being done only after a successful ToUndo(...)
@@ -737,20 +739,20 @@ public partial class TextEditorModel
 		switch (undoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				PerformInsert(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.ToString());
-				RestoreBeforeCursor(cursorModifierBag, undoEdit);
+				PerformInsert(viewModel, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.ToString());
+				RestoreBeforeCursor(viewModel, undoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
-				PerformBackspace(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
-				RestoreBeforeCursor(cursorModifierBag, undoEdit);
+				PerformBackspace(viewModel, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
+				RestoreBeforeCursor(viewModel, undoEdit);
 				break;
 			case TextEditorEditKind.Delete: 
-				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
-				RestoreBeforeCursor(cursorModifierBag, undoEdit);
+				PerformDelete(viewModel, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
+				RestoreBeforeCursor(viewModel, undoEdit);
 				break;
 			case TextEditorEditKind.DeleteSelection: 
-				PerformDelete(cursorModifierBag, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
-				RestoreBeforeCursor(cursorModifierBag, undoEdit);
+				PerformDelete(viewModel, undoEdit.BeforePositionIndex, undoEdit.EditedTextBuilder.Length);
+				RestoreBeforeCursor(viewModel, undoEdit);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				break;
@@ -769,7 +771,7 @@ public partial class TextEditorModel
 					}
 					else
 					{
-						UndoEditWithCursor(cursorModifierBag);
+						UndoEditWithCursor(viewModel);
 					}
 				}
 				break;
@@ -778,16 +780,16 @@ public partial class TextEditorModel
 		}
 	}
 	
-	public void RedoEdit()
+	/*public void RedoEdit()
 	{
 		var cursorModifierBag = new CursorModifierBagTextEditor(
 			Key<TextEditorViewModel>.Empty,
 			new(TextEditorCursor.Empty));
 	
 		RedoEditWithCursor(cursorModifierBag);
-	}
+	}*/
 
-	public void RedoEditWithCursor(CursorModifierBagTextEditor cursorModifierBag, bool recursive = false)
+	public void RedoEditWithCursor(TextEditorViewModel viewModel, bool recursive = false)
 	{
 		// If there is no next then throw exception
 		if (PersistentState.EditBlockIndex >= PersistentState.EditBlockList.Count - 1)
@@ -799,25 +801,25 @@ public partial class TextEditorModel
 			PersistentState.EditBlockIndex++;
 		
 		redoEdit = PersistentState.EditBlockList[PersistentState.EditBlockIndex];
-		RestoreBeforeCursor(cursorModifierBag, redoEdit);
+		RestoreBeforeCursor(viewModel, redoEdit);
 		
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				PerformInsert(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.ToString());
-				RestoreAfterCursor(cursorModifierBag, redoEdit);
+				PerformInsert(viewModel, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.ToString());
+				RestoreAfterCursor(viewModel, redoEdit);
 				break;
 			case TextEditorEditKind.Backspace:
-				PerformBackspace(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				PerformBackspace(viewModel, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
 				// Do not restore after cursor for 'Backspace'.
 				break;
 			case TextEditorEditKind.Delete: 
-				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
-				RestoreAfterCursor(cursorModifierBag, redoEdit);
+				PerformDelete(viewModel, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				RestoreAfterCursor(viewModel, redoEdit);
 				break;
 			case TextEditorEditKind.DeleteSelection: 
-				PerformDelete(cursorModifierBag, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
-				RestoreAfterCursor(cursorModifierBag, redoEdit);
+				PerformDelete(viewModel, redoEdit.BeforePositionIndex, redoEdit.EditedTextBuilder.Length);
+				RestoreAfterCursor(viewModel, redoEdit);
 				break;
 			case TextEditorEditKind.OtherOpen:
 				while (true)
@@ -841,7 +843,7 @@ public partial class TextEditorModel
 					}
 					else
 					{
-						RedoEditWithCursor(cursorModifierBag, recursive: true);
+						RedoEditWithCursor(viewModel, recursive: true);
 					}
 				}
 				break;
@@ -852,22 +854,22 @@ public partial class TextEditorModel
 		}
 	}
 	
-	private void RestoreBeforeCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit edit)
+	private void RestoreBeforeCursor(TextEditorViewModel viewModel, TextEditorEdit edit)
 	{
-		cursorModifierBag.CursorModifier.LineIndex = edit.BeforeCursor.LineIndex;
-		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(edit.BeforeCursor.ColumnIndex);
+		viewModel.LineIndex = edit.Before_LineIndex;
+		viewModel.SetColumnIndexAndPreferred(edit.Before_ColumnIndex);
 		
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = edit.BeforeCursor.Selection.AnchorPositionIndex;
-		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = edit.BeforeCursor.Selection.EndingPositionIndex;
+		viewModel.SelectionAnchorPositionIndex = edit.Before_SelectionAnchorPositionIndex;
+		viewModel.SelectionEndingPositionIndex = edit.Before_SelectionEndingPositionIndex;
 	}
 	
-	private void RestoreAfterCursor(CursorModifierBagTextEditor cursorModifierBag, TextEditorEdit edit)
+	private void RestoreAfterCursor(TextEditorViewModel viewModel, TextEditorEdit edit)
 	{
-		cursorModifierBag.CursorModifier.LineIndex = edit.AfterCursor.LineIndex;
-		cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(edit.AfterCursor.ColumnIndex);
+		viewModel.LineIndex = edit.After_LineIndex;
+		viewModel.SetColumnIndexAndPreferred(edit.After_ColumnIndex);
 		
-		cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = edit.AfterCursor.Selection.AnchorPositionIndex;
-		cursorModifierBag.CursorModifier.SelectionEndingPositionIndex = edit.AfterCursor.Selection.EndingPositionIndex;
+		viewModel.SelectionAnchorPositionIndex = edit.After_SelectionAnchorPositionIndex;
+		viewModel.SelectionEndingPositionIndex = edit.After_SelectionEndingPositionIndex;
 	}
 	#endregion
 	
@@ -1036,32 +1038,35 @@ public partial class TextEditorModel
     /// </param>
     public void Insert(
         string value,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
 		bool shouldCreateEditHistory = true)
     {
-        var cursorModifier = cursorModifierBag.CursorModifier;
-        var originalCursor = cursorModifier.ToCursor();
+        var before_LineIndex = viewModel.LineIndex;
+		var before_ColumnIndex = viewModel.ColumnIndex;
+		var before_PreferredColumnIndex = viewModel.PreferredColumnIndex;
+		var before_SelectionAnchorPositionIndex = viewModel.SelectionAnchorPositionIndex;
+		var before_SelectionEndingPositionIndex = viewModel.SelectionEndingPositionIndex;
 
-        if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
+        if (TextEditorSelectionHelper.HasSelectedText(viewModel))
         {
             Delete(
 				// TODO: 'cursorModifierBag' is not the correct parameter here...
 				//       ...one needs to create a new cursor modifier bag which contains the single cursor that is being looked at. 
-                cursorModifierBag,
+                viewModel,
                 1,
                 false,
                 DeleteKind.Delete);
         }
 
         // Remember the cursorPositionIndex
-        var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
+        var initialCursorPositionIndex = this.GetPositionIndex(viewModel);
 
         // Track metadata with the cursorModifier itself
         //
         // Metadata must be done prior to 'InsertValue'
         //
         // 'value' is replaced by the original with any line endings changed (based on 'useLineEndKindPreference').
-        value = InsertMetadata(value, cursorModifier);
+        value = InsertMetadata(value, viewModel);
 
         // Now the text still needs to be inserted.
         // The cursorModifier is invalid, because the metadata step moved its position.
@@ -1074,8 +1079,16 @@ public partial class TextEditorModel
 				TextEditorEditKind.Insert,
 				tag: string.Empty,
 				initialCursorPositionIndex,
-				originalCursor,
-				TextEditorCursor.Empty,
+				before_LineIndex,
+				before_ColumnIndex,
+				before_PreferredColumnIndex,
+				before_SelectionAnchorPositionIndex,
+				before_SelectionEndingPositionIndex,
+				after_LineIndex: viewModel.LineIndex,
+				after_ColumnIndex: viewModel.ColumnIndex,
+				after_PreferredColumnIndex: viewModel.PreferredColumnIndex,
+				after_SelectionAnchorPositionIndex: viewModel.SelectionAnchorPositionIndex,
+				after_SelectionEndingPositionIndex: viewModel.SelectionEndingPositionIndex,
 				new StringBuilder(value)));
 		}
 
@@ -1106,11 +1119,11 @@ public partial class TextEditorModel
     }
 
 	private string InsertMetadata(
-        string value,
-        TextEditorCursorModifier cursorModifier)
+		string value,
+		TextEditorViewModel viewModel)
     {
-        var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
-        var initialCursorLineIndex = cursorModifier.LineIndex;
+        var initialCursorPositionIndex = this.GetPositionIndex(viewModel);
+        var initialCursorLineIndex = viewModel.LineIndex;
 
         this.AssertPositionIndex(initialCursorPositionIndex);
 
@@ -1187,7 +1200,7 @@ public partial class TextEditorModel
                 }
 
 				if (lineEndPositionLazyInsertRange.index == int.MinValue)
-                	lineEndPositionLazyInsertRange.index = cursorModifier.LineIndex;
+                	lineEndPositionLazyInsertRange.index = viewModel.LineIndex;
 
                 var lineEndCharacters = lineEndKind.AsCharacters();
 
@@ -1200,8 +1213,8 @@ public partial class TextEditorModel
 
                 // MutateLineEndKindCount(lineEndKind, 1);
 
-                cursorModifier.LineIndex++;
-                cursorModifier.SetColumnIndexAndPreferred(0);
+                viewModel.LineIndex++;
+                viewModel.SetColumnIndexAndPreferred(0);
             }
             else
             {
@@ -1220,7 +1233,7 @@ public partial class TextEditorModel
                 }
 
                 lineEndingsChangedValueBuilder.Append(charValue);
-                cursorModifier.SetColumnIndexAndPreferred(1 + cursorModifier.ColumnIndex);
+                viewModel.SetColumnIndexAndPreferred(1 + viewModel.ColumnIndex);
             }
         }
 
@@ -1343,7 +1356,7 @@ public partial class TextEditorModel
     /// Then, for a user's delete key, pass in <see cref="DeleteKind.Delete"/>.
     /// </param>
 	public void Delete(
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         int columnCount,
         bool expandWord,
         DeleteKind deleteKind,
@@ -1353,13 +1366,16 @@ public partial class TextEditorModel
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
 
-        var cursorModifier = cursorModifierBag.CursorModifier;
-        var originalCursor = cursorModifier.ToCursor();
+        var before_LineIndex = viewModel.LineIndex;
+		var before_ColumnIndex = viewModel.ColumnIndex;
+		var before_PreferredColumnIndex = viewModel.PreferredColumnIndex;
+		var before_SelectionAnchorPositionIndex = viewModel.SelectionAnchorPositionIndex;
+		var before_SelectionEndingPositionIndex = viewModel.SelectionEndingPositionIndex;
 
-		var initialPositionIndex = this.GetPositionIndex(cursorModifier);
-		var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
+		var initialPositionIndex = this.GetPositionIndex(viewModel);
+		var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(viewModel);
 
-        var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, usePositionIndex);
+        var tuple = DeleteMetadata(columnCount, viewModel, expandWord, deleteKind, usePositionIndex);
 
         if (tuple is null)
         {
@@ -1375,20 +1391,22 @@ public partial class TextEditorModel
 
 		if (shouldCreateEditHistory)
 		{
-			var (lineIndex, columnIndex) = GetLineAndColumnIndicesFromPositionIndex(calculatedPositionIndex);
-			var afterCursor = new TextEditorCursor(
-				lineIndex,
-				columnIndex,
-				isPrimaryCursor: true);
-			
 			if (initiallyHadSelection)
 			{
 				EnsureUndoPoint(new TextEditorEdit(
 					TextEditorEditKind.DeleteSelection,
 					tag: string.Empty,
 					calculatedPositionIndex,
-					originalCursor,
-					afterCursor,
+					before_LineIndex,
+					before_ColumnIndex,
+					before_PreferredColumnIndex,
+					before_SelectionAnchorPositionIndex,
+					before_SelectionEndingPositionIndex,
+					after_LineIndex: viewModel.LineIndex,
+					after_ColumnIndex: viewModel.ColumnIndex,
+					after_PreferredColumnIndex: viewModel.PreferredColumnIndex,
+					after_SelectionAnchorPositionIndex: viewModel.SelectionAnchorPositionIndex,
+					after_SelectionEndingPositionIndex: viewModel.SelectionEndingPositionIndex,
 					new StringBuilder(textRemoved)));
 			}
 			else if (deleteKind == DeleteKind.Delete)
@@ -1402,8 +1420,16 @@ public partial class TextEditorModel
 						TextEditorEditKind.Delete,
 						tag: string.Empty,
 						calculatedPositionIndex,
-						originalCursor,
-						afterCursor,
+						before_LineIndex,
+						before_ColumnIndex,
+						before_PreferredColumnIndex,
+						before_SelectionAnchorPositionIndex,
+						before_SelectionEndingPositionIndex,
+						after_LineIndex: viewModel.LineIndex,
+						after_ColumnIndex: viewModel.ColumnIndex,
+						after_PreferredColumnIndex: viewModel.PreferredColumnIndex,
+						after_SelectionAnchorPositionIndex: viewModel.SelectionAnchorPositionIndex,
+						after_SelectionEndingPositionIndex: viewModel.SelectionEndingPositionIndex,
 						new StringBuilder(textRemoved)));
 				}
 			}
@@ -1418,8 +1444,16 @@ public partial class TextEditorModel
 						TextEditorEditKind.Backspace,
 						tag: string.Empty,
 						initialPositionIndex, // NOTE: this is different
-						originalCursor,
-						afterCursor,
+						before_LineIndex,
+						before_ColumnIndex,
+						before_PreferredColumnIndex,
+						before_SelectionAnchorPositionIndex,
+						before_SelectionEndingPositionIndex,
+						after_LineIndex: viewModel.LineIndex,
+						after_ColumnIndex: viewModel.ColumnIndex,
+						after_PreferredColumnIndex: viewModel.PreferredColumnIndex,
+						after_SelectionAnchorPositionIndex: viewModel.SelectionAnchorPositionIndex,
+						after_SelectionEndingPositionIndex: viewModel.SelectionEndingPositionIndex,
 						new StringBuilder(textRemoved)));
 				}
 			}
@@ -1470,29 +1504,29 @@ public partial class TextEditorModel
     /// in the <see cref="DeleteValue(int, int)"/> method.
     /// </summary>
 	private (int positionIndex, int charCount)? DeleteMetadata(
-        int columnCount,
-        TextEditorCursorModifier cursorModifier,
+		int columnCount,
+        TextEditorViewModel viewModel,
         bool expandWord,
         DeleteKind deleteKind,
         bool usePositionIndex)
 	{
-        var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(cursorModifier);
-        var initialLineIndex = cursorModifier.LineIndex;
-        var positionIndex = this.GetPositionIndex(cursorModifier);
+        var initiallyHadSelection = TextEditorSelectionHelper.HasSelectedText(viewModel);
+        var initialLineIndex = viewModel.LineIndex;
+        var positionIndex = this.GetPositionIndex(viewModel);
 
-        if (initiallyHadSelection && cursorModifier.SelectionAnchorPositionIndex != -1)
+        if (initiallyHadSelection && viewModel.SelectionAnchorPositionIndex != -1)
         {
             // If user's cursor has a selection, then set the variables so the positionIndex is the
             // selection.AnchorPositionIndex and the count is selection.EndPositionIndex - selection.AnchorPositionIndex
             // and that the 'DeleteKind.Delete' logic runs.
-            var (position_LowerIndexInclusive, position_UpperIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+            var (position_LowerIndexInclusive, position_UpperIndexExclusive) = TextEditorSelectionHelper.GetSelectionBounds(viewModel);
 
             var lowerLineData = this.GetLineInformationFromPositionIndex(position_LowerIndexInclusive);
             var lowerColumnIndex = position_LowerIndexInclusive - lowerLineData.Position_StartInclusiveIndex;
 
-            cursorModifier.LineIndex = lowerLineData.Index;
-            initialLineIndex = cursorModifier.LineIndex;
-            cursorModifier.SetColumnIndexAndPreferred(lowerColumnIndex);
+            viewModel.LineIndex = lowerLineData.Index;
+            initialLineIndex = viewModel.LineIndex;
+            viewModel.SetColumnIndexAndPreferred(lowerColumnIndex);
             positionIndex = position_LowerIndexInclusive;
 
             // The deletion of a selection logic does not check for multibyte characters.
@@ -1500,8 +1534,8 @@ public partial class TextEditorModel
             columnCount = position_UpperIndexExclusive - position_LowerIndexInclusive;
             deleteKind = DeleteKind.Delete;
 
-            cursorModifier.SelectionAnchorPositionIndex = -1;
-            cursorModifier.SelectionEndingPositionIndex = 0;
+            viewModel.SelectionAnchorPositionIndex = -1;
+            viewModel.SelectionEndingPositionIndex = 0;
 		}
 
         this.AssertPositionIndex(positionIndex);
@@ -1516,18 +1550,18 @@ public partial class TextEditorModel
             if (expandWord && !initiallyHadSelection)
             {
                 var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                    cursorModifier.LineIndex,
-                    cursorModifier.ColumnIndex,
+                    viewModel.LineIndex,
+                    viewModel.ColumnIndex,
                     false);
 
                 // -1 implies that no differing kind was found on the current line.
                 if (columnIndexOfCharacterWithDifferingKind == -1)
                 {
-                    var line = this.GetLineInformation(cursorModifier.LineIndex);
+                    var line = this.GetLineInformation(viewModel.LineIndex);
                     columnIndexOfCharacterWithDifferingKind = line.LastValidColumnIndex;
                 }
 
-                columnCount = columnIndexOfCharacterWithDifferingKind - cursorModifier.ColumnIndex;
+                columnCount = columnIndexOfCharacterWithDifferingKind - viewModel.ColumnIndex;
 
                 // Cursor is at the start of a row
                 if (columnCount == 0)
@@ -1593,15 +1627,15 @@ public partial class TextEditorModel
             if (expandWord && !initiallyHadSelection)
             {
                 var columnIndexOfCharacterWithDifferingKind = this.GetColumnIndexOfCharacterWithDifferingKind(
-                    cursorModifier.LineIndex,
-                    cursorModifier.ColumnIndex,
+                    viewModel.LineIndex,
+                    viewModel.ColumnIndex,
                     true);
 
                 // -1 implies that no differing kind was found on the current line.
                 if (columnIndexOfCharacterWithDifferingKind == -1)
                     columnIndexOfCharacterWithDifferingKind = 0;
 
-                columnCount = cursorModifier.ColumnIndex - columnIndexOfCharacterWithDifferingKind;
+                columnCount = viewModel.ColumnIndex - columnIndexOfCharacterWithDifferingKind;
 
                 // Cursor is at the start of a row
                 if (columnCount == 0)
@@ -1742,8 +1776,8 @@ public partial class TextEditorModel
             // Reposition the cursor
             {
                 var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
-                cursorModifier.LineIndex = lineIndex;
-                cursorModifier.SetColumnIndexAndPreferred(columnIndex);
+                viewModel.LineIndex = lineIndex;
+                viewModel.SetColumnIndexAndPreferred(columnIndex);
             }
 
             return (positionIndex, charCount);
@@ -1756,8 +1790,8 @@ public partial class TextEditorModel
             {
                 var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(calculatedPositionIndex);
                 
-                cursorModifier.LineIndex = lineIndex;
-                cursorModifier.SetColumnIndexAndPreferred(columnIndex);
+                viewModel.LineIndex = lineIndex;
+                viewModel.SetColumnIndexAndPreferred(columnIndex);
             }
 
             return (calculatedPositionIndex, charCount);
@@ -1879,14 +1913,9 @@ public partial class TextEditorModel
         return AllText;
     }
 
-    public int GetPositionIndex(TextEditorCursor cursor)
+    public int GetPositionIndex(TextEditorViewModel viewModel)
     {
-        return GetPositionIndex(cursor.LineIndex, cursor.ColumnIndex);
-    }
-
-    public int GetPositionIndex(TextEditorCursorModifier cursorModifier)
-    {
-        return GetPositionIndex(cursorModifier.LineIndex, cursorModifier.ColumnIndex);
+        return GetPositionIndex(viewModel.LineIndex, viewModel.ColumnIndex);
     }
 
     public int GetPositionIndex(int lineIndex, int columnIndex)
@@ -2310,10 +2339,10 @@ public partial class TextEditorModel
     /// One uses this method most often to measure the position of the cursor when rendering the
     /// UI for a font-family which is proportional (i.e. not monospace).
     /// </summary>
-    public string GetTextOffsettingCursor(TextEditorCursor textEditorCursor)
+    public string GetTextOffsettingCursor(TextEditorViewModel viewModel)
     {
-        var cursorPositionIndex = GetPositionIndex(textEditorCursor);
-        var lineStartPositionIndexInclusive = GetLineInformation(textEditorCursor.LineIndex).Position_StartInclusiveIndex;
+        var cursorPositionIndex = GetPositionIndex(viewModel);
+        var lineStartPositionIndexInclusive = GetLineInformation(viewModel.LineIndex).Position_StartInclusiveIndex;
 
         return GetString(lineStartPositionIndexInclusive, cursorPositionIndex - lineStartPositionIndexInclusive);
     }

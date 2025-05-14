@@ -40,7 +40,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
 	private void CompleteForm()
 	{
-		var localTextSpanTuple = _textSpanTuple;
+		/*var localTextSpanTuple = _textSpanTuple;
 		var localInputValue = InputValue;
 		var model = TextEditorService.ModelApi.GetOrDefault(localTextSpanTuple.TextEditorTextSpan.ResourceUri);
 
@@ -91,6 +91,6 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 					_textSpanTuple.TextEditorTextSpan.ResourceUri,
 					Array.Empty<TextEditorTextSpan>());
                 return ValueTask.CompletedTask;
-            });
+            });*/
 	}
 }

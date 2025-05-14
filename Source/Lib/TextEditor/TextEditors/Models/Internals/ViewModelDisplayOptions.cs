@@ -30,7 +30,6 @@ public sealed class ViewModelDisplayOptions
     	TextEditorEditContext,
         TextEditorModel,
         TextEditorViewModel,
-        CursorModifierBagTextEditor,
         KeymapArgs,
 		TextEditorComponentData,
         Task>?
@@ -48,7 +47,6 @@ public sealed class ViewModelDisplayOptions
     	TextEditorEditContext,
         TextEditorModel,
         TextEditorViewModel,
-        CursorModifierBagTextEditor,
         KeymapArgs[], // batchKeymapArgsList
         int, // batchKeymapArgsListLength
         TextEditorComponentData,

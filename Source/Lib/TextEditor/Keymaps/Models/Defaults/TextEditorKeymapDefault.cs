@@ -23,7 +23,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
     
     public Func<TextEditorEditContext, string?, int?, ValueTask> AltF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
-    public Func<TextEditorEditContext, TextEditorModel, TextEditorViewModel, CursorModifierBagTextEditor, ValueTask> ShiftF12Func { get; set; } = (_, _, _, _) => ValueTask.CompletedTask;
+    public Func<TextEditorEditContext, TextEditorModel, TextEditorViewModel, ValueTask> ShiftF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
 
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {
@@ -51,10 +51,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 
 		// An NRE will be caught by the IBackgroundTaskService so don't bother checking 'viewModel is null'.
         var viewModel = editContext.GetViewModelModifier(onKeyDown.ViewModelKey);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
-        var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-        if (viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+        if (viewModel is null)
             return;
 
 		var menuKind = MenuKind.None;
@@ -99,7 +97,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                cursorModifierBag,
 		                onKeyDown.ComponentData.CommonComponentRenderers,
 		                onKeyDown.ComponentData.NotificationService);
 		            
@@ -112,7 +109,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            break;
 		        case "KeyV":
@@ -121,7 +117,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
@@ -132,7 +127,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                cursorModifierBag,
 		                onKeyDown.ComponentData.ClipboardService);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
@@ -142,16 +136,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.SelectAll(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            break;
 		        case "KeyZ":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 		            TextEditorCommandDefaultFunctions.Undo(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
 		            break;
@@ -160,8 +152,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.Redo(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
 		            break;
@@ -170,8 +161,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.Duplicate(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
 		            break;
@@ -180,32 +170,28 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            TextEditorCommandDefaultFunctions.ScrollLineDown(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            break;
 		        case "ArrowUp":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
 		            TextEditorCommandDefaultFunctions.ScrollLineUp(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            break;
 		        case "PageDown":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.CursorMovePageBottom(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            break;
 		        case "PageUp":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.CursorMovePageTop(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            break;
 		        case "Slash":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
@@ -213,7 +199,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                cursorModifierBag,
 		                onKeyDown.ComponentData.TextEditorService,
 		                onKeyDown.ComponentData,
 		                onKeyDown.ComponentData.TextEditorComponentRenderers);
@@ -227,7 +212,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					{
 						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex; lineOffset++)
 						{
-							if (primaryCursorModifier.LineIndex == collapsePoint.AppendToLineIndex + lineOffset)
+							if (viewModel.LineIndex == collapsePoint.AppendToLineIndex + lineOffset)
 								encompassingCollapsePoint = collapsePoint;
 						}
 					}
@@ -237,8 +222,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            		_ = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(
 		            		encompassingCollapsePoint.AppendToLineIndex,
 	            			modelModifier,
-	            			viewModel,
-	            			primaryCursorModifier);
+	            			viewModel);
 	            	}
 					
 		            shouldRevealCursor = true;
@@ -251,8 +235,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                editContext,
 			                modelModifier,
 			                viewModel,
-			                cursorModifierBag,
-			                primaryCursorModifier,
 			                onKeyDown.ComponentData.FindAllService);
 		        	}
 		        	else
@@ -261,8 +243,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                editContext,
 			                modelModifier,
 			                viewModel,
-			                cursorModifierBag,
-			                primaryCursorModifier,
 			                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
 			        }
 		            
@@ -275,8 +255,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                editContext,
 			                modelModifier,
 			                viewModel,
-			                cursorModifierBag,
-			                primaryCursorModifier,
 			                onKeyDown.ComponentData.FindAllService);*/
 		        	}
 		        	else
@@ -287,8 +265,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                editContext,
 			                modelModifier,
 			                viewModel,
-			                cursorModifierBag,
-			                primaryCursorModifier,
 			                onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi);
 			        }
 		            
@@ -302,8 +278,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
                 		onKeyDown.KeymapArgs,
 				        editContext,
 				        modelModifier,
-				        viewModel,
-				        cursorModifierBag);
+				        viewModel);
 				        
 				    if (viewModel.PersistentState.MenuKind != MenuKind.None)
 				    {
@@ -317,7 +292,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "Backspace":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 					modelModifier.Delete(
-	                    cursorModifierBag,
+	                    viewModel,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModel.DeleteKind.Backspace);
@@ -326,7 +301,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				case "Delete":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 					modelModifier.Delete(
-	                    cursorModifierBag,
+	                    viewModel,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModel.DeleteKind.Delete);
@@ -337,9 +312,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					var valueToInsert = modelModifier.LineEndKindPreference.AsCharacters();
 			
 					// Match indentation on newline keystroke
-					var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+					var line = modelModifier.GetLineInformation(viewModel.LineIndex);
 		
-					var cursorPositionIndex = line.Position_StartInclusiveIndex + primaryCursorModifier.ColumnIndex;
+					var cursorPositionIndex = line.Position_StartInclusiveIndex + viewModel.ColumnIndex;
 					var indentationPositionIndex = line.Position_StartInclusiveIndex;
 		
 					_indentationBuilder.Clear();
@@ -357,18 +332,18 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					var indentationLength = _indentationBuilder.Length;
 					valueToInsert = _indentationBuilder.ToString() + valueToInsert;
 					
-					primaryCursorModifier.SelectionAnchorPositionIndex = -1;
-					primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
-        			primaryCursorModifier.ColumnIndex = 0;
+					viewModel.SelectionAnchorPositionIndex = -1;
+					viewModel.LineIndex = viewModel.LineIndex;
+        			viewModel.ColumnIndex = 0;
 					
 					modelModifier.Insert(
 			            valueToInsert,
-			            cursorModifierBag);
+			            viewModel);
 			            
-			        if (primaryCursorModifier.LineIndex > 1)
+			        if (viewModel.LineIndex > 1)
 			        {
-			            primaryCursorModifier.LineIndex--;
-			            primaryCursorModifier.ColumnIndex = indentationLength;
+			            viewModel.LineIndex--;
+			            viewModel.ColumnIndex = indentationLength;
 			        }
 			            
 	                shouldRevealCursor = true;
@@ -380,7 +355,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                cursorModifierBag,
 		                shouldSelectText: onKeyDown.KeymapArgs.ShiftKey);
 	            	shouldRevealCursor = true;
 	            	break;
@@ -392,7 +366,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 							editContext,
 							modelModifier,
 							viewModel,
-							modelModifier.GetPositionIndex(primaryCursorModifier),
+							modelModifier.GetPositionIndex(viewModel),
 							onKeyDown.ComponentData,
 							onKeyDown.ComponentData.TextEditorComponentRenderers,
 					        modelModifier.PersistentState.ResourceUri);
@@ -414,7 +388,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        editContext,
 				        modelModifier,
 				        viewModel,
-				        cursorModifierBag,
 				        onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi,
 				        onKeyDown.ComponentData.TextEditorService,
 				        onKeyDown.ComponentData.DropdownService);
@@ -434,7 +407,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        		editContext,
 				        modelModifier,
 				        viewModel,
-				        cursorModifierBag,
         				new Category("CodeSearchService"));
 			        break;
 				default:
@@ -451,16 +423,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					TextEditorCommandDefaultFunctions.ScrollPageDown(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            break;
 		        case "PageUp":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
 					TextEditorCommandDefaultFunctions.ScrollPageUp(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                cursorModifierBag);
+		                viewModel);
 		            break;
 				case "ArrowLeft":
 	            case "ArrowDown":
@@ -488,8 +458,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                		onKeyDown.KeymapArgs,
 					        editContext,
 					        modelModifier,
-					        viewModel,
-					        cursorModifierBag);
+					        viewModel);
 					        
 					    if (viewModel.PersistentState.MenuKind != MenuKind.None)
 					    {
@@ -508,8 +477,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        		await ShiftF12Func.Invoke(
 		        			editContext,
 		        			modelModifier,
-		        			viewModel,
-		        			cursorModifierBag);
+		        			viewModel);
 		        	}
 		        	else
 		        	{
@@ -517,7 +485,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        		editContext,
 					        modelModifier,
 					        viewModel,
-			        		cursorModifierBag,
 	        				new Category("main"));
 			        }
 			        break;
@@ -537,7 +504,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        editContext,
 				        modelModifier,
 				        viewModel,
-				        cursorModifierBag,
 				        onKeyDown.ComponentData.TextEditorService.JsRuntimeCommonApi,
 				        onKeyDown.ComponentData.EnvironmentProvider,
 				        onKeyDown.ComponentData.FileSystemProvider,
@@ -572,7 +538,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				case "Backspace":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 					modelModifier.Delete(
-	                    cursorModifierBag,
+	                    viewModel,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModel.DeleteKind.Backspace);
@@ -583,7 +549,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				case "Delete":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 					modelModifier.Delete(
-	                    cursorModifierBag,
+	                    viewModel,
 	                    1,
 	                    onKeyDown.KeymapArgs.CtrlKey,
 	                    TextEditorModel.DeleteKind.Delete);
@@ -596,9 +562,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					var valueToInsert = modelModifier.LineEndKindPreference.AsCharacters();
 			
 					// Match indentation on newline keystroke
-					var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+					var line = modelModifier.GetLineInformation(viewModel.LineIndex);
 		
-					var cursorPositionIndex = line.Position_StartInclusiveIndex + primaryCursorModifier.ColumnIndex;
+					var cursorPositionIndex = line.Position_StartInclusiveIndex + viewModel.ColumnIndex;
 					var indentationPositionIndex = line.Position_StartInclusiveIndex;
 		
 					_indentationBuilder.Clear();
@@ -617,14 +583,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					
 					if (onKeyDown.KeymapArgs.ShiftKey)
 					{
-						primaryCursorModifier.SelectionAnchorPositionIndex = -1;
-						primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
-    					primaryCursorModifier.ColumnIndex = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
+						viewModel.SelectionAnchorPositionIndex = -1;
+						viewModel.LineIndex = viewModel.LineIndex;
+    					viewModel.ColumnIndex = modelModifier.GetLineLength(viewModel.LineIndex);
 					}
 					
 					modelModifier.Insert(
 			            valueToInsert,
-			            cursorModifierBag);
+			            viewModel);
 			            
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.None;
@@ -633,23 +599,21 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                break;
 				case "Tab":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-					if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+					if (TextEditorSelectionHelper.HasSelectedText(viewModel))
 		        	{
 		        		if (onKeyDown.KeymapArgs.ShiftKey)
 			        	{
 			        		TextEditorCommandDefaultFunctions.IndentLess(
 				                editContext,
 				                modelModifier,
-				                viewModel,
-				                cursorModifierBag);
+				                viewModel);
 			        	}
 			        	else
 			        	{
 			        		TextEditorCommandDefaultFunctions.IndentMore(
 				                editContext,
 				                modelModifier,
-				                viewModel,
-				                cursorModifierBag);
+				                viewModel);
 			        	}
 			        	
 			        	shouldRevealCursor = true;
@@ -662,14 +626,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        		TextEditorCommandDefaultFunctions.IndentLess(
 				                editContext,
 				                modelModifier,
-				                viewModel,
-				                cursorModifierBag);
+				                viewModel);
 			        	}
 			        	else
 			        	{
 			            	modelModifier.Insert(
 			                    "\t",
-			                    cursorModifierBag);
+			                    viewModel);
 			                    
 			                menuKind = MenuKind.None;
 			                shouldClearTooltip = true;
@@ -683,7 +646,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 	            	modelModifier.Insert(
 	                    " ",
-	                    cursorModifierBag);
+	                    viewModel);
 	                    
 	                shouldRevealCursor = true;
 	                shouldClearTooltip = true;
@@ -704,7 +667,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 					modelModifier.Insert(
 	                    onKeyDown.KeymapArgs.Key,
-	                    cursorModifierBag);
+	                    viewModel);
 	                
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.None;
@@ -749,7 +712,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 	            	modelModifier.Insert(
 	                    onKeyDown.KeymapArgs.Key,
-	                    cursorModifierBag);
+	                    viewModel);
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.AutoCompleteMenu;
 	                shouldClearTooltip = true;
@@ -775,8 +738,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        editContext,
 				        modelModifier,
 				        viewModel,
-				        cursorModifierBag,
-				        primaryCursorModifier,
 				        onKeyDown.ComponentData.DropdownService,
 				        onKeyDown.ComponentData);
 			        break;
@@ -785,8 +746,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        		editContext,
 				        modelModifier,
 				        viewModel,
-				        cursorModifierBag,
-				        primaryCursorModifier,
 				        onKeyDown.ComponentData.DropdownService,
 				        onKeyDown.ComponentData);
 			        break;

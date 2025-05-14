@@ -12,11 +12,11 @@ public static class TextEditorSelectionHelper
             textEditorSelection.EndingPositionIndex);
     }
 
-    public static bool HasSelectedText(TextEditorCursorModifier cursorModifier)
+    public static bool HasSelectedText(TextEditorViewModel viewModel)
     {
         return HasSelectedText(
-            cursorModifier.SelectionAnchorPositionIndex,
-            cursorModifier.SelectionEndingPositionIndex);
+            viewModel.SelectionAnchorPositionIndex,
+            viewModel.SelectionEndingPositionIndex);
     }
 
     public static bool HasSelectedText(int anchorPositionIndex, int endingPositionIndex)
@@ -38,12 +38,12 @@ public static class TextEditorSelectionHelper
     }
     
     public static string? GetSelectedText(
-        TextEditorCursorModifier cursorModifier,
+        TextEditorViewModel viewModel,
         TextEditorModel textEditorModel)
     {
         return GetSelectedText(
-            cursorModifier.SelectionAnchorPositionIndex,
-            cursorModifier.SelectionEndingPositionIndex,
+            viewModel.SelectionAnchorPositionIndex,
+            viewModel.SelectionEndingPositionIndex,
             textEditorModel);
     }
 
@@ -66,30 +66,11 @@ public static class TextEditorSelectionHelper
         return null;
     }
 
-    public static TextEditorCursor SelectLinesRange(
-        TextEditorModel textEditorModel,
-        int startingLineIndex,
-        int count)
+    public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(TextEditorViewModel viewModel)
     {
-        throw new NotImplementedException("TODO: (2023-12-13) Writing immutability for text editor");
-    }
-
-    public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(
-        TextEditorSelection textEditorSelection)
-    {
-        return GetSelectionBounds(
-            textEditorSelection.AnchorPositionIndex,
-            textEditorSelection.EndingPositionIndex);
+    	return GetSelectionBounds(viewModel.SelectionAnchorPositionIndex, viewModel.SelectionEndingPositionIndex);
     }
     
-    public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(
-        TextEditorCursorModifier cursorModifier)
-    {
-        return GetSelectionBounds(
-            cursorModifier.SelectionAnchorPositionIndex,
-            cursorModifier.SelectionEndingPositionIndex);
-    }
-
     public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(
         int anchorPositionIndex,
         int endingPositionIndex)

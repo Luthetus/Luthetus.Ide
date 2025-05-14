@@ -97,14 +97,12 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	
     		var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-            var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+            if (modelModifier is null || viewModelModifier is null)
                 return;
             
-            _lineIndexPrevious = primaryCursorModifier.LineIndex;
-            _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
+            _lineIndexPrevious = viewModelModifier.LineIndex;
+            _columnIndexPrevious = viewModelModifier.ColumnIndex;
             
             if (!viewModelModifier.PersistentState.FirstPresentationLayerKeysList.Contains(
             		TextEditorDevToolsPresentationFacts.PresentationKey))
@@ -134,7 +132,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	
 			var targetScope = extendedCompilerService.GetScopeByPositionIndex(
 				resourceUri,
-				modelModifier.GetPositionIndex(primaryCursorModifier));
+				modelModifier.GetPositionIndex(viewModelModifier));
 			
 			if (!targetScope.ConstructorWasInvoked)
 				return;
