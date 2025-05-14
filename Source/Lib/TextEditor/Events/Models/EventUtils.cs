@@ -262,18 +262,14 @@ public static class EventUtils
         if (modelModifier is null || viewModel is null)
             return (0, 0, 0, 0);
     
-        var charMeasurements = viewModel.CharAndLineMeasurements;
-        var textEditorDimensions = viewModel.TextEditorDimensions;
-        var scrollbarDimensions = viewModel.ScrollbarDimensions;
-    
-        var positionX = mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft;
-        var positionY = mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop;
+        var positionX = mouseEventArgs.ClientX - viewModel.TextEditorDimensions.BoundingClientRectLeft;
+        var positionY = mouseEventArgs.ClientY - viewModel.TextEditorDimensions.BoundingClientRectTop;
     
         // Scroll position offset
-        positionX += scrollbarDimensions.ScrollLeft;
-        positionY += scrollbarDimensions.ScrollTop;
+        positionX += viewModel.ScrollLeft;
+        positionY += viewModel.ScrollTop;
         
-        var lineIndex = (int)(positionY / charMeasurements.LineHeight);
+        var lineIndex = (int)(positionY / viewModel.CharAndLineMeasurements.LineHeight);
         
         var hiddenLineCount = 0;
         
@@ -287,7 +283,7 @@ public static class EventUtils
             ? modelModifier.LineCount - 1
             : lineIndex;
             
-        var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
+        var columnIndexDouble = positionX / viewModel.CharAndLineMeasurements.CharacterWidth;
         int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
         
         var inlineUi = default(InlineUi);

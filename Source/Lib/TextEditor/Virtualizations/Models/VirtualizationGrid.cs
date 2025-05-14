@@ -168,7 +168,7 @@ public struct VirtualizationGrid
 		else
 			componentData.VirtualizedLineCacheUsageHashSet.Clear();
 		
-		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollbarDimensions.ScrollLeft);
+		var absDiffScrollLeft = Math.Abs(componentData.VirtualizedLineCacheCreatedWithScrollLeft - viewModel.ScrollLeft);
 		var useAll = absDiffScrollLeft < 0.01 && componentData.VirtualizedLineCacheViewModelKey == viewModel.PersistentState.ViewModelKey;
 		
 		var reUsedLines = 0;
@@ -354,7 +354,7 @@ public struct VirtualizationGrid
 		
 		componentData.VirtualizedLineCacheViewModelKey = viewModel.PersistentState.ViewModelKey;
 		componentData.VirtualizedLineCacheSpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
-		componentData.VirtualizedLineCacheCreatedWithScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
+		componentData.VirtualizedLineCacheCreatedWithScrollLeft = viewModel.ScrollLeft;
 		
 		for (var i = componentData.VirtualizedLineIndexKeyList.Count - 1; i >= 0; i--)
 		{

@@ -44,7 +44,11 @@ public sealed class TextEditorViewModel : IDisposable
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         VirtualizationGrid virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
-		ScrollbarDimensions scrollbarDimensions,
+		double scrollLeft,
+	    double scrollTop,
+	    double scrollWidth,
+	    double scrollHeight,
+	    double marginScrollHeight,
 		Category category)
     {
     	PersistentState = new TextEditorViewModelPersistentState(
@@ -78,7 +82,13 @@ public sealed class TextEditorViewModel : IDisposable
     
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;
-		ScrollbarDimensions = scrollbarDimensions;
+		
+		ScrollLeft = scrollLeft;
+	    ScrollTop = scrollTop;
+	    ScrollWidth = scrollWidth;
+	    ScrollHeight = scrollHeight;
+	    MarginScrollHeight = marginScrollHeight;
+		
         CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         
         LineIndex = 0;
@@ -105,7 +115,13 @@ public sealed class TextEditorViewModel : IDisposable
 	    
 	    VirtualizationResult = other.VirtualizationResult;
 		TextEditorDimensions = other.TextEditorDimensions;
-		ScrollbarDimensions = other.ScrollbarDimensions;
+		
+		ScrollLeft = other.ScrollLeft;
+	    ScrollTop = other.ScrollTop;
+	    ScrollWidth = other.ScrollWidth;
+	    ScrollHeight = other.ScrollHeight;
+	    MarginScrollHeight = other.MarginScrollHeight;
+		
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
 		
 		CreateCacheWasInvoked = other.CreateCacheWasInvoked;
@@ -135,7 +151,13 @@ public sealed class TextEditorViewModel : IDisposable
     /// </summary>
     public VirtualizationGrid VirtualizationResult { get; set; }
 	public TextEditorDimensions TextEditorDimensions { get; set; }
-	public ScrollbarDimensions ScrollbarDimensions { get; set; }
+	
+	public double ScrollLeft { get; set; }
+    public double ScrollTop { get; set; }
+    public double ScrollWidth { get; set; }
+    public double ScrollHeight { get; set; }
+    public double MarginScrollHeight { get; set; }
+	
 	/// <summary>
 	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...
 	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
@@ -187,6 +209,34 @@ public sealed class TextEditorViewModel : IDisposable
         ColumnIndex = columnIndex;
         PreferredColumnIndex = columnIndex;
     }
+    
+    public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
+		SetScrollLeft((int)Math.Ceiling(ScrollLeft + pixels), textEditorDimensions);
+
+	public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
+	{
+		var resultScrollLeft = Math.Max(0, pixels);
+		var maxScrollLeft = (int)Math.Max(0, ScrollWidth - textEditorDimensions.Width);
+
+		if (resultScrollLeft > maxScrollLeft)
+			resultScrollLeft = maxScrollLeft;
+
+		ScrollLeft = resultScrollLeft;
+	}
+
+	public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
+		SetScrollTop((int)Math.Ceiling(ScrollTop + pixels), textEditorDimensions);
+
+	public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
+	{
+		var resultScrollTop = Math.Max(0, pixels);
+		var maxScrollTop = (int)Math.Max(0, ScrollHeight - textEditorDimensions.Height);
+
+		if (resultScrollTop > maxScrollTop)
+			resultScrollTop = maxScrollTop;
+
+		ScrollTop = resultScrollTop;
+	}
 
     public void Dispose()
     {

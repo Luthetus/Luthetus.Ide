@@ -247,7 +247,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 				    
 				        var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 				        
-				        var originalScrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
+				        var originalScrollLeft = viewModelModifier.ScrollLeft;
 				        
 				        var textSpan = new TextEditorTextSpan(
 				            startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
@@ -267,7 +267,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 				        //    (int)viewModelModifier.CharAndLineMeasurements.LineHeight,
 				        //    viewModelModifier.TextEditorDimensions);
 				        
-				        viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithSetScrollLeft(
+				        viewModelModifier.SetScrollLeft(
 				            (int)originalScrollLeft,
 				            viewModelModifier.TextEditorDimensions);
 				    }

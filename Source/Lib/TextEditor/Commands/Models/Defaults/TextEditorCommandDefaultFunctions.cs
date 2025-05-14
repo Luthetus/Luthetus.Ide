@@ -1285,7 +1285,7 @@ public class TextEditorCommandDefaultFunctions
                 tabsOnSameLineBeforeCursor *
                 viewModel.CharAndLineMeasurements.CharacterWidth;
                 
-            leftOffset -= viewModel.ScrollbarDimensions.ScrollLeft;
+            leftOffset -= viewModel.ScrollLeft;
         }
         
         if (topOffset is null)
@@ -1300,7 +1300,7 @@ public class TextEditorCommandDefaultFunctions
         
         	topOffset ??= ((viewModel.LineIndex - hiddenLineCount) + 1) *
 	        	viewModel.CharAndLineMeasurements.LineHeight -
-	        	viewModel.ScrollbarDimensions.ScrollTop;
+	        	viewModel.ScrollTop;
         }
 		
 		var dropdownRecord = new DropdownRecord(

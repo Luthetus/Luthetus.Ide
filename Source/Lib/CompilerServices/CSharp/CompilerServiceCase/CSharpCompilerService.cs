@@ -271,15 +271,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				componentData,
 				editContext)
 			.ConfigureAwait(false);
-
-		var textEditorDimensions = viewModelModifier.TextEditorDimensions;
-		var scrollbarDimensions = viewModelModifier.ScrollbarDimensions;
 	
 		var relativeCoordinatesOnClick = new RelativeCoordinates(
-		    mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft,
-		    mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop,
-		    scrollbarDimensions.ScrollLeft,
-		    scrollbarDimensions.ScrollTop);
+		    mouseEventArgs.ClientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
+		    mouseEventArgs.ClientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
+		    viewModelModifier.ScrollLeft,
+		    viewModelModifier.ScrollTop);
 
         var cursorPositionIndex = modelModifier.GetPositionIndex(
         	lineAndColumnIndex.LineIndex,
@@ -442,8 +439,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		var relativeCoordinatesOnClick = new RelativeCoordinates(
 		    mouseEventArgs.ClientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
 		    mouseEventArgs.ClientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
-		    viewModelModifier.ScrollbarDimensions.ScrollLeft,
-		    viewModelModifier.ScrollbarDimensions.ScrollTop);
+		    viewModelModifier.ScrollLeft,
+		    viewModelModifier.ScrollTop);
 
         if (!foundMatch && symbols.Count != 0)
         {

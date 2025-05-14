@@ -523,9 +523,9 @@ public sealed class TextEditorComponentData
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
         
         // Proportional Left
-    	var sliderProportionalLeftInPixels = _renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft *
+    	var sliderProportionalLeftInPixels = _renderBatch.ViewModel.ScrollLeft *
             scrollbarWidthInPixels /
-            _renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+            _renderBatch.ViewModel.ScrollWidth;
 
 		_uiStringBuilder.Clear();
 		
@@ -543,7 +543,7 @@ public sealed class TextEditorComponentData
 
         var sliderProportionalWidthInPixels = pageWidth *
             scrollbarWidthInPixels /
-            _renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+            _renderBatch.ViewModel.ScrollWidth;
         
         _uiStringBuilder.Append("width: ");
         _uiStringBuilder.Append(sliderProportionalWidthInPixels.ToCssValue());
@@ -557,9 +557,9 @@ public sealed class TextEditorComponentData
         var scrollbarHeightInPixels = _renderBatch.ViewModel.TextEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         // Proportional Top
-        var sliderProportionalTopInPixels = _renderBatch.ViewModel.ScrollbarDimensions.ScrollTop *
+        var sliderProportionalTopInPixels = _renderBatch.ViewModel.ScrollTop *
             scrollbarHeightInPixels /
-            _renderBatch.ViewModel.ScrollbarDimensions.ScrollHeight;
+            _renderBatch.ViewModel.ScrollHeight;
 
 		_uiStringBuilder.Clear();
 		
@@ -577,7 +577,7 @@ public sealed class TextEditorComponentData
 
         var sliderProportionalHeightInPixels = pageHeight *
             scrollbarHeightInPixels /
-            _renderBatch.ViewModel.ScrollbarDimensions.ScrollHeight;
+            _renderBatch.ViewModel.ScrollHeight;
 
         var sliderProportionalHeightInPixelsInvariantCulture = sliderProportionalHeightInPixels.ToCssValue();
 
@@ -668,9 +668,9 @@ public sealed class TextEditorComponentData
 
         _uiStringBuilder.Append("width: ");
 
-        var fullWidthValue = _renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+        var fullWidthValue = _renderBatch.ViewModel.ScrollWidth;
 
-        if (_renderBatch.ViewModel.TextEditorDimensions.Width > _renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth)
+        if (_renderBatch.ViewModel.TextEditorDimensions.Width > _renderBatch.ViewModel.ScrollWidth)
             fullWidthValue = _renderBatch.ViewModel.TextEditorDimensions.Width; // If content does not fill the viewable width of the Text Editor User Interface
 
         var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
@@ -880,10 +880,10 @@ public sealed class TextEditorComponentData
         }
 
         _uiStringBuilder.Append("width: ");
-        var fullWidthValue = _renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+        var fullWidthValue = _renderBatch.ViewModel.ScrollWidth;
 
         if (_renderBatch.ViewModel.TextEditorDimensions.Width >
-            _renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth)
+            _renderBatch.ViewModel.ScrollWidth)
         {
             // If content does not fill the viewable width of the Text Editor User Interface
             fullWidthValue = _renderBatch.ViewModel.TextEditorDimensions.Width;
@@ -1465,20 +1465,20 @@ public sealed class TextEditorComponentData
 		    }
 		}
 		
-		if (_renderBatch.ViewModel.ScrollbarDimensions.ScrollHeight >= 0)
+		if (_renderBatch.ViewModel.ScrollHeight >= 0)
 		{
-        	if (Math.Abs(_previousScrollHeightInPixels - _renderBatch.ViewModel.ScrollbarDimensions.ScrollHeight) >= 0.2)
+        	if (Math.Abs(_previousScrollHeightInPixels - _renderBatch.ViewModel.ScrollHeight) >= 0.2)
         	{
-        		_previousScrollHeightInPixels = _renderBatch.ViewModel.ScrollbarDimensions.ScrollHeight;
+        		_previousScrollHeightInPixels = _renderBatch.ViewModel.ScrollHeight;
         		shouldCalculateVerticalSlider = true;
 		    }
 		}
 		
-		if (_renderBatch.ViewModel.ScrollbarDimensions.ScrollTop >= 0)
+		if (_renderBatch.ViewModel.ScrollTop >= 0)
 		{
-        	if (Math.Abs(_previousScrollTopInPixels - _renderBatch.ViewModel.ScrollbarDimensions.ScrollTop) >= 0.2)
+        	if (Math.Abs(_previousScrollTopInPixels - _renderBatch.ViewModel.ScrollTop) >= 0.2)
         	{
-        		_previousScrollTopInPixels = _renderBatch.ViewModel.ScrollbarDimensions.ScrollTop;
+        		_previousScrollTopInPixels = _renderBatch.ViewModel.ScrollTop;
         		shouldCalculateVerticalSlider = true;
 		    }
 		}
@@ -1493,20 +1493,20 @@ public sealed class TextEditorComponentData
 		    }
 		}
 		
-		if (_renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth >= 0)
+		if (_renderBatch.ViewModel.ScrollWidth >= 0)
 		{
-        	if (Math.Abs(_previousScrollWidthInPixels - _renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth) >= 0.2)
+        	if (Math.Abs(_previousScrollWidthInPixels - _renderBatch.ViewModel.ScrollWidth) >= 0.2)
         	{
-        		_previousScrollWidthInPixels = _renderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+        		_previousScrollWidthInPixels = _renderBatch.ViewModel.ScrollWidth;
         		shouldCalculateHorizontalSlider = true;
 		    }
 		}
 		
-		if (_renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft >= 0)
+		if (_renderBatch.ViewModel.ScrollLeft >= 0)
 		{
-        	if (Math.Abs(_previousScrollLeftInPixels - _renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft) >= 0.2)
+        	if (Math.Abs(_previousScrollLeftInPixels - _renderBatch.ViewModel.ScrollLeft) >= 0.2)
         	{
-        		_previousScrollLeftInPixels = _renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft;
+        		_previousScrollLeftInPixels = _renderBatch.ViewModel.ScrollLeft;
         		shouldCalculateHorizontalSlider = true;
 		    }
 		}

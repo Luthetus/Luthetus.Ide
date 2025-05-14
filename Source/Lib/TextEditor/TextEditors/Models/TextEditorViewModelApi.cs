@@ -110,7 +110,11 @@ public sealed class TextEditorViewModelApi
 			_commonBackgroundTaskApi,
 			VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
-			new ScrollbarDimensions(0, 0, 0, 0, 0),
+			scrollLeft: 0,
+	    	scrollTop: 0,
+		    scrollWidth: 0,
+		    scrollHeight: 0,
+		    marginScrollHeight: 0,
 			category);
 			
 		_textEditorService.RegisterViewModel(editContext, viewModel);
@@ -171,11 +175,9 @@ public sealed class TextEditorViewModelApi
     {
     	viewModel.ScrollWasModified = true;
 
-		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
-			.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.TextEditorDimensions);
+		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.TextEditorDimensions);
 
-		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
-			.WithSetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.TextEditorDimensions);
+		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.TextEditorDimensions);
     }
         
     public void SetScrollPositionLeft(
@@ -185,8 +187,7 @@ public sealed class TextEditorViewModelApi
     {
     	viewModel.ScrollWasModified = true;
 
-		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
-			.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.TextEditorDimensions);
+		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.TextEditorDimensions);
     }
     
     public void SetScrollPositionTop(
@@ -196,8 +197,7 @@ public sealed class TextEditorViewModelApi
     {
     	viewModel.ScrollWasModified = true;
 
-		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
-			.WithSetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.TextEditorDimensions);
+		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.TextEditorDimensions);
     }
 
     public void MutateScrollVerticalPosition(
@@ -207,8 +207,7 @@ public sealed class TextEditorViewModelApi
     {
         viewModel.ScrollWasModified = true;
 
-        viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
-			.WithMutateScrollTop((int)Math.Ceiling(pixels), viewModel.TextEditorDimensions);
+        viewModel.MutateScrollTop((int)Math.Ceiling(pixels), viewModel.TextEditorDimensions);
     }
 
     public void MutateScrollHorizontalPosition(
@@ -218,8 +217,7 @@ public sealed class TextEditorViewModelApi
     {
         viewModel.ScrollWasModified = true;
 
-		viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions
-			.WithMutateScrollLeft((int)Math.Ceiling(pixels), viewModel.TextEditorDimensions);
+		viewModel.MutateScrollLeft((int)Math.Ceiling(pixels), viewModel.TextEditorDimensions);
     }
 
     public void ScrollIntoView(
@@ -247,8 +245,8 @@ public sealed class TextEditorViewModelApi
         var scrollTop = (lineIndex - hiddenLineCount) *
             viewModel.CharAndLineMeasurements.LineHeight;
 
-		var currentScrollLeft = viewModel.ScrollbarDimensions.ScrollLeft;
-		var currentScrollTop = viewModel.ScrollbarDimensions.ScrollTop;
+		var currentScrollLeft = viewModel.ScrollLeft;
+		var currentScrollTop = viewModel.ScrollTop;
 		
 		bool caseA;
 		bool caseB;
@@ -911,7 +909,7 @@ public sealed class TextEditorViewModelApi
         try
 		{
 			var verticalStartingIndex = (int)Math.Floor(
-				viewModel.ScrollbarDimensions.ScrollTop /
+				viewModel.ScrollTop /
 				viewModel.CharAndLineMeasurements.LineHeight);
 
 			var verticalTake = (int)Math.Ceiling(
@@ -922,7 +920,7 @@ public sealed class TextEditorViewModelApi
 			verticalTake += 1;
 
 			var horizontalStartingIndex = (int)Math.Floor(
-				viewModel.ScrollbarDimensions.ScrollLeft /
+				viewModel.ScrollLeft /
 				viewModel.CharAndLineMeasurements.CharacterWidth);
 
 			var horizontalTake = (int)Math.Ceiling(
@@ -1196,12 +1194,9 @@ public sealed class TextEditorViewModelApi
 			viewModel.VirtualizationResult = virtualizationResult;
 			viewModel.CreateCacheWasInvoked = false;
 			
-			viewModel.ScrollbarDimensions = viewModel.ScrollbarDimensions with
-			{
-				ScrollWidth = totalWidth,
-				ScrollHeight = totalHeight,
-				MarginScrollHeight = marginScrollHeight
-			};
+			viewModel.ScrollWidth = totalWidth;
+			viewModel.ScrollHeight = totalHeight;
+			viewModel.MarginScrollHeight = marginScrollHeight;
 			
 			#if DEBUG
 			LuthetusDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));

@@ -167,7 +167,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					{
 						var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 						
-						var originalScrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
+						var originalScrollLeft = viewModelModifier.ScrollLeft;
 						
 						var textSpan = new TextEditorTextSpan(
 						    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
@@ -183,7 +183,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					        viewModelModifier,
 					        textSpan);
 					        
-				        viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithSetScrollLeft(
+				        viewModelModifier.SetScrollLeft(
 				        	(int)originalScrollLeft,
 				        	viewModelModifier.TextEditorDimensions);
 					}

@@ -228,8 +228,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		            .SetScrollPositionBoth(
 		                _componentData.RowSectionElementId,
 		                _componentData.GutterElementId,
-		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft,
-		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
+		                _componentData._renderBatch.ViewModel.ScrollLeft,
+		                _componentData._renderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
 			}
         }
@@ -660,7 +660,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     		return;
     		
     	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
-		HORIZONTAL_scrollLeftOnMouseDown = _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft;
+		HORIZONTAL_scrollLeftOnMouseDown = _componentData._renderBatch.ViewModel.ScrollLeft;
 
 		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
@@ -690,7 +690,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     		return;
     
     	VERTICAL_thinksLeftMouseButtonIsDown = true;
-		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollTop;
+		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollTop;
 
 		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(VERTICAL_ScrollbarElementId)
@@ -747,7 +747,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
         {
 			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
-			var scrollbarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
 		
 			OnScrollHorizontal onScrollHorizontal;
 
@@ -767,11 +766,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	            var scrollLeft = HORIZONTAL_scrollLeftOnMouseDown +
 					diffX *
-	                scrollbarDimensions.ScrollWidth /
+	                renderBatchLocal.ViewModel.ScrollWidth /
 	                scrollbarWidthInPixels;
 	
-	            if (scrollLeft + textEditorDimensions.Width > scrollbarDimensions.ScrollWidth)
-	                scrollLeft = scrollbarDimensions.ScrollWidth - textEditorDimensions.Width;
+	            if (scrollLeft + textEditorDimensions.Width > renderBatchLocal.ViewModel.ScrollWidth)
+	                scrollLeft = renderBatchLocal.ViewModel.ScrollWidth - textEditorDimensions.Width;
 
 				if (scrollLeft < 0)
 					scrollLeft = 0;
@@ -807,7 +806,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
         {
 			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
-			var scrollbarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
 
 			OnScrollVertical onScrollVertical;
 
@@ -827,11 +825,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	            var scrollTop = VERTICAL_scrollTopOnMouseDown +
 					diffY *
-	                scrollbarDimensions.ScrollHeight /
+	                renderBatchLocal.ViewModel.ScrollHeight /
 	                scrollbarHeightInPixels;
 	
-	            if (scrollTop + textEditorDimensions.Height > scrollbarDimensions.ScrollHeight)
-	                scrollTop = scrollbarDimensions.ScrollHeight - textEditorDimensions.Height;
+	            if (scrollTop + textEditorDimensions.Height > renderBatchLocal.ViewModel.ScrollHeight)
+	                scrollTop = renderBatchLocal.ViewModel.ScrollHeight - textEditorDimensions.Height;
 
 				if (scrollTop < 0)
 					scrollTop = 0;

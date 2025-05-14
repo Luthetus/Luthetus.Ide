@@ -230,15 +230,13 @@ public sealed class TextEditorService
             	
             	if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
             	{
-            		if (viewModelModifier.ScrollbarDimensions.ScrollTop < viewModelModifier.VirtualizationResult.VirtualTop)
+            		if (viewModelModifier.ScrollTop < viewModelModifier.VirtualizationResult.VirtualTop)
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
             		else
             		{
-            			var bigTop = viewModelModifier.ScrollbarDimensions.ScrollTop +
-            				viewModelModifier.TextEditorDimensions.Height;
-            				
+            			var bigTop = viewModelModifier.ScrollTop + viewModelModifier.TextEditorDimensions.Height;
             			var virtualEnd = viewModelModifier.VirtualizationResult.VirtualTop + viewModelModifier.VirtualizationResult.VirtualHeight;
             				
             			if (bigTop > virtualEnd)
@@ -252,7 +250,7 @@ public sealed class TextEditorService
             	// result when checking the vertical virtualization, then we check horizontal.
             	if (!viewModelModifier.ShouldReloadVirtualizationResult)
             	{
-            		var scrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
+            		var scrollLeft = viewModelModifier.ScrollLeft;
             		if (scrollLeft < (viewModelModifier.VirtualizationResult.VirtualLeft))
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
@@ -320,8 +318,8 @@ public sealed class TextEditorService
     	if (modelModifier is null)
     		return;
 		
-		var originalScrollWidth = viewModelModifier.ScrollbarDimensions.ScrollWidth;
-		var originalScrollHeight = viewModelModifier.ScrollbarDimensions.ScrollHeight;
+		var originalScrollWidth = viewModelModifier.ScrollWidth;
+		var originalScrollHeight = viewModelModifier.ScrollHeight;
 	
 		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
 			viewModelModifier.CharAndLineMeasurements.CharacterWidth);
@@ -362,28 +360,27 @@ public sealed class TextEditorService
 			totalHeight += marginScrollHeight;
 		}
 
-		viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions with
-		{
-			ScrollWidth = totalWidth,
-			ScrollHeight = totalHeight,
-			MarginScrollHeight = marginScrollHeight
-		};
+		viewModelModifier.ScrollWidth = totalWidth;
+		viewModelModifier.ScrollHeight = totalHeight;
+		viewModelModifier.MarginScrollHeight = marginScrollHeight;
 		
-		var validateScrollbarDimensions = viewModelModifier.ScrollbarDimensions;
+		// var validateScrollWidth = totalWidth;
+		// var validateScrollHeight = totalHeight;
+		// var validateMarginScrollHeight = marginScrollHeight;
 		
-		if (originalScrollWidth > viewModelModifier.ScrollbarDimensions.ScrollWidth ||
+		if (originalScrollWidth > viewModelModifier.ScrollWidth ||
 			textEditorDimensionsChanged)
 		{
-			validateScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithSetScrollLeft(
-				(int)validateScrollbarDimensions.ScrollLeft,
+			viewModelModifier.SetScrollLeft(
+				(int)viewModelModifier.ScrollLeft,
 				viewModelModifier.TextEditorDimensions);
 		}
 		
-		if (originalScrollHeight > viewModelModifier.ScrollbarDimensions.ScrollHeight ||
+		if (originalScrollHeight > viewModelModifier.ScrollHeight ||
 			textEditorDimensionsChanged)
 		{
-			validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
-				(int)validateScrollbarDimensions.ScrollTop,
+			viewModelModifier.SetScrollTop(
+				(int)viewModelModifier.ScrollTop,
 				viewModelModifier.TextEditorDimensions);
 			
 			// The scrollLeft currently does not have any margin. Therefore subtracting the margin isn't needed.
@@ -394,23 +391,21 @@ public sealed class TextEditorService
 			// Then a "void" will render at the top portion of the text editor, seemingly the size
 			// of the MarginScrollHeight.
 			if (textEditorDimensionsChanged &&
-				viewModelModifier.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop)
+				viewModelModifier.ScrollTop != viewModelModifier.ScrollTop)
 			{
-				validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
-					(int)validateScrollbarDimensions.ScrollTop - (int)validateScrollbarDimensions.MarginScrollHeight,
+				viewModelModifier.SetScrollTop(
+					(int)viewModelModifier.ScrollTop - (int)viewModelModifier.MarginScrollHeight,
 					viewModelModifier.TextEditorDimensions);
 			}
 		}
 		
 		var changeOccurred =
-			viewModelModifier.ScrollbarDimensions.ScrollLeft != validateScrollbarDimensions.ScrollLeft ||
-			viewModelModifier.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop;
+			viewModelModifier.ScrollLeft != viewModelModifier.ScrollLeft ||
+			viewModelModifier.ScrollTop != viewModelModifier.ScrollTop;
 		
 		if (changeOccurred)
 		{
 			viewModelModifier.ScrollWasModified = true;
-			
-			viewModelModifier.ScrollbarDimensions = validateScrollbarDimensions;
 		}
 	}
 	
