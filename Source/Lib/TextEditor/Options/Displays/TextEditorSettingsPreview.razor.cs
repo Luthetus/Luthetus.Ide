@@ -26,7 +26,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
     {
         HeaderComponentType = null,
         FooterComponentType = null,
-        AfterOnKeyDownAsync = (_, _, _, _, _, _) => Task.CompletedTask,
+        AfterOnKeyDownAsync = (_, _, _, _, _) => Task.CompletedTask,
     };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -147,7 +147,11 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            _commonBackgroundTaskApi,
 	            VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
-				new ScrollbarDimensions(0, 0, 0, 0, 0),
+				scrollLeft: 0,
+		    	scrollTop: 0,
+			    scrollWidth: 0,
+			    scrollHeight: 0,
+			    marginScrollHeight: 0,
 	            new Category("terminal"));
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>()

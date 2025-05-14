@@ -126,20 +126,6 @@ public sealed class TextEditorService
 	/// </summary>
 	public StringBuilder __StringBuilder { get; } = new StringBuilder();
 	
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-	public TextEditorCursorModifier __CursorModifier { get; } = new(new TextEditorCursor(isPrimaryCursor: true));
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-	public bool __IsAvailableCursorModifier { get; set; } = true;
-	
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public List<CursorModifierBagTextEditor> __CursorModifierBagCache { get; } = new();
-    
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -171,12 +157,14 @@ public sealed class TextEditorService
 
 	public async ValueTask FinalizePost(TextEditorEditContext editContext)
 	{
-        foreach (var modelModifier in __ModelList)
+        for (int modelIndex = 0; modelIndex < __ModelList.Count; modelIndex++)
         {
-            foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
+        	var modelModifier = __ModelList[modelIndex];
+        	
+            for (int viewModelIndex = 0; viewModelIndex < modelModifier.PersistentState.ViewModelKeyList.Count; viewModelIndex++)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
-                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(modelModifier.PersistentState.ViewModelKeyList[viewModelIndex]);
 
 				if (!viewModelModifier.ShouldReloadVirtualizationResult)
 					viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
@@ -192,27 +180,25 @@ public sealed class TextEditorService
                 else
                     _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
             }
+            
+            if (TextEditorState._modelMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
+				TextEditorState._modelMap[modelModifier.PersistentState.ResourceUri] = modelModifier;
         }
 		
-        foreach (var viewModelModifier in __ViewModelList)
+        for (int viewModelIndex = 0; viewModelIndex < __ViewModelList.Count; viewModelIndex++)
         {
+        	var viewModelModifier = __ViewModelList[viewModelIndex];
+        
         	TextEditorModel? modelModifier = null;
         	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
         		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
         
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-            if (cursorModifierBag.ConstructorWasInvoked)
+        	if (viewModelModifier.PersistentState.ShouldRevealCursor)
             {
-                viewModelModifier.PrimaryCursor = cursorModifierBag.CursorModifier.ToCursor();
-            	if (viewModelModifier.PersistentState.ShouldRevealCursor)
-	            {
-            		ViewModelApi.RevealCursor(
-	            		editContext,
-				        modelModifier,
-				        viewModelModifier,
-				        cursorModifierBag,
-				        cursorModifierBag.CursorModifier);
-	            }
+        		ViewModelApi.RevealCursor(
+            		editContext,
+			        modelModifier,
+			        viewModelModifier);
             }
             
             // This if expression exists below, to check if 'CalculateVirtualizationResult(...)' should be invoked.
@@ -231,14 +217,6 @@ public sealed class TextEditorService
             	viewModelModifier.PersistentState.DisplayTracker.ComponentData is not null)
             {
             	Interlocked.Exchange(ref viewModelModifier.PersistentState.DisplayTracker.ComponentData.shouldScroll, 1);
-            	
-                /*await JsRuntimeTextEditorApi
-		            .SetScrollPositionBoth(
-		                viewModelModifier.PersistentState.BodyElementId,
-		                viewModelModifier.PersistentState.GutterElementId,
-		                viewModelModifier.ScrollbarDimensions.ScrollLeft,
-		                viewModelModifier.ScrollbarDimensions.ScrollTop)
-		            .ConfigureAwait(false);*/
             }
             
             if (!viewModelModifier.ShouldReloadVirtualizationResult &&
@@ -252,15 +230,13 @@ public sealed class TextEditorService
             	
             	if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
             	{
-            		if (viewModelModifier.ScrollbarDimensions.ScrollTop < viewModelModifier.VirtualizationResult.VirtualTop)
+            		if (viewModelModifier.ScrollTop < viewModelModifier.VirtualizationResult.VirtualTop)
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
             		else
             		{
-            			var bigTop = viewModelModifier.ScrollbarDimensions.ScrollTop +
-            				viewModelModifier.TextEditorDimensions.Height;
-            				
+            			var bigTop = viewModelModifier.ScrollTop + viewModelModifier.TextEditorDimensions.Height;
             			var virtualEnd = viewModelModifier.VirtualizationResult.VirtualTop + viewModelModifier.VirtualizationResult.VirtualHeight;
             				
             			if (bigTop > virtualEnd)
@@ -274,7 +250,7 @@ public sealed class TextEditorService
             	// result when checking the vertical virtualization, then we check horizontal.
             	if (!viewModelModifier.ShouldReloadVirtualizationResult)
             	{
-            		var scrollLeft = viewModelModifier.ScrollbarDimensions.ScrollLeft;
+            		var scrollLeft = viewModelModifier.ScrollLeft;
             		if (scrollLeft < (viewModelModifier.VirtualizationResult.VirtualLeft))
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
@@ -296,14 +272,19 @@ public sealed class TextEditorService
 	            	modelModifier,
 			        viewModelModifier);
 			}
+			
+			if (TextEditorState._viewModelMap.ContainsKey(viewModelModifier.PersistentState.ViewModelKey))
+				TextEditorState._viewModelMap[viewModelModifier.PersistentState.ViewModelKey] = viewModelModifier;
         }
 	    
-	    __CursorModifierBagCache.Clear();
 	    // __DiffModelCache.Clear();
 	    
-	    __IsAvailableCursorModifier = true;
+	    __ModelList.Clear();
+		__ViewModelList.Clear();
+
+        TextEditorStateChanged?.Invoke();
 	    
-	    SetModelAndViewModelRange(editContext);
+	    // SetModelAndViewModelRange(editContext);
 	}
 	
 	/// <summary>
@@ -337,8 +318,8 @@ public sealed class TextEditorService
     	if (modelModifier is null)
     		return;
 		
-		var originalScrollWidth = viewModelModifier.ScrollbarDimensions.ScrollWidth;
-		var originalScrollHeight = viewModelModifier.ScrollbarDimensions.ScrollHeight;
+		var originalScrollWidth = viewModelModifier.ScrollWidth;
+		var originalScrollHeight = viewModelModifier.ScrollHeight;
 	
 		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
 			viewModelModifier.CharAndLineMeasurements.CharacterWidth);
@@ -379,28 +360,27 @@ public sealed class TextEditorService
 			totalHeight += marginScrollHeight;
 		}
 
-		viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions with
-		{
-			ScrollWidth = totalWidth,
-			ScrollHeight = totalHeight,
-			MarginScrollHeight = marginScrollHeight
-		};
+		viewModelModifier.ScrollWidth = totalWidth;
+		viewModelModifier.ScrollHeight = totalHeight;
+		viewModelModifier.MarginScrollHeight = marginScrollHeight;
 		
-		var validateScrollbarDimensions = viewModelModifier.ScrollbarDimensions;
+		// var validateScrollWidth = totalWidth;
+		// var validateScrollHeight = totalHeight;
+		// var validateMarginScrollHeight = marginScrollHeight;
 		
-		if (originalScrollWidth > viewModelModifier.ScrollbarDimensions.ScrollWidth ||
+		if (originalScrollWidth > viewModelModifier.ScrollWidth ||
 			textEditorDimensionsChanged)
 		{
-			validateScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithSetScrollLeft(
-				(int)validateScrollbarDimensions.ScrollLeft,
+			viewModelModifier.SetScrollLeft(
+				(int)viewModelModifier.ScrollLeft,
 				viewModelModifier.TextEditorDimensions);
 		}
 		
-		if (originalScrollHeight > viewModelModifier.ScrollbarDimensions.ScrollHeight ||
+		if (originalScrollHeight > viewModelModifier.ScrollHeight ||
 			textEditorDimensionsChanged)
 		{
-			validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
-				(int)validateScrollbarDimensions.ScrollTop,
+			viewModelModifier.SetScrollTop(
+				(int)viewModelModifier.ScrollTop,
 				viewModelModifier.TextEditorDimensions);
 			
 			// The scrollLeft currently does not have any margin. Therefore subtracting the margin isn't needed.
@@ -411,23 +391,21 @@ public sealed class TextEditorService
 			// Then a "void" will render at the top portion of the text editor, seemingly the size
 			// of the MarginScrollHeight.
 			if (textEditorDimensionsChanged &&
-				viewModelModifier.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop)
+				viewModelModifier.ScrollTop != viewModelModifier.ScrollTop)
 			{
-				validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
-					(int)validateScrollbarDimensions.ScrollTop - (int)validateScrollbarDimensions.MarginScrollHeight,
+				viewModelModifier.SetScrollTop(
+					(int)viewModelModifier.ScrollTop - (int)viewModelModifier.MarginScrollHeight,
 					viewModelModifier.TextEditorDimensions);
 			}
 		}
 		
 		var changeOccurred =
-			viewModelModifier.ScrollbarDimensions.ScrollLeft != validateScrollbarDimensions.ScrollLeft ||
-			viewModelModifier.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop;
+			viewModelModifier.ScrollLeft != viewModelModifier.ScrollLeft ||
+			viewModelModifier.ScrollTop != viewModelModifier.ScrollTop;
 		
 		if (changeOccurred)
 		{
 			viewModelModifier.ScrollWasModified = true;
-			
-			viewModelModifier.ScrollbarDimensions = validateScrollbarDimensions;
 		}
 	}
 	
@@ -452,16 +430,14 @@ public sealed class TextEditorService
 			return; // Leave the cursor unchanged if the argument is null
 		var modelModifier = editContext.GetModelModifier(resourceUri);
 		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-		if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+		if (modelModifier is null || viewModelModifier is null)
 			return;
 	
 		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
 			
-		primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
-		primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+		viewModelModifier.LineIndex = lineAndColumnIndices.lineIndex;
+		viewModelModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
 		
 		viewModelModifier.PersistentState.ShouldRevealCursor = true;
 		
@@ -508,24 +484,22 @@ public sealed class TextEditorService
 			return; // Leave the cursor unchanged if the argument is null
 		var modelModifier = editContext.GetModelModifier(resourceUri);
 		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-		if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+		if (modelModifier is null || viewModelModifier is null)
 			return;
 	
 		if (lineIndex is not null)
-			primaryCursorModifier.LineIndex = lineIndex.Value;
+			viewModelModifier.LineIndex = lineIndex.Value;
 		if (columnIndex is not null)
-			primaryCursorModifier.ColumnIndex = columnIndex.Value;
+			viewModelModifier.ColumnIndex = columnIndex.Value;
 		
-		if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
-			primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+		if (viewModelModifier.LineIndex > modelModifier.LineCount - 1)
+			viewModelModifier.LineIndex = modelModifier.LineCount - 1;
 		
-		var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+		var lineInformation = modelModifier.GetLineInformation(viewModelModifier.LineIndex);
 		
-		if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-			primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+		if (viewModelModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+			viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 			
 		viewModelModifier.PersistentState.ShouldRevealCursor = true;
 		
@@ -680,20 +654,28 @@ public sealed class TextEditorService
 		// 
 		// var inState = TextEditorState;
 
-		foreach (var model in __ModelList)
+		if (__ModelList.Count > 0)
 		{
-			if (TextEditorState._modelMap.ContainsKey(model.PersistentState.ResourceUri))
-				TextEditorState._modelMap[model.PersistentState.ResourceUri] = model;
+			foreach (var model in __ModelList)
+			{
+				if (TextEditorState._modelMap.ContainsKey(model.PersistentState.ResourceUri))
+					TextEditorState._modelMap[model.PersistentState.ResourceUri] = model;
+			}
+			
+			__ModelList.Clear();
+		}
+		
+		if (__ViewModelList.Count > 0)
+		{
+			foreach (var viewModel in __ViewModelList)
+			{
+				if (TextEditorState._viewModelMap.ContainsKey(viewModel.PersistentState.ViewModelKey))
+					TextEditorState._viewModelMap[viewModel.PersistentState.ViewModelKey] = viewModel;
+			}
+			
+			__ViewModelList.Clear();
 		}
 
-		foreach (var viewModel in __ViewModelList)
-		{
-			if (TextEditorState._viewModelMap.ContainsKey(viewModel.PersistentState.ViewModelKey))
-				TextEditorState._viewModelMap[viewModel.PersistentState.ViewModelKey] = viewModel;
-		}
-
-		__ModelList.Clear();
-		__ViewModelList.Clear();
         TextEditorStateChanged?.Invoke();
     }
 }

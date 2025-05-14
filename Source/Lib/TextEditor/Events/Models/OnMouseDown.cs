@@ -30,15 +30,13 @@ public struct OnMouseDown
     
     	var viewModel = editContext.GetViewModelModifier(ViewModelKey);
         var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
-        var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-        if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+        if (modelModifier is null || viewModel is null)
             return;
 
         viewModel.PersistentState.ShouldRevealCursor = false;
 
-        var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+        var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(viewModel);
 
         if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
             return; // Not pressing the left mouse button so assume ContextMenu is desired result.
@@ -52,8 +50,8 @@ public struct OnMouseDown
 		}
 
         // Remember the current cursor position prior to doing anything
-        var inLineIndex = primaryCursorModifier.LineIndex;
-        var inColumnIndex = primaryCursorModifier.ColumnIndex;
+        var inLineIndex = viewModel.LineIndex;
+        var inColumnIndex = viewModel.ColumnIndex;
 
         // Move the cursor position
 		//
@@ -70,7 +68,7 @@ public struct OnMouseDown
 		if (lineAndColumnIndex.PositionX < -4 &&
 			lineAndColumnIndex.PositionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
 		{
-			var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel, primaryCursorModifier);
+			var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel);
 			if (shouldGotoFinalize)
 				goto finalize;
 		}
@@ -110,15 +108,15 @@ public struct OnMouseDown
 					{
 						if (lineAndColumnIndex.PositionX < lastValidColumnLeft + 3 * viewModel.CharAndLineMeasurements.CharacterWidth)
 						{
-							var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel, primaryCursorModifier);
+							var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel);
 							if (shouldGotoFinalize)
 								goto finalize;
 						}
 						else
 						{
 							var lastHiddenLineInformation = modelModifier.GetLineInformation(collapsePoint.EndExclusiveLineIndex - 1);
-							primaryCursorModifier.LineIndex = lastHiddenLineInformation.Index;
-							primaryCursorModifier.SetColumnIndexAndPreferred(lastHiddenLineInformation.LastValidColumnIndex);
+							viewModel.LineIndex = lastHiddenLineInformation.Index;
+							viewModel.SetColumnIndexAndPreferred(lastHiddenLineInformation.LastValidColumnIndex);
 							goto finalize;
 						}
 					}
@@ -126,21 +124,20 @@ public struct OnMouseDown
 			}
 		}
 
-        primaryCursorModifier.LineIndex = lineAndColumnIndex.LineIndex;
-        primaryCursorModifier.ColumnIndex = lineAndColumnIndex.ColumnIndex;
-        primaryCursorModifier.PreferredColumnIndex = lineAndColumnIndex.ColumnIndex;
+        viewModel.LineIndex = lineAndColumnIndex.LineIndex;
+        viewModel.ColumnIndex = lineAndColumnIndex.ColumnIndex;
+        viewModel.PreferredColumnIndex = lineAndColumnIndex.ColumnIndex;
 
-        var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
+        var cursorPositionIndex = modelModifier.GetPositionIndex(
             lineAndColumnIndex.LineIndex,
-            lineAndColumnIndex.ColumnIndex,
-            true));
+            lineAndColumnIndex.ColumnIndex);
 
         if (MouseEventArgs.ShiftKey)
         {
             if (!hasSelectedText)
             {
                 // If user does not yet have a selection then place the text selection anchor were they were
-                primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
+                viewModel.SelectionAnchorPositionIndex = modelModifier
                     .GetPositionIndex(inLineIndex, inColumnIndex);
             }
 
@@ -148,10 +145,10 @@ public struct OnMouseDown
         }
         else
         {
-            primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
+            viewModel.SelectionAnchorPositionIndex = cursorPositionIndex;
         }
 
-        primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
+        viewModel.SelectionEndingPositionIndex = cursorPositionIndex;
         
         finalize:
         

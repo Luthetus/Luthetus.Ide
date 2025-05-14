@@ -104,13 +104,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
             	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.TriggerSave(
             		editContext,
             		modelModifier,
             		viewModelModifier,
-            		cursorModifierBag,
             		CommonComponentRenderers,
             		NotificationService);
             	return ValueTask.CompletedTask;
@@ -165,13 +163,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	return TextEditorCommandDefaultFunctions.CopyAsync(
                 	editContext,
                 	modelModifier,
                 	viewModelModifier,
-                	cursorModifierBag,
                 	ClipboardService);
             });
         return Task.CompletedTask;
@@ -189,13 +185,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	return TextEditorCommandDefaultFunctions.CutAsync(
             		editContext,
                 	modelModifier,
                 	viewModelModifier,
-                	cursorModifierBag,
                 	ClipboardService);
             });
         return Task.CompletedTask;
@@ -213,13 +207,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	return TextEditorCommandDefaultFunctions.PasteAsync(
                 	editContext,
                 	modelModifier,
                 	viewModelModifier,
-                	cursorModifierBag,
                 	ClipboardService);
             });
         return Task.CompletedTask;
@@ -237,13 +229,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.Redo(
             		editContext,
             		modelModifier,
-            		viewModelModifier,
-            		cursorModifierBag);
+            		viewModelModifier);
             	
             	return ValueTask.CompletedTask;
             });
@@ -262,13 +252,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.Undo(
             		editContext,
             		modelModifier,
-            		viewModelModifier,
-            		cursorModifierBag);
+            		viewModelModifier);
         		return ValueTask.CompletedTask;
             });
         return Task.CompletedTask;
@@ -286,13 +274,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.SelectAll(
             		editContext,
             		modelModifier,
-            		viewModelModifier,
-            		cursorModifierBag);
+            		viewModelModifier);
             		
         		return ValueTask.CompletedTask;
             });
@@ -311,7 +297,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.TriggerRemeasure(
             		editContext,
@@ -395,7 +380,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             {
                 var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
             	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            	var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
             
             	TextEditorCommandDefaultFunctions.TriggerRemeasure(
             		editContext,

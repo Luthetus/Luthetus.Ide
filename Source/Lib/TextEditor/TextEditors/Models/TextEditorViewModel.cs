@@ -44,7 +44,11 @@ public sealed class TextEditorViewModel : IDisposable
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         VirtualizationGrid virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
-		ScrollbarDimensions scrollbarDimensions,
+		double scrollLeft,
+	    double scrollTop,
+	    double scrollWidth,
+	    double scrollHeight,
+	    double marginScrollHeight,
 		Category category)
     {
     	PersistentState = new TextEditorViewModelPersistentState(
@@ -78,10 +82,20 @@ public sealed class TextEditorViewModel : IDisposable
     
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;
-		ScrollbarDimensions = scrollbarDimensions;
+		
+		ScrollLeft = scrollLeft;
+	    ScrollTop = scrollTop;
+	    ScrollWidth = scrollWidth;
+	    ScrollHeight = scrollHeight;
+	    MarginScrollHeight = marginScrollHeight;
+		
         CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         
-        PrimaryCursor = new TextEditorCursor(true);
+        LineIndex = 0;
+	    ColumnIndex = 0;
+	    PreferredColumnIndex = 0;
+	    SelectionAnchorPositionIndex = -1;
+	    SelectionEndingPositionIndex = 0;
         
         AllCollapsePointList = new();
 		VirtualizedCollapsePointList = new();
@@ -93,10 +107,21 @@ public sealed class TextEditorViewModel : IDisposable
 	{
 		PersistentState = other.PersistentState;
 		
-	    PrimaryCursor = other.PrimaryCursor;
+	    LineIndex = other.LineIndex;
+	    ColumnIndex = other.ColumnIndex;
+	    PreferredColumnIndex = other.PreferredColumnIndex;
+	    SelectionAnchorPositionIndex = other.SelectionAnchorPositionIndex;
+	    SelectionEndingPositionIndex = other.SelectionEndingPositionIndex;
+	    
 	    VirtualizationResult = other.VirtualizationResult;
 		TextEditorDimensions = other.TextEditorDimensions;
-		ScrollbarDimensions = other.ScrollbarDimensions;
+		
+		ScrollLeft = other.ScrollLeft;
+	    ScrollTop = other.ScrollTop;
+	    ScrollWidth = other.ScrollWidth;
+	    ScrollHeight = other.ScrollHeight;
+	    MarginScrollHeight = other.MarginScrollHeight;
+		
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
 		
 		CreateCacheWasInvoked = other.CreateCacheWasInvoked;
@@ -115,14 +140,24 @@ public sealed class TextEditorViewModel : IDisposable
 	
 	public TextEditorViewModelPersistentState PersistentState { get; set; }
 
-    public TextEditorCursor PrimaryCursor { get; set; }
+    public int LineIndex { get; set; }
+    public int ColumnIndex { get; set; }
+    public int PreferredColumnIndex { get; set; }
+    public int SelectionAnchorPositionIndex { get; set; }
+    public int SelectionEndingPositionIndex { get; set; }
     /// <summary>
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
     public VirtualizationGrid VirtualizationResult { get; set; }
 	public TextEditorDimensions TextEditorDimensions { get; set; }
-	public ScrollbarDimensions ScrollbarDimensions { get; set; }
+	
+	public double ScrollLeft { get; set; }
+    public double ScrollTop { get; set; }
+    public double ScrollWidth { get; set; }
+    public double ScrollHeight { get; set; }
+    public double MarginScrollHeight { get; set; }
+	
 	/// <summary>
 	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...
 	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
@@ -168,6 +203,40 @@ public sealed class TextEditorViewModel : IDisposable
 			}
 		}
     }
+    
+    public void SetColumnIndexAndPreferred(int columnIndex)
+    {
+        ColumnIndex = columnIndex;
+        PreferredColumnIndex = columnIndex;
+    }
+    
+    public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
+		SetScrollLeft((int)Math.Ceiling(ScrollLeft + pixels), textEditorDimensions);
+
+	public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
+	{
+		var resultScrollLeft = Math.Max(0, pixels);
+		var maxScrollLeft = (int)Math.Max(0, ScrollWidth - textEditorDimensions.Width);
+
+		if (resultScrollLeft > maxScrollLeft)
+			resultScrollLeft = maxScrollLeft;
+
+		ScrollLeft = resultScrollLeft;
+	}
+
+	public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
+		SetScrollTop((int)Math.Ceiling(ScrollTop + pixels), textEditorDimensions);
+
+	public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
+	{
+		var resultScrollTop = Math.Max(0, pixels);
+		var maxScrollTop = (int)Math.Max(0, ScrollHeight - textEditorDimensions.Height);
+
+		if (resultScrollTop > maxScrollTop)
+			resultScrollTop = maxScrollTop;
+
+		ScrollTop = resultScrollTop;
+	}
 
     public void Dispose()
     {

@@ -462,7 +462,6 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             {
             	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
                 if (modelModifier is null || viewModelModifier is null || localActiveIndexMatchedTextSpan is null)
@@ -479,19 +478,19 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
                 	targetTextSpan.StartInclusiveIndex);
                 	
-                cursorModifierBag.CursorModifier.LineIndex = lineIndex;
-                cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-                cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
+                viewModelModifier.LineIndex = lineIndex;
+                viewModelModifier.SetColumnIndexAndPreferred(columnIndex);
+                viewModelModifier.SelectionAnchorPositionIndex = -1;
                 
                 modelModifier.Delete(
-			        cursorModifierBag,
+			        viewModelModifier,
 			        columnCount: targetTextSpan.Length,
 			        expandWord: false,
 			        TextEditorModel.DeleteKind.Delete);
 			        
 			    modelModifier.Insert(
 			        viewModelModifier.PersistentState.ReplaceValueInFindOverlay,
-			        cursorModifierBag);
+			        viewModelModifier);
 
                 return ValueTask.CompletedTask;
             });
@@ -511,7 +510,6 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             {
             	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
                 if (modelModifier is null || viewModelModifier is null || localActiveIndexMatchedTextSpan is null)
@@ -526,9 +524,17 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 modelModifier.EnsureUndoPoint(new TextEditorEdit(
                 	TextEditorEditKind.OtherOpen,
                 	"ReplaceAll",
-                	modelModifier.GetPositionIndex(cursorModifierBag.CursorModifier),
-                	cursorModifierBag.CursorModifier.ToCursor(),
-                	cursorModifierBag.CursorModifier.ToCursor(),
+                	beforePositionIndex: modelModifier.GetPositionIndex(viewModelModifier),
+					before_LineIndex: viewModelModifier.LineIndex,
+					before_ColumnIndex: viewModelModifier.ColumnIndex,
+					before_PreferredColumnIndex: viewModelModifier.PreferredColumnIndex,
+					before_SelectionAnchorPositionIndex: viewModelModifier.SelectionAnchorPositionIndex,
+					before_SelectionEndingPositionIndex: viewModelModifier.SelectionEndingPositionIndex,
+					after_LineIndex: viewModelModifier.LineIndex,
+					after_ColumnIndex: viewModelModifier.ColumnIndex,
+					after_PreferredColumnIndex: viewModelModifier.PreferredColumnIndex,
+					after_SelectionAnchorPositionIndex: viewModelModifier.SelectionAnchorPositionIndex,
+					after_SelectionEndingPositionIndex: viewModelModifier.SelectionEndingPositionIndex,
                 	editedTextBuilder: null));
                 
                 for (int i = presentationModel.CompletedCalculation.TextSpanList.Count - 1; i >= 0; i--)
@@ -538,27 +544,35 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 	                var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
 	                	targetTextSpan.StartInclusiveIndex);
 	                	
-	                cursorModifierBag.CursorModifier.LineIndex = lineIndex;
-	                cursorModifierBag.CursorModifier.SetColumnIndexAndPreferred(columnIndex);
-	                cursorModifierBag.CursorModifier.SelectionAnchorPositionIndex = -1;
+	                viewModelModifier.LineIndex = lineIndex;
+	                viewModelModifier.SetColumnIndexAndPreferred(columnIndex);
+	                viewModelModifier.SelectionAnchorPositionIndex = -1;
 	                
 	                modelModifier.Delete(
-				        cursorModifierBag,
+				        viewModelModifier,
 				        columnCount: targetTextSpan.Length,
 				        expandWord: false,
 				        TextEditorModel.DeleteKind.Delete);
 				        
 				    modelModifier.Insert(
 				        viewModelModifier.PersistentState.ReplaceValueInFindOverlay,
-				        cursorModifierBag);
+				        viewModelModifier);
                 }
                 
                 modelModifier.EnsureUndoPoint(new TextEditorEdit(
                 	TextEditorEditKind.OtherClose,
                 	"ReplaceAll",
-                	modelModifier.GetPositionIndex(cursorModifierBag.CursorModifier),
-                	cursorModifierBag.CursorModifier.ToCursor(),
-                	cursorModifierBag.CursorModifier.ToCursor(),
+                	modelModifier.GetPositionIndex(viewModelModifier),
+                	before_LineIndex: viewModelModifier.LineIndex,
+					before_ColumnIndex: viewModelModifier.ColumnIndex,
+					before_PreferredColumnIndex: viewModelModifier.PreferredColumnIndex,
+					before_SelectionAnchorPositionIndex: viewModelModifier.SelectionAnchorPositionIndex,
+					before_SelectionEndingPositionIndex: viewModelModifier.SelectionEndingPositionIndex,
+					after_LineIndex: viewModelModifier.LineIndex,
+					after_ColumnIndex: viewModelModifier.ColumnIndex,
+					after_PreferredColumnIndex: viewModelModifier.PreferredColumnIndex,
+					after_SelectionAnchorPositionIndex: viewModelModifier.SelectionAnchorPositionIndex,
+					after_SelectionEndingPositionIndex: viewModelModifier.SelectionEndingPositionIndex,
                 	editedTextBuilder: null));
 
                 return ValueTask.CompletedTask;

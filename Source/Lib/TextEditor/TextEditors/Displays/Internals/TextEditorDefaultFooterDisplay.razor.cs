@@ -202,7 +202,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
             // 
             // So store the result of this method incase an exception occurs in future invocations,
             // to keep the cursor on screen while the state works itself out.
-            return _previousPositionNumber = model.GetPositionIndex(viewModel.PrimaryCursor) + 1;
+            return _previousPositionNumber = model.GetPositionIndex(viewModel) + 1;
         }
         catch (LuthetusTextEditorException)
         {
