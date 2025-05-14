@@ -385,18 +385,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
 				var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
-				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-        		var primaryCursor = cursorModifierBag.CursorModifier;
 
-				if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursor is null)
+				if (modelModifier is null || viewModelModifier is null)
 					return ValueTask.CompletedTask;
 
 				TextEditorCommandDefaultFunctions.ShowContextMenu(
 			        editContext,
 			        modelModifier,
 			        viewModelModifier,
-			        cursorModifierBag,
-			        primaryCursor,
 			        DropdownService,
 			        ComponentData);
 				
@@ -478,10 +474,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				            {
 				            	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
 				                var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
-				                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-				                var primaryCursorModifier = cursorModifierBag.CursorModifier;
 				                
-				                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+				                if (modelModifier is null || viewModelModifier is null)
 				                    return ValueTask.CompletedTask;
 				    
 				                return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(

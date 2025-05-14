@@ -81,7 +81,11 @@ public sealed class TextEditorViewModel : IDisposable
 		ScrollbarDimensions = scrollbarDimensions;
         CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         
-        PrimaryCursor = new TextEditorCursor(true);
+        LineIndex = 0;
+	    ColumnIndex = 0;
+	    PreferredColumnIndex = 0;
+	    SelectionAnchorPositionIndex = -1;
+	    SelectionEndingPositionIndex = 0;
         
         AllCollapsePointList = new();
 		VirtualizedCollapsePointList = new();
@@ -93,7 +97,12 @@ public sealed class TextEditorViewModel : IDisposable
 	{
 		PersistentState = other.PersistentState;
 		
-	    PrimaryCursor = other.PrimaryCursor;
+	    LineIndex = other.LineIndex;
+	    ColumnIndex = other.ColumnIndex;
+	    PreferredColumnIndex = other.PreferredColumnIndex;
+	    SelectionAnchorPositionIndex = other.SelectionAnchorPositionIndex;
+	    SelectionEndingPositionIndex = other.SelectionEndingPositionIndex;
+	    
 	    VirtualizationResult = other.VirtualizationResult;
 		TextEditorDimensions = other.TextEditorDimensions;
 		ScrollbarDimensions = other.ScrollbarDimensions;
@@ -115,7 +124,11 @@ public sealed class TextEditorViewModel : IDisposable
 	
 	public TextEditorViewModelPersistentState PersistentState { get; set; }
 
-    public TextEditorCursor PrimaryCursor { get; set; }
+    public int LineIndex { get; set; }
+    public int ColumnIndex { get; set; }
+    public int PreferredColumnIndex { get; set; }
+    public int SelectionAnchorPositionIndex { get; set; }
+    public int SelectionEndingPositionIndex { get; set; }
     /// <summary>
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
@@ -167,6 +180,12 @@ public sealed class TextEditorViewModel : IDisposable
 				HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
 			}
 		}
+    }
+    
+    public void SetColumnIndexAndPreferred(int columnIndex)
+    {
+        ColumnIndex = columnIndex;
+        PreferredColumnIndex = columnIndex;
     }
 
     public void Dispose()

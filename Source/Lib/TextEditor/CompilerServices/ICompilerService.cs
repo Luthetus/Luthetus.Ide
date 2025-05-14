@@ -84,8 +84,7 @@ public interface ICompilerService
 	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		CursorModifierBagTextEditor cursorModifierBag);
+		TextEditorViewModel viewModelModifier);
 		
 	public ValueTask OnInspect(
 		TextEditorEditContext editContext,
@@ -109,7 +108,6 @@ public interface ICompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Category category);
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting);

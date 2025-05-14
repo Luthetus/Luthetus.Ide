@@ -126,20 +126,6 @@ public sealed class TextEditorService
 	/// </summary>
 	public StringBuilder __StringBuilder { get; } = new StringBuilder();
 	
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-	public TextEditorCursorModifier __CursorModifier { get; } = new(new TextEditorCursor(isPrimaryCursor: true));
-	/// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-	public bool __IsAvailableCursorModifier { get; set; } = true;
-	
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public List<CursorModifierBagTextEditor> __CursorModifierBagCache { get; } = new();
-    
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -207,19 +193,12 @@ public sealed class TextEditorService
         	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
         		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
         
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-            if (cursorModifierBag.ConstructorWasInvoked)
+        	if (viewModelModifier.PersistentState.ShouldRevealCursor)
             {
-                viewModelModifier.PrimaryCursor = cursorModifierBag.CursorModifier.ToCursor();
-            	if (viewModelModifier.PersistentState.ShouldRevealCursor)
-	            {
-            		ViewModelApi.RevealCursor(
-	            		editContext,
-				        modelModifier,
-				        viewModelModifier,
-				        cursorModifierBag,
-				        cursorModifierBag.CursorModifier);
-	            }
+        		ViewModelApi.RevealCursor(
+            		editContext,
+			        modelModifier,
+			        viewModelModifier);
             }
             
             // This if expression exists below, to check if 'CalculateVirtualizationResult(...)' should be invoked.
@@ -300,10 +279,7 @@ public sealed class TextEditorService
 				TextEditorState._viewModelMap[viewModelModifier.PersistentState.ViewModelKey] = viewModelModifier;
         }
 	    
-	    __CursorModifierBagCache.Clear();
 	    // __DiffModelCache.Clear();
-	    
-	    __IsAvailableCursorModifier = true;
 	    
 	    __ModelList.Clear();
 		__ViewModelList.Clear();
@@ -459,16 +435,14 @@ public sealed class TextEditorService
 			return; // Leave the cursor unchanged if the argument is null
 		var modelModifier = editContext.GetModelModifier(resourceUri);
 		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-		if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+		if (modelModifier is null || viewModelModifier is null)
 			return;
 	
 		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
 			
-		primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
-		primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+		viewModelModifier.LineIndex = lineAndColumnIndices.lineIndex;
+		viewModelModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
 		
 		viewModelModifier.PersistentState.ShouldRevealCursor = true;
 		
@@ -515,24 +489,22 @@ public sealed class TextEditorService
 			return; // Leave the cursor unchanged if the argument is null
 		var modelModifier = editContext.GetModelModifier(resourceUri);
 		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-		var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-		if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+		if (modelModifier is null || viewModelModifier is null)
 			return;
 	
 		if (lineIndex is not null)
-			primaryCursorModifier.LineIndex = lineIndex.Value;
+			viewModelModifier.LineIndex = lineIndex.Value;
 		if (columnIndex is not null)
-			primaryCursorModifier.ColumnIndex = columnIndex.Value;
+			viewModelModifier.ColumnIndex = columnIndex.Value;
 		
-		if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
-			primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+		if (viewModelModifier.LineIndex > modelModifier.LineCount - 1)
+			viewModelModifier.LineIndex = modelModifier.LineCount - 1;
 		
-		var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+		var lineInformation = modelModifier.GetLineInformation(viewModelModifier.LineIndex);
 		
-		if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-			primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+		if (viewModelModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+			viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 			
 		viewModelModifier.PersistentState.ShouldRevealCursor = true;
 		

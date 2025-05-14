@@ -207,10 +207,8 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					
 					var modelModifier = editContext.GetModelModifier(terminalOutputFormatterExpand.TextEditorModelResourceUri);
 					var viewModelModifier = editContext.GetViewModelModifier(terminalOutputFormatterExpand.TextEditorViewModelKey);
-					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-					var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-					if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+					if (modelModifier is null || viewModelModifier is null)
 						return ValueTask.CompletedTask;
 
 					var localTerminal = Terminal;
@@ -229,18 +227,18 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					
 					modelModifier.SetContent(outputFormatted.Text);
 					
-					var lineIndexOriginal = primaryCursorModifier.LineIndex;
-					var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
+					var lineIndexOriginal = viewModelModifier.LineIndex;
+					var columnIndexOriginal = viewModelModifier.ColumnIndex;
 					
 					// Move Cursor, try to preserve the current cursor position.
 					{
-						if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
-							primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+						if (viewModelModifier.LineIndex > modelModifier.LineCount - 1)
+							viewModelModifier.LineIndex = modelModifier.LineCount - 1;
 						
-						var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+						var lineInformation = modelModifier.GetLineInformation(viewModelModifier.LineIndex);
 						
-						if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-							primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+						if (viewModelModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+							viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 					}
 					
 					if (showingFinalLine)
@@ -273,8 +271,8 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 				            (int)originalScrollLeft,
 				            viewModelModifier.TextEditorDimensions);
 				    }
-				    else if (lineIndexOriginal != primaryCursorModifier.LineIndex ||
-						     columnIndexOriginal != primaryCursorModifier.ColumnIndex)
+				    else if (lineIndexOriginal != viewModelModifier.LineIndex ||
+						     columnIndexOriginal != viewModelModifier.ColumnIndex)
 					{
 						viewModelModifier.PersistentState.ShouldRevealCursor = true;
 					}  

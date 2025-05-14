@@ -81,54 +81,6 @@ public struct TextEditorEditContext
         return viewModelModifier;
     }
     
-    public CursorModifierBagTextEditor GetCursorModifierBag(TextEditorViewModel? viewModel)
-    {
-        if (viewModel is not null)
-        {
-        	CursorModifierBagTextEditor cursorModifierBag = default;
-        	
-        	for (int i = 0; i < TextEditorService.__CursorModifierBagCache.Count; i++)
-	    	{
-	    		if (TextEditorService.__CursorModifierBagCache[i].ViewModelKey == viewModel.PersistentState.ViewModelKey)
-	    			cursorModifierBag = TextEditorService.__CursorModifierBagCache[i];
-	    	}
-	    	
-	    	if (cursorModifierBag.CursorModifier is null)
-	    	{
-	    		TextEditorCursorModifier cursorModifier;
-            	
-    			if (TextEditorService.__IsAvailableCursorModifier)
-    			{
-    				TextEditorService.__IsAvailableCursorModifier = false;
-    				
-    				TextEditorService.__CursorModifier.LineIndex = viewModel.PrimaryCursor.LineIndex;
-			        TextEditorService.__CursorModifier.ColumnIndex = viewModel.PrimaryCursor.ColumnIndex;
-			        TextEditorService.__CursorModifier.PreferredColumnIndex = viewModel.PrimaryCursor.PreferredColumnIndex;
-			        TextEditorService.__CursorModifier.IsPrimaryCursor = viewModel.PrimaryCursor.IsPrimaryCursor;
-			        TextEditorService.__CursorModifier.SelectionAnchorPositionIndex = viewModel.PrimaryCursor.Selection.AnchorPositionIndex;
-			        TextEditorService.__CursorModifier.SelectionEndingPositionIndex = viewModel.PrimaryCursor.Selection.EndingPositionIndex;
-			        TextEditorService.__CursorModifier.Key = viewModel.PrimaryCursor.Key;
-			        
-			        cursorModifier = TextEditorService.__CursorModifier;
-    			}
-    			else
-    			{
-    				cursorModifier = new(viewModel.PrimaryCursor);
-    			}
-            
-                cursorModifierBag = new CursorModifierBagTextEditor(
-                    viewModel.PersistentState.ViewModelKey,
-                    cursorModifier);
-
-                TextEditorService.__CursorModifierBagCache.Add(cursorModifierBag);
-	    	}
-
-            return cursorModifierBag;
-        }
-
-        return default(CursorModifierBagTextEditor);
-    }
-
     public TextEditorDiffModelModifier? GetDiffModelModifier(
         Key<TextEditorDiffModel> diffModelKey,
         bool isReadOnly = false)

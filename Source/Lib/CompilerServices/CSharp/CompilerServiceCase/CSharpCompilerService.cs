@@ -154,13 +154,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
 	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
 	{
-		var primaryCursor = renderBatch.ViewModel.PrimaryCursor;
-        
-        var positionIndex = renderBatch.Model.GetPositionIndex(primaryCursor);
+        var positionIndex = renderBatch.Model.GetPositionIndex(renderBatch.ViewModel);
         
         var word = renderBatch.Model.ReadPreviousWordOrDefault(
-	        primaryCursor.LineIndex,
-	        primaryCursor.ColumnIndex);
+	        renderBatch.ViewModel.LineIndex,
+	        renderBatch.ViewModel.ColumnIndex);
 	
 		// The cursor is 1 character ahead.
         var textSpan = new TextEditorTextSpan(
@@ -180,10 +178,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        TextEditorViewModel viewModelModifier)
     {
-		var primaryCursorModifier = cursorModifierBag.CursorModifier;
 		var compilerService = modelModifier.PersistentState.CompilerService;
 	
 		var compilerServiceResource = viewModelModifier is null
@@ -192,7 +188,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
 		int? primaryCursorPositionIndex = modelModifier is null || viewModelModifier is null
 			? null
-			: modelModifier.GetPositionIndex(primaryCursorModifier);
+			: modelModifier.GetPositionIndex(viewModelModifier);
 
 		var syntaxNode = primaryCursorPositionIndex is null || __CSharpBinder is null || compilerServiceResource?.CompilationUnit is null
 			? null
@@ -285,10 +281,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    scrollbarDimensions.ScrollLeft,
 		    scrollbarDimensions.ScrollTop);
 
-        var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
-            lineAndColumnIndex.LineIndex,
-            lineAndColumnIndex.ColumnIndex,
-            true));
+        var cursorPositionIndex = modelModifier.GetPositionIndex(
+        	lineAndColumnIndex.LineIndex,
+            lineAndColumnIndex.ColumnIndex);
 
         var foundMatch = false;
         
@@ -490,12 +485,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Category category)
     {
-    	var primaryCursorModifier = cursorModifierBag.CursorModifier;
-    	
-        var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+        var cursorPositionIndex = modelModifier.GetPositionIndex(viewModelModifier);
 
         var foundMatch = false;
         
@@ -1015,38 +1007,25 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            	return ValueTask.CompletedTask;
 	            	
 	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
-
-	            var primaryCursorModifier = editContext.GetCursorModifierBag(viewModelModifier).CursorModifier;
 	            
-	            if (viewModelModifier is null || primaryCursorModifier is null)
+	            if (viewModelModifier is null)
 	            	return ValueTask.CompletedTask;
 	
-	            var cursorModifierBag = new CursorModifierBagTextEditor(
-                    Key<TextEditorViewModel>.Empty,
-	                primaryCursorModifier);
-	                
-	            var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+	            var cursorPositionIndex = modelModifier.GetPositionIndex(viewModelModifier);
 	            var behindPositionIndex = cursorPositionIndex - 1;
-				
-				var behindCursor = new TextEditorCursor(
-	        		primaryCursorModifier.LineIndex,
-	        		primaryCursorModifier.ColumnIndex - 1,
-	        		primaryCursorModifier.IsPrimaryCursor);
 	            		
 	            modelModifier.Insert(
 	                textToInsert,
-	                cursorModifierBag);
+	                viewModelModifier);
 	                
-	            if (behindPositionIndex > 0 && modelModifier.GetCharacter(behindPositionIndex) == 'p')
+	            /*if (behindPositionIndex > 0 && modelModifier.GetCharacter(behindPositionIndex) == 'p')
 	            {
 	            	modelModifier.Delete(
-				        new CursorModifierBagTextEditor(
-                            Key<TextEditorViewModel>.Empty,
-			                new(behindCursor)),
+				        viewModelModifier,
 				        1,
 				        expandWord: false,
                         TextEditorModel.DeleteKind.Delete);
-	            }
+	            }*/
 	
 	            modelModifier.PersistentState.CompilerService.ResourceWasModified(
 	            	(ResourceUri)modelModifier.PersistentState.ResourceUri,

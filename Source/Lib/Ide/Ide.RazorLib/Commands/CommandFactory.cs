@@ -539,13 +539,11 @@ public class CommandFactory : ICommandFactory
 			// then populate the code search with their selection.
 			
 			var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-            var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-            if (modelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+            if (modelModifier is null)
                 return;
 
-            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(viewModelModifier, modelModifier);
 			if (selectedText is null)
 				return;
 			

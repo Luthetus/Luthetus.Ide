@@ -79,12 +79,12 @@ public sealed class TextEditorModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public void UndoEdit(
+    /*public void UndoEdit(
 	    TextEditorEditContext editContext,
         TextEditorModel modelModifier)
     {
         modelModifier.UndoEdit();
-    }
+    }*/
 
     public void SetUsingLineEndKind(
         TextEditorEditContext editContext,
@@ -112,83 +112,83 @@ public sealed class TextEditorModelApi
         modelModifier.SetResourceData(modelModifier.PersistentState.ResourceUri, resourceLastWriteTime);
     }
 
-    public void RedoEdit(
+    /*public void RedoEdit(
     	TextEditorEditContext editContext,
         TextEditorModel modelModifier)
     {
         modelModifier.RedoEdit();
-    }
+    }*/
 
     public void InsertText(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         string content)
     {
-        modelModifier.Insert(content, cursorModifierBag);
+        modelModifier.Insert(content, viewModel);
     }
 
     public void InsertTextUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         string content)
     {
-        modelModifier.Insert(content, cursorModifierBag);
+        modelModifier.Insert(content, viewModel);
     }
 
     public void HandleKeyboardEvent(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         KeymapArgs keymapArgs)
     {
-        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag);
+        modelModifier.HandleKeyboardEvent(keymapArgs, viewModel);
     }
 
     public void HandleKeyboardEventUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         KeymapArgs keymapArgs)
     {
-        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag);
+        modelModifier.HandleKeyboardEvent(keymapArgs, viewModel);
     }
 
     public void DeleteTextByRange(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         int count)
     {
-        modelModifier.DeleteByRange(count, cursorModifierBag);
+        modelModifier.DeleteByRange(count, viewModel);
     }
 
     public void DeleteTextByRangeUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         int count)
     {
-        modelModifier.DeleteByRange(count, cursorModifierBag);
+        modelModifier.DeleteByRange(count, viewModel);
     }
 
     public void DeleteTextByMotion(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         MotionKind motionKind)
     {
-        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag);
+        modelModifier.DeleteTextByMotion(motionKind, viewModel);
     }
 
     public void DeleteTextByMotionUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorViewModel viewModel,
         MotionKind motionKind)
     {
-        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag);
+        modelModifier.DeleteTextByMotion(motionKind, viewModel);
     }
 
     public void AddPresentationModel(

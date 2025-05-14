@@ -294,16 +294,13 @@ public sealed class TextEditorViewModelApi
         KeymapArgs keymapArgs,
 		TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        CursorModifierBagTextEditor cursorModifierBag)
+        TextEditorViewModel viewModel)
     {
         MoveCursorUnsafe(
             keymapArgs,
 	        editContext,
 	        modelModifier,
-	        viewModel,
-	        cursorModifierBag,
-	        cursorModifierBag.CursorModifier);
+	        viewModel);
 
         viewModel.PersistentState.ShouldRevealCursor = true;
     }
@@ -312,22 +309,20 @@ public sealed class TextEditorViewModelApi
         KeymapArgs keymapArgs,
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCursorModifier cursorModifier)
+        TextEditorViewModel viewModel)
     {
         var shouldClearSelection = false;
 
         if (keymapArgs.ShiftKey)
         {
-            if (cursorModifier.SelectionAnchorPositionIndex == -1 ||
-                cursorModifier.SelectionEndingPositionIndex == cursorModifier.SelectionAnchorPositionIndex)
+            if (viewModel.SelectionAnchorPositionIndex == -1 ||
+                viewModel.SelectionEndingPositionIndex == viewModel.SelectionAnchorPositionIndex)
             {
                 var positionIndex = modelModifier.GetPositionIndex(
-                    cursorModifier.LineIndex,
-                    cursorModifier.ColumnIndex);
+                    viewModel.LineIndex,
+                    viewModel.ColumnIndex);
 
-                cursorModifier.SelectionAnchorPositionIndex = positionIndex;
+                viewModel.SelectionAnchorPositionIndex = positionIndex;
             }
         }
         else
@@ -340,34 +335,34 @@ public sealed class TextEditorViewModelApi
         switch (keymapArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) &&
+                if (TextEditorSelectionHelper.HasSelectedText(viewModel) &&
                     !keymapArgs.ShiftKey)
                 {
-                    var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+                    var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(viewModel);
 
                     var lowerLineInformation = modelModifier.GetLineInformationFromPositionIndex(
                         selectionBounds.Position_LowerInclusiveIndex);
 
-                    cursorModifier.LineIndex = lowerLineInformation.Index;
+                    viewModel.LineIndex = lowerLineInformation.Index;
 
-                    cursorModifier.ColumnIndex = selectionBounds.Position_LowerInclusiveIndex -
+                    viewModel.ColumnIndex = selectionBounds.Position_LowerInclusiveIndex -
                         lowerLineInformation.Position_StartInclusiveIndex;
                 }
                 else
                 {
-                    if (cursorModifier.ColumnIndex <= 0)
+                    if (viewModel.ColumnIndex <= 0)
                     {
-                        if (cursorModifier.LineIndex != 0)
+                        if (viewModel.LineIndex != 0)
                         {
-                            cursorModifier.LineIndex--;
+                            viewModel.LineIndex--;
 
-                            lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
+                            lengthOfLine = modelModifier.GetLineLength(viewModel.LineIndex);
 
-                            cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
+                            viewModel.SetColumnIndexAndPreferred(lengthOfLine);
                         }
                         else
                         {
-                            cursorModifier.SetColumnIndexAndPreferred(0);
+                            viewModel.SetColumnIndexAndPreferred(0);
                         }
                     }
                     else
@@ -375,23 +370,23 @@ public sealed class TextEditorViewModelApi
                         if (keymapArgs.CtrlKey)
                         {
                         	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                                cursorModifier.LineIndex,
-                                cursorModifier.ColumnIndex,
+                                viewModel.LineIndex,
+                                viewModel.ColumnIndex,
                                 true);
 
                             if (columnIndexOfCharacterWithDifferingKind == -1) // Move to start of line
                             {
-                                cursorModifier.SetColumnIndexAndPreferred(0);
+                                viewModel.SetColumnIndexAndPreferred(0);
                             }
                             else
                             {
                             	if (!keymapArgs.AltKey) // Move by character kind
                             	{
-                            		cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+                            		viewModel.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
                             	}
                                 else // Move by camel case
                                 {
-                                	var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
+                                	var positionIndex = modelModifier.GetPositionIndex(viewModel);
 									var rememberStartPositionIndex = positionIndex;
 									
 									var minPositionIndex = columnIndexOfCharacterWithDifferingKind;
@@ -419,46 +414,46 @@ public sealed class TextEditorViewModelApi
 									if (useCamelCaseResult)
 									{
 										var columnDisplacement = positionIndex - rememberStartPositionIndex;
-										cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
+										viewModel.SetColumnIndexAndPreferred(viewModel.ColumnIndex + columnDisplacement);
 									}
 									else
 									{
-										cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+										viewModel.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
 									}
                                 }
                             }
                         }
                         else
                         {
-                            cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex - 1);
+                            viewModel.SetColumnIndexAndPreferred(viewModel.ColumnIndex - 1);
                         }
                     }
                 }
 
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                if (cursorModifier.LineIndex < modelModifier.LineCount - 1)
+                if (viewModel.LineIndex < modelModifier.LineCount - 1)
                 {
-                    cursorModifier.LineIndex++;
+                    viewModel.LineIndex++;
 
-                    lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
+                    lengthOfLine = modelModifier.GetLineLength(viewModel.LineIndex);
 
-                    cursorModifier.ColumnIndex = lengthOfLine < cursorModifier.PreferredColumnIndex
+                    viewModel.ColumnIndex = lengthOfLine < viewModel.PreferredColumnIndex
                         ? lengthOfLine
-                        : cursorModifier.PreferredColumnIndex;
+                        : viewModel.PreferredColumnIndex;
                 }
 
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                if (cursorModifier.LineIndex > 0)
+                if (viewModel.LineIndex > 0)
                 {
-                    cursorModifier.LineIndex--;
+                    viewModel.LineIndex--;
 
-                    lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
+                    lengthOfLine = modelModifier.GetLineLength(viewModel.LineIndex);
 
-                    cursorModifier.ColumnIndex = lengthOfLine < cursorModifier.PreferredColumnIndex
+                    viewModel.ColumnIndex = lengthOfLine < viewModel.PreferredColumnIndex
                         ? lengthOfLine
-                        : cursorModifier.PreferredColumnIndex;
+                        : viewModel.PreferredColumnIndex;
                 }
 
                 break;
@@ -467,62 +462,62 @@ public sealed class TextEditorViewModelApi
             	{
             		viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
             	}
-                else if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keymapArgs.ShiftKey)
+                else if (TextEditorSelectionHelper.HasSelectedText(viewModel) && !keymapArgs.ShiftKey)
                 {
-                    var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
+                    var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(viewModel);
 
                     var upperLineMetaData = modelModifier.GetLineInformationFromPositionIndex(
                         selectionBounds.Position_UpperExclusiveIndex);
 
-                    cursorModifier.LineIndex = upperLineMetaData.Index;
+                    viewModel.LineIndex = upperLineMetaData.Index;
 
-                    if (cursorModifier.LineIndex >= modelModifier.LineCount)
+                    if (viewModel.LineIndex >= modelModifier.LineCount)
                     {
-                        cursorModifier.LineIndex = modelModifier.LineCount - 1;
+                        viewModel.LineIndex = modelModifier.LineCount - 1;
 
-                        var upperLineLength = modelModifier.GetLineLength(cursorModifier.LineIndex);
+                        var upperLineLength = modelModifier.GetLineLength(viewModel.LineIndex);
 
-                        cursorModifier.ColumnIndex = upperLineLength;
+                        viewModel.ColumnIndex = upperLineLength;
                     }
                     else
                     {
-                        cursorModifier.ColumnIndex =
+                        viewModel.ColumnIndex =
                             selectionBounds.Position_UpperExclusiveIndex - upperLineMetaData.Position_StartInclusiveIndex;
                     }
                 }
                 else
                 {
-                    lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
+                    lengthOfLine = modelModifier.GetLineLength(viewModel.LineIndex);
 
-                    if (cursorModifier.ColumnIndex >= lengthOfLine &&
-                        cursorModifier.LineIndex < modelModifier.LineCount - 1)
+                    if (viewModel.ColumnIndex >= lengthOfLine &&
+                        viewModel.LineIndex < modelModifier.LineCount - 1)
                     {
-                        cursorModifier.SetColumnIndexAndPreferred(0);
-                        cursorModifier.LineIndex++;
+                        viewModel.SetColumnIndexAndPreferred(0);
+                        viewModel.LineIndex++;
                     }
-                    else if (cursorModifier.ColumnIndex != lengthOfLine)
+                    else if (viewModel.ColumnIndex != lengthOfLine)
                     {
                         if (keymapArgs.CtrlKey)
                         {
                         	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                                cursorModifier.LineIndex,
-                                cursorModifier.ColumnIndex,
+                                viewModel.LineIndex,
+                                viewModel.ColumnIndex,
                                 false);
 
                             if (columnIndexOfCharacterWithDifferingKind == -1) // Move to end of line
                             {
-                                cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
+                                viewModel.SetColumnIndexAndPreferred(lengthOfLine);
                             }
                             else
                             {
                             	if (!keymapArgs.AltKey) // Move by character kind
                             	{
-                            		cursorModifier.SetColumnIndexAndPreferred(
+                            		viewModel.SetColumnIndexAndPreferred(
                                     	columnIndexOfCharacterWithDifferingKind);
                             	}
                                 else // Move by camel case
                                 {
-                                	var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
+                                	var positionIndex = modelModifier.GetPositionIndex(viewModel);
 									var rememberStartPositionIndex = positionIndex;
 									
 									var maxPositionIndex = columnIndexOfCharacterWithDifferingKind;
@@ -551,11 +546,11 @@ public sealed class TextEditorViewModelApi
 									if (useCamelCaseResult)
 									{
 										var columnDisplacement = positionIndex - rememberStartPositionIndex;
-										cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
+										viewModel.SetColumnIndexAndPreferred(viewModel.ColumnIndex + columnDisplacement);
 									}
 									else
 									{
-										cursorModifier.SetColumnIndexAndPreferred(
+										viewModel.SetColumnIndexAndPreferred(
                                     		columnIndexOfCharacterWithDifferingKind);
 									}
                                 }
@@ -563,7 +558,7 @@ public sealed class TextEditorViewModelApi
                         }
                         else
                         {
-                            cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + 1);
+                            viewModel.SetColumnIndexAndPreferred(viewModel.ColumnIndex + 1);
                         }
                     }
                 }
@@ -572,18 +567,18 @@ public sealed class TextEditorViewModelApi
             case KeyboardKeyFacts.MovementKeys.HOME:
                 if (keymapArgs.CtrlKey)
                 {
-                    cursorModifier.LineIndex = 0;
-                    cursorModifier.SetColumnIndexAndPreferred(0);
+                    viewModel.LineIndex = 0;
+                    viewModel.SetColumnIndexAndPreferred(0);
                 }
 				else
 				{
-					var originalPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+					var originalPositionIndex = modelModifier.GetPositionIndex(viewModel);
 					
-					var lineInformation = modelModifier.GetLineInformation(cursorModifier.LineIndex);
+					var lineInformation = modelModifier.GetLineInformation(viewModel.LineIndex);
 					var lastValidPositionIndex = lineInformation.Position_StartInclusiveIndex + lineInformation.LastValidColumnIndex;
 					
-					cursorModifier.ColumnIndex = 0; // This column index = 0 is needed for the while loop below.
-					var indentationPositionIndexExclusiveEnd = modelModifier.GetPositionIndex(cursorModifier);
+					viewModel.ColumnIndex = 0; // This column index = 0 is needed for the while loop below.
+					var indentationPositionIndexExclusiveEnd = modelModifier.GetPositionIndex(viewModel);
 					
 					var cursorWithinIndentation = false;
 		
@@ -605,25 +600,25 @@ public sealed class TextEditorViewModelApi
 					}
 					
 					if (originalPositionIndex == indentationPositionIndexExclusiveEnd)
-						cursorModifier.SetColumnIndexAndPreferred(0);
+						viewModel.SetColumnIndexAndPreferred(0);
 					else
-						cursorModifier.SetColumnIndexAndPreferred(
+						viewModel.SetColumnIndexAndPreferred(
 							indentationPositionIndexExclusiveEnd - lineInformation.Position_StartInclusiveIndex);
 				}
 
                 break;
             case KeyboardKeyFacts.MovementKeys.END:
                 if (keymapArgs.CtrlKey)
-                    cursorModifier.LineIndex = modelModifier.LineCount - 1;
+                    viewModel.LineIndex = modelModifier.LineCount - 1;
 
-                lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
+                lengthOfLine = modelModifier.GetLineLength(viewModel.LineIndex);
 
-                cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
+                viewModel.SetColumnIndexAndPreferred(lengthOfLine);
 
                 break;
         }
         
-        if (viewModel.HiddenLineIndexHashSet.Contains(cursorModifier.LineIndex))
+        if (viewModel.HiddenLineIndexHashSet.Contains(viewModel.LineIndex))
         {
         	switch (keymapArgs.Key)
         	{
@@ -636,7 +631,7 @@ public sealed class TextEditorViewModelApi
         				var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
 						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
 						{
-							if (cursorModifier.LineIndex == firstToHideLineIndex + lineOffset)
+							if (viewModel.LineIndex == firstToHideLineIndex + lineOffset)
 								encompassingCollapsePoint = collapsePoint;
 						}
         			}
@@ -646,15 +641,15 @@ public sealed class TextEditorViewModelApi
         				var lineIndex = encompassingCollapsePoint.EndExclusiveLineIndex - 1;
         				var lineInformation = modelModifier.GetLineInformation(lineIndex);
         				
-        				if (cursorModifier.ColumnIndex != lineInformation.LastValidColumnIndex)
+        				if (viewModel.ColumnIndex != lineInformation.LastValidColumnIndex)
         				{
-        					for (int i = cursorModifier.LineIndex; i >= 0; i--)
+        					for (int i = viewModel.LineIndex; i >= 0; i--)
 		        			{
 		        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
 		        				{
-		        					cursorModifier.LineIndex = i;
+		        					viewModel.LineIndex = i;
 		        					lineInformation = modelModifier.GetLineInformation(i);
-		        					cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+		        					viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
 		        					break;
 		        				}
 		        			}
@@ -667,17 +662,17 @@ public sealed class TextEditorViewModelApi
         		{
         			var success = false;
         		
-        			for (int i = cursorModifier.LineIndex + 1; i < modelModifier.LineCount; i++)
+        			for (int i = viewModel.LineIndex + 1; i < modelModifier.LineCount; i++)
         			{
         				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
         				{
         					success = true;
-        					cursorModifier.LineIndex = i;
+        					viewModel.LineIndex = i;
         					
         					var lineInformation = modelModifier.GetLineInformation(i);
         					
-        					if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-        						cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+        					if (viewModel.ColumnIndex > lineInformation.LastValidColumnIndex)
+        						viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
         					
         					break;
         				}
@@ -685,16 +680,16 @@ public sealed class TextEditorViewModelApi
         			
         			if (!success)
         			{
-        				for (int i = cursorModifier.LineIndex; i >= 0; i--)
+        				for (int i = viewModel.LineIndex; i >= 0; i--)
 	        			{
 	        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
 	        				{
-	        					cursorModifier.LineIndex = i;
+	        					viewModel.LineIndex = i;
 	        					
 	        					var lineInformation = modelModifier.GetLineInformation(i);
 	        					
-	        					if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-	        						cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+	        					if (viewModel.ColumnIndex > lineInformation.LastValidColumnIndex)
+	        						viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
 	        					
 	        					break;
 	        				}
@@ -707,19 +702,19 @@ public sealed class TextEditorViewModelApi
         		{
         			var success = false;
         			
-        			for (int i = cursorModifier.LineIndex; i >= 0; i--)
+        			for (int i = viewModel.LineIndex; i >= 0; i--)
         			{
         				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
         				{
         					success = true;
-        					cursorModifier.LineIndex = i;
+        					viewModel.LineIndex = i;
         					
         					var lineInformation = modelModifier.GetLineInformation(i);
         					
-        					if (cursorModifier.PreferredColumnIndex <= lineInformation.LastValidColumnIndex)
-        						cursorModifier.ColumnIndex = cursorModifier.PreferredColumnIndex;
-        					else if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-        						cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+        					if (viewModel.PreferredColumnIndex <= lineInformation.LastValidColumnIndex)
+        						viewModel.ColumnIndex = viewModel.PreferredColumnIndex;
+        					else if (viewModel.ColumnIndex > lineInformation.LastValidColumnIndex)
+        						viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
         					
         					break;
         				}
@@ -727,16 +722,16 @@ public sealed class TextEditorViewModelApi
         		
         			if (!success)
         			{
-        				for (int i = cursorModifier.LineIndex + 1; i < modelModifier.LineCount; i++)
+        				for (int i = viewModel.LineIndex + 1; i < modelModifier.LineCount; i++)
 	        			{
 	        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
 	        				{
-	        					cursorModifier.LineIndex = i;
+	        					viewModel.LineIndex = i;
 	        					
 	        					var lineInformation = modelModifier.GetLineInformation(i);
 	        					
-	        					if (cursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-	        						cursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+	        					if (viewModel.ColumnIndex > lineInformation.LastValidColumnIndex)
+	        						viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
 	        					
 	        					break;
 	        				}
@@ -754,7 +749,7 @@ public sealed class TextEditorViewModelApi
         				var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
 						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
 						{
-							if (cursorModifier.LineIndex == firstToHideLineIndex + lineOffset)
+							if (viewModel.LineIndex == firstToHideLineIndex + lineOffset)
 								encompassingCollapsePoint = collapsePoint;
 						}
         			}
@@ -764,8 +759,8 @@ public sealed class TextEditorViewModelApi
         				var lineIndex = encompassingCollapsePoint.EndExclusiveLineIndex - 1;
         			
         				var lineInformation = modelModifier.GetLineInformation(lineIndex);
-						cursorModifier.LineIndex = lineIndex;
-						cursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+						viewModel.LineIndex = lineIndex;
+						viewModel.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
         			}
 	        			
         			break;
@@ -785,8 +780,8 @@ public sealed class TextEditorViewModelApi
 		{
 			lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
 			
-			if (lineAndColumnIndices.lineIndex == cursorModifier.LineIndex &&
-				lineAndColumnIndices.columnIndex == cursorModifier.ColumnIndex)
+			if (lineAndColumnIndices.lineIndex == viewModel.LineIndex &&
+				lineAndColumnIndices.columnIndex == viewModel.ColumnIndex)
 			{
 				inlineUi = inlineUiTuple.InlineUi;
 			}
@@ -803,82 +798,70 @@ public sealed class TextEditorViewModelApi
 
         if (keymapArgs.ShiftKey)
         {
-            cursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
-                cursorModifier.LineIndex,
-                cursorModifier.ColumnIndex);
+            viewModel.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
+                viewModel.LineIndex,
+                viewModel.ColumnIndex);
         }
         else if (!keymapArgs.ShiftKey && shouldClearSelection)
         {
             // The active selection is needed, and cannot be touched until the end.
-            cursorModifier.SelectionAnchorPositionIndex = -1;
-            cursorModifier.SelectionEndingPositionIndex = 0;
+            viewModel.SelectionAnchorPositionIndex = -1;
+            viewModel.SelectionEndingPositionIndex = 0;
         }
     }
 
     public void CursorMovePageTop(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModel,
-        CursorModifierBagTextEditor cursorModifierBag)
+        TextEditorViewModel viewModel)
     {
         CursorMovePageTopUnsafe(
 	        editContext,
-        	viewModel,
-        	cursorModifierBag,
-        	cursorModifierBag.CursorModifier);
+        	viewModel);
     }
 
     public void CursorMovePageTopUnsafe(
         TextEditorEditContext editContext,
-        TextEditorViewModel viewModel,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCursorModifier cursorModifier)
+        TextEditorViewModel viewModel)
     {
         if (viewModel.VirtualizationResult.EntryList.Any())
         {
             var firstEntry = viewModel.VirtualizationResult.EntryList.First();
 
-            cursorModifier.LineIndex = firstEntry.LineIndex;
-            cursorModifier.ColumnIndex = 0;
+            viewModel.LineIndex = firstEntry.LineIndex;
+            viewModel.ColumnIndex = 0;
         }
     }
 
     public void CursorMovePageBottom(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        CursorModifierBagTextEditor cursorModifierBag)
+        TextEditorViewModel viewModel)
     {
         CursorMovePageBottomUnsafe(
         	editContext,
         	modelModifier,
-        	viewModel,
-        	cursorModifierBag,
-        	cursorModifierBag.CursorModifier);
+        	viewModel);
     }
 
     public void CursorMovePageBottomUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCursorModifier cursorModifier)
+        TextEditorViewModel viewModel)
     {
         if ((viewModel.VirtualizationResult.EntryList.Any()))
         {
             var lastEntry = viewModel.VirtualizationResult.EntryList.Last();
             var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.LineIndex);
 
-            cursorModifier.LineIndex = lastEntry.LineIndex;
-            cursorModifier.ColumnIndex = lastEntriesLineLength;
+            viewModel.LineIndex = lastEntry.LineIndex;
+            viewModel.ColumnIndex = lastEntriesLineLength;
         }
     }
     
     public void RevealCursor(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        CursorModifierBagTextEditor cursorModifierBag,
-        TextEditorCursorModifier cursorModifier)
+        TextEditorViewModel viewModel)
     {
     	try
     	{
@@ -894,7 +877,7 @@ public sealed class TextEditorViewModelApi
     			
     		// Console.WriteLine(nameof(RevealCursor));
 		
-            var cursorPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+            var cursorPositionIndex = modelModifier.GetPositionIndex(viewModel);
 
             var cursorTextSpan = new TextEditorTextSpan(
                 cursorPositionIndex,
@@ -1245,17 +1228,14 @@ public sealed class TextEditorViewModelApi
 			 at Luthetus.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 49
 			 */
 			
-			var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
-			var primaryCursorModifier = cursorModifierBag.CursorModifier;
-			
-			if (primaryCursorModifier is not null)
+			if (viewModel is not null)
 			{
-				if (primaryCursorModifier.LineIndex >= modelModifier.LineCount)
-					primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+				if (viewModel.LineIndex >= modelModifier.LineCount)
+					viewModel.LineIndex = modelModifier.LineCount - 1;
 	
-				var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+				var lineInformation = modelModifier.GetLineInformation(viewModel.LineIndex);
 	
-				primaryCursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+				viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
 			}
 
 #if DEBUG

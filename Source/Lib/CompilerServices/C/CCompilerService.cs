@@ -137,8 +137,7 @@ public sealed class CCompilerService : ICompilerService
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        TextEditorViewModel viewModelModifier)
     {
     	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
     }
@@ -171,7 +170,6 @@ public sealed class CCompilerService : ICompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Category category)
     {
     	return ValueTask.CompletedTask;

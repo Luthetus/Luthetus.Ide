@@ -166,15 +166,11 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
         try
         {
-            var cursorList = new List<TextEditorCursor> { renderBatch.ViewModel.PrimaryCursor };
-
-            var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
-
-            if (primaryCursor.ColumnIndex > 0)
+            if (renderBatch.ViewModel.ColumnIndex > 0)
             {
                 var word = renderBatch.Model.ReadPreviousWordOrDefault(
-                    primaryCursor.LineIndex,
-                    primaryCursor.ColumnIndex);
+                    renderBatch.ViewModel.LineIndex,
+                    renderBatch.ViewModel.ColumnIndex);
 
                 List<MenuOptionRecord> menuOptionRecordsList = new();
 
@@ -298,16 +294,14 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             {
             	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-                var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-                if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+                if (modelModifier is null || viewModelModifier is null)
                     return ValueTask.CompletedTask;
             
             	TextEditorService.ModelApi.InsertText(
             		editContext,
 			        modelModifier,
-			        cursorModifierBag,
+			        viewModelModifier,
 			        autocompleteEntry.DisplayName.Substring(word.Length));
 			        
 	            return renderBatch.ViewModel.FocusAsync();

@@ -29,13 +29,11 @@ public struct OnDoubleClick
     
         var viewModel = editContext.GetViewModelModifier(ViewModelKey);
         var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModel);
-        var primaryCursorModifier = cursorModifierBag.CursorModifier;
 
-        if (modelModifier is null || viewModel is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+        if (modelModifier is null || viewModel is null)
             return;
 
-        var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+        var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(viewModel);
 
         if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
             return; // Not pressing the left mouse button so assume ContextMenu is desired result.
@@ -73,9 +71,9 @@ public struct OnDoubleClick
 
         // Move user's cursor position to the higher expansion
         {
-            primaryCursorModifier.LineIndex = lineAndColumnIndex.LineIndex;
-            primaryCursorModifier.ColumnIndex = higherColumnIndexExpansion;
-            primaryCursorModifier.PreferredColumnIndex = lineAndColumnIndex.ColumnIndex;
+            viewModel.LineIndex = lineAndColumnIndex.LineIndex;
+            viewModel.ColumnIndex = higherColumnIndexExpansion;
+            viewModel.PreferredColumnIndex = lineAndColumnIndex.ColumnIndex;
         }
 
         // Set text selection ending to higher expansion
@@ -84,7 +82,7 @@ public struct OnDoubleClick
                 lineAndColumnIndex.LineIndex,
                 higherColumnIndexExpansion);
 
-            primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
+            viewModel.SelectionEndingPositionIndex = cursorPositionOfHigherExpansion;
         }
 
         // Set text selection anchor to lower expansion
@@ -93,7 +91,7 @@ public struct OnDoubleClick
                 lineAndColumnIndex.LineIndex,
                 lowerColumnIndexExpansion);
 
-            primaryCursorModifier.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
+            viewModel.SelectionAnchorPositionIndex = cursorPositionOfLowerExpansion;
         }
         
         await editContext.TextEditorService
