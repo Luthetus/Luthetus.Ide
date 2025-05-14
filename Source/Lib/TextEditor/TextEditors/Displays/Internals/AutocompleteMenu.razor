@@ -3,7 +3,7 @@
 
 @{ var renderBatch = GetRenderBatch(); }
 
-@if (renderBatch.ConstructorWasInvoked)
+@if (renderBatch.IsValid)
 {
 	var appOptionsState = AppOptionsService.GetAppOptionsState();
 

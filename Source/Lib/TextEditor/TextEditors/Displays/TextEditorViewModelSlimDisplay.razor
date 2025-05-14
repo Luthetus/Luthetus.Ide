@@ -39,12 +39,24 @@
      style="@_componentData._personalWrapperCssStyle"
      class="@_componentData._personalWrapperCssClass"
      tabindex="-1">
+     
+    @*
+    	Can you put the vertical virtualization boundary at this level so you don't
+    	have to put it in the gutter and the body?
+    	
+    	Then you'd make the gutter and body height: 100% I guess maybe idk.
+    *@
     
-    @if (ViewModelDisplayOptions.IncludeGutterComponent && _componentData._activeRenderBatch.ConstructorWasInvoked && _componentData.LineIndexCacheEntryMap.Count != 0)
+    @*
+    	The positioning of the if statements for the various sections is extremely deliberate and be sure to understand the purpose
+    	of why they're written the way they currently are before attempting to move them around simply for optimization sake
+    	to avoid some bool checks.
+	*@
+    @if (ViewModelDisplayOptions.IncludeGutterComponent && _componentData._renderBatch.IsValid && _componentData.LineIndexCacheEntryMap.Count != 0)
     {
         <div class="luth_te_gutter-section"
 		      style="@_componentData._gutterWidthStyleCssString"
-		      id="@_componentData._activeRenderBatch.ViewModel.PersistentState.GutterElementId">
+		      id="@_componentData.GutterElementId">
 		      
             @* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
             
@@ -56,7 +68,7 @@
 		    
 		    @{ var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1); }
 		    
-		    @foreach (var virtualizedLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
+		    @foreach (var virtualizedLine in _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
 		        <div class="luth_te_gutter"
 		             style="@(_componentData.GetGutterStyleCss(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].TopCssValue))">
@@ -64,11 +76,11 @@
 		            @(_componentData.LineIndexCacheEntryMap[virtualizedLine.LineIndex].LineNumberString)
 		            
 		            @{
-		            	for (int i = 0; i < _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
+		            	for (int i = 0; i < _componentData._renderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
 		            	{
-		            		if (_componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedLine.LineIndex)
+		            		if (_componentData._renderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizedLine.LineIndex)
 		            		{
-		            			collapsePoint = _componentData._activeRenderBatch.ViewModel.VirtualizedCollapsePointList[i];
+		            			collapsePoint = _componentData._renderBatch.ViewModel.VirtualizedCollapsePointList[i];
 		            			break;
 		            		}
 		            	}
@@ -91,8 +103,8 @@
 		    }
 		    
 		    @{
-		        var heightOfGutter = _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count *
-		                             _componentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
+		        var heightOfGutter = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count *
+		                             _componentData._renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
 		
 		        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
 		        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
@@ -109,11 +121,11 @@
 		        
 		        double topOffscreenOverhang;
 		        
-		        if (_componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+		        if (_componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 		        {
 		        	// TODO: It doesn't seem 'VirtualizationLine' ever will have a null value so it is no longer nullable...
 		        	// ...if any code breaks I think this is the only possible place. It is doing '?? -1' here.
-		        	topOffscreenOverhang = _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels;
+		        	topOffscreenOverhang = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels;
 		        }
 		        else
 		        {
@@ -128,9 +140,9 @@
 		        }
 		
 		        // '1' is added to the text editor's height in order to avoid rounding errors
-		        if (heightOfGutter < 1 + _componentData._activeRenderBatch.ViewModel.TextEditorDimensions.Height)
+		        if (heightOfGutter < 1 + _componentData._renderBatch.ViewModel.TextEditorDimensions.Height)
 		        {
-		            var remainingHeightToFill = _componentData._activeRenderBatch.ViewModel.TextEditorDimensions.Height -
+		            var remainingHeightToFill = _componentData._renderBatch.ViewModel.TextEditorDimensions.Height -
 		                heightOfGutter +
 		                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 		            
@@ -142,17 +154,22 @@
 		        }
 		    }
 		</div>
-    }
-
-    @if (_componentData._activeRenderBatch.ConstructorWasInvoked && _componentData.LineIndexCacheEntryMap.Count != 0)
-    {
-    	<div class="luth_te_body-section"
-	 		style="@_componentData._bodyStyle">
-	 		
-			@* RowSection.razor Open *@
-			<div class="luth_te_row-section"
-				id="@_componentData._activeRenderBatch.ViewModel.PersistentState.BodyElementId">
-					    
+	}
+	
+	@*
+    	The positioning of the if statements for the various sections is extremely deliberate and be sure to understand the purpose
+    	of why they're written the way they currently are before attempting to move them around simply for optimization sake
+    	to avoid some bool checks.
+	*@
+	<div class="luth_te_body-section"
+	 	style="@_componentData._bodyStyle">
+	    
+	    @* RowSection.razor Open *@
+		<div class="luth_te_row-section"
+			 id="@_componentData.RowSectionElementId">
+			
+			@if (_componentData._renderBatch.IsValid && _componentData.LineIndexCacheEntryMap.Count != 0)
+			{
 				@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
 				@* Virtualization Open *@
 				<div class="luth_te_virtualization-boundary-display"
@@ -162,16 +179,16 @@
 				<div class="luth_te_virtualization-boundary-display"
 					 style="@_componentData._verticalVirtualizationBoundaryStyleCssString">
 				</div>
-                @* Virtualization Close *@
-                
-                <div class="luth_te_three-dots-section">
-                	@foreach (var entry in _componentData.inlineUiStyleList)
-                	{
-                		<div class="luth_te_three-dots" style="@entry">
+	            @* Virtualization Close *@
+	            
+	            <div class="luth_te_three-dots-section">
+	            	@foreach (var entry in _componentData.inlineUiStyleList)
+	            	{
+	            		<div class="luth_te_three-dots" style="@entry">
 			    			...
 			    		</div>
-                	}
-                </div>
+	            	}
+	            </div>
 							                           
 				@*  PresentationAndSelection Open *@
 				<div class="luth_te_first-render-presentation-layer-group">
@@ -191,8 +208,8 @@
 				</div>
 				
 				<div class="luth_te_text-selection-group">
-				    @if (TextEditorSelectionHelper.HasSelectedText(_componentData._activeRenderBatch.ViewModel.PrimaryCursor.Selection) &&
-				         _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+				    @if (TextEditorSelectionHelper.HasSelectedText(_componentData._renderBatch.ViewModel.PrimaryCursor.Selection) &&
+				         _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 				    {
 				        for (var i = 0; i < _componentData.SelectionStyleList.Count; i++)
 				        {
@@ -220,7 +237,7 @@
 				</div>
 				@*  PresentationAndSelection Close *@
 				
-				@foreach (var virtualizationLine in _componentData._activeRenderBatch.ViewModel.VirtualizationResult.EntryList)
+				@foreach (var virtualizationLine in _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList)
 				{
 					<div class="luth_te_row"
 						 style="@_componentData.RowSection_GetRowStyleCss(_componentData.LineIndexCacheEntryMap[virtualizationLine.LineIndex].TopCssValue, virtualizationLine.LeftInPixels)">
@@ -233,21 +250,21 @@
 						{
 							for (int i = virtualizationLine.VirtualizationSpan_StartInclusiveIndex; i < virtualizationLine.VirtualizationSpan_EndExclusiveIndex; i++)
 							{
-								<span class="@_componentData._activeRenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
-						            @(_componentData._activeRenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
+								<span class="@_componentData._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
+						            @(_componentData._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
 						        </span>
 						    }
 						}
 						
-						@if (GlobalShowNewlines && virtualizationLine.LineIndex < _componentData._activeRenderBatch.Model.LineCount)
+						@if (GlobalShowNewlines && virtualizationLine.LineIndex < _componentData._renderBatch.Model.LineCount)
 						{
-							var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / _componentData._activeRenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+							var amountOfLeftInCharacterWidthUnits = virtualizationLine.LeftInPixels / _componentData._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
 							
-							var lengthOfLine = _componentData._activeRenderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
+							var lengthOfLine = _componentData._renderBatch.Model.GetLineLength(virtualizationLine.LineIndex, true);
 							
 							if (amountOfLeftInCharacterWidthUnits <= lengthOfLine)
 							{
-							    var rowEndingTuple = _componentData._activeRenderBatch.Model.LineEndList[virtualizationLine.LineIndex];
+							    var rowEndingTuple = _componentData._renderBatch.Model.LineEndList[virtualizationLine.LineIndex];
 							
 							    <span class="luth_te_newline">
 							        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
@@ -257,8 +274,8 @@
 					</div>
 				}
 								
-				<textarea id="@_componentData._activeRenderBatch.ViewModel.PersistentState.PrimaryCursorContentId"
-							tabindex="@_componentData._activeRenderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex"
+				<textarea id="@_componentData.PrimaryCursorContentId"
+							tabindex="@_componentData._renderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex"
 							class="@_componentData.BlinkAnimationCssClass"
 							style="@_componentData._previousGetCursorStyleCss">
 				</textarea>
@@ -266,9 +283,12 @@
 				<div class="luth_te_text-editor-caret-row"
 						style="@_componentData._previousGetCaretRowStyleCss">
 				</div>
-			</div>
-			@* RowSection.razor Close *@
-		
+			}
+		</div>
+		@* RowSection.razor Close *@
+	    
+	    @if (_componentData._renderBatch.IsValid && _componentData.LineIndexCacheEntryMap.Count != 0)
+	    {
 			@* ScrollbarSection.razor Open *@
 			<div class="luth_te_scrollbar-section">
 			
@@ -315,37 +335,41 @@
 			@* ScrollbarSection.razor Close *@
 		    
 		    @* TooltipDisplay.razor Open *@
-		    @if (_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
+		    @if (_componentData._renderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
 		    {
-		        <div class="luth_te_tooltip luth_set-selectable @(_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.CssClassString ?? string.Empty)"
+		        <div class="luth_te_tooltip luth_set-selectable @(_componentData._renderBatch.ViewModel.PersistentState.TooltipViewModel.CssClassString ?? string.Empty)"
 		             style="left: @(_componentData.tooltipRelativeX)px; top: @(_componentData.tooltipRelativeY)px;"
-		             @onmouseover="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.OnMouseOver"
+		             @onmouseover="_componentData._renderBatch.ViewModel.PersistentState.TooltipViewModel.OnMouseOver"
 		             @onmousedown:stopPropagation="true"
 		             @onmousemove:stopPropagation="true"
 		             @ondblclick:stopPropagation="true"
 		             @onclick:stopPropagation="true"
 		             @oncontextmenu:stopPropagation="true">
 		
-		            <DynamicComponent Type="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.RendererType"
-		                              Parameters="_componentData._activeRenderBatch.ViewModel.PersistentState.TooltipViewModel.ParameterMap" />
+		            <DynamicComponent Type="_componentData._renderBatch.ViewModel.PersistentState.TooltipViewModel.RendererType"
+		                              Parameters="_componentData._renderBatch.ViewModel.PersistentState.TooltipViewModel.ParameterMap" />
 		        </div>
 		    }
 		    @* TooltipDisplay.razor Close *@
-		    
-		    <FindOverlayDisplay RenderBatch="_componentData._activeRenderBatch"/>
-		</div>
-    }
-    else
+	    }
+    </div>
+    
+    @*
+    	The positioning of the if statements for the various sections is extremely deliberate and be sure to understand the purpose
+    	of why they're written the way they currently are before attempting to move them around simply for optimization sake
+    	to avoid some bool checks.
+	*@
+    @if (!_componentData._renderBatch.IsValid)
     {
-    	if (_componentData._currentRenderBatch.Model is null)
+    	if (_componentData._renderBatch.Model is null)
 	    {
 	        <div>The @nameof(TextEditorModel) was null</div>
 	    }
-	    else if (_componentData._currentRenderBatch.ViewModel is null)
+	    else if (_componentData._renderBatch.ViewModel is null)
 	    {
 	        <div>The @nameof(TextEditorViewModel) was null</div>
 	    }
-	    else if (_componentData._currentRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is null)
+	    else if (_componentData._renderBatch.TextEditorRenderBatchConstants.TextEditorOptions is null)
 	    {
 	        <div>The @nameof(TextEditorOptions) was null</div>
 	    }

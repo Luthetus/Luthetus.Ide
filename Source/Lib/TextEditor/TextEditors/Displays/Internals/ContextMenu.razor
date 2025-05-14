@@ -2,7 +2,7 @@
 
 @{ var renderBatch = GetRenderBatch(); }
 
-@if (renderBatch.ConstructorWasInvoked)
+@if (renderBatch.IsValid)
 {
 	<div @ref="_textEditorContextMenuElementReference"
 	     tab-index="-1"

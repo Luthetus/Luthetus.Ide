@@ -98,7 +98,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private readonly object _linkedViewModelLock = new();
 
     private TextEditorComponentData _componentData = null!;
-    private TextEditorRenderBatchConstants _textEditorRenderBatchConstants;
+    public TextEditorRenderBatchConstants _textEditorRenderBatchConstants;
     
     public TextEditorViewModel? _linkedViewModel;
     
@@ -146,7 +146,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
 	public TextEditorComponentData ComponentData => _componentData;
 	
-	private bool _hasRanCssOnInitializedStepTwo;
+	private Key<TextEditorViewModel> _linkedViewModelKey = Key<TextEditorViewModel>.Empty;
+	
+	private bool _hasRenderedAtLeastOnce = false;
 	
     protected override void OnInitialized()
     {
@@ -166,19 +168,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	SetComponentData();
     	_ = TextEditorService.TextEditorState._componentDataMap.TryAdd(_componentData.ComponentDataKey, _componentData);
     	
-    	CssOnInitializedStepOne();
+    	CssOnInitialized();
   	  
-  	  try
-  	  {
-  	  	ConstructRenderBatch();
-  	  	CssOnInitializedStepTwo();
-  	  	_hasRanCssOnInitializedStepTwo = true;
-  	  }
-  	  catch (Exception e)
-  	  {
-  	  	Console.WriteLine(e);
-  	  }
-        
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
         TextEditorService.OptionsApi.StaticStateChanged += OnOptionStaticStateChanged;
         TextEditorService.OptionsApi.MeasuredStateChanged += OnOptionMeasuredStateChanged;
@@ -190,56 +181,38 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     protected override void OnParametersSet()
     {
-    	HandleTextEditorViewModelKeyChange();
+    	if (_hasRenderedAtLeastOnce && _linkedViewModelKey != TextEditorViewModelKey)
+            HandleTextEditorViewModelKeyChange();
+            
     	base.OnParametersSet();
     }
-
+    
 	protected override bool ShouldRender()
     {
-    	try
-		{
-			if (_linkedViewModel is null)
-	            HandleTextEditorViewModelKeyChange();
-	
-	        ConstructRenderBatch();
-	        if (!_hasRanCssOnInitializedStepTwo)
-	        {
-	        	CssOnInitializedStepTwo();
-  	  		_hasRanCssOnInitializedStepTwo = true;
-	        }
-	
-	        if (ComponentData._currentRenderBatch.ViewModel is not null && ComponentData._currentRenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is not null)
-	        {
-	            if (ComponentData._currentRenderBatch.ViewModel.PersistentState.DisplayTracker.ConsumeIsFirstDisplay())
-					QueueCalculateVirtualizationResultBackgroundTask(ComponentData._currentRenderBatch);
-	        
-				ComponentData.CreateUi();
-			}
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-			return false;
-		}
-    	
+		ComponentData.CreateUi();
         return true;
     }
+    
+    private Key<TextEditorViewModel> _previousViewModelKey = Key<TextEditorViewModel>.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+        	_hasRenderedAtLeastOnce = true;
+        	HandleTextEditorViewModelKeyChange();
+        
             await TextEditorService.JsRuntimeTextEditorApi
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
-
-            QueueCalculateVirtualizationResultBackgroundTask(_componentData._currentRenderBatch);
         }
 
-        if (_componentData._currentRenderBatch.ViewModel is not null)
+        if (_componentData._renderBatch.ViewModel is not null)
         {
-        	if (_componentData.shouldScroll >= 1)
+        	if (_componentData.shouldScroll >= 1 || _previousViewModelKey != _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey)
 			{
+				_previousViewModelKey = _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey;
+				
 				Interlocked.Exchange(ref _componentData.shouldScroll, 0);
 				
 				// It is thought that you shouldn't '.ConfigureAwait(false)'
@@ -253,15 +226,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				//
 				await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
-		                _componentData._currentRenderBatch.ViewModel.PersistentState.BodyElementId,
-		                _componentData._currentRenderBatch.ViewModel.PersistentState.GutterElementId,
-		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft,
-		                _componentData._currentRenderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
+		                _componentData.RowSectionElementId,
+		                _componentData.GutterElementId,
+		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft,
+		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
 	                .ConfigureAwait(false);
 			}
-        
-        	if (_componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender)
-            	_componentData._currentRenderBatch.ViewModel.PersistentState.ShouldSetFocusAfterNextRender = false;
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -275,7 +245,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	  	await nextViewModel.FocusAsync();
 	}
     
-    private void CssOnInitializedStepOne()
+    private void CssOnInitialized()
 	{
 		_componentData.SetWrapperCssAndStyle();
     	
@@ -292,75 +262,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         _componentData._gutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
         
         _componentData._scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
+        
+		_componentData._blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink {TextCursorKindFacts.BeamCssClassString}";
+	    _componentData._blinkAnimationCssClassOff = $"luth_te_text-editor-cursor {TextCursorKindFacts.BeamCssClassString}";
 	}
 	
-	private void CssOnInitializedStepTwo()
-	{
-		_componentData._blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink ";
-	    _componentData._blinkAnimationCssClassOff = $"luth_te_text-editor-cursor ";
-	    
-	    var cursorCssClassString = _componentData._activeRenderBatch.TextEditorRenderBatchConstants?.TextEditorOptions?.Keymap?.GetCursorCssClassString();
-        if (cursorCssClassString is not null)
-        {
-        	_componentData._blinkAnimationCssClassOn += cursorCssClassString;
-        	_componentData._blinkAnimationCssClassOff += cursorCssClassString;
-        }
-	}
-	
-	public void ConstructRenderBatch()
-    {
-    	var localTextEditorState = TextEditorService.TextEditorState;
-    
-		var inViewModel = localTextEditorState._viewModelMap[TextEditorViewModelKey];
-		var inModel = localTextEditorState._modelMap[inViewModel.PersistentState.ResourceUri];
-    
-    	(TextEditorModel Model, TextEditorViewModel ViewModel) model_viewmodel_tuple = (inModel, inViewModel);
-		
-        var renderBatchUnsafe = new TextEditorRenderBatch(
-            model_viewmodel_tuple.Model,
-            model_viewmodel_tuple.ViewModel,
-            _textEditorRenderBatchConstants);
-        
-        if (renderBatchUnsafe.ViewModel is not null && !renderBatchUnsafe.ViewModel.CreateCacheWasInvoked &&
-        	renderBatchUnsafe.Model is not null)
-        {
-        	/*
-	        if (_componentData.VirtualizedLineCacheViewModelKey != renderBatchUnsafe.ViewModel.ViewModelKey)
-				_componentData.VirtualizationLineCacheClear();
-			*/
-			
-			renderBatchUnsafe.ViewModel = null;
-		
-        	TextEditorService.WorkerArbitrary.PostUnique(nameof(ConstructRenderBatch), editContext =>
-        	{
-        		try
-        		{
-        			var localTextEditorState = TextEditorService.TextEditorState;
-    
-					var inViewModel = localTextEditorState._viewModelMap[TextEditorViewModelKey];
-					var inModel = localTextEditorState._modelMap[inViewModel.PersistentState.ResourceUri];
-			    
-        			inViewModel.VirtualizationResult.CreateCache(
-		        		TextEditorService,
-		        		inModel,
-		        		inViewModel);
-        		}
-        		catch (Exception e)
-        		{
-        			Console.WriteLine(e);
-        		}
-        		
-        		return ValueTask.CompletedTask;
-        	});
-        }
-        
-        _componentData._previousRenderBatch = _componentData._currentRenderBatch;
-        
-        _componentData._currentRenderBatch = renderBatchUnsafe;
-        
-        _componentData._activeRenderBatch = renderBatchUnsafe.Validate() ? renderBatchUnsafe : default;
-    }
-    
     private void SetComponentData()
     {
 		_componentData = new(
@@ -405,13 +311,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			ViewModelDisplayOptions,
 			_componentData);
     }
-
-    private async void GeneralOnStateChangedEventHandler() =>
-        await InvokeAsync(StateHasChanged);
-        
-    private async void ViewModel_CursorShouldBlinkChanged() =>
-        await InvokeAsync(StateHasChanged);
-
+    
     public void HandleTextEditorViewModelKeyChange()
     {
     	// Avoid infinite loop if the viewmodel does not exist.
@@ -440,16 +340,22 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 nextViewModel?.PersistentState.DisplayTracker.RegisterComponentData(_componentData);
 
                 _linkedViewModel = nextViewModel;
+                _linkedViewModelKey = _linkedViewModel.PersistentState.ViewModelKey;
 
                 if (nextViewModel is not null)
                     nextViewModel.PersistentState.ShouldRevealCursor = true;
-            }
             
-            _componentData.VirtualizationLineCacheClear();
+            	_componentData.VirtualizationLineCacheClear();        
+                QueueCalculateVirtualizationResultBackgroundTask();
+            }
             
             return ValueTask.CompletedTask;
     	});
     }
+
+    private async void GeneralOnStateChangedEventHandler() => await InvokeAsync(StateHasChanged);
+        
+    private async void ViewModel_CursorShouldBlinkChanged() => await InvokeAsync(StateHasChanged);
     
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
@@ -725,8 +631,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	        });
     }
 
-    public void QueueCalculateVirtualizationResultBackgroundTask(
-		TextEditorRenderBatch localCurrentRenderBatch)
+    public void QueueCalculateVirtualizationResultBackgroundTask()
     {
         var viewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
         if (viewModel is null)
@@ -756,19 +661,19 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
-    	var renderBatchLocal = ComponentData._activeRenderBatch;
-    	if (!renderBatchLocal.ConstructorWasInvoked)
+    	var renderBatchLocal = ComponentData._renderBatch;
+    	if (!renderBatchLocal.IsValid)
     		return;
     		
     	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
-		HORIZONTAL_scrollLeftOnMouseDown = _componentData._activeRenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft;
+		HORIZONTAL_scrollLeftOnMouseDown = _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft;
 
 		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
 		// Drag far up to reset scroll to original
-		var textEditorDimensions = _componentData._activeRenderBatch.ViewModel.TextEditorDimensions;
+		var textEditorDimensions = _componentData._renderBatch.ViewModel.TextEditorDimensions;
 		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
 		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
 
@@ -786,8 +691,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
-    	var renderBatchLocal = _componentData._activeRenderBatch;
-    	if (!renderBatchLocal.ConstructorWasInvoked)
+    	var renderBatchLocal = _componentData._renderBatch;
+    	if (!renderBatchLocal.IsValid)
     		return;
     
     	VERTICAL_thinksLeftMouseButtonIsDown = true;
@@ -835,8 +740,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private Task HORIZONTAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
-    	var renderBatchLocal = _componentData._activeRenderBatch;
-    	if (!renderBatchLocal.ConstructorWasInvoked)
+    	var renderBatchLocal = _componentData._renderBatch;
+    	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     
     	var localThinksLeftMouseButtonIsDown = HORIZONTAL_thinksLeftMouseButtonIsDown;
@@ -895,8 +800,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private Task VERTICAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
-    	var renderBatchLocal = _componentData._activeRenderBatch;
-    	if (!renderBatchLocal.ConstructorWasInvoked)
+    	var renderBatchLocal = _componentData._renderBatch;
+    	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     
     	var localThinksLeftMouseButtonIsDown = VERTICAL_thinksLeftMouseButtonIsDown;
@@ -956,7 +861,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private async void OnOptionMeasuredStateChanged()
     {
     	_componentData.SetWrapperCssAndStyle();
-    	QueueCalculateVirtualizationResultBackgroundTask(_componentData._currentRenderBatch);
+    	QueueCalculateVirtualizationResultBackgroundTask();
     }
     
     private async void OnOptionStaticStateChanged()

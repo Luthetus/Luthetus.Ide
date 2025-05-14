@@ -33,69 +33,35 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
-		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		var model = TextEditorService.ModelApi.GetOrDefault(
+			ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 
-		_ = Task.Run(async () =>
+		if (model is null)
 		{
-			await DotNetBackgroundTaskApi.TestExplorerService
-				.HandleUserInterfaceWasInitializedEffect()
-				.ConfigureAwait(false);
-		});
-
-		base.OnInitialized();
-	}
-	
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			var model = TextEditorService.ModelApi.GetOrDefault(
-				ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
-
-			if (model is null)
+			TextEditorService.WorkerArbitrary.PostUnique(nameof(TestExplorerDisplay), async editContext =>
 			{
-				TextEditorService.WorkerArbitrary.PostUnique(nameof(TestExplorerDisplay), async editContext =>
-				{
-					var terminalDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
-					var terminalCompilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
-	
-					model = new TextEditorModel(
-						ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-						DateTime.UtcNow,
-						ExtensionNoPeriodFacts.TERMINAL,
-						"initialContent:TestExplorerDetailsTextEditorResourceUri",
-	                    terminalDecorationMapper,
-	                    terminalCompilerService,
-	                    TextEditorService);
-	
-					TextEditorService.ModelApi.RegisterCustom(editContext, model);
-	
-					TextEditorService.ViewModelApi.Register(
-						editContext,
-						TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey,
-						ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-						new Category("terminal"));
-	
-					RegisterDetailsTextEditor(model);
-	
-					await InvokeAsync(StateHasChanged);
-				});
-			}
-		}
+				var terminalDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
+				var terminalCompilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
 
-		await base.OnAfterRenderAsync(firstRender);
-	}
+				model = new TextEditorModel(
+					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
+					DateTime.UtcNow,
+					ExtensionNoPeriodFacts.TERMINAL,
+					"initialContent:TestExplorerDetailsTextEditorResourceUri",
+                    terminalDecorationMapper,
+                    terminalCompilerService,
+                    TextEditorService);
 
-	private void RegisterDetailsTextEditor(TextEditorModel model)
-	{
-		TextEditorService.WorkerArbitrary.PostUnique(
-			nameof(TextEditorService.ModelApi.AddPresentationModel),
-			editContext =>
-			{
+				TextEditorService.ModelApi.RegisterCustom(editContext, model);
+
+				TextEditorService.ViewModelApi.Register(
+					editContext,
+					TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey,
+					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
+					new Category("terminal"));
+
 				var modelModifier = editContext.GetModelModifier(model.PersistentState.ResourceUri);
-			
+		
 				TextEditorService.ModelApi.AddPresentationModel(
 					editContext,
 					modelModifier,
@@ -117,9 +83,6 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 				var viewModelModifier = editContext.GetViewModelModifier(TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey);
 
-				if (viewModelModifier is null)
-					throw new NullReferenceException();
-
 				var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 				{
 					TerminalPresentationFacts.PresentationKey,
@@ -128,11 +91,25 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 				};
 
 				viewModelModifier.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
-				
-				return ValueTask.CompletedTask;
+
+				// await InvokeAsync(StateHasChanged);
 			});
-	}
+		}
 	
+		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
+		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+
+		_ = Task.Run(async () =>
+		{
+			await DotNetBackgroundTaskApi.TestExplorerService
+				.HandleUserInterfaceWasInitializedEffect()
+				.ConfigureAwait(false);
+		});
+
+		base.OnInitialized();
+	}
+
 	private void DispatchShouldDiscoverTestsEffect()
 	{
 		_ = Task.Run(async () =>

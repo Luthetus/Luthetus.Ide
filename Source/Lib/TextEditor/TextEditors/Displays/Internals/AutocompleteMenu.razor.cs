@@ -68,7 +68,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._activeRenderBatch ?? default;
+    	return GetComponentData()?._renderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -98,7 +98,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
     	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.ConstructorWasInvoked)
+    	if (!renderBatch.IsValid)
     		return Task.CompletedTask;
     
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
@@ -110,7 +110,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     private async Task ReturnFocusToThisAsync()
     {
     	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.ConstructorWasInvoked)
+    	if (!renderBatch.IsValid)
     		return;
     		
         try
@@ -144,7 +144,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     private MenuRecord GetMenuRecord()
     {
     	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.ConstructorWasInvoked)
+    	if (!renderBatch.IsValid)
     		return NoResultsMenuRecord;
     
         try
@@ -161,7 +161,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     public MenuRecord GetDefaultMenuRecord(List<AutocompleteEntry>? otherAutocompleteEntryList = null)
     {
     	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.ConstructorWasInvoked)
+    	if (!renderBatch.IsValid)
     		return NoResultsMenuRecord;
     
         try
@@ -230,7 +230,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     public async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
     	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.ConstructorWasInvoked)
+    	if (!renderBatch.IsValid)
     		return;
     
         _ = Task.Run(async () =>
@@ -289,7 +289,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         TextEditorViewModel viewModel)
     {
     	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.ConstructorWasInvoked)
+    	if (!renderBatch.IsValid)
     		return;
     
         TextEditorService.WorkerArbitrary.PostUnique(

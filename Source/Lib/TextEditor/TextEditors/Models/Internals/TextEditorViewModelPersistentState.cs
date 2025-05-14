@@ -21,10 +21,6 @@ public class TextEditorViewModelPersistentState
 	    List<Key<TextEditorPresentationModel>> firstPresentationLayerKeysList,
 	    List<Key<TextEditorPresentationModel>> lastPresentationLayerKeysList,
 	    DynamicViewModelAdapterTextEditor dynamicViewModelAdapter,
-	    string bodyElementId,
-	    string primaryCursorContentId,
-	    string gutterElementId,
-	    string findOverlayId,
 	    bool showFindOverlay,
 	    string replaceValueInFindOverlay,
 	    bool showReplaceButtonInFindOverlay,
@@ -32,7 +28,6 @@ public class TextEditorViewModelPersistentState
 	    bool findOverlayValueExternallyChangedMarker,
 	    MenuKind menuKind,
 	    TooltipViewModel tooltipViewModel,
-	    bool shouldSetFocusAfterNextRender,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind)
 	{
@@ -46,10 +41,6 @@ public class TextEditorViewModelPersistentState
 	    FirstPresentationLayerKeysList = firstPresentationLayerKeysList;
 	    LastPresentationLayerKeysList = lastPresentationLayerKeysList;
 	    DynamicViewModelAdapter = dynamicViewModelAdapter;
-	    BodyElementId = bodyElementId;
-	    PrimaryCursorContentId = primaryCursorContentId;
-	    GutterElementId = gutterElementId;
-	    FindOverlayId = findOverlayId;
 	    
 	    ShowFindOverlay = showFindOverlay;
 	    ReplaceValueInFindOverlay = replaceValueInFindOverlay;
@@ -59,8 +50,7 @@ public class TextEditorViewModelPersistentState
 	    
 	    MenuKind = menuKind;
 	    TooltipViewModel = tooltipViewModel;
-	    
-	    ShouldSetFocusAfterNextRender = shouldSetFocusAfterNextRender;
+
 	    ShouldRevealCursor = shouldRevealCursor;
 		VirtualAssociativityKind = virtualAssociativityKind;
 	}
@@ -114,10 +104,6 @@ public class TextEditorViewModelPersistentState
 	/// a panel tab, or a text editor group tab.
 	/// </summary>
 	public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
-	public string BodyElementId { get; }
-	public string PrimaryCursorContentId { get; }
-	public string GutterElementId { get; }
-	public string FindOverlayId { get; }
 	
 	/// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
@@ -161,12 +147,6 @@ public class TextEditorViewModelPersistentState
 	/// </summary>
     public TooltipViewModel? TooltipViewModel { get; set; }
     
-    /// <summary>
-    /// If one opens a file with the 'Enter' key, they might want focus to then be set on that
-    /// newly opened file. However, perhaps one wants the 'Space' key to also open the file,
-    /// but not set focus to it.
-    /// </summary>
-    public bool ShouldSetFocusAfterNextRender { get; set; }
     public bool ShouldRevealCursor { get; set; }
     public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
 }

@@ -16,16 +16,14 @@ public struct TextEditorRenderBatch
 		Model = model;
 	    ViewModel = viewModel;
 	    TextEditorRenderBatchConstants = textEditorRenderBatchConstants;
+	    
+	    Validate();
 	}
 
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
     public TextEditorRenderBatchConstants TextEditorRenderBatchConstants { get; set; }
     
-    public bool ConstructorWasInvoked => Model is not null &&
-								         ViewModel is not null &&
-								         TextEditorRenderBatchConstants.TextEditorOptions is not null;
-
     public double GutterWidthInPixels { get; private set; }
 
     public bool IsValid { get; private set; }
@@ -34,7 +32,9 @@ public struct TextEditorRenderBatch
     {
     	IsValid = Model is not null &&
 	        ViewModel is not null &&
-	        TextEditorRenderBatchConstants.TextEditorOptions is not null;
+	        ViewModel.CreateCacheWasInvoked &&
+	        TextEditorRenderBatchConstants.TextEditorOptions is not null &&
+	        ViewModel.CreateCacheWasInvoked;
 	    
 	    if (IsValid)
 	    	GutterWidthInPixels = GetGutterWidthInPixels();
