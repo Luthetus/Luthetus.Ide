@@ -29,6 +29,7 @@
 
 .luth_te_text-editor-group-active-view-model {
     height: calc(100% - var(--luth_tabs-bar-height));
+    position: relative;
 }
 
 .luth_te_method {

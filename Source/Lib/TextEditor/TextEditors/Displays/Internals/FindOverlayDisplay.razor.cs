@@ -159,9 +159,13 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             {
             	becameShown = true;
             	
-                await CommonBackgroundTaskApi.JsRuntimeCommonApi
-                    .FocusHtmlElementById(renderBatchLocal.ViewModel.PersistentState.FindOverlayId)
-                    .ConfigureAwait(false);
+            	var componentData = renderBatchLocal.ViewModel.PersistentState.DisplayTracker.ComponentData;
+            	if (componentData is not null)
+            	{
+	                await CommonBackgroundTaskApi.JsRuntimeCommonApi
+	                    .FocusHtmlElementById(componentData.FindOverlayId)
+	                    .ConfigureAwait(false);
+                }
             }
         }
         
@@ -208,9 +212,13 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     	
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await CommonBackgroundTaskApi.JsRuntimeCommonApi
-                .FocusHtmlElementById(renderBatchLocal.ViewModel.PersistentState.PrimaryCursorContentId)
-                .ConfigureAwait(false);
+        	var componentData = renderBatchLocal.ViewModel.PersistentState.DisplayTracker.ComponentData;
+        	if (componentData is not null)
+        	{
+	            await CommonBackgroundTaskApi.JsRuntimeCommonApi
+	                .FocusHtmlElementById(componentData.PrimaryCursorContentId)
+	                .ConfigureAwait(false);
+            }
 
             TextEditorService.WorkerArbitrary.PostRedundant(
                 nameof(FindOverlayDisplay),

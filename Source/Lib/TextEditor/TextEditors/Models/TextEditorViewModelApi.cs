@@ -1272,9 +1272,13 @@ public sealed class TextEditorViewModelApi
         TextEditorViewModel viewModel)
     {
         var options = _textEditorService.OptionsApi.GetOptions();
+        
+        var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+        if (componentData is null)
+        	return;
 		
 		var textEditorMeasurements = await _textEditorService.ViewModelApi
-			.GetTextEditorMeasurementsAsync(viewModel.PersistentState.BodyElementId)
+			.GetTextEditorMeasurementsAsync(componentData.BodyElementId)
 			.ConfigureAwait(false);
 
 		viewModel.CharAndLineMeasurements = options.CharAndLineMeasurements;

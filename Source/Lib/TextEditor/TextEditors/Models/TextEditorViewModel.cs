@@ -66,10 +66,6 @@ public sealed class TextEditorViewModel : IDisposable
 	            panelService,
 	            dialogService,
 	            commonBackgroundTaskApi),
-		    bodyElementId: $"luth_te_text-editor-content_{viewModelKey.Guid}",
-		    primaryCursorContentId: $"luth_te_text-editor-content_{viewModelKey.Guid}_primary-cursor",
-		    gutterElementId: $"luth_te_text-editor-gutter_{viewModelKey.Guid}",
-		    findOverlayId: $"luth_te_find-overlay_{viewModelKey.Guid}",
 		    showFindOverlay: false,
 		    replaceValueInFindOverlay: string.Empty,
 		    showReplaceButtonInFindOverlay: false,
@@ -149,7 +145,11 @@ public sealed class TextEditorViewModel : IDisposable
 
     public ValueTask FocusAsync()
     {
-        return PersistentState.TextEditorService.ViewModelApi.FocusPrimaryCursorAsync(PersistentState.PrimaryCursorContentId);
+    	var componentData = PersistentState.DisplayTracker.ComponentData;
+    	if (componentData is null)
+    		return ValueTask.CompletedTask;
+    	
+        return PersistentState.TextEditorService.ViewModelApi.FocusPrimaryCursorAsync(componentData.PrimaryCursorContentId);
     }
     
     public void ApplyCollapsePointState(TextEditorEditContext editContext)

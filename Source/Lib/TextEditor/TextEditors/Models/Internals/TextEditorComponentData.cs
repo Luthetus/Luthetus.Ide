@@ -77,6 +77,11 @@ public sealed class TextEditorComponentData
 		ServiceProvider = serviceProvider;
 		
 		ComponentDataKey = new Key<TextEditorComponentData>(TextEditorHtmlElementId);
+		
+		BodyElementId = $"luth_te_text-editor-content_{TextEditorHtmlElementId}";
+		PrimaryCursorContentId = $"luth_te_text-editor-content_{TextEditorHtmlElementId}_primary-cursor";
+		GutterElementId = $"luth_te_text-editor-gutter_{TextEditorHtmlElementId}";
+		FindOverlayId = $"luth_te_find-overlay_{TextEditorHtmlElementId}";
 	}
 	
 	public string? inlineUiWidthStyleCssString;
@@ -87,6 +92,11 @@ public sealed class TextEditorComponentData
     public TextEditorRenderBatch _renderBatch;
     
     public int shouldScroll;
+    
+	public string BodyElementId { get; }
+	public string PrimaryCursorContentId { get; }
+	public string GutterElementId { get; }
+	public string FindOverlayId { get; }
 
 	/// <summary>
 	/// This property contains the global options, with an extra step of overriding any specified options

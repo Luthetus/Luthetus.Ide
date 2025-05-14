@@ -206,6 +206,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         if (_componentData._renderBatch.ViewModel is not null)
         {
+        	/*
+        	Console.Write($"Width:{_componentData._renderBatch.ViewModel.TextEditorDimensions.Width}");
+        	Console.Write($"Height:{_componentData._renderBatch.ViewModel.TextEditorDimensions.Height}");
+        	Console.Write($"BoundingClientRectLeft:{_componentData._renderBatch.ViewModel.TextEditorDimensions.BoundingClientRectLeft}");
+        	Console.Write($"BoundingClientRectTop:{_componentData._renderBatch.ViewModel.TextEditorDimensions.BoundingClientRectTop}");
+        	Console.WriteLine();
+        	*/
+        
         	if (_componentData.shouldScroll >= 1 || _previousViewModelKey != _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey)
 			{
 				_previousViewModelKey = _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey;
@@ -223,8 +231,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				//
 				await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
-		                _componentData._renderBatch.ViewModel.PersistentState.BodyElementId,
-		                _componentData._renderBatch.ViewModel.PersistentState.GutterElementId,
+		                _componentData.BodyElementId,
+		                _componentData.GutterElementId,
 		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft,
 		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
 	                .ConfigureAwait(false);

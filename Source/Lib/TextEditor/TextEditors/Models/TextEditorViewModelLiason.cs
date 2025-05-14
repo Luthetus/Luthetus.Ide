@@ -106,4 +106,17 @@ public class TextEditorViewModelLiason
 			}
 		}
 	}
+	
+	public void SetContent(List<Key<TextEditorViewModel>> viewModelKeyList)
+	{
+		var editContext = new TextEditorEditContext(_textEditorService);
+		
+		foreach (var viewModelKey in viewModelKeyList)
+		{
+			var viewModel = editContext.GetViewModelModifier(viewModelKey);
+			
+			if (viewModel.PersistentState.DisplayTracker.ComponentData is not null)
+				viewModel.PersistentState.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
+		}
+	}
 }

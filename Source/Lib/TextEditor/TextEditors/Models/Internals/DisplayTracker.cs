@@ -170,11 +170,16 @@ public sealed class DisplayTracker : IDisposable
 
 	public void PostScrollAndRemeasure()
 	{
+		Console.WriteLine("START:PostScrollAndRemeasure()");
+		
 		var model = _textEditorService.ModelApi.GetOrDefault(_resourceUri);
         var viewModel = _textEditorService.ViewModelApi.GetOrDefault(_viewModelKey);
 
         if (model is null || viewModel is null)
+        {
+        	Console.WriteLine("FAIL:PostScrollAndRemeasure()");
             return;
+        }
 
 		_textEditorService.WorkerArbitrary.PostRedundant(
 			nameof(AppDimensionStateWrap_StateChanged),
@@ -186,13 +191,27 @@ public sealed class DisplayTracker : IDisposable
 				var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 				
 	            if (modelModifier is null || viewModelModifier is null)
+	            {
+	            	Console.WriteLine("FAIL:PostScrollAndRemeasure()");
 	                return;
+	            }
+	            
+	            var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+	            if (componentData is null)
+	            	return;
 				
-				var textEditorMeasurements = await _textEditorService.ViewModelApi
-					.GetTextEditorMeasurementsAsync(viewModelModifier.PersistentState.BodyElementId)
+				var textEditorDimensions = await _textEditorService.ViewModelApi
+					.GetTextEditorMeasurementsAsync(componentData.BodyElementId)
 					.ConfigureAwait(false);
+					
+				Console.Write($"psar->");
+				Console.Write($"Width:{textEditorDimensions.Width}");
+	        	Console.Write($"Height:{textEditorDimensions.Height}");
+	        	Console.Write($"BoundingClientRectLeft:{textEditorDimensions.BoundingClientRectLeft}");
+	        	Console.Write($"BoundingClientRectTop:{textEditorDimensions.BoundingClientRectTop}");
+	        	Console.WriteLine();
 		
-				viewModelModifier.TextEditorDimensions = textEditorMeasurements;
+				viewModelModifier.TextEditorDimensions = textEditorDimensions;
 				
 				viewModelModifier.ShouldReloadVirtualizationResult = true;
 				

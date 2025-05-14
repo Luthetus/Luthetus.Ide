@@ -754,8 +754,12 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         IDropdownService dropdownService)
     {
+    	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	if (componentData is null)
+    		return;
+    
 		var cursorDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(viewModel.PersistentState.PrimaryCursorContentId)
+			.MeasureElementById(componentData.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
 		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
@@ -868,8 +872,12 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         IDropdownService dropdownService)
     {
+    	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	if (componentData is null)
+    		return;
+    
 		var cursorDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(viewModel.PersistentState.PrimaryCursorContentId)
+			.MeasureElementById(componentData.PrimaryCursorContentId)
 			.ConfigureAwait(false);
 
 		var primaryCursorModifier = cursorModifierBag.CursorModifier;
@@ -956,8 +964,12 @@ public class TextEditorCommandDefaultFunctions
         TextEditorComponentData componentData,
         ILuthetusTextEditorComponentRenderers textEditorComponentRenderers)
     {
+    	componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	if (componentData is null)
+    		return;
+    		
         var elementPositionInPixels = await textEditorService.JsRuntimeTextEditorApi
-            .GetBoundingClientRect(viewModel.PersistentState.PrimaryCursorContentId)
+            .GetBoundingClientRect(componentData.PrimaryCursorContentId)
             .ConfigureAwait(false);
 
         elementPositionInPixels = elementPositionInPixels with
@@ -1453,8 +1465,12 @@ public class TextEditorCommandDefaultFunctions
 
         if (viewModel.PersistentState.ShowFindOverlay)
         {
+        	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+	    	if (componentData is null)
+	    		return;
+    		
             await commonJavaScriptInteropApi
-                .FocusHtmlElementById(viewModel.PersistentState.FindOverlayId)
+                .FocusHtmlElementById(componentData.FindOverlayId)
                 .ConfigureAwait(false);
         }
         else

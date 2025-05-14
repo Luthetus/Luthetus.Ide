@@ -21,10 +21,6 @@ public class TextEditorViewModelPersistentState
 	    List<Key<TextEditorPresentationModel>> firstPresentationLayerKeysList,
 	    List<Key<TextEditorPresentationModel>> lastPresentationLayerKeysList,
 	    DynamicViewModelAdapterTextEditor dynamicViewModelAdapter,
-	    string bodyElementId,
-	    string primaryCursorContentId,
-	    string gutterElementId,
-	    string findOverlayId,
 	    bool showFindOverlay,
 	    string replaceValueInFindOverlay,
 	    bool showReplaceButtonInFindOverlay,
@@ -45,10 +41,6 @@ public class TextEditorViewModelPersistentState
 	    FirstPresentationLayerKeysList = firstPresentationLayerKeysList;
 	    LastPresentationLayerKeysList = lastPresentationLayerKeysList;
 	    DynamicViewModelAdapter = dynamicViewModelAdapter;
-	    BodyElementId = bodyElementId;
-	    PrimaryCursorContentId = primaryCursorContentId;
-	    GutterElementId = gutterElementId;
-	    FindOverlayId = findOverlayId;
 	    
 	    ShowFindOverlay = showFindOverlay;
 	    ReplaceValueInFindOverlay = replaceValueInFindOverlay;
@@ -112,10 +104,6 @@ public class TextEditorViewModelPersistentState
 	/// a panel tab, or a text editor group tab.
 	/// </summary>
 	public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; set; }
-	public string BodyElementId { get; }
-	public string PrimaryCursorContentId { get; }
-	public string GutterElementId { get; }
-	public string FindOverlayId { get; }
 	
 	/// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
