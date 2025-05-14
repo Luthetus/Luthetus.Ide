@@ -148,6 +148,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	private Key<TextEditorViewModel> _linkedViewModelKey = Key<TextEditorViewModel>.Empty;
 	
+	private bool _hasRenderedAtLeastOnce = false;
+	
     protected override void OnInitialized()
     {
     	 _onKeyDownNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown);
@@ -179,7 +181,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     protected override void OnParametersSet()
     {
-    	if (_linkedViewModelKey != TextEditorViewModelKey)
+    	if (_hasRenderedAtLeastOnce && _linkedViewModelKey != TextEditorViewModelKey)
             HandleTextEditorViewModelKeyChange();
             
     	base.OnParametersSet();
@@ -197,6 +199,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     {
         if (firstRender)
         {
+        	_hasRenderedAtLeastOnce = true;
+        	HandleTextEditorViewModelKeyChange();
+        
             await TextEditorService.JsRuntimeTextEditorApi
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
