@@ -205,20 +205,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             await TextEditorService.JsRuntimeTextEditorApi
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
-
-            QueueCalculateVirtualizationResultBackgroundTask();
         }
 
         if (_componentData._renderBatch.ViewModel is not null)
         {
-        	/*
-        	Console.Write($"Width:{_componentData._renderBatch.ViewModel.TextEditorDimensions.Width}");
-        	Console.Write($"Height:{_componentData._renderBatch.ViewModel.TextEditorDimensions.Height}");
-        	Console.Write($"BoundingClientRectLeft:{_componentData._renderBatch.ViewModel.TextEditorDimensions.BoundingClientRectLeft}");
-        	Console.Write($"BoundingClientRectTop:{_componentData._renderBatch.ViewModel.TextEditorDimensions.BoundingClientRectTop}");
-        	Console.WriteLine();
-        	*/
-        
         	if (_componentData.shouldScroll >= 1 || _previousViewModelKey != _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey)
 			{
 				_previousViewModelKey = _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey;
@@ -236,7 +226,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				//
 				await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
-		                _componentData.BodyElementId,
+		                _componentData.RowSectionElementId,
 		                _componentData.GutterElementId,
 		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollLeft,
 		                _componentData._renderBatch.ViewModel.ScrollbarDimensions.ScrollTop)
@@ -354,11 +344,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
                 if (nextViewModel is not null)
                     nextViewModel.PersistentState.ShouldRevealCursor = true;
-                    
+            
+            	_componentData.VirtualizationLineCacheClear();        
                 QueueCalculateVirtualizationResultBackgroundTask();
             }
-            
-            _componentData.VirtualizationLineCacheClear();
             
             return ValueTask.CompletedTask;
     	});

@@ -162,12 +162,11 @@
     	to avoid some bool checks.
 	*@
 	<div class="luth_te_body-section"
-	 	style="@_componentData._bodyStyle"
-	 	id="@_componentData.BodyElementId">
+	 	style="@_componentData._bodyStyle">
 	    
 	    @* RowSection.razor Open *@
 		<div class="luth_te_row-section"
-			id="@_componentData.BodyElementId">
+			 id="@_componentData.RowSectionElementId">
 			
 			@if (_componentData._renderBatch.IsValid && _componentData.LineIndexCacheEntryMap.Count != 0)
 			{

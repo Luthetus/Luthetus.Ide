@@ -1278,7 +1278,7 @@ public sealed class TextEditorViewModelApi
         	return;
 		
 		var textEditorMeasurements = await _textEditorService.ViewModelApi
-			.GetTextEditorMeasurementsAsync(componentData.BodyElementId)
+			.GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
 			.ConfigureAwait(false);
 
 		viewModel.CharAndLineMeasurements = options.CharAndLineMeasurements;

@@ -170,8 +170,6 @@ public sealed class DisplayTracker : IDisposable
 
 	public void PostScrollAndRemeasure()
 	{
-		Console.WriteLine("START:PostScrollAndRemeasure()");
-		
 		var model = _textEditorService.ModelApi.GetOrDefault(_resourceUri);
         var viewModel = _textEditorService.ViewModelApi.GetOrDefault(_viewModelKey);
 
@@ -201,15 +199,8 @@ public sealed class DisplayTracker : IDisposable
 	            	return;
 				
 				var textEditorDimensions = await _textEditorService.ViewModelApi
-					.GetTextEditorMeasurementsAsync(componentData.BodyElementId)
+					.GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
 					.ConfigureAwait(false);
-					
-				Console.Write($"psar->");
-				Console.Write($"Width:{textEditorDimensions.Width}");
-	        	Console.Write($"Height:{textEditorDimensions.Height}");
-	        	Console.Write($"BoundingClientRectLeft:{textEditorDimensions.BoundingClientRectLeft}");
-	        	Console.Write($"BoundingClientRectTop:{textEditorDimensions.BoundingClientRectTop}");
-	        	Console.WriteLine();
 		
 				viewModelModifier.TextEditorDimensions = textEditorDimensions;
 				

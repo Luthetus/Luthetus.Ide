@@ -78,7 +78,7 @@ public sealed class TextEditorComponentData
 		
 		ComponentDataKey = new Key<TextEditorComponentData>(TextEditorHtmlElementId);
 		
-		BodyElementId = $"luth_te_text-editor-content_{TextEditorHtmlElementId}";
+		RowSectionElementId = $"luth_te_text-editor-body_{TextEditorHtmlElementId}";
 		PrimaryCursorContentId = $"luth_te_text-editor-content_{TextEditorHtmlElementId}_primary-cursor";
 		GutterElementId = $"luth_te_text-editor-gutter_{TextEditorHtmlElementId}";
 		FindOverlayId = $"luth_te_find-overlay_{TextEditorHtmlElementId}";
@@ -93,7 +93,7 @@ public sealed class TextEditorComponentData
     
     public int shouldScroll;
     
-	public string BodyElementId { get; }
+	public string RowSectionElementId { get; }
 	public string PrimaryCursorContentId { get; }
 	public string GutterElementId { get; }
 	public string FindOverlayId { get; }
