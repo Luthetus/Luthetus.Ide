@@ -97,6 +97,8 @@ public sealed class TextEditorComponentData
 	public string PrimaryCursorContentId { get; }
 	public string GutterElementId { get; }
 	public string FindOverlayId { get; }
+	
+	public string gutterWidthInPixelsInvariantCulture = string.Empty;
 
 	/// <summary>
 	/// This property contains the global options, with an extra step of overriding any specified options
@@ -311,8 +313,11 @@ public sealed class TextEditorComponentData
     }
     
     /* RowSection.razor Open */
-    public string RowSection_GetRowStyleCss(string topCssValue, double virtualizedLineLeftInPixels)
+    public string RowSection_GetRowStyleCss(int lineIndex)
     {
+    	var topCssValue = LineIndexCacheEntryMap[lineIndex].TopCssValue;
+    	var leftCssValue = LineIndexCacheEntryMap[lineIndex].LeftCssValue;
+    	
     	_uiStringBuilder.Clear();
     
         _uiStringBuilder.Append("top: ");
@@ -321,12 +326,9 @@ public sealed class TextEditorComponentData
 
         _uiStringBuilder.Append(_lineHeightStyleCssString);
 
-		if (virtualizedLineLeftInPixels > 0)
-		{
-	        _uiStringBuilder.Append("left: ");
-	        _uiStringBuilder.Append(virtualizedLineLeftInPixels.ToCssValue());
-	        _uiStringBuilder.Append("px;");
-        }
+        _uiStringBuilder.Append("left: ");
+        _uiStringBuilder.Append(leftCssValue);
+        _uiStringBuilder.Append("px;");
 
         return _uiStringBuilder.ToString();
     }
@@ -335,7 +337,8 @@ public sealed class TextEditorComponentData
     {
     	var shouldAppearAfterCollapsePoint = cursorIsOnHiddenLine;
     	
-    	var leftInPixels = 0d;
+    	// TODO: Cache cursor left css value.
+    	var leftInPixels = _renderBatch.GutterWidthInPixels;
     	var topInPixelsInvariantCulture = string.Empty;
 	
 		if (cursorIsOnHiddenLine)
@@ -1203,101 +1206,8 @@ public sealed class TextEditorComponentData
     }
     
     public Dictionary<int, TextEditorLineIndexCacheEntry> LineIndexCacheEntryMap = new();
-    private HashSet<int> LineIndexCacheUsageHashSet = new();
-    private List<int> LineIndexKeyList = new();
-    
-    private void CreateCache()
-    {
-    	var hiddenLineCount = 0;
-    	var checkHiddenLineIndex = 0;
-    	var handledCursor = false;
-    	var isHandlingCursor = false;
-    	
-    	for (int i = 0; i < _renderBatch.ViewModel.VirtualizationResult.EntryList.Count; i++)
-    	{
-    		int lineIndex = _renderBatch.ViewModel.VirtualizationResult.EntryList[i].LineIndex;
-    		
-    		if (lineIndex >= _renderBatch.ViewModel.LineIndex && !handledCursor)
-    		{
-    		 	isHandlingCursor = true;
-    		 	lineIndex = _renderBatch.ViewModel.LineIndex;
-			}
-    		
-    		for (; checkHiddenLineIndex < lineIndex; checkHiddenLineIndex++)
-            {
-            	if (_renderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
-            		hiddenLineCount++;
-            }
-            
-            LineIndexCacheUsageHashSet.Add(lineIndex);
-            
-            if (LineIndexCacheEntryMap.ContainsKey(lineIndex))
-	    	{
-	    		var cacheEntry = LineIndexCacheEntryMap[lineIndex];
-	    		
-	    		if (hiddenLineCount != cacheEntry.HiddenLineCount)
-	            {
-	            	cacheEntry.TopCssValue = ((lineIndex - hiddenLineCount) * _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight)
-	            		.ToCssValue();
-	            		
-	            	cacheEntry.HiddenLineCount = hiddenLineCount;
-	            	
-	            	LineIndexCacheEntryMap[lineIndex] = cacheEntry;
-	            }
-	    	}
-	    	else
-	    	{
-	    		LineIndexKeyList.Add(lineIndex);
-	    		
-	    		LineIndexCacheEntryMap.Add(lineIndex, new TextEditorLineIndexCacheEntry(
-	    			topCssValue: ((lineIndex - hiddenLineCount) * _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
-					lineNumberString: (lineIndex + 1).ToString(),
-					hiddenLineCount: hiddenLineCount));
-	    	}
-	    	
-	    	if (isHandlingCursor)
-	    	{
-	    		isHandlingCursor = false;
-	    		handledCursor = true;
-	    		i--;
-	    		
-	    		if (_renderBatch.ViewModel.HiddenLineIndexHashSet.Contains(_renderBatch.ViewModel.LineIndex))
-	    			cursorIsOnHiddenLine = true;
-	    	}
-    	}
-    	
-    	if (!handledCursor)
-    	{
-    		LineIndexCacheUsageHashSet.Add(_renderBatch.ViewModel.LineIndex);
-    		
-    		if (LineIndexCacheEntryMap.ContainsKey(_renderBatch.ViewModel.LineIndex))
-	    	{
-	    		var cacheEntry = LineIndexCacheEntryMap[_renderBatch.ViewModel.LineIndex];
-	    		
-	    		if (hiddenLineCount != cacheEntry.HiddenLineCount)
-	            {
-	            	cacheEntry.TopCssValue = (_renderBatch.ViewModel.LineIndex * _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight)
-	            		.ToCssValue();
-	            		
-	            	cacheEntry.HiddenLineCount = 0;
-	            	
-	            	LineIndexCacheEntryMap[_renderBatch.ViewModel.LineIndex] = cacheEntry;
-	            }
-	    	}
-	    	else
-	    	{
-	    		LineIndexKeyList.Add(_renderBatch.ViewModel.LineIndex);
-	    		
-	    		LineIndexCacheEntryMap.Add(_renderBatch.ViewModel.LineIndex, new TextEditorLineIndexCacheEntry(
-	    			topCssValue: (_renderBatch.ViewModel.LineIndex * _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
-					lineNumberString: (_renderBatch.ViewModel.LineIndex + 1).ToString(),
-					hiddenLineCount: 0));
-	    	}
-	    		
-    		if (_renderBatch.ViewModel.HiddenLineIndexHashSet.Contains(_renderBatch.ViewModel.LineIndex))
-	    		cursorIsOnHiddenLine = true;
-    	}
-    }
+    public HashSet<int> LineIndexCacheUsageHashSet = new();
+    public List<int> LineIndexKeyList = new();
     
     /// <summary>If the scroll left changes you have to discard the virtualized line cache.</summary>
     public double VirtualizedLineCacheCreatedWithScrollLeft = -1;
@@ -1374,14 +1284,11 @@ public sealed class TextEditorComponentData
     	cursorIsOnHiddenLine = false;
     		
     	LineIndexCacheUsageHashSet.Clear();
-    	
-    	CreateCache();
     
     	// Somewhat hacky second try-catch so the presentations
     	// don't clobber the text editor's default behavior when they throw an exception.
     	try
     	{
-	        GetCursorAndCaretRowStyleCss();
 	        GetSelection();
 	        
 	        GetPresentationLayer(firstPresentationLayerGroupList, firstPresentationLayerTextSpanList);
@@ -1403,11 +1310,11 @@ public sealed class TextEditorComponentData
         	if (Math.Abs(_previousGutterWidthInPixels - _renderBatch.GutterWidthInPixels) >= 0.2)
         	{
         		_previousGutterWidthInPixels = _renderBatch.GutterWidthInPixels;
-        		var widthInPixelsInvariantCulture = _renderBatch.GutterWidthInPixels.ToCssValue();
+        		gutterWidthInPixelsInvariantCulture = _renderBatch.GutterWidthInPixels.ToCssValue();
         		
         		_uiStringBuilder.Clear();
         		_uiStringBuilder.Append("width: ");
-        		_uiStringBuilder.Append(widthInPixelsInvariantCulture);
+        		_uiStringBuilder.Append(gutterWidthInPixelsInvariantCulture);
         		_uiStringBuilder.Append("px;");
         		_gutterWidthStyleCssString = _uiStringBuilder.ToString();
         		
@@ -1419,9 +1326,9 @@ public sealed class TextEditorComponentData
         		
         		_uiStringBuilder.Clear();
         		_uiStringBuilder.Append("width: calc(100% - ");
-		        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+		        _uiStringBuilder.Append(gutterWidthInPixelsInvariantCulture);
 		        _uiStringBuilder.Append("px); left: ");
-		        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+		        _uiStringBuilder.Append(gutterWidthInPixelsInvariantCulture);
 		        _uiStringBuilder.Append("px;");
         		_bodyStyle = _uiStringBuilder.ToString();
 

@@ -109,7 +109,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private IconDriver _iconDriver = new IconDriver(widthInPixels: 15, heightInPixels: 15);
     
-    private string ContentElementId { get; set; }
+    private string ContentElementId => _componentData.RowSectionElementId;
     
 	/// <summary>
 	/// Unit of measurement is pixels (px).
@@ -227,7 +227,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
 		                _componentData.RowSectionElementId,
-		                _componentData.GutterElementId,
 		                _componentData._renderBatch.ViewModel.ScrollLeft,
 		                _componentData._renderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
@@ -249,7 +248,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	{
 		_componentData.SetWrapperCssAndStyle();
     	
-    	ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
+    	// ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
 	    
 	    VERTICAL_ScrollbarElementId = $"luth_te_{VERTICAL_scrollbarGuid}";
 	    VERTICAL_ScrollbarSliderElementId = $"luth_te_{VERTICAL_scrollbarGuid}-slider";

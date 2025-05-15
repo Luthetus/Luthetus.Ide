@@ -69,14 +69,12 @@ public class LuthetusTextEditorJavaScriptInteropApi
 
     public ValueTask SetScrollPositionBoth(
         string bodyElementId,
-        string gutterElementId,
         double scrollLeftInPixels,
         double scrollTopInPixels)
     {
         return _jsRuntime.InvokeVoidAsync(
             "luthetusTextEditor.setScrollPositionBoth",
             bodyElementId,
-            gutterElementId,
             scrollLeftInPixels,
             scrollTopInPixels);
     }
