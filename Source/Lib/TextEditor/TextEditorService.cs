@@ -260,11 +260,17 @@ public sealed class TextEditorService
 
 			if (viewModelModifier.ShouldCalculateVirtualizationResult)
 			{
-				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
-	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
-	            	editContext,
-	            	modelModifier,
-			        viewModelModifier);
+				var componentData = viewModelModifier.PersistentState.DisplayTracker.ComponentData;
+				
+				if (componentData is not null)
+				{
+					// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
+		            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+		            	editContext,
+		            	modelModifier,
+				        viewModelModifier,
+				        componentData);
+				}
 			}
 			
 			if (TextEditorState._viewModelMap.ContainsKey(viewModelModifier.PersistentState.ViewModelKey))

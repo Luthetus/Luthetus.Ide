@@ -900,7 +900,8 @@ public sealed class TextEditorViewModelApi
     public void CalculateVirtualizationResult(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-		TextEditorViewModel viewModel)
+		TextEditorViewModel viewModel,
+		TextEditorComponentData componentData)
     {
     	#if DEBUG
     	var startTime = Stopwatch.GetTimestamp();
@@ -911,10 +912,6 @@ public sealed class TextEditorViewModelApi
     	
         try
 		{
-			var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
-			if (componentData is null)
-				return;
-		
 			viewModel.ShouldCalculateVirtualizationResult = false;
 		
 			var verticalStartingIndex = (int)Math.Floor(

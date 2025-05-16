@@ -674,10 +674,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             	
             	viewModelModifier.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
             	
-            	TextEditorService.ViewModelApi.CalculateVirtualizationResult(
-            		editContext,
-			        modelModifier,
-			        viewModelModifier);
+            	TextEditorService.FinalizePost(editContext);
 			    return ValueTask.CompletedTask;
             });
     }
