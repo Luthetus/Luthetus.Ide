@@ -100,7 +100,7 @@ public sealed class TextEditorModel
 	    _allText = other._allText;
 	    _charCount = other._charCount;
 	    
-	    /*if (other.ShouldReloadVirtualizationResult)
+	    /*if (other.ShouldCalculateVirtualizationResult)
 	    {
 	    	WriteEditBlockListToConsole();
 	    }*/
@@ -273,7 +273,7 @@ public sealed class TextEditorModel
 	/// <summary>
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
 	/// </summary>
-    public bool ShouldReloadVirtualizationResult { get; set; }
+    public bool ShouldCalculateVirtualizationResult { get; set; }
 
     public int DocumentLength => RichCharacterList.Length;
     
@@ -603,7 +603,7 @@ public sealed class TextEditorModel
 		};
 
         SetIsDirtyTrue();
-		ShouldReloadVirtualizationResult = true;
+		ShouldCalculateVirtualizationResult = true;
 		
 		PersistentState.__TextEditorViewModelLiason.SetContent(PersistentState.ViewModelKeyList);
     }
@@ -1115,7 +1115,7 @@ public sealed class TextEditorModel
         }
 
         SetIsDirtyTrue();
-		ShouldReloadVirtualizationResult = true;
+		ShouldCalculateVirtualizationResult = true;
     }
 
 	private string InsertMetadata(
@@ -1490,7 +1490,7 @@ public sealed class TextEditorModel
         }
 
         SetIsDirtyTrue();
-		ShouldReloadVirtualizationResult = true;
+		ShouldCalculateVirtualizationResult = true;
     }
 
 	/// <summary>

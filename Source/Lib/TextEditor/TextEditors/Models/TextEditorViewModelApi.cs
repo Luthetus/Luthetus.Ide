@@ -906,8 +906,17 @@ public sealed class TextEditorViewModelApi
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
     	
+    	if (!viewModel.ShouldCalculateVirtualizationResult)
+    		return;
+    	
         try
 		{
+			var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+			if (componentData is null)
+				return;
+		
+			viewModel.ShouldCalculateVirtualizationResult = false;
+		
 			var verticalStartingIndex = (int)Math.Floor(
 				viewModel.ScrollTop /
 				viewModel.CharAndLineMeasurements.LineHeight);
@@ -1192,7 +1201,6 @@ public sealed class TextEditorViewModelApi
 		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
 						
 			viewModel.VirtualizationResult = virtualizationResult;
-			viewModel.CreateCacheWasInvoked = false;
 			
 			viewModel.ScrollWidth = totalWidth;
 			viewModel.ScrollHeight = totalHeight;

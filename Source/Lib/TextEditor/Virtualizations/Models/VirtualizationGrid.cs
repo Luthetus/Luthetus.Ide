@@ -153,8 +153,6 @@ public struct VirtualizationGrid
     	#if DEBUG
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
-    	
-    	viewModel.CreateCacheWasInvoked = true;
     
     	if (viewModel.VirtualizationResult.EntryList.Count == 0)
 			return;

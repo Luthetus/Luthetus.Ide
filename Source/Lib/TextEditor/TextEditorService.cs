@@ -166,8 +166,8 @@ public sealed class TextEditorService
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
                 var viewModelModifier = editContext.GetViewModelModifier(modelModifier.PersistentState.ViewModelKeyList[viewModelIndex]);
 
-				if (!viewModelModifier.ShouldReloadVirtualizationResult)
-					viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
+				if (!viewModelModifier.ShouldCalculateVirtualizationResult)
+					viewModelModifier.ShouldCalculateVirtualizationResult = modelModifier.ShouldCalculateVirtualizationResult;
             }
 
             if (modelModifier.WasDirty != modelModifier.IsDirty)
@@ -190,7 +190,7 @@ public sealed class TextEditorService
         	var viewModelModifier = __ViewModelList[viewModelIndex];
         
         	TextEditorModel? modelModifier = null;
-        	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.ShouldReloadVirtualizationResult || viewModelModifier.ScrollWasModified)
+        	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.ShouldCalculateVirtualizationResult || viewModelModifier.ScrollWasModified)
         		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
         
         	if (viewModelModifier.PersistentState.ShouldRevealCursor)
@@ -208,12 +208,12 @@ public sealed class TextEditorService
             // 
             // This is done here, so that the 'ScrollWasModified' bool can be set, and downstream if statements will be entered,
             // which go on to scroll the editor.
-            if (viewModelModifier.ShouldReloadVirtualizationResult)
+            if (viewModelModifier.ShouldCalculateVirtualizationResult)
 			{
 				ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: false);
 			}
 
-            if (!viewModelModifier.ShouldReloadVirtualizationResult &&
+            if (!viewModelModifier.ShouldCalculateVirtualizationResult &&
             	viewModelModifier.ScrollWasModified)
             {
             	// If not already going to reload virtualization result,
@@ -226,7 +226,7 @@ public sealed class TextEditorService
             	{
             		if (viewModelModifier.ScrollTop < viewModelModifier.VirtualizationResult.VirtualTop)
             		{
-            			viewModelModifier.ShouldReloadVirtualizationResult = true;
+            			viewModelModifier.ShouldCalculateVirtualizationResult = true;
             		}
             		else
             		{
@@ -234,7 +234,7 @@ public sealed class TextEditorService
             			var virtualEnd = viewModelModifier.VirtualizationResult.VirtualTop + viewModelModifier.VirtualizationResult.VirtualHeight;
             				
             			if (bigTop > virtualEnd)
-            				viewModelModifier.ShouldReloadVirtualizationResult = true;
+            				viewModelModifier.ShouldCalculateVirtualizationResult = true;
             		}
             	}
             	
@@ -242,23 +242,23 @@ public sealed class TextEditorService
             	//
             	// If we didn't already determine the necessity of calculating the virtualization
             	// result when checking the vertical virtualization, then we check horizontal.
-            	if (!viewModelModifier.ShouldReloadVirtualizationResult)
+            	if (!viewModelModifier.ShouldCalculateVirtualizationResult)
             	{
             		var scrollLeft = viewModelModifier.ScrollLeft;
             		if (scrollLeft < (viewModelModifier.VirtualizationResult.VirtualLeft))
             		{
-            			viewModelModifier.ShouldReloadVirtualizationResult = true;
+            			viewModelModifier.ShouldCalculateVirtualizationResult = true;
             		}
             		else
             		{
 						var bigLeft = scrollLeft + viewModelModifier.TextEditorDimensions.Width;
             			if (bigLeft > viewModelModifier.VirtualizationResult.VirtualLeft + viewModelModifier.VirtualizationResult.VirtualWidth)
-            				viewModelModifier.ShouldReloadVirtualizationResult = true;
+            				viewModelModifier.ShouldCalculateVirtualizationResult = true;
             		}
             	}
             }
 
-			if (viewModelModifier.ShouldReloadVirtualizationResult)
+			if (viewModelModifier.ShouldCalculateVirtualizationResult)
 			{
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
 	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(

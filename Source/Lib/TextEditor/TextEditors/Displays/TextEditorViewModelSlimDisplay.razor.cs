@@ -368,11 +368,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 _linkedViewModel = nextViewModel;
                 _linkedViewModelKey = _linkedViewModel.PersistentState.ViewModelKey;
 
+                _componentData.VirtualizationLineCacheClear();
+                
                 if (nextViewModel is not null)
+                {
                     nextViewModel.PersistentState.ShouldRevealCursor = true;
-            
-            	_componentData.VirtualizationLineCacheClear();        
-                QueueCalculateVirtualizationResultBackgroundTask();
+                    nextViewModel.ShouldCalculateVirtualizationResult = true;
+                    TextEditorService.FinalizePost(editContext);
+                }
             }
             
             return ValueTask.CompletedTask;

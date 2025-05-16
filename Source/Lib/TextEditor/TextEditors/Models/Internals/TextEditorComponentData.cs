@@ -1553,30 +1553,5 @@ public sealed class TextEditorComponentData
     	{
     		return;
     	}
-    	else if (!_renderBatch.ViewModel.CreateCacheWasInvoked)
-    	{
-	    	TextEditorService.WorkerArbitrary.PostUnique(nameof(DiagnoseIssues), editContext =>
-	    	{
-	    		try
-	    		{
-					var inViewModel = TextEditorService.TextEditorState._viewModelMap[viewModel.PersistentState.ViewModelKey];
-					var inModel = TextEditorService.TextEditorState._modelMap[viewModel.PersistentState.ResourceUri];
-					
-					if (inViewModel is null || inViewModel.CreateCacheWasInvoked)
-						return ValueTask.CompletedTask;
-			    
-	    			inViewModel.VirtualizationResult.CreateCache(
-		        		TextEditorService,
-		        		inModel,
-		        		inViewModel);
-	    		}
-	    		catch (Exception e)
-	    		{
-	    			Console.WriteLine(e);
-	    		}
-	    		
-	    		return ValueTask.CompletedTask;
-	    	});
-    	}
     }
 }
