@@ -213,12 +213,6 @@ public sealed class TextEditorService
 				ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: false);
 			}
 
-            if (viewModelModifier.ScrollWasModified &&
-            	viewModelModifier.PersistentState.DisplayTracker.ComponentData is not null)
-            {
-            	Interlocked.Exchange(ref viewModelModifier.PersistentState.DisplayTracker.ComponentData.shouldScroll, 1);
-            }
-            
             if (!viewModelModifier.ShouldReloadVirtualizationResult &&
             	viewModelModifier.ScrollWasModified)
             {

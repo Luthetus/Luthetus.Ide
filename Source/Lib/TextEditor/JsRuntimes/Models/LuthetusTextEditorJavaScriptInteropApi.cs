@@ -80,6 +80,30 @@ public class LuthetusTextEditorJavaScriptInteropApi
             scrollLeftInPixels,
             scrollTopInPixels);
     }
+    
+    public ValueTask SetScrollPositionLeft(
+        string bodyElementId,
+        string gutterElementId,
+        double scrollLeftInPixels)
+    {
+        return _jsRuntime.InvokeVoidAsync(
+            "luthetusTextEditor.setScrollPositionLeft",
+            bodyElementId,
+            gutterElementId,
+            scrollLeftInPixels);
+    }
+    
+    public ValueTask SetScrollPositionTop(
+        string bodyElementId,
+        string gutterElementId,
+        double scrollTopInPixels)
+    {
+        return _jsRuntime.InvokeVoidAsync(
+            "luthetusTextEditor.setScrollPositionTop",
+            bodyElementId,
+            gutterElementId,
+            scrollTopInPixels);
+    }
 
     public ValueTask<TextEditorDimensions> GetTextEditorMeasurementsInPixelsById(
         string elementId)
