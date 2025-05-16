@@ -101,7 +101,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-gDQE\/MR7AVmY19\/TV398Vja1W+4UGbfeKUArEH+hsvU=",
+      "hash": "sha256-+DBIuzY0GMjzFiwg675vEy8zlgDVdExhBX7g\/BMesEQ=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -117,87 +117,87 @@
       "url": "_framework\/CliWrap.wasm"
     },
     {
-      "hash": "sha256-P8xBlzxi60gafvALSC3Opeurvi6125P8zkA76+LCxNo=",
+      "hash": "sha256-eqL4WCsfW9G26NFYOqz2IdIk6\/Y5FfQrarG+uunirmo=",
       "url": "_framework\/Luthetus.Common.RazorLib.wasm"
     },
     {
-      "hash": "sha256-8IJp0OmKID7NCxSns82bllUDbF\/SwZkyJN6qM4nXPtw=",
+      "hash": "sha256-0zkW9hhEuWs20uAUKiZQwLTer9RzaU+cdZP4R5uKZcM=",
       "url": "_framework\/Luthetus.CompilerServices.C.wasm"
     },
     {
-      "hash": "sha256-xp9xj4Hkt\/mOJ+dk3TE2sorDPmyRYPb75M5uynXw9v4=",
+      "hash": "sha256-cVOYluaSPInFZLITL3EQhmbZmQuCEn+\/F+4rF1dxjK8=",
       "url": "_framework\/Luthetus.CompilerServices.CSharp.wasm"
     },
     {
-      "hash": "sha256-fDUdJh5JlI7E3MddCyo5KmdVEppsQPrMro3JAx0d3aQ=",
+      "hash": "sha256-ravctZ5IoihZmwLVndVxXQJyTPAJKdkpURBWmOLjqgU=",
       "url": "_framework\/Luthetus.CompilerServices.CSharpProject.wasm"
     },
     {
-      "hash": "sha256-vFARqZCiYM9XCee9zQPchycFCMaOPmbvqa6c78jqX6I=",
+      "hash": "sha256-dAR08IazYkf\/tIp3uhHYwN1r9FfnZyLSx9t7zPAS78E=",
       "url": "_framework\/Luthetus.CompilerServices.Css.wasm"
     },
     {
-      "hash": "sha256-8ulv8lL7MLLrvDo\/DjCiMJHg6uVhAsl6cSx3KJFaEtQ=",
+      "hash": "sha256-3JcCLN8LHBkuCi1PWqNC5UZYMNlaOPIhr2oDYI3Fg8w=",
       "url": "_framework\/Luthetus.CompilerServices.DotNetSolution.wasm"
     },
     {
-      "hash": "sha256-\/TePsvYJ4SV0wFZBt3ohDtvSYBJmkRi2QXmJ2yPce6Q=",
+      "hash": "sha256-LiDnsgBRhx5XqMR9WiJzimJ7B+g74DlkCTPl9BWWxuU=",
       "url": "_framework\/Luthetus.CompilerServices.FSharp.wasm"
     },
     {
-      "hash": "sha256-huXdE+EQFjTm2wSaHwzbYGn18Ft3OjZLc2RO1LSCMEY=",
+      "hash": "sha256-JHHg9KbFi9Kowy4dGtilxWc5XPYvNESZn1aUCGPtkpU=",
       "url": "_framework\/Luthetus.CompilerServices.JavaScript.wasm"
     },
     {
-      "hash": "sha256-A8ggDcofneoigGhGVjWdZ5Uh6vXycWjAodzWHPt7k6s=",
+      "hash": "sha256-DU27lQgtujp6EQmX8oF4UkHj6+mM6gQSnbvVnRt4GzU=",
       "url": "_framework\/Luthetus.CompilerServices.Json.wasm"
     },
     {
-      "hash": "sha256-jbXqP1f3V3KLxb6HkphgwfLQNilQN1Lcqjl6O\/iiBdQ=",
+      "hash": "sha256-nohB1UNPNfstX+Uigw1BFs4mEWW2HWMa8sINQllx0AU=",
       "url": "_framework\/Luthetus.CompilerServices.Python.wasm"
     },
     {
-      "hash": "sha256-kVFJAaiKFRJDGXZsR+\/+bd6Pk\/FzhnPLehwFOsW1dTM=",
+      "hash": "sha256-MdV+Qkg3PLCwMHjUWjbowqcRvRPAsn0yT5D0xqcxqTM=",
       "url": "_framework\/Luthetus.CompilerServices.Razor.wasm"
     },
     {
-      "hash": "sha256-lnmW8R1ka5sG8efgy8ubv2rRbuD\/mu8J9+LNQrYXMLk=",
+      "hash": "sha256-ddpj7WojvtHD\/KT1kaDmYSUYl7aLHWDbNTHlV1aa0Mg=",
       "url": "_framework\/Luthetus.CompilerServices.TypeScript.wasm"
     },
     {
-      "hash": "sha256-fRKYa8CDu6iMAZM6jEz+Hscjy4OWjbQVSNwsoN4FRz0=",
+      "hash": "sha256-N6w6tXO0byw4eGGdfgJhC3iK7X1B5Gi\/CkHFByKBHb8=",
       "url": "_framework\/Luthetus.CompilerServices.Xml.wasm"
     },
     {
-      "hash": "sha256-PXky+UEacO6V\/zK9j474pL3qzZy9lNuu1+dwpx0F48o=",
+      "hash": "sha256-XDgbIbUshJ17WMBFMx9TYm\/73NHueKEbWd1yAr2gA3Q=",
       "url": "_framework\/Luthetus.Extensions.CompilerServices.wasm"
     },
     {
-      "hash": "sha256-\/5cuLPJ67lBVbTkWsLiJGi\/Cj2co\/EUeGDjg71dInQI=",
+      "hash": "sha256-pM82yC6ng6CPx97KYkY83wIeDrZH\/CKaR7aWkjsEgpc=",
       "url": "_framework\/Luthetus.Extensions.Config.wasm"
     },
     {
-      "hash": "sha256-Z1tAfxkhQIxm2ovWnXlfx9NsSgEWS2kBQdfhlsTb4tE=",
+      "hash": "sha256-yyOpvByip3no50MMRlFgEMlHr0kyezB2NnnvsYcrjhc=",
       "url": "_framework\/Luthetus.Extensions.DotNet.wasm"
     },
     {
-      "hash": "sha256-ZUsKz0MMlaWLVTtSC65kPjFN5nq7dMYeu0NUsR8jtWA=",
+      "hash": "sha256-kMaFKzMa3YPXsjHCHwEqnV4ysCRAgGDOC\/cTNpy64xU=",
       "url": "_framework\/Luthetus.Extensions.Git.wasm"
     },
     {
-      "hash": "sha256-S6XCjOgl+ArJEJZjEhSgnJ6LtRUDVHgD7E1wHZ0HQH0=",
+      "hash": "sha256-1Aq6EnlNu0QonmCt3Yy00u1EqnD\/DUEVJBW16npDXSc=",
       "url": "_framework\/Luthetus.Ide.RazorLib.wasm"
     },
     {
-      "hash": "sha256-\/ix2LvcbueqAZ29irUFYr4+D4AknWKR3smINqkQs7Ho=",
+      "hash": "sha256-mkcb4Smo7Oj4s2oFZJ6K2SxCYyZpq\/qhIj6essZG7Y8=",
       "url": "_framework\/Luthetus.Ide.Wasm.wasm"
     },
     {
-      "hash": "sha256-+HAT7AzjqrTj28BsWZ8d9\/5o3csHcauIX0p7XH1rKlk=",
+      "hash": "sha256-84ymSubMPPKpmrH3eCaFSCWW8eIusfPMzLEE30SvLAA=",
       "url": "_framework\/Luthetus.TextEditor.RazorLib.wasm"
     },
     {
-      "hash": "sha256-Fj\/JTLEihdBctsfIBSy5w+qgzPOTaTOlkBn9hKnxSeI=",
+      "hash": "sha256-bBb2U95yciSocckyTF2+H4cb5ooeyRP\/l95En\/OoWsQ=",
       "url": "_framework\/Luthetus.Website.RazorLib.wasm"
     },
     {
@@ -465,5 +465,5 @@
       "url": "_content\/Luthetus.TextEditor\/luthetusTextEditor.js"
     }
   ],
-  "version": "7zj7Fvbo"
+  "version": "OCmwK\/Gx"
 };
