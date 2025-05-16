@@ -251,7 +251,7 @@ public sealed class TextEditorModelApi
             }
         }
         
-        modelModifier.ShouldReloadVirtualizationResult = true;
+        modelModifier.ShouldCalculateVirtualizationResult = true;
     }
 
     public void ApplySyntaxHighlighting(
@@ -276,7 +276,7 @@ public sealed class TextEditorModelApi
 	        compilerServiceResource.CompilationUnit?.GetTextTextSpans() ?? Array.Empty<TextEditorTextSpan>());
         
         // TODO: Why does painting reload virtualization result???
-        modelModifier.ShouldReloadVirtualizationResult = true;
+        modelModifier.ShouldCalculateVirtualizationResult = true;
     }
     #endregion
 

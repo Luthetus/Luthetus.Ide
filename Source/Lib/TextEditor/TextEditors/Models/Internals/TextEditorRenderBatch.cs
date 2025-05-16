@@ -31,10 +31,8 @@ public struct TextEditorRenderBatch
     public bool Validate()
     {
     	IsValid = Model is not null &&
-	        ViewModel is not null &&
-	        ViewModel.CreateCacheWasInvoked &&
-	        TextEditorRenderBatchConstants.TextEditorOptions is not null &&
-	        ViewModel.CreateCacheWasInvoked;
+			      ViewModel is not null &&
+			      TextEditorRenderBatchConstants.TextEditorOptions is not null;
 	    
 	    if (IsValid)
 	    	GutterWidthInPixels = GetGutterWidthInPixels();
