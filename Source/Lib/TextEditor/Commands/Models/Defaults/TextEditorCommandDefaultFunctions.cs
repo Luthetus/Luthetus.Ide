@@ -1074,7 +1074,7 @@ public class TextEditorCommandDefaultFunctions
     				}*/
     			}
 				
-				viewModel.ShouldReloadVirtualizationResult = true;
+				viewModel.ShouldCalculateVirtualizationResult = true;
 				return true;
 			}
 		}

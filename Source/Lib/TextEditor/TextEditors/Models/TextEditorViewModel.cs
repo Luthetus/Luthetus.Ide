@@ -124,7 +124,7 @@ public sealed class TextEditorViewModel : IDisposable
 		
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
 		
-		CreateCacheWasInvoked = other.CreateCacheWasInvoked;
+		ShouldCalculateVirtualizationResult = other.ShouldCalculateVirtualizationResult;
 		
 		AllCollapsePointList = other.AllCollapsePointList;
 		VirtualizedCollapsePointList = other.VirtualizedCollapsePointList;
@@ -134,7 +134,6 @@ public sealed class TextEditorViewModel : IDisposable
 	    /*
 	    // Don't copy these properties
 	    ScrollWasModified { get; set; }
-	    ShouldReloadVirtualizationResult { get; set; }
 	    */
 	}
 	
@@ -163,15 +162,14 @@ public sealed class TextEditorViewModel : IDisposable
 	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
 	/// </summary>
     public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
-	
-    public bool CreateCacheWasInvoked { get; set; }
     
-    public bool ScrollWasModified { get; set; }
-	/// <summary>
+    /// <summary>
 	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
 	/// </summary>
-    public bool ShouldReloadVirtualizationResult { get; set; }
-    
+    public bool ShouldCalculateVirtualizationResult { get; set; }
+	
+    public bool ScrollWasModified { get; set; }
+	
     public List<CollapsePoint> AllCollapsePointList { get; set; }
 	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
 	public bool HiddenLineIndexHashSetIsShallowCopy { get; set; }
