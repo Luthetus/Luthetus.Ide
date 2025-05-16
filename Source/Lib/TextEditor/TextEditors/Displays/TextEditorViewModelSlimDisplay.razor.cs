@@ -193,7 +193,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         return true;
     }
     
-    private Key<TextEditorViewModel> _previousViewModelKey = Key<TextEditorViewModel>.Empty;
+	private double _previousScrollLeft;
+	private double _previousScrollTop;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -209,29 +210,54 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         if (_componentData._renderBatch.ViewModel is not null)
         {
-        	if (_componentData.shouldScroll >= 1 || _previousViewModelKey != _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey)
-			{
-				_previousViewModelKey = _componentData._renderBatch.ViewModel.PersistentState.ViewModelKey;
-				
-				Interlocked.Exchange(ref _componentData.shouldScroll, 0);
-				
-				// It is thought that you shouldn't '.ConfigureAwait(false)'
-				// because this could provide a "natural throttle for the scrolling"
-				// since more ITextEditorService edit contexts might have time to be calculated
-				// and thus not every single one of them need be scrolled to.
-				// This idea has not been proven yet.
-				//
-				// (the same is true for rendering the UI, it might avoid some renders
-				//  because the most recent should render took time to get executed).
-				//
-				await TextEditorService.JsRuntimeTextEditorApi
+        	// It is thought that you shouldn't '.ConfigureAwait(false)' for the scrolling JS Interop,
+			// because this could provide a "natural throttle for the scrolling"
+			// since more ITextEditorService edit contexts might have time to be calculated
+			// and thus not every single one of them need be scrolled to.
+			// This idea has not been proven yet.
+			//
+			// (the same is true for rendering the UI, it might avoid some renders
+			//  because the most recent should render took time to get executed).
+        	
+        	var leftChanged = Math.Abs(_previousScrollLeft - _componentData._renderBatch.ViewModel.ScrollLeft) > 0.1;
+        	var topChanged = Math.Abs(_previousScrollTop - _componentData._renderBatch.ViewModel.ScrollTop) > 0.1;
+        	
+        	// ScrollLeft is most likely to shortcircuit, thus it is being put first.
+        	if (leftChanged && topChanged)
+        	{
+        		_previousScrollLeft = _componentData._renderBatch.ViewModel.ScrollLeft;
+        		_previousScrollTop = _componentData._renderBatch.ViewModel.ScrollTop;
+        		
+        		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
 		                _componentData.RowSectionElementId,
 		                _componentData.GutterElementId,
 		                _componentData._renderBatch.ViewModel.ScrollLeft,
 		                _componentData._renderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
-			}
+        	}
+        	else if (topChanged) // ScrollTop is most likely to come next
+        	{
+        		_previousScrollTop = _componentData._renderBatch.ViewModel.ScrollTop;
+        		
+        		await TextEditorService.JsRuntimeTextEditorApi
+		            .SetScrollPositionTop(
+		                _componentData.RowSectionElementId,
+		                _componentData.GutterElementId,
+		                _componentData._renderBatch.ViewModel.ScrollTop)
+	                .ConfigureAwait(false);
+        	}
+        	else if (leftChanged)
+        	{
+        		_previousScrollLeft = _componentData._renderBatch.ViewModel.ScrollLeft;
+        		
+        		await TextEditorService.JsRuntimeTextEditorApi
+		            .SetScrollPositionLeft(
+		                _componentData.RowSectionElementId,
+		                _componentData.GutterElementId,
+		                _componentData._renderBatch.ViewModel.ScrollLeft)
+	                .ConfigureAwait(false);
+        	}
         }
 
         await base.OnAfterRenderAsync(firstRender);
