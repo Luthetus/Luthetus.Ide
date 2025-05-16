@@ -95,6 +95,35 @@ window.luthetusTextEditor = {
             textEditorGutter.scrollTop = textEditorBody.scrollTop;
         }
     },
+    setScrollPositionLeft: function (textEditorBodyId, gutterElementId, scrollLeft) {
+        let textEditorBody = document.getElementById(textEditorBodyId);
+
+        if (!textEditorBody) {
+            return;
+        }
+        
+		// 0 is falsey
+        if (scrollLeft || scrollLeft === 0) {
+            textEditorBody.scrollLeft = scrollLeft;
+        }
+    },
+    setScrollPositionTop: function (textEditorBodyId, gutterElementId, scrollTop) {
+        let textEditorBody = document.getElementById(textEditorBodyId);
+        let textEditorGutter = document.getElementById(gutterElementId);
+
+        if (!textEditorBody) {
+            return;
+        }
+        
+		// 0 is falsey
+        if (scrollTop || scrollTop === 0) {
+            textEditorBody.scrollTop = scrollTop;
+        }
+
+        if (textEditorGutter) {
+            textEditorGutter.scrollTop = textEditorBody.scrollTop;
+        }
+    },
     setGutterScrollTop: function (gutterElementId, scrollTop) {
         let textEditorGutter = document.getElementById(gutterElementId);
 
