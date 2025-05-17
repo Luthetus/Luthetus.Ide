@@ -144,7 +144,7 @@
 	    	}
 	    	
 	    	<div class="luth_te_row"
-				 style="@_componentData.RowSection_GetRowStyleCss(_componentData.LineIndexCacheEntryMap[line.LineIndex].TopCssValue, line.LeftInPixels)">
+				 style="@_componentData.RowSection_GetRowStyleCss(line.LineIndex)">
 			
 				@*
 					'!= 0' because the struct's int property will default to '0',
@@ -178,6 +178,7 @@
 			</div>
 	    }
 	    
+	    if (ViewModelDisplayOptions.IncludeGutterComponent)
 	    {
 	        var heightOfGutter = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count *
 	                             _componentData._renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;

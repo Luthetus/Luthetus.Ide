@@ -1343,6 +1343,8 @@ public sealed class TextEditorViewModelApi
 		bool useAll)
     {
     	var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
+    	
+    	// Console.WriteLine(virtualizationEntry.LeftInPixels);
 		
 		if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
 		{

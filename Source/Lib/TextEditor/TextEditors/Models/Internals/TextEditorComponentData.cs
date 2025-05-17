@@ -311,22 +311,19 @@ public sealed class TextEditorComponentData
     }
     
     /* RowSection.razor Open */
-    public string RowSection_GetRowStyleCss(string topCssValue, double virtualizedLineLeftInPixels)
+    public string RowSection_GetRowStyleCss(int lineIndex)
     {
     	_uiStringBuilder.Clear();
     
         _uiStringBuilder.Append("top: ");
-        _uiStringBuilder.Append(topCssValue);
+        _uiStringBuilder.Append(LineIndexCacheEntryMap[lineIndex].TopCssValue);
         _uiStringBuilder.Append("px;");
 
         _uiStringBuilder.Append(_lineHeightStyleCssString);
 
-		if (virtualizedLineLeftInPixels > 0)
-		{
-	        _uiStringBuilder.Append("left: ");
-	        _uiStringBuilder.Append(virtualizedLineLeftInPixels.ToCssValue());
-	        _uiStringBuilder.Append("px;");
-        }
+        _uiStringBuilder.Append("left: ");
+        _uiStringBuilder.Append(LineIndexCacheEntryMap[lineIndex].LeftCssValue);
+        _uiStringBuilder.Append("px;");
 
         return _uiStringBuilder.ToString();
     }
@@ -1251,6 +1248,7 @@ public sealed class TextEditorComponentData
 	    		
 	    		LineIndexCacheEntryMap.Add(lineIndex, new TextEditorLineIndexCacheEntry(
 	    			topCssValue: ((lineIndex - hiddenLineCount) * _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
+	    			leftCssValue: _renderBatch.ViewModel.VirtualizationResult.EntryList[i].LeftInPixels.ToCssValue(),
 					lineNumberString: (lineIndex + 1).ToString(),
 					hiddenLineCount: hiddenLineCount));
 	    	}
@@ -1291,6 +1289,9 @@ public sealed class TextEditorComponentData
 	    		LineIndexCacheEntryMap.Add(_renderBatch.ViewModel.LineIndex, new TextEditorLineIndexCacheEntry(
 	    			topCssValue: (_renderBatch.ViewModel.LineIndex * _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
 					lineNumberString: (_renderBatch.ViewModel.LineIndex + 1).ToString(),
+					// TODO: This will cause a bug, this declares a lines left but in reality its trying to just describe the cursor and this value is placeholder.
+					// But, since this placeholder is cached, if this line comes up in a future render it may or may not be positioned correctly.
+					leftCssValue: _renderBatch.ViewModel.GutterWidthInPixels.ToCssValue(),
 					hiddenLineCount: 0));
 	    	}
 	    		
