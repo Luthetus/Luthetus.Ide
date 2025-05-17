@@ -153,8 +153,9 @@
 }
 
 .luth_te_gutter-section {
-    position: relative;
-    overflow: hidden;
+    position: sticky;
+    left: 0;
+    z-index: 1;
 }
 
 .luth_te_body-section {

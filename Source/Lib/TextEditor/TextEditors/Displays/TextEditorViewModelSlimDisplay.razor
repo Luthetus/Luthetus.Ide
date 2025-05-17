@@ -107,41 +107,105 @@
     
     	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
     	
-    	foreach (var line in _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList)
+    	if (ViewModelDisplayOptions.IncludeGutterComponent)
+    	{
+    		<div class="luth_te_gutter-section">
+	    		@for (int lineIndex = 0; lineIndex < _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
+			    {
+			    	var line = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
+			    	
+			    	if (ViewModelDisplayOptions.IncludeGutterComponent)
+			    	{
+				        <div class="luth_te_gutter"
+				             style="@(_componentData.GetGutterStyleCss(_componentData.LineIndexCacheEntryMap[line.LineIndex].TopCssValue))">
+				             
+				            @(_componentData.LineIndexCacheEntryMap[line.LineIndex].LineNumberString)
+				            
+				            @{
+				            	for (int i = 0; i < _componentData._renderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
+				            	{
+				            		if (_componentData._renderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == line.LineIndex)
+				            		{
+				            			collapsePoint = _componentData._renderBatch.ViewModel.VirtualizedCollapsePointList[i];
+				            			break;
+				            		}
+				            	}
+				            }
+			
+							@if (collapsePoint.AppendToLineIndex == line.LineIndex)
+							{
+							    <span class="luth_te_gutter-chevron">
+							    	@if (collapsePoint.IsCollapsed)
+							    	{
+							    		@IconChevronRightFragment.Render(_iconDriver)
+							    	}
+							    	else
+							    	{
+							    		@IconChevronDownFragment.Render(_iconDriver)
+							    	}
+								</span>
+							}
+				        </div>
+			    	}
+		    	}
+		    	
+		    	@{
+			        var heightOfGutter = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count *
+			                             _componentData._renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
+			
+			        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
+			        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
+			        //
+			        // But, there is a catch. The bug comes down to whether your virtualization result, has any 'overhang'
+			        // at the top of the text editor.
+			        //
+			        // Because this code just takes the virtualization result height as if it were centered
+			        // one ontop of the other with the visible content.
+			        //
+			        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
+			        //
+			        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
+			        
+			        double topOffscreenOverhang;
+			        
+			        if (_componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+			        {
+			        	// TODO: It doesn't seem 'VirtualizationLine' ever will have a null value so it is no longer nullable...
+			        	// ...if any code breaks I think this is the only possible place. It is doing '?? -1' here.
+			        	topOffscreenOverhang = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels;
+			        }
+			        else
+			        {
+			        	 topOffscreenOverhang = -1;
+			        }
+			
+			        if (topOffscreenOverhang != -1)
+			        {
+			            // If the 'topOffscreenOverhang' was measureable, then subtract from the height of the gutter,
+			            // however much of it overhangs the top offscreen.
+			            heightOfGutter -= topOffscreenOverhang;
+			        }
+			
+			        // '1' is added to the text editor's height in order to avoid rounding errors
+			        if (heightOfGutter < 1 + _componentData._renderBatch.ViewModel.TextEditorDimensions.Height)
+			        {
+			            var remainingHeightToFill = _componentData._renderBatch.ViewModel.TextEditorDimensions.Height -
+			                heightOfGutter +
+			                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+			            
+			            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
+			            
+			            <div class="luth_te_gutter"
+			                 style="@(_componentData.GetGutterStyleCssImaginary()) height: @(remainingHeightToFillInvariantCulture)px;">
+			            </div>
+			        }
+			    }
+			</div>
+    	}
+    	
+    	for (int lineIndex = 0; lineIndex < _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
 	    {
-	    	if (ViewModelDisplayOptions.IncludeGutterComponent)
-	    	{
-		        <div class="luth_te_gutter"
-		             style="@(_componentData.GetGutterStyleCss(_componentData.LineIndexCacheEntryMap[line.LineIndex].TopCssValue))">
-		             
-		            @(_componentData.LineIndexCacheEntryMap[line.LineIndex].LineNumberString)
-		            
-		            @{
-		            	for (int i = 0; i < _componentData._renderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
-		            	{
-		            		if (_componentData._renderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == line.LineIndex)
-		            		{
-		            			collapsePoint = _componentData._renderBatch.ViewModel.VirtualizedCollapsePointList[i];
-		            			break;
-		            		}
-		            	}
-		            }
-	
-					@if (collapsePoint.AppendToLineIndex == line.LineIndex)
-					{
-					    <span class="luth_te_gutter-chevron">
-					    	@if (collapsePoint.IsCollapsed)
-					    	{
-					    		@IconChevronRightFragment.Render(_iconDriver)
-					    	}
-					    	else
-					    	{
-					    		@IconChevronDownFragment.Render(_iconDriver)
-					    	}
-						</span>
-					}
-		        </div>
-	    	}
+	    	var line = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
 	    	
 	    	<div class="luth_te_row"
 				 style="@_componentData.RowSection_GetRowStyleCss(line.LineIndex)">
@@ -176,59 +240,6 @@
 					}
 				}
 			</div>
-	    }
-	    
-	    if (ViewModelDisplayOptions.IncludeGutterComponent)
-	    {
-	        var heightOfGutter = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count *
-	                             _componentData._renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
-	
-	        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
-	        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
-	        //
-	        // But, there is a catch. The bug comes down to whether your virtualization result, has any 'overhang'
-	        // at the top of the text editor.
-	        //
-	        // Because this code just takes the virtualization result height as if it were centered
-	        // one ontop of the other with the visible content.
-	        //
-	        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
-	        //
-	        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
-	        
-	        double topOffscreenOverhang;
-	        
-	        if (_componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
-	        {
-	        	// TODO: It doesn't seem 'VirtualizationLine' ever will have a null value so it is no longer nullable...
-	        	// ...if any code breaks I think this is the only possible place. It is doing '?? -1' here.
-	        	topOffscreenOverhang = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels;
-	        }
-	        else
-	        {
-	        	 topOffscreenOverhang = -1;
-	        }
-	
-	        if (topOffscreenOverhang != -1)
-	        {
-	            // If the 'topOffscreenOverhang' was measureable, then subtract from the height of the gutter,
-	            // however much of it overhangs the top offscreen.
-	            heightOfGutter -= topOffscreenOverhang;
-	        }
-	
-	        // '1' is added to the text editor's height in order to avoid rounding errors
-	        if (heightOfGutter < 1 + _componentData._renderBatch.ViewModel.TextEditorDimensions.Height)
-	        {
-	            var remainingHeightToFill = _componentData._renderBatch.ViewModel.TextEditorDimensions.Height -
-	                heightOfGutter +
-	                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
-	            
-	            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
-	            
-	            <div class="luth_te_gutter"
-	                 style="@(_componentData.GetGutterStyleCssImaginary()) height: @(remainingHeightToFillInvariantCulture)px;">
-	            </div>
-	        }
 	    }
 	    
 	    <textarea id="@_componentData.PrimaryCursorContentId"
