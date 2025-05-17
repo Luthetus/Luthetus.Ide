@@ -630,7 +630,7 @@ public sealed class TextEditorComponentData
         if (startingColumnIndex > line.LastValidColumnIndex)
         	startingColumnIndex = line.LastValidColumnIndex;
 
-        var startInPixels = startingColumnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+        var startInPixels = _renderBatch.ViewModel.GutterWidthInPixels + startingColumnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
 
         // startInPixels offset from Tab keys a width of many characters
         {
@@ -649,7 +649,7 @@ public sealed class TextEditorComponentData
         _uiStringBuilder.Append(startInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
 
-        var widthInPixels = endingColumnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth - startInPixels;
+        var widthInPixels = endingColumnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth - startInPixels + _renderBatch.ViewModel.GutterWidthInPixels;
 
         // Tab keys a width of many characters
         {
@@ -835,7 +835,7 @@ public sealed class TextEditorComponentData
 
         _uiStringBuilder.Append(_lineHeightStyleCssString);
 
-        var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidth;
+        var selectionStartInPixels = _renderBatch.ViewModel.GutterWidthInPixels + selectionStartingColumnIndex * charMeasurements.CharacterWidth;
 
         // selectionStartInPixels offset from Tab keys a width of many characters
         {
@@ -856,7 +856,7 @@ public sealed class TextEditorComponentData
         _uiStringBuilder.Append("px;");
 
         var selectionWidthInPixels = 
-            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels;
+            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels + _renderBatch.ViewModel.GutterWidthInPixels;
 
         // Tab keys a width of many characters
         {
@@ -1161,7 +1161,7 @@ public sealed class TextEditorComponentData
     		if (!LineIndexCacheEntryMap.ContainsKey(lineAndColumnIndices.lineIndex))
     			continue;
     		
-    		var leftInPixels = lineAndColumnIndices.columnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+    		var leftInPixels = _renderBatch.ViewModel.GutterWidthInPixels + lineAndColumnIndices.columnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
     		
     		// Tab key column offset
     		{
