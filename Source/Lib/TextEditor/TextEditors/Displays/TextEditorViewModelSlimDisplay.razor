@@ -109,7 +109,8 @@
     	
     	if (ViewModelDisplayOptions.IncludeGutterComponent)
     	{
-    		<div class="luth_te_gutter-section">
+    		<div class="luth_te_gutter-section"
+    			 style="@_componentData._gutterWidthStyleCssString">
 	    		@for (int lineIndex = 0; lineIndex < _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
 			    {
 			    	var line = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
