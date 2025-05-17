@@ -1203,8 +1203,21 @@ public sealed class TextEditorComponentData
     private HashSet<int> LineIndexCacheUsageHashSet = new();
     private List<int> LineIndexKeyList = new();
     
+    private void ClearCache()
+    {
+	   LineIndexCacheEntryMap.Clear();
+	   LineIndexCacheUsageHashSet.Clear();
+	   LineIndexKeyList.Clear();
+    }
+    
     private void CreateCache()
     {
+    	if (Math.Abs(_previousViewModelGutterWidth - _renderBatch.ViewModel.GutterWidthInPixels) > 0.1)
+    	{
+    		_previousViewModelGutterWidth = _renderBatch.ViewModel.GutterWidthInPixels;
+    		ClearCache();
+    	}
+    
     	var hiddenLineCount = 0;
     	var checkHiddenLineIndex = 0;
     	var handledCursor = false;
@@ -1345,6 +1358,8 @@ public sealed class TextEditorComponentData
     }
     
     private int _counter;
+    
+    private double _previousViewModelGutterWidth = 0;
     
     public void CreateUi()
     {
