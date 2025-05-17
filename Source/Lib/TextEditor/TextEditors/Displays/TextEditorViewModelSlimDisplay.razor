@@ -203,44 +203,46 @@
 			</div>
     	}
     	
-    	for (int lineIndex = 0; lineIndex < _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
-	    {
-	    	var line = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
-	    	
-	    	<div class="luth_te_row"
-				 style="@_componentData.RowSection_GetRowStyleCss(line.LineIndex)">
-			
-				@*
-					'!= 0' because the struct's int property will default to '0',
-					and if there is no text then the property is unchanged from its default value.
-				*@
-				@if (line.VirtualizationSpan_EndExclusiveIndex != 0)
-				{
-					for (int i = line.VirtualizationSpan_StartInclusiveIndex; i < line.VirtualizationSpan_EndExclusiveIndex; i++)
-					{
-						<span class="@_componentData._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
-				            @(_componentData._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
-				        </span>
-				    }
-				}
+    	<div class="luth_te_text-section">
+	    	@for (int lineIndex = 0; lineIndex < _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
+		    {
+		    	var line = _componentData._renderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
+		    	
+		    	<div class="luth_te_row"
+					 style="@_componentData.RowSection_GetRowStyleCss(line.LineIndex)">
 				
-				@if (GlobalShowNewlines && line.LineIndex < _componentData._renderBatch.Model.LineCount)
-				{
-					var amountOfLeftInCharacterWidthUnits = line.LeftInPixels / _componentData._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
-					
-					var lengthOfLine = _componentData._renderBatch.Model.GetLineLength(line.LineIndex, true);
-					
-					if (amountOfLeftInCharacterWidthUnits <= lengthOfLine)
+					@*
+						'!= 0' because the struct's int property will default to '0',
+						and if there is no text then the property is unchanged from its default value.
+					*@
+					@if (line.VirtualizationSpan_EndExclusiveIndex != 0)
 					{
-					    var rowEndingTuple = _componentData._renderBatch.Model.LineEndList[line.LineIndex];
-					
-					    <span class="luth_te_newline">
-					        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
-					    </span>
+						for (int i = line.VirtualizationSpan_StartInclusiveIndex; i < line.VirtualizationSpan_EndExclusiveIndex; i++)
+						{
+							<span class="@_componentData._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
+					            @(_componentData._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
+					        </span>
+					    }
 					}
-				}
-			</div>
-	    }
+					
+					@if (GlobalShowNewlines && line.LineIndex < _componentData._renderBatch.Model.LineCount)
+					{
+						var amountOfLeftInCharacterWidthUnits = line.LeftInPixels / _componentData._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+						
+						var lengthOfLine = _componentData._renderBatch.Model.GetLineLength(line.LineIndex, true);
+						
+						if (amountOfLeftInCharacterWidthUnits <= lengthOfLine)
+						{
+						    var rowEndingTuple = _componentData._renderBatch.Model.LineEndList[line.LineIndex];
+						
+						    <span class="luth_te_newline">
+						        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
+						    </span>
+						}
+					}
+				</div>
+		    }
+	    </div>
 	    
 	    <textarea id="@_componentData.PrimaryCursorContentId"
 				  tabindex="@_componentData._renderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex"
