@@ -231,7 +231,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
 		                _componentData.RowSectionElementId,
-		                _componentData.GutterElementId,
 		                _componentData._renderBatch.ViewModel.ScrollLeft,
 		                _componentData._renderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
@@ -243,7 +242,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionTop(
 		                _componentData.RowSectionElementId,
-		                _componentData.GutterElementId,
 		                _componentData._renderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
         	}
@@ -254,7 +252,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionLeft(
 		                _componentData.RowSectionElementId,
-		                _componentData.GutterElementId,
 		                _componentData._renderBatch.ViewModel.ScrollLeft)
 	                .ConfigureAwait(false);
         	}

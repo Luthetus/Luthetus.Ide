@@ -9,6 +9,7 @@
     cursor: text;
     position: relative;
     display: flex;
+    overflow: hidden;
 }
 
 .luth_te_text-editor:focus-visible {
@@ -152,8 +153,11 @@
 }
 
 .luth_te_gutter-section {
-    position: relative;
-    overflow: hidden;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    cursor: default;
+    overflow: none;
 }
 
 .luth_te_body-section {
@@ -218,6 +222,7 @@
 .luth_te_scrollbar-horizontal {
     top: calc(100% - var(--luth_te_scrollbar-size));
     height: var(--luth_te_scrollbar-size);
+    right: var(--luth_te_scrollbar-size);
 }
 
 .luth_te_scrollbar-vertical {

@@ -208,6 +208,8 @@ public sealed class DisplayTracker : IDisposable
 				
 				// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
 				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: true);
+				
+				componentData.VisualizationLineCacheIsInvalid = true;
 			});
 	}
 
