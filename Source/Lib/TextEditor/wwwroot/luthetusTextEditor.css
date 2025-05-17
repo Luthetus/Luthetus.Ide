@@ -9,6 +9,7 @@
     cursor: text;
     position: relative;
     display: flex;
+    overflow: hidden;
 }
 
 .luth_te_text-editor:focus-visible {
