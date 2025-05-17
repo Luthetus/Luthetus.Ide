@@ -73,9 +73,8 @@ window.luthetusTextEditor = {
             RelativeScrollTop: element.scrollTop
         }
     },
-    setScrollPositionBoth: function (textEditorBodyId, gutterElementId, scrollLeft, scrollTop) {
+    setScrollPositionBoth: function (textEditorBodyId, scrollLeft, scrollTop) {
         let textEditorBody = document.getElementById(textEditorBodyId);
-        let textEditorGutter = document.getElementById(gutterElementId);
 
         if (!textEditorBody) {
             return;
@@ -90,12 +89,8 @@ window.luthetusTextEditor = {
         if (scrollTop || scrollTop === 0) {
             textEditorBody.scrollTop = scrollTop;
         }
-
-        if (textEditorGutter) {
-            textEditorGutter.scrollTop = textEditorBody.scrollTop;
-        }
     },
-    setScrollPositionLeft: function (textEditorBodyId, gutterElementId, scrollLeft) {
+    setScrollPositionLeft: function (textEditorBodyId, scrollLeft) {
         let textEditorBody = document.getElementById(textEditorBodyId);
 
         if (!textEditorBody) {
@@ -107,9 +102,8 @@ window.luthetusTextEditor = {
             textEditorBody.scrollLeft = scrollLeft;
         }
     },
-    setScrollPositionTop: function (textEditorBodyId, gutterElementId, scrollTop) {
+    setScrollPositionTop: function (textEditorBodyId, scrollTop) {
         let textEditorBody = document.getElementById(textEditorBodyId);
-        let textEditorGutter = document.getElementById(gutterElementId);
 
         if (!textEditorBody) {
             return;
@@ -119,19 +113,6 @@ window.luthetusTextEditor = {
         if (scrollTop || scrollTop === 0) {
             textEditorBody.scrollTop = scrollTop;
         }
-
-        if (textEditorGutter) {
-            textEditorGutter.scrollTop = textEditorBody.scrollTop;
-        }
-    },
-    setGutterScrollTop: function (gutterElementId, scrollTop) {
-        let textEditorGutter = document.getElementById(gutterElementId);
-
-        if (!textEditorGutter) {
-            return;
-        }
-
-        textEditorGutter.scrollTop = scrollTop;
     },
     getTextEditorMeasurementsInPixelsById: function (elementId) {
         let elementReference = document.getElementById(elementId);
