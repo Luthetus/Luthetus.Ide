@@ -332,7 +332,7 @@ public sealed class TextEditorComponentData
     {
     	var shouldAppearAfterCollapsePoint = cursorIsOnHiddenLine;
     	
-    	var leftInPixels = 0d;
+    	var leftInPixels = _renderBatch.ViewModel.GutterWidthInPixels;
     	var topInPixelsInvariantCulture = string.Empty;
 	
 		if (cursorIsOnHiddenLine)
