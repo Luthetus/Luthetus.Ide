@@ -220,6 +220,7 @@
 .luth_te_scrollbar-horizontal {
     top: calc(100% - var(--luth_te_scrollbar-size));
     height: var(--luth_te_scrollbar-size);
+    right: var(--luth_te_scrollbar-size);
 }
 
 .luth_te_scrollbar-vertical {

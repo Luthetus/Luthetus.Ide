@@ -504,7 +504,8 @@ public sealed class TextEditorComponentData
 	public void HORIZONTAL_GetScrollbarHorizontalStyleCss()
     {
     	var scrollbarWidthInPixels = _renderBatch.ViewModel.TextEditorDimensions.Width -
-            ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+                                     ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
+                                     _renderBatch.ViewModel.GutterWidthInPixels;
         
         _uiStringBuilder.Clear();
         _uiStringBuilder.Append("width: ");
@@ -517,7 +518,8 @@ public sealed class TextEditorComponentData
     public void HORIZONTAL_GetSliderHorizontalStyleCss()
     {
     	var scrollbarWidthInPixels = _renderBatch.ViewModel.TextEditorDimensions.Width -
-            ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+						             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
+						             _renderBatch.ViewModel.GutterWidthInPixels;
         
         // Proportional Left
     	var sliderProportionalLeftInPixels = _renderBatch.ViewModel.ScrollLeft *
@@ -1413,119 +1415,114 @@ public sealed class TextEditorComponentData
         if (_renderBatch.ViewModel is null)
         	return;
         
+        // TODO: I think the statement:...
+        // ....`if (Math.Abs(_previousGutterWidthInPixels - _renderBatch.GutterWidthInPixels) >= 0.2)`
+        // can visually "thrash" back and forth between two values if one of them is negative.
+        //
+        // (it renders in one spot, then immediately renders in a different spot, then renders again back in the original spot
+        //  and etc... cause it keeps thinking the value changed).
+        //
+        // I don't have any proof for this though, so until I do I'll remove the:
+        // `if (_renderBatch.GutterWidthInPixels >= 0)` checks.
+        //
+        // And if the "thrash" effect is real then a better solution than the if check for >= 0
+        // is to do this in the setter of the property itself.
+        //
+        // Since the measurements are "rarely" taken relative to this very hot "UI" pathway.
+        
+        
         // Check if the gutter width changed. If so, re-measure text editor.
-		if (_renderBatch.GutterWidthInPixels >= 0)
-		{
-        	if (Math.Abs(_previousGutterWidthInPixels - _renderBatch.GutterWidthInPixels) >= 0.2)
-        	{
-        		_previousGutterWidthInPixels = _renderBatch.GutterWidthInPixels;
-        		var widthInPixelsInvariantCulture = _renderBatch.GutterWidthInPixels.ToCssValue();
-        		
-        		_uiStringBuilder.Clear();
-        		_uiStringBuilder.Append("width: ");
-        		_uiStringBuilder.Append(widthInPixelsInvariantCulture);
-        		_uiStringBuilder.Append("px;");
-        		_gutterWidthStyleCssString = _uiStringBuilder.ToString();
-        		
-        		_uiStringBuilder.Clear();
-        		_uiStringBuilder.Append(_lineHeightStyleCssString);
-		        _uiStringBuilder.Append(_gutterWidthStyleCssString);
-		        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
-        		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
-        		
-        		_uiStringBuilder.Clear();
-        		_uiStringBuilder.Append("width: calc(100% - ");
-		        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
-		        _uiStringBuilder.Append("px); left: ");
-		        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
-		        _uiStringBuilder.Append("px;");
-        		_bodyStyle = _uiStringBuilder.ToString();
+    	if (Math.Abs(_previousGutterWidthInPixels - _renderBatch.GutterWidthInPixels) >= 0.1)
+    	{
+    		_previousGutterWidthInPixels = _renderBatch.GutterWidthInPixels;
+    		var widthInPixelsInvariantCulture = _renderBatch.GutterWidthInPixels.ToCssValue();
+    		
+    		_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append("width: ");
+    		_uiStringBuilder.Append(widthInPixelsInvariantCulture);
+    		_uiStringBuilder.Append("px;");
+    		_gutterWidthStyleCssString = _uiStringBuilder.ToString();
+    		
+    		_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append(_lineHeightStyleCssString);
+	        _uiStringBuilder.Append(_gutterWidthStyleCssString);
+	        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
+    		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
+    		
+    		_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append("width: calc(100% - ");
+	        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+	        _uiStringBuilder.Append("px); left: ");
+	        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+	        _uiStringBuilder.Append("px;");
+    		_bodyStyle = _uiStringBuilder.ToString();
 
-        		_renderBatch.ViewModel.PersistentState.DisplayTracker.PostScrollAndRemeasure();
-        		return;
-        	}
-		}
+    		_renderBatch.ViewModel.PersistentState.DisplayTracker.PostScrollAndRemeasure();
+    		
+    		HORIZONTAL_GetScrollbarHorizontalStyleCss();
+    		HORIZONTAL_GetSliderHorizontalStyleCss();
+    		return;
+    	}
 		
 		// NOTE: The 'gutterWidth' version of this will do a re-measure,...
 		// ...and therefore will return if its condition branch was entered.
-		if (_renderBatch.ViewModel.CharAndLineMeasurements.LineHeight >= 0)
-		{
-        	if (Math.Abs(_previousLineHeightInPixels - _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight) >= 0.2)
-        	{
-        		_previousLineHeightInPixels = _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
-				
-				_uiStringBuilder.Clear();
-        		_uiStringBuilder.Append("height: ");
-		        _uiStringBuilder.Append(_renderBatch.ViewModel.CharAndLineMeasurements.LineHeight.ToCssValue());
-		        _uiStringBuilder.Append("px;");
-		        _lineHeightStyleCssString = _uiStringBuilder.ToString();
-		        
-		        _uiStringBuilder.Clear();
-        		_uiStringBuilder.Append(_lineHeightStyleCssString);
-		        _uiStringBuilder.Append(_gutterWidthStyleCssString);
-		        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
-        		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
-    		}
+    	if (Math.Abs(_previousLineHeightInPixels - _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight) >= 0.1)
+    	{
+    		_previousLineHeightInPixels = _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
+			
+			_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append("height: ");
+	        _uiStringBuilder.Append(_renderBatch.ViewModel.CharAndLineMeasurements.LineHeight.ToCssValue());
+	        _uiStringBuilder.Append("px;");
+	        _lineHeightStyleCssString = _uiStringBuilder.ToString();
+	        
+	        _uiStringBuilder.Clear();
+    		_uiStringBuilder.Append(_lineHeightStyleCssString);
+	        _uiStringBuilder.Append(_gutterWidthStyleCssString);
+	        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
+    		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
 		}
 		
 		bool shouldCalculateVerticalSlider = false;
 		bool shouldCalculateHorizontalSlider = false;
 		bool shouldCalculateHorizontalScrollbar = false;
 		
-		if (_renderBatch.ViewModel.TextEditorDimensions.Height >= 0)
-		{
-        	if (Math.Abs(_previousTextEditorHeightInPixels - _renderBatch.ViewModel.TextEditorDimensions.Height) >= 0.2)
-        	{
-        		_previousTextEditorHeightInPixels = _renderBatch.ViewModel.TextEditorDimensions.Height;
-        		shouldCalculateVerticalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousTextEditorHeightInPixels - _renderBatch.ViewModel.TextEditorDimensions.Height) >= 0.1)
+    	{
+    		_previousTextEditorHeightInPixels = _renderBatch.ViewModel.TextEditorDimensions.Height;
+    		shouldCalculateVerticalSlider = true;
+	    }
 		
-		if (_renderBatch.ViewModel.ScrollHeight >= 0)
-		{
-        	if (Math.Abs(_previousScrollHeightInPixels - _renderBatch.ViewModel.ScrollHeight) >= 0.2)
-        	{
-        		_previousScrollHeightInPixels = _renderBatch.ViewModel.ScrollHeight;
-        		shouldCalculateVerticalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousScrollHeightInPixels - _renderBatch.ViewModel.ScrollHeight) >= 0.1)
+    	{
+    		_previousScrollHeightInPixels = _renderBatch.ViewModel.ScrollHeight;
+    		shouldCalculateVerticalSlider = true;
+	    }
 		
-		if (_renderBatch.ViewModel.ScrollTop >= 0)
-		{
-        	if (Math.Abs(_previousScrollTopInPixels - _renderBatch.ViewModel.ScrollTop) >= 0.2)
-        	{
-        		_previousScrollTopInPixels = _renderBatch.ViewModel.ScrollTop;
-        		shouldCalculateVerticalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousScrollTopInPixels - _renderBatch.ViewModel.ScrollTop) >= 0.1)
+    	{
+    		_previousScrollTopInPixels = _renderBatch.ViewModel.ScrollTop;
+    		shouldCalculateVerticalSlider = true;
+	    }
 		
-		if (_renderBatch.ViewModel.TextEditorDimensions.Width >= 0)
-		{
-        	if (Math.Abs(_previousTextEditorWidthInPixels - _renderBatch.ViewModel.TextEditorDimensions.Width) >= 0.2)
-        	{
-        		_previousTextEditorWidthInPixels = _renderBatch.ViewModel.TextEditorDimensions.Width;
-        		shouldCalculateHorizontalSlider = true;
-        		shouldCalculateHorizontalScrollbar = true;
-		    }
-		}
+    	if (Math.Abs(_previousTextEditorWidthInPixels - _renderBatch.ViewModel.TextEditorDimensions.Width) >= 0.1)
+    	{
+    		_previousTextEditorWidthInPixels = _renderBatch.ViewModel.TextEditorDimensions.Width;
+    		shouldCalculateHorizontalSlider = true;
+    		shouldCalculateHorizontalScrollbar = true;
+	    }
 		
-		if (_renderBatch.ViewModel.ScrollWidth >= 0)
-		{
-        	if (Math.Abs(_previousScrollWidthInPixels - _renderBatch.ViewModel.ScrollWidth) >= 0.2)
-        	{
-        		_previousScrollWidthInPixels = _renderBatch.ViewModel.ScrollWidth;
-        		shouldCalculateHorizontalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousScrollWidthInPixels - _renderBatch.ViewModel.ScrollWidth) >= 0.1)
+    	{
+    		_previousScrollWidthInPixels = _renderBatch.ViewModel.ScrollWidth;
+    		shouldCalculateHorizontalSlider = true;
+	    }
 		
-		if (_renderBatch.ViewModel.ScrollLeft >= 0)
-		{
-        	if (Math.Abs(_previousScrollLeftInPixels - _renderBatch.ViewModel.ScrollLeft) >= 0.2)
-        	{
-        		_previousScrollLeftInPixels = _renderBatch.ViewModel.ScrollLeft;
-        		shouldCalculateHorizontalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousScrollLeftInPixels - _renderBatch.ViewModel.ScrollLeft) >= 0.1)
+    	{
+    		_previousScrollLeftInPixels = _renderBatch.ViewModel.ScrollLeft;
+    		shouldCalculateHorizontalSlider = true;
+	    }
 
 		if (shouldCalculateVerticalSlider)
 			VERTICAL_GetSliderVerticalStyleCss();
@@ -1540,13 +1537,13 @@ public sealed class TextEditorComponentData
     	
     	if (_renderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
 		{
-			if (valueTooltipRelativeX != _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX)
+			if (Math.Abs(valueTooltipRelativeX - _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX) >= 0.1)
 			{
 				valueTooltipRelativeX = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX;
 				tooltipRelativeX = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX.ToCssValue();
 			}
 		
-			if (valueTooltipRelativeY != _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY)
+			if (Math.Abs(valueTooltipRelativeY - _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY) >= 0.1)
 			{
 				valueTooltipRelativeY = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY;
 				tooltipRelativeY = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
