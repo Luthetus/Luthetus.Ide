@@ -186,6 +186,8 @@ public sealed class TextEditorComponentData
 	public string _gutterPaddingStyleCssString;
     public string _gutterWidthStyleCssString;
     
+    public string _scrollbarSectionLeftCssString;
+    
     /// <summary>
     /// Each individual line number is a separate "gutter".
     /// Therefore, the UI in a loop will use a StringBuilder to .Append(...)
@@ -1461,6 +1463,12 @@ public sealed class TextEditorComponentData
     		
     		HORIZONTAL_GetScrollbarHorizontalStyleCss();
     		HORIZONTAL_GetSliderHorizontalStyleCss();
+    		
+    		_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append("left: ");
+    		_uiStringBuilder.Append(widthInPixelsInvariantCulture);
+    		_uiStringBuilder.Append("px;");
+    		_scrollbarSectionLeftCssString = _uiStringBuilder.ToString();
     		return;
     	}
 		
