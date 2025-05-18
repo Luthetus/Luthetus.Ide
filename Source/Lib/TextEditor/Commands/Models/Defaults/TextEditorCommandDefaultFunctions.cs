@@ -1271,7 +1271,9 @@ public class TextEditorCommandDefaultFunctions
         
         if (leftOffset is null)
         {
-        	leftOffset = viewModel.ColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth;
+            leftOffset = viewModel.GutterWidthInPixels +
+                         viewModel.ColumnIndex *
+                         viewModel.CharAndLineMeasurements.CharacterWidth;
 	        
 	        // Tab key column offset
             var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(

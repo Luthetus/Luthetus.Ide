@@ -1015,6 +1015,8 @@ public sealed class TextEditorViewModelApi
 			viewModel.ScrollHeight = totalHeight;
 			viewModel.MarginScrollHeight = marginScrollHeight;
 			
+			viewModel.GutterWidthInPixels = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
+			
 			if (componentData.VisualizationLineCacheIsInvalid)
 				componentData.VirtualizationLineCacheClear();
 			else
@@ -1181,7 +1183,7 @@ public sealed class TextEditorViewModelApi
 							virtualizationSpan_EndExclusiveIndex: 0,
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
-							leftInPixels,
+							viewModel.GutterWidthInPixels + leftInPixels,
 							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount)));
 							
 						CreateCacheEach(
@@ -1230,8 +1232,8 @@ public sealed class TextEditorViewModelApi
 							virtualizationSpan_EndExclusiveIndex: 0,
 							widthInPixels,
 							viewModel.CharAndLineMeasurements.LineHeight,
-							0,
-							(lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount)));
+							leftInPixels: viewModel.GutterWidthInPixels,
+							topInPixels: (lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount)));
 						
 						CreateCacheEach(
 							modelModifier,
@@ -1303,6 +1305,34 @@ public sealed class TextEditorViewModelApi
 		}
     }
     
+    private static int CountDigits(int argumentNumber)
+    {
+    	var digitCount = 1;
+    	var runningNumber = argumentNumber;
+    	
+    	while ((runningNumber /= 10) > 0)
+    	{
+    		digitCount++;
+    	}
+    	
+    	return digitCount;
+    }
+
+    private double GetGutterWidthInPixels(TextEditorModel model, TextEditorViewModel viewModel, TextEditorComponentData componentData)
+    {
+        if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
+            return 0;
+
+        var mostDigitsInARowLineNumber = CountDigits(model!.LineCount);
+
+        var gutterWidthInPixels = mostDigitsInARowLineNumber *
+            viewModel!.CharAndLineMeasurements.CharacterWidth;
+
+        gutterWidthInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS + TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;
+
+        return gutterWidthInPixels;
+    }
+    
     public void CreateCacheEach(
     	TextEditorModel model,
     	TextEditorViewModel viewModel,
@@ -1313,6 +1343,8 @@ public sealed class TextEditorViewModelApi
 		bool useAll)
     {
     	var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
+    	
+    	// Console.WriteLine(virtualizationEntry.LeftInPixels);
 		
 		if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
 		{

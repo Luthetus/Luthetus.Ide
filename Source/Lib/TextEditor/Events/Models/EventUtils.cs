@@ -269,6 +269,8 @@ public static class EventUtils
         positionX += viewModel.ScrollLeft;
         positionY += viewModel.ScrollTop;
         
+        positionX -= viewModel.GutterWidthInPixels;
+        
         var lineIndex = (int)(positionY / viewModel.CharAndLineMeasurements.LineHeight);
         
         var hiddenLineCount = 0;
