@@ -109,7 +109,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private IconDriver _iconDriver = new IconDriver(widthInPixels: 15, heightInPixels: 15);
     
-    private string ContentElementId { get; set; }
+    private string ContentElementId => _componentData.RowSectionElementId;
     
 	/// <summary>
 	/// Unit of measurement is pixels (px).
@@ -272,7 +272,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	{
 		_componentData.SetWrapperCssAndStyle();
     	
-    	ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
+    	// ContentElementId = $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
 	    
 	    VERTICAL_ScrollbarElementId = $"luth_te_{VERTICAL_scrollbarGuid}";
 	    VERTICAL_ScrollbarSliderElementId = $"luth_te_{VERTICAL_scrollbarGuid}-slider";
@@ -481,7 +481,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                                 if (viewModelModifier is null)
                                     return ValueTask.CompletedTask;
 
-                                viewModelModifier.PersistentState.TooltipViewModel = null;
+                                // viewModelModifier.PersistentState.TooltipViewModel = null;
 
 								return ValueTask.CompletedTask;
 							});

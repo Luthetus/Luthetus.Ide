@@ -1545,16 +1545,22 @@ public sealed class TextEditorComponentData
     	
     	if (_renderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
 		{
-			if (Math.Abs(valueTooltipRelativeX - _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX) >= 0.1)
+			var x = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX +
+					_renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeScrollLeft;
+					
+			var y = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY +
+					_renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeScrollTop;
+		
+			if (Math.Abs(valueTooltipRelativeX - x) >= 0.1)
 			{
-				valueTooltipRelativeX = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX;
-				tooltipRelativeX = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX.ToCssValue();
+				valueTooltipRelativeX = x;
+				tooltipRelativeX = x.ToCssValue();
 			}
 		
-			if (Math.Abs(valueTooltipRelativeY - _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY) >= 0.1)
+			if (Math.Abs(valueTooltipRelativeY - y) >= 0.1)
 			{
-				valueTooltipRelativeY = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY;
-				tooltipRelativeY = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
+				valueTooltipRelativeY = y;
+				tooltipRelativeY = y.ToCssValue();
 			}
 		}
 		

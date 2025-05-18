@@ -156,7 +156,7 @@
     position: sticky;
     left: 0;
     z-index: 1;
-    cursor: default;
+    cursor: pointer;
     overflow: none;
 }
 
