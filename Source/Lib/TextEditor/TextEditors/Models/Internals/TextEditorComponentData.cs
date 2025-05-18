@@ -1221,6 +1221,11 @@ public sealed class TextEditorComponentData
     		_previousViewModelGutterWidth = _renderBatch.ViewModel.GutterWidthInPixels;
     		ClearCache();
     	}
+    	else if (Math.Abs(_previousViewModelScrollLeft - _renderBatch.ViewModel.ScrollLeft) > 0.1)
+    	{
+    		_previousViewModelScrollLeft = _renderBatch.ViewModel.ScrollLeft;
+    		ClearCache();
+    	}
     
     	var hiddenLineCount = 0;
     	var checkHiddenLineIndex = 0;
@@ -1364,6 +1369,7 @@ public sealed class TextEditorComponentData
     private int _counter;
     
     private double _previousViewModelGutterWidth = 0;
+    private double _previousViewModelScrollLeft = 0;
     
     public void CreateUi()
     {
