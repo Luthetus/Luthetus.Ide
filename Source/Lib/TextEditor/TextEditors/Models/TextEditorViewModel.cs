@@ -121,6 +121,8 @@ public sealed class TextEditorViewModel : IDisposable
 	    ScrollWidth = other.ScrollWidth;
 	    ScrollHeight = other.ScrollHeight;
 	    MarginScrollHeight = other.MarginScrollHeight;
+	    
+	    GutterWidthInPixels = other.GutterWidthInPixels;
 		
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
 		
@@ -156,6 +158,8 @@ public sealed class TextEditorViewModel : IDisposable
     public double ScrollWidth { get; set; }
     public double ScrollHeight { get; set; }
     public double MarginScrollHeight { get; set; }
+    
+    public double GutterWidthInPixels { get; set; }
 	
 	/// <summary>
 	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...

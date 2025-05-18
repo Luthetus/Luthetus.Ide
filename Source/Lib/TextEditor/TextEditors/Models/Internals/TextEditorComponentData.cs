@@ -186,6 +186,8 @@ public sealed class TextEditorComponentData
 	public string _gutterPaddingStyleCssString;
     public string _gutterWidthStyleCssString;
     
+    public string _scrollbarSectionLeftCssString;
+    
     /// <summary>
     /// Each individual line number is a separate "gutter".
     /// Therefore, the UI in a loop will use a StringBuilder to .Append(...)
@@ -311,22 +313,19 @@ public sealed class TextEditorComponentData
     }
     
     /* RowSection.razor Open */
-    public string RowSection_GetRowStyleCss(string topCssValue, double virtualizedLineLeftInPixels)
+    public string RowSection_GetRowStyleCss(int lineIndex)
     {
     	_uiStringBuilder.Clear();
     
         _uiStringBuilder.Append("top: ");
-        _uiStringBuilder.Append(topCssValue);
+        _uiStringBuilder.Append(LineIndexCacheEntryMap[lineIndex].TopCssValue);
         _uiStringBuilder.Append("px;");
 
         _uiStringBuilder.Append(_lineHeightStyleCssString);
 
-		if (virtualizedLineLeftInPixels > 0)
-		{
-	        _uiStringBuilder.Append("left: ");
-	        _uiStringBuilder.Append(virtualizedLineLeftInPixels.ToCssValue());
-	        _uiStringBuilder.Append("px;");
-        }
+        _uiStringBuilder.Append("left: ");
+        _uiStringBuilder.Append(LineIndexCacheEntryMap[lineIndex].LeftCssValue);
+        _uiStringBuilder.Append("px;");
 
         return _uiStringBuilder.ToString();
     }
@@ -335,7 +334,7 @@ public sealed class TextEditorComponentData
     {
     	var shouldAppearAfterCollapsePoint = cursorIsOnHiddenLine;
     	
-    	var leftInPixels = 0d;
+    	var leftInPixels = _renderBatch.ViewModel.GutterWidthInPixels;
     	var topInPixelsInvariantCulture = string.Empty;
 	
 		if (cursorIsOnHiddenLine)
@@ -507,7 +506,8 @@ public sealed class TextEditorComponentData
 	public void HORIZONTAL_GetScrollbarHorizontalStyleCss()
     {
     	var scrollbarWidthInPixels = _renderBatch.ViewModel.TextEditorDimensions.Width -
-            ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+                                     ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
+                                     _renderBatch.ViewModel.GutterWidthInPixels;
         
         _uiStringBuilder.Clear();
         _uiStringBuilder.Append("width: ");
@@ -520,7 +520,8 @@ public sealed class TextEditorComponentData
     public void HORIZONTAL_GetSliderHorizontalStyleCss()
     {
     	var scrollbarWidthInPixels = _renderBatch.ViewModel.TextEditorDimensions.Width -
-            ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+						             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
+						             _renderBatch.ViewModel.GutterWidthInPixels;
         
         // Proportional Left
     	var sliderProportionalLeftInPixels = _renderBatch.ViewModel.ScrollLeft *
@@ -633,7 +634,7 @@ public sealed class TextEditorComponentData
         if (startingColumnIndex > line.LastValidColumnIndex)
         	startingColumnIndex = line.LastValidColumnIndex;
 
-        var startInPixels = startingColumnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+        var startInPixels = _renderBatch.ViewModel.GutterWidthInPixels + startingColumnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
 
         // startInPixels offset from Tab keys a width of many characters
         {
@@ -652,7 +653,7 @@ public sealed class TextEditorComponentData
         _uiStringBuilder.Append(startInPixelsInvariantCulture);
         _uiStringBuilder.Append("px;");
 
-        var widthInPixels = endingColumnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth - startInPixels;
+        var widthInPixels = endingColumnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth - startInPixels + _renderBatch.ViewModel.GutterWidthInPixels;
 
         // Tab keys a width of many characters
         {
@@ -838,7 +839,7 @@ public sealed class TextEditorComponentData
 
         _uiStringBuilder.Append(_lineHeightStyleCssString);
 
-        var selectionStartInPixels = selectionStartingColumnIndex * charMeasurements.CharacterWidth;
+        var selectionStartInPixels = _renderBatch.ViewModel.GutterWidthInPixels + selectionStartingColumnIndex * charMeasurements.CharacterWidth;
 
         // selectionStartInPixels offset from Tab keys a width of many characters
         {
@@ -859,7 +860,7 @@ public sealed class TextEditorComponentData
         _uiStringBuilder.Append("px;");
 
         var selectionWidthInPixels = 
-            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels;
+            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels + _renderBatch.ViewModel.GutterWidthInPixels;
 
         // Tab keys a width of many characters
         {
@@ -1164,7 +1165,7 @@ public sealed class TextEditorComponentData
     		if (!LineIndexCacheEntryMap.ContainsKey(lineAndColumnIndices.lineIndex))
     			continue;
     		
-    		var leftInPixels = lineAndColumnIndices.columnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+    		var leftInPixels = _renderBatch.ViewModel.GutterWidthInPixels + lineAndColumnIndices.columnIndex * _renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
     		
     		// Tab key column offset
     		{
@@ -1206,8 +1207,26 @@ public sealed class TextEditorComponentData
     private HashSet<int> LineIndexCacheUsageHashSet = new();
     private List<int> LineIndexKeyList = new();
     
+    private void ClearCache()
+    {
+	   LineIndexCacheEntryMap.Clear();
+	   LineIndexCacheUsageHashSet.Clear();
+	   LineIndexKeyList.Clear();
+    }
+    
     private void CreateCache()
     {
+    	if (Math.Abs(_previousViewModelGutterWidth - _renderBatch.ViewModel.GutterWidthInPixels) > 0.1)
+    	{
+    		_previousViewModelGutterWidth = _renderBatch.ViewModel.GutterWidthInPixels;
+    		ClearCache();
+    	}
+    	else if (Math.Abs(_previousViewModelScrollLeft - _renderBatch.ViewModel.ScrollLeft) > 0.1)
+    	{
+    		_previousViewModelScrollLeft = _renderBatch.ViewModel.ScrollLeft;
+    		ClearCache();
+    	}
+    
     	var hiddenLineCount = 0;
     	var checkHiddenLineIndex = 0;
     	var handledCursor = false;
@@ -1251,6 +1270,7 @@ public sealed class TextEditorComponentData
 	    		
 	    		LineIndexCacheEntryMap.Add(lineIndex, new TextEditorLineIndexCacheEntry(
 	    			topCssValue: ((lineIndex - hiddenLineCount) * _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
+	    			leftCssValue: _renderBatch.ViewModel.VirtualizationResult.EntryList[i].LeftInPixels.ToCssValue(),
 					lineNumberString: (lineIndex + 1).ToString(),
 					hiddenLineCount: hiddenLineCount));
 	    	}
@@ -1291,6 +1311,9 @@ public sealed class TextEditorComponentData
 	    		LineIndexCacheEntryMap.Add(_renderBatch.ViewModel.LineIndex, new TextEditorLineIndexCacheEntry(
 	    			topCssValue: (_renderBatch.ViewModel.LineIndex * _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight).ToCssValue(),
 					lineNumberString: (_renderBatch.ViewModel.LineIndex + 1).ToString(),
+					// TODO: This will cause a bug, this declares a lines left but in reality its trying to just describe the cursor and this value is placeholder.
+					// But, since this placeholder is cached, if this line comes up in a future render it may or may not be positioned correctly.
+					leftCssValue: _renderBatch.ViewModel.GutterWidthInPixels.ToCssValue(),
 					hiddenLineCount: 0));
 	    	}
 	    		
@@ -1345,6 +1368,9 @@ public sealed class TextEditorComponentData
     
     private int _counter;
     
+    private double _previousViewModelGutterWidth = 0;
+    private double _previousViewModelScrollLeft = 0;
+    
     public void CreateUi()
     {
     	TextEditorViewModel? viewModel = null;
@@ -1397,119 +1423,120 @@ public sealed class TextEditorComponentData
         if (_renderBatch.ViewModel is null)
         	return;
         
+        // TODO: I think the statement:...
+        // ....`if (Math.Abs(_previousGutterWidthInPixels - _renderBatch.GutterWidthInPixels) >= 0.2)`
+        // can visually "thrash" back and forth between two values if one of them is negative.
+        //
+        // (it renders in one spot, then immediately renders in a different spot, then renders again back in the original spot
+        //  and etc... cause it keeps thinking the value changed).
+        //
+        // I don't have any proof for this though, so until I do I'll remove the:
+        // `if (_renderBatch.GutterWidthInPixels >= 0)` checks.
+        //
+        // And if the "thrash" effect is real then a better solution than the if check for >= 0
+        // is to do this in the setter of the property itself.
+        //
+        // Since the measurements are "rarely" taken relative to this very hot "UI" pathway.
+        
+        
         // Check if the gutter width changed. If so, re-measure text editor.
-		if (_renderBatch.GutterWidthInPixels >= 0)
-		{
-        	if (Math.Abs(_previousGutterWidthInPixels - _renderBatch.GutterWidthInPixels) >= 0.2)
-        	{
-        		_previousGutterWidthInPixels = _renderBatch.GutterWidthInPixels;
-        		var widthInPixelsInvariantCulture = _renderBatch.GutterWidthInPixels.ToCssValue();
-        		
-        		_uiStringBuilder.Clear();
-        		_uiStringBuilder.Append("width: ");
-        		_uiStringBuilder.Append(widthInPixelsInvariantCulture);
-        		_uiStringBuilder.Append("px;");
-        		_gutterWidthStyleCssString = _uiStringBuilder.ToString();
-        		
-        		_uiStringBuilder.Clear();
-        		_uiStringBuilder.Append(_lineHeightStyleCssString);
-		        _uiStringBuilder.Append(_gutterWidthStyleCssString);
-		        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
-        		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
-        		
-        		_uiStringBuilder.Clear();
-        		_uiStringBuilder.Append("width: calc(100% - ");
-		        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
-		        _uiStringBuilder.Append("px); left: ");
-		        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
-		        _uiStringBuilder.Append("px;");
-        		_bodyStyle = _uiStringBuilder.ToString();
+    	if (Math.Abs(_previousGutterWidthInPixels - _renderBatch.GutterWidthInPixels) >= 0.1)
+    	{
+    		_previousGutterWidthInPixels = _renderBatch.GutterWidthInPixels;
+    		var widthInPixelsInvariantCulture = _renderBatch.GutterWidthInPixels.ToCssValue();
+    		
+    		_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append("width: ");
+    		_uiStringBuilder.Append(widthInPixelsInvariantCulture);
+    		_uiStringBuilder.Append("px;");
+    		_gutterWidthStyleCssString = _uiStringBuilder.ToString();
+    		
+    		_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append(_lineHeightStyleCssString);
+	        _uiStringBuilder.Append(_gutterWidthStyleCssString);
+	        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
+    		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
+    		
+    		_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append("width: calc(100% - ");
+	        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+	        _uiStringBuilder.Append("px); left: ");
+	        _uiStringBuilder.Append(widthInPixelsInvariantCulture);
+	        _uiStringBuilder.Append("px;");
+    		_bodyStyle = _uiStringBuilder.ToString();
 
-        		_renderBatch.ViewModel.PersistentState.DisplayTracker.PostScrollAndRemeasure();
-        		return;
-        	}
-		}
+    		_renderBatch.ViewModel.PersistentState.DisplayTracker.PostScrollAndRemeasure();
+    		
+    		HORIZONTAL_GetScrollbarHorizontalStyleCss();
+    		HORIZONTAL_GetSliderHorizontalStyleCss();
+    		
+    		_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append("left: ");
+    		_uiStringBuilder.Append(widthInPixelsInvariantCulture);
+    		_uiStringBuilder.Append("px;");
+    		_scrollbarSectionLeftCssString = _uiStringBuilder.ToString();
+    		return;
+    	}
 		
 		// NOTE: The 'gutterWidth' version of this will do a re-measure,...
 		// ...and therefore will return if its condition branch was entered.
-		if (_renderBatch.ViewModel.CharAndLineMeasurements.LineHeight >= 0)
-		{
-        	if (Math.Abs(_previousLineHeightInPixels - _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight) >= 0.2)
-        	{
-        		_previousLineHeightInPixels = _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
-				
-				_uiStringBuilder.Clear();
-        		_uiStringBuilder.Append("height: ");
-		        _uiStringBuilder.Append(_renderBatch.ViewModel.CharAndLineMeasurements.LineHeight.ToCssValue());
-		        _uiStringBuilder.Append("px;");
-		        _lineHeightStyleCssString = _uiStringBuilder.ToString();
-		        
-		        _uiStringBuilder.Clear();
-        		_uiStringBuilder.Append(_lineHeightStyleCssString);
-		        _uiStringBuilder.Append(_gutterWidthStyleCssString);
-		        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
-        		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
-    		}
+    	if (Math.Abs(_previousLineHeightInPixels - _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight) >= 0.1)
+    	{
+    		_previousLineHeightInPixels = _renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
+			
+			_uiStringBuilder.Clear();
+    		_uiStringBuilder.Append("height: ");
+	        _uiStringBuilder.Append(_renderBatch.ViewModel.CharAndLineMeasurements.LineHeight.ToCssValue());
+	        _uiStringBuilder.Append("px;");
+	        _lineHeightStyleCssString = _uiStringBuilder.ToString();
+	        
+	        _uiStringBuilder.Clear();
+    		_uiStringBuilder.Append(_lineHeightStyleCssString);
+	        _uiStringBuilder.Append(_gutterWidthStyleCssString);
+	        _uiStringBuilder.Append(_gutterPaddingStyleCssString);
+    		_gutterHeightWidthPaddingStyleCssString = _uiStringBuilder.ToString();
 		}
 		
 		bool shouldCalculateVerticalSlider = false;
 		bool shouldCalculateHorizontalSlider = false;
 		bool shouldCalculateHorizontalScrollbar = false;
 		
-		if (_renderBatch.ViewModel.TextEditorDimensions.Height >= 0)
-		{
-        	if (Math.Abs(_previousTextEditorHeightInPixels - _renderBatch.ViewModel.TextEditorDimensions.Height) >= 0.2)
-        	{
-        		_previousTextEditorHeightInPixels = _renderBatch.ViewModel.TextEditorDimensions.Height;
-        		shouldCalculateVerticalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousTextEditorHeightInPixels - _renderBatch.ViewModel.TextEditorDimensions.Height) >= 0.1)
+    	{
+    		_previousTextEditorHeightInPixels = _renderBatch.ViewModel.TextEditorDimensions.Height;
+    		shouldCalculateVerticalSlider = true;
+	    }
 		
-		if (_renderBatch.ViewModel.ScrollHeight >= 0)
-		{
-        	if (Math.Abs(_previousScrollHeightInPixels - _renderBatch.ViewModel.ScrollHeight) >= 0.2)
-        	{
-        		_previousScrollHeightInPixels = _renderBatch.ViewModel.ScrollHeight;
-        		shouldCalculateVerticalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousScrollHeightInPixels - _renderBatch.ViewModel.ScrollHeight) >= 0.1)
+    	{
+    		_previousScrollHeightInPixels = _renderBatch.ViewModel.ScrollHeight;
+    		shouldCalculateVerticalSlider = true;
+	    }
 		
-		if (_renderBatch.ViewModel.ScrollTop >= 0)
-		{
-        	if (Math.Abs(_previousScrollTopInPixels - _renderBatch.ViewModel.ScrollTop) >= 0.2)
-        	{
-        		_previousScrollTopInPixels = _renderBatch.ViewModel.ScrollTop;
-        		shouldCalculateVerticalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousScrollTopInPixels - _renderBatch.ViewModel.ScrollTop) >= 0.1)
+    	{
+    		_previousScrollTopInPixels = _renderBatch.ViewModel.ScrollTop;
+    		shouldCalculateVerticalSlider = true;
+	    }
 		
-		if (_renderBatch.ViewModel.TextEditorDimensions.Width >= 0)
-		{
-        	if (Math.Abs(_previousTextEditorWidthInPixels - _renderBatch.ViewModel.TextEditorDimensions.Width) >= 0.2)
-        	{
-        		_previousTextEditorWidthInPixels = _renderBatch.ViewModel.TextEditorDimensions.Width;
-        		shouldCalculateHorizontalSlider = true;
-        		shouldCalculateHorizontalScrollbar = true;
-		    }
-		}
+    	if (Math.Abs(_previousTextEditorWidthInPixels - _renderBatch.ViewModel.TextEditorDimensions.Width) >= 0.1)
+    	{
+    		_previousTextEditorWidthInPixels = _renderBatch.ViewModel.TextEditorDimensions.Width;
+    		shouldCalculateHorizontalSlider = true;
+    		shouldCalculateHorizontalScrollbar = true;
+	    }
 		
-		if (_renderBatch.ViewModel.ScrollWidth >= 0)
-		{
-        	if (Math.Abs(_previousScrollWidthInPixels - _renderBatch.ViewModel.ScrollWidth) >= 0.2)
-        	{
-        		_previousScrollWidthInPixels = _renderBatch.ViewModel.ScrollWidth;
-        		shouldCalculateHorizontalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousScrollWidthInPixels - _renderBatch.ViewModel.ScrollWidth) >= 0.1)
+    	{
+    		_previousScrollWidthInPixels = _renderBatch.ViewModel.ScrollWidth;
+    		shouldCalculateHorizontalSlider = true;
+	    }
 		
-		if (_renderBatch.ViewModel.ScrollLeft >= 0)
-		{
-        	if (Math.Abs(_previousScrollLeftInPixels - _renderBatch.ViewModel.ScrollLeft) >= 0.2)
-        	{
-        		_previousScrollLeftInPixels = _renderBatch.ViewModel.ScrollLeft;
-        		shouldCalculateHorizontalSlider = true;
-		    }
-		}
+    	if (Math.Abs(_previousScrollLeftInPixels - _renderBatch.ViewModel.ScrollLeft) >= 0.1)
+    	{
+    		_previousScrollLeftInPixels = _renderBatch.ViewModel.ScrollLeft;
+    		shouldCalculateHorizontalSlider = true;
+	    }
 
 		if (shouldCalculateVerticalSlider)
 			VERTICAL_GetSliderVerticalStyleCss();
@@ -1524,16 +1551,22 @@ public sealed class TextEditorComponentData
     	
     	if (_renderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
 		{
-			if (valueTooltipRelativeX != _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX)
+			var x = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX +
+					_renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeScrollLeft;
+					
+			var y = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY +
+					_renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeScrollTop;
+		
+			if (Math.Abs(valueTooltipRelativeX - x) >= 0.1)
 			{
-				valueTooltipRelativeX = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX;
-				tooltipRelativeX = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX.ToCssValue();
+				valueTooltipRelativeX = x;
+				tooltipRelativeX = x.ToCssValue();
 			}
 		
-			if (valueTooltipRelativeY != _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY)
+			if (Math.Abs(valueTooltipRelativeY - y) >= 0.1)
 			{
-				valueTooltipRelativeY = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY;
-				tooltipRelativeY = _renderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY.ToCssValue();
+				valueTooltipRelativeY = y;
+				tooltipRelativeY = y.ToCssValue();
 			}
 		}
 		
