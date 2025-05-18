@@ -11,7 +11,7 @@ namespace Luthetus.Tutorials.RazorLib.Pages;
 public partial class Index : ComponentBase
 {
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
@@ -19,6 +19,7 @@ public partial class Index : ComponentBase
 
 	public static ResourceUri ResourceUri { get; } = new("/index.txt");
 	public static Key<TextEditorViewModel> ViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
+	public static Key<TextEditorViewModel> OtherViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
 	
 	protected override void OnInitialized()
 	{
