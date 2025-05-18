@@ -21,8 +21,12 @@ public partial class Index : ComponentBase
 	public static Key<TextEditorViewModel> ViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
 	public static Key<TextEditorViewModel> OtherViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
 	
+	private Key<TextEditorViewModel> UseViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
+	
 	protected override void OnInitialized()
 	{
+		UseViewModelKey = OtherViewModelKey;
+	
 		var existingModel = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
 		if (existingModel is not null)
 			return;
@@ -80,5 +84,17 @@ public partial class Index : ComponentBase
 		});
 			
 		base.OnInitialized();
+	}
+	
+	private void Toggle()
+	{
+		if (UseViewModelKey == OtherViewModelKey)
+		{
+			UseViewModelKey = ViewModelKey;
+		}
+		else if (UseViewModelKey == ViewModelKey)
+		{
+			UseViewModelKey = OtherViewModelKey;
+		}
 	}
 }
