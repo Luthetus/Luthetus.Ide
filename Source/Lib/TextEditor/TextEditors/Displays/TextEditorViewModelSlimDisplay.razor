@@ -47,7 +47,7 @@
 		 style="@_componentData.VerticalVirtualizationBoundaryStyleCssString">
 	</div>
     
-    @if (_componentData.RenderBatch.IsValid && _componentData.LineIndexCacheEntryMap.Count != 0)
+    @if (_componentData.RenderBatch.IsValid && _componentData.Css_LineIndexCache_EntryMap.Count != 0)
     {
     	<div class="luth_te_three-dots-section">
         	@foreach (var entry in _componentData.InlineUiStyleList)
@@ -118,9 +118,9 @@
 			    	if (ViewModelDisplayOptions.IncludeGutterComponent)
 			    	{
 				        <div class="luth_te_gutter"
-				             style="@(_componentData.GetGutterStyleCss(_componentData.LineIndexCacheEntryMap[line.LineIndex].TopCssValue))">
+				             style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].TopCssValue))">
 				             
-				            @(_componentData.LineIndexCacheEntryMap[line.LineIndex].LineNumberString)
+				            @(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].LineNumberString)
 				            
 				            @{
 				            	for (int i = 0; i < _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)

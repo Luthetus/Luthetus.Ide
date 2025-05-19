@@ -364,7 +364,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 _linkedViewModel = nextViewModel;
                 _linkedViewModelKey = _linkedViewModel.PersistentState.ViewModelKey;
 
-                _componentData.VirtualizationLineCacheClear();
+                _componentData.Virtualized_LineIndexCache_Clear();
                 
                 if (nextViewModel is not null)
                 {

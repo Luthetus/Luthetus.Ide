@@ -58,11 +58,11 @@ public class TextEditorViewModelLiason
 			
 			if (lineEndPositionWasAdded && viewModel.PersistentState.DisplayTracker.ComponentData is not null)
 			{
-				viewModel.PersistentState.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
+				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_IsInvalid = true;
 			}
 			else
 			{
-				viewModel.PersistentState.DisplayTracker.ComponentData.VirtualizedLineLineIndexWithModificationList.Add(initialCursorLineIndex);
+				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Add(initialCursorLineIndex);
 			}
 		}
 	}
@@ -98,11 +98,11 @@ public class TextEditorViewModelLiason
 			
 			if (lineEndPositionWasAdded && viewModel.PersistentState.DisplayTracker.ComponentData is not null)
 			{
-				viewModel.PersistentState.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
+				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_IsInvalid = true;
 			}
 			else
 			{
-				viewModel.PersistentState.DisplayTracker.ComponentData.VirtualizedLineLineIndexWithModificationList.Add(initialCursorLineIndex);
+				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Add(initialCursorLineIndex);
 			}
 		}
 	}
@@ -116,7 +116,7 @@ public class TextEditorViewModelLiason
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
 			
 			if (viewModel.PersistentState.DisplayTracker.ComponentData is not null)
-				viewModel.PersistentState.DisplayTracker.ComponentData.VisualizationLineCacheIsInvalid = true;
+				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_IsInvalid = true;
 		}
 	}
 }
