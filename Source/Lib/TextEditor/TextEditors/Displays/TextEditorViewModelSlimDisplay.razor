@@ -111,9 +111,9 @@
     	{
     		<div class="luth_te_gutter-section"
     			 style="@_componentData.Gutter_WidthCssStyle">
-	    		@for (int lineIndex = 0; lineIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
+	    		@for (int virtualizationResultIndex = 0; virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; virtualizationResultIndex++)
 			    {
-			    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
+			    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex];
 			    	
 			    	if (ViewModelDisplayOptions.IncludeGutterComponent)
 			    	{
@@ -205,9 +205,9 @@
     	}
     	
     	<div class="luth_te_text-section">
-	    	@for (int lineIndex = 0; lineIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
+	    	@for (int virtualizationResultIndex = 0; virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; virtualizationResultIndex++)
 		    {
-		    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
+		    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex];
 		    	
 		    	<div class="luth_te_row"
 					 style="@_componentData.RowSection_GetRowStyleCss(line.LineIndex)">
