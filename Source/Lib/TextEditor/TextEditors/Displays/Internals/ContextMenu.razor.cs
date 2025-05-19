@@ -72,7 +72,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._renderBatch ?? default;
+    	return GetComponentData()?.RenderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()

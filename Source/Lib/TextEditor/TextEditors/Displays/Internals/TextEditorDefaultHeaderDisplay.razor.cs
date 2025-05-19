@@ -65,7 +65,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     
     private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._renderBatch ?? default;
+    	return GetComponentData()?.RenderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
