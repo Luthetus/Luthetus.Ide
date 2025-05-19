@@ -110,7 +110,7 @@
     	if (ViewModelDisplayOptions.IncludeGutterComponent)
     	{
     		<div class="luth_te_gutter-section"
-    			 style="@_componentData.GutterWidthStyleCssString">
+    			 style="@_componentData.Gutter_WidthCssStyle">
 	    		@for (int lineIndex = 0; lineIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
 			    {
 			    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
@@ -248,19 +248,19 @@
 	    <textarea id="@_componentData.PrimaryCursorContentId"
 				  tabindex="@_componentData.RenderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex"
 				  class="@_componentData.BlinkAnimationCssClass"
-				  style="@_componentData.PreviousGetCursorStyleCss">
+				  style="@_componentData.CursorCssStyle">
 		</textarea>
 						
 		<div class="luth_te_text-editor-caret-row"
-				style="@_componentData.PreviousGetCaretRowStyleCss">
+				style="@_componentData.CaretRowCssStyle">
 		</div>
 		
 		@* ScrollbarSection.razor Open *@
-		<div class="luth_te_scrollbar-section" style="@_componentData.ScrollbarSectionLeftCssString">
+		<div class="luth_te_scrollbar-section" style="@_componentData.ScrollbarSection_LeftCssStyle">
 		
 			<div class="luth_te_scrollbar luth_te_scrollbar-horizontal"
 			     id="@HORIZONTAL_ScrollbarElementId"
-			     style="@_componentData.Previous_HORIZONTAL_GetScrollbarHorizontalStyleCss_Result"
+			     style="@_componentData.HORIZONTAL_ScrollbarCssStyle"
 			     @onmousedown:stopPropagation="true"
 			     @onmousedown="HORIZONTAL_HandleOnMouseDownAsync"
 			     @onmousemove:stopPropagation="true"
@@ -270,7 +270,7 @@
 			    
 			    <div class="luth_te_scrollbar-slider"
 			         id="@HORIZONTAL_ScrollbarSliderElementId"
-			         style="@_componentData.Previous_HORIZONTAL_GetSliderHorizontalStyleCss_Result">
+			         style="@_componentData.HORIZONTAL_SliderCssStyle">
 			    </div>
 			</div>
 			
@@ -285,7 +285,7 @@
 			         
 			    <div class="luth_te_scrollbar-slider"
 			         id="@VERTICAL_ScrollbarSliderElementId"
-			         style="@_componentData.Previous_VERTICAL_GetSliderVerticalStyleCss_Result">
+			         style="@_componentData.VERTICAL_SliderCssStyle">
 			    </div>
 			</div>
 		    

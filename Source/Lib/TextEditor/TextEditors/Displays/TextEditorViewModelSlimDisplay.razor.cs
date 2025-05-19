@@ -222,10 +222,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         	// `if (firstRender)` is the only current scenario where an await comes prior to this read and assign.
         	//
         	// ScrollLeft is most likely to shortcircuit, thus it is being put first.
-        	if (_componentData.ScrollLeftChanged && _componentData.ScrollTopChanged)
+        	if (_componentData.Scroll_LeftChanged && _componentData.Scroll_TopChanged)
         	{
-        		_componentData.ScrollLeftChanged = false;
-        		_componentData.ScrollTopChanged = false;
+        		_componentData.Scroll_LeftChanged = false;
+        		_componentData.Scroll_TopChanged = false;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
@@ -234,9 +234,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		                _componentData.RenderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
         	}
-        	else if (_componentData.ScrollTopChanged) // ScrollTop is most likely to come next
+        	else if (_componentData.Scroll_TopChanged) // ScrollTop is most likely to come next
         	{
-        		_componentData.ScrollTopChanged = false;
+        		_componentData.Scroll_TopChanged = false;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionTop(
@@ -244,9 +244,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		                _componentData.RenderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
         	}
-        	else if (_componentData.ScrollLeftChanged)
+        	else if (_componentData.Scroll_LeftChanged)
         	{
-        		_componentData.ScrollLeftChanged = false;
+        		_componentData.Scroll_LeftChanged = false;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionLeft(
@@ -281,12 +281,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	    
 	    var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
 	    var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
-        _componentData.GutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
+        _componentData.Gutter_PaddingCssStyle = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
         
-        _componentData.ScrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
+        _componentData.ScrollbarSizeCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
         
-		_componentData.BlinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink {TextCursorKindFacts.BeamCssClassString}";
-	    _componentData.BlinkAnimationCssClassOff = $"luth_te_text-editor-cursor {TextCursorKindFacts.BeamCssClassString}";
+		_componentData.CursorCssClassBlinkAnimationOn = $"luth_te_text-editor-cursor luth_te_blink {TextCursorKindFacts.BeamCssClassString}";
+	    _componentData.CursorCssClassBlinkAnimationOff = $"luth_te_text-editor-cursor {TextCursorKindFacts.BeamCssClassString}";
 	}
 	
     private void SetComponentData()
