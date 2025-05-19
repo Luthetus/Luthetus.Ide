@@ -115,39 +115,36 @@
 			    {
 			    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex];
 			    	
-			    	if (ViewModelDisplayOptions.IncludeGutterComponent)
-			    	{
-				        <div class="luth_te_gutter"
-				             style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].TopCssValue))">
-				             
-				            @(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].LineNumberString)
-				            
-				            @{
-				            	for (int i = 0; i < _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
-				            	{
-				            		if (_componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == line.LineIndex)
-				            		{
-				            			collapsePoint = _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList[i];
-				            			break;
-				            		}
-				            	}
-				            }
-			
-							@if (collapsePoint.AppendToLineIndex == line.LineIndex)
-							{
-							    <span class="luth_te_gutter-chevron">
-							    	@if (collapsePoint.IsCollapsed)
-							    	{
-							    		@IconChevronRightFragment.Render(_iconDriver)
-							    	}
-							    	else
-							    	{
-							    		@IconChevronDownFragment.Render(_iconDriver)
-							    	}
-								</span>
-							}
-				        </div>
-			    	}
+			        <div class="luth_te_gutter"
+			             style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].TopCssValue))">
+			             
+			            @(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].LineNumberString)
+			            
+			            @{
+			            	for (int i = 0; i < _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
+			            	{
+			            		if (_componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == line.LineIndex)
+			            		{
+			            			collapsePoint = _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList[i];
+			            			break;
+			            		}
+			            	}
+			            }
+		
+						@if (collapsePoint.AppendToLineIndex == line.LineIndex)
+						{
+						    <span class="luth_te_gutter-chevron">
+						    	@if (collapsePoint.IsCollapsed)
+						    	{
+						    		@IconChevronRightFragment.Render(_iconDriver)
+						    	}
+						    	else
+						    	{
+						    		@IconChevronDownFragment.Render(_iconDriver)
+						    	}
+							</span>
+						}
+			        </div>
 		    	}
 		    	
 		    	@{
