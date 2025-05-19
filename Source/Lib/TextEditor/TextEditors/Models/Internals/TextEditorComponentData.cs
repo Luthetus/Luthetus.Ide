@@ -695,8 +695,10 @@ public sealed class TextEditorComponentData
 	
 		if (CursorIsOnHiddenLine)
 		{
-			foreach (var collapsePoint in RenderBatch.ViewModel.AllCollapsePointList)
+			for (int collapsePointIndex = 0; collapsePointIndex < RenderBatch.ViewModel.AllCollapsePointList.Count; collapsePointIndex++)
 			{
+				var collapsePoint = RenderBatch.ViewModel.AllCollapsePointList[collapsePointIndex];
+				
 				if (!collapsePoint.IsCollapsed)
 					continue;
 			
@@ -767,8 +769,10 @@ public sealed class TextEditorComponentData
 	        
 	        leftInPixels += RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth * RenderBatch.ViewModel.ColumnIndex;
 	        
-	        foreach (var inlineUiTuple in RenderBatch.ViewModel.InlineUiList)
+	        for (int inlineUiTupleIndex = 0; inlineUiTupleIndex < RenderBatch.ViewModel.InlineUiList.Count; inlineUiTupleIndex++)
 			{
+				var inlineUiTuple = RenderBatch.ViewModel.InlineUiList[inlineUiTupleIndex];
+				
 				var lineAndColumnIndices = RenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
 				
 				if (lineAndColumnIndices.lineIndex == RenderBatch.ViewModel.LineIndex)
@@ -1101,8 +1105,10 @@ public sealed class TextEditorComponentData
 
         // Shift the text spans
         {
-            foreach (var textSpan in VirtualizedTextSpanList)
+            for (int textSpanIndex = 0; textSpanIndex < VirtualizedTextSpanList.Count; textSpanIndex++)
             {
+            	var textSpan = VirtualizedTextSpanList[textSpanIndex];
+            	
                 var startingIndexInclusive = textSpan.StartInclusiveIndex;
                 var endingIndexExclusive = textSpan.EndExclusiveIndex;
 
@@ -1436,8 +1442,10 @@ public sealed class TextEditorComponentData
     	presentationLayerGroupList.Clear();
     	presentationLayerTextSpanList.Clear();
     
-    	foreach (var presentationKey in presentationLayerKeysList)
+    	for (int presentationKeyIndex = 0; presentationKeyIndex < presentationLayerKeysList.Count; presentationKeyIndex++)
 	    {
+	    	var presentationKey = presentationLayerKeysList[presentationKeyIndex];
+	    	
 	    	var presentationLayer = RenderBatch.Model.PresentationModelList.FirstOrDefault(
 	    		x => x.TextEditorPresentationKey == presentationKey);
 	        if (presentationLayer is null)
@@ -1461,8 +1469,10 @@ public sealed class TextEditorComponentData
 			var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;
 
-            foreach (var textSpan in textSpansList)
+            for (int textSpanIndex = 0; textSpanIndex < textSpansList.Count; textSpanIndex++)
             {
+            	var textSpan = textSpansList[textSpanIndex];
+            	
                 var boundsInPositionIndexUnits = (textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex);
 
                 var boundsInLineIndexUnits = PresentationGetBoundsInLineIndexUnits(boundsInPositionIndexUnits);
@@ -1515,8 +1525,10 @@ public sealed class TextEditorComponentData
     
     	InlineUiStyleList.Clear();
     	
-    	foreach (var entry in RenderBatch.ViewModel.InlineUiList)
+    	for (int inlineUiIndex = 0; inlineUiIndex < RenderBatch.ViewModel.InlineUiList.Count; inlineUiIndex++)
     	{
+    		var entry = RenderBatch.ViewModel.InlineUiList[inlineUiIndex];
+    		
     		var lineAndColumnIndices = RenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
     		
     		if (!Css_LineIndexCache_EntryMap.ContainsKey(lineAndColumnIndices.lineIndex))
