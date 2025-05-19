@@ -319,8 +319,8 @@ public sealed class TextEditorComponentData
 	        GetCursorAndCaretRowStyleCss();
 	        GetSelection();
 	        
-	        GetPresentationLayer(FirstPresentationLayerGroupList, FirstPresentationLayerTextSpanList);
-	        GetPresentationLayer(LastPresentationLayerGroupList, LastPresentationLayerTextSpanList);
+	        GetPresentationLayer(RenderBatch.ViewModel.PersistentState.FirstPresentationLayerKeysList, FirstPresentationLayerGroupList, FirstPresentationLayerTextSpanList);
+	        GetPresentationLayer(RenderBatch.ViewModel.PersistentState.LastPresentationLayerKeysList, LastPresentationLayerGroupList, LastPresentationLayerTextSpanList);
 	        
 	        GetInlineUiStyleList();
         }
@@ -1422,13 +1422,14 @@ public sealed class TextEditorComponentData
     }
     
     private void GetPresentationLayer(
+    	List<Key<TextEditorPresentationModel>> presentationLayerKeysList,
     	List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> presentationLayerGroupList,
     	List<(string PresentationCssClass, string PresentationCssStyle)> presentationLayerTextSpanList)
     {
     	presentationLayerGroupList.Clear();
     	presentationLayerTextSpanList.Clear();
     
-    	foreach (var presentationKey in RenderBatch.ViewModel.PersistentState.FirstPresentationLayerKeysList)
+    	foreach (var presentationKey in presentationLayerKeysList)
 	    {
 	    	var presentationLayer = RenderBatch.Model.PresentationModelList.FirstOrDefault(
 	    		x => x.TextEditorPresentationKey == presentationKey);
