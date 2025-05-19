@@ -53,7 +53,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._renderBatch ?? default;
+    	return GetComponentData()?.RenderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()

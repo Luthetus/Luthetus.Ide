@@ -68,7 +68,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._renderBatch ?? default;
+    	return GetComponentData()?.RenderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()

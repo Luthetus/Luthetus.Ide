@@ -150,6 +150,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	private bool _hasRenderedAtLeastOnce = false;
 	
+	private double PreviousScrollLeft { get; set; }
+	private double PreviousScrollTop { get; set; }
+	
     protected override void OnInitialized()
     {
     	 _onKeyDownNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown);
@@ -192,9 +195,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		ComponentData.CreateUi();
         return true;
     }
-    
-	private double _previousScrollLeft;
-	private double _previousScrollTop;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -208,7 +208,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 .ConfigureAwait(false);
         }
 
-        if (_componentData._renderBatch.ViewModel is not null)
+        if (_componentData.RenderBatch.ViewModel is not null)
         {
         	// It is thought that you shouldn't '.ConfigureAwait(false)' for the scrolling JS Interop,
 			// because this could provide a "natural throttle for the scrolling"
@@ -219,40 +219,40 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			// (the same is true for rendering the UI, it might avoid some renders
 			//  because the most recent should render took time to get executed).
         	
-        	var leftChanged = Math.Abs(_previousScrollLeft - _componentData._renderBatch.ViewModel.ScrollLeft) > 0.1;
-        	var topChanged = Math.Abs(_previousScrollTop - _componentData._renderBatch.ViewModel.ScrollTop) > 0.1;
+        	var leftChanged = Math.Abs(PreviousScrollLeft - _componentData.RenderBatch.ViewModel.ScrollLeft) > 0.1;
+        	var topChanged = Math.Abs(PreviousScrollTop - _componentData.RenderBatch.ViewModel.ScrollTop) > 0.1;
         	
         	// ScrollLeft is most likely to shortcircuit, thus it is being put first.
         	if (leftChanged && topChanged)
         	{
-        		_previousScrollLeft = _componentData._renderBatch.ViewModel.ScrollLeft;
-        		_previousScrollTop = _componentData._renderBatch.ViewModel.ScrollTop;
+        		PreviousScrollLeft = _componentData.RenderBatch.ViewModel.ScrollLeft;
+        		PreviousScrollTop = _componentData.RenderBatch.ViewModel.ScrollTop;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
 		                _componentData.RowSectionElementId,
-		                _componentData._renderBatch.ViewModel.ScrollLeft,
-		                _componentData._renderBatch.ViewModel.ScrollTop)
+		                _componentData.RenderBatch.ViewModel.ScrollLeft,
+		                _componentData.RenderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
         	}
         	else if (topChanged) // ScrollTop is most likely to come next
         	{
-        		_previousScrollTop = _componentData._renderBatch.ViewModel.ScrollTop;
+        		PreviousScrollTop = _componentData.RenderBatch.ViewModel.ScrollTop;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionTop(
 		                _componentData.RowSectionElementId,
-		                _componentData._renderBatch.ViewModel.ScrollTop)
+		                _componentData.RenderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
         	}
         	else if (leftChanged)
         	{
-        		_previousScrollLeft = _componentData._renderBatch.ViewModel.ScrollLeft;
+        		PreviousScrollLeft = _componentData.RenderBatch.ViewModel.ScrollLeft;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionLeft(
 		                _componentData.RowSectionElementId,
-		                _componentData._renderBatch.ViewModel.ScrollLeft)
+		                _componentData.RenderBatch.ViewModel.ScrollLeft)
 	                .ConfigureAwait(false);
         	}
         }
@@ -282,12 +282,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	    
 	    var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
 	    var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
-        _componentData._gutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
+        _componentData.GutterPaddingStyleCssString = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
         
-        _componentData._scrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
+        _componentData.ScrollbarSizeInPixelsCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
         
-		_componentData._blinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink {TextCursorKindFacts.BeamCssClassString}";
-	    _componentData._blinkAnimationCssClassOff = $"luth_te_text-editor-cursor {TextCursorKindFacts.BeamCssClassString}";
+		_componentData.BlinkAnimationCssClassOn = $"luth_te_text-editor-cursor luth_te_blink {TextCursorKindFacts.BeamCssClassString}";
+	    _componentData.BlinkAnimationCssClassOff = $"luth_te_text-editor-cursor {TextCursorKindFacts.BeamCssClassString}";
 	}
 	
     private void SetComponentData()
@@ -678,19 +678,19 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
-    	var renderBatchLocal = ComponentData._renderBatch;
+    	var renderBatchLocal = ComponentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
     		return;
     		
     	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
-		HORIZONTAL_scrollLeftOnMouseDown = _componentData._renderBatch.ViewModel.ScrollLeft;
+		HORIZONTAL_scrollLeftOnMouseDown = _componentData.RenderBatch.ViewModel.ScrollLeft;
 
 		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
 		// Drag far up to reset scroll to original
-		var textEditorDimensions = _componentData._renderBatch.ViewModel.TextEditorDimensions;
+		var textEditorDimensions = _componentData.RenderBatch.ViewModel.TextEditorDimensions;
 		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
 		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
 
@@ -708,7 +708,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
-    	var renderBatchLocal = _componentData._renderBatch;
+    	var renderBatchLocal = _componentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
     		return;
     
@@ -757,7 +757,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private Task HORIZONTAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
-    	var renderBatchLocal = _componentData._renderBatch;
+    	var renderBatchLocal = _componentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     
@@ -816,7 +816,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private Task VERTICAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
-    	var renderBatchLocal = _componentData._renderBatch;
+    	var renderBatchLocal = _componentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     
