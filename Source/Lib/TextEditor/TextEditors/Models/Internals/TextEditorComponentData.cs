@@ -319,8 +319,15 @@ public sealed class TextEditorComponentData
 	        GetCursorAndCaretRowStyleCss();
 	        GetSelection();
 	        
-	        GetPresentationLayer(RenderBatch.ViewModel.PersistentState.FirstPresentationLayerKeysList, FirstPresentationLayerGroupList, FirstPresentationLayerTextSpanList);
-	        GetPresentationLayer(RenderBatch.ViewModel.PersistentState.LastPresentationLayerKeysList, LastPresentationLayerGroupList, LastPresentationLayerTextSpanList);
+	        GetPresentationLayer(
+	        	RenderBatch.ViewModel.PersistentState.FirstPresentationLayerKeysList,
+	        	FirstPresentationLayerGroupList,
+	        	FirstPresentationLayerTextSpanList);
+	        	
+	        GetPresentationLayer(
+	        	RenderBatch.ViewModel.PersistentState.LastPresentationLayerKeysList,
+	        	LastPresentationLayerGroupList,
+	        	LastPresentationLayerTextSpanList);
 	        
 	        GetInlineUiStyleList();
         }
