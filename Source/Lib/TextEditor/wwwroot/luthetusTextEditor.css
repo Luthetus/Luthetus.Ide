@@ -819,7 +819,7 @@
     --luth_te_newline-background-color: #faeee2;
     --luth_te_method-foreground-color: rgb(236, 158, 19);
     --luth_te_type-foreground-color: rgb(19,97,236);
-    --luth_te_variable-foreground-color: rgb(59,196,62);
+    --luth_te_variable-foreground-color: rgb(50, 166, 52);
     --luth_te_string-literal-foreground-color: rgb(164,112,91);
     --luth_te_string-literal-escape-character-foreground-color: rgb(0, 0, 255);
     --luth_te_string-literal-escape-character-secondary-foreground-color: var(--luth_te_associated-key-color);

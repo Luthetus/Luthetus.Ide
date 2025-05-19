@@ -182,7 +182,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     
     private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._renderBatch ?? default;
+    	return GetComponentData()?.RenderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()

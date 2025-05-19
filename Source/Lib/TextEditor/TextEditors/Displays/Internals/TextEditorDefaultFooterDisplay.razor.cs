@@ -79,7 +79,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
     
     private TextEditorRenderBatch GetRenderBatch()
     {
-    	return GetComponentData()?._renderBatch ?? default;
+    	return GetComponentData()?.RenderBatch ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()

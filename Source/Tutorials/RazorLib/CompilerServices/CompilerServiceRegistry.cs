@@ -14,7 +14,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public IReadOnlyDictionary<string, ICompilerService> Map => _map;
     public IReadOnlyList<ICompilerService> CompilerServiceList => _map.Values.ToList();
 
-    public CompilerServiceRegistry(ITextEditorService textEditorService, IClipboardService clipboardService)
+    public CompilerServiceRegistry(TextEditorService textEditorService, IClipboardService clipboardService)
     {
         CSharpCompilerService = new CSharpCompilerService(textEditorService, clipboardService);
         DefaultCompilerService = new CompilerServiceDoNothing();

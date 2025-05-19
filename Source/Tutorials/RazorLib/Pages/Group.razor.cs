@@ -12,7 +12,7 @@ namespace Luthetus.Tutorials.RazorLib.Pages;
 public partial class Group : ComponentBase
 {
 	[Inject]
-	private ITextEditorService TextEditorService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
