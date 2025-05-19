@@ -282,8 +282,8 @@ public sealed class TextEditorComponentData
     
     public void CreateUi()
     {
-    	TextEditorViewModel? viewModel = null;
-    	TextEditorModel? model = null;
+    	TextEditorViewModel? viewModel;
+    	TextEditorModel? model;
     	
     	try
     	{
@@ -292,6 +292,9 @@ public sealed class TextEditorComponentData
     	}
     	catch (Exception e)
     	{
+    		viewModel = null;
+    		model = null;
+    	
     		Console.WriteLine(e);
     	}
     
