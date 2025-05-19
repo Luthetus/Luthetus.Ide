@@ -117,46 +117,4 @@ public struct VirtualizationGrid
     /// Lowest 'top' point where a rendered element is displayed.
     /// </summary>
     public double VirtualTop { get; init; }
-    
-    /// <summary>
-    /// Inlining this instead of invoking the function definition just to see what happens.
-    /// </summary>
-    /*private void AppendTextEscaped(
-        StringBuilder spanBuilder,
-        RichCharacter richCharacter,
-        string tabKeyOutput,
-        string spaceKeyOutput)
-    {
-        switch (richCharacter.Value)
-        {
-            case '\t':
-                spanBuilder.Append(tabKeyOutput);
-                break;
-            case ' ':
-                spanBuilder.Append(spaceKeyOutput);
-                break;
-            case '\r':
-                break;
-            case '\n':
-                break;
-            case '<':
-                spanBuilder.Append("&lt;");
-                break;
-            case '>':
-                spanBuilder.Append("&gt;");
-                break;
-            case '"':
-                spanBuilder.Append("&quot;");
-                break;
-            case '\'':
-                spanBuilder.Append("&#39;");
-                break;
-            case '&':
-                spanBuilder.Append("&amp;");
-                break;
-            default:
-                spanBuilder.Append(richCharacter.Value);
-                break;
-        }
-    }*/
 }
