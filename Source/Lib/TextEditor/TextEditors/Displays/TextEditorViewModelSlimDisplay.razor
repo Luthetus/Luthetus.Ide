@@ -111,16 +111,18 @@
     	{
     		<div class="luth_te_gutter-section"
     			 style="@_componentData.Gutter_WidthCssStyle">
-	    		@for (int lineIndex = 0; lineIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
+	    		@for (int virtualizationResultIndex = 0; virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; virtualizationResultIndex++)
 			    {
-			    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
+			    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex];
 			    	
 			    	if (ViewModelDisplayOptions.IncludeGutterComponent)
 			    	{
+			    		var css_lineIndexCache_line = _componentData.Css_LineIndexCache_Read(line.LineIndex, virtualizationResultIndex: -1, isCursor: false);
+			    		
 				        <div class="luth_te_gutter"
-				             style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].TopCssValue))">
+				             style="@(_componentData.GetGutterStyleCss(css_lineIndexCache_line.TopCssValue))">
 				             
-				            @(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].LineNumberString)
+				            @(css_lineIndexCache_line.LineNumberString)
 				            
 				            @{
 				            	for (int i = 0; i < _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
@@ -205,12 +207,12 @@
     	}
     	
     	<div class="luth_te_text-section">
-	    	@for (int lineIndex = 0; lineIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; lineIndex++)
+	    	@for (int virtualizationResultIndex = 0; virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; virtualizationResultIndex++)
 		    {
-		    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[lineIndex];
+		    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex];
 		    	
 		    	<div class="luth_te_row"
-					 style="@_componentData.RowSection_GetRowStyleCss(line.LineIndex)">
+					 style="@_componentData.RowSection_GetRowStyleCss(line.LineIndex, virtualizationResultIndex)">
 				
 					@*
 						'!= 0' because the struct's int property will default to '0',
