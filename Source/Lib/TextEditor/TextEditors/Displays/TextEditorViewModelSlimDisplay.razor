@@ -47,10 +47,6 @@
 		 style="@_componentData.VerticalVirtualizationBoundaryStyleCssString">
 	</div>
     
-    @{
-    	Console.WriteLine($"_componentData.RenderBatch.IsValid: {_componentData.RenderBatch.IsValid}");
-    }
-    
     @if (_componentData.RenderBatch.IsValid && _componentData.LineIndexCacheEntryMap.Count != 0)
     {
     	<div class="luth_te_three-dots-section">

@@ -150,9 +150,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	private bool _hasRenderedAtLeastOnce = false;
 	
-	private double PreviousScrollLeft { get; set; }
-	private double PreviousScrollTop { get; set; }
-	
     protected override void OnInitialized()
     {
     	 _onKeyDownNonRenderingEventHandler = EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown);
@@ -219,14 +216,16 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			// (the same is true for rendering the UI, it might avoid some renders
 			//  because the most recent should render took time to get executed).
         	
-        	var leftChanged = Math.Abs(PreviousScrollLeft - _componentData.RenderBatch.ViewModel.ScrollLeft) > 0.1;
-        	var topChanged = Math.Abs(PreviousScrollTop - _componentData.RenderBatch.ViewModel.ScrollTop) > 0.1;
-        	
+        	// WARNING: It is only thread safe to read, then assign `_componentData.ScrollLeftChanged` or `_componentData.ScrollTopChanged`...
+        	// ...if this method is running synchronously, i.e.: there hasn't been an await.
+        	// |
+        	// `if (firstRender)` is the only current scenario where an await comes prior to this read and assign.
+        	//
         	// ScrollLeft is most likely to shortcircuit, thus it is being put first.
-        	if (leftChanged && topChanged)
+        	if (_componentData.ScrollLeftChanged && _componentData.ScrollTopChanged)
         	{
-        		PreviousScrollLeft = _componentData.RenderBatch.ViewModel.ScrollLeft;
-        		PreviousScrollTop = _componentData.RenderBatch.ViewModel.ScrollTop;
+        		_componentData.ScrollLeftChanged = false;
+        		_componentData.ScrollTopChanged = false;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
@@ -235,9 +234,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		                _componentData.RenderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
         	}
-        	else if (topChanged) // ScrollTop is most likely to come next
+        	else if (_componentData.ScrollTopChanged) // ScrollTop is most likely to come next
         	{
-        		PreviousScrollTop = _componentData.RenderBatch.ViewModel.ScrollTop;
+        		_componentData.ScrollTopChanged = false;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionTop(
@@ -245,9 +244,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		                _componentData.RenderBatch.ViewModel.ScrollTop)
 	                .ConfigureAwait(false);
         	}
-        	else if (leftChanged)
+        	else if (_componentData.ScrollLeftChanged)
         	{
-        		PreviousScrollLeft = _componentData.RenderBatch.ViewModel.ScrollLeft;
+        		_componentData.ScrollLeftChanged = false;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionLeft(

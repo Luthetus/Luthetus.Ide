@@ -154,28 +154,6 @@ public sealed class TextEditorComponentData
     
     private List<TextEditorTextSpan> VirtualizedTextSpanList { get; set; } = new();
     private List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
-
-	public void ThrottleApplySyntaxHighlighting(TextEditorModel modelModifier)
-    {
-        _throttleApplySyntaxHighlighting.Run(_ =>
-        {
-            modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
-			return Task.CompletedTask;
-        });
-    }
-
-	public Task ContinueRenderingTooltipAsync()
-    {
-        MouseNoLongerOverTooltipCancellationTokenSource.Cancel();
-        MouseNoLongerOverTooltipCancellationTokenSource = new();
-
-        return Task.CompletedTask;
-    }
-    
-    public void OnMouseMoved()
-    {
-    	MouseMovedTimestamp = Stopwatch.GetTimestamp();
-    }
     
 	public double PreviousLineHeightInPixels { get; set; } = 0;
 	
@@ -185,6 +163,9 @@ public sealed class TextEditorComponentData
 	public double PreviousTextEditorWidthInPixels { get; set; } = 0;
 	public double PreviousScrollWidthInPixels { get; set; } = 0;
 	public double PreviousScrollLeftInPixels { get; set; } = 0;
+	
+	public bool ScrollLeftChanged { get; set; }
+    public bool ScrollTopChanged { get; set; }
 	
 	public string GutterPaddingStyleCssString { get; set; }
     public string GutterWidthStyleCssString { get; set; }
@@ -289,6 +270,28 @@ public sealed class TextEditorComponentData
     /// (i.e.: only use this for methods that were invoked from the .razor file)
     /// </summary>
     public StringBuilder UiStringBuilder { get; set; } = new();
+    
+    public void ThrottleApplySyntaxHighlighting(TextEditorModel modelModifier)
+    {
+        _throttleApplySyntaxHighlighting.Run(_ =>
+        {
+            modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
+			return Task.CompletedTask;
+        });
+    }
+
+	public Task ContinueRenderingTooltipAsync()
+    {
+        MouseNoLongerOverTooltipCancellationTokenSource.Cancel();
+        MouseNoLongerOverTooltipCancellationTokenSource = new();
+
+        return Task.CompletedTask;
+    }
+    
+    public void OnMouseMoved()
+    {
+    	MouseMovedTimestamp = Stopwatch.GetTimestamp();
+    }
     
     public string GetGutterStyleCss(string topCssValue)
     {
@@ -1488,6 +1491,7 @@ public sealed class TextEditorComponentData
     	if (Math.Abs(PreviousScrollTopInPixels - RenderBatch.ViewModel.ScrollTop) >= 0.1)
     	{
     		PreviousScrollTopInPixels = RenderBatch.ViewModel.ScrollTop;
+    		ScrollTopChanged = true;
     		shouldCalculateVerticalSlider = true;
 	    }
 		
@@ -1507,6 +1511,7 @@ public sealed class TextEditorComponentData
     	if (Math.Abs(PreviousScrollLeftInPixels - RenderBatch.ViewModel.ScrollLeft) >= 0.1)
     	{
     		PreviousScrollLeftInPixels = RenderBatch.ViewModel.ScrollLeft;
+    		ScrollLeftChanged = true;
     		shouldCalculateHorizontalSlider = true;
 	    }
 
