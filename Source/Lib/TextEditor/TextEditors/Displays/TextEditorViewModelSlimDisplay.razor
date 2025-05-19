@@ -115,10 +115,12 @@
 			    {
 			    	var line = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex];
 			    	
+			    	var css_lineIndexCache_line = _componentData.Css_LineIndexCache_EntryMap[line.LineIndex];
+			    	
 			        <div class="luth_te_gutter"
-			             style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].TopCssValue))">
+			             style="@(_componentData.GetGutterStyleCss(css_lineIndexCache_line.TopCssValue))">
 			             
-			            @(_componentData.Css_LineIndexCache_EntryMap[line.LineIndex].LineNumberString)
+			            @(css_lineIndexCache_line.LineNumberString)
 			            
 			            @{
 			            	for (int i = 0; i < _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
