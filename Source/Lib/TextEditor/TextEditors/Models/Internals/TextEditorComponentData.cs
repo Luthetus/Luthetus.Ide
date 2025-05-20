@@ -897,7 +897,6 @@ public sealed class TextEditorComponentData
         UiStringBuilder.Append("bottom: 0; height: ");
         UiStringBuilder.Append(ScrollbarSizeCssValue);
         UiStringBuilder.Append("px; ");
-        UiStringBuilder.Append(HORIZONTAL_SliderCssStyle);
         
         UiStringBuilder.Append(" left: ");
         UiStringBuilder.Append(sliderProportionalLeftInPixels.ToCssValue());
@@ -931,7 +930,6 @@ public sealed class TextEditorComponentData
 		UiStringBuilder.Append("left: 0; width: ");
 		UiStringBuilder.Append(ScrollbarSizeCssValue);
 		UiStringBuilder.Append("px; ");
-		UiStringBuilder.Append(VERTICAL_SliderCssStyle);
 		
 		UiStringBuilder.Append("top: ");
 		UiStringBuilder.Append(sliderProportionalTopInPixels.ToCssValue());
