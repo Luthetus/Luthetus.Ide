@@ -772,7 +772,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		
 		// TODO: Do this code first so the user gets immediate UI feedback in the event that
 		//       their keydown code takes a long time?
-		editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+		editContext.TextEditorService.ViewModelApi.StopCursorBlinking();
 		
 		await editContext.TextEditorService
 			.FinalizePost(editContext)
