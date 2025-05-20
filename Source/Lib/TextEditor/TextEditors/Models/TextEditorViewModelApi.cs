@@ -49,6 +49,15 @@ public sealed class TextEditorViewModelApi
     private bool _intentStopCursorBlinking = false;
     private int _stopCursorBlinkingId = 0;
     
+    /// <summary>
+    /// Thread Safety: most invocations of this are from the TextEditorEditContext,...
+    /// ...so a decision needs to made whether this is restricted to the TextEditorEditContext
+    /// and therefore thread safe, or this isn't restricted and perhaps should have a thread safe
+    /// pattern involved.
+    ///
+    /// Precise debounce timing: I think this implementation has an imprecise debounce delay,
+    /// but that is very low importance from a triage perspective. There are more important things to work on.
+    /// </summary>
     public void StopCursorBlinking()
     {
         if (CursorShouldBlink)
