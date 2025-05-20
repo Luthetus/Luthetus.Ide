@@ -69,7 +69,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	    if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
 	    {
 	    	_previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
-	    	TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+	    	TextEditorService.ViewModelApi.StopCursorBlinking();
 	    }
     
         await InvokeAsync(StateHasChanged);
