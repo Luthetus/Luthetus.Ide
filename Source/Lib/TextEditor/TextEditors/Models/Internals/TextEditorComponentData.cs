@@ -247,6 +247,7 @@ public sealed class TextEditorComponentData
     
     public string VerticalVirtualizationBoundaryStyleCssString { get; set; } = "height: 0px;";
 	public string HorizontalVirtualizationBoundaryStyleCssString { get; set; } = "width: 0px;";
+	public string BothVirtualizationBoundaryStyleCssString { get; set; } = "width: 0px; height: 0px;";
 	
 	public double TotalWidth { get; set; }
 	public double TotalHeight { get; set; }
@@ -1282,11 +1283,11 @@ public sealed class TextEditorComponentData
 
     public void GetSelection()
     {
+    	SelectionStyleList.Clear();
+    
     	if (TextEditorSelectionHelper.HasSelectedText(RenderBatch.ViewModel) &&
 	         RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
 	    {
-	    	SelectionStyleList.Clear();
-	    
 	        SelectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
 	            RenderBatch.ViewModel);
 	
@@ -1435,6 +1436,11 @@ public sealed class TextEditorComponentData
 	    	UiStringBuilder.Append("px;");
 	    	VerticalVirtualizationBoundaryStyleCssString = UiStringBuilder.ToString();
     	}
+    	
+    	UiStringBuilder.Clear();
+    	UiStringBuilder.Append(HorizontalVirtualizationBoundaryStyleCssString);
+    	UiStringBuilder.Append(VerticalVirtualizationBoundaryStyleCssString);
+    	BothVirtualizationBoundaryStyleCssString = UiStringBuilder.ToString();
     }
     
     private void GetPresentationLayer(
