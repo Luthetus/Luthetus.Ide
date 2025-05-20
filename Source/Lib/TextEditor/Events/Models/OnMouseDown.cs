@@ -152,7 +152,7 @@ public struct OnMouseDown
         
         finalize:
         
-        editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+        editContext.TextEditorService.ViewModelApi.StopCursorBlinking();
         
         await editContext.TextEditorService
         	.FinalizePost(editContext)

@@ -46,51 +46,46 @@ public sealed class TextEditorViewModelApi
     public bool CursorShouldBlink { get; private set; } = true;
     public event Action? CursorShouldBlinkChanged;
     
-    public void SetCursorShouldBlink(bool cursorShouldBlink)
+    private bool _intentStopCursorBlinking = false;
+    private int _stopCursorBlinkingId = 0;
+    
+    public void StopCursorBlinking()
     {
-        if (!cursorShouldBlink)
+        if (CursorShouldBlink)
         {
-            if (CursorShouldBlink)
+            CursorShouldBlink = false;
+            CursorShouldBlinkChanged?.Invoke();
+        }
+        
+        var localId = _stopCursorBlinkingId;
+        _stopCursorBlinkingId = localId == int.MaxValue
+	        ? 0
+	        : localId + 1;
+        
+        if (!_intentStopCursorBlinking)
+        {
+        	_intentStopCursorBlinking = true;
+        	
+            _cursorShouldBlinkTask = Task.Run(async () =>
             {
-                // Change true -> false THEREFORE: notify subscribers
-                CursorShouldBlink = cursorShouldBlink;
-                CursorShouldBlinkChanged?.Invoke();
-            }
-
-            // Single Threaded Applications flicker every "_blinkingCursorTaskDelay" event while holding a key down if this line is not included
-            _cursorShouldBlinkCancellationTokenSource.Cancel();
-
-            if (_cursorShouldBlinkTask.IsCompleted)
-            {
-                // Considering that just before entering this if block we cancel the cancellation token source. I want to ensure we get a new one if a new Task session beings.
-                _cursorShouldBlinkCancellationTokenSource = new();
-
-                _cursorShouldBlinkTask = Task.Run(async () =>
+                while (true)
                 {
-                    while (true)
+                	var id = _stopCursorBlinkingId;
+                
+                    await Task
+                        .Delay(_blinkingCursorTaskDelay)
+                        .ConfigureAwait(false);
+                        
+                    if (id == _stopCursorBlinkingId)
                     {
-                        try
-                        {
-                            var cancellationToken = _cursorShouldBlinkCancellationTokenSource.Token;
-
-                            await Task
-                                .Delay(_blinkingCursorTaskDelay, cancellationToken)
-                                .ConfigureAwait(false);
-
-                            // Change false -> true THEREFORE: notify subscribers
-                            CursorShouldBlink = true;
-                            CursorShouldBlinkChanged?.Invoke();
-                            break;
-                        }
-                        catch (TaskCanceledException)
-                        {
-                            // Single Threaded Applications cannot exit the while loop unless they cancel the token themselves.
-                            _cursorShouldBlinkCancellationTokenSource.Cancel();
-                            _cursorShouldBlinkCancellationTokenSource = new();
-                        }
+	                    CursorShouldBlink = true;
+	                    CursorShouldBlinkChanged?.Invoke();
+                    	break;
                     }
-                });
-            }
+                }
+                
+                _intentStopCursorBlinking = false;
+            });
         }
     }
 

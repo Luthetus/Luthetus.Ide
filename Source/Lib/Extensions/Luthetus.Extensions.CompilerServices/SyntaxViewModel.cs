@@ -137,7 +137,7 @@ public struct SyntaxViewModel
 					indexInclusiveStart,
 					new Category("main"),
 					Key<TextEditorViewModel>.NewKey())
-				.ContinueWith(_ => textEditorService.ViewModelApi.SetCursorShouldBlink(false));
+				.ContinueWith(_ => textEditorService.ViewModelApi.StopCursorBlinking());
 		});
 		return Task.CompletedTask;
 	}

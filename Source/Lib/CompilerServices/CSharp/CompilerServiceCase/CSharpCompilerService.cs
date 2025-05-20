@@ -571,7 +571,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						indexInclusiveStart,
 						category,
 						Key<TextEditorViewModel>.NewKey())
-					.ContinueWith(_ => _textEditorService.ViewModelApi.SetCursorShouldBlink(false));
+					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
 			}
 		});
     }

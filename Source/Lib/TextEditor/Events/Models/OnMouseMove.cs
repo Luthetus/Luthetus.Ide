@@ -86,7 +86,7 @@ public struct OnMouseMove
         
         finalize:
 	
-		editContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+		editContext.TextEditorService.ViewModelApi.StopCursorBlinking();
 	
 		await editContext.TextEditorService
 			.FinalizePost(editContext)
