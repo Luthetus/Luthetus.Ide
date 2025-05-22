@@ -378,11 +378,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
 		{
 			var query = _getAutocompleteMenuStringBuilder.ToString();
-			var menuOptionRecordsList = new List<MenuOptionRecord>();
+			var autocompleteEntryList = new List<AutocompleteEntry>();
 			
-			menuOptionRecordsList.Add(new MenuOptionRecord(
-				displayName: $"query: {query}",
-			    MenuOptionKind.Other));
+			autocompleteEntryList.Add(new AutocompleteEntry(
+				$"query: {query}",
+                AutocompleteEntryKind.Snippet,
+                null));
 		
 			var split = query.Split(".");
 			
@@ -415,18 +416,30 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         					case SyntaxKind.VariableDeclarationNode:
         						var variableDeclarationNode = (VariableDeclarationNode)member;
         						// Console.WriteLine($"\t{variableDeclarationNode.IdentifierToken.TextSpan.GetText()}");
-        						menuOptionRecordsList.Add(new MenuOptionRecord(
-									displayName: variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+        						
+        						autocompleteEntryList.Add(new AutocompleteEntry(
+									variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+					                AutocompleteEntryKind.Variable,
+					                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+        						
+        						/*menuOptionRecordsList.Add(new MenuOptionRecord(
+									displayName: ,
 								    MenuOptionKind.Other,
-								    onClickFunc: () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+								    onClickFunc: () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));*/
         						break;
     						case SyntaxKind.FunctionDefinitionNode:
         						var functionDefinitionNode = (FunctionDefinitionNode)member;
         						// Console.WriteLine($"\t{functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText()}");
-        						menuOptionRecordsList.Add(new MenuOptionRecord(
+        						
+        						autocompleteEntryList.Add(new AutocompleteEntry(
+									functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
+					                AutocompleteEntryKind.Function,
+					                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+        						
+        						/*menuOptionRecordsList.Add(new MenuOptionRecord(
 									displayName: functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
 								    MenuOptionKind.Other,
-								    onClickFunc: () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+								    onClickFunc: () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));*/
         						break;
         				}
         			}
@@ -440,8 +453,24 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         	{
         		// Console.WriteLine("failure variable");
         	}
+      
+      	 return new MenuRecord(
+			autocompleteEntryList.Select(entry => new MenuOptionRecord(
+		        entry.DisplayName,
+		        MenuOptionKind.Other,
+		        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
+		        widgetParameterMap: new Dictionary<string, object?>
+		        {
+		            {
+		                nameof(AutocompleteEntry),
+		                entry
+		            }
+		        }))
+		    .ToList());
         	
-			return new MenuRecord(menuOptionRecordsList);
+			// return autocompleteMenu.GetDefaultMenuRecord(autocompleteEntryList);
+			
+			// return new MenuRecord(menuOptionRecordsList);
 		}
         
         var word = renderBatch.Model.ReadPreviousWordOrDefault(
