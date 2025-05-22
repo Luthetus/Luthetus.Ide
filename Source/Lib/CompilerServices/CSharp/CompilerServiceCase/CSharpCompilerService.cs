@@ -154,7 +154,201 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
 	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
 	{
-        var positionIndex = renderBatch.Model.GetPositionIndex(renderBatch.ViewModel);
+		var positionIndex = renderBatch.Model.GetPositionIndex(renderBatch.ViewModel);
+	    
+		var character = '\0';
+		
+		var foundMemberAccessToken = false;
+		var memberAccessTokenPositionIndex = -1;
+		
+		var isParsingIdentifier = false;
+		var isParsingNumber = false;
+		
+		// banana.Price
+		//
+		// 'banana.' is  the context
+		// 'banana' is the operating word
+		var operatingWordEndExclusiveIndex = -1;
+		
+		// '|' indicates cursor position:
+		//
+		// "apple banana.Pri|ce"
+		// "apple.banana Pri|ce"
+		var notParsingButTouchingletterOrDigit = false;
+		var letterOrDigitIntoNonMatchingCharacterKindOccurred = false;
+		
+		var i = positionIndex - 1;
+		
+		for (; i >= 0; i--)
+		{
+		    character = renderBatch.Model.GetCharacter(i);
+		    
+		    switch (character)
+		    {
+		        /* Lowercase Letters */
+		        case 'a':
+		        case 'b':
+		        case 'c':
+		        case 'd':
+		        case 'e':
+		        case 'f':
+		        case 'g':
+		        case 'h':
+		        case 'i':
+		        case 'j':
+		        case 'k':
+		        case 'l':
+		        case 'm':
+		        case 'n':
+		        case 'o':
+		        case 'p':
+		        case 'q':
+		        case 'r':
+		        case 's':
+		        case 't':
+		        case 'u':
+		        case 'v':
+		        case 'w':
+		        case 'x':
+		        case 'y':
+		        case 'z':
+		        /* Uppercase Letters */
+		        case 'A':
+		        case 'B':
+		        case 'C':
+		        case 'D':
+		        case 'E':
+		        case 'F':
+		        case 'G':
+		        case 'H':
+		        case 'I':
+		        case 'J':
+		        case 'K':
+		        case 'L':
+		        case 'M':
+		        case 'N':
+		        case 'O':
+		        case 'P':
+		        case 'Q':
+		        case 'R':
+		        case 'S':
+		        case 'T':
+		        case 'U':
+		        case 'V':
+		        case 'W':
+		        case 'X':
+		        case 'Y':
+		        case 'Z':
+		        /* Underscore */
+		        case '_':
+		            if (foundMemberAccessToken)
+		            {
+		                isParsingIdentifier = true;
+		                
+		                if (operatingWordEndExclusiveIndex == -1)
+		                	operatingWordEndExclusiveIndex = i;
+		            }
+		            else
+		            {
+		                notParsingButTouchingletterOrDigit = true;
+		            }
+		            break;
+		        case '0':
+		        case '1':
+		        case '2':
+		        case '3':
+		        case '4':
+		        case '5':
+		        case '6':
+		        case '7':
+		        case '8':
+		        case '9':
+		            if (foundMemberAccessToken)
+		            {
+		                if (!isParsingIdentifier)
+		                {
+		                    isParsingNumber = true;
+		                    
+		                    if (operatingWordEndExclusiveIndex == -1)
+			                	operatingWordEndExclusiveIndex = i;
+		                }
+		            }
+		            else
+		            {
+		                notParsingButTouchingletterOrDigit = true;
+		            }
+		            break;
+		        case '\r':
+		        case '\n':
+		        case '\t':
+		            if (isParsingIdentifier || isParsingNumber)
+		                goto exitOuterForLoop;
+		
+		            if (notParsingButTouchingletterOrDigit)
+		            {
+		                if (letterOrDigitIntoNonMatchingCharacterKindOccurred)
+		                {
+		                    goto exitOuterForLoop;
+		                }
+		                else
+		                {
+		                    letterOrDigitIntoNonMatchingCharacterKindOccurred = true;
+		                }
+		            }
+		            break;
+		        case '.':
+		            if (!foundMemberAccessToken)
+		            {
+		                foundMemberAccessToken = true;
+		                notParsingButTouchingletterOrDigit = false;
+		                letterOrDigitIntoNonMatchingCharacterKindOccurred = false;
+		            }
+		            break;
+		        default:
+		            goto exitOuterForLoop;
+		    }
+		}
+		
+		exitOuterForLoop:
+		
+		// Invalidate the parsed identifier if it starts with a number.
+		if (isParsingIdentifier)
+		{
+		    switch (character)
+		    {
+		        case '0':
+		        case '1':
+		        case '2':
+		        case '3':
+		        case '4':
+		        case '5':
+		        case '6':
+		        case '7':
+		        case '8':
+		        case '9':
+		            isParsingIdentifier = false;
+		            break;
+		    }
+		}
+		
+		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
+		{
+		    var operatingWordText = renderBatch.Model.GetString(i + 1, operatingWordEndExclusiveIndex - i);
+		    Console.Write($"{operatingWordText}. -- ");
+		    // return Binder.Something(operatingWordText).GetMemberList();
+		}
+		else
+		{
+		    Console.Write("LocalAndParentScopes -- ");
+		    // return Context = LocalAndParentScopes;
+		}
+		
+		var wordTextSpanTuple = renderBatch.Model.GetWordTextSpan(positionIndex);
+		
+		if (wordTextSpanTuple.ResultKind != GetWordTextSpanResultKind.None)
+			Console.Write($"{wordTextSpanTuple.ResultKind} {wordTextSpanTuple.TextSpan.GetText()}");
+			
+		Console.WriteLine();
         
         var word = renderBatch.Model.ReadPreviousWordOrDefault(
 	        renderBatch.ViewModel.LineIndex,
