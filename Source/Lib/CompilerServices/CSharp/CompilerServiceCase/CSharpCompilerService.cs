@@ -182,9 +182,17 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		var i = positionIndex - 1;
 		
+		// "person. |Aaa;"
+		
+		// Console.WriteLine("asdfg");
 		for (; i >= 0; i--)
 		{
 		    character = renderBatch.Model.GetCharacter(i);
+		    
+		    /*if (character == ' ')
+		    	Console.Write("{space}");
+	    	else
+	    		Console.Write(character);*/
 		    
 		    switch (character)
 		    {
@@ -284,6 +292,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		        case '\r':
 		        case '\n':
 		        case '\t':
+		        case ' ':
 		            if (isParsingIdentifier || isParsingNumber)
 		                goto exitOuterForLoop;
 		
@@ -313,6 +322,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		}
 		
 		exitOuterForLoop:
+		
+		// Console.WriteLine();
 		
 		// Invalidate the parsed identifier if it starts with a number.
 		if (isParsingIdentifier)
@@ -359,10 +370,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		{
 			var strAaa = $"{wordTextSpanTuple.TextSpan.GetText()}";
 			_getAutocompleteMenuStringBuilder.Append(strAaa);
-			Console.Write(strAaa);
+			// Console.Write(strAaa);
 		}
 			
-		Console.WriteLine();
+		// Console.WriteLine();
 		
 		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
 		{
@@ -384,9 +395,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	        		split[0], // person
 	        		out var existingVariableDeclarationNode))
         	{
-        		Console.WriteLine("success variable");
+        		// Console.WriteLine("success variable");
         		
-        		Console.WriteLine(existingVariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText());
+        		// Console.WriteLine(existingVariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText());
         		
         		if (__CSharpBinder.TryGetTypeDefinitionHierarchically(
 				    	compilationUnit: null,
@@ -395,7 +406,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		        		existingVariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(), // Person
 		        		out var existingTypeDefinitionNode))
         		{
-        			Console.WriteLine("success type");
+        			// Console.WriteLine("success type");
         			
         			foreach (var member in existingTypeDefinitionNode.GetMemberList())
         			{
@@ -403,7 +414,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         				{
         					case SyntaxKind.VariableDeclarationNode:
         						var variableDeclarationNode = (VariableDeclarationNode)member;
-        						Console.WriteLine($"\t{variableDeclarationNode.IdentifierToken.TextSpan.GetText()}");
+        						// Console.WriteLine($"\t{variableDeclarationNode.IdentifierToken.TextSpan.GetText()}");
         						menuOptionRecordsList.Add(new MenuOptionRecord(
 									displayName: variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
 								    MenuOptionKind.Other,
@@ -411,7 +422,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         						break;
     						case SyntaxKind.FunctionDefinitionNode:
         						var functionDefinitionNode = (FunctionDefinitionNode)member;
-        						Console.WriteLine($"\t{functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText()}");
+        						// Console.WriteLine($"\t{functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText()}");
         						menuOptionRecordsList.Add(new MenuOptionRecord(
 									displayName: functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
 								    MenuOptionKind.Other,
@@ -422,12 +433,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         		}
         		else
         		{
-        			Console.WriteLine("failure type");
+        			// Console.WriteLine("failure type");
         		}
         	}
         	else
         	{
-        		Console.WriteLine("failure variable");
+        		// Console.WriteLine("failure variable");
         	}
         	
 			return new MenuRecord(menuOptionRecordsList);
@@ -460,7 +471,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
 			
 			model.Insert(text, viewModel);
-			return ValueTask.CompletedTask;
+			
+			return viewModel.FocusAsync();
 		});
 		
 		return Task.CompletedTask;
