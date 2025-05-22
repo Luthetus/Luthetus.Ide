@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -151,6 +152,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	{
 		return contextMenu.GetDefaultMenuRecord();
 	}
+	
+	private readonly StringBuilder _getAutocompleteMenuStringBuilder = new();
 
 	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
 	{
@@ -331,24 +334,104 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    }
 		}
 		
+		_getAutocompleteMenuStringBuilder.Clear();
+		
 		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
 		{
 		    var operatingWordText = renderBatch.Model.GetString(i + 1, operatingWordEndExclusiveIndex - i);
-		    Console.Write($"{operatingWordText}. -- ");
+		    
+		    var strAaa = $"{operatingWordText}.";
+		    _getAutocompleteMenuStringBuilder.Append(strAaa);
+		    // Console.Write(str);
 		    // return Binder.Something(operatingWordText).GetMemberList();
 		}
 		else
 		{
-		    Console.Write("LocalAndParentScopes -- ");
+			var strAaa = "LocalAndParentScopes -- ";
+			_getAutocompleteMenuStringBuilder.Append(strAaa);
+		    Console.Write(strAaa);
 		    // return Context = LocalAndParentScopes;
 		}
 		
 		var wordTextSpanTuple = renderBatch.Model.GetWordTextSpan(positionIndex);
 		
 		if (wordTextSpanTuple.ResultKind != GetWordTextSpanResultKind.None)
-			Console.Write($"{wordTextSpanTuple.ResultKind} {wordTextSpanTuple.TextSpan.GetText()}");
+		{
+			var strAaa = $"{wordTextSpanTuple.TextSpan.GetText()}";
+			_getAutocompleteMenuStringBuilder.Append(strAaa);
+			Console.Write(strAaa);
+		}
 			
 		Console.WriteLine();
+		
+		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
+		{
+			var query = _getAutocompleteMenuStringBuilder.ToString();
+			var menuOptionRecordsList = new List<MenuOptionRecord>();
+			
+			menuOptionRecordsList.Add(new MenuOptionRecord(
+				displayName: $"query: {query}",
+			    MenuOptionKind.Other));
+		
+			var split = query.Split(".");
+			
+			var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit: null, renderBatch.Model.PersistentState.ResourceUri, positionIndex);
+			
+			if (__CSharpBinder.TryGetVariableDeclarationNodeByScope(
+	        		cSharpCompilationUnit: null,
+	        		renderBatch.Model.PersistentState.ResourceUri,
+	        		scope.IndexKey,
+	        		split[0], // person
+	        		out var existingVariableDeclarationNode))
+        	{
+        		Console.WriteLine("success variable");
+        		
+        		Console.WriteLine(existingVariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText());
+        		
+        		if (__CSharpBinder.TryGetTypeDefinitionHierarchically(
+				    	compilationUnit: null,
+					    renderBatch.Model.PersistentState.ResourceUri,
+		        		scope.IndexKey,
+		        		existingVariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(), // Person
+		        		out var existingTypeDefinitionNode))
+        		{
+        			Console.WriteLine("success type");
+        			
+        			foreach (var member in existingTypeDefinitionNode.GetMemberList())
+        			{
+        				switch (member.SyntaxKind)
+        				{
+        					case SyntaxKind.VariableDeclarationNode:
+        						var variableDeclarationNode = (VariableDeclarationNode)member;
+        						Console.WriteLine($"\t{variableDeclarationNode.IdentifierToken.TextSpan.GetText()}");
+        						menuOptionRecordsList.Add(new MenuOptionRecord(
+									displayName: variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+								    MenuOptionKind.Other,
+								    onClickFunc: () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+        						break;
+    						case SyntaxKind.FunctionDefinitionNode:
+        						var functionDefinitionNode = (FunctionDefinitionNode)member;
+        						Console.WriteLine($"\t{functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText()}");
+        						menuOptionRecordsList.Add(new MenuOptionRecord(
+									displayName: functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
+								    MenuOptionKind.Other,
+								    onClickFunc: () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+        						break;
+        				}
+        			}
+        		}
+        		else
+        		{
+        			Console.WriteLine("failure type");
+        		}
+        	}
+        	else
+        	{
+        		Console.WriteLine("failure variable");
+        	}
+        	
+			return new MenuRecord(menuOptionRecordsList);
+		}
         
         var word = renderBatch.Model.ReadPreviousWordOrDefault(
 	        renderBatch.ViewModel.LineIndex,
@@ -367,6 +450,20 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             textSpan);
 	
 		return autocompleteMenu.GetDefaultMenuRecord(compilerServiceAutocompleteEntryList);
+	}
+	
+	private Task MemberAutocomplete(string text, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
+	{
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(MemberAutocomplete), editContext =>
+		{
+			var model = editContext.GetModelModifier(resourceUri);
+			var viewModel = editContext.GetViewModelModifier(viewModelKey);
+			
+			model.Insert(text, viewModel);
+			return ValueTask.CompletedTask;
+		});
+		
+		return Task.CompletedTask;
 	}
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
