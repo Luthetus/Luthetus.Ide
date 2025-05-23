@@ -669,8 +669,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                    onKeyDown.KeymapArgs.Key,
 	                    viewModel);
 	                
+	                if (onKeyDown.KeymapArgs.Code == "Minus" && onKeyDown.KeymapArgs.ShiftKey)
+	                	menuKind = MenuKind.AutoCompleteMenu;
+	                else if (onKeyDown.KeymapArgs.Code == "Period" && !onKeyDown.KeymapArgs.ShiftKey)
+	                	menuKind = MenuKind.AutoCompleteMenu;
+	                else
+	                	menuKind = MenuKind.None;
+	                
 	                shouldRevealCursor = true;
-	                menuKind = MenuKind.None;
 	                shouldClearTooltip = true;
 	                break;
 				case "Digit0":
