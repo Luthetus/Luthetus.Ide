@@ -1607,7 +1607,8 @@ public partial class CSharpBinder
     			int? endExclusiveIndex = null;
     			
     			if (variableDeclarationNode.TypeReference.TypeIdentifierToken.ConstructorWasInvoked &&
-    			    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+    			    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri &&
+    			    !variableDeclarationNode.TypeReference.IsImplicit)
     			{
     				startInclusiveIndex = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
     				endExclusiveIndex = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex;
