@@ -430,6 +430,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					{
 						typeReference = new TypeReference((TypeClauseNode)definitionNode);
 					}
+					else if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+					{
+						var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
+						typeReference = typeDefinitionNode.ToTypeReference();
+					}
 						
 					if (typeReference != default)
 					{
@@ -463,7 +468,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			        				{
 			        					case SyntaxKind.VariableDeclarationNode:
 			        						var variableDeclarationNode = (VariableDeclarationNode)member;
-			        						
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
 												variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
 								                AutocompleteEntryKind.Variable,
@@ -471,11 +475,17 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			        						break;
 			    						case SyntaxKind.FunctionDefinitionNode:
 			        						var functionDefinitionNode = (FunctionDefinitionNode)member;
-			        						
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
 												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
 								                AutocompleteEntryKind.Function,
 								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+			        						break;
+		        						case SyntaxKind.TypeDefinitionNode:
+			        						var innerTypeDefinitionNode = (TypeDefinitionNode)member;
+			        						autocompleteEntryList.Add(new AutocompleteEntry(
+												innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
+								                AutocompleteEntryKind.Type,
+								                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 			        				}
 			        			}
