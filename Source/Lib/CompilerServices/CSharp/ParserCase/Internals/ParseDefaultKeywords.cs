@@ -685,12 +685,6 @@ public class ParseDefaultKeywords
 
     public static void HandleUsingTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (parserModel.UsingStatementListingNode is null)
-    	{
-    		parserModel.UsingStatementListingNode ??= new();
-    		parserModel.StatementBuilder.ChildList.Add(parserModel.UsingStatementListingNode);
-    	}
-    	
     	var usingKeywordToken = parserModel.TokenWalker.Consume();
     	
     	var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(compilationUnit, ref parserModel, isNamespaceStatement: false);

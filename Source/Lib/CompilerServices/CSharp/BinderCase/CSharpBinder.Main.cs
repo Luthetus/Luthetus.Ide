@@ -20,6 +20,9 @@ public partial class CSharpBinder
 	private readonly Dictionary<ResourceUri, CSharpCompilationUnit> _compilationUnitMap = new();
 	//private readonly object _compilationUnitMapLock = new();
 
+	/// <summary>
+	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
+	/// </summary>
     private readonly Dictionary<string, NamespaceGroup> _namespaceGroupMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     private readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
@@ -143,15 +146,7 @@ public partial class CSharpBinder
 
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
-        	// Bad, why is a new list being made? (2025-02-07)
-        	var outNamespaceStatementNodeList = new List<NamespaceStatementNode>(inNamespaceGroupNode.NamespaceStatementNodeList);
-            outNamespaceStatementNodeList.Add(namespaceStatementNode);
-
-            var outNamespaceGroupNode = new NamespaceGroup(
-                inNamespaceGroupNode.NamespaceString,
-                outNamespaceStatementNodeList);
-
-            _namespaceGroupMap[namespaceString] = outNamespaceGroupNode;
+        	inNamespaceGroupNode.NamespaceStatementNodeList.Add(namespaceStatementNode);
         }
         else
         {
@@ -440,8 +435,6 @@ public partial class CSharpBinder
         		parserModel.GetNextSymbolId(),
         		namespaceIdentifierToken.TextSpan));
         		
-        parserModel.UsingStatementListingNode.UsingStatementTupleList.Add((usingKeywordToken, namespaceIdentifierToken));
-
         AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(), compilationUnit, ref parserModel);
     }
     
