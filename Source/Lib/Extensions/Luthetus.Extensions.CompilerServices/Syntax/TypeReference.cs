@@ -48,4 +48,6 @@ public record struct TypeReference
 	public bool HasQuestionMark { get; }
 	public int ArrayRank { get; }
 	public bool IsFabricated { get; }
+	
+	public bool IsImplicit { get; set; }
 }

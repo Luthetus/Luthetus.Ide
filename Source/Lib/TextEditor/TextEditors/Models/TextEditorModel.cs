@@ -1986,13 +1986,14 @@ public sealed class TextEditorModel
             startPositionIndexInclusive,
             endPositionIndexExclusive - startPositionIndexInclusive);
     }
-
+    
     /// <summary>
     /// Given a <see cref="TextEditorModel"/> with a preference for the right side of the cursor, the following conditional branch will play out:<br/><br/>
     ///     -IF the cursor is amongst a word, that word will be returned.<br/><br/>
     ///     -ELSE IF the start of a word is to the right of the cursor that word will be returned.<br/><br/>
-    ///     -ELSE IF the end of a word is to the left of the cursor that word will be returned.</summary>
-    public TextEditorTextSpan? GetWordTextSpan(int positionIndex)
+    ///     -ELSE IF the end of a word is to the left of the cursor that word will be returned.<br/><br/>
+    ///     -ELSE (GetWordTextSpanResultKind.None, default).</summary>
+    public (GetWordTextSpanResultKind ResultKind, TextEditorTextSpan TextSpan) GetWordTextSpan(int positionIndex)
     {
         var previousCharacter = GetCharacter(positionIndex - 1);
         var currentCharacter = GetCharacter(positionIndex);
@@ -2021,12 +2022,12 @@ public sealed class TextEditorModel
             if (wordColumnIndexEndExclusive == -1)
                 wordColumnIndexEndExclusive = GetLineLength(lineInformation.Index);
 
-            return new TextEditorTextSpan(
+            return (GetWordTextSpanResultKind.Among, new TextEditorTextSpan(
                 wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
                 wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
                 0,
                 PersistentState.ResourceUri,
-                GetAllText());
+                GetAllText()));
         }
         else if (currentCharacterKind == CharacterKind.LetterOrDigit)
         {
@@ -2038,12 +2039,12 @@ public sealed class TextEditorModel
             if (wordColumnIndexEndExclusive == -1)
                 wordColumnIndexEndExclusive = GetLineLength(lineInformation.Index);
 
-            return new TextEditorTextSpan(
+            return (GetWordTextSpanResultKind.Start, new TextEditorTextSpan(
                 columnIndex + lineInformation.Position_StartInclusiveIndex,
                 wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
                 0,
                 PersistentState.ResourceUri,
-                GetAllText());
+                GetAllText()));
         }
         else if (previousCharacterKind == CharacterKind.LetterOrDigit)
         {
@@ -2055,15 +2056,15 @@ public sealed class TextEditorModel
             if (wordColumnIndexStartInclusive == -1)
                 wordColumnIndexStartInclusive = 0;
 
-            return new TextEditorTextSpan(
+            return (GetWordTextSpanResultKind.End, new TextEditorTextSpan(
                 wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
                 columnIndex + lineInformation.Position_StartInclusiveIndex,
                 0,
                 PersistentState.ResourceUri,
-                GetAllText());
+                GetAllText()));
         }
 
-        return null;
+        return (GetWordTextSpanResultKind.None, default);
     }
 
     public List<TextEditorTextSpan> FindMatches(string query)
