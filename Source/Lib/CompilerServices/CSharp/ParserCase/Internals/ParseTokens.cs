@@ -174,7 +174,11 @@ public static class ParseTokens
 						var binaryExpressionNode = (BinaryExpressionNode)expression;
 						
 						if (binaryExpressionNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
-							variableDeclarationNode.SetTypeReference(binaryExpressionNode.RightExpressionNode.ResultTypeReference);
+						{
+							var typeReference = binaryExpressionNode.RightExpressionNode.ResultTypeReference;
+							typeReference.IsImplicit = true;
+							variableDeclarationNode.SetTypeReference(typeReference);
+						}
 					}
 				}
 				

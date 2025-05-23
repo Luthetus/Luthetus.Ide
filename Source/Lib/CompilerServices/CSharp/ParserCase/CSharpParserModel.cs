@@ -125,8 +125,6 @@ public struct CSharpParserModel
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public TypeReference MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeReference();
     
-    public UsingStatementListingNode? UsingStatementListingNode { get; set; }
-    
     /// <summary>
     /// TODO: Consider the case where you have just an AmbiguousIdentifierExpressionNode then StatementDelimiterToken.
     /// </summary>
