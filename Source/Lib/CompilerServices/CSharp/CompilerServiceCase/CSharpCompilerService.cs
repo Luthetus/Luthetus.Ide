@@ -336,40 +336,40 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    }
 		}
 		
-		_getAutocompleteMenuStringBuilder.Clear();
+		// _getAutocompleteMenuStringBuilder.Clear();
 		
-		var operatingWordText = string.Empty;
+		// var operatingWordText = string.Empty;
 		
-		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
-		{
-		    operatingWordText = renderBatch.Model.GetString(i + 1, operatingWordEndExclusiveIndex - i);
-		    
-		    var strAaa = $"{operatingWordText}.";
-		    _getAutocompleteMenuStringBuilder.Append(strAaa);
-		}
-		else
-		{
-			var strAaa = "LocalAndParentScopes -- ";
-			_getAutocompleteMenuStringBuilder.Append(strAaa);
-		}
+		// if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
+		// {
+		    // operatingWordText = renderBatch.Model.GetString(i + 1, operatingWordEndExclusiveIndex - i);
+		    // 
+		    // var strAaa = $"{operatingWordText}.";
+		    // _getAutocompleteMenuStringBuilder.Append(strAaa);
+		// }
+		// else
+		// {
+			// var strAaa = "LocalAndParentScopes -- ";
+			// _getAutocompleteMenuStringBuilder.Append(strAaa);
+		// }
 		
-		var wordTextSpanTuple = renderBatch.Model.GetWordTextSpan(positionIndex);
+		// var wordTextSpanTuple = renderBatch.Model.GetWordTextSpan(positionIndex);
 		
-		if (wordTextSpanTuple.ResultKind != GetWordTextSpanResultKind.None)
-		{
-			var strAaa = $"{wordTextSpanTuple.TextSpan.GetText()}";
-			_getAutocompleteMenuStringBuilder.Append(strAaa);
-		}
+		// if (wordTextSpanTuple.ResultKind != GetWordTextSpanResultKind.None)
+		// {
+			// var strAaa = $"{wordTextSpanTuple.TextSpan.GetText()}";
+			// _getAutocompleteMenuStringBuilder.Append(strAaa);
+		// }
 			
 		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
 		{
-			var query = _getAutocompleteMenuStringBuilder.ToString();
+			// var query = _getAutocompleteMenuStringBuilder.ToString();
 			var autocompleteEntryList = new List<AutocompleteEntry>();
 			
-			autocompleteEntryList.Add(new AutocompleteEntry(
-				$"query: {query}",
-                AutocompleteEntryKind.Snippet,
-                null));
+			// autocompleteEntryList.Add(new AutocompleteEntry(
+				// $"query: {query}",
+                // AutocompleteEntryKind.Snippet,
+                // null));
                 
 			var operatingWordAmongPositionIndex = operatingWordEndExclusiveIndex - 1;
        	
@@ -462,7 +462,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 								var memberList = typeDefinitionNode.GetMemberList();
 								ISyntaxNode? foundDefinitionNode = null;
 					    		
-					    		foreach (var member in memberList)
+					    		foreach (var member in memberList.Take(25))
 			        			{
 			        				switch (member.SyntaxKind)
 			        				{
