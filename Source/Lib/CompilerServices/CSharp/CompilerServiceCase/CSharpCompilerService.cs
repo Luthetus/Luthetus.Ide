@@ -542,14 +542,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	
 	private Task MemberAutocomplete(string text, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
 	{
-		_textEditorService.WorkerArbitrary.PostUnique(nameof(MemberAutocomplete), editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(nameof(MemberAutocomplete), async editContext =>
 		{
 			var model = editContext.GetModelModifier(resourceUri);
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
 			
 			model.Insert(text, viewModel);
+			await viewModel.FocusAsync();
 			
-			return viewModel.FocusAsync();
+			await ParseAsync(editContext, model, shouldApplySyntaxHighlighting: true);
 		});
 		
 		return Task.CompletedTask;
