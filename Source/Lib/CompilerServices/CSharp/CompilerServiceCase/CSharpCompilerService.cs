@@ -40,6 +40,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     private readonly Dictionary<ResourceUri, CSharpResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
     private readonly HashSet<string> _collapsePointUsedIdentifierHashSet = new();
+    private readonly StringBuilder _getAutocompleteMenuStringBuilder = new();
     
     // Service dependencies
     private readonly TextEditorService _textEditorService;
@@ -153,347 +154,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		return contextMenu.GetDefaultMenuRecord();
 	}
 	
-	private readonly StringBuilder _getAutocompleteMenuStringBuilder = new();
-	
-	private MenuRecord? GetAutocompleteMenuEntire(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu, int positionIndex)
-	{
-		var character = '\0';
-		
-		var foundMemberAccessToken = false;
-		var memberAccessTokenPositionIndex = -1;
-		
-		var isParsingIdentifier = false;
-		var isParsingNumber = false;
-		
-		// banana.Price
-		//
-		// 'banana.' is  the context
-		// 'banana' is the operating word
-		var operatingWordEndExclusiveIndex = -1;
-		
-		// '|' indicates cursor position:
-		//
-		// "apple banana.Pri|ce"
-		// "apple.banana Pri|ce"
-		var notParsingButTouchingletterOrDigit = false;
-		var letterOrDigitIntoNonMatchingCharacterKindOccurred = false;
-		
-		var i = positionIndex - 1;
-		
-		// "person. |Aaa;"
-		
-		// Console.WriteLine("asdfg");
-		for (; i >= 0; i--)
-		{
-		    character = renderBatch.Model.GetCharacter(i);
-		    
-		    /*if (character == ' ')
-		    	Console.Write("{space}");
-	    	else
-	    		Console.Write(character);*/
-		    
-		    switch (character)
-		    {
-		        /* Lowercase Letters */
-		        case 'a':
-		        case 'b':
-		        case 'c':
-		        case 'd':
-		        case 'e':
-		        case 'f':
-		        case 'g':
-		        case 'h':
-		        case 'i':
-		        case 'j':
-		        case 'k':
-		        case 'l':
-		        case 'm':
-		        case 'n':
-		        case 'o':
-		        case 'p':
-		        case 'q':
-		        case 'r':
-		        case 's':
-		        case 't':
-		        case 'u':
-		        case 'v':
-		        case 'w':
-		        case 'x':
-		        case 'y':
-		        case 'z':
-		        /* Uppercase Letters */
-		        case 'A':
-		        case 'B':
-		        case 'C':
-		        case 'D':
-		        case 'E':
-		        case 'F':
-		        case 'G':
-		        case 'H':
-		        case 'I':
-		        case 'J':
-		        case 'K':
-		        case 'L':
-		        case 'M':
-		        case 'N':
-		        case 'O':
-		        case 'P':
-		        case 'Q':
-		        case 'R':
-		        case 'S':
-		        case 'T':
-		        case 'U':
-		        case 'V':
-		        case 'W':
-		        case 'X':
-		        case 'Y':
-		        case 'Z':
-		        /* Underscore */
-		        case '_':
-		            if (foundMemberAccessToken)
-		            {
-		                isParsingIdentifier = true;
-		                
-		                if (operatingWordEndExclusiveIndex == -1)
-		                	operatingWordEndExclusiveIndex = i;
-		            }
-		            else
-		            {
-		                notParsingButTouchingletterOrDigit = true;
-		            }
-		            break;
-		        case '0':
-		        case '1':
-		        case '2':
-		        case '3':
-		        case '4':
-		        case '5':
-		        case '6':
-		        case '7':
-		        case '8':
-		        case '9':
-		            if (foundMemberAccessToken)
-		            {
-		                if (!isParsingIdentifier)
-		                {
-		                    isParsingNumber = true;
-		                    
-		                    if (operatingWordEndExclusiveIndex == -1)
-			                	operatingWordEndExclusiveIndex = i;
-		                }
-		            }
-		            else
-		            {
-		                notParsingButTouchingletterOrDigit = true;
-		            }
-		            break;
-		        case '\r':
-		        case '\n':
-		        case '\t':
-		        case ' ':
-		            if (isParsingIdentifier || isParsingNumber)
-		                goto exitOuterForLoop;
-		
-		            if (notParsingButTouchingletterOrDigit)
-		            {
-		                if (letterOrDigitIntoNonMatchingCharacterKindOccurred)
-		                {
-		                    goto exitOuterForLoop;
-		                }
-		                else
-		                {
-		                    letterOrDigitIntoNonMatchingCharacterKindOccurred = true;
-		                }
-		            }
-		            break;
-		        case '.':
-		            if (!foundMemberAccessToken)
-		            {
-		                foundMemberAccessToken = true;
-		                notParsingButTouchingletterOrDigit = false;
-		                letterOrDigitIntoNonMatchingCharacterKindOccurred = false;
-		            }
-		            break;
-		        default:
-		            goto exitOuterForLoop;
-		    }
-		}
-		
-		exitOuterForLoop:
-		
-		// Console.WriteLine();
-		
-		// Invalidate the parsed identifier if it starts with a number.
-		if (isParsingIdentifier)
-		{
-		    switch (character)
-		    {
-		        case '0':
-		        case '1':
-		        case '2':
-		        case '3':
-		        case '4':
-		        case '5':
-		        case '6':
-		        case '7':
-		        case '8':
-		        case '9':
-		            isParsingIdentifier = false;
-		            break;
-		    }
-		}
-		
-		_getAutocompleteMenuStringBuilder.Clear();
-		
-		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
-		{
-		    var operatingWordText = renderBatch.Model.GetString(i + 1, operatingWordEndExclusiveIndex - i);
-		    
-		    var strAaa = $"{operatingWordText}.";
-		    _getAutocompleteMenuStringBuilder.Append(strAaa);
-		    // Console.Write(str);
-		    // return Binder.Something(operatingWordText).GetMemberList();
-		}
-		else
-		{
-			var strAaa = "LocalAndParentScopes -- ";
-			_getAutocompleteMenuStringBuilder.Append(strAaa);
-		    Console.Write(strAaa);
-		    // return Context = LocalAndParentScopes;
-		}
-		
-		var wordTextSpanTuple = renderBatch.Model.GetWordTextSpan(positionIndex);
-		
-		if (wordTextSpanTuple.ResultKind != GetWordTextSpanResultKind.None)
-		{
-			var strAaa = $"{wordTextSpanTuple.TextSpan.GetText()}";
-			_getAutocompleteMenuStringBuilder.Append(strAaa);
-			// Console.Write(strAaa);
-		}
-			
-		// Console.WriteLine();
-		
-		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
-		{
-			var query = _getAutocompleteMenuStringBuilder.ToString();
-			var autocompleteEntryList = new List<AutocompleteEntry>();
-			
-			autocompleteEntryList.Add(new AutocompleteEntry(
-				$"query: {query}",
-                AutocompleteEntryKind.Snippet,
-                null));
-		
-			var split = query.Split(".");
-			
-			var scope = __CSharpBinder.GetScopeByPositionIndex(compilationUnit: null, renderBatch.Model.PersistentState.ResourceUri, positionIndex);
-			
-			/*var shouldGetNode = false;
-			
-			while (shouldGetNode)
-			{
-				if (__CSharpBinder.TryGetVariableDeclarationHierarchically(
-		        		cSharpCompilationUnit: null,
-		        		renderBatch.Model.PersistentState.ResourceUri,
-		        		scope.IndexKey,
-		        		split[0], // person
-		        		out var existingVariableDeclarationNode))
-	        	{
-	        		
-	        	}
-	        	else if (__CSharpBinder.TryGetTypeDefinitionHierarchically(
-					    	compilationUnit: null,
-						    renderBatch.Model.PersistentState.ResourceUri,
-			        		scope.IndexKey,
-			        		existingVariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(), // Person
-			        		out var existingTypeDefinitionNode))
-	        	{
-	        		
-	        	}
-			}
-			
-			if (__CSharpBinder.TryGetVariableDeclarationNodeByScope(
-	        		cSharpCompilationUnit: null,
-	        		renderBatch.Model.PersistentState.ResourceUri,
-	        		scope.IndexKey,
-	        		split[0], // person
-	        		out var existingVariableDeclarationNode))
-        	{
-        		Console.WriteLine("success variable");
-        		
-        		// Console.WriteLine(existingVariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText());
-        		
-        		if ()
-        		{
-        			Console.WriteLine("success type");
-        			
-        			foreach (var member in existingTypeDefinitionNode.GetMemberList())
-        			{
-        				switch (member.SyntaxKind)
-        				{
-        					case SyntaxKind.VariableDeclarationNode:
-        						var variableDeclarationNode = (VariableDeclarationNode)member;
-        						// Console.WriteLine($"\t{variableDeclarationNode.IdentifierToken.TextSpan.GetText()}");
-        						
-        						autocompleteEntryList.Add(new AutocompleteEntry(
-									variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
-					                AutocompleteEntryKind.Variable,
-					                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
-        						
-        						/*menuOptionRecordsList.Add(new MenuOptionRecord(
-									displayName: ,
-								    MenuOptionKind.Other,
-								    onClickFunc: () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));*//*
-        						break;
-    						case SyntaxKind.FunctionDefinitionNode:
-        						var functionDefinitionNode = (FunctionDefinitionNode)member;
-        						// Console.WriteLine($"\t{functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText()}");
-        						
-        						autocompleteEntryList.Add(new AutocompleteEntry(
-									functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
-					                AutocompleteEntryKind.Function,
-					                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
-        						
-        						/*menuOptionRecordsList.Add(new MenuOptionRecord(
-									displayName: functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
-								    MenuOptionKind.Other,
-								    onClickFunc: () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));*//*
-        						break;
-        				}
-        			}
-        		}
-        		else
-        		{
-        			Console.WriteLine("failure type");
-        		}
-        	}
-        	else
-        	{
-        		Console.WriteLine("failure variable");
-        	}
-      
-      	 return new MenuRecord(
-			autocompleteEntryList.Select(entry => new MenuOptionRecord(
-		        entry.DisplayName,
-		        MenuOptionKind.Other,
-		        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
-		        widgetParameterMap: new Dictionary<string, object?>
-		        {
-		            {
-		                nameof(AutocompleteEntry),
-		                entry
-		            }
-		        }))
-		    .ToList());
-		    */
-        	
-			// return autocompleteMenu.GetDefaultMenuRecord(autocompleteEntryList);
-			
-			// return new MenuRecord(menuOptionRecordsList);
-		}
-		
-		return null;
-	}
-	
 	private MenuRecord? GetAutocompleteMenuPart(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu, int positionIndex)
 	{
 		var character = '\0';
@@ -519,17 +179,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		var i = positionIndex - 1;
 		
-		// "person. |Aaa;"
-		
-		// Console.WriteLine("asdfg");
 		for (; i >= 0; i--)
 		{
 		    character = renderBatch.Model.GetCharacter(i);
-		    
-		    /*if (character == ' ')
-		    	Console.Write("{space}");
-	    	else
-	    		Console.Write(character);*/
 		    
 		    switch (character)
 		    {
@@ -664,8 +316,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		exitOuterForLoop:
 		
-		// Console.WriteLine();
-		
 		// Invalidate the parsed identifier if it starts with a number.
 		if (isParsingIdentifier)
 		{
@@ -696,15 +346,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    
 		    var strAaa = $"{operatingWordText}.";
 		    _getAutocompleteMenuStringBuilder.Append(strAaa);
-		    // Console.Write(str);
-		    // return Binder.Something(operatingWordText).GetMemberList();
 		}
 		else
 		{
 			var strAaa = "LocalAndParentScopes -- ";
 			_getAutocompleteMenuStringBuilder.Append(strAaa);
-		    Console.Write(strAaa);
-		    // return Context = LocalAndParentScopes;
 		}
 		
 		var wordTextSpanTuple = renderBatch.Model.GetWordTextSpan(positionIndex);
@@ -713,11 +359,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		{
 			var strAaa = $"{wordTextSpanTuple.TextSpan.GetText()}";
 			_getAutocompleteMenuStringBuilder.Append(strAaa);
-			// Console.Write(strAaa);
 		}
 			
-		// Console.WriteLine();
-		
 		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
 		{
 			var query = _getAutocompleteMenuStringBuilder.ToString();
@@ -728,182 +371,133 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 AutocompleteEntryKind.Snippet,
                 null));
                 
-           {
-           	var operatingWordAmongPositionIndex = operatingWordEndExclusiveIndex - 1;
-           	
-           	if (operatingWordAmongPositionIndex < 0)
-           		operatingWordAmongPositionIndex = 0;
-           
-		        var foundMatch = false;
-		        
-		        var resource = GetResource(renderBatch.Model.PersistentState.ResourceUri);
-		        var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
-		        
-		        var symbols = compilationUnitLocal.SymbolList;
-		        var diagnostics = compilationUnitLocal.DiagnosticList;
-		        
-		        Symbol foundSymbol = default;
+			var operatingWordAmongPositionIndex = operatingWordEndExclusiveIndex - 1;
+       	
+			if (operatingWordAmongPositionIndex < 0)
+				operatingWordAmongPositionIndex = 0;
+       
+	        var foundMatch = false;
+	        
+	        var resource = GetResource(renderBatch.Model.PersistentState.ResourceUri);
+	        var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
+	        
+	        var symbols = compilationUnitLocal.SymbolList;
+	        var diagnostics = compilationUnitLocal.DiagnosticList;
+	        
+	        Symbol foundSymbol = default;
+	
+	        if (!foundMatch && symbols.Count != 0)
+	        {
+	            foreach (var symbol in symbols)
+	            {
+	                if (operatingWordAmongPositionIndex >= symbol.TextSpan.StartInclusiveIndex &&
+	                    operatingWordAmongPositionIndex < symbol.TextSpan.EndExclusiveIndex)
+	                {
+	                    foundMatch = true;
+	                    foundSymbol = symbol;
+	                }
+	            }
+	        }
+	        
+	        if (foundMatch)
+	        {		        	
+	        	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(foundSymbol.TextSpan.ResourceUri);
+		    	var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
+		    	var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
 		
-		        if (!foundMatch && symbols.Count != 0)
-		        {
-		            foreach (var symbol in symbols)
-		            {
-		                if (operatingWordAmongPositionIndex >= symbol.TextSpan.StartInclusiveIndex &&
-		                    operatingWordAmongPositionIndex < symbol.TextSpan.EndExclusiveIndex)
-		                {
-		                    foundMatch = true;
-		                    foundSymbol = symbol;
-		                }
-		            }
-		        }
-		        
-		        if (foundMatch)
-		        {
-		        	Console.WriteLine("foundMatch");
-		        	
-		        	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(foundSymbol.TextSpan.ResourceUri);
-			    	var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
-			    	var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
-			
-			    	var definitionNode = extendedCompilerService.GetDefinitionNode(foundSymbol.TextSpan, compilerServiceResource, foundSymbol);
-			    	
-			    	Console.WriteLine(foundSymbol.TextSpan.GetText());
-			    	
-			    	if (definitionNode is not null)
-			    	{
-			    		Console.WriteLine("definitionNode is not null");
-			    		
-			    		TypeReference typeReference = default;
-			    		
-						if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-						{
-							Console.WriteLine("if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)");
-							var variableReferenceNode = (VariableReferenceNode)definitionNode;
-							if (variableReferenceNode.VariableDeclarationNode is not null)
-								typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
-						}
-						else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-						{
-							Console.WriteLine("else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)");
-							var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
-							typeReference = variableDeclarationNode.TypeReference;
-						}
-						else if (definitionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
-						{
-							Console.WriteLine("else if (definitionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)");
-							typeReference = ((FunctionInvocationNode)definitionNode).ResultTypeReference;
-						}
-						else if (definitionNode.SyntaxKind == SyntaxKind.TypeClauseNode)
-						{
-							Console.WriteLine("else if (definitionNode.SyntaxKind == SyntaxKind.TypeClauseNode)");
-							typeReference = new TypeReference((TypeClauseNode)definitionNode);
-						}
+		    	var definitionNode = extendedCompilerService.GetDefinitionNode(foundSymbol.TextSpan, compilerServiceResource, foundSymbol);
+		    	
+		    	if (definitionNode is not null)
+		    	{
+		    		TypeReference typeReference = default;
+		    		
+					if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+					{
+						var variableReferenceNode = (VariableReferenceNode)definitionNode;
+						if (variableReferenceNode.VariableDeclarationNode is not null)
+							typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
+					}
+					else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+					{
+						var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
+						typeReference = variableDeclarationNode.TypeReference;
+					}
+					else if (definitionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+					{
+						typeReference = ((FunctionInvocationNode)definitionNode).ResultTypeReference;
+					}
+					else if (definitionNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+					{
+						typeReference = new TypeReference((TypeClauseNode)definitionNode);
+					}
+						
+					if (typeReference != default)
+					{
+						Symbol innerFoundSymbol = default;
+	
+				        if (symbols.Count != 0)
+				        {
+				            foreach (var symbol in symbols)
+				            {
+				                if (typeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex >= symbol.TextSpan.StartInclusiveIndex &&
+				                    typeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex < symbol.TextSpan.EndExclusiveIndex)
+				                {
+				                    innerFoundSymbol = symbol;
+				                }
+				            }
+				        }
+				        
+				        if (innerFoundSymbol != default)
+				        {
+				        	var maybeTypeDefinitionNode = GetDefinitionNode(innerFoundSymbol.TextSpan, compilerServiceResource, innerFoundSymbol);
 							
-						if (typeReference != default)
-						{
-							Console.WriteLine("if (typeReference != default)");
-							
-							Console.WriteLine("typeReference.TypeIdentifierToken.TextSpan " + typeReference.TypeIdentifierToken.TextSpan.GetText());
-							
-							Symbol innerFoundSymbol = default;
+							if (maybeTypeDefinitionNode is not null && maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+							{
+								var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
+								var memberList = typeDefinitionNode.GetMemberList();
+								ISyntaxNode? foundDefinitionNode = null;
+					    		
+					    		foreach (var member in memberList)
+			        			{
+			        				switch (member.SyntaxKind)
+			        				{
+			        					case SyntaxKind.VariableDeclarationNode:
+			        						var variableDeclarationNode = (VariableDeclarationNode)member;
+			        						
+			        						autocompleteEntryList.Add(new AutocompleteEntry(
+												variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
+								                AutocompleteEntryKind.Variable,
+								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+			        						break;
+			    						case SyntaxKind.FunctionDefinitionNode:
+			        						var functionDefinitionNode = (FunctionDefinitionNode)member;
+			        						
+			        						autocompleteEntryList.Add(new AutocompleteEntry(
+												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
+								                AutocompleteEntryKind.Function,
+								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+			        						break;
+			        				}
+			        			}
+							}
+				        }
+					}
+		    	}
+	        }
 		
-					        if (symbols.Count != 0)
+			return new MenuRecord(
+				autocompleteEntryList.Select(entry => new MenuOptionRecord(
+					    entry.DisplayName,
+					    MenuOptionKind.Other,
+					    () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
+					    widgetParameterMap: new Dictionary<string, object?>
+					    {
 					        {
-					            foreach (var symbol in symbols)
-					            {
-					                if (typeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex >= symbol.TextSpan.StartInclusiveIndex &&
-					                    typeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex < symbol.TextSpan.EndExclusiveIndex)
-					                {
-					                    innerFoundSymbol = symbol;
-					                }
-					            }
+					            nameof(AutocompleteEntry),
+					            entry
 					        }
-					        
-					        if (innerFoundSymbol != default)
-					        {
-					        	var maybeTypeDefinitionNode = GetDefinitionNode(innerFoundSymbol.TextSpan, compilerServiceResource, innerFoundSymbol);
-								
-								if (maybeTypeDefinitionNode is null)
-								{
-									Console.WriteLine("if (maybeTypeDefinitionNode is null)");
-								}
-								else if (maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-								{
-									Console.WriteLine("maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode");
-								}
-								
-								if (maybeTypeDefinitionNode is not null && maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-								{
-									var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-									var memberList = typeDefinitionNode.GetMemberList();
-									ISyntaxNode? foundDefinitionNode = null;
-						    		
-						    		foreach (var member in memberList)
-				        			{
-				        				switch (member.SyntaxKind)
-				        				{
-				        					case SyntaxKind.VariableDeclarationNode:
-				        						var variableDeclarationNode = (VariableDeclarationNode)member;
-				        						// Console.WriteLine($"\t{variableDeclarationNode.IdentifierToken.TextSpan.GetText()}");
-				        						
-				        						autocompleteEntryList.Add(new AutocompleteEntry(
-													variableDeclarationNode.IdentifierToken.TextSpan.GetText(),
-									                AutocompleteEntryKind.Variable,
-									                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
-				        						
-				        						/*menuOptionRecordsList.Add(new MenuOptionRecord(
-													displayName: ,
-												    MenuOptionKind.Other,
-												    onClickFunc: () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));*/
-				        						break;
-				    						case SyntaxKind.FunctionDefinitionNode:
-				        						var functionDefinitionNode = (FunctionDefinitionNode)member;
-				        						// Console.WriteLine($"\t{functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText()}");
-				        						
-				        						autocompleteEntryList.Add(new AutocompleteEntry(
-													functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
-									                AutocompleteEntryKind.Function,
-									                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
-				        						
-				        						/*menuOptionRecordsList.Add(new MenuOptionRecord(
-													displayName: functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(),
-												    MenuOptionKind.Other,
-												    onClickFunc: () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(), renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));*/
-				        						break;
-				        				}
-				        			}
-								}
-								else
-								{
-									Console.WriteLine("null or !TypeDefinitionNode");
-								}
-					        }
-						}
-			    	}
-			    	else
-			    	{
-			    		Console.WriteLine("definitionNode is null");
-			    	}
-		        }
-           }
-		
-      	 return new MenuRecord(
-			autocompleteEntryList.Select(entry => new MenuOptionRecord(
-		        entry.DisplayName,
-		        MenuOptionKind.Other,
-		        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
-		        widgetParameterMap: new Dictionary<string, object?>
-		        {
-		            {
-		                nameof(AutocompleteEntry),
-		                entry
-		            }
-		        }))
-		    .ToList());
-        	
-			// return autocompleteMenu.GetDefaultMenuRecord(autocompleteEntryList);
-			
-			// return new MenuRecord(menuOptionRecordsList);
+					    }))
+					.ToList());
 		}
 		
 		return null;
@@ -912,10 +506,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
 	{
 		var positionIndex = renderBatch.Model.GetPositionIndex(renderBatch.ViewModel);
-		
-		var autocompleteMenuEntireResult = GetAutocompleteMenuEntire(renderBatch, autocompleteMenu, positionIndex);
-		if (autocompleteMenuEntireResult is not null)
-			return autocompleteMenuEntireResult;
 		
 		var autocompleteMenuPart = GetAutocompleteMenuPart(renderBatch, autocompleteMenu, positionIndex);
 		if (autocompleteMenuPart is not null)
@@ -934,7 +524,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             renderBatch.Model.GetAllText());
 	
 		var compilerServiceAutocompleteEntryList = OBSOLETE_GetAutocompleteEntries(
-            word,
+			word,
             textSpan);
 	
 		return autocompleteMenu.GetDefaultMenuRecord(compilerServiceAutocompleteEntryList);
