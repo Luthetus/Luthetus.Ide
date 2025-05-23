@@ -303,6 +303,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		                foundMemberAccessToken = true;
 		                notParsingButTouchingletterOrDigit = false;
 		                letterOrDigitIntoNonMatchingCharacterKindOccurred = false;
+		                
+		                if (i > 0)
+		                {
+		                	var innerCharacter = renderBatch.Model.GetCharacter(i - 1);
+		                	
+		                	if (innerCharacter == '?' || innerCharacter == '!')
+		                		i--;
+		                }
 		            }
 		            else
 		            {
