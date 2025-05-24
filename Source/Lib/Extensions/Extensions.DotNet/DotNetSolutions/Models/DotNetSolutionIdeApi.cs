@@ -365,34 +365,40 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	
 	private async ValueTask SortProjectReferences(TextEditorEditContext editContext, DotNetSolutionModel dotNetSolutionModel)
 	{
-		var projectList = new List<IDotNetProject>(dotNetSolutionModel.DotNetProjectList);
+		var movingProjectList = new List<IDotNetProject>(dotNetSolutionModel.DotNetProjectList);
 		
-		Random.Shared.Shuffle(CollectionsMarshal.AsSpan(projectList));
+		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList.Select(
+			project => (project, new List<AbsolutePath>()))
+			.ToList();
+		
+		Random.Shared.Shuffle(CollectionsMarshal.AsSpan(movingProjectList));
 		
 		Console.WriteLine();
 		Console.WriteLine("=============");
 		Console.WriteLine("Initial");
 		Console.WriteLine("--------------");
-		foreach (var project in projectList)
+		foreach (var project in movingProjectList)
 		{
 			Console.WriteLine(project.AbsolutePath.Value);
 		}
 		Console.WriteLine("=============");
 		Console.WriteLine();
 		
-		foreach (var project in dotNetSolutionModel.DotNetProjectList)
+		for (int i = 0; i < enumeratingProjectTupleList.Count; i++)
 		{
-			if (!await _fileSystemProvider.File.ExistsAsync(project.AbsolutePath.Value))
+			var projectTuple = enumeratingProjectTupleList[i];
+		
+			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.Project.AbsolutePath.Value))
 				continue;
 				
-			Console.WriteLine(project.AbsolutePath.Value);
+			Console.WriteLine(projectTuple.Project.AbsolutePath.Value);
 				
 			var content = await _fileSystemProvider.File.ReadAllTextAsync(
-					project.AbsolutePath.Value)
+					projectTuple.Project.AbsolutePath.Value)
 				.ConfigureAwait(false);
 	
 			var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-				new(project.AbsolutePath.Value),
+				new(projectTuple.Project.AbsolutePath.Value),
 				content);
 	
 			var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
@@ -404,8 +410,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			var projectReferences = cSharpProjectSyntaxWalker.TagNodes
 				.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "ProjectReference")
 				.ToList();
-	
-			List<AbsolutePath> referenceProjectAbsolutePathList = new();
 	
 			foreach (var projectReference in projectReferences)
 			{
@@ -425,7 +429,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
 	
 				var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-					project.AbsolutePath,
+					projectTuple.Project.AbsolutePath,
 					includeAttribute.Item2,
 					_environmentProvider);
 	
@@ -433,10 +437,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 					referenceProjectAbsolutePathString,
 					false);
 	
-				referenceProjectAbsolutePathList.Add(referenceProjectAbsolutePath);
+				projectTuple.ReferenceProjectAbsolutePathList.Add(referenceProjectAbsolutePath);
 			}
 			
-			foreach (var referenceProjectAbsolutePath in referenceProjectAbsolutePathList)
+			foreach (var referenceProjectAbsolutePath in projectTuple.ReferenceProjectAbsolutePathList)
 			{
 				Console.WriteLine($"\t{referenceProjectAbsolutePath.Value}");
 			}
@@ -446,7 +450,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		Console.WriteLine("=============");
 		Console.WriteLine("After");
 		Console.WriteLine("--------------");
-		foreach (var project in projectList)
+		foreach (var project in movingProjectList)
 		{
 			Console.WriteLine(project.AbsolutePath.Value);
 		}
