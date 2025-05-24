@@ -365,33 +365,23 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	
 	private async ValueTask SortProjectReferences(TextEditorEditContext editContext, DotNetSolutionModel dotNetSolutionModel)
 	{
-		var movingProjectList = new List<IDotNetProject>(dotNetSolutionModel.DotNetProjectList);
-		
-		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList.Select(
-			project => (project, new List<AbsolutePath>()))
+		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList
+			.Select(project => (project, new List<AbsolutePath>()))
 			.ToList();
 		
-		Random.Shared.Shuffle(CollectionsMarshal.AsSpan(movingProjectList));
+		Random.Shared.Shuffle(CollectionsMarshal.AsSpan(enumeratingProjectTupleList));
 		
-		Console.WriteLine();
-		Console.WriteLine("=============");
-		Console.WriteLine("Initial");
-		Console.WriteLine("--------------");
-		foreach (var project in movingProjectList)
-		{
-			Console.WriteLine(project.AbsolutePath.Value);
-		}
-		Console.WriteLine("=============");
-		Console.WriteLine();
-		
-		for (int i = 0; i < enumeratingProjectTupleList.Count; i++)
+		for (int i = enumeratingProjectTupleList.Count - 1; i >= 0; i--)
 		{
 			var projectTuple = enumeratingProjectTupleList[i];
 		
 			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.Project.AbsolutePath.Value))
+			{
+				enumeratingProjectTupleList.RemoveAt(i);
 				continue;
+			}
 				
-			Console.WriteLine(projectTuple.Project.AbsolutePath.Value);
+			// Console.WriteLine(projectTuple.Project.AbsolutePath.Value);
 				
 			var content = await _fileSystemProvider.File.ReadAllTextAsync(
 					projectTuple.Project.AbsolutePath.Value)
@@ -439,20 +429,41 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	
 				projectTuple.ReferenceProjectAbsolutePathList.Add(referenceProjectAbsolutePath);
 			}
-			
+		}
+		
+		Console.WriteLine();
+		Console.WriteLine("=============");
+		Console.WriteLine("Initial");
+		Console.WriteLine("--------------");
+		foreach (var projectTuple in enumeratingProjectTupleList)
+		{
+			Console.WriteLine(projectTuple.Project.AbsolutePath.Value);
 			foreach (var referenceProjectAbsolutePath in projectTuple.ReferenceProjectAbsolutePathList)
 			{
 				Console.WriteLine($"\t{referenceProjectAbsolutePath.Value}");
 			}
+		}
+		Console.WriteLine("=============");
+		Console.WriteLine();
+		
+		for (int i = 0; i < enumeratingProjectTupleList.Count; i++)
+		{
+			var projectTuple = enumeratingProjectTupleList[i];
+		
+			
 		}
 		
 		Console.WriteLine();
 		Console.WriteLine("=============");
 		Console.WriteLine("After");
 		Console.WriteLine("--------------");
-		foreach (var project in movingProjectList)
+		foreach (var projectTuple in enumeratingProjectTupleList)
 		{
-			Console.WriteLine(project.AbsolutePath.Value);
+			Console.WriteLine(projectTuple.Project.AbsolutePath.Value);
+			foreach (var referenceProjectAbsolutePath in projectTuple.ReferenceProjectAbsolutePathList)
+			{
+				Console.WriteLine($"\t{referenceProjectAbsolutePath.Value}");
+			}
 		}
 		Console.WriteLine("=============");
 		Console.WriteLine();
