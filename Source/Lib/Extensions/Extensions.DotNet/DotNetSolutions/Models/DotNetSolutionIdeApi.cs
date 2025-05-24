@@ -19,6 +19,8 @@ using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.DotNetSolution.Models.Project;
+using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -360,6 +362,99 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		D,
 		E,
 	}
+	
+	private async ValueTask SortProjectReferences(TextEditorEditContext editContext, DotNetSolutionModel dotNetSolutionModel)
+	{
+		var projectList = new List<IDotNetProject>(dotNetSolutionModel.DotNetProjectList);
+		
+		Random.Shared.Shuffle(CollectionsMarshal.AsSpan(projectList));
+		
+		Console.WriteLine();
+		Console.WriteLine("=============");
+		Console.WriteLine("Initial");
+		Console.WriteLine("--------------");
+		foreach (var project in projectList)
+		{
+			Console.WriteLine(project.AbsolutePath.Value);
+		}
+		Console.WriteLine("=============");
+		Console.WriteLine();
+		
+		foreach (var project in dotNetSolutionModel.DotNetProjectList)
+		{
+			if (!await _fileSystemProvider.File.ExistsAsync(project.AbsolutePath.Value))
+				continue;
+				
+			Console.WriteLine(project.AbsolutePath.Value);
+				
+			var content = await _fileSystemProvider.File.ReadAllTextAsync(
+					project.AbsolutePath.Value)
+				.ConfigureAwait(false);
+	
+			var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+				new(project.AbsolutePath.Value),
+				content);
+	
+			var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+	
+			var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
+	
+			cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
+	
+			var projectReferences = cSharpProjectSyntaxWalker.TagNodes
+				.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "ProjectReference")
+				.ToList();
+	
+			List<AbsolutePath> referenceProjectAbsolutePathList = new();
+	
+			foreach (var projectReference in projectReferences)
+			{
+				var attributeNameValueTuples = projectReference
+					.AttributeNodes
+					.Select(x => (
+						x.AttributeNameSyntax.TextEditorTextSpan
+							.GetText()
+							.Trim(),
+						x.AttributeValueSyntax.TextEditorTextSpan
+							.GetText()
+							.Replace("\"", string.Empty)
+							.Replace("=", string.Empty)
+							.Trim()))
+					.ToArray();
+	
+				var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
+	
+				var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+					project.AbsolutePath,
+					includeAttribute.Item2,
+					_environmentProvider);
+	
+				var referenceProjectAbsolutePath = _environmentProvider.AbsolutePathFactory(
+					referenceProjectAbsolutePathString,
+					false);
+	
+				referenceProjectAbsolutePathList.Add(referenceProjectAbsolutePath);
+			}
+			
+			foreach (var referenceProjectAbsolutePath in referenceProjectAbsolutePathList)
+			{
+				Console.WriteLine($"\t{referenceProjectAbsolutePath.Value}");
+			}
+		}
+		
+		Console.WriteLine();
+		Console.WriteLine("=============");
+		Console.WriteLine("After");
+		Console.WriteLine("--------------");
+		foreach (var project in projectList)
+		{
+			Console.WriteLine(project.AbsolutePath.Value);
+		}
+		Console.WriteLine("=============");
+		Console.WriteLine();
+		
+		throw new NotImplementedException();
+	}
 
 	private async ValueTask ParseSolution(TextEditorEditContext editContext, Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
@@ -370,7 +465,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		if (dotNetSolutionModel is null)
 			return;
-			
+		
+		await SortProjectReferences(editContext, dotNetSolutionModel);
+		
 		var cancellationTokenSource = new CancellationTokenSource();
 		var cancellationToken = cancellationTokenSource.Token;
 		
