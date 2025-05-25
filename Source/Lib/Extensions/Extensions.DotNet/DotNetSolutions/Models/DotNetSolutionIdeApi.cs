@@ -226,7 +226,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 			.Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
 			.Select(x => (SolutionFolder)x)
 			.ToList();
-
+			
 		var dotNetSolutionModel = new DotNetSolutionModel(
 			solutionAbsolutePath,
 			parser.DotNetSolutionHeader,
@@ -236,10 +236,13 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 			parser.DotNetSolutionGlobal,
 			content);
 		
+		var sortedByProjectReferenceDependenciesDotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
+		dotNetSolutionModel.DotNetProjectList = sortedByProjectReferenceDependenciesDotNetProjectList;
+		
 		/*	
 		// FindAllReferences
 		var pathGroupList = new List<(string Name, string Path)>();
-		foreach (var project in parser.DotNetProjectList)
+		foreach (var project in sortedByProjectReferenceDependenciesDotNetProjectList)
 		{
 			if (project.AbsolutePath.ParentDirectory is not null)
 			{
@@ -363,14 +366,12 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		E,
 	}
 	
-	private async ValueTask SortProjectReferences(TextEditorEditContext editContext, DotNetSolutionModel dotNetSolutionModel)
+	private async ValueTask<List<IDotNetProject>> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
 	{
 		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList
 			.Select(project => (project, new List<AbsolutePath>()))
 			.OrderBy(projectTuple => projectTuple.project.AbsolutePath.Value)
 			.ToList();
-		
-		// Random.Shared.Shuffle(CollectionsMarshal.AsSpan(enumeratingProjectTupleList));
 		
 		for (int i = enumeratingProjectTupleList.Count - 1; i >= 0; i--)
 		{
@@ -381,8 +382,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				enumeratingProjectTupleList.RemoveAt(i);
 				continue;
 			}
-				
-			// Console.WriteLine(projectTuple.Project.AbsolutePath.Value);
 				
 			var content = await _fileSystemProvider.File.ReadAllTextAsync(
 					projectTuple.Project.AbsolutePath.Value)
@@ -432,33 +431,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			}
 		}
 		
-		Console.WriteLine();
-		Console.WriteLine("=============");
-		Console.WriteLine("Initial");
-		Console.WriteLine("--------------");
-		foreach (var projectTuple in enumeratingProjectTupleList)
-		{
-			Console.WriteLine(projectTuple.Project.AbsolutePath.Value);
-			// foreach (var referenceProjectAbsolutePath in projectTuple.ReferenceProjectAbsolutePathList)
-			// {
-			// 	Console.WriteLine($"\t{referenceProjectAbsolutePath.Value}");
-			// }
-		}
-		Console.WriteLine("=============");
-		Console.WriteLine();
-		
-		/*
-		I'll probably start by:
-		- If the referenced project is at an index that is greater than the project which contains the reference,
-		  	- Then move the referenced project to be 1 index less than the project which contains the reference.
-		  	- If the project which contains the reference is at index 0, then don't do anything.
-		
-		Then the parse order would be from index 0 to ascending
-		
-		I'm just gonna see what happens.
-		*/
-		
-		var hadMovement = false;
 		var upperLimit = enumeratingProjectTupleList.Count;
 		for (int outerIndex = 0; outerIndex < upperLimit; outerIndex++)
 		{
@@ -473,26 +445,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				
 					if (referenceIndex > i)
 					{
-						// Console.WriteLine($"Move: {referenceAbsolutePath}");
-					
 						var indexDestination = i - 1;
 						if (indexDestination == -1)
 							indexDestination = 0;
-						
-						if (projectTuple.Project.AbsolutePath.Value ==
-								"\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Source\\Lib\\TextEditor\\Luthetus.TextEditor.RazorLib.csproj")
-						{
-							if (referenceAbsolutePath.Value ==
-									"\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Source\\Lib\\Common\\Luthetus.Common.RazorLib.csproj")
-							{
-								Console.WriteLine("TEXT EDITOR AND COMMON");
-							}
-						}
-						
-						if (outerIndex == upperLimit -1)
-						{
-							Console.WriteLine("if (outerIndex == upperLimit -1) Had Movement");
-						}
 					
 						MoveAndShiftList(
 							enumeratingProjectTupleList,
@@ -503,75 +458,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			}
 		}
 		
-var answerMaybe = @"\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Luthetus.Common.RazorLib.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\Luthetus.TextEditor.RazorLib.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Extensions\Luthetus.Extensions.CompilerServices\Luthetus.Extensions.CompilerServices.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\C\Luthetus.CompilerServices.C.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\Xml\Luthetus.CompilerServices.Xml.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\CSharp\Luthetus.CompilerServices.CSharp.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\CSharpProject\Luthetus.CompilerServices.CSharpProject.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\Css\Luthetus.CompilerServices.Css.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\DotNetSolution\Luthetus.CompilerServices.DotNetSolution.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\FSharp\Luthetus.CompilerServices.FSharp.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\JavaScript\Luthetus.CompilerServices.JavaScript.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\Json\Luthetus.CompilerServices.Json.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\Python\Luthetus.CompilerServices.Python.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\Razor\Luthetus.CompilerServices.Razor.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\CompilerServices\TypeScript\Luthetus.CompilerServices.TypeScript.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Ide.RazorLib\Luthetus.Ide.RazorLib.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Extensions\Extensions.Git\Luthetus.Extensions.Git.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Extensions\Extensions.DotNet\Luthetus.Extensions.DotNet.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Extensions\Extensions.Config\Luthetus.Extensions.Config.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Extensions\Extensions.Website\Luthetus.Website.RazorLib.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Host.BlazorServerSide\Luthetus.Ide.ServerSide.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Host.BlazorWebAssembly\Luthetus.Ide.Wasm.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Host.Photino\Luthetus.Ide.Photino.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\BUnit\Luthetus.BUnit.Tests\Luthetus.BUnit.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\Common\Luthetus.Common.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\C\Luthetus.CompilerServices.C.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\CSharp\Luthetus.CompilerServices.CSharp.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\CSharpProject\Luthetus.CompilerServices.CSharpProject.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\Css\Luthetus.CompilerServices.Css.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\DotNetSolution\Luthetus.CompilerServices.DotNetSolution.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\FSharp\Luthetus.CompilerServices.FSharp.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\JavaScript\Luthetus.CompilerServices.JavaScript.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\Json\Luthetus.CompilerServices.Json.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\Razor\Luthetus.CompilerServices.Razor.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\Terminal\Luthetus.CompilerServices.Terminal.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\TypeScript\Luthetus.CompilerServices.TypeScript.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\CompilerServices\Xml\Luthetus.CompilerServices.Xml.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\Extensions\Extensions.DotNet.Tests\Luthetus.Extensions.DotNet.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\Extensions\Luthetus.Extensions.Git.Tests\Luthetus.Extensions.Git.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\Ide\Luthetus.Ide.Tests.csproj
-\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Tests\TextEditor\Luthetus.TextEditor.Tests.csproj"
-.ReplaceLineEndings("\n");
-		
-		var stringBuilderToCheckAnswerMaybe = new System.Text.StringBuilder();
-		
-		Console.WriteLine();
-		Console.WriteLine("=============");
-		Console.WriteLine("After");
-		Console.WriteLine("--------------");
-		foreach (var projectTuple in enumeratingProjectTupleList)
-		{
-			Console.WriteLine(projectTuple.Project.AbsolutePath.Value);
-			
-			stringBuilderToCheckAnswerMaybe.Append(projectTuple.Project.AbsolutePath.Value + "\n");
-			
-			// foreach (var referenceProjectAbsolutePath in projectTuple.ReferenceProjectAbsolutePathList)
-			// {
-			// 	Console.WriteLine($"\t{referenceProjectAbsolutePath.Value}");
-			// }
-		}
-		Console.WriteLine("=============");
-		Console.WriteLine();
-		
-		var checkAnswerMaybe = stringBuilderToCheckAnswerMaybe.ToString();
-		Console.WriteLine($"answerMaybe == checkAnswerMaybe: {answerMaybe == checkAnswerMaybe}");
-		
-		// Console.WriteLine(checkAnswerMaybe);
-		
-		throw new NotImplementedException();
+		return enumeratingProjectTupleList.Select(x => x.Project).ToList();
 	}
 	
 	private void MoveAndShiftList(
@@ -584,13 +471,10 @@ var answerMaybe = @"\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Luthe
 			var otherTemporary = enumeratingProjectTupleList[indexDestination];
 			enumeratingProjectTupleList[indexDestination] = enumeratingProjectTupleList[indexSource];
 			enumeratingProjectTupleList[indexSource] = otherTemporary;
-		
-			Console.WriteLine("else if (indexSource == 1 && indexDestination == 0)");
 			return;
 		}
 	
 		var temporary = enumeratingProjectTupleList[indexDestination];
-		
 		enumeratingProjectTupleList[indexDestination] = enumeratingProjectTupleList[indexSource];
 		
 		for (int i = indexSource; i > indexDestination; i--)
@@ -611,8 +495,6 @@ var answerMaybe = @"\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Luthe
 
 		if (dotNetSolutionModel is null)
 			return;
-		
-		await SortProjectReferences(editContext, dotNetSolutionModel);
 		
 		var cancellationTokenSource = new CancellationTokenSource();
 		var cancellationToken = cancellationTokenSource.Token;
