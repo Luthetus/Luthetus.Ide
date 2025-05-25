@@ -164,15 +164,20 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		{
 			_textEditorService.WorkerArbitrary.PostUnique(nameof(DotNetSolutionIdeApi), editContext =>
 			{
+				var extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
+				
+				if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+					extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X;
+			
 				_textEditorService.ModelApi.RegisterTemplated(
 					editContext,
-					ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
+					extension,
 					resourceUri,
 					DateTime.UtcNow,
 					content);
 	
 				_compilerServiceRegistry
-					.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+					.GetCompilerService(extension)
 					.RegisterResource(
 						resourceUri,
 						shouldTriggerResourceWasModified: true);
@@ -181,60 +186,12 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 			});
 		}
 
-		var lexer = new DotNetSolutionLexer(
-			resourceUri,
-			content);
+		DotNetSolutionModel dotNetSolutionModel;
 
-		lexer.Lex();
-
-		var parser = new DotNetSolutionParser(lexer);
-
-		var compilationUnit = parser.Parse();
-
-		foreach (var project in parser.DotNetProjectList)
-		{
-			var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
-
-			// Debugging Linux-Ubuntu (2024-04-28)
-			// -----------------------------------
-			// It is believed, that Linux-Ubuntu is not fully working correctly,
-			// due to the directory separator character at the os level being '/',
-			// meanwhile the .NET solution has as its directory separator character '\'.
-			//
-			// Will perform a string.Replace("\\", "/") here. And if it solves the issue,
-			// then some standard way of doing this needs to be made available in the IEnvironmentProvider.
-			//
-			// Okay, this single replacement fixes 99% of the solution explorer issue.
-			// And I say 99% instead of 100% just because I haven't tested every single part of it yet.
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
-
-			// Solution Folders do not exist on the filesystem. Therefore their absolute path is not guaranteed to be unique
-			// One can use the ProjectIdGuid however, when working with a SolutionFolder to make the absolute path unique.
-			if (project.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-				relativePathFromSolutionFileString = $"{project.ProjectIdGuid}_{relativePathFromSolutionFileString}";
-
-			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-				solutionAbsolutePath,
-				relativePathFromSolutionFileString,
-				_environmentProvider);
-
-			project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
-		}
-
-		var solutionFolderList = parser.DotNetProjectList
-			.Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-			.Select(x => (SolutionFolder)x)
-			.ToList();
-			
-		var dotNetSolutionModel = new DotNetSolutionModel(
-			solutionAbsolutePath,
-			parser.DotNetSolutionHeader,
-			parser.DotNetProjectList,
-			solutionFolderList,
-			parser.NestedProjectEntryList,
-			parser.DotNetSolutionGlobal,
-			content);
+		if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+			// dotNetSolutionModel = null;// dotNetSolutionModel = ParseSlnx();
+		else
+			dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri, content);
 		
 		var sortedByProjectReferenceDependenciesDotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
 		dotNetSolutionModel.DotNetProjectList = sortedByProjectReferenceDependenciesDotNetProjectList;
@@ -366,6 +323,103 @@ Execution Terminal".ReplaceLineEndings("\n")));
             	}));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
+	}
+	
+	/*public DotNetSolutionModel ParseSlnx(
+		AbsolutePath solutionAbsolutePath,
+		ResourceUri resourceUri,
+		string content)
+	{
+		
+	
+		return ParseSharedSteps(
+			dotNetProjectList,
+			solutionAbsolutePath,
+			resourceUri,
+			content,
+			dotNetSolutionHeader,
+			nestedProjectEntryList,
+			dotNetSolutionGlobal);
+	}*/
+		
+	public DotNetSolutionModel ParseSln(
+		AbsolutePath solutionAbsolutePath,
+		ResourceUri resourceUri,
+		string content)
+	{
+		var lexer = new DotNetSolutionLexer(
+			resourceUri,
+			content);
+
+		lexer.Lex();
+
+		var parser = new DotNetSolutionParser(lexer);
+
+		var compilationUnit = parser.Parse();
+
+		return ParseSharedSteps(
+			parser.DotNetProjectList,
+			solutionAbsolutePath,
+			resourceUri,
+			content,
+			parser.DotNetSolutionHeader,
+			parser.NestedProjectEntryList,
+			parser.DotNetSolutionGlobal);
+	}
+	
+	public DotNetSolutionModel ParseSharedSteps(
+		List<IDotNetProject> dotNetProjectList,
+		AbsolutePath solutionAbsolutePath,
+		ResourceUri resourceUri,
+		string content,
+		DotNetSolutionHeader dotNetSolutionHeader,
+		List<NestedProjectEntry> nestedProjectEntryList,
+		DotNetSolutionGlobal dotNetSolutionGlobal)
+	{
+		foreach (var project in dotNetProjectList)
+		{
+			var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
+
+			// Debugging Linux-Ubuntu (2024-04-28)
+			// -----------------------------------
+			// It is believed, that Linux-Ubuntu is not fully working correctly,
+			// due to the directory separator character at the os level being '/',
+			// meanwhile the .NET solution has as its directory separator character '\'.
+			//
+			// Will perform a string.Replace("\\", "/") here. And if it solves the issue,
+			// then some standard way of doing this needs to be made available in the IEnvironmentProvider.
+			//
+			// Okay, this single replacement fixes 99% of the solution explorer issue.
+			// And I say 99% instead of 100% just because I haven't tested every single part of it yet.
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
+
+			// Solution Folders do not exist on the filesystem. Therefore their absolute path is not guaranteed to be unique
+			// One can use the ProjectIdGuid however, when working with a SolutionFolder to make the absolute path unique.
+			if (project.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+				relativePathFromSolutionFileString = $"{project.ProjectIdGuid}_{relativePathFromSolutionFileString}";
+
+			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+				solutionAbsolutePath,
+				relativePathFromSolutionFileString,
+				_environmentProvider);
+
+			project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
+		}
+
+		var solutionFolderList = dotNetProjectList
+			.Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+			.Select(x => (SolutionFolder)x)
+			.ToList();
+			
+		return new DotNetSolutionModel(
+			solutionAbsolutePath,
+			dotNetSolutionHeader,
+			dotNetProjectList,
+			solutionFolderList,
+			nestedProjectEntryList,
+			dotNetSolutionGlobal,
+			content);
 	}
 	
 	private enum ParseSolutionStageKind

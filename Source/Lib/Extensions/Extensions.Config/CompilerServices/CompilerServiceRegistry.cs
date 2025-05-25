@@ -60,6 +60,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
         _map.Add(ExtensionNoPeriodFacts.TYPE_SCRIPT, TypeScriptCompilerService);
         _map.Add(ExtensionNoPeriodFacts.F_SHARP, FSharpCompilerService);
         _map.Add(ExtensionNoPeriodFacts.DOT_NET_SOLUTION, DotNetSolutionCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X, DotNetSolutionCompilerService);
         _map.Add(ExtensionNoPeriodFacts.C, CCompilerService);
         _map.Add(ExtensionNoPeriodFacts.PYTHON, PythonCompilerService);
         _map.Add(ExtensionNoPeriodFacts.H, CCompilerService);
