@@ -93,6 +93,9 @@ public class EditorIdeApi : IBackgroundTaskGroup
             "TextEditor",
             absolutePath =>
             {
+            	// TODO: Why does 'isDirectory: false' not work?
+				_environmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
+            
             	_textEditorService.WorkerArbitrary.PostUnique(nameof(EditorIdeApi), async editContext =>
 				{
 					await _textEditorService.OpenInEditorAsync(
