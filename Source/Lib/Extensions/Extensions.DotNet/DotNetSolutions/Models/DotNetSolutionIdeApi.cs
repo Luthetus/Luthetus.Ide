@@ -189,7 +189,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		DotNetSolutionModel dotNetSolutionModel;
 
 		if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
-			// dotNetSolutionModel = null;// dotNetSolutionModel = ParseSlnx();
+			dotNetSolutionModel = ParseSlnx(solutionAbsolutePath, resourceUri, content);
 		else
 			dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri, content);
 		
@@ -325,7 +325,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
 	}
 	
-	/*public DotNetSolutionModel ParseSlnx(
+	public DotNetSolutionModel ParseSlnx(
 		AbsolutePath solutionAbsolutePath,
 		ResourceUri resourceUri,
 		string content)
@@ -340,7 +340,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			dotNetSolutionHeader,
 			nestedProjectEntryList,
 			dotNetSolutionGlobal);
-	}*/
+	}
 		
 	public DotNetSolutionModel ParseSln(
 		AbsolutePath solutionAbsolutePath,

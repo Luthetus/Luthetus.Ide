@@ -178,13 +178,26 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	var lexer = new DotNetSolutionLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
-    	lexer.Lex();
-    	
-        var parser = new DotNetSolutionParser(lexer);
-        var compilationUnit = parser.Parse();
+    	List<SyntaxToken> syntaxTokenList;
     
-    	lock (_resourceMapLock)
+    	if (modelModifier.PersistentState.ResourceUri.Value.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+    	{
+    		// ...
+	    
+	    	syntaxTokenList = new();
+    	}
+    	else
+    	{
+	    	var lexer = new DotNetSolutionLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
+	    	lexer.Lex();
+	    	
+	        var parser = new DotNetSolutionParser(lexer);
+	        var compilationUnit = parser.Parse();
+	        
+	        syntaxTokenList = lexer.SyntaxTokenList;
+		}
+		
+		lock (_resourceMapLock)
 		{
 			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
 			{
@@ -192,7 +205,7 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 				
 				resource.CompilationUnit = new ExtendedCompilationUnit
 				{
-					TokenList = lexer.SyntaxTokenList
+					TokenList = syntaxTokenList
 				};
 			}
 		}
