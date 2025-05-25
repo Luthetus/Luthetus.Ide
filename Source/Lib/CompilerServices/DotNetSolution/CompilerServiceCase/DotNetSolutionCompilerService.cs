@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Syntax;
 using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
+using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 
 namespace Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
@@ -182,9 +183,10 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
     
     	if (modelModifier.PersistentState.ResourceUri.Value.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
     	{
-    		// ...
-	    
-	    	syntaxTokenList = new();
+	    	var lexer = new TextEditorXmlLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
+	    	lexer.Lex();
+	    	
+	    	syntaxTokenList = lexer.SyntaxTokenList;
     	}
     	else
     	{

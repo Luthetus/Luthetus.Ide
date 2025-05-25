@@ -330,7 +330,87 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		ResourceUri resourceUri,
 		string content)
 	{
+    	var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+			new(solutionAbsolutePath.Value),
+			content);
+
+		var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+
+		var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
+
+		cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
+
+		var dotNetProjectList = new List<IDotNetProject>();
+
+		var folderTagList = cSharpProjectSyntaxWalker.TagNodes
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "Folder")
+			.ToList();
+    	
+    	var projectTagList = cSharpProjectSyntaxWalker.TagNodes
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "Project")
+			.ToList();
 		
+		foreach (var folder in folderTagList)
+		{
+			var attributeNameValueTuples = folder
+				.AttributeNodes
+				.Select(x => (
+					x.AttributeNameSyntax.TextEditorTextSpan
+						.GetText()
+						.Trim(),
+					x.AttributeValueSyntax.TextEditorTextSpan
+						.GetText()
+						.Replace("\"", string.Empty)
+						.Replace("=", string.Empty)
+						.Trim()))
+				.ToArray();
+
+			var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Folder");
+
+			var relativePath = new RelativePath(includeAttribute.Item2, isDirectory: false, _environmentProvider);
+
+			dotNetProjectList.Add(new SolutionFolder(
+		        relativePath.NameNoExtension,
+		        Guid.Empty,
+		        includeAttribute.Item2,
+		        Guid.Empty,
+		        new(),
+		        new(),
+		        default(AbsolutePath)));
+		}
+		
+		foreach (var project in projectTagList)
+		{
+			var attributeNameValueTuples = project
+				.AttributeNodes
+				.Select(x => (
+					x.AttributeNameSyntax.TextEditorTextSpan
+						.GetText()
+						.Trim(),
+					x.AttributeValueSyntax.TextEditorTextSpan
+						.GetText()
+						.Replace("\"", string.Empty)
+						.Replace("=", string.Empty)
+						.Trim()))
+				.ToArray();
+
+			var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Path");
+
+			var relativePath = new RelativePath(includeAttribute.Item2, isDirectory: false, _environmentProvider);
+
+			dotNetProjectList.Add(new CSharpProjectModel(
+		        relativePath.NameNoExtension,
+		        Guid.Empty,
+		        includeAttribute.Item2,
+		        Guid.Empty,
+		        new(),
+		        new(),
+		        default(AbsolutePath)));
+		}
+
+    	var dotNetSolutionHeader = new DotNetSolutionHeader();
+    	var nestedProjectEntryList = new List<NestedProjectEntry>();
+    	var dotNetSolutionGlobal = new DotNetSolutionGlobal();
 	
 		return ParseSharedSteps(
 			dotNetProjectList,
