@@ -1,0 +1,17 @@
+@{
+	var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
+	var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+}
+
+<div class="luth_dotnet_solution-properties">
+	<h3>
+		@if (dotNetSolutionModel is null)
+		{
+			<text>dotNetSolutionModel is null</text>
+		}
+		else
+		{
+			<text>@dotNetSolutionModel.AbsolutePath.Value</text>
+		}
+	</h3>
+</div>
