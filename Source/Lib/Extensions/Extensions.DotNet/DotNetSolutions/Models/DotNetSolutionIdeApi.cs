@@ -366,6 +366,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		E,
 	}
 	
+	/// <summary>
+	/// This solution is incomplete, the current code for this was just to get a "feel" for things.
+	/// </summary>
 	private async ValueTask<List<IDotNetProject>> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
 	{
 		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList
