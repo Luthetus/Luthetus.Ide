@@ -41,11 +41,23 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 	{
 		if (obj is not TreeViewSolutionFolder treeViewSolutionFolder)
 			return false;
-
-		return treeViewSolutionFolder.Item.AbsolutePath.Value == Item.AbsolutePath.Value;
+		
+		if (treeViewSolutionFolder.Item.IsSlnx != Item.IsSlnx)
+			return false;
+			
+		if (Item.IsSlnx)
+			return treeViewSolutionFolder.Item.ActualName == Item.ActualName;
+		else
+			return treeViewSolutionFolder.Item.ProjectIdGuid == Item.ProjectIdGuid;
 	}
 
-	public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
+	public override int GetHashCode()
+	{
+		if (Item.IsSlnx)
+			return Item.ActualName.GetHashCode();
+		else
+			return Item.ProjectIdGuid.GetHashCode();
+	}
 
 	public override TreeViewRenderer GetTreeViewRenderer()
 	{
@@ -105,7 +117,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
 		var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
 
-		var childProjectList = treeViewSolution.Item.DotNetProjectList.Union(treeViewSolution.Item.SolutionFolderList)
+		var childProjectList = treeViewSolution.Item.DotNetProjectList.Select(x => (ISolutionMember)x).Union(treeViewSolution.Item.SolutionFolderList)
 			.Where(x => childProjectIds.Contains(x.ProjectIdGuid))
 			.ToArray();
 
@@ -114,7 +126,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
 		foreach (var project in childProjectList)
 		{
-			if (project.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
+			if (project.SolutionMemberKind == SolutionMemberKind.SolutionFolder)
 				childTreeViewSolutionFolderList.Add(ConstructTreeViewSolutionFolder((SolutionFolder)project));
 			else
 				childTreeViewCSharpProjectList.Add(ConstructTreeViewCSharpProject((CSharpProjectModel)project));

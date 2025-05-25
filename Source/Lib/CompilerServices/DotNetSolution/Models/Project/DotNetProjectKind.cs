@@ -8,6 +8,5 @@ namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 /// </summary>
 public enum DotNetProjectKind
 {
-    SolutionFolder,
     CSharpProject
 }
