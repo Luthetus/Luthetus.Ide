@@ -352,7 +352,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			new UniqueTextEditorWork(
 	            nameof(ParseSolution),
 	            _textEditorService,
-	            editContext => ParseSolution(editContext, dotNetSolutionModel.Key)));
+	            async editContext =>
+	            {
+	            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+	            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+            	}));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
 	}
