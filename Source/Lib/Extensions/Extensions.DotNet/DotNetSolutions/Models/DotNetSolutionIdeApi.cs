@@ -461,7 +461,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			}
 		}
 		
-		return enumeratingProjectTupleList.Select(x => x.Project).ToList();
+		return enumeratingProjectTupleList.Select(x =>
+		{
+			x.Project.ReferencedAbsolutePathList = x.ReferenceProjectAbsolutePathList;
+			return x.Project;
+		}).ToList();
 	}
 	
 	private void MoveAndShiftList(

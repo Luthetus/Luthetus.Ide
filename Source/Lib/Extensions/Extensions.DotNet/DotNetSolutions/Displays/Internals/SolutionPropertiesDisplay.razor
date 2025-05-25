@@ -14,4 +14,45 @@
 			<text>@dotNetSolutionModel.AbsolutePath.Value</text>
 		}
 	</h3>
+	
+	@{
+		string GetProjectCssClass(bool valid) => valid ? "luth_tree-view-valid" : "luth_tree-view-exception";
+	}
+	
+	@for (int i = 0; i < dotNetSolutionModel.DotNetProjectList.Count; i++)
+	{
+		var project = dotNetSolutionModel.DotNetProjectList[i];
+		
+		if (project.DotNetProjectKind == Luthetus.CompilerServices.DotNetSolution.Models.Project.DotNetProjectKind.CSharpProject)
+		{
+			var projectValid = true;
+			
+			if (project.ReferencedAbsolutePathList is not null)
+			{
+				foreach (var referencedAbsolutePath in project.ReferencedAbsolutePathList)
+				{
+					var findIndex = dotNetSolutionModel.DotNetProjectList.FindIndex(x => x.AbsolutePath.Value == referencedAbsolutePath.Value);
+				
+					if (findIndex == -1 || findIndex > i)
+					{
+						projectValid = false;
+					}
+				}
+			}
+		
+			<div title="@project.AbsolutePath.Value" class="@GetProjectCssClass(projectValid)">
+				@project.AbsolutePath.NameWithExtension
+			</div>
+			
+			if (project.ReferencedAbsolutePathList is not null)
+			{
+				<ul>
+					@foreach (var referencedAbsolutePath in project.ReferencedAbsolutePathList)
+					{
+						<li title="@referencedAbsolutePath.Value">@referencedAbsolutePath.NameWithExtension</li>
+					}
+				</ul>
+			}
+		}
+	}
 </div>

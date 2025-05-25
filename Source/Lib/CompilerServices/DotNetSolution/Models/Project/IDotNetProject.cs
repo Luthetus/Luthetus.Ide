@@ -25,4 +25,5 @@ public interface IDotNetProject
     /// </summary>
     public AbsolutePath AbsolutePath { get; set; }
     public DotNetProjectKind DotNetProjectKind { get; }
+    public List<AbsolutePath>? ReferencedAbsolutePathList { get; set; }
 }
