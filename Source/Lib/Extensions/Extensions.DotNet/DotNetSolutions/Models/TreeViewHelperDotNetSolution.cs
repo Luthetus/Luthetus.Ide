@@ -46,7 +46,7 @@ public class TreeViewHelperDotNetSolution
 			.OrderBy(x => ((TreeViewNamespacePath)x).Item.AbsolutePath.NameNoExtension)
 			.ToList();
 
-		var children = childSolutionFolders.Union(childProjects).ToList();
+		var children = childSolutionFolders.Concat(childProjects).ToList();
 
 		var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(children);
 

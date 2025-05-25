@@ -111,32 +111,59 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 		if (currentNode is not TreeViewSolution treeViewSolution)
 			return;
 
-		var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntryList
-			.Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
-			.ToArray();
-
-		var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
-
-		var childProjectList = treeViewSolution.Item.DotNetProjectList.Select(x => (ISolutionMember)x).Union(treeViewSolution.Item.SolutionFolderList)
-			.Where(x => childProjectIds.Contains(x.ProjectIdGuid))
-			.ToArray();
-
 		var childTreeViewSolutionFolderList = new List<TreeViewSolutionFolder>();
 		var childTreeViewCSharpProjectList = new List<TreeViewNamespacePath>();
 
-		foreach (var project in childProjectList)
+		List<TreeViewNoType> childTreeViewList;
+		
+		if (Item.IsSlnx)
 		{
-			if (project.SolutionMemberKind == SolutionMemberKind.SolutionFolder)
-				childTreeViewSolutionFolderList.Add(ConstructTreeViewSolutionFolder((SolutionFolder)project));
-			else
-				childTreeViewCSharpProjectList.Add(ConstructTreeViewCSharpProject((CSharpProjectModel)project));
+			var selfStringNestedProjectEntryList = treeViewSolution.Item.StringNestedProjectEntryList
+				.Where(x => x.SolutionFolderActualName == Item.ActualName)
+				.ToList();
+				
+			var solutionFolderSelfStringNestedProjectEntryList = selfStringNestedProjectEntryList
+				.Where(x => x.ChildIsSolutionFolder)
+				.Select(x => x.ChildIdentifier)
+				.ToList();
+			
+			var projectSelfStringNestedProjectEntryList = selfStringNestedProjectEntryList
+				.Where(x => !x.ChildIsSolutionFolder)
+				.Select(x => x.ChildIdentifier)
+				.ToList();
+			
+			foreach (var otherSolutionFolder in treeViewSolution.Item.SolutionFolderList)
+			{
+				if (solutionFolderSelfStringNestedProjectEntryList.Contains(otherSolutionFolder.ActualName))
+					childTreeViewSolutionFolderList.Add(ConstructTreeViewSolutionFolder(otherSolutionFolder));
+			}
 		}
-
-		var childTreeViewList =
+		else
+		{
+			var nestedProjectEntries = treeViewSolution.Item.GuidNestedProjectEntryList
+				.Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
+				.ToArray();
+	
+			var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
+	
+			var childMemberList = treeViewSolution.Item.DotNetProjectList.Select(x => (ISolutionMember)x).Union(treeViewSolution.Item.SolutionFolderList)
+				.Where(x => childProjectIds.Contains(x.ProjectIdGuid))
+				.ToArray();
+	
+			foreach (var member in childMemberList)
+			{
+				if (member.SolutionMemberKind == SolutionMemberKind.SolutionFolder)
+					childTreeViewSolutionFolderList.Add(ConstructTreeViewSolutionFolder((SolutionFolder)member));
+				else
+					childTreeViewCSharpProjectList.Add(ConstructTreeViewCSharpProject((CSharpProjectModel)member));
+			}
+		}
+		
+		childTreeViewList =
 			childTreeViewSolutionFolderList.OrderBy(x => x.Item.DisplayName).Select(x => (TreeViewNoType)x)
 			.Union(childTreeViewCSharpProjectList.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).Select(x => (TreeViewNoType)x))
 			.ToList();
-
+			
 		for (int siblingsIndex = siblingsAndSelfTreeViews.Count - 1; siblingsIndex >= 0; siblingsIndex--)
 		{
 			var siblingOrSelf = siblingsAndSelfTreeViews[siblingsIndex];

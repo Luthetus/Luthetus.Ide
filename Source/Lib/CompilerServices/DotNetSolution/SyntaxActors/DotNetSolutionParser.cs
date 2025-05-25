@@ -17,7 +17,7 @@ public class DotNetSolutionParser
     private readonly Stack<AssociatedEntryGroupBuilder> _associatedEntryGroupBuilderStack = new();
     private readonly List<IDotNetProject> _dotNetProjectList = new();
     private readonly List<SolutionFolder> _solutionFolderList = new();
-    private readonly List<NestedProjectEntry> _nestedProjectEntryList = new();
+    private readonly List<GuidNestedProjectEntry> _nestedProjectEntryList = new();
 
     private DotNetSolutionHeader _dotNetSolutionHeader = new();
     private bool _hasReadHeader;
@@ -37,7 +37,7 @@ public class DotNetSolutionParser
     public AssociatedEntryGroup? NoParentHavingAssociatedEntryGroup => _noParentHavingAssociatedEntryGroup;
     public List<IDotNetProject> DotNetProjectList => _dotNetProjectList;
     public List<SolutionFolder> SolutionFolderList => _solutionFolderList;
-    public List<NestedProjectEntry> NestedProjectEntryList => _nestedProjectEntryList;
+    public List<GuidNestedProjectEntry> NestedProjectEntryList => _nestedProjectEntryList;
 
     public CompilationUnit Parse()
     {
@@ -88,7 +88,7 @@ public class DotNetSolutionParser
                             if (Guid.TryParse(pair.AssociatedValueToken.TextSpan.GetText(),
                                     out var solutionFolderIdGuid))
                             {
-                                var nestedProjectEntry = new NestedProjectEntry(
+                                var nestedProjectEntry = new GuidNestedProjectEntry(
                                     childProjectIdGuid,
                                     solutionFolderIdGuid);
 

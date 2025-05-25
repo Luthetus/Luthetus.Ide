@@ -351,7 +351,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "Project")
 			.ToList();
 		
-		Console.WriteLine("Solution Folders (DisplayName -- LiteralName)");
 		foreach (var folder in folderTagList)
 		{
 			var attributeNameValueTuples = folder
@@ -373,16 +372,12 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 			var nameNoExtension = new AbsolutePath(attribute.Item2, isDirectory: true, _environmentProvider)
 				.NameNoExtension;
-			
-			Console.Write("\t" + nameNoExtension);
-			Console.WriteLine(" -- " + attribute.Item2);
 
 			solutionFolderList.Add(new SolutionFolder(
 		        nameNoExtension,
 		        attribute.Item2));
 		}
 		
-		Console.WriteLine("Project - Relative Paths");
 		foreach (var project in projectTagList)
 		{
 			var attributeNameValueTuples = project
@@ -403,8 +398,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				continue;
 
 			var relativePath = new RelativePath(attribute.Item2, isDirectory: false, _environmentProvider);
-			
-			Console.WriteLine("\t" + relativePath.Value);
 
 			dotNetProjectList.Add(new CSharpProjectModel(
 		        relativePath.NameNoExtension,
@@ -417,8 +410,38 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		}
 
     	var dotNetSolutionHeader = new DotNetSolutionHeader();
-    	var nestedProjectEntryList = new List<NestedProjectEntry>();
+    	var stringNestedProjectEntryList = new List<StringNestedProjectEntry>();
     	var dotNetSolutionGlobal = new DotNetSolutionGlobal();
+    	
+    	// You have to iterate in reverse so ascending will put longest words to shortest (when iterating reverse).
+    	var sortedSolutionFolderList = solutionFolderList.OrderBy(x => x.ActualName).ToList();
+    	var clonedSortedSolutionFolderList = new List<SolutionFolder>(sortedSolutionFolderList);
+    	
+    	for (int outerIndex = clonedSortedSolutionFolderList.Count - 1; outerIndex >= 0; outerIndex--)
+    	{
+    		var childSolutionFolder = clonedSortedSolutionFolderList[outerIndex];
+    		var parentActualName = string.Empty;
+    		
+	    	for (int i = sortedSolutionFolderList.Count - 1; i >= 0; i--)
+	    	{
+	    		var sortedSolutionFolder = sortedSolutionFolderList[i];
+	    		if (sortedSolutionFolder.ActualName.Contains(childSolutionFolder.ActualName))
+	    		{
+	    			parentActualName = sortedSolutionFolder.ActualName;
+	    			break;
+	    		}
+	    	}
+	    	
+	    	if (parentActualName != string.Empty)
+	    	{
+	    		stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
+	    			ChildIsSolutionFolder: true,
+				    childSolutionFolder.ActualName,
+				    parentActualName));
+	    		
+	    		clonedSortedSolutionFolderList.RemoveAt(outerIndex);
+	    	}
+    	}
 	
 		return ParseSharedSteps(
 			dotNetProjectList,
@@ -427,7 +450,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			resourceUri,
 			content,
 			dotNetSolutionHeader,
-			nestedProjectEntryList,
+			guidNestedProjectEntryList: null,
+			stringNestedProjectEntryList: stringNestedProjectEntryList,
 			dotNetSolutionGlobal);
 	}
 		
@@ -453,7 +477,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			resourceUri,
 			content,
 			parser.DotNetSolutionHeader,
-			parser.NestedProjectEntryList,
+			guidNestedProjectEntryList: parser.NestedProjectEntryList,
+			stringNestedProjectEntryList: null,
 			parser.DotNetSolutionGlobal);
 	}
 	
@@ -464,7 +489,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		ResourceUri resourceUri,
 		string content,
 		DotNetSolutionHeader dotNetSolutionHeader,
-		List<NestedProjectEntry> nestedProjectEntryList,
+		List<GuidNestedProjectEntry>? guidNestedProjectEntryList,
+		List<StringNestedProjectEntry>? stringNestedProjectEntryList,
 		DotNetSolutionGlobal dotNetSolutionGlobal)
 	{
 		foreach (var project in dotNetProjectList)
@@ -498,7 +524,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			dotNetSolutionHeader,
 			dotNetProjectList,
 			solutionFolderList,
-			nestedProjectEntryList,
+			guidNestedProjectEntryList,
+			stringNestedProjectEntryList,
 			dotNetSolutionGlobal,
 			content);
 	}

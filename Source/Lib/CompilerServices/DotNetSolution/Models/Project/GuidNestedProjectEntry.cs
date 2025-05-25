@@ -1,5 +1,5 @@
 namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
-public record NestedProjectEntry(
+public record GuidNestedProjectEntry(
     Guid ChildProjectIdGuid,
     Guid SolutionFolderIdGuid);
