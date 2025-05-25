@@ -277,6 +277,13 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		if (parentDirectory is not null)
 		{
 			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
+			
+			foreach (var project in dotNetSolutionModel.DotNetProjectList)
+			{
+				var innerParentDirectory = project.AbsolutePath.ParentDirectory;
+				if (innerParentDirectory is not null)
+					_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
+			}
 
 			_findAllService.SetStartingDirectoryPath(parentDirectory);
 
