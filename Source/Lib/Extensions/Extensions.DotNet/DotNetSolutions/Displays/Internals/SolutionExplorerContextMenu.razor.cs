@@ -65,6 +65,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
 	private static readonly Key<IDynamicViewModel> _solutionEditorDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _solutionPropertiesDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newCSharpProjectDialogKey = Key<IDynamicViewModel>.NewKey();
 
 	public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
@@ -250,11 +251,17 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			"Open in text editor",
 			MenuOptionKind.Update,
 			() => OpenSolutionInTextEditor(treeViewSolution.Item));
+			
+		var properties = new MenuOptionRecord(
+			"Properties",
+			MenuOptionKind.Update,
+			() => OpenSolutionProperties(treeViewSolution.Item));
 
 		return new[]
 		{
 			createOptions,
 			openInTextEditor,
+			properties,
 		};
 	}
 
@@ -525,6 +532,19 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				new Category("main"),
 				Key<TextEditorViewModel>.NewKey());
 		});
+		return Task.CompletedTask;
+	}
+	
+	private Task OpenSolutionProperties(DotNetSolutionModel dotNetSolutionModel)
+	{
+		DialogService.ReduceRegisterAction(new DialogViewModel(
+			dynamicViewModelKey: _solutionPropertiesDialogKey,
+			title: "Solution Properties",
+			componentType: typeof(SolutionPropertiesDisplay),
+			componentParameterMap: null,
+			cssClass: null,
+			isResizable: true,
+			setFocusOnCloseElementId: null));
 		return Task.CompletedTask;
 	}
 

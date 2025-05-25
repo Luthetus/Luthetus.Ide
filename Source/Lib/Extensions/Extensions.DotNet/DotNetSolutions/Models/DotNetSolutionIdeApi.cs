@@ -19,6 +19,8 @@ using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.DotNetSolution.Models.Project;
+using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -224,7 +226,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 			.Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
 			.Select(x => (SolutionFolder)x)
 			.ToList();
-
+			
 		var dotNetSolutionModel = new DotNetSolutionModel(
 			solutionAbsolutePath,
 			parser.DotNetSolutionHeader,
@@ -234,10 +236,13 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 			parser.DotNetSolutionGlobal,
 			content);
 		
+		var sortedByProjectReferenceDependenciesDotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
+		dotNetSolutionModel.DotNetProjectList = sortedByProjectReferenceDependenciesDotNetProjectList;
+		
 		/*	
 		// FindAllReferences
 		var pathGroupList = new List<(string Name, string Path)>();
-		foreach (var project in parser.DotNetProjectList)
+		foreach (var project in sortedByProjectReferenceDependenciesDotNetProjectList)
 		{
 			if (project.AbsolutePath.ParentDirectory is not null)
 			{
@@ -272,6 +277,13 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		if (parentDirectory is not null)
 		{
 			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
+			
+			foreach (var project in dotNetSolutionModel.DotNetProjectList)
+			{
+				var innerParentDirectory = project.AbsolutePath.ParentDirectory;
+				if (innerParentDirectory is not null)
+					_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
+			}
 
 			_findAllService.SetStartingDirectoryPath(parentDirectory);
 
@@ -347,7 +359,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			new UniqueTextEditorWork(
 	            nameof(ParseSolution),
 	            _textEditorService,
-	            editContext => ParseSolution(editContext, dotNetSolutionModel.Key)));
+	            async editContext =>
+	            {
+	            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+	            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+            	}));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
 	}
@@ -360,6 +376,133 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		D,
 		E,
 	}
+	
+	/// <summary>
+	/// This solution is incomplete, the current code for this was just to get a "feel" for things.
+	/// </summary>
+	private async ValueTask<List<IDotNetProject>> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
+	{
+		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList
+			.Select(project => (project, new List<AbsolutePath>()))
+			.OrderBy(projectTuple => projectTuple.project.AbsolutePath.Value)
+			.ToList();
+		
+		for (int i = enumeratingProjectTupleList.Count - 1; i >= 0; i--)
+		{
+			var projectTuple = enumeratingProjectTupleList[i];
+		
+			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.Project.AbsolutePath.Value))
+			{
+				enumeratingProjectTupleList.RemoveAt(i);
+				continue;
+			}
+				
+			var content = await _fileSystemProvider.File.ReadAllTextAsync(
+					projectTuple.Project.AbsolutePath.Value)
+				.ConfigureAwait(false);
+	
+			var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+				new(projectTuple.Project.AbsolutePath.Value),
+				content);
+	
+			var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+	
+			var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
+	
+			cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
+	
+			var projectReferences = cSharpProjectSyntaxWalker.TagNodes
+				.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "ProjectReference")
+				.ToList();
+	
+			foreach (var projectReference in projectReferences)
+			{
+				var attributeNameValueTuples = projectReference
+					.AttributeNodes
+					.Select(x => (
+						x.AttributeNameSyntax.TextEditorTextSpan
+							.GetText()
+							.Trim(),
+						x.AttributeValueSyntax.TextEditorTextSpan
+							.GetText()
+							.Replace("\"", string.Empty)
+							.Replace("=", string.Empty)
+							.Trim()))
+					.ToArray();
+	
+				var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
+	
+				var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+					projectTuple.Project.AbsolutePath,
+					includeAttribute.Item2,
+					_environmentProvider);
+	
+				var referenceProjectAbsolutePath = _environmentProvider.AbsolutePathFactory(
+					referenceProjectAbsolutePathString,
+					false);
+	
+				projectTuple.ReferenceProjectAbsolutePathList.Add(referenceProjectAbsolutePath);
+			}
+		}
+		
+		var upperLimit = enumeratingProjectTupleList.Count;
+		for (int outerIndex = 0; outerIndex < upperLimit; outerIndex++)
+		{
+			for (int i = 0; i < enumeratingProjectTupleList.Count; i++)
+			{
+				var projectTuple = enumeratingProjectTupleList[i];
+				
+				foreach (var referenceAbsolutePath in projectTuple.ReferenceProjectAbsolutePathList)
+				{
+					var referenceIndex = enumeratingProjectTupleList
+						.FindIndex(x => x.Project.AbsolutePath.Value == referenceAbsolutePath.Value);
+				
+					if (referenceIndex > i)
+					{
+						var indexDestination = i - 1;
+						if (indexDestination == -1)
+							indexDestination = 0;
+					
+						MoveAndShiftList(
+							enumeratingProjectTupleList,
+							indexSource: referenceIndex,
+							indexDestination);
+					}
+				}
+			}
+		}
+		
+		return enumeratingProjectTupleList.Select(x =>
+		{
+			x.Project.ReferencedAbsolutePathList = x.ReferenceProjectAbsolutePathList;
+			return x.Project;
+		}).ToList();
+	}
+	
+	private void MoveAndShiftList(
+		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList,
+		int indexSource,
+		int indexDestination)
+	{
+		if (indexSource == 1 && indexDestination == 0)
+		{
+			var otherTemporary = enumeratingProjectTupleList[indexDestination];
+			enumeratingProjectTupleList[indexDestination] = enumeratingProjectTupleList[indexSource];
+			enumeratingProjectTupleList[indexSource] = otherTemporary;
+			return;
+		}
+	
+		var temporary = enumeratingProjectTupleList[indexDestination];
+		enumeratingProjectTupleList[indexDestination] = enumeratingProjectTupleList[indexSource];
+		
+		for (int i = indexSource; i > indexDestination; i--)
+		{
+			if (i - 1 == indexDestination)
+				enumeratingProjectTupleList[i] = temporary;
+			else
+				enumeratingProjectTupleList[i] = enumeratingProjectTupleList[i - 1];
+		}
+	}
 
 	private async ValueTask ParseSolution(TextEditorEditContext editContext, Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
@@ -370,7 +513,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		if (dotNetSolutionModel is null)
 			return;
-			
+		
 		var cancellationTokenSource = new CancellationTokenSource();
 		var cancellationToken = cancellationTokenSource.Token;
 		

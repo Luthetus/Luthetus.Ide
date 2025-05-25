@@ -9,7 +9,8 @@ using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 /// <summary>
-/// Investigate making this a record struct
+/// TODO: Investigate making this a record struct
+/// TODO: 'Key<DotNetSolutionModel>? DotNetSolutionModelKey' should not be nullable use Key<DotNetSolutionModel>.Empty.
 /// </summary>
 public record DotNetSolutionState(
     Key<DotNetSolutionModel>? DotNetSolutionModelKey,

@@ -28,7 +28,7 @@ public record DotNetSolutionModel : IDotNetSolution
     public Key<DotNetSolutionModel> Key { get; init; }
     public AbsolutePath AbsolutePath { get; init; }
     public DotNetSolutionHeader DotNetSolutionHeader { get; init; }
-    public List<IDotNetProject> DotNetProjectList { get; init; }
+    public List<IDotNetProject> DotNetProjectList { get; set; }
     public List<SolutionFolder> SolutionFolderList { get; init; }
     public List<NestedProjectEntry> NestedProjectEntryList { get; init; }
     public DotNetSolutionGlobal DotNetSolutionGlobal { get; init; }

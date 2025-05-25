@@ -180,11 +180,15 @@ em.luth_em {
 }
 
 .luth_tree-view-exception {
-    color: var(--luth_error-foreground-color)
+    color: var(--luth_error-foreground-color);
 }
 
 .luth_tree-view-warning {
-    color: var(--luth_warning-foreground-color)
+    color: var(--luth_warning-foreground-color);
+}
+
+.luth_tree-view-valid {
+    color: var(--luth_primary-emphasis-foreground-color);
 }
 
 .luth_context-menu-content {

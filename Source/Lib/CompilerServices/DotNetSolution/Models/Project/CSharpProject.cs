@@ -32,4 +32,5 @@ public class CSharpProjectModel : IDotNetProject
     public SyntaxToken? CloseAssociatedGroupToken { get; set; }
     public AbsolutePath AbsolutePath { get; set; }
     public DotNetProjectKind DotNetProjectKind => DotNetProjectKind.CSharpProject;
+    public List<AbsolutePath>? ReferencedAbsolutePathList { get; set; }
 }

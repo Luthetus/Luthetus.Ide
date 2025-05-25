@@ -90,6 +90,8 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
         {
             IsLoadingFolderExplorer = true
         });
+        
+		_environmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
 
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,

@@ -100,12 +100,12 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			return;
 
 		var nestedProjectEntries = treeViewSolution.Item.NestedProjectEntryList
-				.Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
-				.ToArray();
+			.Where(x => x.SolutionFolderIdGuid == Item.ProjectIdGuid)
+			.ToArray();
 
 		var childProjectIds = nestedProjectEntries.Select(x => x.ChildProjectIdGuid).ToArray();
 
-		var childProjectList = treeViewSolution.Item.DotNetProjectList
+		var childProjectList = treeViewSolution.Item.DotNetProjectList.Union(treeViewSolution.Item.SolutionFolderList)
 			.Where(x => childProjectIds.Contains(x.ProjectIdGuid))
 			.ToArray();
 
