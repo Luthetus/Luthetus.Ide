@@ -4,6 +4,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 public static class ExtensionNoPeriodFacts
 {
     public const string DOT_NET_SOLUTION = "sln";
+    public const string DOT_NET_SOLUTION_X = "slnx";
     public const string C_SHARP_PROJECT = "csproj";
     public const string C_SHARP_CLASS = "cs";
     public const string CSHTML_CLASS = "cshtml";

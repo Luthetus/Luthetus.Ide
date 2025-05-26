@@ -41,6 +41,7 @@ public class DecorationMapperRegistry : IDecorationMapperRegistry
         _map.Add(ExtensionNoPeriodFacts.CPP, GenericDecorationMapper);
         _map.Add(ExtensionNoPeriodFacts.HPP, GenericDecorationMapper);
         _map.Add(ExtensionNoPeriodFacts.DOT_NET_SOLUTION, HtmlDecorationMapper);
+        _map.Add(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X, HtmlDecorationMapper);
         _map.Add(ExtensionNoPeriodFacts.TERMINAL, TerminalDecorationMapper);
     }
 

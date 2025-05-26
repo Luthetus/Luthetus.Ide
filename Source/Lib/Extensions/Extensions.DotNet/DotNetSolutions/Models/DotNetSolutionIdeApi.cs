@@ -21,6 +21,8 @@ using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -164,15 +166,20 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 		{
 			_textEditorService.WorkerArbitrary.PostUnique(nameof(DotNetSolutionIdeApi), editContext =>
 			{
+				var extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
+				
+				if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+					extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X;
+			
 				_textEditorService.ModelApi.RegisterTemplated(
 					editContext,
-					ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
+					extension,
 					resourceUri,
 					DateTime.UtcNow,
 					content);
 	
 				_compilerServiceRegistry
-					.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
+					.GetCompilerService(extension)
 					.RegisterResource(
 						resourceUri,
 						shouldTriggerResourceWasModified: true);
@@ -181,60 +188,12 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 			});
 		}
 
-		var lexer = new DotNetSolutionLexer(
-			resourceUri,
-			content);
+		DotNetSolutionModel dotNetSolutionModel;
 
-		lexer.Lex();
-
-		var parser = new DotNetSolutionParser(lexer);
-
-		var compilationUnit = parser.Parse();
-
-		foreach (var project in parser.DotNetProjectList)
-		{
-			var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
-
-			// Debugging Linux-Ubuntu (2024-04-28)
-			// -----------------------------------
-			// It is believed, that Linux-Ubuntu is not fully working correctly,
-			// due to the directory separator character at the os level being '/',
-			// meanwhile the .NET solution has as its directory separator character '\'.
-			//
-			// Will perform a string.Replace("\\", "/") here. And if it solves the issue,
-			// then some standard way of doing this needs to be made available in the IEnvironmentProvider.
-			//
-			// Okay, this single replacement fixes 99% of the solution explorer issue.
-			// And I say 99% instead of 100% just because I haven't tested every single part of it yet.
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
-
-			// Solution Folders do not exist on the filesystem. Therefore their absolute path is not guaranteed to be unique
-			// One can use the ProjectIdGuid however, when working with a SolutionFolder to make the absolute path unique.
-			if (project.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-				relativePathFromSolutionFileString = $"{project.ProjectIdGuid}_{relativePathFromSolutionFileString}";
-
-			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-				solutionAbsolutePath,
-				relativePathFromSolutionFileString,
-				_environmentProvider);
-
-			project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
-		}
-
-		var solutionFolderList = parser.DotNetProjectList
-			.Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
-			.Select(x => (SolutionFolder)x)
-			.ToList();
-			
-		var dotNetSolutionModel = new DotNetSolutionModel(
-			solutionAbsolutePath,
-			parser.DotNetSolutionHeader,
-			parser.DotNetProjectList,
-			solutionFolderList,
-			parser.NestedProjectEntryList,
-			parser.DotNetSolutionGlobal,
-			content);
+		if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+			dotNetSolutionModel = ParseSlnx(solutionAbsolutePath, resourceUri, content);
+		else
+			dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri, content);
 		
 		var sortedByProjectReferenceDependenciesDotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
 		dotNetSolutionModel.DotNetProjectList = sortedByProjectReferenceDependenciesDotNetProjectList;
@@ -366,6 +325,271 @@ Execution Terminal".ReplaceLineEndings("\n")));
             	}));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
+	}
+	
+	public DotNetSolutionModel ParseSlnx(
+		AbsolutePath solutionAbsolutePath,
+		ResourceUri resourceUri,
+		string content)
+	{
+    	var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+			new(solutionAbsolutePath.Value),
+			content);
+
+		var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+
+		var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
+
+		cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
+
+		var dotNetProjectList = new List<IDotNetProject>();
+		var solutionFolderList = new List<SolutionFolder>();
+
+		var folderTagList = cSharpProjectSyntaxWalker.TagNodes
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "Folder")
+			.ToList();
+    	
+    	var projectTagList = cSharpProjectSyntaxWalker.TagNodes
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "Project")
+			.ToList();
+		
+		var solutionFolderPathHashSet = new HashSet<string>();
+		
+		var stringNestedProjectEntryList = new List<StringNestedProjectEntry>();
+		
+		foreach (var folder in folderTagList)
+		{
+			var attributeNameValueTuples = folder
+				.AttributeNodes
+				.Select(x => (
+					x.AttributeNameSyntax.TextEditorTextSpan
+						.GetText()
+						.Trim(),
+					x.AttributeValueSyntax.TextEditorTextSpan
+						.GetText()
+						.Replace("\"", string.Empty)
+						.Replace("=", string.Empty)
+						.Trim()))
+				.ToArray();
+
+			var attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Name");
+			if (attribute.Item2 is null)
+				continue;
+
+			var ancestorDirectoryList = new List<string>();
+
+			var absolutePath = new AbsolutePath(
+				attribute.Item2,
+				isDirectory: true,
+				_environmentProvider,
+				ancestorDirectoryList);
+
+			solutionFolderPathHashSet.Add(absolutePath.Value);
+			
+			for (int i = 0; i < ancestorDirectoryList.Count; i++)
+			{
+				if (i == 0)
+					continue;
+					
+				solutionFolderPathHashSet.Add(ancestorDirectoryList[i]);
+			}
+			
+			foreach (var child in folder.ChildContent)
+			{
+				if (child.HtmlSyntaxKind == HtmlSyntaxKind.TagSelfClosingNode ||
+					child.HtmlSyntaxKind == HtmlSyntaxKind.TagClosingNode)
+				{
+					var tagNode = (TagNode)child;
+					
+					attributeNameValueTuples = tagNode
+						.AttributeNodes
+						.Select(x => (
+							x.AttributeNameSyntax.TextEditorTextSpan
+								.GetText()
+								.Trim(),
+							x.AttributeValueSyntax.TextEditorTextSpan
+								.GetText()
+								.Replace("\"", string.Empty)
+								.Replace("=", string.Empty)
+								.Trim()))
+						.ToArray();
+		
+					attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Path");
+					if (attribute.Item2 is null)
+						continue;
+						
+					stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
+		    			ChildIsSolutionFolder: false,
+					    attribute.Item2,
+					    absolutePath.Value));
+				}
+			}
+		}
+		
+		// I'm too tired to decide if enumerating a HashSet is safe
+		var temporarySolutionFolderList = solutionFolderPathHashSet.ToList();
+		
+		foreach (var solutionFolderPath in temporarySolutionFolderList)
+		{
+			var absolutePath = new AbsolutePath(
+				solutionFolderPath,
+				isDirectory: true,
+				_environmentProvider);
+			
+			solutionFolderList.Add(new SolutionFolder(
+		        absolutePath.NameNoExtension,
+		        solutionFolderPath));
+		}
+		
+		foreach (var project in projectTagList)
+		{
+			var attributeNameValueTuples = project
+				.AttributeNodes
+				.Select(x => (
+					x.AttributeNameSyntax.TextEditorTextSpan
+						.GetText()
+						.Trim(),
+					x.AttributeValueSyntax.TextEditorTextSpan
+						.GetText()
+						.Replace("\"", string.Empty)
+						.Replace("=", string.Empty)
+						.Trim()))
+				.ToArray();
+
+			var attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Path");
+			if (attribute.Item2 is null)
+				continue;
+
+			var relativePath = new RelativePath(attribute.Item2, isDirectory: false, _environmentProvider);
+
+			dotNetProjectList.Add(new CSharpProjectModel(
+		        relativePath.NameNoExtension,
+		        Guid.Empty,
+		        attribute.Item2,
+		        Guid.Empty,
+		        new(),
+		        new(),
+		        default(AbsolutePath)));
+		}
+
+    	var dotNetSolutionHeader = new DotNetSolutionHeader();
+    	var dotNetSolutionGlobal = new DotNetSolutionGlobal();
+    	
+    	// You have to iterate in reverse so ascending will put longest words to shortest (when iterating reverse).
+    	var childSolutionFolderList = solutionFolderList.OrderBy(x => x.ActualName).ToList();
+    	var parentSolutionFolderList = new List<SolutionFolder>(childSolutionFolderList);
+    	
+    	for (int parentIndex = parentSolutionFolderList.Count - 1; parentIndex >= 0; parentIndex--)
+    	{
+    		var parentSolutionFolder = parentSolutionFolderList[parentIndex];
+    		
+	    	for (int childIndex = childSolutionFolderList.Count - 1; childIndex >= 0; childIndex--)
+	    	{
+	    		var childSolutionFolder = childSolutionFolderList[childIndex];
+	    		
+	    		if (childSolutionFolder.ActualName != parentSolutionFolder.ActualName &&
+	    			childSolutionFolder.ActualName.StartsWith(parentSolutionFolder.ActualName))
+	    		{
+	    			stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
+		    			ChildIsSolutionFolder: true,
+					    childSolutionFolder.ActualName,
+					    parentSolutionFolder.ActualName));
+					    
+				    childSolutionFolderList.RemoveAt(childIndex);
+	    		}
+	    	}
+    	}
+    	
+    	/*foreach (var stringNestedProjectEntry in stringNestedProjectEntryList)
+    	{
+    		Console.WriteLine($"ci_{stringNestedProjectEntry.ChildIdentifier} -- {stringNestedProjectEntry.SolutionFolderActualName}");
+    	}*/
+	
+		return ParseSharedSteps(
+			dotNetProjectList,
+			solutionFolderList,
+			solutionAbsolutePath,
+			resourceUri,
+			content,
+			dotNetSolutionHeader,
+			guidNestedProjectEntryList: null,
+			stringNestedProjectEntryList: stringNestedProjectEntryList,
+			dotNetSolutionGlobal);
+	}
+		
+	public DotNetSolutionModel ParseSln(
+		AbsolutePath solutionAbsolutePath,
+		ResourceUri resourceUri,
+		string content)
+	{
+		var lexer = new DotNetSolutionLexer(
+			resourceUri,
+			content);
+
+		lexer.Lex();
+
+		var parser = new DotNetSolutionParser(lexer);
+
+		var compilationUnit = parser.Parse();
+
+		return ParseSharedSteps(
+			parser.DotNetProjectList,
+			parser.SolutionFolderList,
+			solutionAbsolutePath,
+			resourceUri,
+			content,
+			parser.DotNetSolutionHeader,
+			guidNestedProjectEntryList: parser.NestedProjectEntryList,
+			stringNestedProjectEntryList: null,
+			parser.DotNetSolutionGlobal);
+	}
+	
+	public DotNetSolutionModel ParseSharedSteps(
+		List<IDotNetProject> dotNetProjectList,
+		List<SolutionFolder> solutionFolderList,
+		AbsolutePath solutionAbsolutePath,
+		ResourceUri resourceUri,
+		string content,
+		DotNetSolutionHeader dotNetSolutionHeader,
+		List<GuidNestedProjectEntry>? guidNestedProjectEntryList,
+		List<StringNestedProjectEntry>? stringNestedProjectEntryList,
+		DotNetSolutionGlobal dotNetSolutionGlobal)
+	{
+		foreach (var project in dotNetProjectList)
+		{
+			var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
+
+			// Debugging Linux-Ubuntu (2024-04-28)
+			// -----------------------------------
+			// It is believed, that Linux-Ubuntu is not fully working correctly,
+			// due to the directory separator character at the os level being '/',
+			// meanwhile the .NET solution has as its directory separator character '\'.
+			//
+			// Will perform a string.Replace("\\", "/") here. And if it solves the issue,
+			// then some standard way of doing this needs to be made available in the IEnvironmentProvider.
+			//
+			// Okay, this single replacement fixes 99% of the solution explorer issue.
+			// And I say 99% instead of 100% just because I haven't tested every single part of it yet.
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
+
+			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+				solutionAbsolutePath,
+				relativePathFromSolutionFileString,
+				_environmentProvider);
+
+			project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
+		}
+
+		return new DotNetSolutionModel(
+			solutionAbsolutePath,
+			dotNetSolutionHeader,
+			dotNetProjectList,
+			solutionFolderList,
+			guidNestedProjectEntryList,
+			stringNestedProjectEntryList,
+			dotNetSolutionGlobal,
+			content);
 	}
 	
 	private enum ParseSolutionStageKind
@@ -891,77 +1115,13 @@ Execution Terminal".ReplaceLineEndings("\n")));
         }
 	}
 
-	private async ValueTask Do_Website_AddExistingProjectToSolution(
+	private ValueTask Do_Website_AddExistingProjectToSolution(
 		Key<DotNetSolutionModel> dotNetSolutionModelKey,
 		string projectTemplateShortName,
 		string cSharpProjectName,
 		AbsolutePath cSharpProjectAbsolutePath)
 	{
-		var inDotNetSolutionModel = _dotNetSolutionService.GetDotNetSolutionState().DotNetSolutionsList.FirstOrDefault(
-			x => x.Key == dotNetSolutionModelKey);
-
-		if (inDotNetSolutionModel is null)
-			return;
-
-		var projectTypeGuid = WebsiteProjectTemplateFacts.GetProjectTypeGuid(
-			projectTemplateShortName);
-
-		var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
-			inDotNetSolutionModel.NamespacePath.AbsolutePath,
-			cSharpProjectAbsolutePath,
-			_environmentProvider);
-
-		var projectIdGuid = Guid.NewGuid();
-
-		var dotNetSolutionModelBuilder = new DotNetSolutionModelBuilder(inDotNetSolutionModel);
-
-		var cSharpProject = new CSharpProjectModel(
-			cSharpProjectName,
-			projectTypeGuid,
-			relativePathFromSlnToProject,
-			projectIdGuid,
-			// TODO: 'openAssociatedGroupToken' gets set when 'AddDotNetProject(...)' is ran, which is hacky and should be changed. Until then passing in 'null!'
-			default,
-			null,
-			cSharpProjectAbsolutePath);
-
-		dotNetSolutionModelBuilder.AddDotNetProject(cSharpProject, _environmentProvider);
-
-		var outDotNetSolutionModel = dotNetSolutionModelBuilder.Build();
-
-		await _fileSystemProvider.File.WriteAllTextAsync(
-				outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
-				outDotNetSolutionModel.SolutionFileContents)
-			.ConfigureAwait(false);
-
-		var solutionTextEditorModel = _textEditorService.ModelApi.GetOrDefault(
-			new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.Value));
-
-		if (solutionTextEditorModel is not null)
-		{
-			_textEditorService.WorkerArbitrary.PostUnique(
-				nameof(Do_Website_AddExistingProjectToSolution),
-				editContext =>
-				{
-					var modelModifier = editContext.GetModelModifier(solutionTextEditorModel.PersistentState.ResourceUri);
-					if (modelModifier is null)
-						return ValueTask.CompletedTask;
-				
-					_textEditorService.ModelApi.Reload(
-						editContext,
-				        modelModifier,
-				        outDotNetSolutionModel.SolutionFileContents,
-				        DateTime.UtcNow);
-					return ValueTask.CompletedTask;
-				});
-		}
-
-		// TODO: Putting a hack for now to overwrite if somehow model was registered already
-		_dotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
-			outDotNetSolutionModel.Key,
-			outDotNetSolutionModel));
-
-		await Do_SetDotNetSolutionTreeView(outDotNetSolutionModel.Key).ConfigureAwait(false);
+		return ValueTask.CompletedTask;
 	}
 
 	/// <summary>Don't have the implementation <see cref="WithAction"/> as public scope.</summary>
