@@ -287,7 +287,7 @@ public class CodeSearchService : ICodeSearchService
 	
 	public async Task UpdateContent(ResourceUri providedResourceUri)
 	{
-		_textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchService), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			Console.WriteLine(nameof(UpdateContent));
 		

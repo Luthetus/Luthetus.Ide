@@ -66,12 +66,10 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 	public Queue<TextEditorWorkArbitraryKind> WorkKindQueue { get; } = new();
 	
 	public void PostUnique(
-        string name,
         Func<TextEditorEditContext, ValueTask> textEditorFunc)
     {
     	EnqueueUniqueTextEditorWork(
     		new UniqueTextEditorWork(
-	            name,
 	            _textEditorService,
 	            textEditorFunc));
     }

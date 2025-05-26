@@ -57,7 +57,7 @@ public partial class SymbolDisplay : ComponentBase
     
     private Task OpenInEditorOnClick(string filePath)
     {
-    	TextEditorService.WorkerArbitrary.PostUnique(nameof(SymbolDisplay), async editContext =>
+    	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
     	{
     		await TextEditorService.OpenInEditorAsync(
     			editContext,

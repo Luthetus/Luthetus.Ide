@@ -38,7 +38,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 		if (model is null)
 		{
-			TextEditorService.WorkerArbitrary.PostUnique(nameof(TestExplorerDisplay), async editContext =>
+			TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 			{
 				var terminalDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
 				var terminalCompilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);

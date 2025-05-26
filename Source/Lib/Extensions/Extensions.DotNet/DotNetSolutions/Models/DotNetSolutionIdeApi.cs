@@ -161,7 +161,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
 		if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)
 		{
-			_textEditorService.WorkerArbitrary.PostUnique(nameof(DotNetSolutionIdeApi), editContext =>
+			_textEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
 				var extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 				
@@ -312,14 +312,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		});
 		
 		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(
-			new UniqueTextEditorWork(
-	            nameof(ParseSolution),
-	            _textEditorService,
-	            async editContext =>
-	            {
-	            	await ParseSolution(editContext, dotNetSolutionModel.Key);
-	            	await ParseSolution(editContext, dotNetSolutionModel.Key);
-            	}));
+			new UniqueTextEditorWork(_textEditorService, async editContext =>
+            {
+            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+        	}));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
 	}

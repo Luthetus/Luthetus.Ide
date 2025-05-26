@@ -104,7 +104,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                                     MenuOptionKind.Other,
                                     onClickFunc: () =>
                                     {
-                                    	_textEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorInitializationBackgroundTaskGroup), async editContext =>
+                                    	_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
                                     	{
                                     		await _textEditorService.OpenInEditorAsync(
                                     			editContext,

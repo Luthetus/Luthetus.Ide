@@ -128,86 +128,84 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				};
 			}
 
-			TextEditorService.WorkerArbitrary.PostUnique(
-				nameof(TestExplorerDetailsDisplay),
-				editContext =>
-				{
-					var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
-					var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
+			TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
 
-					if (modelModifier is null || viewModelModifier is null)
-						return ValueTask.CompletedTask;
-					
-					var showingFinalLine = false;
-					
-					if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
-					{
-						var last = viewModelModifier.VirtualizationResult.EntryList.Last();
-						if (last.LineIndex == modelModifier.LineCount - 1)
-							showingFinalLine = true;
-					}
-
-					modelModifier.SetContent(newContent ?? string.Empty);
-					
-					var lineIndexOriginal = viewModelModifier.LineIndex;
-					var columnIndexOriginal = viewModelModifier.ColumnIndex;
-					
-					// Move Cursor, try to preserve the current cursor position.
-					{
-						if (viewModelModifier.LineIndex > modelModifier.LineCount - 1)
-							viewModelModifier.LineIndex = modelModifier.LineCount - 1;
-						
-						var lineInformation = modelModifier.GetLineInformation(viewModelModifier.LineIndex);
-						
-						if (viewModelModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-							viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
-					}
-					
-					if (showingFinalLine)
-					{
-						var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
-						
-						var originalScrollLeft = viewModelModifier.ScrollLeft;
-						
-						var textSpan = new TextEditorTextSpan(
-						    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
-						    endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
-						    decorationByte: 0,
-						    modelModifier.PersistentState.ResourceUri,
-						    sourceText: string.Empty,
-						    getTextPrecalculatedResult: string.Empty);
-					
-						TextEditorService.ViewModelApi.ScrollIntoView(
-					        editContext,
-					        modelModifier,
-					        viewModelModifier,
-					        textSpan);
-					        
-				        viewModelModifier.SetScrollLeft(
-				        	(int)originalScrollLeft,
-				        	viewModelModifier.TextEditorDimensions);
-					}
-					else if (lineIndexOriginal != viewModelModifier.LineIndex ||
-						     columnIndexOriginal != viewModelModifier.ColumnIndex)
-					{
-						viewModelModifier.PersistentState.ShouldRevealCursor = true;
-					}
-
-					var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
-						ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
-
-					if (compilerServiceResource is TerminalResource terminalResource)
-					{
-						terminalResource.CompilationUnit.ManualDecorationTextSpanList.Clear();
-						terminalResource.CompilationUnit.ManualDecorationTextSpanList.AddRange(newDecorationTextSpanList);
-
-						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-							editContext,
-							modelModifier);
-					}
-
+				if (modelModifier is null || viewModelModifier is null)
 					return ValueTask.CompletedTask;
-				});
+				
+				var showingFinalLine = false;
+				
+				if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
+				{
+					var last = viewModelModifier.VirtualizationResult.EntryList.Last();
+					if (last.LineIndex == modelModifier.LineCount - 1)
+						showingFinalLine = true;
+				}
+
+				modelModifier.SetContent(newContent ?? string.Empty);
+				
+				var lineIndexOriginal = viewModelModifier.LineIndex;
+				var columnIndexOriginal = viewModelModifier.ColumnIndex;
+				
+				// Move Cursor, try to preserve the current cursor position.
+				{
+					if (viewModelModifier.LineIndex > modelModifier.LineCount - 1)
+						viewModelModifier.LineIndex = modelModifier.LineCount - 1;
+					
+					var lineInformation = modelModifier.GetLineInformation(viewModelModifier.LineIndex);
+					
+					if (viewModelModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+						viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+				}
+				
+				if (showingFinalLine)
+				{
+					var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+					
+					var originalScrollLeft = viewModelModifier.ScrollLeft;
+					
+					var textSpan = new TextEditorTextSpan(
+					    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+					    endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
+					    decorationByte: 0,
+					    modelModifier.PersistentState.ResourceUri,
+					    sourceText: string.Empty,
+					    getTextPrecalculatedResult: string.Empty);
+				
+					TextEditorService.ViewModelApi.ScrollIntoView(
+				        editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        textSpan);
+				        
+			        viewModelModifier.SetScrollLeft(
+			        	(int)originalScrollLeft,
+			        	viewModelModifier.TextEditorDimensions);
+				}
+				else if (lineIndexOriginal != viewModelModifier.LineIndex ||
+					     columnIndexOriginal != viewModelModifier.ColumnIndex)
+				{
+					viewModelModifier.PersistentState.ShouldRevealCursor = true;
+				}
+
+				var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
+					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
+
+				if (compilerServiceResource is TerminalResource terminalResource)
+				{
+					terminalResource.CompilationUnit.ManualDecorationTextSpanList.Clear();
+					terminalResource.CompilationUnit.ManualDecorationTextSpanList.AddRange(newDecorationTextSpanList);
+
+					editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+						editContext,
+						modelModifier);
+				}
+
+				return ValueTask.CompletedTask;
+			});
 		}
 	}
 

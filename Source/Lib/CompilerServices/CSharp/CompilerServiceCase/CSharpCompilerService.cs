@@ -122,7 +122,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_textEditorService.WorkerArbitrary.PostUnique(nameof(CSharpCompilerService), editContext =>
+    	_textEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
 			var modelModifier = editContext.GetModelModifier(resourceUri);
 
@@ -550,7 +550,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	
 	private Task MemberAutocomplete(string text, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
 	{
-		_textEditorService.WorkerArbitrary.PostUnique(nameof(MemberAutocomplete), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			var model = editContext.GetModelModifier(resourceUri);
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
@@ -942,7 +942,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return;
 		
-		_textEditorService.WorkerArbitrary.PostUnique(nameof(SyntaxViewModel), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			if (category.Value == "CodeSearchService")
 			{
@@ -1375,50 +1375,48 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     private Task PropSnippet(string word, TextEditorTextSpan textSpan, string textToInsert)
     {
-        _textEditorService.WorkerArbitrary.PostUnique(
-	        nameof(PropSnippet),
-	        (Func<TextEditorEditContext, ValueTask>)(	        editContext =>
-	        {
-	            var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
-	
-	            if (modelModifier is null)
-	                return ValueTask.CompletedTask;
-	
-	            var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
-	            
-	            var viewModel = viewModelList.FirstOrDefault(x => x.PersistentState.Category.Value == "main")
-	            	?? viewModelList.FirstOrDefault();
-	            
-	            if (viewModel is null)
-	            	return ValueTask.CompletedTask;
-	            	
-	            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
-	            
-	            if (viewModelModifier is null)
-	            	return ValueTask.CompletedTask;
-	
-	            var cursorPositionIndex = modelModifier.GetPositionIndex(viewModelModifier);
-	            var behindPositionIndex = cursorPositionIndex - 1;
-	            		
-	            modelModifier.Insert(
-	                textToInsert,
-	                viewModelModifier);
-	                
-	            /*if (behindPositionIndex > 0 && modelModifier.GetCharacter(behindPositionIndex) == 'p')
-	            {
-	            	modelModifier.Delete(
-				        viewModelModifier,
-				        1,
-				        expandWord: false,
-                        TextEditorModel.DeleteKind.Delete);
-	            }*/
-	
-	            modelModifier.PersistentState.CompilerService.ResourceWasModified(
-	            	(ResourceUri)modelModifier.PersistentState.ResourceUri,
-	            	(IReadOnlyList<TextEditorTextSpan>)Array.Empty<TextEditorTextSpan>());
-	            	
-	            return ValueTask.CompletedTask;
-	        }));
+        _textEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
+
+            if (modelModifier is null)
+                return ValueTask.CompletedTask;
+
+            var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
+            
+            var viewModel = viewModelList.FirstOrDefault(x => x.PersistentState.Category.Value == "main")
+            	?? viewModelList.FirstOrDefault();
+            
+            if (viewModel is null)
+            	return ValueTask.CompletedTask;
+            	
+            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
+            
+            if (viewModelModifier is null)
+            	return ValueTask.CompletedTask;
+
+            var cursorPositionIndex = modelModifier.GetPositionIndex(viewModelModifier);
+            var behindPositionIndex = cursorPositionIndex - 1;
+            		
+            modelModifier.Insert(
+                textToInsert,
+                viewModelModifier);
+                
+            /*if (behindPositionIndex > 0 && modelModifier.GetCharacter(behindPositionIndex) == 'p')
+            {
+            	modelModifier.Delete(
+			        viewModelModifier,
+			        1,
+			        expandWord: false,
+                    TextEditorModel.DeleteKind.Delete);
+            }*/
+
+            modelModifier.PersistentState.CompilerService.ResourceWasModified(
+            	(ResourceUri)modelModifier.PersistentState.ResourceUri,
+            	(IReadOnlyList<TextEditorTextSpan>)Array.Empty<TextEditorTextSpan>());
+            	
+            return ValueTask.CompletedTask;
+        }));
 	        
 	    return Task.CompletedTask;
     }

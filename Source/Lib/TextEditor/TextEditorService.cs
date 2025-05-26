@@ -444,7 +444,7 @@ public sealed class TextEditorService
 		_ = Task.Run(async () =>
 		{
 			await Task.Delay(200).ConfigureAwait(false);
-			WorkerArbitrary.PostUnique(nameof(OpenInEditorAsync), editContext =>
+			WorkerArbitrary.PostUnique(editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
 				viewModelModifier.PersistentState.ShouldRevealCursor = true;
@@ -506,7 +506,7 @@ public sealed class TextEditorService
 		_ = Task.Run(async () =>
 		{
 			await Task.Delay(200).ConfigureAwait(false);
-			WorkerArbitrary.PostUnique(nameof(OpenInEditorAsync), editContext =>
+			WorkerArbitrary.PostUnique(editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
 				viewModelModifier.PersistentState.ShouldRevealCursor = true;

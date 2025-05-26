@@ -340,7 +340,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	if (TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey) is null)
     		return;
     	
-    	TextEditorService.WorkerArbitrary.PostUnique(nameof(HandleTextEditorViewModelKeyChange), editContext =>
+    	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
     	{
     		var localTextEditorViewModelKey = TextEditorViewModelKey;
 
@@ -404,25 +404,23 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     {
 		var localViewModelKey = TextEditorViewModelKey;
 
-		TextEditorService.WorkerArbitrary.PostUnique(
-			nameof(ReceiveOnContextMenu),
-			editContext =>
-			{
-				var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
-				var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
+		TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+		{
+			var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
+			var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
 
-				if (modelModifier is null || viewModelModifier is null)
-					return ValueTask.CompletedTask;
-
-				TextEditorCommandDefaultFunctions.ShowContextMenu(
-			        editContext,
-			        modelModifier,
-			        viewModelModifier,
-			        DropdownService,
-			        ComponentData);
-				
+			if (modelModifier is null || viewModelModifier is null)
 				return ValueTask.CompletedTask;
-			});
+
+			TextEditorCommandDefaultFunctions.ShowContextMenu(
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        DropdownService,
+		        ComponentData);
+			
+			return ValueTask.CompletedTask;
+		});
     }
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
@@ -471,19 +469,17 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 	
                 	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown || mouseMoveMouseEventArgs is null)
                 	{
-                		TextEditorService.WorkerArbitrary.PostUnique(
-							nameof(ReceiveContentOnMouseMove),
-							editContext =>
-							{
-								var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                		TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+						{
+							var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
 
-                                if (viewModelModifier is null)
-                                    return ValueTask.CompletedTask;
+                            if (viewModelModifier is null)
+                                return ValueTask.CompletedTask;
 
-                                viewModelModifier.PersistentState.TooltipViewModel = null;
+                            viewModelModifier.PersistentState.TooltipViewModel = null;
 
-								return ValueTask.CompletedTask;
-							});
+							return ValueTask.CompletedTask;
+						});
 						break;
                 	}
                 	
@@ -493,25 +489,23 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                     {
                         await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-				        TextEditorService.WorkerArbitrary.PostUnique(
-				            nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync),
-				            editContext =>
-				            {
-				            	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-				                var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
-				                
-				                if (modelModifier is null || viewModelModifier is null)
-				                    return ValueTask.CompletedTask;
-				    
-				                return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(
-				                    editContext,
-				                    modelModifier,
-				                    viewModelModifier,
-				                    mouseMoveMouseEventArgs,
-				                    _componentData,
-				                    TextEditorComponentRenderers,
-				                    viewModelModifier.PersistentState.ResourceUri);
-				            });
+				        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+			            {
+			            	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+			                var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
+			                
+			                if (modelModifier is null || viewModelModifier is null)
+			                    return ValueTask.CompletedTask;
+			    
+			                return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(
+			                    editContext,
+			                    modelModifier,
+			                    viewModelModifier,
+			                    mouseMoveMouseEventArgs,
+			                    _componentData,
+			                    TextEditorComponentRenderers,
+			                    viewModelModifier.PersistentState.ResourceUri);
+			            });
 
                         break;
                     }
@@ -571,27 +565,25 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(ReceiveOnTouchMove),
-            editContext =>
-			{
-				var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-				
-				if (viewModelModifier is null)
-					return ValueTask.CompletedTask;
-				
-                TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
-                	editContext,
-			        viewModelModifier,
-                	diffX);
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+		{
+			var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+			
+			if (viewModelModifier is null)
+				return ValueTask.CompletedTask;
+			
+            TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+            	editContext,
+		        viewModelModifier,
+            	diffX);
 
-                TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-                	editContext,
-			        viewModelModifier,
-                	diffY);
-                	
-                return ValueTask.CompletedTask;
-			});
+            TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+            	editContext,
+		        viewModelModifier,
+            	diffY);
+            	
+            return ValueTask.CompletedTask;
+		});
 
         _previousTouchEventArgs = touchEventArgs;
     }
@@ -633,20 +625,18 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (viewModel is null)
             return;
 
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(QueueRemeasureBackgroundTask),
-            editContext =>
-            {
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+        	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
-				if (viewModelModifier is null)
-					return ValueTask.CompletedTask;
+			if (viewModelModifier is null)
+				return ValueTask.CompletedTask;
 
-            	return TextEditorService.ViewModelApi.RemeasureAsync(
-            		editContext,
-			        viewModelModifier);
-	        });
-    }
+        	return TextEditorService.ViewModelApi.RemeasureAsync(
+        		editContext,
+		        viewModelModifier);
+        });
+	}
 
     public void QueueCalculateVirtualizationResultBackgroundTask()
     {
@@ -654,21 +644,19 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (viewModel is null)
             return;
 
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(QueueCalculateVirtualizationResultBackgroundTask),
-            editContext =>
-            {
-            	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+        	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
-				if (modelModifier is null || viewModelModifier is null)
-					return ValueTask.CompletedTask;
-            	
-            	viewModelModifier.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
-            	
-            	TextEditorService.FinalizePost(editContext);
-			    return ValueTask.CompletedTask;
-            });
+			if (modelModifier is null || viewModelModifier is null)
+				return ValueTask.CompletedTask;
+        	
+        	viewModelModifier.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+        	
+        	TextEditorService.FinalizePost(editContext);
+		    return ValueTask.CompletedTask;
+        });
     }
     
     private async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)

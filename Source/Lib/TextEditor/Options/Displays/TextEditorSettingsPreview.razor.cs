@@ -33,7 +33,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
     {
         if (firstRender)
         {
-        	TextEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorSettingsPreview), async editContext =>
+        	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         	{
         		TextEditorService.ModelApi.RegisterTemplated(
         			editContext,
