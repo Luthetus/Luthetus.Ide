@@ -21,6 +21,8 @@ using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -353,6 +355,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		
 		var solutionFolderPathHashSet = new HashSet<string>();
 		
+		var stringNestedProjectEntryList = new List<StringNestedProjectEntry>();
+		
 		foreach (var folder in folderTagList)
 		{
 			var attributeNameValueTuples = folder
@@ -388,6 +392,37 @@ Execution Terminal".ReplaceLineEndings("\n")));
 					continue;
 					
 				solutionFolderPathHashSet.Add(ancestorDirectoryList[i]);
+			}
+			
+			foreach (var child in folder.ChildContent)
+			{
+				if (child.HtmlSyntaxKind == HtmlSyntaxKind.TagSelfClosingNode ||
+					child.HtmlSyntaxKind == HtmlSyntaxKind.TagClosingNode)
+				{
+					var tagNode = (TagNode)child;
+					
+					attributeNameValueTuples = tagNode
+						.AttributeNodes
+						.Select(x => (
+							x.AttributeNameSyntax.TextEditorTextSpan
+								.GetText()
+								.Trim(),
+							x.AttributeValueSyntax.TextEditorTextSpan
+								.GetText()
+								.Replace("\"", string.Empty)
+								.Replace("=", string.Empty)
+								.Trim()))
+						.ToArray();
+		
+					attribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Path");
+					if (attribute.Item2 is null)
+						continue;
+						
+					stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
+		    			ChildIsSolutionFolder: false,
+					    attribute.Item2,
+					    absolutePath.Value));
+				}
 			}
 		}
 		
@@ -438,7 +473,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		}
 
     	var dotNetSolutionHeader = new DotNetSolutionHeader();
-    	var stringNestedProjectEntryList = new List<StringNestedProjectEntry>();
     	var dotNetSolutionGlobal = new DotNetSolutionGlobal();
     	
     	// You have to iterate in reverse so ascending will put longest words to shortest (when iterating reverse).
