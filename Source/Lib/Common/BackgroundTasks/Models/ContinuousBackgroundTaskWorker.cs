@@ -19,23 +19,11 @@ public sealed class ContinuousBackgroundTaskWorker
         _logger = loggerFactory.CreateLogger<ContinuousBackgroundTaskWorker>();
         LuthetusHostingKind = luthetusHostingKind;
     }
-    
-    // private IBackgroundTask? _executingBackgroundTask;
 
     public BackgroundTaskQueue Queue { get; }
     public BackgroundTaskService BackgroundTaskService { get; }
     public Task? StartAsyncTask { get; internal set; }
     public LuthetusHostingKind LuthetusHostingKind { get; }
-
-	/*public IBackgroundTask? ExecutingBackgroundTask
-    {
-        get => _executingBackgroundTask;
-        set
-        {
-            _executingBackgroundTask = value;
-            ExecutingBackgroundTaskChanged?.Invoke();
-        }
-    }*/
     
     public event Action? ExecutingBackgroundTaskChanged;
 
@@ -43,19 +31,18 @@ public sealed class ContinuousBackgroundTaskWorker
     {
         _logger.LogInformation($"{nameof(ContinuousBackgroundTaskWorker)} is starting.");
 
-        while (!cancellationToken.IsCancellationRequested)
-        {
-        	await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-        	var backgroundTask = Queue.__DequeueOrDefault();
-
-            try
+		while (!cancellationToken.IsCancellationRequested)
+		{
+			try
             {
-                // ExecutingBackgroundTask = backgroundTask;
-                
-                await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
-                await Task.Yield();
-            }
-            catch (Exception ex)
+		        while (!cancellationToken.IsCancellationRequested)
+		        {
+		        	await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+	                await Queue.__DequeueOrDefault().HandleEvent(cancellationToken).ConfigureAwait(false);
+	                await Task.Yield();
+		        }
+	        }
+	        catch (Exception ex)
             {
                 var message = ex is OperationCanceledException
                     ? "Task was cancelled {0}." // {0} => WorkItemName
