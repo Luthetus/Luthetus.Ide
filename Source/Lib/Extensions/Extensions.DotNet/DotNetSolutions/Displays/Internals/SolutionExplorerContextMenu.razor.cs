@@ -123,7 +123,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		}
 		else if (treeViewModel is TreeViewSolution treeViewSolution)
 		{
-			if (ExtensionNoPeriodFacts.DOT_NET_SOLUTION == treeViewSolution.Item.NamespacePath.AbsolutePath.ExtensionNoPeriod)
+			if (ExtensionNoPeriodFacts.DOT_NET_SOLUTION == treeViewSolution.Item.NamespacePath.AbsolutePath.ExtensionNoPeriod ||
+				ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X == treeViewSolution.Item.NamespacePath.AbsolutePath.ExtensionNoPeriod)
 			{
 				if (treeViewSolution.Parent is null || treeViewSolution.Parent is TreeViewAdhoc)
 					menuOptionList.AddRange(GetDotNetSolutionMenuOptions(treeViewSolution));
