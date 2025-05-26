@@ -33,9 +33,6 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public string Name { get; } = nameof(TextEditorInitializationBackgroundTaskGroup);
-    public bool EarlyBatchEnabled { get; } = false;
-
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
     private readonly Queue<TextEditorInitializationBackgroundTaskGroupWorkKind> _workKindQueue = new();

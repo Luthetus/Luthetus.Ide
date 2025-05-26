@@ -54,9 +54,6 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     
     // Nervous about this not being considered an interpolated constant string.
-    public string Name { get; } = "TextEditorWorker";
-    
-    public bool EarlyBatchEnabled { get; } = false;
     
     public bool __TaskCompletionSourceWasCreated { get; set; }
     

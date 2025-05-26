@@ -214,8 +214,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     public ICompilerServiceExplorerService CompilerServiceExplorerService { get; }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public string Name { get; } = nameof(DotNetBackgroundTaskApi);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 

@@ -252,8 +252,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public string Name { get; } = nameof(TestExplorerService);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 

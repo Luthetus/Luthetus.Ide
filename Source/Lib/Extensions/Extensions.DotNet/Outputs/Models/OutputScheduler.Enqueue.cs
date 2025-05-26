@@ -6,8 +6,6 @@ namespace Luthetus.Extensions.DotNet.Outputs.Models;
 public partial class OutputScheduler : IBackgroundTaskGroup
 {
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public string Name { get; } = nameof(OutputScheduler);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 

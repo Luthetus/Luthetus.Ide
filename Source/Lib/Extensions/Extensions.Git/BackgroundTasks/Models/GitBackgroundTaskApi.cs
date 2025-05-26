@@ -82,8 +82,6 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 	public GitCliOutputParser GitCliOutputParser { get; }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public string Name { get; } = nameof(GitIdeApi);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 

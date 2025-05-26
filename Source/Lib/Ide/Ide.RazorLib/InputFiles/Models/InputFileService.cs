@@ -18,8 +18,6 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
 	public InputFileState GetInputFileState() => _inputFileState;
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public string Name { get; } = nameof(InputFileService);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 

@@ -42,9 +42,6 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public string Name { get; } = nameof(TerminalIntegrated);
-    public bool EarlyBatchEnabled { get; } = false;
-
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
     private readonly Queue<TerminalWorkKind> _workKindQueue = new();
