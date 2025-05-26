@@ -98,10 +98,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
 	
     private void QueueRemeasureBackgroundTask()
     {
-        TextEditorService.WorkerArbitrary.PostRedundant(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(QueueRemeasureBackgroundTask),
-			ResourceUri.Empty,
-			Key<TextEditorViewModel>.Empty,
             async editContext =>
             {
             	var charAndLineMeasurements = await TextEditorService.JsRuntimeTextEditorApi

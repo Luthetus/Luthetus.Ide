@@ -48,10 +48,8 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	
 	        if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
 	        {
-	            TextEditorService.WorkerArbitrary.PostRedundant(
+	            TextEditorService.WorkerArbitrary.PostUnique(
 	                nameof(TextEditorService.ModelApi.SetUsingLineEndKind),
-	                viewModel.PersistentState.ResourceUri,
-					viewModel.PersistentState.ViewModelKey,
 	                editContext =>
 	                {
 	                	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);

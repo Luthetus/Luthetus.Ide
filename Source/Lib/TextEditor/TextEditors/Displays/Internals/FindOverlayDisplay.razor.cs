@@ -220,10 +220,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 	                .ConfigureAwait(false);
             }
 
-            TextEditorService.WorkerArbitrary.PostRedundant(
+            TextEditorService.WorkerArbitrary.PostUnique(
                 nameof(FindOverlayDisplay),
-				renderBatchLocal.ViewModel.PersistentState.ResourceUri,
-                renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
                 editContext =>
                 {
                     var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
@@ -431,10 +429,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     	if (!renderBatchLocal.IsValid)
     		return;
     	
-    	TextEditorService.WorkerArbitrary.PostRedundant(
+    	TextEditorService.WorkerArbitrary.PostUnique(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
-            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
                 var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
@@ -454,10 +450,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     	if (!renderBatchLocal.IsValid)
     		return;
     
-    	TextEditorService.WorkerArbitrary.PostRedundant(
+    	TextEditorService.WorkerArbitrary.PostUnique(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
-            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
@@ -502,10 +496,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     	if (!renderBatchLocal.IsValid)
     		return;
     
-    	TextEditorService.WorkerArbitrary.PostRedundant(
+    	TextEditorService.WorkerArbitrary.PostUnique(
             nameof(FindOverlayDisplay),
-			renderBatchLocal.ViewModel.PersistentState.ResourceUri,
-            renderBatchLocal.ViewModel.PersistentState.ViewModelKey,
             (TextEditorEditContext editContext) =>
             {
             	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);

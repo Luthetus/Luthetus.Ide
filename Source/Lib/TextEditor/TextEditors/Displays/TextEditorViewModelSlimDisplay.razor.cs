@@ -633,10 +633,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (viewModel is null)
             return;
 
-        TextEditorService.WorkerArbitrary.PostRedundant(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(QueueRemeasureBackgroundTask),
-			viewModel.PersistentState.ResourceUri,
-			viewModel.PersistentState.ViewModelKey,
             editContext =>
             {
             	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
@@ -656,10 +654,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (viewModel is null)
             return;
 
-        TextEditorService.WorkerArbitrary.PostRedundant(
+        TextEditorService.WorkerArbitrary.PostUnique(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
-			viewModel.PersistentState.ResourceUri,
-			viewModel.PersistentState.ViewModelKey,
             editContext =>
             {
             	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);

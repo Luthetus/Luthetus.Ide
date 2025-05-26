@@ -60,7 +60,6 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
     
     public bool __TaskCompletionSourceWasCreated { get; set; }
     
-    public Queue<RedundantTextEditorWork> RedundantTextEditorWorkQueue { get; } = new();
     public Queue<UniqueTextEditorWork> UniqueTextEditorWorkQueue { get; } = new();
 	
 	/// <summary>
@@ -68,21 +67,6 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 	/// better to have this Queue be a struct that has the count of contiguous work kind enqueues?
 	/// </summary>
 	public Queue<TextEditorWorkArbitraryKind> WorkKindQueue { get; } = new();
-	
-	public void PostRedundant(
-        string name,
-		ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        Func<TextEditorEditContext, ValueTask> textEditorFunc)
-    {
-    	EnqueueRedundantTextEditorWork(
-    		new RedundantTextEditorWork(
-	            name,
-				resourceUri,
-	            viewModelKey,
-	            _textEditorService,
-	            textEditorFunc));
-    }
 	
 	public void PostUnique(
         string name,
@@ -94,16 +78,6 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 	            _textEditorService,
 	            textEditorFunc));
     }
-	
-	public void EnqueueRedundantTextEditorWork(RedundantTextEditorWork redundantTextEditorWork)
-	{
-		lock (_workKindQueueLock)
-		{
-			WorkKindQueue.Enqueue(TextEditorWorkArbitraryKind.RedundantTextEditorWork);
-			RedundantTextEditorWorkQueue.Enqueue(redundantTextEditorWork);
-			_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
-		}
-	}
 	
 	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)
 	{
@@ -131,8 +105,6 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 			
 		switch (workKind)
 		{
-			case TextEditorWorkArbitraryKind.RedundantTextEditorWork:
-				return RedundantTextEditorWorkQueue.Dequeue().HandleEvent(cancellationToken);
 			case TextEditorWorkArbitraryKind.UniqueTextEditorWork:
 				return UniqueTextEditorWorkQueue.Dequeue().HandleEvent(cancellationToken);
 			default:

@@ -179,10 +179,8 @@ public sealed class DisplayTracker : IDisposable
             return;
         }
 
-		_textEditorService.WorkerArbitrary.PostRedundant(
+		_textEditorService.WorkerArbitrary.PostUnique(
 			nameof(AppDimensionStateWrap_StateChanged),
-			model.PersistentState.ResourceUri,
-            viewModel.PersistentState.ViewModelKey,
 			async editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);

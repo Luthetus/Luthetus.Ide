@@ -321,10 +321,8 @@ public sealed class TextEditorGroupApi
 		Key<TextEditorGroup> groupKey,
     	Key<TextEditorViewModel> viewModelKey)
 	{
-		_textEditorService.WorkerArbitrary.PostRedundant(
+		_textEditorService.WorkerArbitrary.PostUnique(
 			nameof(PostScroll),
-			ResourceUri.Empty,
-			viewModelKey,
 			editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
