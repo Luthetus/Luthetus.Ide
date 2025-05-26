@@ -20,23 +20,11 @@ public sealed class IndefiniteBackgroundTaskWorker
         LuthetusHostingKind = luthetusHostingKind;
     }
     
-    // private IBackgroundTask? _executingBackgroundTask;
-
     public BackgroundTaskQueue Queue { get; }
     public BackgroundTaskService BackgroundTaskService { get; }
     public Task? StartAsyncTask { get; internal set; }
     public LuthetusHostingKind LuthetusHostingKind { get; }
 
-	/*public IBackgroundTask? ExecutingBackgroundTask
-    {
-        get => _executingBackgroundTask;
-        set
-        {
-            _executingBackgroundTask = value;
-            ExecutingBackgroundTaskChanged?.Invoke();
-        }
-    }*/
-    
     public event Action? ExecutingBackgroundTaskChanged;
 
     public async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -50,8 +38,6 @@ public sealed class IndefiniteBackgroundTaskWorker
 
             try
             {
-                // ExecutingBackgroundTask = backgroundTask;
-                
                 await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
                 await Task.Yield();
             }
@@ -68,8 +54,6 @@ public sealed class IndefiniteBackgroundTaskWorker
             {
             	if (backgroundTask.__TaskCompletionSourceWasCreated)
             		BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
-            	
-                // ExecutingBackgroundTask = null;
             }
     	}
 	}   
