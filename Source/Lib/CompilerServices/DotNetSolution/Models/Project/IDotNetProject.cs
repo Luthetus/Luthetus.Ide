@@ -4,7 +4,7 @@ using Luthetus.Extensions.CompilerServices.Syntax;
 
 namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
-public interface IDotNetProject
+public interface IDotNetProject : ISolutionMember
 {
     public string DisplayName { get; }
     public Guid ProjectTypeGuid { get; }

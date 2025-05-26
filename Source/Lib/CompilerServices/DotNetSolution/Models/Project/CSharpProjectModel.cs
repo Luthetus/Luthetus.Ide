@@ -33,4 +33,6 @@ public class CSharpProjectModel : IDotNetProject
     public AbsolutePath AbsolutePath { get; set; }
     public DotNetProjectKind DotNetProjectKind => DotNetProjectKind.CSharpProject;
     public List<AbsolutePath>? ReferencedAbsolutePathList { get; set; }
+    
+    public SolutionMemberKind SolutionMemberKind => SolutionMemberKind.Project;
 }

@@ -507,15 +507,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     return Task.CompletedTask;
                 });
 
-            var menuOptionOpenCSharpProject = new MenuOptionRecord(
-                "C# Project - TODO: Adhoc Sln",
-                MenuOptionKind.Other,
-                () =>
-                {
-                    Editor.ShowInputFile();
-                    return Task.CompletedTask;
-                });
-
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
                 MenuOptionKind.Other,
@@ -523,7 +514,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 {
                     menuOptionOpenFile,
                     menuOptionOpenDirectory,
-                    menuOptionOpenCSharpProject,
                 }));
 
             menuOptionsList.Add(menuOptionOpen);

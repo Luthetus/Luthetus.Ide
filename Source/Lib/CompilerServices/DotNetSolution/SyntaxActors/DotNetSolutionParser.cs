@@ -16,7 +16,8 @@ public class DotNetSolutionParser
     private readonly List<TextEditorDiagnostic> _diagnosticList = new();
     private readonly Stack<AssociatedEntryGroupBuilder> _associatedEntryGroupBuilderStack = new();
     private readonly List<IDotNetProject> _dotNetProjectList = new();
-    private readonly List<NestedProjectEntry> _nestedProjectEntryList = new();
+    private readonly List<SolutionFolder> _solutionFolderList = new();
+    private readonly List<GuidNestedProjectEntry> _nestedProjectEntryList = new();
 
     private DotNetSolutionHeader _dotNetSolutionHeader = new();
     private bool _hasReadHeader;
@@ -35,7 +36,8 @@ public class DotNetSolutionParser
     public DotNetSolutionGlobal DotNetSolutionGlobal => _dotNetSolutionGlobal;
     public AssociatedEntryGroup? NoParentHavingAssociatedEntryGroup => _noParentHavingAssociatedEntryGroup;
     public List<IDotNetProject> DotNetProjectList => _dotNetProjectList;
-    public List<NestedProjectEntry> NestedProjectEntryList => _nestedProjectEntryList;
+    public List<SolutionFolder> SolutionFolderList => _solutionFolderList;
+    public List<GuidNestedProjectEntry> NestedProjectEntryList => _nestedProjectEntryList;
 
     public CompilationUnit Parse()
     {
@@ -86,7 +88,7 @@ public class DotNetSolutionParser
                             if (Guid.TryParse(pair.AssociatedValueToken.TextSpan.GetText(),
                                     out var solutionFolderIdGuid))
                             {
-                                var nestedProjectEntry = new NestedProjectEntry(
+                                var nestedProjectEntry = new GuidNestedProjectEntry(
                                     childProjectIdGuid,
                                     solutionFolderIdGuid);
 
@@ -229,32 +231,27 @@ public class DotNetSolutionParser
                         var relativePathFromSolutionFileString = relativePathFromSolutionFileStringAssociatedPair.AssociatedValueToken.TextSpan.GetText();
                         _ = Guid.TryParse(projectIdGuidAssociatedPair.AssociatedValueToken.TextSpan.GetText(), out var projectIdGuid);
 
-                        IDotNetProject dotNetProject;
-
                         if (projectTypeGuid == SolutionFolder.SolutionFolderProjectTypeGuid)
                         {
-                            dotNetProject = new SolutionFolder(
+                            _solutionFolderList.Add(new SolutionFolder(
                                 displayName,
                                 projectTypeGuid,
                                 relativePathFromSolutionFileString,
                                 projectIdGuid,
                                 builtGroup.OpenAssociatedGroupToken,
-                                builtGroup.CloseAssociatedGroupToken,
-                                default(AbsolutePath));
+                                builtGroup.CloseAssociatedGroupToken));
                         }
                         else
                         {
-                            dotNetProject = new CSharpProjectModel(
+                            _dotNetProjectList.Add(new CSharpProjectModel(
                                 displayName,
                                 projectTypeGuid,
                                 relativePathFromSolutionFileString,
                                 projectIdGuid,
                                 builtGroup.OpenAssociatedGroupToken,
                                 builtGroup.CloseAssociatedGroupToken,
-                                default(AbsolutePath));
+                                default(AbsolutePath)));
                         }
-
-                        _dotNetProjectList.Add(dotNetProject);
                     }
 
                     _noParentHavingAssociatedEntryGroup = builtGroup;
