@@ -1145,11 +1145,6 @@ public class GitIdeApi : IBackgroundTaskGroup
         return Task.CompletedTask;
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         GitIdeApiWorkKind workKind;

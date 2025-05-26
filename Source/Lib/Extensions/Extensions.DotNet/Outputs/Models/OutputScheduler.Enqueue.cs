@@ -23,11 +23,6 @@ public partial class OutputScheduler : IBackgroundTaskGroup
         }
     }
     
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         OutputSchedulerWorkKind workKind;

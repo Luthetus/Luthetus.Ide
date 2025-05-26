@@ -514,11 +514,6 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         return newDirectoryInfo;
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         MenuOptionsFactoryWorkKind workKind;

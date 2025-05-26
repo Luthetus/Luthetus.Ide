@@ -92,11 +92,6 @@ public class FileSystemIdeApi : IBackgroundTaskGroup
             await onAfterSaveCompletedWrittenDateTimeFunc.Invoke(fileLastWriteTime);
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         FileSystemIdeApiWorkKind workKind;

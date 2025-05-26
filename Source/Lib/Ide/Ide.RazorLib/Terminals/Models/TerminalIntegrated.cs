@@ -259,11 +259,6 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
         // _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         TerminalWorkKind workKind;

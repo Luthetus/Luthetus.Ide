@@ -698,11 +698,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideHeader.RenderRunDropdownOnClick()));
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         IdeBackgroundTaskApiWorkKind workKind;

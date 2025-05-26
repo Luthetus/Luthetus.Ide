@@ -69,11 +69,6 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 	/// </summary>
 	public Queue<TextEditorWorkArbitraryKind> WorkKindQueue { get; } = new();
 	
-	public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-	{
-		return null;
-	}
-	
 	public void PostRedundant(
         string name,
 		ResourceUri resourceUri,

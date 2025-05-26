@@ -73,11 +73,6 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
         return ValueTask.CompletedTask;
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-	{
-		return null;
-	}
-	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)
 	{
 		ConfigWorkKind workKind;

@@ -130,11 +130,6 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
         _panelService.RegisterPanelTab(leftPanel.Key, gitPanel, false);
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-	{
-		return null;
-	}
-	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)
 	{
         GitBackgroundTaskApiWorkKind workKind;

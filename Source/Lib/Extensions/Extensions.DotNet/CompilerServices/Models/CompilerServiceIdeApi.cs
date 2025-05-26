@@ -176,11 +176,6 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 			new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model));
 	}
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         CompilerServiceIdeWorkKind workKind;

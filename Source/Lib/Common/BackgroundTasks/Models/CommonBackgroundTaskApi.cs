@@ -303,11 +303,6 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         }
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-	{
-		return null;
-	}
-	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)
 	{
 		CommonWorkKind workKind;

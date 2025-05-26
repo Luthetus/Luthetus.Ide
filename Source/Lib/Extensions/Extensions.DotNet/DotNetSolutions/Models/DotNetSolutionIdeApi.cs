@@ -1154,11 +1154,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		});
 	}
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         DotNetSolutionIdeWorkKind workKind;

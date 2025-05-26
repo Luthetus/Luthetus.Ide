@@ -229,11 +229,6 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     	_throttleUiUpdateFromSetHasExecutingProcess.Run(default(byte));
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         TerminalWorkKind workKind;

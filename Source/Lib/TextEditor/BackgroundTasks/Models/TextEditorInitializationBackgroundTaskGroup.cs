@@ -133,11 +133,6 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         _keymapService.RegisterKeymapLayer(TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         TextEditorInitializationBackgroundTaskGroupWorkKind workKind;

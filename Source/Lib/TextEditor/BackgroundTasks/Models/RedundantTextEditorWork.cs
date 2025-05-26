@@ -51,31 +51,6 @@ public struct RedundantTextEditorWork : IBackgroundTaskGroup
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public TextEditorService TextEditorService { get; }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        if (oldEvent is not RedundantTextEditorWork oldRedundantTextEditorWork)
-        {
-            // Keep both events
-            return null;
-        }
-
-        if (oldRedundantTextEditorWork.Name == Name &&
-		    oldRedundantTextEditorWork.ResourceUri == ResourceUri &&
-            oldRedundantTextEditorWork.ViewModelKey == ViewModelKey)
-        {
-            // Keep this event (via replacement)
-            return this;
-        }
-
-        // Keep both events
-        return null;
-    }
-    
-    public IBackgroundTaskGroup? LateBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-    	return null;
-    }
-
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	var editContext = new TextEditorEditContext(TextEditorService);

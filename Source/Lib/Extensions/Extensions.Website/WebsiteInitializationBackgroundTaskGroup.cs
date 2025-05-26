@@ -59,11 +59,6 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public void Enqueue_LuthetusWebsiteInitializerOnAfterRenderAsync()
     {
         lock (_workLock)

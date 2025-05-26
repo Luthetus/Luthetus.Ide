@@ -32,17 +32,6 @@ public struct UniqueTextEditorWork : IBackgroundTaskGroup
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public TextEditorService TextEditorService { get; }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        // Keep both events
-        return null;
-    }
-    
-    public IBackgroundTaskGroup? LateBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public async ValueTask HandleEvent(CancellationToken cancellationToken)
     {
     	var editContext = new TextEditorEditContext(TextEditorService);

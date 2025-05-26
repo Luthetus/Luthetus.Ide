@@ -73,11 +73,6 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	/// </summary>
 	public Queue<TextEditorWorkUiKind> WorkKindQueue { get; } = new();
 	
-	public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-	{
-		return null;
-	}
-	
 	/// <summary>
 	/// For thread safety you must ensure you invoke this "only" from the UI thread because there
 	/// is no thread safety in the implementation.

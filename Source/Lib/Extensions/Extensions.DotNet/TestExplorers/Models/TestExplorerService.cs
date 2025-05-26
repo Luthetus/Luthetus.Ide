@@ -278,11 +278,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         }
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         TestExplorerSchedulerWorkKind workKind;

@@ -422,11 +422,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
             });
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
         EditorIdeApiWorkKind workKind;
