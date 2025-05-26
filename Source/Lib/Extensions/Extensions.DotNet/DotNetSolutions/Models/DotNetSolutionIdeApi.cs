@@ -406,13 +406,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		        solutionFolderPath));
 		}
 		
-		Console.WriteLine("====");
-		foreach (var asd in solutionFolderList)
-		{
-			Console.WriteLine(asd.ActualName);
-		}
-		Console.WriteLine("====");
-		
 		foreach (var project in projectTagList)
 		{
 			var attributeNameValueTuples = project
@@ -449,34 +442,27 @@ Execution Terminal".ReplaceLineEndings("\n")));
     	var dotNetSolutionGlobal = new DotNetSolutionGlobal();
     	
     	// You have to iterate in reverse so ascending will put longest words to shortest (when iterating reverse).
-    	var sortedSolutionFolderList = solutionFolderList.OrderBy(x => x.ActualName).ToList();
-    	var clonedSortedSolutionFolderList = new List<SolutionFolder>(sortedSolutionFolderList);
+    	var childSolutionFolderList = solutionFolderList.OrderBy(x => x.ActualName).ToList();
+    	var parentSolutionFolderList = new List<SolutionFolder>(childSolutionFolderList);
     	
-    	for (int outerIndex = clonedSortedSolutionFolderList.Count - 1; outerIndex >= 0; outerIndex--)
+    	for (int parentIndex = parentSolutionFolderList.Count - 1; parentIndex >= 0; parentIndex--)
     	{
-    		var childSolutionFolder = clonedSortedSolutionFolderList[outerIndex];
-    		var parentActualName = string.Empty;
+    		var parentSolutionFolder = parentSolutionFolderList[parentIndex];
     		
-	    	for (int i = sortedSolutionFolderList.Count - 1; i >= 0; i--)
+	    	for (int childIndex = childSolutionFolderList.Count - 1; childIndex >= 0; childIndex--)
 	    	{
-	    		var sortedSolutionFolder = sortedSolutionFolderList[i];
+	    		var childSolutionFolder = childSolutionFolderList[childIndex];
 	    		
-	    		if (sortedSolutionFolder.ActualName != childSolutionFolder.ActualName &&
-	    			sortedSolutionFolder.ActualName.Contains(childSolutionFolder.ActualName))
+	    		if (childSolutionFolder.ActualName != parentSolutionFolder.ActualName &&
+	    			childSolutionFolder.ActualName.StartsWith(parentSolutionFolder.ActualName))
 	    		{
-	    			parentActualName = sortedSolutionFolder.ActualName;
-	    			break;
+	    			stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
+		    			ChildIsSolutionFolder: true,
+					    childSolutionFolder.ActualName,
+					    parentSolutionFolder.ActualName));
+					    
+				    childSolutionFolderList.RemoveAt(childIndex);
 	    		}
-	    	}
-	    	
-	    	if (parentActualName != string.Empty)
-	    	{
-	    		stringNestedProjectEntryList.Add(new StringNestedProjectEntry(
-	    			ChildIsSolutionFolder: true,
-				    childSolutionFolder.ActualName,
-				    parentActualName));
-	    		
-	    		clonedSortedSolutionFolderList.RemoveAt(outerIndex);
 	    	}
     	}
     	
