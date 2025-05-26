@@ -151,6 +151,12 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 				if (solutionFolderSelfStringNestedProjectEntryList.Contains(otherSolutionFolder.ActualName))
 					childTreeViewSolutionFolderList.Add(ConstructTreeViewSolutionFolder(otherSolutionFolder));
 			}
+			
+			foreach (var project in treeViewSolution.Item.DotNetProjectList)
+			{
+				if (projectSelfStringNestedProjectEntryList.Contains(project.RelativePathFromSolutionFileString))
+					childTreeViewCSharpProjectList.Add(ConstructTreeViewCSharpProject((CSharpProjectModel)project));
+			}
 		}
 		else
 		{
