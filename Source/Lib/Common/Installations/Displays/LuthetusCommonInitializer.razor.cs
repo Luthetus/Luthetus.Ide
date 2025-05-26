@@ -43,19 +43,19 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 		{
 			var token = _workerCancellationTokenSource.Token;
 
-			if (BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask is null)
+			if (BackgroundTaskService.ContinuousWorker.StartAsyncTask is null)
 			{
-				BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = Task.Run(
-					() => BackgroundTaskService.ContinuousTaskWorker.ExecuteAsync(token),
+				BackgroundTaskService.ContinuousWorker.StartAsyncTask = Task.Run(
+					() => BackgroundTaskService.ContinuousWorker.ExecuteAsync(token),
 					token);
 			}
 
 			if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
 			{
-				if (BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask is null)
+				if (BackgroundTaskService.IndefiniteWorker.StartAsyncTask is null)
 				{
-					BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = Task.Run(
-						() => BackgroundTaskService.IndefiniteTaskWorker.ExecuteAsync(token),
+					BackgroundTaskService.IndefiniteWorker.StartAsyncTask = Task.Run(
+						() => BackgroundTaskService.IndefiniteWorker.ExecuteAsync(token),
 						token);
 				}
 			}
@@ -79,7 +79,7 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     	_workerCancellationTokenSource.Cancel();
     	_workerCancellationTokenSource.Dispose();
     	
-    	BackgroundTaskService.ContinuousTaskWorker.StartAsyncTask = null;
-    	BackgroundTaskService.IndefiniteTaskWorker.StartAsyncTask = null;
+    	BackgroundTaskService.ContinuousWorker.StartAsyncTask = null;
+    	BackgroundTaskService.IndefiniteWorker.StartAsyncTask = null;
     }
 }

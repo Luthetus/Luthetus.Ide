@@ -8,15 +8,11 @@ public struct BackgroundTask : IBackgroundTaskGroup
 
     public BackgroundTask(
         Key<IBackgroundTaskGroup> backgroundTaskKey,
-        Key<BackgroundTaskQueue> queueKey,
-        string name,
         Func<ValueTask> runFunc)
     {
         _runFunc = runFunc;
 
         BackgroundTaskKey = backgroundTaskKey;
-        QueueKey = queueKey;
-        Name = name;
     }
 
     /// <summary>
@@ -25,15 +21,7 @@ public struct BackgroundTask : IBackgroundTaskGroup
     /// - this disables _taskCompletionSourceMap
     /// </summary>
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; }
-    public string Name { get; }
-    public bool EarlyBatchEnabled { get; init; }
     public bool __TaskCompletionSourceWasCreated { get; set; }
-
-	public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-	{
-		return null;
-	}
 
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {

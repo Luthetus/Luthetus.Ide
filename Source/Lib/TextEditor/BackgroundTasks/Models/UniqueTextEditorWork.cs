@@ -28,7 +28,6 @@ public struct UniqueTextEditorWork : IBackgroundTaskGroup
 
 	public string Name { get; set; }
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; set; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; set; } = BackgroundTaskFacts.ContinuousQueueKey;
     public bool EarlyBatchEnabled { get; set; }
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public TextEditorService TextEditorService { get; }

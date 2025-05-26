@@ -42,7 +42,6 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(ConfigBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
 

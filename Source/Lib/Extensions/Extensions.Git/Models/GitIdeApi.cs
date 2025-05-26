@@ -61,7 +61,6 @@ public class GitIdeApi : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(GitIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -79,7 +78,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.Status);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -133,7 +132,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.GetActiveBranchName);
             _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -177,7 +176,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.GetOriginName);
             _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -221,7 +220,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.Add);
             _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -283,7 +282,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.Unstage);
             _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -347,7 +346,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.Commit);
             _queue_Commit.Enqueue((repoAtTimeOfRequest, commitSummary));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -401,7 +400,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.BranchNew);
             _queue_BranchNew.Enqueue((repoAtTimeOfRequest, branchName));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -445,7 +444,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.BranchGetAll);
             _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -492,7 +491,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.BranchSet);
             _queue_BranchSet.Enqueue((repoAtTimeOfRequest, branchName));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -534,7 +533,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.PushToOriginWithTracking);
             _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -578,7 +577,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.Pull);
             _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -620,7 +619,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.Fetch);
             _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -669,7 +668,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.LogFile);
             _queue_general_callback.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -717,7 +716,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.ShowFile);
             _queue_general_callback.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -870,7 +869,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(GitIdeApiWorkKind.DiffFile);
             _queue_DiffFile.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     

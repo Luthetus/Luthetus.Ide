@@ -30,7 +30,6 @@ public class FileSystemIdeApi : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(FileSystemIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -53,7 +52,7 @@ public class FileSystemIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(FileSystemIdeApiWorkKind.SaveFile);
             _queue_SaveFile.Enqueue((absolutePath, content, onAfterSaveCompletedWrittenDateTimeFunc, cancellationToken));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 

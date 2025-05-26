@@ -76,7 +76,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(EditorIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -371,7 +370,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
                                     _queue_FileContentsWereModifiedOnDisk.Enqueue((
                                         inputFileAbsolutePathString, textEditorModel, fileLastWriteTime, notificationInformativeKey));
 
-                                    _backgroundTaskService.EnqueueGroup(this);
+                                    _backgroundTaskService.Continuous_EnqueueGroup(this);
                                 }
 
 								return Task.CompletedTask;

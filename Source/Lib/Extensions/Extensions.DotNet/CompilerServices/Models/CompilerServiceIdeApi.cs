@@ -43,7 +43,6 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(CompilerServiceIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -58,7 +57,7 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(CompilerServiceIdeWorkKind.SetCompilerServiceExplorerTreeView);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 

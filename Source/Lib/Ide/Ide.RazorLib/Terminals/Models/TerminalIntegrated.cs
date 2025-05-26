@@ -42,7 +42,6 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.IndefiniteQueueKey;
     public string Name { get; } = nameof(TerminalIntegrated);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -74,7 +73,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
             _queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -85,7 +84,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _backgroundTaskService.EnqueueAsync(
+		return _backgroundTaskService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",

@@ -121,7 +121,6 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(CompilerServiceIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -139,7 +138,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.SetDotNetSolution);
 			_queue_SetDotNetSolution.Enqueue(inSolutionAbsolutePath);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 
@@ -973,7 +972,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
         {
             _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.SetDotNetSolutionTreeView);
 			_queue_SetDotNetSolutionTreeView.Enqueue(dotNetSolutionModelKey);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 
@@ -1111,7 +1110,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			_queue_Website_AddExistingProjectToSolution.Enqueue(
                 (dotNetSolutionModelKey, projectTemplateShortName, cSharpProjectName, cSharpProjectAbsolutePath));
 
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 

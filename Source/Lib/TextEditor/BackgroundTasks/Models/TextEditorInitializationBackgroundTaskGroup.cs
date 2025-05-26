@@ -33,7 +33,6 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(TextEditorInitializationBackgroundTaskGroup);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -54,7 +53,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(TextEditorInitializationBackgroundTaskGroupWorkKind.LuthetusTextEditorInitializerOnInit);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 

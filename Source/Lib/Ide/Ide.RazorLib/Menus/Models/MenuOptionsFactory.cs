@@ -38,7 +38,6 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(MenuOptionsFactory);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -215,7 +214,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                 namespacePath,
                 onAfterCompletion));
 
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -272,7 +271,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformNewDirectory);
             _queue_PerformNewDirectory.Enqueue((directoryName, parentDirectory, onAfterCompletion));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -299,7 +298,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformDeleteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -327,7 +326,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCopyFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -350,7 +349,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCutFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -373,7 +372,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformPasteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((receivingDirectory, onAfterCompletion));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     

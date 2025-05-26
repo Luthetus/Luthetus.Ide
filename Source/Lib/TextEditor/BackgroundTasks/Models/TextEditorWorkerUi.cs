@@ -51,7 +51,6 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	}
 	
 	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     
     // Nervous about this not being considered an interpolated constant string.
     public string Name { get; } = "TextEditorWorkerUi";
@@ -87,7 +86,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	{
 		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnDoubleClick);
 		OnDoubleClickQueue.Enqueue(onDoubleClick);
-		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
+		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
 	/// <summary>
@@ -98,7 +97,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	{
 		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnKeyDown);
 		OnKeyDownQueue.Enqueue(onKeyDown);
-		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
+		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
 	/// <summary>
@@ -109,7 +108,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	{
 		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnMouseDown);
 		OnMouseDownQueue.Enqueue(onMouseDown);
-		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
+		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
 	/// <summary>
@@ -120,7 +119,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	{
 		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnMouseMove);
 		OnMouseMoveQueue.Enqueue(onMouseMove);
-		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
+		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
 	/// <summary>
@@ -131,7 +130,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	{
 		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnScrollHorizontal);
 		OnScrollHorizontalQueue.Enqueue(onScrollHorizontal);
-		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
+		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
 	/// <summary>
@@ -142,7 +141,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	{
 		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnScrollVertical);
 		OnScrollVerticalQueue.Enqueue(onScrollVertical);
-		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
+		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
 	/// <summary>
@@ -153,7 +152,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 	{
 		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnWheel);
 		OnWheelQueue.Enqueue(onWheel);
-		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
+		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)

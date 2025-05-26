@@ -42,7 +42,6 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(FolderExplorerIdeApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -59,7 +58,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(FolderExplorerIdeApiWorkKind.SetFolderExplorerState);
             queue_general_AbsolutePath.Enqueue(folderAbsolutePath);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -80,7 +79,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(FolderExplorerIdeApiWorkKind.SetFolderExplorerTreeView);
             queue_general_AbsolutePath.Enqueue(folderAbsolutePath);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 

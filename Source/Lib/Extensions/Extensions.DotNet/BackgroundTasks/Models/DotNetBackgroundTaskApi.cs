@@ -214,7 +214,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     public ICompilerServiceExplorerService CompilerServiceExplorerService { get; }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(DotNetBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -236,7 +235,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		{
 			_workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles);
 			_queue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles.Enqueue(commandArgs);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 	
@@ -278,7 +277,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.LuthetusExtensionsDotNetInitializerOnInit);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -420,7 +419,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.LuthetusExtensionsDotNetInitializerOnAfterRender);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -733,7 +732,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.SubmitNuGetQuery);
             _queue_SubmitNuGetQuery.Enqueue(query);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -756,7 +755,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName);
             _queue_RunTestByFullyQualifiedName.Enqueue((treeViewStringFragment, fullyQualifiedName, treeViewProjectTestModel));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     

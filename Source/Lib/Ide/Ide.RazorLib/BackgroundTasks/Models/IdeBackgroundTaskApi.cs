@@ -178,7 +178,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     public InputFileIdeApi InputFile { get; }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(IdeBackgroundTaskApi);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -196,7 +195,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(IdeBackgroundTaskApiWorkKind.LuthetusIdeInitializerOnInit);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -469,7 +468,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit);
             _queue_IdeHeaderOnInit.Enqueue(ideHeader);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 

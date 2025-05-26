@@ -39,7 +39,6 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     public string Name { get; } = nameof(DotNetMenuOptionsFactory);
     public bool EarlyBatchEnabled { get; } = false;
 
@@ -195,7 +194,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _queue_PerformRemoveCSharpProjectReferenceFromSolution.Enqueue(
 				(treeViewSolution, projectNode, terminal, notificationService, onAfterCompletion));
 
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -288,7 +287,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _queue_PerformRemoveProjectToProjectReference.Enqueue(
 				(treeViewCSharpProjectToProjectReference, terminal, notificationService, onAfterCompletion));
 
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -336,7 +335,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _queue_PerformMoveProjectToSolutionFolder.Enqueue(
 				(treeViewSolution, treeViewProjectToMove, solutionFolderPath, terminal, notificationService, onAfterCompletion));
 
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -396,7 +395,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _queue_PerformRemoveNuGetPackageReferenceFromProject.Enqueue(
 				(modifyProjectNamespacePath, treeViewCSharpProjectNugetPackageReference, terminal, notificationService, onAfterCompletion));
 
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 	

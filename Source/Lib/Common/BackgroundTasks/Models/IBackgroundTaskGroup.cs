@@ -5,7 +5,6 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 public interface IBackgroundTaskGroup
 {
 	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; }
-    public Key<BackgroundTaskQueue> QueueKey { get; }
     public bool __TaskCompletionSourceWasCreated { get; set; }
     
     /// <summary>
