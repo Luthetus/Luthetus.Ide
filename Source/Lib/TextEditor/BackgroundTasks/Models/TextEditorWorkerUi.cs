@@ -43,7 +43,6 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </summary>
 public class TextEditorWorkerUi : IBackgroundTaskGroup
 {
-	private readonly object _workKindQueueLock = new();
 	private readonly TextEditorService _textEditorService;
 	
 	public TextEditorWorkerUi(TextEditorService textEditorService)
@@ -51,14 +50,11 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		_textEditorService = textEditorService;
 	}
 	
-	/*private TextEditorWorkUiKind _previousTextEditorWorkUiKind = TextEditorWorkUiKind.None;
-	private OnMouseMove _previousOnMouseMove = default;*/
-	
 	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
     
     // Nervous about this not being considered an interpolated constant string.
-    public string Name { get; } = "TextEditorWorker";
+    public string Name { get; } = "TextEditorWorkerUi";
     
     public bool EarlyBatchEnabled { get; } = false;
     
@@ -71,7 +67,6 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
     public Queue<OnScrollHorizontal> OnScrollHorizontalQueue { get; } = new();
 	public Queue<OnScrollVertical> OnScrollVerticalQueue { get; } = new();
 	public Queue<OnWheel> OnWheelQueue { get; } = new();
-	public Queue<OnWheelBatch> OnWheelBatchQueue { get; } = new();
 	
 	/// <summary>
 	/// If multiple EventKind of the same are enqueued one after another then
@@ -84,99 +79,81 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		return null;
 	}
 	
-	public void EnqueueOnDoubleClick(OnDoubleClick onDoubleClick)
+	/// <summary>
+	/// For thread safety you must ensure you invoke this "only" from the UI thread because there
+	/// is no thread safety in the implementation.
+	/// </summary>
+	public void UnsafeEnqueueOnDoubleClick(OnDoubleClick onDoubleClick)
 	{
-		lock (_workKindQueueLock)
-		{
-			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnDoubleClick;
-			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnDoubleClick);
-			OnDoubleClickQueue.Enqueue(onDoubleClick);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
+		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnDoubleClick);
+		OnDoubleClickQueue.Enqueue(onDoubleClick);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
-	public void EnqueueOnKeyDown(OnKeyDown onKeyDown)
+	/// <summary>
+	/// For thread safety you must ensure you invoke this "only" from the UI thread because there
+	/// is no thread safety in the implementation.
+	/// </summary>
+	public void UnsafeEnqueueOnKeyDown(OnKeyDown onKeyDown)
 	{
-		lock (_workKindQueueLock)
-		{
-			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnKeyDown;
-			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnKeyDown);
-			OnKeyDownQueue.Enqueue(onKeyDown);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
+		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnKeyDown);
+		OnKeyDownQueue.Enqueue(onKeyDown);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
-	public void EnqueueOnMouseDown(OnMouseDown onMouseDown)
+	/// <summary>
+	/// For thread safety you must ensure you invoke this "only" from the UI thread because there
+	/// is no thread safety in the implementation.
+	/// </summary>
+	public void UnsafeEnqueueOnMouseDown(OnMouseDown onMouseDown)
 	{
-		lock (_workKindQueueLock)
-		{
-			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnMouseDown;
-			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnMouseDown);
-			OnMouseDownQueue.Enqueue(onMouseDown);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
+		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnMouseDown);
+		OnMouseDownQueue.Enqueue(onMouseDown);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
-	public void EnqueueOnMouseMove(OnMouseMove onMouseMove)
+	/// <summary>
+	/// For thread safety you must ensure you invoke this "only" from the UI thread because there
+	/// is no thread safety in the implementation.
+	/// </summary>
+	public void UnsafeEnqueueOnMouseMove(OnMouseMove onMouseMove)
 	{
-		lock (_workKindQueueLock)
-		{
-			/*if (_previousTextEditorWorkUiKind == TextEditorWorkUiKind.OnMouseMove)
-			{
-				_previousOnMouseMove = onMouseMove;
-				Console.WriteLine("Skip");
-				return;
-			}*/
-		
-			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnMouseMove;
-			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnMouseMove);
-			OnMouseMoveQueue.Enqueue(onMouseMove);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
+		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnMouseMove);
+		OnMouseMoveQueue.Enqueue(onMouseMove);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
-	public void EnqueueOnScrollHorizontal(OnScrollHorizontal onScrollHorizontal)
+	/// <summary>
+	/// For thread safety you must ensure you invoke this "only" from the UI thread because there
+	/// is no thread safety in the implementation.
+	/// </summary>
+	public void UnsafeEnqueueOnScrollHorizontal(OnScrollHorizontal onScrollHorizontal)
 	{
-		lock (_workKindQueueLock)
-		{
-			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnScrollHorizontal;
-			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnScrollHorizontal);
-			OnScrollHorizontalQueue.Enqueue(onScrollHorizontal);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
+		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnScrollHorizontal);
+		OnScrollHorizontalQueue.Enqueue(onScrollHorizontal);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
-	public void EnqueueOnScrollVertical(OnScrollVertical onScrollVertical)
+	/// <summary>
+	/// For thread safety you must ensure you invoke this "only" from the UI thread because there
+	/// is no thread safety in the implementation.
+	/// </summary>
+	public void UnsafeEnqueueOnScrollVertical(OnScrollVertical onScrollVertical)
 	{
-		lock (_workKindQueueLock)
-		{
-			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnScrollVertical;
-			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnScrollVertical);
-			OnScrollVerticalQueue.Enqueue(onScrollVertical);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
+		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnScrollVertical);
+		OnScrollVerticalQueue.Enqueue(onScrollVertical);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
-	public void EnqueueOnWheel(OnWheel onWheel)
+	/// <summary>
+	/// For thread safety you must ensure you invoke this "only" from the UI thread because there
+	/// is no thread safety in the implementation.
+	/// </summary>
+	public void UnsafeEnqueueOnWheel(OnWheel onWheel)
 	{
-		lock (_workKindQueueLock)
-		{
-			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnWheel;
-			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnWheel);
-			OnWheelQueue.Enqueue(onWheel);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
-	}
-	
-	public void EnqueueOnWheelBatch(OnWheelBatch onWheelBatch)
-	{
-		lock (_workKindQueueLock)
-		{
-			// _previousTextEditorWorkUiKind = TextEditorWorkUiKind.OnWheelBatch;
-			WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnWheelBatch);
-			OnWheelBatchQueue.Enqueue(onWheelBatch);
-			_textEditorService.BackgroundTaskService.EnqueueGroup(this);
-		}
+		WorkKindQueue.Enqueue(TextEditorWorkUiKind.OnWheel);
+		OnWheelQueue.Enqueue(onWheel);
+		_textEditorService.BackgroundTaskService.EnqueueGroup(this);
 	}
 	
 	public ValueTask HandleEvent(CancellationToken cancellationToken)
@@ -187,15 +164,9 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		// by getting the count prior to starting the yield return deqeue
 		// then only dequeueing at most 'count' times.
 		
-		lock (_workKindQueueLock)
-		{
-			if (!WorkKindQueue.TryDequeue(out workKind))
-				return ValueTask.CompletedTask;
-			
-			// if (WorkKindQueue.Count == 0)
-			// 	_previousTextEditorWorkUiKind = TextEditorWorkUiKind.None;
-		}
-			
+		if (!WorkKindQueue.TryDequeue(out workKind))
+			return ValueTask.CompletedTask;
+		
 		switch (workKind)
 		{
 			case TextEditorWorkUiKind.OnDoubleClick:
@@ -212,8 +183,6 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 				return OnScrollVerticalQueue.Dequeue().HandleEvent(cancellationToken);
 			case TextEditorWorkUiKind.OnWheel:
 				return OnWheelQueue.Dequeue().HandleEvent(cancellationToken);
-			case TextEditorWorkUiKind.OnWheelBatch:
-				return OnWheelBatchQueue.Dequeue().HandleEvent(cancellationToken);
 			default:
 				Console.WriteLine($"{nameof(TextEditorWorkerUi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;

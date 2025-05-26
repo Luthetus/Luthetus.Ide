@@ -393,7 +393,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             return;
         }
         
-        TextEditorService.WorkerUi.EnqueueOnKeyDown(
+        TextEditorService.WorkerUi.UnsafeEnqueueOnKeyDown(
         	new OnKeyDown(
 				_componentData,
 	            new KeymapArgs(keyboardEventArgs),
@@ -427,7 +427,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
-        TextEditorService.WorkerUi.EnqueueOnDoubleClick(
+        TextEditorService.WorkerUi.UnsafeEnqueueOnDoubleClick(
         	new OnDoubleClick(
 	            mouseEventArgs,
 				_componentData,
@@ -439,7 +439,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         _componentData.ThinksLeftMouseButtonIsDown = true;
         _onMouseMoveMouseEventArgs = null;
 
-        TextEditorService.WorkerUi.EnqueueOnMouseDown(
+        TextEditorService.WorkerUi.UnsafeEnqueueOnMouseDown(
         	new OnMouseDown(
 	            mouseEventArgs,
 				_componentData,
@@ -524,7 +524,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	    
 	    if (localThinksLeftMouseButtonIsDown)
 	    {
-	        TextEditorService.WorkerUi.EnqueueOnMouseMove(
+	        TextEditorService.WorkerUi.UnsafeEnqueueOnMouseMove(
 	            new OnMouseMove(
 	            mouseEventArgs,
 	            _componentData,
@@ -539,7 +539,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
-    	TextEditorService.WorkerUi.EnqueueOnWheel(
+    	TextEditorService.WorkerUi.UnsafeEnqueueOnWheel(
         	new OnWheel(
 	            wheelEventArgs,
 	            _componentData,
@@ -803,7 +803,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 			}
 
-			TextEditorService.WorkerUi.EnqueueOnScrollHorizontal(onScrollHorizontal);
+			TextEditorService.WorkerUi.UnsafeEnqueueOnScrollHorizontal(onScrollHorizontal);
         }
         else
         {
@@ -862,7 +862,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 			}
 
-			TextEditorService.WorkerUi.EnqueueOnScrollVertical(onScrollVertical);
+			TextEditorService.WorkerUi.UnsafeEnqueueOnScrollVertical(onScrollVertical);
         }
         else
         {

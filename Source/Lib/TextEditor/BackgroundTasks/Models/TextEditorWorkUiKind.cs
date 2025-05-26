@@ -10,5 +10,4 @@ public enum TextEditorWorkUiKind
     OnScrollHorizontal,
 	OnScrollVertical,
 	OnWheel,
-	OnWheelBatch
 }
