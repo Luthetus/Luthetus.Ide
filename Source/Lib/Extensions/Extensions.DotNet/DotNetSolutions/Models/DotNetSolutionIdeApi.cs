@@ -351,6 +351,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "Project")
 			.ToList();
 		
+		var solutionFolderPathHashSet = new HashSet<string>();
+		
 		foreach (var folder in folderTagList)
 		{
 			var attributeNameValueTuples = folder
@@ -370,13 +372,46 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			if (attribute.Item2 is null)
 				continue;
 
-			var nameNoExtension = new AbsolutePath(attribute.Item2, isDirectory: true, _environmentProvider)
-				.NameNoExtension;
+			var ancestorDirectoryList = new List<string>();
 
-			solutionFolderList.Add(new SolutionFolder(
-		        nameNoExtension,
-		        attribute.Item2));
+			var absolutePath = new AbsolutePath(
+				attribute.Item2,
+				isDirectory: true,
+				_environmentProvider,
+				ancestorDirectoryList);
+
+			solutionFolderPathHashSet.Add(absolutePath.Value);
+			
+			for (int i = 0; i < ancestorDirectoryList.Count; i++)
+			{
+				if (i == 0)
+					continue;
+					
+				solutionFolderPathHashSet.Add(ancestorDirectoryList[i]);
+			}
 		}
+		
+		// I'm too tired to decide if enumerating a HashSet is safe
+		var temporarySolutionFolderList = solutionFolderPathHashSet.ToList();
+		
+		foreach (var solutionFolderPath in temporarySolutionFolderList)
+		{
+			var absolutePath = new AbsolutePath(
+				solutionFolderPath,
+				isDirectory: true,
+				_environmentProvider);
+			
+			solutionFolderList.Add(new SolutionFolder(
+		        absolutePath.NameNoExtension,
+		        solutionFolderPath));
+		}
+		
+		Console.WriteLine("====");
+		foreach (var asd in solutionFolderList)
+		{
+			Console.WriteLine(asd.ActualName);
+		}
+		Console.WriteLine("====");
 		
 		foreach (var project in projectTagList)
 		{
@@ -425,7 +460,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	    	for (int i = sortedSolutionFolderList.Count - 1; i >= 0; i--)
 	    	{
 	    		var sortedSolutionFolder = sortedSolutionFolderList[i];
-	    		if (sortedSolutionFolder.ActualName.Contains(childSolutionFolder.ActualName))
+	    		
+	    		if (sortedSolutionFolder.ActualName != childSolutionFolder.ActualName &&
+	    			sortedSolutionFolder.ActualName.Contains(childSolutionFolder.ActualName))
 	    		{
 	    			parentActualName = sortedSolutionFolder.ActualName;
 	    			break;
@@ -442,6 +479,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	    		clonedSortedSolutionFolderList.RemoveAt(outerIndex);
 	    	}
     	}
+    	
+    	/*foreach (var stringNestedProjectEntry in stringNestedProjectEntryList)
+    	{
+    		Console.WriteLine($"ci_{stringNestedProjectEntry.ChildIdentifier} -- {stringNestedProjectEntry.SolutionFolderActualName}");
+    	}*/
 	
 		return ParseSharedSteps(
 			dotNetProjectList,

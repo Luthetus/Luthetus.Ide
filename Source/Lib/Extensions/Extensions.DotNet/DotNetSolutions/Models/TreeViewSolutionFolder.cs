@@ -103,8 +103,22 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 		var currentNode = (TreeViewNoType)this;
 
 		// First, find the TreeViewSolution
+		var infiniteLoopDebugLimitCounter = 0;
+		
 		while (currentNode is not TreeViewSolution && currentNode.Parent is not null)
 		{
+			if (++infiniteLoopDebugLimitCounter % 100_000 == 0)
+			{
+				if (currentNode.Parent is TreeViewSolutionFolder)
+				{
+					Console.WriteLine($"tree_view_solution_folder {((TreeViewSolutionFolder)currentNode.Parent).Item.ActualName} -- {Item.ActualName}");
+				}
+				else
+				{
+					Console.WriteLine($"tree_view_solution_folder parent_infinite_loop -- {Item.ActualName}");
+				}
+			}
+			
 			currentNode = currentNode.Parent;
 		}
 
