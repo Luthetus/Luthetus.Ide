@@ -53,7 +53,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     	
     	TextEditorService.OptionsApi.NeedsMeasured += OnNeedsMeasured;
 
-        TextEditorInitializationBackgroundTaskGroup.Enqueue_LuthetusTextEditorInitializerOnInit();
+        TextEditorInitializationBackgroundTaskGroup.Enqueue(TextEditorInitializationBackgroundTaskGroupWorkKind.LuthetusTextEditorInitializerOnInit);
             
         base.OnInitialized();
     }

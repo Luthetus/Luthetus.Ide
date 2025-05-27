@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -35,8 +36,8 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<TextEditorInitializationBackgroundTaskGroupWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<TextEditorInitializationBackgroundTaskGroupWorkKind> _workKindQueue = new();
+    
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IKeymapService _keymapService;
     private readonly LuthetusTextEditorConfig _textEditorConfig;
@@ -45,13 +46,10 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IContextService _contextService;
 
-    public void Enqueue_LuthetusTextEditorInitializerOnInit()
+    public void Enqueue(TextEditorInitializationBackgroundTaskGroupWorkKind workKind)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(TextEditorInitializationBackgroundTaskGroupWorkKind.LuthetusTextEditorInitializerOnInit);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workKindQueue.Enqueue(workKind);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
 
     public async ValueTask Do_LuthetusTextEditorInitializerOnInit()
@@ -132,25 +130,16 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        TextEditorInitializationBackgroundTaskGroupWorkKind workKind;
-
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
+        if (!_workKindQueue.TryDequeue(out TextEditorInitializationBackgroundTaskGroupWorkKind workKind))
+            return ValueTask.CompletedTask;
 
         switch (workKind)
         {
             case TextEditorInitializationBackgroundTaskGroupWorkKind.LuthetusTextEditorInitializerOnInit:
-            {
                 return Do_LuthetusTextEditorInitializerOnInit();
-            }
             default:
-            {
                 Console.WriteLine($"{nameof(TextEditorInitializationBackgroundTaskGroup)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }
