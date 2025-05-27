@@ -24,7 +24,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-        IdeBackgroundTaskApi.Enqueue_LuthetusIdeInitializerOnInit();
+        IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+        {
+        	WorkKind = IdeBackgroundTaskApiWorkKind.LuthetusIdeInitializerOnInit,
+        });
         base.OnInitialized();
 	}
 	

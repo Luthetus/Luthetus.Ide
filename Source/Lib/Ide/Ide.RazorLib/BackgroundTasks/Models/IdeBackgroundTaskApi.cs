@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -181,22 +182,18 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<IdeBackgroundTaskApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<IdeBackgroundTaskApiWorkArgs> _workQueue = new();
 
     private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
 
-    public void Enqueue_LuthetusIdeInitializerOnInit()
+    public void Enqueue(IdeBackgroundTaskApiWorkArgs workArgs)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(IdeBackgroundTaskApiWorkKind.LuthetusIdeInitializerOnInit);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
-    
+
     public ValueTask Do_LuthetusIdeInitializerOnInit()
     {
         if (_textEditorConfig.CustomThemeRecordList is not null)
@@ -458,18 +455,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         }
     }
 
-    private readonly Queue<IdeHeader> _queue_IdeHeaderOnInit = new();
-
-    public void Enqueue_IdeHeaderOnInit(IdeHeader ideHeader)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit);
-            _queue_IdeHeaderOnInit.Enqueue(ideHeader);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
-
     public ValueTask Do_IdeHeaderOnInit(IdeHeader ideHeader)
     {
         InitializeMenuFile();
@@ -698,30 +683,18 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        IdeBackgroundTaskApiWorkKind workKind;
+        if (!_workQueue.TryDequeue(out IdeBackgroundTaskApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.WorkKind)
         {
             case IdeBackgroundTaskApiWorkKind.LuthetusIdeInitializerOnInit:
-            {
                 return Do_LuthetusIdeInitializerOnInit();
-            }
             case IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit:
-            {
-                var args = _queue_IdeHeaderOnInit.Dequeue();
-                return Do_IdeHeaderOnInit(args);
-            }
+                return Do_IdeHeaderOnInit(workArgs.IdeHeader);
             default:
-            {
                 Console.WriteLine($"{nameof(IdeBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }
