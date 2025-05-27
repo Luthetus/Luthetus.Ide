@@ -113,23 +113,26 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
 
     public void ShowInputFile()
     {
-        _ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-            "Folder Explorer",
-            async absolutePath =>
+        _ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        {
+        	WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+            Message = "Folder Explorer",
+            OnAfterSubmitFunc = async absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
                     await Do_SetFolderExplorerState(absolutePath).ConfigureAwait(false);
             },
-            absolutePath =>
+            SelectionIsValidFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
             },
-            [
+            InputFilePatterns = [
                 new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-            ]);
+            ]
+        });
     }
 
     public ValueTask HandleEvent()

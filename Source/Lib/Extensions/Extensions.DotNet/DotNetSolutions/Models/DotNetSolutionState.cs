@@ -31,9 +31,11 @@ public record DotNetSolutionState(
     	IdeBackgroundTaskApi ideBackgroundTaskApi,
     	DotNetBackgroundTaskApi compilerServicesBackgroundTaskApi)
     {
-        ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-            "Solution Explorer",
-            absolutePath =>
+        ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		{
+			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			Message = "Solution Explorer",
+            OnAfterSubmitFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
                     compilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
@@ -44,7 +46,7 @@ public record DotNetSolutionState(
 
 				return Task.CompletedTask;
             },
-            absolutePath =>
+            SelectionIsValidFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
@@ -53,12 +55,13 @@ public record DotNetSolutionState(
                     absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION ||
     				absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X);
             },
-            new()
+            InputFilePatterns = new()
             {
                 new InputFilePattern(
                     ".NET Solution",
                     absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION ||
                     				absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X)
-            });
+            }
+        });
     }
 }

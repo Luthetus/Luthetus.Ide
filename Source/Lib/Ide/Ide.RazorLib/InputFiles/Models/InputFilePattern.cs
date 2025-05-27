@@ -2,7 +2,10 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
-public class InputFilePattern
+/// <summary>
+/// If either `PatternName` or `MatchesPatternFunc` is null then this is default.
+/// </summary>
+public struct InputFilePattern
 {
     public InputFilePattern(string patternName, Func<AbsolutePath, bool> matchesPatternFunc)
     {
@@ -12,4 +15,6 @@ public class InputFilePattern
 
     public string PatternName { get; }
     public Func<AbsolutePath, bool> MatchesPatternFunc { get; }
+    
+    public bool ConstructorWasInvoked => PatternName is null || MatchesPatternFunc is null;
 }

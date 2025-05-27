@@ -87,9 +87,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory(string message)
 	{
-		IdeBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-			message,
-			async absolutePath =>
+		IdeBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		{
+			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			Message = message,
+			OnAfterSubmitFunc = async absolutePath =>
 			{
 				if (absolutePath.ExactInput is null)
 					return;
@@ -97,17 +99,18 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				_viewModel.ParentDirectoryNameValue = absolutePath.Value;
 				await InvokeAsync(StateHasChanged);
 			},
-			absolutePath =>
+			SelectionIsValidFunc = absolutePath =>
 			{
 				if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(true);
 			},
-			new()
+			InputFilePatterns = new()
 			{
 				new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-			});
+			}
+		});
 	}
 
 	private async Task ReadProjectTemplates()

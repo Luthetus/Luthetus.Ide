@@ -91,9 +91,11 @@ public class EditorIdeApi : IBackgroundTaskGroup
     
     public void ShowInputFile()
     {
-        _ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-            "TextEditor",
-            absolutePath =>
+        _ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        {
+        	WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+            Message = "TextEditor",
+            OnAfterSubmitFunc = absolutePath =>
             {
             	// TODO: Why does 'isDirectory: false' not work?
 				_environmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
@@ -110,17 +112,18 @@ public class EditorIdeApi : IBackgroundTaskGroup
 				});
 				return Task.CompletedTask;
             },
-            absolutePath =>
+            SelectionIsValidFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
             },
-            new()
+            InputFilePatterns = new()
             {
-                    new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
-            });
+            	new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
+            }
+        });
     }
 
     public async Task FastParseFunc(FastParseArgs fastParseArgs)
