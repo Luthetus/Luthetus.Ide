@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
@@ -9,39 +10,26 @@ public partial class OutputScheduler : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<OutputSchedulerWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<OutputSchedulerWorkKind> _workKindQueue = new();
 
-    public void Enqueue_ConstructTreeView()
+    public void Enqueue(OutputSchedulerWorkKind outputSchedulerWorkKind)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(OutputSchedulerWorkKind.ConstructTreeView);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workKindQueue.Enqueue(outputSchedulerWorkKind);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
     
     public ValueTask HandleEvent()
     {
-        OutputSchedulerWorkKind workKind;
-
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
+        if (!_workKindQueue.TryDequeue(out OutputSchedulerWorkKind workKind))
+            return ValueTask.CompletedTask;
 
         switch (workKind)
         {
             case OutputSchedulerWorkKind.ConstructTreeView:
-            {
                 return Do_ConstructTreeView();
-            }
             default:
-            {
                 Console.WriteLine($"{nameof(OutputScheduler)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }
