@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-public struct BackgroundTask : IBackgroundTaskGroup
+public class BackgroundTask : IBackgroundTaskGroup
 {
     private readonly Func<ValueTask> _runFunc;
 

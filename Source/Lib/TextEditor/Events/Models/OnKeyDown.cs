@@ -34,6 +34,7 @@ public struct OnKeyDown
 
     public ValueTask HandleEvent(CancellationToken cancellationToken)
     {
-    	return ComponentData.Options.Keymap.HandleEvent(this);	
+    	// return ComponentData.Options.Keymap.HandleEvent(this);
+    	return ValueTask.CompletedTask;
     }
 }

@@ -37,6 +37,7 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -393,11 +394,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             return;
         }
         
-        TextEditorService.WorkerUi.UnsafeEnqueueOnKeyDown(
-        	new OnKeyDown(
-				_componentData,
-	            new KeymapArgs(keyboardEventArgs),
-	            TextEditorViewModelKey));
+        TextEditorService.WorkerUi.Enqueue(
+        	new TextEditorWorkerUiArgs(
+	        	_componentData,
+	        	TextEditorViewModelKey,
+		        keyboardEventArgs));
 	}
 
     private void ReceiveOnContextMenu()
@@ -425,11 +426,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
-        TextEditorService.WorkerUi.UnsafeEnqueueOnDoubleClick(
-        	new OnDoubleClick(
-	            mouseEventArgs,
-				_componentData,
-	            TextEditorViewModelKey));
+        TextEditorService.WorkerUi.Enqueue(
+        	new TextEditorWorkerUiArgs(
+	        	_componentData,
+	        	TextEditorViewModelKey,
+		        mouseEventArgs,
+		        TextEditorWorkUiKind.OnDoubleClick));
     }
 
     private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
@@ -437,11 +439,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         _componentData.ThinksLeftMouseButtonIsDown = true;
         _onMouseMoveMouseEventArgs = null;
 
-        TextEditorService.WorkerUi.UnsafeEnqueueOnMouseDown(
-        	new OnMouseDown(
-	            mouseEventArgs,
-				_componentData,
-	            TextEditorViewModelKey));
+        TextEditorService.WorkerUi.Enqueue(
+        	new TextEditorWorkerUiArgs(
+	        	_componentData,
+	        	TextEditorViewModelKey,
+		        mouseEventArgs,
+		        TextEditorWorkUiKind.OnMouseDown));
     }
 
     private void ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
@@ -518,11 +521,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	    
 	    if (localThinksLeftMouseButtonIsDown)
 	    {
-	        TextEditorService.WorkerUi.UnsafeEnqueueOnMouseMove(
-	            new OnMouseMove(
-	            mouseEventArgs,
-	            _componentData,
-	            TextEditorViewModelKey));
+	    	TextEditorService.WorkerUi.Enqueue(
+	        	new TextEditorWorkerUiArgs(
+		        	_componentData,
+		        	TextEditorViewModelKey,
+			        mouseEventArgs,
+		        	TextEditorWorkUiKind.OnMouseMove));
 	    }
 	}
 
@@ -533,11 +537,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
-    	TextEditorService.WorkerUi.UnsafeEnqueueOnWheel(
-        	new OnWheel(
-	            wheelEventArgs,
-	            _componentData,
-	            TextEditorViewModelKey));
+	    TextEditorService.WorkerUi.Enqueue(
+        	new TextEditorWorkerUiArgs(
+	        	_componentData,
+	        	TextEditorViewModelKey,
+		        wheelEventArgs));
     }
 
     private void ReceiveOnTouchStart(TouchEventArgs touchEventArgs)
@@ -754,15 +758,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         {
 			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
 		
-			OnScrollHorizontal onScrollHorizontal;
+			double scrollLeft;
 
 			if (onDragMouseEventArgs.ClientY < HORIZONTAL_clientYThresholdToResetScrollLeftPosition)
 			{
 				// Drag far left to reset scroll to original
-				onScrollHorizontal = new OnScrollHorizontal(
-					HORIZONTAL_scrollLeftOnMouseDown,
-					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
-					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+				scrollLeft = HORIZONTAL_scrollLeftOnMouseDown;
 			}
 			else
 			{
@@ -770,7 +771,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	            var scrollbarWidthInPixels = textEditorDimensions.Width - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 	
-	            var scrollLeft = HORIZONTAL_scrollLeftOnMouseDown +
+	            scrollLeft = HORIZONTAL_scrollLeftOnMouseDown +
 					diffX *
 	                renderBatchLocal.ViewModel.ScrollWidth /
 	                scrollbarWidthInPixels;
@@ -780,14 +781,23 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
 				if (scrollLeft < 0)
 					scrollLeft = 0;
-	
-				onScrollHorizontal = new OnScrollHorizontal(
-					scrollLeft,
-					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
-					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 			}
 
-			TextEditorService.WorkerUi.UnsafeEnqueueOnScrollHorizontal(onScrollHorizontal);
+			// Hack: I want all the events in a shared queue. All events other than scrolling events...
+			// ...can be stored in the same property as an 'object' type.
+			//
+			// Scrolling is a pain since it would mean copying around a double at all times
+			// that is only used for the scrolling events.
+			//
+			// Thus MouseEventArgs.ClientX will be used to store the scrollLeft.
+			onDragMouseEventArgs.ClientX = scrollLeft;
+			
+			TextEditorService.WorkerUi.Enqueue(
+	        	new TextEditorWorkerUiArgs(
+		        	_componentData,
+		        	TextEditorViewModelKey,
+			        onDragMouseEventArgs,
+			        TextEditorWorkUiKind.OnScrollHorizontal));
         }
         else
         {
@@ -813,15 +823,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         {
 			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
 
-			OnScrollVertical onScrollVertical;
+			double scrollTop;
 
 			if (onDragMouseEventArgs.ClientX < VERTICAL_clientXThresholdToResetScrollTopPosition)
 			{
 				// Drag far left to reset scroll to original
-				onScrollVertical = new OnScrollVertical(
-					VERTICAL_scrollTopOnMouseDown,
-					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
-					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+				scrollTop = VERTICAL_scrollTopOnMouseDown;
 			}
 			else
 			{
@@ -829,7 +836,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	            var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 	
-	            var scrollTop = VERTICAL_scrollTopOnMouseDown +
+	            scrollTop = VERTICAL_scrollTopOnMouseDown +
 					diffY *
 	                renderBatchLocal.ViewModel.ScrollHeight /
 	                scrollbarHeightInPixels;
@@ -839,14 +846,22 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
 				if (scrollTop < 0)
 					scrollTop = 0;
-	
-				onScrollVertical = new OnScrollVertical(
-					scrollTop,
-					renderBatchLocal.TextEditorRenderBatchConstants.ComponentData,
-					renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
 			}
 
-			TextEditorService.WorkerUi.UnsafeEnqueueOnScrollVertical(onScrollVertical);
+			// Hack: I want all the events in a shared queue. All events other than scrolling events...
+			// ...can be stored in the same property as an 'object' type.
+			//
+			// Scrolling is a pain since it would mean copying around a double at all times
+			// that is only used for the scrolling events.
+			//
+			// Thus MouseEventArgs.ClientY will be used to store the scrollTop.
+			onDragMouseEventArgs.ClientY = scrollTop;
+			TextEditorService.WorkerUi.Enqueue(
+	        	new TextEditorWorkerUiArgs(
+		        	_componentData,
+		        	TextEditorViewModelKey,
+			        onDragMouseEventArgs,
+			        TextEditorWorkUiKind.OnScrollVertical));
         }
         else
         {
