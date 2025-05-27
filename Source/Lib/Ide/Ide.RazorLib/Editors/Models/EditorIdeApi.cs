@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -79,11 +80,14 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<EditorIdeApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<EditorIdeApiWorkArgs> _workQueue = new();
 
-    private readonly Queue<(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)> _queue_FileContentsWereModifiedOnDisk = new();
-
+    public void Enqueue(EditorIdeApiWorkArgs workArgs)
+    {
+		_workQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
+    }
+    
     public void ShowInputFile()
     {
         _ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
@@ -357,15 +361,14 @@ public class EditorIdeApi : IBackgroundTaskGroup
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
                             new Func<Task>(() =>
                             {
-                                lock (_workLock)
-                                {
-                                    _workKindQueue.Enqueue(EditorIdeApiWorkKind.FileContentsWereModifiedOnDisk);
-
-                                    _queue_FileContentsWereModifiedOnDisk.Enqueue((
-                                        inputFileAbsolutePathString, textEditorModel, fileLastWriteTime, notificationInformativeKey));
-
-                                    _backgroundTaskService.Continuous_EnqueueGroup(this);
-                                }
+                            	Enqueue(new EditorIdeApiWorkArgs
+                            	{
+                            		WorkKind = EditorIdeApiWorkKind.FileContentsWereModifiedOnDisk,
+                            		InputFileAbsolutePathString = inputFileAbsolutePathString,
+                            		TextEditorModel = textEditorModel,
+                            		FileLastWriteTime = fileLastWriteTime,
+                            		NotificationInformativeKey = notificationInformativeKey,
+                            	});
 
 								return Task.CompletedTask;
 							})
@@ -416,27 +419,17 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        EditorIdeApiWorkKind workKind;
+        if (!_workQueue.TryDequeue(out EditorIdeApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.WorkKind)
         {
             case EditorIdeApiWorkKind.FileContentsWereModifiedOnDisk:
-            {
-                var args = _queue_FileContentsWereModifiedOnDisk.Dequeue();
                 return Do_FileContentsWereModifiedOnDisk(
-                    args.inputFileAbsolutePathString, args.textEditorModel, args.fileLastWriteTime, args.notificationInformativeKey);
-            }
+                    workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
             default:
-            {
                 Console.WriteLine($"{nameof(EditorIdeApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }
