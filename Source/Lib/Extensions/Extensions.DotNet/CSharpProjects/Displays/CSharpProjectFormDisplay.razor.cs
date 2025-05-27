@@ -18,6 +18,7 @@ using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.Websites;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.CSharpProjects.Displays;
 
@@ -236,8 +237,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        	{
 				        	DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
-							DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(
-								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
+							DotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+							{
+								WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+								DotNetSolutionAbsolutePath = immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath,
+							});
 							return Task.CompletedTask;
 						}
 			        };

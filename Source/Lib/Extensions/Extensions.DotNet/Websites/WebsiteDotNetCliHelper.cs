@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Extensions.DotNet.CSharpProjects.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.Websites;
 
@@ -49,11 +50,14 @@ public class WebsiteDotNetCliHelper
 			cSharpProjectAbsolutePathString,
 			false);
 
-		compilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_Website_AddExistingProjectToSolution(
-			immutableView.DotNetSolutionModel.Key,
-			immutableView.ProjectTemplateShortNameValue,
-			immutableView.CSharpProjectNameValue,
-			cSharpAbsolutePath);
+		compilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+		{
+			WorkKind = DotNetSolutionIdeWorkKind.Website_AddExistingProjectToSolution,
+			DotNetSolutionModelKey = immutableView.DotNetSolutionModel.Key,
+			ProjectTemplateShortName = immutableView.ProjectTemplateShortNameValue,
+			CSharpProjectName = immutableView.CSharpProjectNameValue,
+			CSharpProjectAbsolutePath = cSharpAbsolutePath,
+		});
 
 		// Close Dialog
 		dialogService.ReduceDisposeAction(dialogRecord.DynamicViewModelKey);

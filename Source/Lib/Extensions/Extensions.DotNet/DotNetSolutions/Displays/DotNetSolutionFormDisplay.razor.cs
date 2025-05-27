@@ -14,6 +14,7 @@ using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 
@@ -138,7 +139,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 						solutionAbsolutePathString,
 						false);
 
-					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+					{
+						WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+						DotNetSolutionAbsolutePath = solutionAbsolutePath,
+					});
 					return Task.CompletedTask;
 	        	}
 	        };
@@ -182,7 +187,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			solutionAbsolutePathString,
 			false);
 
-		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
+		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+		{
+			WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+			DotNetSolutionAbsolutePath = solutionAbsolutePath,
+		});
 	}
 
 	public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"
