@@ -98,21 +98,19 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
 
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.TriggerSave),
-            editContext =>
-            {
-            	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	TextEditorCommandDefaultFunctions.TriggerSave(
-            		editContext,
-            		modelModifier,
-            		viewModelModifier,
-            		CommonComponentRenderers,
-            		NotificationService);
-            	return ValueTask.CompletedTask;
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+        	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	TextEditorCommandDefaultFunctions.TriggerSave(
+        		editContext,
+        		modelModifier,
+        		viewModelModifier,
+        		CommonComponentRenderers,
+        		NotificationService);
+        	return ValueTask.CompletedTask;
+        });
         return Task.CompletedTask;
     }
 
@@ -157,19 +155,17 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     	
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.CopyAsync),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	return TextEditorCommandDefaultFunctions.CopyAsync(
-                	editContext,
-                	modelModifier,
-                	viewModelModifier,
-                	ClipboardService);
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	return TextEditorCommandDefaultFunctions.CopyAsync(
+            	editContext,
+            	modelModifier,
+            	viewModelModifier,
+            	ClipboardService);
+        });
         return Task.CompletedTask;
     }
 
@@ -179,19 +175,17 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     	
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.CutAsync),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	return TextEditorCommandDefaultFunctions.CutAsync(
-            		editContext,
-                	modelModifier,
-                	viewModelModifier,
-                	ClipboardService);
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	return TextEditorCommandDefaultFunctions.CutAsync(
+        		editContext,
+            	modelModifier,
+            	viewModelModifier,
+            	ClipboardService);
+        });
         return Task.CompletedTask;
     }
 
@@ -201,19 +195,17 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     	
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.PasteAsync),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	return TextEditorCommandDefaultFunctions.PasteAsync(
-                	editContext,
-                	modelModifier,
-                	viewModelModifier,
-                	ClipboardService);
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	return TextEditorCommandDefaultFunctions.PasteAsync(
+            	editContext,
+            	modelModifier,
+            	viewModelModifier,
+            	ClipboardService);
+        });
         return Task.CompletedTask;
     }
 
@@ -223,20 +215,18 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
 
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.Redo),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	TextEditorCommandDefaultFunctions.Redo(
-            		editContext,
-            		modelModifier,
-            		viewModelModifier);
-            	
-            	return ValueTask.CompletedTask;
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	TextEditorCommandDefaultFunctions.Redo(
+        		editContext,
+        		modelModifier,
+        		viewModelModifier);
+        	
+        	return ValueTask.CompletedTask;
+        });
         return Task.CompletedTask;
     }
 
@@ -246,19 +236,17 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     	
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.Undo),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	TextEditorCommandDefaultFunctions.Undo(
-            		editContext,
-            		modelModifier,
-            		viewModelModifier);
-        		return ValueTask.CompletedTask;
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	TextEditorCommandDefaultFunctions.Undo(
+        		editContext,
+        		modelModifier,
+        		viewModelModifier);
+    		return ValueTask.CompletedTask;
+        });
         return Task.CompletedTask;
     }
 
@@ -268,20 +256,18 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     	
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.SelectAll),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	TextEditorCommandDefaultFunctions.SelectAll(
-            		editContext,
-            		modelModifier,
-            		viewModelModifier);
-            		
-        		return ValueTask.CompletedTask;
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	TextEditorCommandDefaultFunctions.SelectAll(
+        		editContext,
+        		modelModifier,
+        		viewModelModifier);
+        		
+    		return ValueTask.CompletedTask;
+        });
         return Task.CompletedTask;
     }
 
@@ -291,19 +277,17 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     	
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.TriggerRemeasure),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	TextEditorCommandDefaultFunctions.TriggerRemeasure(
-            		editContext,
-            		viewModelModifier);
-            		
-        		return ValueTask.CompletedTask;
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	TextEditorCommandDefaultFunctions.TriggerRemeasure(
+        		editContext,
+        		viewModelModifier);
+        		
+    		return ValueTask.CompletedTask;
+        });
         return Task.CompletedTask;
     }
 
@@ -337,15 +321,13 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 		    MenuOptionKind.Delete,
 		    onClickFunc: () =>
 		    {
-			    TextEditorService.WorkerArbitrary.PostUnique(
-		            nameof(DoReloadOnClick),
-		            editContext =>
-		            {
-		            	editContext.TextEditorService.ViewModelApi.Dispose(editContext, renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-		            	DirtyResourceUriService.RemoveDirtyResourceUri(renderBatchLocal.Model.PersistentState.ResourceUri);
-		            	editContext.TextEditorService.ModelApi.Dispose(editContext, renderBatchLocal.Model.PersistentState.ResourceUri);
-		            	return ValueTask.CompletedTask;
-		            });
+			    TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+	            {
+	            	editContext.TextEditorService.ViewModelApi.Dispose(editContext, renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+	            	DirtyResourceUriService.RemoveDirtyResourceUri(renderBatchLocal.Model.PersistentState.ResourceUri);
+	            	editContext.TextEditorService.ModelApi.Dispose(editContext, renderBatchLocal.Model.PersistentState.ResourceUri);
+	            	return ValueTask.CompletedTask;
+	            });
 		    	return Task.CompletedTask;
 		    }));
 		    
@@ -374,18 +356,16 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!renderBatchLocal.IsValid)
     		return Task.CompletedTask;
     	
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(TextEditorCommandDefaultFunctions.TriggerRemeasure),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-            
-            	TextEditorCommandDefaultFunctions.TriggerRemeasure(
-            		editContext,
-            		viewModelModifier);
-            	return ValueTask.CompletedTask;
-            });
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        
+        	TextEditorCommandDefaultFunctions.TriggerRemeasure(
+        		editContext,
+        		viewModelModifier);
+        	return ValueTask.CompletedTask;
+        });
         return Task.CompletedTask;
     }
 

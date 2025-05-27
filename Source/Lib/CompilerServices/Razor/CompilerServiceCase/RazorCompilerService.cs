@@ -105,7 +105,7 @@ public sealed class RazorCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_textEditorService.WorkerArbitrary.PostUnique(nameof(ICompilerService), editContext =>
+    	_textEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
 			var modelModifier = editContext.GetModelModifier(resourceUri);
 

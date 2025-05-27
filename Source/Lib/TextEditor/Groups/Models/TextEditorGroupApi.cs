@@ -321,18 +321,14 @@ public sealed class TextEditorGroupApi
 		Key<TextEditorGroup> groupKey,
     	Key<TextEditorViewModel> viewModelKey)
 	{
-		_textEditorService.WorkerArbitrary.PostRedundant(
-			nameof(PostScroll),
-			ResourceUri.Empty,
-			viewModelKey,
-			editContext =>
-			{
-				var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-	            if (viewModelModifier is null)
-	                return ValueTask.CompletedTask;
+		_textEditorService.WorkerArbitrary.PostUnique(editContext =>
+		{
+			var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            if (viewModelModifier is null)
+                return ValueTask.CompletedTask;
 
-    			viewModelModifier.ScrollWasModified = true;
-				return ValueTask.CompletedTask;
-			});
+			viewModelModifier.ScrollWasModified = true;
+			return ValueTask.CompletedTask;
+		});
 	}
 }

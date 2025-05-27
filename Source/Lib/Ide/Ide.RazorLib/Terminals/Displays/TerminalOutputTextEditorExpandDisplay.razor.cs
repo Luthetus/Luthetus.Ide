@@ -195,112 +195,110 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	{
 		_throttle.Run(_ =>
         {
-        	TextEditorService.WorkerArbitrary.PostUnique(
-				nameof(TerminalOutput),
-				editContext =>
-				{
-					var formatter = Terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
-						x => x.Name == nameof(TerminalOutputFormatterExpand));
-						
-					if (formatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
-						return ValueTask.CompletedTask;
+        	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+			{
+				var formatter = Terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
+					x => x.Name == nameof(TerminalOutputFormatterExpand));
 					
-					var modelModifier = editContext.GetModelModifier(terminalOutputFormatterExpand.TextEditorModelResourceUri);
-					var viewModelModifier = editContext.GetViewModelModifier(terminalOutputFormatterExpand.TextEditorViewModelKey);
-
-					if (modelModifier is null || viewModelModifier is null)
-						return ValueTask.CompletedTask;
-
-					var localTerminal = Terminal;
-					
-					var showingFinalLine = false;
-    
-				    if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
-				    {
-				        var last = viewModelModifier.VirtualizationResult.EntryList.Last();
-				        if (last.LineIndex == modelModifier.LineCount - 1)
-				            showingFinalLine = true;
-				    }
-
-					var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.TerminalOutput
-						.GetOutputFormatted(nameof(TerminalOutputFormatterExpand));
-					
-					modelModifier.SetContent(outputFormatted.Text);
-					
-					var lineIndexOriginal = viewModelModifier.LineIndex;
-					var columnIndexOriginal = viewModelModifier.ColumnIndex;
-					
-					// Move Cursor, try to preserve the current cursor position.
-					{
-						if (viewModelModifier.LineIndex > modelModifier.LineCount - 1)
-							viewModelModifier.LineIndex = modelModifier.LineCount - 1;
-						
-						var lineInformation = modelModifier.GetLineInformation(viewModelModifier.LineIndex);
-						
-						if (viewModelModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-							viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
-					}
-					
-					if (showingFinalLine)
-				    {
-				    	// Console.WriteLine($"showingFinalLine: {showingFinalLine}");
-				    
-				        var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
-				        
-				        var originalScrollLeft = viewModelModifier.ScrollLeft;
-				        
-				        var textSpan = new TextEditorTextSpan(
-				            startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
-				            endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
-				            decorationByte: 0,
-				            modelModifier.PersistentState.ResourceUri,
-				            sourceText: string.Empty,
-				            getTextPrecalculatedResult: string.Empty);
-				        
-				        TextEditorService.ViewModelApi.ScrollIntoView(
-				            editContext,
-				            modelModifier,
-				            viewModelModifier,
-				            textSpan);
-				        
-				        //viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithMutateScrollTop(
-				        //    (int)viewModelModifier.CharAndLineMeasurements.LineHeight,
-				        //    viewModelModifier.TextEditorDimensions);
-				        
-				        viewModelModifier.SetScrollLeft(
-				            (int)originalScrollLeft,
-				            viewModelModifier.TextEditorDimensions);
-				    }
-				    else if (lineIndexOriginal != viewModelModifier.LineIndex ||
-						     columnIndexOriginal != viewModelModifier.ColumnIndex)
-					{
-						viewModelModifier.PersistentState.ShouldRevealCursor = true;
-					}  
-					
-					var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
-						terminalOutputFormatterExpand.TextEditorModelResourceUri);
-
-					if (compilerServiceResource is TerminalResource terminalResource)
-					{					
-						terminalResource.CompilationUnit.ManualDecorationTextSpanList.Clear();
-						terminalResource.CompilationUnit.ManualDecorationTextSpanList.AddRange(
-							outputFormatted.SymbolList.Select(x => x.TextSpan));
-								
-						terminalResource.CompilationUnit.ManualSymbolList.Clear();
-						terminalResource.CompilationUnit.ManualSymbolList.AddRange(outputFormatted.SymbolList);
-
-						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-							editContext,
-							modelModifier);
-							
-						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
-							editContext,
-							modelModifier,
-							outputFormatted.TextSpanList);
-					}
-					
+				if (formatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
 					return ValueTask.CompletedTask;
-				});
+				
+				var modelModifier = editContext.GetModelModifier(terminalOutputFormatterExpand.TextEditorModelResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(terminalOutputFormatterExpand.TextEditorViewModelKey);
+
+				if (modelModifier is null || viewModelModifier is null)
+					return ValueTask.CompletedTask;
+
+				var localTerminal = Terminal;
+				
+				var showingFinalLine = false;
+
+			    if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
+			    {
+			        var last = viewModelModifier.VirtualizationResult.EntryList.Last();
+			        if (last.LineIndex == modelModifier.LineCount - 1)
+			            showingFinalLine = true;
+			    }
+
+				var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.TerminalOutput
+					.GetOutputFormatted(nameof(TerminalOutputFormatterExpand));
+				
+				modelModifier.SetContent(outputFormatted.Text);
+				
+				var lineIndexOriginal = viewModelModifier.LineIndex;
+				var columnIndexOriginal = viewModelModifier.ColumnIndex;
+				
+				// Move Cursor, try to preserve the current cursor position.
+				{
+					if (viewModelModifier.LineIndex > modelModifier.LineCount - 1)
+						viewModelModifier.LineIndex = modelModifier.LineCount - 1;
+					
+					var lineInformation = modelModifier.GetLineInformation(viewModelModifier.LineIndex);
+					
+					if (viewModelModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+						viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+				}
+				
+				if (showingFinalLine)
+			    {
+			    	// Console.WriteLine($"showingFinalLine: {showingFinalLine}");
+			    
+			        var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
+			        
+			        var originalScrollLeft = viewModelModifier.ScrollLeft;
+			        
+			        var textSpan = new TextEditorTextSpan(
+			            startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+			            endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
+			            decorationByte: 0,
+			            modelModifier.PersistentState.ResourceUri,
+			            sourceText: string.Empty,
+			            getTextPrecalculatedResult: string.Empty);
+			        
+			        TextEditorService.ViewModelApi.ScrollIntoView(
+			            editContext,
+			            modelModifier,
+			            viewModelModifier,
+			            textSpan);
+			        
+			        //viewModelModifier.ScrollbarDimensions = viewModelModifier.ScrollbarDimensions.WithMutateScrollTop(
+			        //    (int)viewModelModifier.CharAndLineMeasurements.LineHeight,
+			        //    viewModelModifier.TextEditorDimensions);
+			        
+			        viewModelModifier.SetScrollLeft(
+			            (int)originalScrollLeft,
+			            viewModelModifier.TextEditorDimensions);
+			    }
+			    else if (lineIndexOriginal != viewModelModifier.LineIndex ||
+					     columnIndexOriginal != viewModelModifier.ColumnIndex)
+				{
+					viewModelModifier.PersistentState.ShouldRevealCursor = true;
+				}  
+				
+				var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(
+					terminalOutputFormatterExpand.TextEditorModelResourceUri);
+
+				if (compilerServiceResource is TerminalResource terminalResource)
+				{					
+					terminalResource.CompilationUnit.ManualDecorationTextSpanList.Clear();
+					terminalResource.CompilationUnit.ManualDecorationTextSpanList.AddRange(
+						outputFormatted.SymbolList.Select(x => x.TextSpan));
+							
+					terminalResource.CompilationUnit.ManualSymbolList.Clear();
+					terminalResource.CompilationUnit.ManualSymbolList.AddRange(outputFormatted.SymbolList);
+
+					editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+						editContext,
+						modelModifier);
+						
+					editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+						editContext,
+						modelModifier,
+						outputFormatted.TextSpanList);
+				}
+				
+				return ValueTask.CompletedTask;
+			});
 			return Task.CompletedTask;
         });
 	}

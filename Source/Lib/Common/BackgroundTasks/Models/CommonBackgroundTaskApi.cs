@@ -63,9 +63,6 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
     
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(CommonBackgroundTaskApi);
-    public bool EarlyBatchEnabled { get; } = false;
     
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -78,7 +75,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     	lock (_workLock)
     	{
     		_workKindQueue.Enqueue(CommonWorkKind.LuthetusCommonInitializerWork);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -183,7 +180,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     	{
     		_workKindQueue.Enqueue(CommonWorkKind.WriteToLocalStorage);
 			_writeToLocalStorageQueue.Enqueue((key, value));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -202,7 +199,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(CommonWorkKind.Tab_ManuallyPropagateOnContextMenu);
             _tab_ManuallyPropagateOnContextMenuQueue.Enqueue((localHandleTabButtonOnContextMenu, tabContextMenuEventArgs));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -221,7 +218,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(CommonWorkKind.TreeView_HandleTreeViewOnContextMenu);
             _treeView_HandleTreeViewOnContextMenuQueue.Enqueue((onContextMenuFunc, treeViewContextMenuCommandArgs));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -244,7 +241,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown);
             _treeView_HandleExpansionChevronOnMouseDownQueue.Enqueue((localTreeViewNoType, treeViewContainer));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -262,7 +259,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu);
             _treeView_ManuallyPropagateOnContextMenuQueue.Enqueue((handleTreeViewOnContextMenu, mouseEventArgs, key, treeViewNoType));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -283,7 +280,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(CommonWorkKind.TreeViewService_LoadChildList);
             _queue_TreeViewService_LoadChildList.Enqueue((containerKey, treeViewNoType));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -304,12 +301,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         }
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-	{
-		return null;
-	}
-	
-	public ValueTask HandleEvent(CancellationToken cancellationToken)
+	public ValueTask HandleEvent()
 	{
 		CommonWorkKind workKind;
 		

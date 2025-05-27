@@ -38,7 +38,7 @@ public sealed class ContinuousBackgroundTaskWorker
 		        while (!cancellationToken.IsCancellationRequested)
 		        {
 		        	await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-	                await Queue.__DequeueOrDefault().HandleEvent(cancellationToken).ConfigureAwait(false);
+	                await Queue.__DequeueOrDefault().HandleEvent().ConfigureAwait(false);
 	                await Task.Yield();
 		        }
 	        }

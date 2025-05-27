@@ -4,47 +4,21 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-/// <summary>
-/// Given two contiguous background tasks. If either, or both, of the
-/// two are of this type, they will NOT be "batched"/"merged" into a singular task.
-/// </summary>
-/// <remarks>
-/// For further control over the batching, one needs to implement <see cref="ITextEditorTask"/>
-/// and implement the method: <see cref="IBackgroundTask.BatchOrDefault"/>.
-/// </remarks>
-public struct UniqueTextEditorWork : IBackgroundTaskGroup
+public struct UniqueTextEditorWork
 {
     private readonly Func<TextEditorEditContext, ValueTask> _textEditorFunc;
 
     public UniqueTextEditorWork(
-        string name,
         TextEditorService textEditorService,
         Func<TextEditorEditContext, ValueTask> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
-        Name = name;
         TextEditorService = textEditorService;
     }
 
-	public string Name { get; set; }
-    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; set; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; set; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public bool EarlyBatchEnabled { get; set; }
-    public bool __TaskCompletionSourceWasCreated { get; set; }
     public TextEditorService TextEditorService { get; }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        // Keep both events
-        return null;
-    }
-    
-    public IBackgroundTaskGroup? LateBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public async ValueTask HandleEvent(CancellationToken cancellationToken)
+    public async ValueTask HandleEvent()
     {
     	var editContext = new TextEditorEditContext(TextEditorService);
     

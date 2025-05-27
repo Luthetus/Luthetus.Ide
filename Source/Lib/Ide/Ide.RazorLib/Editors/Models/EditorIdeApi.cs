@@ -76,9 +76,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(EditorIdeApi);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -96,7 +93,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             	// TODO: Why does 'isDirectory: false' not work?
 				_environmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
             
-            	_textEditorService.WorkerArbitrary.PostUnique(nameof(EditorIdeApi), async editContext =>
+            	_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 				{
 					await _textEditorService.OpenInEditorAsync(
 						editContext,
@@ -131,10 +128,8 @@ public class EditorIdeApi : IBackgroundTaskGroup
 			fastParseArgs.ResourceUri,
 			shouldTriggerResourceWasModified: false);
 			
-		var uniqueTextEditorWork = new UniqueTextEditorWork(
-            nameof(compilerService.FastParseAsync),
-            _textEditorService,
-            editContext => compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
+		var uniqueTextEditorWork = new UniqueTextEditorWork(_textEditorService, editContext =>
+			compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
 		
 		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
     }
@@ -267,20 +262,18 @@ public class EditorIdeApi : IBackgroundTaskGroup
             {
                 if (writtenDateTime is not null)
                 {
-                    _textEditorService.WorkerArbitrary.PostUnique(
-                        nameof(HandleOnSaveRequested),
-                        editContext =>
-                        {
-                        	var modelModifier = editContext.GetModelModifier(innerTextEditor.PersistentState.ResourceUri);
-                        	if (modelModifier is null)
-                        		return ValueTask.CompletedTask;
-                        
-                        	_textEditorService.ModelApi.SetResourceData(
-                        		editContext,
-                                modelModifier,
-                                writtenDateTime.Value);
-                            return ValueTask.CompletedTask;
-                        });
+                    _textEditorService.WorkerArbitrary.PostUnique(editContext =>
+                    {
+                    	var modelModifier = editContext.GetModelModifier(innerTextEditor.PersistentState.ResourceUri);
+                    	if (modelModifier is null)
+                    		return ValueTask.CompletedTask;
+                    
+                    	_textEditorService.ModelApi.SetResourceData(
+                    		editContext,
+                            modelModifier,
+                            writtenDateTime.Value);
+                        return ValueTask.CompletedTask;
+                    });
                 }
 
                 return Task.CompletedTask;
@@ -323,7 +316,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             
         if (showViewModelArgs.ShouldSetFocusToEditor)
         {
-        	_textEditorService.WorkerArbitrary.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+        	_textEditorService.WorkerArbitrary.PostUnique(editContext =>
 	        {
 	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
 	        	return viewModel.FocusAsync();
@@ -371,7 +364,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
                                     _queue_FileContentsWereModifiedOnDisk.Enqueue((
                                         inputFileAbsolutePathString, textEditorModel, fileLastWriteTime, notificationInformativeKey));
 
-                                    _backgroundTaskService.EnqueueGroup(this);
+                                    _backgroundTaskService.Continuous_EnqueueGroup(this);
                                 }
 
 								return Task.CompletedTask;
@@ -402,33 +395,26 @@ public class EditorIdeApi : IBackgroundTaskGroup
             .ReadAllTextAsync(inputFileAbsolutePathString)
             .ConfigureAwait(false);
 
-        _textEditorService.WorkerArbitrary.PostUnique(
-            nameof(CheckIfContentsWereModifiedAsync),
-            editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
-                if (modelModifier is null)
-                    return ValueTask.CompletedTask;
-
-                _textEditorService.ModelApi.Reload(
-                    editContext,
-                    modelModifier,
-                    content,
-                    fileLastWriteTime);
-
-                editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-                    editContext,
-                    modelModifier);
+        _textEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
+            if (modelModifier is null)
                 return ValueTask.CompletedTask;
-            });
+
+            _textEditorService.ModelApi.Reload(
+                editContext,
+                modelModifier,
+                content,
+                fileLastWriteTime);
+
+            editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                editContext,
+                modelModifier);
+            return ValueTask.CompletedTask;
+        });
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         EditorIdeApiWorkKind workKind;
 

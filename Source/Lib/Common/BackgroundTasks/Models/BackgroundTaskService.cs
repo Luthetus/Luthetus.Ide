@@ -5,56 +5,45 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public sealed class BackgroundTaskService
 {
-	private readonly Dictionary<Key<BackgroundTaskQueue>, BackgroundTaskQueue> _queueContainerMap = new();
     private readonly Dictionary<Key<IBackgroundTaskGroup>, TaskCompletionSource> _taskCompletionSourceMap = new();
-    
     private readonly object _taskCompletionSourceLock = new();
     
 	/// <summary>
 	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
 	/// </summary>
-	public ContinuousBackgroundTaskWorker ContinuousTaskWorker { get; private set; }
+	public ContinuousBackgroundTaskWorker ContinuousWorker { get; private set; }
+	/// <summary>
+	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
+	/// </summary>
+	public BackgroundTaskQueue ContinuousQueue { get; private set; }
+	
 	/// <summary>
 	/// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
 	/// </summary>
-    public IndefiniteBackgroundTaskWorker IndefiniteTaskWorker { get; private set; }
+    public IndefiniteBackgroundTaskWorker IndefiniteWorker { get; private set; }
+    /// <summary>
+	/// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
+	/// </summary>
+    public BackgroundTaskQueue IndefiniteQueue { get; private set; }
 
-	public List<BackgroundTaskQueue> GetQueues() => _queueContainerMap.Values.Select(x => (BackgroundTaskQueue)x).ToList();
-
-	public void EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup)
+	public void Continuous_EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup)
 	{
-		_queueContainerMap[backgroundTaskGroup.QueueKey].Enqueue(backgroundTaskGroup);
+		ContinuousQueue.Enqueue(backgroundTaskGroup);
+	}
+	
+	public void Indefinite_EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup)
+	{
+		IndefiniteQueue.Enqueue(backgroundTaskGroup);
 	}
 
-	public IBackgroundTaskGroup? Dequeue(Key<BackgroundTaskQueue> queueKey)
+    public Task Indefinite_EnqueueAsync(IBackgroundTaskGroup backgroundTask)
     {
-        var queue = _queueContainerMap[queueKey];
-        return queue.__DequeueOrDefault();
-    }
-
-    public async Task<IBackgroundTaskGroup?> DequeueAsync(
-        Key<BackgroundTaskQueue> queueKey,
-        CancellationToken cancellationToken)
-    {
-        var queue = _queueContainerMap[queueKey];
-		await queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-        return queue.__DequeueOrDefault();
-    }
-    
-    public Task EnqueueAsync(IBackgroundTaskGroup backgroundTask)
-    {
-    	if (backgroundTask.QueueKey == BackgroundTaskFacts.ContinuousQueueKey)
-    	{
-    		throw new LuthetusCommonException(
-    			$"Only the {nameof(IndefiniteBackgroundTaskWorker)} can use {nameof(TaskCompletionSource)}. The key provided was for {nameof(BackgroundTaskFacts.ContinuousQueueKey)}, use: '{nameof(BackgroundTaskFacts.IndefiniteQueueKey)}' instead. Or invoke '{nameof(EnqueueGroup)}' to execute the work item in the background.");
-    	}
-    
     	backgroundTask.__TaskCompletionSourceWasCreated = true;
     	
     	if (backgroundTask.BackgroundTaskKey == Key<IBackgroundTaskGroup>.Empty)
     	{
     		throw new LuthetusCommonException(
-    			$"{nameof(EnqueueAsync)} cannot be invoked with an {nameof(IBackgroundTaskGroup)} that has a 'BackgroundTaskKey == Key<IBackgroundTask>.Empty'. An empty key disables tracking, and task completion source. The non-async Enqueue(...) will still work however.");
+    			$"{nameof(Indefinite_EnqueueAsync)} cannot be invoked with an {nameof(IBackgroundTaskGroup)} that has a 'BackgroundTaskKey == Key<IBackgroundTask>.Empty'. An empty key disables tracking, and task completion source. The non-async Enqueue(...) will still work however.");
     	}
 
         TaskCompletionSource taskCompletionSource = new();
@@ -81,14 +70,14 @@ public sealed class BackgroundTaskService
 	        }
 		}
 
-        _queueContainerMap[backgroundTask.QueueKey].Enqueue(backgroundTask);
+        IndefiniteQueue.Enqueue(backgroundTask);
 			
 		return taskCompletionSource.Task;
     }
 
-    public Task EnqueueAsync(Key<IBackgroundTaskGroup> taskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
+    public Task Indefinite_EnqueueAsync(Key<IBackgroundTaskGroup> taskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
     {
-        return EnqueueAsync(new BackgroundTask(taskKey, queueKey, name, runFunc));
+        return Indefinite_EnqueueAsync(new BackgroundTask(taskKey, runFunc));
     }
     
     public void CompleteTaskCompletionSource(Key<IBackgroundTaskGroup> backgroundTaskKey)
@@ -100,32 +89,30 @@ public sealed class BackgroundTaskService
 	        	var existingTaskCompletionSource = _taskCompletionSourceMap[backgroundTaskKey];
 	        	
 	        	if (!existingTaskCompletionSource.Task.IsCompleted)
-	        	{
 	        		existingTaskCompletionSource.SetResult();
-	        	}
 	        	
 	        	_taskCompletionSourceMap.Remove(backgroundTaskKey);
 	        }
 		}
     }
 
-    public void RegisterQueue(BackgroundTaskQueue queue)
+    public void SetContinuousWorker(ContinuousBackgroundTaskWorker worker)
     {
-        _queueContainerMap.Add(queue.Key, (BackgroundTaskQueue)queue);
-    }
-
-    public BackgroundTaskQueue GetQueue(Key<BackgroundTaskQueue> queueKey)
-    {
-        return _queueContainerMap[queueKey];
+    	ContinuousWorker = worker;
     }
     
-    public void SetContinuousTaskWorker(ContinuousBackgroundTaskWorker continuousTaskWorker)
+    public void SetContinuousQueue(BackgroundTaskQueue queue)
     {
-    	ContinuousTaskWorker = continuousTaskWorker;
+    	ContinuousQueue = queue;
     }
     
-    public void SetIndefiniteTaskWorker(IndefiniteBackgroundTaskWorker indefiniteTaskWorker)
+    public void SetIndefiniteWorker(IndefiniteBackgroundTaskWorker worker)
     {
-    	IndefiniteTaskWorker = indefiniteTaskWorker;
+    	IndefiniteWorker = worker;
+    }
+    
+    public void SetIndefiniteQueue(BackgroundTaskQueue queue)
+    {
+    	IndefiniteQueue = queue;
     }
 }

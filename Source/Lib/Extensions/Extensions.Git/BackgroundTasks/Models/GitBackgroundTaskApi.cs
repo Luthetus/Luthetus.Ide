@@ -82,9 +82,6 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 	public GitCliOutputParser GitCliOutputParser { get; }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(GitIdeApi);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -96,7 +93,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(GitBackgroundTaskApiWorkKind.LuthetusExtensionsGitInitializerOnInit);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 	
@@ -131,12 +128,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
         _panelService.RegisterPanelTab(leftPanel.Key, gitPanel, false);
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-	{
-		return null;
-	}
-	
-	public ValueTask HandleEvent(CancellationToken cancellationToken)
+	public ValueTask HandleEvent()
 	{
         GitBackgroundTaskApiWorkKind workKind;
 		

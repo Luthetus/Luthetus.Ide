@@ -42,10 +42,6 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.IndefiniteQueueKey;
-    public string Name { get; } = nameof(TerminalIntegrated);
-    public bool EarlyBatchEnabled { get; } = false;
-
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
     private readonly Queue<TerminalWorkKind> _workKindQueue = new();
@@ -74,7 +70,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
             _queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -85,7 +81,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _backgroundTaskService.EnqueueAsync(
+		return _backgroundTaskService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -260,12 +256,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
         // _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         TerminalWorkKind workKind;
 

@@ -252,9 +252,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(TestExplorerService);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -266,7 +263,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         lock (_workLock)
         {
             _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.ConstructTreeView);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -275,16 +272,11 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         lock (_workLock)
         {
             _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.DiscoverTests);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         TestExplorerSchedulerWorkKind workKind;
 

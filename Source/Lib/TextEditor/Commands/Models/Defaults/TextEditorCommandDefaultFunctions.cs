@@ -759,7 +759,7 @@ public class TextEditorCommandDefaultFunctions
 				MenuOptionKind.Other,
 				onClickFunc: async () => 
 				{
-					textEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorCommandDefaultFunctions), async editContext =>
+					textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 			    	{
 			    		await textEditorService.OpenInEditorAsync(
 			    			editContext,

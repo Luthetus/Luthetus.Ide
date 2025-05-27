@@ -97,7 +97,7 @@ public partial class GitDiffDisplay : ComponentBase
 
 	private async Task<bool> TryCreateEditorIn(string logFileContent, ResourceUri originalResourceUri)
 	{
-		TextEditorService.WorkerArbitrary.PostUnique(nameof(GitDiffDisplay), editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 		{
 			// Dispose any previously created state for the editor in model
 			if (InResourceUri is not null)
@@ -183,7 +183,7 @@ public partial class GitDiffDisplay : ComponentBase
 	
 	private async Task<bool> TryCreateEditorOut(ResourceUri originalResourceUri, AbsolutePath originalAbsolutePath)
 	{
-		TextEditorService.WorkerArbitrary.PostUnique(nameof(GitDiffDisplay), async editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			// Create Model
 			var originalModel = TextEditorService.ModelApi.GetOrDefault(originalResourceUri);
@@ -287,65 +287,63 @@ public partial class GitDiffDisplay : ComponentBase
             {
             	Console.WriteLine("DiffFileEnqueue");
             	
-            	TextEditorService.WorkerArbitrary.PostUnique(
-            		nameof(plusMarkedLineIndexList),
-            		editContext =>
-            		{
-            			Console.WriteLine("plusMarkedLineIndexList");
-            		
-            			var originalResourceUri = new ResourceUri(localGitFile.AbsolutePath.Value);
-            		
-            			var modelModifier = editContext.GetModelModifier(originalResourceUri);
-            			var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
-            			
-            			if (modelModifier is null || viewModelModifier is null)
-            			{
-            				Console.WriteLine("modelModifier is null || viewModelModifier is null");
-            				return ValueTask.CompletedTask;
-            			}
-            				
-            			editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
-			            	editContext,
-			                modelModifier,
-			                DiffPresentationFacts.OutPresentationKey,
-			                DiffPresentationFacts.EmptyOutPresentationModel);
-			                
-			            var outPresentationModel = modelModifier.PresentationModelList.First(
-			                x => x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
-			                
-			            if (outPresentationModel.PendingCalculation is null)
-			            {
-			            	Console.WriteLine("outPresentationModel.PendingCalculation is null");
-			                return ValueTask.CompletedTask;
-			            }
-			            
-			            var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
-			            
-			            var outResultTextSpanList = new List<TextEditorTextSpan>();
-			            
-			            foreach (var lineIndex in plusMarkedLineIndexList)
-			            {
-			            	
-			            	var lineInformation = modelModifier.GetLineInformation(lineIndex);
-			            	
-			            	Console.WriteLine($"lineIndex: {lineIndex} | ({lineInformation.Position_StartInclusiveIndex} to {lineInformation.UpperLineEnd.Position_StartInclusiveIndex})");
-			            	
-			            	outResultTextSpanList.Add(new TextEditorTextSpan(
-			            		lineInformation.Position_StartInclusiveIndex,
-			            		lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
-							    (byte)TextEditorDiffDecorationKind.InsertionLine,
-							    originalResourceUri,
-							    outPresentationModel.PendingCalculation.ContentAtRequest));
-			            }
-			            
-			            modelModifier.CompletePendingCalculatePresentationModel(
-			                DiffPresentationFacts.OutPresentationKey,
-			                DiffPresentationFacts.EmptyOutPresentationModel,
-			                outResultTextSpanList);
-			            Console.WriteLine("modelModifier.CompletePendingCalculatePresentationModel");
-            			
-            			return ValueTask.CompletedTask;
-            		});
+            	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        		{
+        			Console.WriteLine("plusMarkedLineIndexList");
+        		
+        			var originalResourceUri = new ResourceUri(localGitFile.AbsolutePath.Value);
+        		
+        			var modelModifier = editContext.GetModelModifier(originalResourceUri);
+        			var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
+        			
+        			if (modelModifier is null || viewModelModifier is null)
+        			{
+        				Console.WriteLine("modelModifier is null || viewModelModifier is null");
+        				return ValueTask.CompletedTask;
+        			}
+        				
+        			editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+		            	editContext,
+		                modelModifier,
+		                DiffPresentationFacts.OutPresentationKey,
+		                DiffPresentationFacts.EmptyOutPresentationModel);
+		                
+		            var outPresentationModel = modelModifier.PresentationModelList.First(
+		                x => x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
+		                
+		            if (outPresentationModel.PendingCalculation is null)
+		            {
+		            	Console.WriteLine("outPresentationModel.PendingCalculation is null");
+		                return ValueTask.CompletedTask;
+		            }
+		            
+		            var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
+		            
+		            var outResultTextSpanList = new List<TextEditorTextSpan>();
+		            
+		            foreach (var lineIndex in plusMarkedLineIndexList)
+		            {
+		            	
+		            	var lineInformation = modelModifier.GetLineInformation(lineIndex);
+		            	
+		            	Console.WriteLine($"lineIndex: {lineIndex} | ({lineInformation.Position_StartInclusiveIndex} to {lineInformation.UpperLineEnd.Position_StartInclusiveIndex})");
+		            	
+		            	outResultTextSpanList.Add(new TextEditorTextSpan(
+		            		lineInformation.Position_StartInclusiveIndex,
+		            		lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
+						    (byte)TextEditorDiffDecorationKind.InsertionLine,
+						    originalResourceUri,
+						    outPresentationModel.PendingCalculation.ContentAtRequest));
+		            }
+		            
+		            modelModifier.CompletePendingCalculatePresentationModel(
+		                DiffPresentationFacts.OutPresentationKey,
+		                DiffPresentationFacts.EmptyOutPresentationModel,
+		                outResultTextSpanList);
+		            Console.WriteLine("modelModifier.CompletePendingCalculatePresentationModel");
+        			
+        			return ValueTask.CompletedTask;
+        		});
             		
             	return Task.CompletedTask;
             });

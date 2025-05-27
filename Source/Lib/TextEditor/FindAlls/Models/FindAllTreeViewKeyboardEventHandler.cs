@@ -52,7 +52,7 @@ public class FindAllTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 		if (activeNode is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
 			return Task.CompletedTask;
 
-		_textEditorService.WorkerArbitrary.PostUnique(nameof(FindAllTreeViewKeyboardEventHandler), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
     	{
     		await _textEditorService.OpenInEditorAsync(
     			editContext,

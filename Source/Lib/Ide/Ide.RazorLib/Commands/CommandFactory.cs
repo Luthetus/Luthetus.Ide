@@ -521,7 +521,7 @@ public class CommandFactory : ICommandFactory
 
         _dialogService.ReduceRegisterAction(CodeSearchDialog);
         
-        _textEditorService.WorkerArbitrary.PostUnique(nameof(CodeSearchDisplay), async editContext =>
+        _textEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
         	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
             if (group is null)

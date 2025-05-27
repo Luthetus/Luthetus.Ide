@@ -42,9 +42,6 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(ConfigBackgroundTaskApi);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -60,17 +57,12 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
     public void Enqueue_LuthetusWebsiteInitializerOnAfterRenderAsync()
     {
         lock (_workLock)
         {
             _workKindQueue.Enqueue(WebsiteInitializationBackgroundTaskGroupWorkKind.LuthetusWebsiteInitializerOnAfterRenderAsync);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -151,7 +143,7 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
             InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
             false);
 
-		_textEditorService.WorkerArbitrary.PostUnique(nameof(WebsiteInitializationBackgroundTaskGroup), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			await _textEditorService.OpenInEditorAsync(
 				editContext,
@@ -205,46 +197,44 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                 compilerService,
                 _textEditorService);
 
-            _textEditorService.WorkerArbitrary.PostUnique(
-                nameof(_textEditorService.ModelApi.AddPresentationModel),
-                editContext =>
-                {
-                	_textEditorService.ModelApi.RegisterCustom(editContext, textEditorModel);
-                	
-                    var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
+            _textEditorService.WorkerArbitrary.PostUnique(editContext =>
+            {
+            	_textEditorService.ModelApi.RegisterCustom(editContext, textEditorModel);
+            	
+                var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
 
-                    if (modelModifier is null)
-                        return ValueTask.CompletedTask;
-
-                    _textEditorService.ModelApi.AddPresentationModel(
-                        editContext,
-                        modelModifier,
-                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-
-                    _textEditorService.ModelApi.AddPresentationModel(
-                        editContext,
-                        modelModifier,
-                        FindOverlayPresentationFacts.EmptyPresentationModel);
-
-                    _textEditorService.ModelApi.AddPresentationModel(
-                        editContext,
-                        modelModifier,
-                        DiffPresentationFacts.EmptyInPresentationModel);
-
-                    _textEditorService.ModelApi.AddPresentationModel(
-                        editContext,
-                        modelModifier,
-                        DiffPresentationFacts.EmptyOutPresentationModel);
-
-                    textEditorModel.PersistentState.CompilerService.RegisterResource(
-                        textEditorModel.PersistentState.ResourceUri,
-                        shouldTriggerResourceWasModified: true);
+                if (modelModifier is null)
                     return ValueTask.CompletedTask;
-                });
+
+                _textEditorService.ModelApi.AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+
+                _textEditorService.ModelApi.AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    FindOverlayPresentationFacts.EmptyPresentationModel);
+
+                _textEditorService.ModelApi.AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    DiffPresentationFacts.EmptyInPresentationModel);
+
+                _textEditorService.ModelApi.AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    DiffPresentationFacts.EmptyOutPresentationModel);
+
+                textEditorModel.PersistentState.CompilerService.RegisterResource(
+                    textEditorModel.PersistentState.ResourceUri,
+                    shouldTriggerResourceWasModified: true);
+                return ValueTask.CompletedTask;
+            });
         }
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         WebsiteInitializationBackgroundTaskGroupWorkKind workKind;
 
