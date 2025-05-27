@@ -95,7 +95,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 	private void ReloadOnClick()
 	{
-        DotNetBackgroundTaskApi.CompilerService.Enqueue_SetCompilerServiceExplorerTreeView();
+        DotNetBackgroundTaskApi.CompilerService.Enqueue(CompilerServiceIdeWorkKind.SetCompilerServiceExplorerTreeView);
 	}
 
 	public void Dispose()
