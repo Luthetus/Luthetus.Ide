@@ -205,9 +205,6 @@ public sealed class TextEditorComponentData
     /// <summary>Pixels (px)</summary>
     private double ViewModelScrollLeft { get; set; }
     
-    /// <summary>Pixels (px)</summary>
-    private double CharacterWidth { get; set; }
-    
     public string ScrollbarSection_LeftCssStyle { get; set; }
     
     /// <summary>If the scroll left changes you have to discard the virtualized line cache.</summary>
