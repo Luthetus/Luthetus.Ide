@@ -43,9 +43,12 @@ public class TreeViewService : ITreeViewService
 			selectNodesBetweenCurrentAndNextActiveNode,
             treeViewNoType =>
             {
-                CommonBackgroundTaskApi.Enqueue_TreeViewService_LoadChildList(
-                    containerKey,
-                    treeViewNoType);
+                CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+                {
+    				WorkKind = CommonWorkKind.TreeViewService_LoadChildList,
+                	ContainerKey = containerKey,
+                	TreeViewNoType = treeViewNoType,
+                });
             });
     }
 

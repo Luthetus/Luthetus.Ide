@@ -314,9 +314,12 @@ public sealed class TextEditorOptionsApi
 
     public void WriteToStorage()
     {
-        _commonBackgroundTaskApi.Enqueue_WriteToLocalStorage(
-            _textEditorService.StorageKey,
-            new TextEditorOptionsJsonDto(_textEditorService.OptionsApi.GetTextEditorOptionsState().Options));
+        _commonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        {
+    		WorkKind = CommonWorkKind.WriteToLocalStorage,
+        	WriteToLocalStorage_Key = _textEditorService.StorageKey,
+            WriteToLocalStorage_Value = new TextEditorOptionsJsonDto(_textEditorService.OptionsApi.GetTextEditorOptionsState().Options),
+        });
     }
 
     public async Task SetFromLocalStorageAsync()

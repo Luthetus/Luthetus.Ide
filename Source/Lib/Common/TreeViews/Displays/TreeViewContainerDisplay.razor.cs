@@ -179,9 +179,12 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
         if (OnContextMenuFunc is not null)
 		{
-            CommonBackgroundTaskApi.Enqueue_TreeView_HandleTreeViewOnContextMenu(
-                OnContextMenuFunc,
-                _treeViewContextMenuCommandArgs);
+            CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+            {
+    			WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
+            	OnContextMenuFunc = OnContextMenuFunc,
+                TreeViewContextMenuCommandArgs = _treeViewContextMenuCommandArgs,
+            });
         }
 
         await InvokeAsync(StateHasChanged);
