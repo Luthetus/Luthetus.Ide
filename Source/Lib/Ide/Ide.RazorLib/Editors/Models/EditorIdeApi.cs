@@ -21,6 +21,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Ide.RazorLib.Editors.Models;
@@ -259,10 +260,12 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
         var cancellationToken = innerTextEditor.PersistentState.TextEditorSaveFileHelper.GetCancellationToken();
 
-        _ideBackgroundTaskApi.FileSystem.Enqueue_SaveFile(
-            absolutePath,
-            innerContent,
-            writtenDateTime =>
+        _ideBackgroundTaskApi.FileSystem.Enqueue(new FileSystemIdeApiWorkArgs
+        {
+        	WorkKind = FileSystemIdeApiWorkKind.SaveFile,
+            AbsolutePath = absolutePath,
+            Content = innerContent,
+            OnAfterSaveCompletedWrittenDateTimeFunc = writtenDateTime =>
             {
                 if (writtenDateTime is not null)
                 {
@@ -282,7 +285,8 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
                 return Task.CompletedTask;
             },
-            cancellationToken);
+            CancellationToken = cancellationToken
+        });
     }
 
     public async Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
