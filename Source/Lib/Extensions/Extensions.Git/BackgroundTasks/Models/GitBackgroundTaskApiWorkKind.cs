@@ -1,6 +1,7 @@
-﻿namespace Luthetus.Extensions.Git.BackgroundTasks.Models;
+namespace Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 public enum GitBackgroundTaskApiWorkKind
 {
-    LuthetusExtensionsGitInitializerOnInit
+	None,
+    LuthetusExtensionsGitInitializerOnInit,
 }
