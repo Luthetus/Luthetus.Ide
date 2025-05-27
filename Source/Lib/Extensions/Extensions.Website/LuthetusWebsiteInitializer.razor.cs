@@ -27,7 +27,8 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-            WebsiteInitializationBackgroundTaskGroup.Enqueue_LuthetusWebsiteInitializerOnAfterRenderAsync();
+            WebsiteInitializationBackgroundTaskGroup.Enqueue(
+            	WebsiteInitializationBackgroundTaskGroupWorkKind.LuthetusWebsiteInitializerOnAfterRenderAsync);
         }
 
         return base.OnAfterRenderAsync(firstRender);

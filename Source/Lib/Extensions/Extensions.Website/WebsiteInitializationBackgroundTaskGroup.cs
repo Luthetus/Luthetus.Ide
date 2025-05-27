@@ -1,12 +1,8 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Extensions.Config.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
-using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
-using Luthetus.Ide.Wasm.Facts;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
@@ -14,6 +10,11 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.Extensions.Config.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
+using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
+using Luthetus.Ide.Wasm.Facts;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -45,8 +46,8 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<WebsiteInitializationBackgroundTaskGroupWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<WebsiteInitializationBackgroundTaskGroupWorkKind> _workKindQueue = new();
+    
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly ITreeViewService _treeViewService;
     private readonly IFileSystemProvider _fileSystemProvider;
@@ -57,13 +58,10 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 
-    public void Enqueue_LuthetusWebsiteInitializerOnAfterRenderAsync()
+    public void Enqueue(WebsiteInitializationBackgroundTaskGroupWorkKind workKind)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(WebsiteInitializationBackgroundTaskGroupWorkKind.LuthetusWebsiteInitializerOnAfterRenderAsync);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workKindQueue.Enqueue(workKind);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
     
     public async ValueTask Do_LuthetusWebsiteInitializerOnAfterRenderAsync()
@@ -136,7 +134,11 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         // won't open the first file correctly without this.
         _textEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
 
-        _dotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
+        _dotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+        {
+        	WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+        	DotNetSolutionAbsolutePath = solutionAbsolutePath,
+    	});
 
         // Display a file from the get-go so the user is less confused on what the website is.
         var absolutePath = _environmentProvider.AbsolutePathFactory(
@@ -236,25 +238,16 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        WebsiteInitializationBackgroundTaskGroupWorkKind workKind;
-
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
+        if (!_workKindQueue.TryDequeue(out WebsiteInitializationBackgroundTaskGroupWorkKind workKind))
+            return ValueTask.CompletedTask;
 
         switch (workKind)
         {
             case WebsiteInitializationBackgroundTaskGroupWorkKind.LuthetusWebsiteInitializerOnAfterRenderAsync:
-            {
                 return Do_LuthetusWebsiteInitializerOnAfterRenderAsync();
-            }
             default:
-            {
                 Console.WriteLine($"{nameof(WebsiteInitializationBackgroundTaskGroup)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }
