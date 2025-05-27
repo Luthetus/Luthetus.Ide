@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
-public class UniqueTextEditorWork : IBackgroundTaskGroup
+public struct UniqueTextEditorWork
 {
     private readonly Func<TextEditorEditContext, ValueTask> _textEditorFunc;
 
@@ -16,8 +16,6 @@ public class UniqueTextEditorWork : IBackgroundTaskGroup
         TextEditorService = textEditorService;
     }
 
-    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; set; } = Key<IBackgroundTaskGroup>.Empty;
-    public bool __TaskCompletionSourceWasCreated { get; set; }
     public TextEditorService TextEditorService { get; }
 
     public async ValueTask HandleEvent(CancellationToken cancellationToken)

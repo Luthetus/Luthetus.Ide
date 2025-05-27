@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -23,7 +24,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
     
     public bool __TaskCompletionSourceWasCreated { get; set; }
     
-    public Queue<TextEditorWorkerUiArgs> WorkQueue { get; } = new();
+    public ConcurrentQueue<TextEditorWorkerUiArgs> WorkQueue { get; } = new();
 	
 	public void Enqueue(TextEditorWorkerUiArgs workerUiArgs)
 	{
