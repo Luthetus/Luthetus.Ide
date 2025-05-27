@@ -195,10 +195,18 @@ public sealed class TextEditorComponentData
 	public string Gutter_PaddingCssStyle { get; set; }
     public string Gutter_WidthCssStyle { get; set; }
     
-    /// <summary>Pixels (px)</summary>
-    private double ViewModelGutterWidth { get; set; }
+    /// <summary>
+    /// Pixels (px)
+    ///
+    /// The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
+    /// Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
+    /// </summary>
+    private double ViewModelGutterWidth { get; set; } = -2;
     /// <summary>Pixels (px)</summary>
     private double ViewModelScrollLeft { get; set; }
+    
+    /// <summary>Pixels (px)</summary>
+    private double CharacterWidth { get; set; }
     
     public string ScrollbarSection_LeftCssStyle { get; set; }
     
