@@ -74,7 +74,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
     			
-    		DotNetBackgroundTaskApi.Output.Enqueue_ConstructTreeView();
+    		DotNetBackgroundTaskApi.Output.Enqueue(OutputSchedulerWorkKind.ConstructTreeView);
     		return Task.CompletedTask;
     	});
     }

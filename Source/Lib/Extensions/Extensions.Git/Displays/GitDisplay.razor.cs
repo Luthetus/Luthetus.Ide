@@ -174,7 +174,14 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task PerformBranchNewEnqueue(GitState localGitState, string fileName)
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.Enqueue_BranchNew(localGitState.Repo, fileName);
+            {
+                GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+                {
+                	WorkKind = GitIdeApiWorkKind.BranchNew,
+                	RepoAtTimeOfRequest = localGitState.Repo,
+                	BranchName = fileName,
+                });
+            }
 
 			return Task.CompletedTask;
         }
@@ -202,7 +209,13 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-            	GitBackgroundTaskApi.Git.Enqueue_PushToOriginWithTracking(localGitState.Repo);
+            {
+            	GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+            	{
+            		WorkKind = GitIdeApiWorkKind.PushToOriginWithTracking,
+            		RepoAtTimeOfRequest = localGitState.Repo,
+            	});
+            }
 
 			return Task.CompletedTask;
         }
@@ -218,7 +231,13 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.Enqueue_Pull(localGitState.Repo);
+            {
+                GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+                {
+                	WorkKind = GitIdeApiWorkKind.Pull,
+                	RepoAtTimeOfRequest = localGitState.Repo,
+                });
+            }
 
             return Task.CompletedTask;
         }
@@ -234,7 +253,13 @@ public partial class GitDisplay : ComponentBase, IDisposable
         Task DoAction()
         {
             if (localGitState.Repo is not null)
-                GitBackgroundTaskApi.Git.Enqueue_Fetch(localGitState.Repo);
+            {
+                GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+                {
+                	WorkKind = GitIdeApiWorkKind.Fetch,
+                	RepoAtTimeOfRequest = localGitState.Repo
+            	});
+            }
 
             return Task.CompletedTask;
         }

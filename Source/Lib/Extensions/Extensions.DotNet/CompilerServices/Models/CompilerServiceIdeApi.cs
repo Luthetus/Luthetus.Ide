@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -46,17 +47,12 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<CompilerServiceIdeWorkKind> _workKindQueue = new();
+    private readonly ConcurrentQueue<CompilerServiceIdeWorkKind> _workQueue = new();
 
-    private readonly object _workLock = new();
-
-    public void Enqueue_SetCompilerServiceExplorerTreeView()
+    public void Enqueue(CompilerServiceIdeWorkKind workKind)
 	{
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(CompilerServiceIdeWorkKind.SetCompilerServiceExplorerTreeView);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workQueue.Enqueue(workKind);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
 
     /// <summary>
@@ -176,25 +172,16 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        CompilerServiceIdeWorkKind workKind;
-
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
+        if (!_workQueue.TryDequeue(out CompilerServiceIdeWorkKind workKind))
+            return ValueTask.CompletedTask;
 
         switch (workKind)
         {
             case CompilerServiceIdeWorkKind.SetCompilerServiceExplorerTreeView:
-            {
                 return Do_SetCompilerServiceExplorerTreeView();
-            }
             default:
-            {
                 Console.WriteLine($"{nameof(CompilerServiceIdeApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }

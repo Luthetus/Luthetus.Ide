@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -45,19 +46,12 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<FolderExplorerIdeApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<FolderExplorerIdeApiWorkArgs> _workKindQueue = new();
 
-    private readonly Queue<AbsolutePath> queue_general_AbsolutePath = new();
-
-    public void Enqueue_SetFolderExplorerState(AbsolutePath folderAbsolutePath)
+    public void Enqueue(FolderExplorerIdeApiWorkArgs workArgs)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(FolderExplorerIdeApiWorkKind.SetFolderExplorerState);
-            queue_general_AbsolutePath.Enqueue(folderAbsolutePath);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workKindQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
 
     private ValueTask Do_SetFolderExplorerState(AbsolutePath folderAbsolutePath)
@@ -69,16 +63,6 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
             });
 
         return Do_SetFolderExplorerTreeView(folderAbsolutePath);
-    }
-
-    public void Enqueue_SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(FolderExplorerIdeApiWorkKind.SetFolderExplorerTreeView);
-            queue_general_AbsolutePath.Enqueue(folderAbsolutePath);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
 
     private async ValueTask Do_SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
@@ -129,52 +113,42 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
 
     public void ShowInputFile()
     {
-        _ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-            "Folder Explorer",
-            async absolutePath =>
+        _ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        {
+        	WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+            Message = "Folder Explorer",
+            OnAfterSubmitFunc = async absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
                     await Do_SetFolderExplorerState(absolutePath).ConfigureAwait(false);
             },
-            absolutePath =>
+            SelectionIsValidFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
             },
-            [
+            InputFilePatterns = [
                 new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-            ]);
+            ]
+        });
     }
 
     public ValueTask HandleEvent()
     {
-        FolderExplorerIdeApiWorkKind workKind;
+        if (!_workKindQueue.TryDequeue(out FolderExplorerIdeApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.FolderExplorerIdeApiWorkKind)
         {
             case FolderExplorerIdeApiWorkKind.SetFolderExplorerState:
-            {
-                var args = queue_general_AbsolutePath.Dequeue();
-                return Do_SetFolderExplorerState(args);
-            }
+                return Do_SetFolderExplorerState(workArgs.AbsolutePath);
             case FolderExplorerIdeApiWorkKind.SetFolderExplorerTreeView:
-            {
-                var args = queue_general_AbsolutePath.Dequeue();
-                return Do_SetFolderExplorerTreeView(args);
-            }
+                return Do_SetFolderExplorerTreeView(workArgs.AbsolutePath);
             default:
-            {
                 Console.WriteLine($"{nameof(FolderExplorerIdeApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }

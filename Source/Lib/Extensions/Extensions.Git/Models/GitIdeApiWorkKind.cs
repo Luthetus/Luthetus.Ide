@@ -1,7 +1,8 @@
-﻿namespace Luthetus.Extensions.Git.Models;
+namespace Luthetus.Extensions.Git.Models;
 
 public enum GitIdeApiWorkKind
 {
+	None,
     Status,
     GetActiveBranchName,
     GetOriginName,

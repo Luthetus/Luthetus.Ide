@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
@@ -85,16 +86,12 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<GitBackgroundTaskApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<GitBackgroundTaskApiWorkKind> _workKindQueue = new();
 
-    public void Enqueue_LuthetusExtensionsGitInitializerOnInit()
+    public void Enqueue(GitBackgroundTaskApiWorkKind workKind)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitBackgroundTaskApiWorkKind.LuthetusExtensionsGitInitializerOnInit);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workKindQueue.Enqueue(workKind);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
 	
 	public ValueTask Do_LuthetusExtensionsGitInitializerOnInit()
@@ -130,25 +127,16 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
 
 	public ValueTask HandleEvent()
 	{
-        GitBackgroundTaskApiWorkKind workKind;
-		
-		lock (_workLock)
-		{
-			if (!_workKindQueue.TryDequeue(out workKind))
-				return ValueTask.CompletedTask;
-		}
+		if (!_workKindQueue.TryDequeue(out GitBackgroundTaskApiWorkKind workKind))
+			return ValueTask.CompletedTask;
 			
 		switch (workKind)
 		{
 			case GitBackgroundTaskApiWorkKind.LuthetusExtensionsGitInitializerOnInit:
-			{
 				return Do_LuthetusExtensionsGitInitializerOnInit();
-			}
 			default:
-			{
 				Console.WriteLine($"{nameof(GitBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-			}
 		}
 	}
 }

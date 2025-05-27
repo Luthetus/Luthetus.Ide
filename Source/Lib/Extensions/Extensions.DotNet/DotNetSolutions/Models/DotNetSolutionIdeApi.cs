@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -124,23 +125,15 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<DotNetSolutionIdeWorkKind> _workKindQueue = new();
-
-    private readonly object _workLock = new();
-
-    private readonly Queue<AbsolutePath> _queue_SetDotNetSolution = new();
-
-    public void Enqueue_SetDotNetSolution(AbsolutePath inSolutionAbsolutePath)
+    private readonly ConcurrentQueue<DotNetSolutionIdeWorkArgs> _workQueue = new();
+    
+    public void Enqueue(DotNetSolutionIdeWorkArgs workArgs)
 	{
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.SetDotNetSolution);
-			_queue_SetDotNetSolution.Enqueue(inSolutionAbsolutePath);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 
-	private async ValueTask Do_SetDotNetSolution(AbsolutePath inSolutionAbsolutePath)
+    private async ValueTask Do_SetDotNetSolution(AbsolutePath inSolutionAbsolutePath)
 	{
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
@@ -959,18 +952,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		}
 	}
 
-	private readonly Queue<Key<DotNetSolutionModel>> _queue_SetDotNetSolutionTreeView = new();
-
-    public void Enqueue_SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
-	{
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.SetDotNetSolutionTreeView);
-			_queue_SetDotNetSolutionTreeView.Enqueue(dotNetSolutionModelKey);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-	}
-
 	private async ValueTask Do_SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
 		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
@@ -1088,27 +1069,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
         return Task.CompletedTask;
     }
 
-	private readonly
-		Queue<(Key<DotNetSolutionModel> dotNetSolutionModelKey, string projectTemplateShortName, string cSharpProjectName, AbsolutePath cSharpProjectAbsolutePath)>
-		_queue_Website_AddExistingProjectToSolution = new();
-
-    public void Enqueue_Website_AddExistingProjectToSolution(
-		Key<DotNetSolutionModel> dotNetSolutionModelKey,
-		string projectTemplateShortName,
-		string cSharpProjectName,
-		AbsolutePath cSharpProjectAbsolutePath)
-	{
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.Website_AddExistingProjectToSolution);
-
-			_queue_Website_AddExistingProjectToSolution.Enqueue(
-                (dotNetSolutionModelKey, projectTemplateShortName, cSharpProjectName, cSharpProjectAbsolutePath));
-
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-	}
-
 	private ValueTask Do_Website_AddExistingProjectToSolution(
 		Key<DotNetSolutionModel> dotNetSolutionModelKey,
 		string projectTemplateShortName,
@@ -1151,40 +1111,24 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
     public ValueTask HandleEvent()
     {
-        DotNetSolutionIdeWorkKind workKind;
+        if (!_workQueue.TryDequeue(out DotNetSolutionIdeWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.WorkKind)
         {
             case DotNetSolutionIdeWorkKind.SetDotNetSolution:
-            {
-				var args = _queue_SetDotNetSolution.Dequeue();
-                return Do_SetDotNetSolution(args);
-            }
+                return Do_SetDotNetSolution(workArgs.DotNetSolutionAbsolutePath);
 			case DotNetSolutionIdeWorkKind.SetDotNetSolutionTreeView:
-            {
-				var args = _queue_SetDotNetSolutionTreeView.Dequeue();
-                return Do_SetDotNetSolutionTreeView(args);
-            }
+                return Do_SetDotNetSolutionTreeView(workArgs.DotNetSolutionModelKey);
 			case DotNetSolutionIdeWorkKind.Website_AddExistingProjectToSolution:
-            {
-				var args = _queue_Website_AddExistingProjectToSolution.Dequeue();
                 return Do_Website_AddExistingProjectToSolution(
-                    args.dotNetSolutionModelKey,
-					args.projectTemplateShortName,
-					args.cSharpProjectName,
-                    args.cSharpProjectAbsolutePath);
-            }
+                    workArgs.DotNetSolutionModelKey,
+					workArgs.ProjectTemplateShortName,
+					workArgs.CSharpProjectName,
+                    workArgs.CSharpProjectAbsolutePath);
             default:
-            {
                 Console.WriteLine($"{nameof(DotNetSolutionIdeApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }

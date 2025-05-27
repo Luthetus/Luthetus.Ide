@@ -18,6 +18,7 @@ using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.Websites;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.CSharpProjects.Displays;
 
@@ -86,9 +87,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory(string message)
 	{
-		IdeBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-			message,
-			async absolutePath =>
+		IdeBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		{
+			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			Message = message,
+			OnAfterSubmitFunc = async absolutePath =>
 			{
 				if (absolutePath.ExactInput is null)
 					return;
@@ -96,17 +99,18 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				_viewModel.ParentDirectoryNameValue = absolutePath.Value;
 				await InvokeAsync(StateHasChanged);
 			},
-			absolutePath =>
+			SelectionIsValidFunc = absolutePath =>
 			{
 				if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(true);
 			},
-			new()
+			InputFilePatterns = new()
 			{
 				new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-			});
+			}
+		});
 	}
 
 	private async Task ReadProjectTemplates()
@@ -236,8 +240,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        	{
 				        	DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
-							DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(
-								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
+							DotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+							{
+								WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+								DotNetSolutionAbsolutePath = immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath,
+							});
 							return Task.CompletedTask;
 						}
 			        };

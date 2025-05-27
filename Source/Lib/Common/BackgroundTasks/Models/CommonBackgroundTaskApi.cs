@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -31,6 +32,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     private readonly IDialogService _dialogService;
     private readonly ITreeViewService _treeViewService;
     private readonly LuthetusCommonConfig _commonConfig;
+    
+    private readonly ConcurrentQueue<CommonWorkArgs> _workQueue = new();
 
     public CommonBackgroundTaskApi(
 		BackgroundTaskService backgroundTaskService,
@@ -66,17 +69,10 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<CommonWorkKind> _workKindQueue = new();
-    
-    private readonly object _workLock = new();
-
-    public void Enqueue_LuthetusCommonInitializer()
+    public void Enqueue(CommonWorkArgs commonWorkArgs)
     {
-    	lock (_workLock)
-    	{
-    		_workKindQueue.Enqueue(CommonWorkKind.LuthetusCommonInitializerWork);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+		_workQueue.Enqueue(commonWorkArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
 
     private async ValueTask Do_LuthetusCommonInitializer(Key<ContextSwitchGroup> contextSwitchGroupKey)
@@ -172,54 +168,16 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                 }));
     }
 
-    private readonly Queue<(string Key, object Value)> _writeToLocalStorageQueue = new();
-
-    public void Enqueue_WriteToLocalStorage(string key, object value)
-    {
-    	lock (_workLock)
-    	{
-    		_workKindQueue.Enqueue(CommonWorkKind.WriteToLocalStorage);
-			_writeToLocalStorageQueue.Enqueue((key, value));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
-
     public async ValueTask Do_WriteToLocalStorage(string key, object value)
     {
         var valueJson = System.Text.Json.JsonSerializer.Serialize(value);
         await _storageService.SetValue(key, valueJson).ConfigureAwait(false);
     }
 
-    private readonly Queue<(Func<TabContextMenuEventArgs, Task> LocalHandleTabButtonOnContextMenu, TabContextMenuEventArgs TabContextMenuEventArgs)> _tab_ManuallyPropagateOnContextMenuQueue = new();
-
-    public void Enqueue_Tab_ManuallyPropagateOnContextMenu(
-		Func<TabContextMenuEventArgs, Task> localHandleTabButtonOnContextMenu, TabContextMenuEventArgs tabContextMenuEventArgs)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(CommonWorkKind.Tab_ManuallyPropagateOnContextMenu);
-            _tab_ManuallyPropagateOnContextMenuQueue.Enqueue((localHandleTabButtonOnContextMenu, tabContextMenuEventArgs));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
-
     public async ValueTask Do_Tab_ManuallyPropagateOnContextMenu(
         Func<TabContextMenuEventArgs, Task> localHandleTabButtonOnContextMenu, TabContextMenuEventArgs tabContextMenuEventArgs)
     {
         await localHandleTabButtonOnContextMenu.Invoke(tabContextMenuEventArgs).ConfigureAwait(false);
-    }
-
-    private readonly Queue<(Func<TreeViewCommandArgs, Task>? OnContextMenuFunc, TreeViewCommandArgs TreeViewContextMenuCommandArgs)> _treeView_HandleTreeViewOnContextMenuQueue = new();
-
-    public void Enqueue_TreeView_HandleTreeViewOnContextMenu(
-        Func<TreeViewCommandArgs, Task>? onContextMenuFunc, TreeViewCommandArgs treeViewContextMenuCommandArgs)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(CommonWorkKind.TreeView_HandleTreeViewOnContextMenu);
-            _treeView_HandleTreeViewOnContextMenuQueue.Enqueue((onContextMenuFunc, treeViewContextMenuCommandArgs));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
 
     public async ValueTask Do_TreeView_HandleTreeViewOnContextMenu(
@@ -233,34 +191,10 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         }
     }
 
-    private readonly Queue<(TreeViewNoType LocalTreeViewNoType, TreeViewContainer TreeViewContainer)> _treeView_HandleExpansionChevronOnMouseDownQueue = new();
-
-    public void Enqueue_TreeView_HandleExpansionChevronOnMouseDown(TreeViewNoType localTreeViewNoType, TreeViewContainer treeViewContainer)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown);
-            _treeView_HandleExpansionChevronOnMouseDownQueue.Enqueue((localTreeViewNoType, treeViewContainer));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
-
     public async ValueTask Do_TreeView_HandleExpansionChevronOnMouseDown(TreeViewNoType localTreeViewNoType, TreeViewContainer treeViewContainer)
     {
         await localTreeViewNoType.LoadChildListAsync().ConfigureAwait(false);
         _treeViewService.ReduceReRenderNodeAction(treeViewContainer.Key, localTreeViewNoType);
-    }
-
-    private readonly Queue<(Func<MouseEventArgs?, Key<TreeViewContainer>, TreeViewNoType?, Task> HandleTreeViewOnContextMenu, MouseEventArgs MouseEventArgs, Key<TreeViewContainer> Key, TreeViewNoType TreeViewNoType)> _treeView_ManuallyPropagateOnContextMenuQueue = new();
-
-    public void Enqueue_TreeView_ManuallyPropagateOnContextMenu(Func<MouseEventArgs?, Key<TreeViewContainer>, TreeViewNoType?, Task> handleTreeViewOnContextMenu, MouseEventArgs mouseEventArgs, Key<TreeViewContainer> key, TreeViewNoType treeViewNoType)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu);
-            _treeView_ManuallyPropagateOnContextMenuQueue.Enqueue((handleTreeViewOnContextMenu, mouseEventArgs, key, treeViewNoType));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
 
     public async ValueTask Do_TreeView_ManuallyPropagateOnContextMenu(Func<MouseEventArgs?, Key<TreeViewContainer>, TreeViewNoType?, Task> handleTreeViewOnContextMenu, MouseEventArgs mouseEventArgs, Key<TreeViewContainer> key, TreeViewNoType treeViewNoType)
@@ -270,18 +204,6 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                 key,
                 treeViewNoType)
             .ConfigureAwait(false);
-    }
-
-    private readonly Queue<(Key<TreeViewContainer> containerKey, TreeViewNoType treeViewNoType)> _queue_TreeViewService_LoadChildList = new();
-
-    public void Enqueue_TreeViewService_LoadChildList(Key<TreeViewContainer> containerKey, TreeViewNoType treeViewNoType)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(CommonWorkKind.TreeViewService_LoadChildList);
-            _queue_TreeViewService_LoadChildList.Enqueue((containerKey, treeViewNoType));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
 
     public async ValueTask Do_TreeViewService_LoadChildList(Key<TreeViewContainer> containerKey, TreeViewNoType treeViewNoType)
@@ -300,58 +222,31 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
             throw;
         }
     }
-
-	public ValueTask HandleEvent()
+    
+    public ValueTask HandleEvent()
 	{
-		CommonWorkKind workKind;
-		
-		lock (_workLock)
-		{
-			if (!_workKindQueue.TryDequeue(out workKind))
-				return ValueTask.CompletedTask;
-		}
+		if (!_workQueue.TryDequeue(out CommonWorkArgs workArgs))
+			return ValueTask.CompletedTask;
 			
-		switch (workKind)
+		switch (workArgs.WorkKind)
 		{
 			case CommonWorkKind.LuthetusCommonInitializerWork:
-			{
 				return Do_LuthetusCommonInitializer(LuthetusCommonInitializer.ContextSwitchGroupKey);
-			}
 			case CommonWorkKind.WriteToLocalStorage:
-			{
-				var args = _writeToLocalStorageQueue.Dequeue();
-				return Do_WriteToLocalStorage(args.Key, args.Value);
-			}
+				return Do_WriteToLocalStorage(workArgs.WriteToLocalStorage_Key, workArgs.WriteToLocalStorage_Value);
 			case CommonWorkKind.Tab_ManuallyPropagateOnContextMenu:
-			{
-				var args = _tab_ManuallyPropagateOnContextMenuQueue.Dequeue();
-				return Do_Tab_ManuallyPropagateOnContextMenu(args.LocalHandleTabButtonOnContextMenu, args.TabContextMenuEventArgs);
-			}
+				return Do_Tab_ManuallyPropagateOnContextMenu(workArgs.HandleTabButtonOnContextMenu, workArgs.TabContextMenuEventArgs);
 			case CommonWorkKind.TreeView_HandleTreeViewOnContextMenu:
-			{
-				var args = _treeView_HandleTreeViewOnContextMenuQueue.Dequeue();
-				return Do_TreeView_HandleTreeViewOnContextMenu(args.OnContextMenuFunc, args.TreeViewContextMenuCommandArgs);
-			}
+				return Do_TreeView_HandleTreeViewOnContextMenu(workArgs.OnContextMenuFunc, workArgs.TreeViewContextMenuCommandArgs);
             case CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown:
-			{
-				var args = _treeView_HandleExpansionChevronOnMouseDownQueue.Dequeue();
-				return Do_TreeView_HandleExpansionChevronOnMouseDown(args.LocalTreeViewNoType, args.TreeViewContainer);
-			}
+				return Do_TreeView_HandleExpansionChevronOnMouseDown(workArgs.TreeViewNoType, workArgs.TreeViewContainer);
             case CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu:
-			{
-				var args = _treeView_ManuallyPropagateOnContextMenuQueue.Dequeue();
-				return Do_TreeView_ManuallyPropagateOnContextMenu(args.HandleTreeViewOnContextMenu, args.MouseEventArgs, args.Key, args.TreeViewNoType);
-			}
+				return Do_TreeView_ManuallyPropagateOnContextMenu(workArgs.HandleTreeViewOnContextMenu, workArgs.MouseEventArgs, workArgs.ContainerKey, workArgs.TreeViewNoType);
             case CommonWorkKind.TreeViewService_LoadChildList:
-			{
-				var args = _queue_TreeViewService_LoadChildList.Dequeue();
-				return Do_TreeViewService_LoadChildList(args.containerKey, args.treeViewNoType);
-			}
+				return Do_TreeViewService_LoadChildList(workArgs.ContainerKey, workArgs.TreeViewNoType);
 			default:
-			{
 				Console.WriteLine($"{nameof(CommonBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-			}
 		}
 	}
 }

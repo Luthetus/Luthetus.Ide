@@ -26,7 +26,7 @@ public partial class InputFileBottomControls : ComponentBase
         var pattern = InputFileState.InputFilePatternsList
             .FirstOrDefault(x => x.PatternName == patternName);
 
-        if (pattern is not null)
+        if (pattern.ConstructorWasInvoked)
             InputFileService.SetSelectedInputFilePattern(pattern);
     }
 

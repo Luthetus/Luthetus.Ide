@@ -35,7 +35,11 @@ public partial class GitControlsDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        GitBackgroundTaskApi.Git.Enqueue_Add(localGitState.Repo);
+        GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+        {
+        	WorkKind = GitIdeApiWorkKind.Add,
+        	RepoAtTimeOfRequest = localGitState.Repo,
+    	});
     }
 
     private void UnstageOnClick(GitState localGitState)
@@ -43,7 +47,11 @@ public partial class GitControlsDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        GitBackgroundTaskApi.Git.Enqueue_Unstage(localGitState.Repo);
+        GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+        {
+        	WorkKind = GitIdeApiWorkKind.Unstage,
+        	RepoAtTimeOfRequest = localGitState.Repo
+    	});
     }
 
     private void CommitChangesOnClick(GitState localGitState, string localSummary)
@@ -51,7 +59,12 @@ public partial class GitControlsDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        GitBackgroundTaskApi.Git.Enqueue_Commit(localGitState.Repo, localSummary);
+        GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+        {
+        	WorkKind = GitIdeApiWorkKind.Commit,
+        	RepoAtTimeOfRequest = localGitState.Repo,
+        	CommitSummary = localSummary
+    	});
 
         _summary = string.Empty;
     }

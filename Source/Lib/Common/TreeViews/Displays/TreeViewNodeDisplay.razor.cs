@@ -106,8 +106,12 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         if (localTreeViewNoType.IsExpanded)
         {
-            CommonBackgroundTaskApi.Enqueue_TreeView_HandleExpansionChevronOnMouseDown(
-                localTreeViewNoType, TreeViewContainer);
+            CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+            {
+    			WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
+            	TreeViewNoType = localTreeViewNoType,
+            	TreeViewContainer = TreeViewContainer
+            });
         }
         else
         {
@@ -133,11 +137,14 @@ public partial class TreeViewNodeDisplay : ComponentBase
             .OnMouseDownAsync(treeViewCommandArgs)
             .ConfigureAwait(false);
 
-        CommonBackgroundTaskApi.Enqueue_TreeView_ManuallyPropagateOnContextMenu(
-            HandleTreeViewOnContextMenu,
-            mouseEventArgs,
-            treeViewContainer.Key,
-            treeViewNoType);
+        CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        {
+    		WorkKind = CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu,
+        	HandleTreeViewOnContextMenu = HandleTreeViewOnContextMenu,
+            MouseEventArgs = mouseEventArgs,
+            ContainerKey = treeViewContainer.Key,
+            TreeViewNoType = treeViewNoType,
+        });
     }
 
     private async Task HandleOnClick(MouseEventArgs? mouseEventArgs)

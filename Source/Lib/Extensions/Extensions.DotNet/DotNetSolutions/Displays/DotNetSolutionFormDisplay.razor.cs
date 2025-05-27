@@ -14,6 +14,7 @@ using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 
@@ -67,9 +68,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory()
 	{
-		IdeBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-			"Directory for new .NET Solution",
-			async absolutePath =>
+		IdeBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		{
+			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			Message = "Directory for new .NET Solution",
+			OnAfterSubmitFunc = async absolutePath =>
 			{
 				if (absolutePath.ExactInput is null)
 					return;
@@ -77,17 +80,18 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 				_parentDirectoryName = absolutePath.Value;
 				await InvokeAsync(StateHasChanged);
 			},
-			absolutePath =>
+			SelectionIsValidFunc = absolutePath =>
 			{
 				if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(true);
 			},
-			new()
+			InputFilePatterns = new()
 			{
 				new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-			});
+			}
+		});
 	}
 
 	private async Task StartNewDotNetSolutionCommandOnClick()
@@ -138,7 +142,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 						solutionAbsolutePathString,
 						false);
 
-					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+					{
+						WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+						DotNetSolutionAbsolutePath = solutionAbsolutePath,
+					});
 					return Task.CompletedTask;
 	        	}
 	        };
@@ -182,7 +190,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			solutionAbsolutePathString,
 			false);
 
-		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(solutionAbsolutePath);
+		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+		{
+			WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+			DotNetSolutionAbsolutePath = solutionAbsolutePath,
+		});
 	}
 
 	public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

@@ -1,6 +1,7 @@
-﻿namespace Luthetus.Extensions.DotNet.Outputs.Models;
+namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
 public enum OutputSchedulerWorkKind
 {
+	None,
     ConstructTreeView
 }

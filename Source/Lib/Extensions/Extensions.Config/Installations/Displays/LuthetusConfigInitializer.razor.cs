@@ -10,6 +10,7 @@ using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.AppDatas.Models;
 using Luthetus.Extensions.Config.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.Config.Installations.Displays;
 
@@ -36,7 +37,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-        ConfigBackgroundTaskApi.Enqueue_InitializeFooterJustifyEndComponents();
+        ConfigBackgroundTaskApi.Enqueue(ConfigWorkKind.InitializeFooterJustifyEndComponents);
 		base.OnInitialized();
 	}
 
@@ -66,7 +67,11 @@ public partial class LuthetusConfigInitializer : ComponentBase
             solutionMostRecent,
             false);
 
-        DotNetBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(slnAbsolutePath);
+        DotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+        {
+        	WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+        	DotNetSolutionAbsolutePath = slnAbsolutePath,
+    	});
 
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)

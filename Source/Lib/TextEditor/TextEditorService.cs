@@ -9,6 +9,9 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lines.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -33,6 +36,9 @@ public sealed class TextEditorService
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IPanelService _panelService;
     private readonly IDialogService _dialogService;
+    private readonly IContextService _contextService;
+    private readonly IKeymapService _keymapService;
+    private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
@@ -53,6 +59,8 @@ public sealed class TextEditorService
         IPanelService panelService,
         IDialogService dialogService,
         IContextService contextService,
+        IKeymapService keymapService,
+        IEnvironmentProvider environmentProvider,
 		IAutocompleteIndexer autocompleteIndexer,
 		IAutocompleteService autocompleteService,
 		IAppDimensionService appDimensionService,
@@ -77,6 +85,9 @@ public sealed class TextEditorService
 		JsRuntimeTextEditorApi = _jsRuntime.GetLuthetusTextEditorApi();
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dialogService = dialogService;
+        _contextService = contextService;
+        _keymapService = keymapService;
+        _environmentProvider = environmentProvider;
 
 		AutocompleteIndexer = autocompleteIndexer;
 		AutocompleteService = autocompleteService;
@@ -677,5 +688,88 @@ public sealed class TextEditorService
 		}
 
         TextEditorStateChanged?.Invoke();
+    }
+    
+    public void Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind()
+    {
+    	_backgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+    		Key<IBackgroundTaskGroup>.Empty,
+    		Do_LuthetusTextEditorInitializerOnInit));
+    }
+
+    public async ValueTask Do_LuthetusTextEditorInitializerOnInit()
+    {
+        if (TextEditorConfig.CustomThemeRecordList is not null)
+        {
+            foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
+            {
+                ThemeService.ReduceRegisterAction(themeRecord);
+            }
+        }
+
+        var initialThemeRecord = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+            x => x.Key == TextEditorConfig.InitialThemeKey);
+
+        if (initialThemeRecord is not null)
+            OptionsApi.SetTheme(initialThemeRecord, updateStorage: false);
+
+        await OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
+
+        _contextService.RegisterContextSwitchGroup(
+            new ContextSwitchGroup(
+                Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer.ContextSwitchGroupKey,
+                "Text Editor",
+                () =>
+                {
+                    var menuOptionList = new List<MenuOptionRecord>();
+
+                    var mainGroup = GroupApi.GetGroups()
+                        .FirstOrDefault(x => x.Category.Value == "main");
+
+                    if (mainGroup is not null)
+                    {
+                        var viewModelList = new List<TextEditorViewModel>();
+
+                        foreach (var viewModelKey in mainGroup.ViewModelKeyList)
+                        {
+                            var viewModel = ViewModelApi.GetOrDefault(viewModelKey);
+
+                            if (viewModel is not null)
+                            {
+                                viewModelList.Add(viewModel);
+
+                                var absolutePath = _environmentProvider.AbsolutePathFactory(
+                                    viewModel.PersistentState.ResourceUri.Value,
+                                    false);
+
+                                menuOptionList.Add(new MenuOptionRecord(
+                                    absolutePath.NameWithExtension,
+                                    MenuOptionKind.Other,
+                                    onClickFunc: () =>
+                                    {
+                                    	WorkerArbitrary.PostUnique(async editContext =>
+                                    	{
+                                    		await OpenInEditorAsync(
+                                    			editContext,
+	                                            absolutePath.Value,
+	                                            true,
+	                                            cursorPositionIndex: null,
+	                                            new Category("main"),
+	                                            viewModel.PersistentState.ViewModelKey);
+                                    	});
+                                    	return Task.CompletedTask;
+                                    }));
+                            }
+                        }
+                    }
+
+                    var menu = menuOptionList.Count == 0
+                        ? new MenuRecord(MenuRecord.NoMenuOptionsExistList)
+                        : new MenuRecord(menuOptionList);
+
+                    return Task.FromResult(menu);
+                }));
+
+        _keymapService.RegisterKeymapLayer(Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
 }

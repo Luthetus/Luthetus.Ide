@@ -85,14 +85,17 @@ public partial class GitDiffDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
             
-        GitBackgroundTaskApi.Git.Enqueue_ShowFile(
-            localGitState.Repo,
-            localGitFile.RelativePathString,
-            (gitCliOutputParser, logFileContent) =>
+        GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+        {
+        	WorkKind = GitIdeApiWorkKind.ShowFile,
+            RepoAtTimeOfRequest = localGitState.Repo,
+            RelativePathToFile = localGitFile.RelativePathString,
+            NoIntCallback = (gitCliOutputParser, logFileContent) =>
             {
             	_createEditorsThrottle.Run(_ => { CreateEditorFromLog(gitCliOutputParser, localGitState, localGitFile, logFileContent); return Task.CompletedTask; });
             	return Task.CompletedTask;
-            });
+            }
+        });
     }
 
 	private async Task<bool> TryCreateEditorIn(string logFileContent, ResourceUri originalResourceUri)
@@ -280,10 +283,12 @@ public partial class GitDiffDisplay : ComponentBase
     	if (!(await TryCreateEditorOut(originalResourceUri, localGitFile.AbsolutePath)))
     		return;
     		
-    	GitBackgroundTaskApi.Git.Enqueue_DiffFile(
-            localGitState.Repo,
-            localGitFile.RelativePathString,
-            (gitCliOutputParser, logFileContent, plusMarkedLineIndexList) =>
+    	GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+    	{
+    		WorkKind = GitIdeApiWorkKind.DiffFile,
+            RepoAtTimeOfRequest = localGitState.Repo,
+            RelativePathToFile = localGitFile.RelativePathString,
+            WithIntCallback = (gitCliOutputParser, logFileContent, plusMarkedLineIndexList) =>
             {
             	Console.WriteLine("DiffFileEnqueue");
             	
@@ -346,7 +351,8 @@ public partial class GitDiffDisplay : ComponentBase
         		});
             		
             	return Task.CompletedTask;
-            });
+            }
+        });
 
         await InvokeAsync(StateHasChanged);
     }

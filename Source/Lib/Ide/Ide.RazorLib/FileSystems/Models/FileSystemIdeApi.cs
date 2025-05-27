@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -33,25 +34,12 @@ public class FileSystemIdeApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<FileSystemIdeApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<FileSystemIdeApiWorkArgs> _workQueue = new();
 
-    private readonly
-        Queue<(AbsolutePath absolutePath, string content, Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc, CancellationToken cancellationToken)>
-        _queue_SaveFile = new();
-
-    public void Enqueue_SaveFile(
-        AbsolutePath absolutePath,
-        string content,
-        Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
-        CancellationToken cancellationToken = default)
+    public void Enqueue(FileSystemIdeApiWorkArgs workArgs)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(FileSystemIdeApiWorkKind.SaveFile);
-            _queue_SaveFile.Enqueue((absolutePath, content, onAfterSaveCompletedWrittenDateTimeFunc, cancellationToken));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
 
     private async ValueTask Do_SaveFile(
@@ -92,26 +80,16 @@ public class FileSystemIdeApi : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        FileSystemIdeApiWorkKind workKind;
+        if (!_workQueue.TryDequeue(out FileSystemIdeApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.WorkKind)
         {
             case FileSystemIdeApiWorkKind.SaveFile:
-            {
-                var args = _queue_SaveFile.Dequeue();
-                return Do_SaveFile(args.absolutePath, args.content, args.onAfterSaveCompletedWrittenDateTimeFunc, args.cancellationToken);
-            }
+                return Do_SaveFile(workArgs.AbsolutePath, workArgs.Content, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
             default:
-            {
                 Console.WriteLine($"{nameof(FileSystemIdeApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }

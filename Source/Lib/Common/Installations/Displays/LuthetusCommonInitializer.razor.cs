@@ -33,7 +33,10 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
     
 	protected override void OnInitialized()
 	{
-        CommonBackgroundTaskApi.Enqueue_LuthetusCommonInitializer();
+        CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        {
+        	WorkKind = CommonWorkKind.LuthetusCommonInitializerWork
+    	});
         base.OnInitialized();
 	}
 
