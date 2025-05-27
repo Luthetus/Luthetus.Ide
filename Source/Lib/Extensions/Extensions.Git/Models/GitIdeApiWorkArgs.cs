@@ -1,6 +1,6 @@
 namespace Luthetus.Extensions.Git.Models;
 
-public class GitIdeApiWorkArgs
+public struct GitIdeApiWorkArgs
 {
 	public GitIdeApiWorkKind WorkKind { get; set; }
     public GitRepo RepoAtTimeOfRequest { get; set; }
