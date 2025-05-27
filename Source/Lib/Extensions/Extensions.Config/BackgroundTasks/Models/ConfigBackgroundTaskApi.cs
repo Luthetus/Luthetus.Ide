@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
@@ -21,19 +22,15 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<ConfigWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<ConfigWorkKind> _workKindQueue = new();
 
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IIdeMainLayoutService _ideMainLayoutService;
 
-    public void Enqueue_InitializeFooterJustifyEndComponents()
+    public void Enqueue(ConfigWorkKind configWorkKind)
 	{
-		lock (_workLock)
-        {
-            _workKindQueue.Enqueue(ConfigWorkKind.InitializeFooterJustifyEndComponents);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workKindQueue.Enqueue(configWorkKind);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 
     public ValueTask Do_InitializeFooterJustifyEndComponents()
@@ -73,25 +70,16 @@ public class ConfigBackgroundTaskApi : IBackgroundTaskGroup
 
 	public ValueTask HandleEvent()
 	{
-		ConfigWorkKind workKind;
-		
-		lock (_workLock)
-		{
-			if (!_workKindQueue.TryDequeue(out workKind))
-				return ValueTask.CompletedTask;
-		}
+		if (!_workKindQueue.TryDequeue(out ConfigWorkKind workKind))
+			return ValueTask.CompletedTask;
 			
 		switch (workKind)
 		{
 			case ConfigWorkKind.InitializeFooterJustifyEndComponents:
-			{
 				return Do_InitializeFooterJustifyEndComponents();
-			}
 			default:
-			{
 				Console.WriteLine($"{nameof(ConfigBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-			}
 		}
 	}
 }

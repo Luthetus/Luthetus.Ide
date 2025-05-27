@@ -36,7 +36,7 @@ public partial class LuthetusConfigInitializer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-        ConfigBackgroundTaskApi.Enqueue_InitializeFooterJustifyEndComponents();
+        ConfigBackgroundTaskApi.Enqueue(ConfigWorkKind.InitializeFooterJustifyEndComponents);
 		base.OnInitialized();
 	}
 
