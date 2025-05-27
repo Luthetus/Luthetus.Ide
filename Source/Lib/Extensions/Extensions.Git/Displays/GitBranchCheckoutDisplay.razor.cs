@@ -17,6 +17,11 @@ public partial class GitBranchCheckoutDisplay : ComponentBase
         if (localGitState.Repo is null)
             return;
 
-        GitBackgroundTaskApi.Git.Enqueue_BranchSet(localGitState.Repo, branchName);
+        GitBackgroundTaskApi.Git.Enqueue(new GitIdeApiWorkArgs
+        {
+        	WorkKind = GitIdeApiWorkKind.BranchSet,
+        	RepoAtTimeOfRequest = localGitState.Repo,
+        	BranchName = branchName
+    	});
     }
 }
