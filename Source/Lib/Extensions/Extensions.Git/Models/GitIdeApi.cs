@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -64,22 +65,16 @@ public class GitIdeApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<GitIdeApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
-
-    private readonly Queue<GitRepo> _queue_general_repoAtTimeOfRequest = new();
+    private readonly ConcurrentQueue<GitIdeApiWorkArgs> _workQueue = new();
 
     public Key<TerminalCommandRequest> GitTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 
-    public void Enqueue_Status()
+    public void Enqueue(GitIdeApiWorkArgs workArgs)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.Status);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
-    
+
     public ValueTask Do_Status()
     {
         var localGitState = GetGitState();
@@ -115,23 +110,32 @@ public class GitIdeApi : IBackgroundTaskGroup
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
     }
-
+    
     public void RefreshEnqueue(GitRepo repoAtTimeOfRequest)
     {
-		Enqueue_Status();
-        Enqueue_BranchGetAll(repoAtTimeOfRequest);
-        Enqueue_GetActiveBranchName(repoAtTimeOfRequest);
-        Enqueue_GetOriginName(repoAtTimeOfRequest);
-    }
-
-    public void Enqueue_GetActiveBranchName(GitRepo repoAtTimeOfRequest)
-    {
-        lock (_workLock)
+		Enqueue(new GitIdeApiWorkArgs
+		{
+			WorkKind = GitIdeApiWorkKind.Status
+		});
+		
+        Enqueue(new GitIdeApiWorkArgs
         {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.GetActiveBranchName);
-            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        	WorkKind = GitIdeApiWorkKind.BranchGetAll,
+        	RepoAtTimeOfRequest = repoAtTimeOfRequest
+    	});
+        
+        Enqueue(new GitIdeApiWorkArgs
+        {
+        	WorkKind = GitIdeApiWorkKind.GetActiveBranchName,
+        	RepoAtTimeOfRequest = repoAtTimeOfRequest
+    	});
+        
+        Enqueue(new GitIdeApiWorkArgs
+        {
+        	WorkKind = GitIdeApiWorkKind.GetOriginName,
+        	RepoAtTimeOfRequest = repoAtTimeOfRequest
+    	});
+        
     }
     
     public ValueTask Do_GetActiveBranchName(GitRepo repoAtTimeOfRequest)
@@ -167,16 +171,6 @@ public class GitIdeApi : IBackgroundTaskGroup
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
     }
-
-    public void Enqueue_GetOriginName(GitRepo repoAtTimeOfRequest)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.GetOriginName);
-            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
     
     public ValueTask Do_GetOriginName(GitRepo repoAtTimeOfRequest)
     {
@@ -210,16 +204,6 @@ public class GitIdeApi : IBackgroundTaskGroup
                 	
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
-    }
-
-    public void Enqueue_Add(GitRepo repoAtTimeOfRequest)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.Add);
-            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_Add(GitRepo repoAtTimeOfRequest)
@@ -265,23 +249,17 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             ContinueWithFunc = parsedCommand =>
             {
-                Enqueue_Status();
+                Enqueue(new GitIdeApiWorkArgs
+                {
+                	WorkKind = GitIdeApiWorkKind.Status,
+                });
+                
 				return Task.CompletedTask;
             }
         };
                 	
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
-    }
-	
-	public void Enqueue_Unstage(GitRepo repoAtTimeOfRequest)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.Unstage);
-            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_Unstage(GitRepo repoAtTimeOfRequest)
@@ -327,25 +305,16 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             ContinueWithFunc = parsedCommand =>
             {
-                Enqueue_Status();
+                Enqueue(new GitIdeApiWorkArgs
+                {
+                	WorkKind = GitIdeApiWorkKind.Status,
+                });
                 return Task.CompletedTask;
             }
         };
                 	
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
-    }
-
-    private readonly Queue<(GitRepo repoAtTimeOfRequest, string commitSummary)> _queue_Commit = new();
-
-	public void Enqueue_Commit(GitRepo repoAtTimeOfRequest, string commitSummary)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.Commit);
-            _queue_Commit.Enqueue((repoAtTimeOfRequest, commitSummary));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_Commit(GitRepo repoAtTimeOfRequest, string commitSummary)
@@ -370,7 +339,10 @@ public class GitIdeApi : IBackgroundTaskGroup
         {
             ContinueWithFunc = parsedCommand =>
             {
-                Enqueue_Status();
+                Enqueue(new GitIdeApiWorkArgs
+                {
+                	WorkKind = GitIdeApiWorkKind.Status,
+                });
 	
 				NotificationHelper.DispatchInformative(
 					"Git: committed",
@@ -385,21 +357,6 @@ public class GitIdeApi : IBackgroundTaskGroup
                 	
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
-    }
-
-    private readonly Queue<(GitRepo repoAtTimeOfRequest, string branchName)> _queue_BranchNew = new();
-
-    public void Enqueue_BranchNew(GitRepo repoAtTimeOfRequest, string branchName)
-    {
-        if (string.IsNullOrWhiteSpace(branchName))
-            NotificationHelper.DispatchError(nameof(Enqueue_BranchNew), "branchName was null or whitespace", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(6));
-
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.BranchNew);
-            _queue_BranchNew.Enqueue((repoAtTimeOfRequest, branchName));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_BranchNew(GitRepo repoAtTimeOfRequest, string branchName)
@@ -434,16 +391,6 @@ public class GitIdeApi : IBackgroundTaskGroup
                 	
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
-    }
-
-    public void Enqueue_BranchGetAll(GitRepo repoAtTimeOfRequest)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.BranchGetAll);
-            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_BranchGetAll(GitRepo repoAtTimeOfRequest)
@@ -480,18 +427,6 @@ public class GitIdeApi : IBackgroundTaskGroup
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
     }
-
-    private readonly Queue<(GitRepo repoAtTimeOfRequest, string branchName)> _queue_BranchSet = new();
-
-    public void Enqueue_BranchSet(GitRepo repoAtTimeOfRequest, string branchName)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.BranchSet);
-            _queue_BranchSet.Enqueue((repoAtTimeOfRequest, branchName));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
     
     public ValueTask Do_BranchSet(GitRepo repoAtTimeOfRequest, string branchName)
     {
@@ -523,16 +458,6 @@ public class GitIdeApi : IBackgroundTaskGroup
                 	
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
-    }
-    
-    public void Enqueue_PushToOriginWithTracking(GitRepo repoAtTimeOfRequest)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.PushToOriginWithTracking);
-            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_PushToOriginWithTracking(GitRepo repoAtTimeOfRequest)
@@ -568,16 +493,6 @@ public class GitIdeApi : IBackgroundTaskGroup
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
     }
-
-    public void Enqueue_Pull(GitRepo repoAtTimeOfRequest)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.Pull);
-            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
     
     public ValueTask Do_Pull(GitRepo repoAtTimeOfRequest)
     {
@@ -611,16 +526,6 @@ public class GitIdeApi : IBackgroundTaskGroup
 		return ValueTask.CompletedTask;
     }
     
-    public void Enqueue_Fetch(GitRepo repoAtTimeOfRequest)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.Fetch);
-            _queue_general_repoAtTimeOfRequest.Enqueue(repoAtTimeOfRequest);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
-    
     public ValueTask Do_Fetch(GitRepo repoAtTimeOfRequest)
     {
         var localGitState = GetGitState();
@@ -651,23 +556,6 @@ public class GitIdeApi : IBackgroundTaskGroup
                 	
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
-    }
-
-    private readonly
-        Queue<(GitRepo repoAtTimeOfRequest, string relativePathToFile, Func<GitCliOutputParser, string, Task> callback)>
-        _queue_general_callback = new();
-
-    public void Enqueue_LogFile(
-        GitRepo repoAtTimeOfRequest,
-        string relativePathToFile,
-        Func<GitCliOutputParser, string, Task> callback)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.LogFile);
-            _queue_general_callback.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_LogFile(
@@ -703,19 +591,6 @@ public class GitIdeApi : IBackgroundTaskGroup
                 	
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		return ValueTask.CompletedTask;
-    }
-
-    public void Enqueue_ShowFile(
-        GitRepo repoAtTimeOfRequest,
-        string relativePathToFile,
-        Func<GitCliOutputParser, string, Task> callback)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.ShowFile);
-            _queue_general_callback.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_ShowFile(
@@ -853,23 +728,6 @@ public class GitIdeApi : IBackgroundTaskGroup
 		
 		return plusMarkedLineIndexList;
 	}
-
-    private readonly
-        Queue<(GitRepo repoAtTimeOfRequest, string relativePathToFile, Func<GitCliOutputParser, string, List<int>, Task> callback)>
-        _queue_DiffFile = new();
-
-    public void Enqueue_DiffFile(
-        GitRepo repoAtTimeOfRequest,
-        string relativePathToFile,
-        Func<GitCliOutputParser, string, List<int>, Task> callback)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(GitIdeApiWorkKind.DiffFile);
-            _queue_DiffFile.Enqueue((repoAtTimeOfRequest, relativePathToFile, callback));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
     
     public ValueTask Do_DiffFile(
         GitRepo repoAtTimeOfRequest,
@@ -1145,95 +1003,44 @@ public class GitIdeApi : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        GitIdeApiWorkKind workKind;
+        if (!_workQueue.TryDequeue(out GitIdeApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.WorkKind)
         {
             case GitIdeApiWorkKind.Status:
-            {
                 return Do_Status();
-            }
             case GitIdeApiWorkKind.GetActiveBranchName:
-            {
-                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
-                return Do_GetActiveBranchName(args);
-            }
+                return Do_GetActiveBranchName(workArgs.RepoAtTimeOfRequest);
             case GitIdeApiWorkKind.GetOriginName:
-            {
-                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
-                return Do_GetOriginName(args);
-            }
+                return Do_GetOriginName(workArgs.RepoAtTimeOfRequest);
             case GitIdeApiWorkKind.Add:
-            {
-                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
-                return Do_Add(args);
-            }
+                return Do_Add(workArgs.RepoAtTimeOfRequest);
             case GitIdeApiWorkKind.Unstage:
-            {
-                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
-                return Do_Unstage(args);
-            }
+                return Do_Unstage(workArgs.RepoAtTimeOfRequest);
             case GitIdeApiWorkKind.Commit:
-            {
-                var args = _queue_Commit.Dequeue();
-                return Do_Commit(args.repoAtTimeOfRequest, args.commitSummary);
-            }
+                return Do_Commit(workArgs.RepoAtTimeOfRequest, workArgs.CommitSummary);
             case GitIdeApiWorkKind.BranchNew:
-            {
-                var args = _queue_BranchNew.Dequeue();
-                return Do_BranchNew(args.repoAtTimeOfRequest, args.branchName);
-            }
+                return Do_BranchNew(workArgs.RepoAtTimeOfRequest, workArgs.BranchName);
             case GitIdeApiWorkKind.BranchGetAll:
-            {
-                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
-                return Do_BranchGetAll(args);
-            }
+                return Do_BranchGetAll(workArgs.RepoAtTimeOfRequest);
             case GitIdeApiWorkKind.BranchSet:
-            {
-                var args = _queue_BranchSet.Dequeue();
-                return Do_BranchSet(args.repoAtTimeOfRequest, args.branchName);
-            }
+                return Do_BranchSet(workArgs.RepoAtTimeOfRequest, workArgs.BranchName);
             case GitIdeApiWorkKind.PushToOriginWithTracking:
-            {
-                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
-                return Do_PushToOriginWithTracking(args);
-            }
+                return Do_PushToOriginWithTracking(workArgs.RepoAtTimeOfRequest);
             case GitIdeApiWorkKind.Pull:
-            {
-                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
-                return Do_Pull(args);
-            }
+                return Do_Pull(workArgs.RepoAtTimeOfRequest);
             case GitIdeApiWorkKind.Fetch:
-            {
-                var args = _queue_general_repoAtTimeOfRequest.Dequeue();
-                return Do_Fetch(args);
-            }
+                return Do_Fetch(workArgs.RepoAtTimeOfRequest);
             case GitIdeApiWorkKind.LogFile:
-            {
-                var args = _queue_general_callback.Dequeue();
-                return Do_LogFile(args.repoAtTimeOfRequest, args.relativePathToFile, args.callback);
-            }
+                return Do_LogFile(workArgs.RepoAtTimeOfRequest, workArgs.RelativePathToFile, workArgs.NoIntCallback);
             case GitIdeApiWorkKind.ShowFile:
-            {
-                var args = _queue_general_callback.Dequeue();
-                return Do_ShowFile(args.repoAtTimeOfRequest, args.relativePathToFile, args.callback);
-            }
+                return Do_ShowFile(workArgs.RepoAtTimeOfRequest, workArgs.RelativePathToFile, workArgs.NoIntCallback);
             case GitIdeApiWorkKind.DiffFile:
-            {
-                var args = _queue_DiffFile.Dequeue();
-                return Do_DiffFile(args.repoAtTimeOfRequest, args.relativePathToFile, args.callback);
-            }
+                return Do_DiffFile(workArgs.RepoAtTimeOfRequest, workArgs.RelativePathToFile, workArgs.WithIntCallback);
             default:
-            {
                 Console.WriteLine($"{nameof(GitIdeApi)} {nameof(HandleEvent)} default case");
                 return ValueTask.CompletedTask;
-            }
         }
     }
 }

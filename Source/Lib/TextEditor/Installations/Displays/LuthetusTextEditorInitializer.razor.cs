@@ -28,8 +28,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     [Inject]
     public IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
     [Inject]
-    private TextEditorInitializationBackgroundTaskGroup TextEditorInitializationBackgroundTaskGroup { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
 
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
@@ -53,7 +51,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
     	
     	TextEditorService.OptionsApi.NeedsMeasured += OnNeedsMeasured;
 
-        TextEditorInitializationBackgroundTaskGroup.Enqueue_LuthetusTextEditorInitializerOnInit();
+        TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
             
         base.OnInitialized();
     }

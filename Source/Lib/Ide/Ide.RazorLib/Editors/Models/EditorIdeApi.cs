@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
@@ -20,6 +21,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Ide.RazorLib.Editors.Models;
@@ -79,16 +81,21 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<EditorIdeApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<EditorIdeApiWorkArgs> _workQueue = new();
 
-    private readonly Queue<(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)> _queue_FileContentsWereModifiedOnDisk = new();
-
+    public void Enqueue(EditorIdeApiWorkArgs workArgs)
+    {
+		_workQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
+    }
+    
     public void ShowInputFile()
     {
-        _ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-            "TextEditor",
-            absolutePath =>
+        _ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        {
+        	WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+            Message = "TextEditor",
+            OnAfterSubmitFunc = absolutePath =>
             {
             	// TODO: Why does 'isDirectory: false' not work?
 				_environmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
@@ -105,17 +112,18 @@ public class EditorIdeApi : IBackgroundTaskGroup
 				});
 				return Task.CompletedTask;
             },
-            absolutePath =>
+            SelectionIsValidFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
                     return Task.FromResult(false);
 
                 return Task.FromResult(true);
             },
-            new()
+            InputFilePatterns = new()
             {
-                    new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
-            });
+            	new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
+            }
+        });
     }
 
     public async Task FastParseFunc(FastParseArgs fastParseArgs)
@@ -255,10 +263,12 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
         var cancellationToken = innerTextEditor.PersistentState.TextEditorSaveFileHelper.GetCancellationToken();
 
-        _ideBackgroundTaskApi.FileSystem.Enqueue_SaveFile(
-            absolutePath,
-            innerContent,
-            writtenDateTime =>
+        _ideBackgroundTaskApi.FileSystem.Enqueue(new FileSystemIdeApiWorkArgs
+        {
+        	WorkKind = FileSystemIdeApiWorkKind.SaveFile,
+            AbsolutePath = absolutePath,
+            Content = innerContent,
+            OnAfterSaveCompletedWrittenDateTimeFunc = writtenDateTime =>
             {
                 if (writtenDateTime is not null)
                 {
@@ -278,7 +288,8 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
                 return Task.CompletedTask;
             },
-            cancellationToken);
+            CancellationToken = cancellationToken
+        });
     }
 
     public async Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
@@ -357,15 +368,14 @@ public class EditorIdeApi : IBackgroundTaskGroup
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
                             new Func<Task>(() =>
                             {
-                                lock (_workLock)
-                                {
-                                    _workKindQueue.Enqueue(EditorIdeApiWorkKind.FileContentsWereModifiedOnDisk);
-
-                                    _queue_FileContentsWereModifiedOnDisk.Enqueue((
-                                        inputFileAbsolutePathString, textEditorModel, fileLastWriteTime, notificationInformativeKey));
-
-                                    _backgroundTaskService.Continuous_EnqueueGroup(this);
-                                }
+                            	Enqueue(new EditorIdeApiWorkArgs
+                            	{
+                            		WorkKind = EditorIdeApiWorkKind.FileContentsWereModifiedOnDisk,
+                            		InputFileAbsolutePathString = inputFileAbsolutePathString,
+                            		TextEditorModel = textEditorModel,
+                            		FileLastWriteTime = fileLastWriteTime,
+                            		NotificationInformativeKey = notificationInformativeKey,
+                            	});
 
 								return Task.CompletedTask;
 							})
@@ -416,27 +426,17 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        EditorIdeApiWorkKind workKind;
+        if (!_workQueue.TryDequeue(out EditorIdeApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.WorkKind)
         {
             case EditorIdeApiWorkKind.FileContentsWereModifiedOnDisk:
-            {
-                var args = _queue_FileContentsWereModifiedOnDisk.Dequeue();
                 return Do_FileContentsWereModifiedOnDisk(
-                    args.inputFileAbsolutePathString, args.textEditorModel, args.fileLastWriteTime, args.notificationInformativeKey);
-            }
+                    workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
             default:
-            {
                 Console.WriteLine($"{nameof(EditorIdeApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }

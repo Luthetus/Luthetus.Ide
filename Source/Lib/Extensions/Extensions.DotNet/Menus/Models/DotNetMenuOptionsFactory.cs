@@ -227,9 +227,11 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion)
 	{
-		ideBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-			$"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
-			referencedProject =>
+		ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		{
+			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			Message = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
+			OnAfterSubmitFunc = referencedProject =>
 			{
 				if (referencedProject.ExactInput is null)
 					return Task.CompletedTask;
@@ -252,7 +254,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				terminal.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			},
-			absolutePath =>
+			SelectionIsValidFunc = absolutePath =>
 			{
 				if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
 					return Task.FromResult(false);
@@ -260,12 +262,13 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				return Task.FromResult(
 					absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
 			},
-			new()
+			InputFilePatterns = new()
 			{
 				new InputFilePattern(
 					"C# Project",
 					absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-			});
+			}
+		});
 	}
 
 	private readonly

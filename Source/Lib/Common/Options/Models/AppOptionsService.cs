@@ -241,9 +241,12 @@ public class AppOptionsService : IAppOptionsService
 
     public void WriteToStorage()
     {
-        CommonBackgroundTaskApi.Enqueue_WriteToLocalStorage(
-            StorageKey,
-            new CommonOptionsJsonDto(GetAppOptionsState().Options));
+        CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+    	{
+    		WorkKind = CommonWorkKind.WriteToLocalStorage,
+    		WriteToLocalStorage_Key = StorageKey,
+    		WriteToLocalStorage_Value = new CommonOptionsJsonDto(GetAppOptionsState().Options)
+    	});
     }
     
     private void HandleThemeChange()

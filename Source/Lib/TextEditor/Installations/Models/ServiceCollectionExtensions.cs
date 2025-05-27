@@ -34,8 +34,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>()
             .AddScoped<IFindAllService, FindAllService>()
-            .AddScoped<IDirtyResourceUriService, DirtyResourceUriService>()
-            .AddScoped<TextEditorInitializationBackgroundTaskGroup>();
+            .AddScoped<IDirtyResourceUriService, DirtyResourceUriService>();
         
         return services;
     }

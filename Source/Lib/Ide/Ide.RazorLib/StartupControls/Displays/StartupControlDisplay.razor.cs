@@ -90,6 +90,8 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    MenuOptionKind.Other,
 			    onClickFunc: async () => 
 				{
+					TerminalGroupService.SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
+				
 					var success = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	
 	                if (!success)
@@ -99,8 +101,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	                }
-	                
-	                TerminalGroupService.SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
 				}));
 			    
 			menuOptionList.Add(new MenuOptionRecord(

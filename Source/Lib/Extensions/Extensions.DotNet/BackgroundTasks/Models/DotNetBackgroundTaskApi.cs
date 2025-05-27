@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -217,27 +218,20 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<DotNetBackgroundTaskApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
-
-	private readonly Queue<TreeViewCommandArgs> _queue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles = new();
+	private readonly ConcurrentQueue<DotNetBackgroundTaskApiWorkArgs> _workQueue = new();
 
     private Key<PanelGroup> _leftPanelGroupKey;
     private Key<Panel> _solutionExplorerPanelKey;
 
     private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
-
-    public void Enqueue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(TreeViewCommandArgs commandArgs)
+    
+    public void Enqueue(DotNetBackgroundTaskApiWorkArgs workArgs)
     {
-        lock (_workLock)
-		{
-			_workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles);
-			_queue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles.Enqueue(commandArgs);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+		_workQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
-	
-	public async ValueTask Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(TreeViewCommandArgs commandArgs)
+
+    public async ValueTask Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(TreeViewCommandArgs commandArgs)
     {
         foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
         {
@@ -267,15 +261,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                     _treeViewService.ReduceReRenderNodeAction(mostRecentContainer.Key, localParent);
                 }
             }
-        }
-    }
-
-    public void Enqueue_LuthetusExtensionsDotNetInitializerOnInit()
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.LuthetusExtensionsDotNetInitializerOnInit);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -410,15 +395,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         
         // SetActivePanelTabAction
         _panelService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
-    }
-
-    public void Enqueue_LuthetusExtensionsDotNetInitializerOnAfterRender()
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.LuthetusExtensionsDotNetInitializerOnAfterRender);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
 
     public ValueTask Do_LuthetusExtensionsDotNetInitializerOnAfterRender()
@@ -722,18 +698,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         return Task.CompletedTask;
     }
 
-    private readonly Queue<INugetPackageManagerQuery> _queue_SubmitNuGetQuery = new();
-
-    public void Enqueue_SubmitNuGetQuery(INugetPackageManagerQuery query)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.SubmitNuGetQuery);
-            _queue_SubmitNuGetQuery.Enqueue(query);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
-    }
-
     public async ValueTask Do_SubmitNuGetQuery(INugetPackageManagerQuery query)
     {
         var localNugetResult = await _nugetPackageManagerProvider
@@ -741,20 +705,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             .ConfigureAwait(false);
 
         NuGetPackageManagerService.ReduceSetMostRecentQueryResultAction(localNugetResult);
-    }
-
-    private readonly
-        Queue<(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName, TreeViewProjectTestModel treeViewProjectTestModel)>
-        _queue_RunTestByFullyQualifiedName = new();
-
-    public void Enqueue_RunTestByFullyQualifiedName(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName, TreeViewProjectTestModel treeViewProjectTestModel)
-    {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName);
-            _queue_RunTestByFullyQualifiedName.Enqueue((treeViewStringFragment, fullyQualifiedName, treeViewProjectTestModel));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
     }
     
     public ValueTask Do_RunTestByFullyQualifiedName(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName, TreeViewProjectTestModel treeViewProjectTestModel)
@@ -854,44 +804,24 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        DotNetBackgroundTaskApiWorkKind workKind;
+        if (!_workQueue.TryDequeue(out DotNetBackgroundTaskApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.WorkKind)
         {
             case DotNetBackgroundTaskApiWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles:
-            {
-				var args = _queue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles.Dequeue();
-                return Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(args);
-            }
+                return Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(workArgs.TreeViewCommandArgs);
             case DotNetBackgroundTaskApiWorkKind.LuthetusExtensionsDotNetInitializerOnInit:
-            {
                 return Do_LuthetusExtensionsDotNetInitializerOnInit();
-            }
             case DotNetBackgroundTaskApiWorkKind.LuthetusExtensionsDotNetInitializerOnAfterRender:
-            {
                 return Do_LuthetusExtensionsDotNetInitializerOnAfterRender();
-            }
             case DotNetBackgroundTaskApiWorkKind.SubmitNuGetQuery:
-            {
-                var args = _queue_SubmitNuGetQuery.Dequeue();
-                return Do_SubmitNuGetQuery(args);
-            }
+                return Do_SubmitNuGetQuery(workArgs.NugetPackageManagerQuery);
             case DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName:
-            {
-                var args = _queue_RunTestByFullyQualifiedName.Dequeue();
-                return Do_RunTestByFullyQualifiedName(args.treeViewStringFragment, args.fullyQualifiedName, args.treeViewProjectTestModel);
-            }
+                return Do_RunTestByFullyQualifiedName(workArgs.TreeViewStringFragment, workArgs.FullyQualifiedName, workArgs.TreeViewProjectTestModel);
             default:
-            {
                 Console.WriteLine($"{nameof(DotNetBackgroundTaskApi)} {nameof(HandleEvent)} default case");
                 return ValueTask.CompletedTask;
-            }
         }
     }
 }

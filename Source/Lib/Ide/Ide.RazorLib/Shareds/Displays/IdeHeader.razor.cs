@@ -67,7 +67,11 @@ public partial class IdeHeader : ComponentBase, IDisposable
 	{
 		AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
-		IdeBackgroundTaskApi.Enqueue_IdeHeaderOnInit(this);
+		IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+		{
+			WorkKind = IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit,
+			IdeHeader = this,
+		});
 
         base.OnInitialized();
 	}

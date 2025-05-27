@@ -144,9 +144,12 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-		CommonBackgroundTaskApi.Enqueue_Tab_ManuallyPropagateOnContextMenu(
-            localHandleTabButtonOnContextMenu,
-            new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync));
+		CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+		{
+    		WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
+			HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
+            TabContextMenuEventArgs = new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync),
+		});
     }
 
 	private async Task FocusAsync()

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -34,25 +35,12 @@ public class InputFileIdeApi : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly Queue<InputFileIdeApiWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
+    private readonly ConcurrentQueue<InputFileIdeApiWorkArgs> _workQueue = new();
 
-    private readonly
-        Queue<(string message, Func<AbsolutePath, Task> onAfterSubmitFunc, Func<AbsolutePath, Task<bool>> selectionIsValidFunc, List<InputFilePattern> inputFilePatterns)>
-        _queue_RequestInputFileStateForm = new();
-
-    public void Enqueue_RequestInputFileStateForm(
-        string message,
-        Func<AbsolutePath, Task> onAfterSubmitFunc,
-        Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
-        List<InputFilePattern> inputFilePatterns)
+    public void Enqueue(InputFileIdeApiWorkArgs workArgs)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(InputFileIdeApiWorkKind.RequestInputFileStateForm);
-            _queue_RequestInputFileStateForm.Enqueue((message, onAfterSubmitFunc, selectionIsValidFunc, inputFilePatterns));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
-        }
+        _workQueue.Enqueue(workArgs);
+        _backgroundTaskService.Continuous_EnqueueGroup(this);
     }
 
     private ValueTask Do_RequestInputFileStateForm(
@@ -83,27 +71,17 @@ public class InputFileIdeApi : IBackgroundTaskGroup
 
     public ValueTask HandleEvent()
     {
-        InputFileIdeApiWorkKind workKind;
+        if (!_workQueue.TryDequeue(out InputFileIdeApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
 
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
+        switch (workArgs.WorkKind)
         {
             case InputFileIdeApiWorkKind.RequestInputFileStateForm:
-            {
-                var args = _queue_RequestInputFileStateForm.Dequeue();
                 return Do_RequestInputFileStateForm(
-                    args.message, args.onAfterSubmitFunc, args.selectionIsValidFunc, args.inputFilePatterns);
-            }
+                    workArgs.Message, workArgs.OnAfterSubmitFunc, workArgs.SelectionIsValidFunc, workArgs.InputFilePatterns);
             default:
-            {
                 Console.WriteLine($"{nameof(InputFileIdeApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
-            }
         }
     }
 }

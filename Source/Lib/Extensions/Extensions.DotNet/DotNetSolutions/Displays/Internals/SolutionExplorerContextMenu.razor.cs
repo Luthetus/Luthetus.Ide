@@ -199,8 +199,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 								.Invoke()
 								.ConfigureAwait(false);
 
-							DotNetBackgroundTaskApi.Enqueue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(
-                                commandArgs);
+							DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+							{
+								WorkKind = DotNetBackgroundTaskApiWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles,
+                                TreeViewCommandArgs = commandArgs,
+                            });
 						}
 					},
 					{ nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
@@ -328,7 +331,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				NotificationService,
 				() =>
 				{
-					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+					{
+						WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+						DotNetSolutionAbsolutePath = treeViewSolution.Item.NamespacePath.AbsolutePath
+					});
 					return Task.CompletedTask;
 				}),
 			new MenuOptionRecord(
@@ -352,7 +359,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				NotificationService,
 				() =>
 				{
-					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+					{
+						WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+						DotNetSolutionAbsolutePath = treeViewSolution.Item.NamespacePath.AbsolutePath,
+					});
 					return Task.CompletedTask;
 				}),
 		};
@@ -481,9 +492,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 	private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
 	{
-		IdeBackgroundTaskApi.InputFile.Enqueue_RequestInputFileStateForm(
-			"Existing C# Project to add to solution",
-			absolutePath =>
+		IdeBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		{
+			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			Message = "Existing C# Project to add to solution",
+			OnAfterSubmitFunc = absolutePath =>
 			{
 				if (absolutePath.ExactInput is null)
 					return Task.CompletedTask;
@@ -498,7 +511,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        {
 		        	ContinueWithFunc = parsedCommand =>
 		        	{
-		        		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue_SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
+		        		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+		        		{
+		        			WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+		        			DotNetSolutionAbsolutePath = dotNetSolutionModel.NamespacePath.AbsolutePath,
+	        			});
 						return Task.CompletedTask;
 		        	}
 		        };
@@ -506,19 +523,20 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			},
-			absolutePath =>
+			SelectionIsValidFunc = absolutePath =>
 			{
 				if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
 					return Task.FromResult(false);
 
 				return Task.FromResult(absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
 			},
-			new()
+			InputFilePatterns = new()
 			{
 				new InputFilePattern(
 					"C# Project",
 					absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-			});
+			}
+		});
 	}
 
 	private Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)
