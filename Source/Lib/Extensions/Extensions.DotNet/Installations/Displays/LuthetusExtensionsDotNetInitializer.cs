@@ -10,7 +10,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 
     protected override void OnInitialized()
 	{
-		DotNetBackgroundTaskApi.Enqueue_LuthetusExtensionsDotNetInitializerOnInit();
+		DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+		{
+			WorkKind = DotNetBackgroundTaskApiWorkKind.LuthetusExtensionsDotNetInitializerOnInit,
+		});
 		base.OnInitialized();
 	}
 	
@@ -18,7 +21,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	{
 		if (firstRender)
 		{
-            DotNetBackgroundTaskApi.Enqueue_LuthetusExtensionsDotNetInitializerOnAfterRender();
+            DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+            {
+            	WorkKind = DotNetBackgroundTaskApiWorkKind.LuthetusExtensionsDotNetInitializerOnAfterRender
+            });
 		}
 	}
 }

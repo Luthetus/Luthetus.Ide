@@ -219,10 +219,13 @@ public partial class TestExplorerContextMenu : ComponentBase
 			
 				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 				{
-					DotNetBackgroundTaskApi.Enqueue_RunTestByFullyQualifiedName(
-                        treeViewStringFragment,
-                        fullyQualifiedName,
-                        treeViewProjectTestModel);
+					DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+					{
+						WorkKind = DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName,
+                        TreeViewStringFragment = treeViewStringFragment,
+                        FullyQualifiedName = fullyQualifiedName,
+                        TreeViewProjectTestModel = treeViewProjectTestModel,
+                    });
 				}
 
 				return Task.CompletedTask;

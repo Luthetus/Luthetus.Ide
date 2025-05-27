@@ -87,7 +87,11 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 				await InvokeAsync(StateHasChanged);
 			}
 
-			DotNetBackgroundTaskApi.Enqueue_SubmitNuGetQuery(query);
+			DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+			{
+				WorkKind = DotNetBackgroundTaskApiWorkKind.SubmitNuGetQuery,
+				NugetPackageManagerQuery = query,
+			});
 		}
 		catch (Exception e)
 		{

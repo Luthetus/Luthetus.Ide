@@ -199,8 +199,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 								.Invoke()
 								.ConfigureAwait(false);
 
-							DotNetBackgroundTaskApi.Enqueue_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(
-                                commandArgs);
+							DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+							{
+								WorkKind = DotNetBackgroundTaskApiWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles,
+                                TreeViewCommandArgs = commandArgs,
+                            });
 						}
 					},
 					{ nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
