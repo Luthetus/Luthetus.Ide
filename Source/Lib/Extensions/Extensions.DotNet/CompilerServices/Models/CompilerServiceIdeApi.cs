@@ -43,9 +43,6 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(CompilerServiceIdeApi);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -58,7 +55,7 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(CompilerServiceIdeWorkKind.SetCompilerServiceExplorerTreeView);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -177,12 +174,7 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 			new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model));
 	}
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         CompilerServiceIdeWorkKind workKind;
 

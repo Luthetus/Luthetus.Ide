@@ -48,23 +48,19 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	
 	        if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
 	        {
-	            TextEditorService.WorkerArbitrary.PostRedundant(
-	                nameof(TextEditorService.ModelApi.SetUsingLineEndKind),
-	                viewModel.PersistentState.ResourceUri,
-					viewModel.PersistentState.ViewModelKey,
-	                editContext =>
-	                {
-	                	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-	                	
-	                	if (modelModifier is null)
-	                		return ValueTask.CompletedTask;
-	                	
-	                	TextEditorService.ModelApi.SetUsingLineEndKind(
-	                		editContext,
-		                    modelModifier,
-		                    rowEndingKind);
-		                return ValueTask.CompletedTask;
-		            });
+	            TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+                {
+                	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+                	
+                	if (modelModifier is null)
+                		return ValueTask.CompletedTask;
+                	
+                	TextEditorService.ModelApi.SetUsingLineEndKind(
+                		editContext,
+	                    modelModifier,
+	                    rowEndingKind);
+	                return ValueTask.CompletedTask;
+	            });
 	        }
 		}
 	}

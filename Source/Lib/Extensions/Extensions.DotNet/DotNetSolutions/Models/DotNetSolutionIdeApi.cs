@@ -121,9 +121,6 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(CompilerServiceIdeApi);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -139,7 +136,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.SetDotNetSolution);
 			_queue_SetDotNetSolution.Enqueue(inSolutionAbsolutePath);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 
@@ -164,7 +161,7 @@ public class DotNetSolutionIdeApi : IBackgroundTaskGroup
 
 		if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)
 		{
-			_textEditorService.WorkerArbitrary.PostUnique(nameof(DotNetSolutionIdeApi), editContext =>
+			_textEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
 				var extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 				
@@ -315,14 +312,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		});
 		
 		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(
-			new UniqueTextEditorWork(
-	            nameof(ParseSolution),
-	            _textEditorService,
-	            async editContext =>
-	            {
-	            	await ParseSolution(editContext, dotNetSolutionModel.Key);
-	            	await ParseSolution(editContext, dotNetSolutionModel.Key);
-            	}));
+			new UniqueTextEditorWork(_textEditorService, async editContext =>
+            {
+            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+        	}));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
 	}
@@ -973,7 +967,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
         {
             _workKindQueue.Enqueue(DotNetSolutionIdeWorkKind.SetDotNetSolutionTreeView);
 			_queue_SetDotNetSolutionTreeView.Enqueue(dotNetSolutionModelKey);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 
@@ -1111,7 +1105,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			_queue_Website_AddExistingProjectToSolution.Enqueue(
                 (dotNetSolutionModelKey, projectTemplateShortName, cSharpProjectName, cSharpProjectAbsolutePath));
 
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
 	}
 
@@ -1155,12 +1149,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		});
 	}
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         DotNetSolutionIdeWorkKind workKind;
 

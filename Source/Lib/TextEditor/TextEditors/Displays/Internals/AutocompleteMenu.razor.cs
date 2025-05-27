@@ -115,22 +115,20 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     		
         try
         {
-            TextEditorService.WorkerArbitrary.PostUnique(
-				nameof(AutocompleteMenu),
-				editContext =>
+            TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+			{
+				var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+
+				if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+					TextEditorCommandDefaultFunctions.RemoveDropdown(
+				        editContext,
+				        viewModelModifier,
+				        DropdownService);
+				}
 
-					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
-					{
-						TextEditorCommandDefaultFunctions.RemoveDropdown(
-					        editContext,
-					        viewModelModifier,
-					        DropdownService);
-					}
-
-					return ValueTask.CompletedTask;
-				});
+				return ValueTask.CompletedTask;
+			});
 				
 			await renderBatch.ViewModel.FocusAsync();
         }
@@ -233,22 +231,20 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         {
             try
             {
-				TextEditorService.WorkerArbitrary.PostUnique(
-					nameof(AutocompleteMenu),
-					editContext =>
-					{
-						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
-	
-						if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
-						{
-							TextEditorCommandDefaultFunctions.RemoveDropdown(
-						        editContext,
-						        viewModelModifier,
-						        DropdownService);
-						}
+				TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+				{
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
 
-						return renderBatch.ViewModel.FocusAsync();
-					});
+					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
+					{
+						TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        DropdownService);
+					}
+
+					return renderBatch.ViewModel.FocusAsync();
+				});
 				
 				// (2025-01-21)
 				// ====================================================================================
@@ -288,24 +284,22 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     	if (!renderBatch.IsValid)
     		return;
     
-        TextEditorService.WorkerArbitrary.PostUnique(
-            nameof(InsertAutocompleteMenuOption),
-            editContext =>
-            {
-            	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+        	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
-                if (modelModifier is null || viewModelModifier is null)
-                    return ValueTask.CompletedTask;
-            
-            	TextEditorService.ModelApi.InsertText(
-            		editContext,
-			        modelModifier,
-			        viewModelModifier,
-			        autocompleteEntry.DisplayName.Substring(word.Length));
-			        
-	            return renderBatch.ViewModel.FocusAsync();
-            });
+            if (modelModifier is null || viewModelModifier is null)
+                return ValueTask.CompletedTask;
+        
+        	TextEditorService.ModelApi.InsertText(
+        		editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        autocompleteEntry.DisplayName.Substring(word.Length));
+		        
+            return renderBatch.ViewModel.FocusAsync();
+        });
 		
 		await renderBatch.ViewModel.FocusAsync();
     }

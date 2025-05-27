@@ -31,9 +31,6 @@ public class InputFileIdeApi : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(InputFileIdeApi);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -54,7 +51,7 @@ public class InputFileIdeApi : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(InputFileIdeApiWorkKind.RequestInputFileStateForm);
             _queue_RequestInputFileStateForm.Enqueue((message, onAfterSubmitFunc, selectionIsValidFunc, inputFilePatterns));
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -84,12 +81,7 @@ public class InputFileIdeApi : IBackgroundTaskGroup
         return ValueTask.CompletedTask;
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         InputFileIdeApiWorkKind workKind;
 

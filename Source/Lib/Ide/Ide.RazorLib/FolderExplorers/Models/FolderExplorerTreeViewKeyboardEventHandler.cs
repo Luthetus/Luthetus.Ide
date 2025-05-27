@@ -216,7 +216,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-		_textEditorService.WorkerArbitrary.PostUnique(nameof(FolderExplorerTreeViewMouseEventHandler), async editContext =>
+		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			await _textEditorService.OpenInEditorAsync(
 				editContext,

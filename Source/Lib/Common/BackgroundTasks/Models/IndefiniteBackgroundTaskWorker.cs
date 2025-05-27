@@ -38,7 +38,7 @@ public sealed class IndefiniteBackgroundTaskWorker
 
             try
             {
-                await backgroundTask.HandleEvent(cancellationToken).ConfigureAwait(false);
+                await backgroundTask.HandleEvent().ConfigureAwait(false);
                 await Task.Yield();
             }
             catch (Exception ex)

@@ -523,7 +523,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 	private Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)
 	{
-		TextEditorService.WorkerArbitrary.PostUnique(nameof(SolutionExplorerContextMenu), async editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			await TextEditorService.OpenInEditorAsync(
 				editContext,

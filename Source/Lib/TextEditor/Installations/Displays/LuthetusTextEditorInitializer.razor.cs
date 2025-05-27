@@ -98,20 +98,16 @@ public partial class LuthetusTextEditorInitializer : ComponentBase, IDisposable
 	
     private void QueueRemeasureBackgroundTask()
     {
-        TextEditorService.WorkerArbitrary.PostRedundant(
-            nameof(QueueRemeasureBackgroundTask),
-			ResourceUri.Empty,
-			Key<TextEditorViewModel>.Empty,
-            async editContext =>
-            {
-            	var charAndLineMeasurements = await TextEditorService.JsRuntimeTextEditorApi
-		            .GetCharAndLineMeasurementsInPixelsById(
-		                _measureCharacterWidthAndLineHeightElementId,
-		                _countOfTestCharacters)
-		            .ConfigureAwait(false);
-		            
-		        TextEditorService.OptionsApi.SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
-	        });
+        TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+        	var charAndLineMeasurements = await TextEditorService.JsRuntimeTextEditorApi
+	            .GetCharAndLineMeasurementsInPixelsById(
+	                _measureCharacterWidthAndLineHeightElementId,
+	                _countOfTestCharacters)
+	            .ConfigureAwait(false);
+	            
+	        TextEditorService.OptionsApi.SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
+        });
     }
     
     public void Dispose()

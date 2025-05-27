@@ -50,8 +50,8 @@ public static class ServiceCollectionExtensions
             BackgroundTaskFacts.IndefiniteQueueKey,
             "Blocking");
             
-        hostingInformation.BackgroundTaskService.RegisterQueue(continuousQueue);
-        hostingInformation.BackgroundTaskService.RegisterQueue(indefiniteQueue);
+        hostingInformation.BackgroundTaskService.SetContinuousQueue(continuousQueue);
+        hostingInformation.BackgroundTaskService.SetIndefiniteQueue(indefiniteQueue);
             
         services
             .AddSingleton(commonConfig)
@@ -59,13 +59,13 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
 			.AddScoped<BackgroundTaskService>(sp => 
             {
-				hostingInformation.BackgroundTaskService.SetContinuousTaskWorker(new ContinuousBackgroundTaskWorker(
+				hostingInformation.BackgroundTaskService.SetContinuousWorker(new ContinuousBackgroundTaskWorker(
 				    continuousQueue,
 					hostingInformation.BackgroundTaskService,
 				    sp.GetRequiredService<ILoggerFactory>(),
 				    hostingInformation.LuthetusHostingKind));
 
-				hostingInformation.BackgroundTaskService.SetIndefiniteTaskWorker(new IndefiniteBackgroundTaskWorker(
+				hostingInformation.BackgroundTaskService.SetIndefiniteWorker(new IndefiniteBackgroundTaskWorker(
 				    indefiniteQueue,
 					hostingInformation.BackgroundTaskService,
 				    sp.GetRequiredService<ILoggerFactory>(),

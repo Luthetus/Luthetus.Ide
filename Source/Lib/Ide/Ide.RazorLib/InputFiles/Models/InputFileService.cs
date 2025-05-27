@@ -18,9 +18,6 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
 	public InputFileState GetInputFileState() => _inputFileState;
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(InputFileService);
-    public bool EarlyBatchEnabled { get; } = false;
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
@@ -287,7 +284,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
                 _queue_OpenParentDirectoryAction.Enqueue((
                     ideComponentRenderers, commonComponentRenderers, fileSystemProvider, environmentProvider, backgroundTaskService, parentDirectoryTreeViewModel));
 
-                backgroundTaskService.EnqueueGroup(this);
+                backgroundTaskService.Continuous_EnqueueGroup(this);
             }
         }
     }
@@ -320,7 +317,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
             {
                 _workKindQueue.Enqueue(InputFileServiceWorkKind.RefreshCurrentSelectionAction);
                 _queue_RefreshCurrentSelectionAction.Enqueue((backgroundTaskService, currentSelection));
-                backgroundTaskService.EnqueueGroup(this);
+                backgroundTaskService.Continuous_EnqueueGroup(this);
             }
         }
     }
@@ -333,12 +330,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
             await currentSelection.LoadChildListAsync().ConfigureAwait(false);
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         InputFileServiceWorkKind workKind;
 

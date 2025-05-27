@@ -186,11 +186,7 @@
                 			TextEditorWorkerUi.cs
                 		</a>
                         
-            			Do not lock on enqueue/dequeue, ensure method is synchronously
-            			invoked from the UI event handlers.
-            			
-            			(if event handler is async then invoking the method prior to
-            			 an await should be synchronous as well at time of invocation).
+            			Rewrite the text editor UI events.
                     </li>
                 </ul>
             </div>

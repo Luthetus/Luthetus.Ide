@@ -33,10 +33,6 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = BackgroundTaskFacts.ContinuousQueueKey;
-    public string Name { get; } = nameof(TextEditorInitializationBackgroundTaskGroup);
-    public bool EarlyBatchEnabled { get; } = false;
-
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
     private readonly Queue<TextEditorInitializationBackgroundTaskGroupWorkKind> _workKindQueue = new();
@@ -54,7 +50,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         lock (_workLock)
         {
             _workKindQueue.Enqueue(TextEditorInitializationBackgroundTaskGroupWorkKind.LuthetusTextEditorInitializerOnInit);
-            _backgroundTaskService.EnqueueGroup(this);
+            _backgroundTaskService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -108,7 +104,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
                                     MenuOptionKind.Other,
                                     onClickFunc: () =>
                                     {
-                                    	_textEditorService.WorkerArbitrary.PostUnique(nameof(TextEditorInitializationBackgroundTaskGroup), async editContext =>
+                                    	_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
                                     	{
                                     		await _textEditorService.OpenInEditorAsync(
                                     			editContext,
@@ -134,12 +130,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         _keymapService.RegisterKeymapLayer(TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
 
-    public IBackgroundTaskGroup? EarlyBatchOrDefault(IBackgroundTaskGroup oldEvent)
-    {
-        return null;
-    }
-
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         TextEditorInitializationBackgroundTaskGroupWorkKind workKind;
 
