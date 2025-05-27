@@ -174,7 +174,7 @@ public class CompilerServiceIdeApi : IBackgroundTaskGroup
 			new CompilerServiceExplorerState(inCompilerServiceExplorerState.Model));
 	}
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         CompilerServiceIdeWorkKind workKind;
 

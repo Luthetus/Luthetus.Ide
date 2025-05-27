@@ -512,7 +512,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         return newDirectoryInfo;
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         MenuOptionsFactoryWorkKind workKind;
 

@@ -148,7 +148,7 @@ public class FolderExplorerIdeApi : IBackgroundTaskGroup
             ]);
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         FolderExplorerIdeApiWorkKind workKind;
 

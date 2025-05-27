@@ -852,7 +852,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         _terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         DotNetBackgroundTaskApiWorkKind workKind;
 

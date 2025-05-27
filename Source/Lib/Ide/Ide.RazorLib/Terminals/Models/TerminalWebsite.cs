@@ -260,7 +260,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         // _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         TerminalWorkKind workKind;
 

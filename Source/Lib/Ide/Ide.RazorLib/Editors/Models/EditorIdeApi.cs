@@ -414,7 +414,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
         });
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         EditorIdeApiWorkKind workKind;
 

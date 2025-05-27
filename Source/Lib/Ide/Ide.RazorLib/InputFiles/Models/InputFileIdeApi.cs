@@ -81,7 +81,7 @@ public class InputFileIdeApi : IBackgroundTaskGroup
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         InputFileIdeApiWorkKind workKind;
 

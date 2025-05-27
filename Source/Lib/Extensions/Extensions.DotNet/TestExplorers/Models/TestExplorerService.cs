@@ -276,7 +276,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         }
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         TestExplorerSchedulerWorkKind workKind;
 

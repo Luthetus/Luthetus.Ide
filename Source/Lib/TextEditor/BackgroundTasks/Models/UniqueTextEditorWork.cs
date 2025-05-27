@@ -18,7 +18,7 @@ public struct UniqueTextEditorWork
 
     public TextEditorService TextEditorService { get; }
 
-    public async ValueTask HandleEvent(CancellationToken cancellationToken)
+    public async ValueTask HandleEvent()
     {
     	var editContext = new TextEditorEditContext(TextEditorService);
     

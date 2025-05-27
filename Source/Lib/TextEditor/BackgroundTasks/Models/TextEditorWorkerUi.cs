@@ -32,7 +32,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
-	public async ValueTask HandleEvent(CancellationToken cancellationToken)
+	public async ValueTask HandleEvent()
 	{
 		if (!WorkQueue.TryDequeue(out TextEditorWorkerUiArgs workArgs))
 			return;

@@ -227,7 +227,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     	_throttleUiUpdateFromSetHasExecutingProcess.Run(default(byte));
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         TerminalWorkKind workKind;
 

@@ -23,7 +23,7 @@ public class BackgroundTask : IBackgroundTaskGroup
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         return _runFunc.Invoke();
     }

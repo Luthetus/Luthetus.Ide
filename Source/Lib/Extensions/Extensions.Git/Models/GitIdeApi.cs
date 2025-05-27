@@ -1143,7 +1143,7 @@ public class GitIdeApi : IBackgroundTaskGroup
         return Task.CompletedTask;
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         GitIdeApiWorkKind workKind;
 

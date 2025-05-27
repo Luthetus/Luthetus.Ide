@@ -37,12 +37,12 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 		_textEditorService.BackgroundTaskService.Continuous_EnqueueGroup(this);
 	}
 	
-	public ValueTask HandleEvent(CancellationToken cancellationToken)
+	public ValueTask HandleEvent()
 	{
 		if (!UniqueTextEditorWorkQueue.TryDequeue(out UniqueTextEditorWork uniqueTextEditorWork))
 			return ValueTask.CompletedTask;
 		
-		return uniqueTextEditorWork.HandleEvent(cancellationToken);
+		return uniqueTextEditorWork.HandleEvent();
 	}
 }
 

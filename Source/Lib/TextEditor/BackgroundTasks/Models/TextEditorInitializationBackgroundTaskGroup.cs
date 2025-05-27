@@ -130,7 +130,7 @@ public class TextEditorInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         _keymapService.RegisterKeymapLayer(TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         TextEditorInitializationBackgroundTaskGroupWorkKind workKind;
 

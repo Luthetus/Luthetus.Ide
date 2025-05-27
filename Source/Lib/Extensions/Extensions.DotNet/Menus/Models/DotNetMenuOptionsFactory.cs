@@ -423,7 +423,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         DotNetMenuOptionsFactoryWorkKind workKind;
 

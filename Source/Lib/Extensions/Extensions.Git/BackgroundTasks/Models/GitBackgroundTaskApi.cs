@@ -128,7 +128,7 @@ public class GitBackgroundTaskApi : IBackgroundTaskGroup
         _panelService.RegisterPanelTab(leftPanel.Key, gitPanel, false);
     }
 
-	public ValueTask HandleEvent(CancellationToken cancellationToken)
+	public ValueTask HandleEvent()
 	{
         GitBackgroundTaskApiWorkKind workKind;
 		

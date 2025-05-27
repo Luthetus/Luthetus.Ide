@@ -301,7 +301,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         }
     }
 
-	public ValueTask HandleEvent(CancellationToken cancellationToken)
+	public ValueTask HandleEvent()
 	{
 		CommonWorkKind workKind;
 		

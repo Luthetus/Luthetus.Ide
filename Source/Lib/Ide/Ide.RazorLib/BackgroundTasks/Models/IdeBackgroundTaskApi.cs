@@ -696,7 +696,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideHeader.RenderRunDropdownOnClick()));
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         IdeBackgroundTaskApiWorkKind workKind;
 

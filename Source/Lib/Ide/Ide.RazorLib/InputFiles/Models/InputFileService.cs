@@ -330,7 +330,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
             await currentSelection.LoadChildListAsync().ConfigureAwait(false);
     }
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         InputFileServiceWorkKind workKind;
 

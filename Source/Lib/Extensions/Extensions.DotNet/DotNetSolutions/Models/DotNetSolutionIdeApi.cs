@@ -1149,7 +1149,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		});
 	}
 
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         DotNetSolutionIdeWorkKind workKind;
 

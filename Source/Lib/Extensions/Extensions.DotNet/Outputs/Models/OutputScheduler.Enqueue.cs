@@ -21,7 +21,7 @@ public partial class OutputScheduler : IBackgroundTaskGroup
         }
     }
     
-    public ValueTask HandleEvent(CancellationToken cancellationToken)
+    public ValueTask HandleEvent()
     {
         OutputSchedulerWorkKind workKind;
 
