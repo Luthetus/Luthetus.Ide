@@ -261,8 +261,6 @@ public class EditorIdeApi : IBackgroundTaskGroup
             innerTextEditor.PersistentState.ResourceUri.Value,
             false);
 
-        var cancellationToken = innerTextEditor.PersistentState.GetCancellationToken();
-
         _ideBackgroundTaskApi.FileSystem.Enqueue(new FileSystemIdeApiWorkArgs
         {
         	WorkKind = FileSystemIdeApiWorkKind.SaveFile,
@@ -288,7 +286,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
 
                 return Task.CompletedTask;
             },
-            CancellationToken = cancellationToken
+            CancellationToken = CancellationToken.None
         });
     }
 
