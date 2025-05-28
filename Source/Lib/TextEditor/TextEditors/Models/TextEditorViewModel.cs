@@ -89,11 +89,6 @@ public sealed class TextEditorViewModel : IDisposable
 	    PreferredColumnIndex = 0;
 	    SelectionAnchorPositionIndex = -1;
 	    SelectionEndingPositionIndex = 0;
-        
-        AllCollapsePointList = new();
-		VirtualizedCollapsePointList = new();
-		HiddenLineIndexHashSet = new();
-		InlineUiList = new();
 	}
 	
 	public TextEditorViewModel(TextEditorViewModel other)
@@ -120,11 +115,6 @@ public sealed class TextEditorViewModel : IDisposable
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
 		
 		ShouldCalculateVirtualizationResult = other.ShouldCalculateVirtualizationResult;
-		
-		AllCollapsePointList = other.AllCollapsePointList;
-		VirtualizedCollapsePointList = other.VirtualizedCollapsePointList;
-		HiddenLineIndexHashSet = other.HiddenLineIndexHashSet;
-		InlineUiList = other.InlineUiList;
 	    
 	    /*
 	    // Don't copy these properties
@@ -166,13 +156,7 @@ public sealed class TextEditorViewModel : IDisposable
     public bool ShouldCalculateVirtualizationResult { get; set; }
 	
     public bool ScrollWasModified { get; set; }
-	
-    public List<CollapsePoint> AllCollapsePointList { get; set; }
-	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
-	public bool HiddenLineIndexHashSetIsShallowCopy { get; set; }
-	public HashSet<int> HiddenLineIndexHashSet { get; set; }
-	public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; }
-
+    
     public ValueTask FocusAsync()
     {
     	var componentData = PersistentState.ComponentData;
@@ -184,17 +168,14 @@ public sealed class TextEditorViewModel : IDisposable
     
     public void ApplyCollapsePointState(TextEditorEditContext editContext)
     {
-    	HiddenLineIndexHashSet = new();
-    	HiddenLineIndexHashSetIsShallowCopy = true;
-    	
-    	foreach (var collapsePoint in AllCollapsePointList)
+    	foreach (var collapsePoint in PersistentState.AllCollapsePointList)
 		{
 			if (!collapsePoint.IsCollapsed)
 				continue;
 			var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
 			for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
 			{
-				HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
+				PersistentState.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
 			}
 		}
     }

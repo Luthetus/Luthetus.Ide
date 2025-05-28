@@ -87,6 +87,11 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         };
 
         DialogFocusPointHtmlElementId = $"luth_dialog-focus-point_{DynamicViewModelKey.Guid}";
+	
+		AllCollapsePointList = new();
+		VirtualizedCollapsePointList = new();
+		HiddenLineIndexHashSet = new();
+		InlineUiList = new();
 	}
 
 	/// <summary>
@@ -172,6 +177,11 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     
     public bool ShouldRevealCursor { get; set; }
     public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
+    
+    public List<CollapsePoint> AllCollapsePointList { get; set; }
+	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
+	public HashSet<int> HiddenLineIndexHashSet { get; set; }
+	public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; }
     
     #region DisplayTracker
 	/// <summary>

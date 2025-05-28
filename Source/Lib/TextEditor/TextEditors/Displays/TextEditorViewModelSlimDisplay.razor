@@ -111,11 +111,11 @@
 			             
 			            @(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineNumberString)
 			            
-			            @for (int i = 0; i < _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList.Count; i++)
+			            @for (int i = 0; i < _componentData.RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
 		            	{
-		            		if (_componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList[i].AppendToLineIndex == _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
+		            		if (_componentData.RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList[i].AppendToLineIndex == _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
 		            		{
-		            			collapsePoint = _componentData.RenderBatch.ViewModel.VirtualizedCollapsePointList[i];
+		            			collapsePoint = _componentData.RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList[i];
 		            			break;
 		            		}
 		            	}

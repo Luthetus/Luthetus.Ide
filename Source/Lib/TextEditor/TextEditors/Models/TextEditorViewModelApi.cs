@@ -239,7 +239,7 @@ public sealed class TextEditorViewModelApi
             viewModel.CharAndLineMeasurements.CharacterWidth;
             
         var hiddenLineCount = 0;
-        foreach (var index in viewModel.HiddenLineIndexHashSet)
+        foreach (var index in viewModel.PersistentState.HiddenLineIndexHashSet)
         {
         	if (index < lineIndex)
         		hiddenLineCount++;
@@ -620,7 +620,7 @@ public sealed class TextEditorViewModelApi
                 break;
         }
         
-        if (viewModel.HiddenLineIndexHashSet.Contains(viewModel.LineIndex))
+        if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(viewModel.LineIndex))
         {
         	switch (keymapArgs.Key)
         	{
@@ -628,7 +628,7 @@ public sealed class TextEditorViewModelApi
         		{
         			CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
 
-        			foreach (var collapsePoint in viewModel.AllCollapsePointList)
+        			foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
         			{
         				var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
 						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
@@ -647,7 +647,7 @@ public sealed class TextEditorViewModelApi
         				{
         					for (int i = viewModel.LineIndex; i >= 0; i--)
 		        			{
-		        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+		        				if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
 		        				{
 		        					viewModel.LineIndex = i;
 		        					lineInformation = modelModifier.GetLineInformation(i);
@@ -666,7 +666,7 @@ public sealed class TextEditorViewModelApi
         		
         			for (int i = viewModel.LineIndex + 1; i < modelModifier.LineCount; i++)
         			{
-        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+        				if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
         				{
         					success = true;
         					viewModel.LineIndex = i;
@@ -684,7 +684,7 @@ public sealed class TextEditorViewModelApi
         			{
         				for (int i = viewModel.LineIndex; i >= 0; i--)
 	        			{
-	        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+	        				if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
 	        				{
 	        					viewModel.LineIndex = i;
 	        					
@@ -706,7 +706,7 @@ public sealed class TextEditorViewModelApi
         			
         			for (int i = viewModel.LineIndex; i >= 0; i--)
         			{
-        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+        				if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
         				{
         					success = true;
         					viewModel.LineIndex = i;
@@ -726,7 +726,7 @@ public sealed class TextEditorViewModelApi
         			{
         				for (int i = viewModel.LineIndex + 1; i < modelModifier.LineCount; i++)
 	        			{
-	        				if (!viewModel.HiddenLineIndexHashSet.Contains(i))
+	        				if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
 	        				{
 	        					viewModel.LineIndex = i;
 	        					
@@ -746,7 +746,7 @@ public sealed class TextEditorViewModelApi
     			{
         			CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
 
-        			foreach (var collapsePoint in viewModel.AllCollapsePointList)
+        			foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
         			{
         				var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
 						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
@@ -778,7 +778,7 @@ public sealed class TextEditorViewModelApi
         (int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
 		var inlineUi = new InlineUi(0, InlineUiKind.None);
 		
-		foreach (var inlineUiTuple in viewModel.InlineUiList)
+		foreach (var inlineUiTuple in viewModel.PersistentState.InlineUiList)
 		{
 			lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
 			
@@ -941,7 +941,7 @@ public sealed class TextEditorViewModelApi
 			
 			for (int i = 0; i < verticalStartingIndex; i++)
 			{
-				if (viewModel.HiddenLineIndexHashSet.Contains(i))
+				if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
 				{
 					hiddenCount++;
 					verticalStartingIndex++;
@@ -993,7 +993,7 @@ public sealed class TextEditorViewModelApi
 			}
 
 			var totalHeight = (int)Math.Ceiling(
-				(modelModifier.LineEndList.Count - viewModel.HiddenLineIndexHashSet.Count) *
+				(modelModifier.LineEndList.Count - viewModel.PersistentState.HiddenLineIndexHashSet.Count) *
 				viewModel.CharAndLineMeasurements.LineHeight);
 
 			// Add vertical margin so the user can scroll beyond the final line of content
@@ -1068,7 +1068,7 @@ public sealed class TextEditorViewModelApi
 				
 					var lineIndex = verticalStartingIndex + lineOffset;
 
-					if (viewModel.HiddenLineIndexHashSet.Contains(lineIndex))
+					if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(lineIndex))
 					{
 						hiddenCount++;
 						continue;
@@ -1359,9 +1359,9 @@ public sealed class TextEditorViewModelApi
 		(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
 		var inlineUi = new InlineUi(0, InlineUiKind.None);
 		
-		for (int inlineUiIndex = 0; inlineUiIndex < viewModel.InlineUiList.Count; inlineUiIndex++)
+		for (int inlineUiIndex = 0; inlineUiIndex < viewModel.PersistentState.InlineUiList.Count; inlineUiIndex++)
 		{
-			var inlineUiTuple = viewModel.InlineUiList[inlineUiIndex];
+			var inlineUiTuple = viewModel.PersistentState.InlineUiList[inlineUiIndex];
 			
 			lineAndColumnIndices = model.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
 			

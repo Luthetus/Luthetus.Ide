@@ -212,7 +212,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
             		CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
 
-					foreach (var collapsePoint in viewModel.AllCollapsePointList)
+					foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
 					{
 						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex; lineOffset++)
 						{

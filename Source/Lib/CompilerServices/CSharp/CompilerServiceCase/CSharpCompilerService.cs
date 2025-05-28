@@ -1478,14 +1478,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				{
 					var collapsePoint = collapsePointList[i];
 					
-					var indexPreviousCollapsePoint = viewModel.AllCollapsePointList.FindIndex(
+					var indexPreviousCollapsePoint = viewModel.PersistentState.AllCollapsePointList.FindIndex(
 						x => x.Identifier == collapsePoint.Identifier);
 						
 					bool isCollapsed;
 						
 					if (indexPreviousCollapsePoint != -1)
 					{
-						if (viewModel.AllCollapsePointList[indexPreviousCollapsePoint].IsCollapsed)
+						if (viewModel.PersistentState.AllCollapsePointList[indexPreviousCollapsePoint].IsCollapsed)
 						{
 							collapsePoint.IsCollapsed = true;
 							collapsePointList[i] = collapsePoint;
@@ -1493,7 +1493,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					}
 				}
 				
-				viewModel.AllCollapsePointList = collapsePointList;
+				viewModel.PersistentState.AllCollapsePointList = collapsePointList;
 				
 				viewModel.ApplyCollapsePointState(editContext);
 			}
