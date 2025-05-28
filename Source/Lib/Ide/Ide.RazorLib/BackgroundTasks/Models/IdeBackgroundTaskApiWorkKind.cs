@@ -7,4 +7,6 @@ public enum IdeBackgroundTaskApiWorkKind
     IdeHeaderOnInit,
     FileContentsWereModifiedOnDisk,
     SaveFile,
+    SetFolderExplorerState,
+    SetFolderExplorerTreeView,
 }

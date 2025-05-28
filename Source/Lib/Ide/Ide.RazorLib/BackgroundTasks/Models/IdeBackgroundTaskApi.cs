@@ -139,16 +139,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _ideHeaderService = ideHeaderService;
         _serviceProvider = serviceProvider;
 
-        FolderExplorer = new FolderExplorerIdeApi(
-            this,
-            _fileSystemProvider,
-            _environmentProvider,
-            _ideComponentRenderers,
-            _commonComponentRenderers,
-            _treeViewService,
-            _backgroundTaskService,
-            _folderExplorerService);
-
         InputFile = new InputFileIdeApi(
             this,
             _ideComponentRenderers,
@@ -157,7 +147,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _inputFileService);
     }
     
-    public FolderExplorerIdeApi FolderExplorer { get; }
     public InputFileIdeApi InputFile { get; }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -467,7 +456,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 MenuOptionKind.Other,
                 () =>
                 {
-                    FolderExplorer.ShowInputFile();
+                    FolderExplorer_ShowInputFile();
                     return Task.CompletedTask;
                 });
 
@@ -1032,6 +1021,87 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             await onAfterSaveCompletedWrittenDateTimeFunc.Invoke(fileLastWriteTime);
     }
     
+    private ValueTask Do_SetFolderExplorerState(AbsolutePath folderAbsolutePath)
+    {
+        _folderExplorerService.With(
+            inFolderExplorerState => inFolderExplorerState with
+            {
+                AbsolutePath = folderAbsolutePath
+            });
+
+        return Do_SetFolderExplorerTreeView(folderAbsolutePath);
+    }
+
+    private async ValueTask Do_SetFolderExplorerTreeView(AbsolutePath folderAbsolutePath)
+    {
+        _folderExplorerService.With(inFolderExplorerState => inFolderExplorerState with
+        {
+            IsLoadingFolderExplorer = true
+        });
+        
+		_environmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
+
+        var rootNode = new TreeViewAbsolutePath(
+            folderAbsolutePath,
+            _ideComponentRenderers,
+            _commonComponentRenderers,
+            _fileSystemProvider,
+            _environmentProvider,
+            true,
+            true);
+
+        await rootNode.LoadChildListAsync().ConfigureAwait(false);
+
+        if (!_treeViewService.TryGetTreeViewContainer(
+                FolderExplorerState.TreeViewContentStateKey,
+                out var treeViewState))
+        {
+            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                FolderExplorerState.TreeViewContentStateKey,
+                rootNode,
+                new List<TreeViewNoType>() { rootNode }));
+        }
+        else
+        {
+            _treeViewService.ReduceWithRootNodeAction(FolderExplorerState.TreeViewContentStateKey, rootNode);
+
+            _treeViewService.ReduceSetActiveNodeAction(
+                FolderExplorerState.TreeViewContentStateKey,
+                rootNode,
+                true,
+                false);
+        }
+
+        _folderExplorerService.With(inFolderExplorerState => inFolderExplorerState with
+        {
+            IsLoadingFolderExplorer = false
+        });
+    }
+
+    public void FolderExplorer_ShowInputFile()
+    {
+        InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        {
+        	WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+            Message = "Folder Explorer",
+            OnAfterSubmitFunc = async absolutePath =>
+            {
+                if (absolutePath.ExactInput is not null)
+                    await Do_SetFolderExplorerState(absolutePath).ConfigureAwait(false);
+            },
+            SelectionIsValidFunc = absolutePath =>
+            {
+                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
+                    return Task.FromResult(false);
+
+                return Task.FromResult(true);
+            },
+            InputFilePatterns = [
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+            ]
+        });
+    }
+    
     public ValueTask HandleEvent()
     {
         if (!_workQueue.TryDequeue(out IdeBackgroundTaskApiWorkArgs workArgs))
@@ -1048,6 +1118,10 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	                workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
 			case IdeBackgroundTaskApiWorkKind.SaveFile:
                 return Do_SaveFile(workArgs.AbsolutePath, workArgs.Content, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
+            case IdeBackgroundTaskApiWorkKind.SetFolderExplorerState:
+                return Do_SetFolderExplorerState(workArgs.AbsolutePath);
+            case IdeBackgroundTaskApiWorkKind.SetFolderExplorerTreeView:
+                return Do_SetFolderExplorerTreeView(workArgs.AbsolutePath);
             default:
                 Console.WriteLine($"{nameof(IdeBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
