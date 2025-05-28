@@ -7,6 +7,11 @@ using Luthetus.Ide.RazorLib.Shareds.Displays;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
+/*
+These IBackgroundTaskGroup "args" structs are a bit heavy at the moment.
+This is better than how things were, I need to find another moment
+to go through and lean these out.
+*/
 public struct IdeBackgroundTaskApiWorkArgs
 {
 	public IdeBackgroundTaskApiWorkKind WorkKind { get; set; }

@@ -206,6 +206,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 		    	    	viewModelModifier.PersistentState.VirtualizedCollapsePointList.Add(collapsePoint);
 		    	    }
 				}
+				
+				viewModelModifier.PersistentState.VirtualizedCollapsePointListVersion++;
 			}
 				
 			if (_codeBlockOwner != targetScope.CodeBlockOwner)

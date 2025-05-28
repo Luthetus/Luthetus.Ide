@@ -152,6 +152,9 @@ public sealed class TextEditorComponentData
     
     public List<string> SelectionStyleList { get; set; } = new List<string>();
     
+    public List<CollapsePoint> VirtualizedCollapsePointList { get; set; } = new();
+    public int VirtualizedCollapsePointListVersion { get; set; }
+    
     private List<TextEditorTextSpan> VirtualizedTextSpanList { get; set; } = new();
     private List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
     
@@ -286,6 +289,8 @@ public sealed class TextEditorComponentData
     /// </summary>
     public StringBuilder UiStringBuilder { get; set; } = new();
     
+    private Key<TextEditorViewModel> _seenViewModelKey = Key<TextEditorViewModel>.Empty;
+    
     public void CreateUi()
     {
     	TextEditorViewModel? viewModel;
@@ -337,6 +342,20 @@ public sealed class TextEditorComponentData
 	        	RenderBatch.ViewModel.PersistentState.LastPresentationLayerKeysList,
 	        	LastPresentationLayerGroupList,
 	        	LastPresentationLayerTextSpanList);
+	        
+	        if (VirtualizedCollapsePointListVersion != RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
+	        	_seenViewModelKey != RenderBatch.ViewModel.PersistentState.ViewModelKey)
+	        {
+	        	_seenViewModelKey = RenderBatch.ViewModel.PersistentState.ViewModelKey;
+	        	VirtualizedCollapsePointList.Clear();
+	        
+	        	for (int i = 0; i < RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
+	        	{
+	        		VirtualizedCollapsePointList.Add(RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList[i]);
+	        	}
+	        	
+	        	VirtualizedCollapsePointListVersion = RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
+	        }
 	        
 	        GetInlineUiStyleList();
         }

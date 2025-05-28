@@ -182,6 +182,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
 	public HashSet<int> HiddenLineIndexHashSet { get; set; }
 	public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; }
+	public int VirtualizedCollapsePointListVersion { get; set; }
     
     #region DisplayTracker
 	/// <summary>

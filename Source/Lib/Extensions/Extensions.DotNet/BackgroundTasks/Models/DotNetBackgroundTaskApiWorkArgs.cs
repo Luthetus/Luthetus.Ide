@@ -7,6 +7,11 @@ using Luthetus.Extensions.DotNet.Nugets.Models;
 
 namespace Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
+/*
+These IBackgroundTaskGroup "args" structs are a bit heavy at the moment.
+This is better than how things were, I need to find another moment
+to go through and lean these out.
+*/
 public struct DotNetBackgroundTaskApiWorkArgs
 {
 	public DotNetBackgroundTaskApiWorkKind WorkKind { get; set; }

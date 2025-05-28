@@ -111,11 +111,11 @@
 			             
 			            @(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineNumberString)
 			            
-			            @for (int i = 0; i < _componentData.RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
+			            @for (int i = 0; i < _componentData.VirtualizedCollapsePointList.Count; i++)
 		            	{
-		            		if (_componentData.RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList[i].AppendToLineIndex == _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
+		            		if (_componentData.VirtualizedCollapsePointList[i].AppendToLineIndex == _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
 		            		{
-		            			collapsePoint = _componentData.RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList[i];
+		            			collapsePoint = _componentData.VirtualizedCollapsePointList[i];
 		            			break;
 		            		}
 		            	}
@@ -280,19 +280,21 @@
 			</div>
 		</div>
 	    
-	    @if (_componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
+	    var tooltipViewModel = _componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel;
+	    
+	    @if (tooltipViewModel is not null)
 	    {
-	        <div class="luth_te_tooltip luth_set-selectable @(_componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel.CssClassString ?? string.Empty)"
+	        <div class="luth_te_tooltip luth_set-selectable @(tooltipViewModel.CssClassString ?? string.Empty)"
 	             style="left: @(_componentData.TooltipRelativeX)px; top: @(_componentData.TooltipRelativeY)px;"
-	             @onmouseover="_componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel.OnMouseOver"
+	             @onmouseover="tooltipViewModel.OnMouseOver"
 	             @onmousedown:stopPropagation="true"
 	             @onmousemove:stopPropagation="true"
 	             @ondblclick:stopPropagation="true"
 	             @onclick:stopPropagation="true"
 	             @oncontextmenu:stopPropagation="true">
 	
-	            <DynamicComponent Type="_componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel.RendererType"
-	                              Parameters="_componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel.ParameterMap" />
+	            <DynamicComponent Type="tooltipViewModel.RendererType"
+	                              Parameters="tooltipViewModel.ParameterMap" />
 	        </div>
 	    }
 	}

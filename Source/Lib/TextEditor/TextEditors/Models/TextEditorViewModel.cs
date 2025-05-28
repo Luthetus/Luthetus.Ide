@@ -178,6 +178,7 @@ public sealed class TextEditorViewModel : IDisposable
 				PersistentState.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
 			}
 		}
+		PersistentState.VirtualizedCollapsePointListVersion++;
     }
     
     public void SetColumnIndexAndPreferred(int columnIndex)
