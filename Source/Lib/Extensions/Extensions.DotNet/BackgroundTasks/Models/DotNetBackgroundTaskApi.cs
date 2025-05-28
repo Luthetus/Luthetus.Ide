@@ -141,17 +141,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		
 		CompilerServiceExplorerService = new CompilerServiceExplorerService();
 
-        CompilerService = new CompilerServiceIdeApi(
-			this,
-            _ideBackgroundTaskApi,
-            _backgroundTaskService,
-			CompilerServiceExplorerService,
-			_compilerServiceRegistry,
-			_ideComponentRenderers,
-			_commonComponentRenderers,
-			_treeViewService);
-			
-		TestExplorerService = new TestExplorerService(
+        TestExplorerService = new TestExplorerService(
 			this,
 			_ideBackgroundTaskApi,
 			DotNetSolutionService,
@@ -205,7 +195,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	}
 
 	public DotNetSolutionIdeApi DotNetSolution { get; }
-    public CompilerServiceIdeApi CompilerService { get; }
     public OutputScheduler Output { get; }
     public IOutputService OutputService { get; }
     public ITestExplorerService TestExplorerService { get; }
