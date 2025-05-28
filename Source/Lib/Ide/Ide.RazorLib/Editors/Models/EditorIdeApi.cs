@@ -261,7 +261,7 @@ public class EditorIdeApi : IBackgroundTaskGroup
             innerTextEditor.PersistentState.ResourceUri.Value,
             false);
 
-        var cancellationToken = innerTextEditor.PersistentState.TextEditorSaveFileHelper.GetCancellationToken();
+        var cancellationToken = innerTextEditor.PersistentState.GetCancellationToken();
 
         _ideBackgroundTaskApi.FileSystem.Enqueue(new FileSystemIdeApiWorkArgs
         {

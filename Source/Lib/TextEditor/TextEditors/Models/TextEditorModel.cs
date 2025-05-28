@@ -45,7 +45,6 @@ public sealed class TextEditorModel
     		fileExtension,
 		    decorationMapper ?? new TextEditorDecorationMapperDefault(),
 		    compilerService ?? new CompilerServiceDoNothing(),
-		    textEditorSaveFileHelper: new(),
 		    partitionSize,
 		    resourceUri,
 		    editBlockList: new(),
@@ -922,11 +921,6 @@ public sealed class TextEditorModel
     public void SetCompilerService(ICompilerService compilerService)
     {
         PersistentState.CompilerService = compilerService;
-    }
-
-    public void SetTextEditorSaveFileHelper(SaveFileHelper textEditorSaveFileHelper)
-    {
-        PersistentState.TextEditorSaveFileHelper = textEditorSaveFileHelper;
     }
 
     public void ClearAllStatesButKeepEditHistory()
