@@ -33,7 +33,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private DotNetBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
@@ -68,9 +68,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory()
 	{
-		IdeBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
-			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
 			Message = "Directory for new .NET Solution",
 			OnAfterSubmitFunc = async absolutePath =>
 			{
@@ -142,9 +142,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 						solutionAbsolutePathString,
 						false);
 
-					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+					DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 					{
-						WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+						WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
 						DotNetSolutionAbsolutePath = solutionAbsolutePath,
 					});
 					return Task.CompletedTask;
@@ -190,9 +190,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			solutionAbsolutePathString,
 			false);
 
-		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+		DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 		{
-			WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+			WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
 			DotNetSolutionAbsolutePath = solutionAbsolutePath,
 		});
 	}

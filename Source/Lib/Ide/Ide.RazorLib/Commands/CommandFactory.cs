@@ -22,6 +22,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.CompilerServices;
 using Luthetus.Extensions.CompilerServices.Displays;
 using Luthetus.Extensions.CompilerServices.Syntax;
@@ -30,7 +31,6 @@ using Luthetus.Extensions.CompilerServices.Syntax.Nodes;
 // using Luthetus.Ide.RazorLib.FindAllReferences.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
-using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -322,7 +322,7 @@ public class CommandFactory : ICommandFactory
                 "Focus: Text Editor", "focus-text-editor", false,
                 async commandArgs =>
                 {
-                    var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
+                    var group = _textEditorService.GroupApi.GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
                     if (group is null)
                         return;
 
@@ -330,7 +330,7 @@ public class CommandFactory : ICommandFactory
                     if (activeViewModel is null)
                         return;
 
-					var componentData = activeViewModel.PersistentState.DisplayTracker.ComponentData;
+					var componentData = activeViewModel.PersistentState.ComponentData;
 					if (componentData is not null)
 					{
 						await _commonBackgroundTaskApi.JsRuntimeCommonApi
@@ -523,7 +523,7 @@ public class CommandFactory : ICommandFactory
         
         _textEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
-        	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
+        	var group = _textEditorService.GroupApi.GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
             if (group is null)
                 return;
 

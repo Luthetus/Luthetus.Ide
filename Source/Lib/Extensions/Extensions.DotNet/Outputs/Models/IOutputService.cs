@@ -9,4 +9,6 @@ public interface IOutputService
     public void ReduceStateHasChangedAction(Guid dotNetRunParseResultId);
     
 	public Task HandleConstructTreeViewEffect();
+	
+	public ValueTask Do_ConstructTreeView();
 }

@@ -331,9 +331,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				NotificationService,
 				() =>
 				{
-					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+					CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 					{
-						WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+						WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
 						DotNetSolutionAbsolutePath = treeViewSolution.Item.NamespacePath.AbsolutePath
 					});
 					return Task.CompletedTask;
@@ -359,9 +359,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				NotificationService,
 				() =>
 				{
-					CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+					CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 					{
-						WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+						WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
 						DotNetSolutionAbsolutePath = treeViewSolution.Item.NamespacePath.AbsolutePath,
 					});
 					return Task.CompletedTask;
@@ -492,9 +492,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 	private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
 	{
-		IdeBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
-			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
 			Message = "Existing C# Project to add to solution",
 			OnAfterSubmitFunc = absolutePath =>
 			{
@@ -511,9 +511,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        {
 		        	ContinueWithFunc = parsedCommand =>
 		        	{
-		        		CompilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+		        		CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 		        		{
-		        			WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+		        			WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
 		        			DotNetSolutionAbsolutePath = dotNetSolutionModel.NamespacePath.AbsolutePath,
 	        			});
 						return Task.CompletedTask;

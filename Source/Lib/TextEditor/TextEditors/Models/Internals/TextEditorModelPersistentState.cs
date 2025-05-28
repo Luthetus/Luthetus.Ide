@@ -19,7 +19,6 @@ public class TextEditorModelPersistentState
 		string fileExtension,
 	    IDecorationMapper decorationMapper,
 	    ICompilerService compilerService,
-	    SaveFileHelper textEditorSaveFileHelper,
 	    int partitionSize,
 	    ResourceUri resourceUri,
 	    int editBlockIndex,
@@ -34,7 +33,6 @@ public class TextEditorModelPersistentState
         FileExtension = fileExtension;
 	    DecorationMapper = decorationMapper;
 	    CompilerService = compilerService;
-	    TextEditorSaveFileHelper = textEditorSaveFileHelper;
 	    PartitionSize = partitionSize;
 	    ResourceUri = resourceUri;
 	    
@@ -59,7 +57,6 @@ public class TextEditorModelPersistentState
     public string FileExtension { get; set; }
     public IDecorationMapper DecorationMapper { get; set; }
     public ICompilerService CompilerService { get; set; }
-    public SaveFileHelper TextEditorSaveFileHelper { get; set; }
     public int PartitionSize { get; }
     public ResourceUri ResourceUri { get; set; }
     

@@ -313,7 +313,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     		
     		CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
 
-			foreach (var collapsePoint in viewModelModifier.AllCollapsePointList)
+			foreach (var collapsePoint in viewModelModifier.PersistentState.AllCollapsePointList)
 			{
 				for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex; lineOffset++)
 				{

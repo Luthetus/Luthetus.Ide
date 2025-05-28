@@ -29,18 +29,18 @@ public record DotNetSolutionState(
 
     public static void ShowInputFile(
     	IdeBackgroundTaskApi ideBackgroundTaskApi,
-    	DotNetBackgroundTaskApi compilerServicesBackgroundTaskApi)
+    	DotNetBackgroundTaskApi dotNetBackgroundTaskApi)
     {
-        ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        ideBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
-			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
 			Message = "Solution Explorer",
             OnAfterSubmitFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
-                    compilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+                    dotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
                     {
-                    	WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+                    	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
                     	DotNetSolutionAbsolutePath = absolutePath,
                     });
 

@@ -87,9 +87,9 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory(string message)
 	{
-		IdeBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
-			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
 			Message = message,
 			OnAfterSubmitFunc = async absolutePath =>
 			{
@@ -240,9 +240,9 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        	{
 				        	DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
-							DotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+							DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 							{
-								WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+								WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
 								DotNetSolutionAbsolutePath = immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath,
 							});
 							return Task.CompletedTask;

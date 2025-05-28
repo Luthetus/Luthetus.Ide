@@ -7,5 +7,8 @@ public enum DotNetBackgroundTaskApiWorkKind
     LuthetusExtensionsDotNetInitializerOnInit,
     LuthetusExtensionsDotNetInitializerOnAfterRender,
     SubmitNuGetQuery,
-    RunTestByFullyQualifiedName
+    RunTestByFullyQualifiedName,
+    SetDotNetSolution,
+	SetDotNetSolutionTreeView,
+	Website_AddExistingProjectToSolution,
 }

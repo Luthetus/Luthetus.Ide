@@ -155,7 +155,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             {
             	becameShown = true;
             	
-            	var componentData = renderBatchLocal.ViewModel.PersistentState.DisplayTracker.ComponentData;
+            	var componentData = renderBatchLocal.ViewModel.PersistentState.ComponentData;
             	if (componentData is not null)
             	{
 	                await CommonBackgroundTaskApi.JsRuntimeCommonApi
@@ -208,7 +208,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     	
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-        	var componentData = renderBatchLocal.ViewModel.PersistentState.DisplayTracker.ComponentData;
+        	var componentData = renderBatchLocal.ViewModel.PersistentState.ComponentData;
         	if (componentData is not null)
         	{
 	            await CommonBackgroundTaskApi.JsRuntimeCommonApi

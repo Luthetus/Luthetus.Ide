@@ -200,7 +200,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 					if (lineAndColumnIndex.PositionX > lastValidColumnLeft + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
 						// Check for collision with non-tab inline UI
-						foreach (var collapsePoint in viewModel.AllCollapsePointList)
+						foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
 						{
 							if (collapsePoint.AppendToLineIndex != lineAndColumnIndex.LineIndex ||
 							    !collapsePoint.IsCollapsed)
@@ -289,7 +289,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 				if (rowAndColumnIndex.PositionX < -4 &&
 					rowAndColumnIndex.PositionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
 				{
-					var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.LineIndex);
+					var virtualizedIndexCollapsePoint = viewModel.PersistentState.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.LineIndex);
 					
 					if (virtualizedIndexCollapsePoint != -1)
 						goto finalize;
@@ -301,7 +301,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 					if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
 						// Check for collision with non-tab inline UI
-						foreach (var collapsePoint in viewModel.AllCollapsePointList)
+						foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
 						{
 							if (collapsePoint.AppendToLineIndex != rowAndColumnIndex.LineIndex ||
 							    !collapsePoint.IsCollapsed)

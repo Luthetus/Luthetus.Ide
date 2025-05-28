@@ -2,9 +2,9 @@ using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-public class TextEditorRenderBatchConstants
+public class TextEditorRenderBatchPersistentState
 {
-	public TextEditorRenderBatchConstants(
+	public TextEditorRenderBatchPersistentState(
 		TextEditorOptions textEditorOptions,
 		string fontFamily,
 		int fontSizeInPixels,

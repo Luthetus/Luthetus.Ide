@@ -4,7 +4,7 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.Groups.Displays
-@using Luthetus.Ide.RazorLib.Editors.Models
+@using Luthetus.Ide.RazorLib.BackgroundTasks.Models
 
 <ContextBoundary ContextRecord="_viewModelDisplayOptions.ContextRecord"
                  ClassCssString="luth_ide_editor-display"
@@ -22,7 +22,7 @@
     
     	@{
 	        var textEditorGroup = TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
-	            x => x.GroupKey == EditorIdeApi.EditorTextEditorGroupKey);
+	            x => x.GroupKey == IdeBackgroundTaskApi.EditorTextEditorGroupKey);
 	    }
     
     	@if (textEditorGroup is not null)

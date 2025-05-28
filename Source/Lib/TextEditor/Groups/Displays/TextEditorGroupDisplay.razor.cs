@@ -72,8 +72,8 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
             
             if (viewModel is not null)
             {
-                viewModel.PersistentState.DynamicViewModelAdapter.TabGroup = textEditorGroup;
-				tabList.Add(viewModel.PersistentState.DynamicViewModelAdapter);
+                viewModel.PersistentState.TabGroup = textEditorGroup;
+				tabList.Add(viewModel.PersistentState);
             }
 		}
 

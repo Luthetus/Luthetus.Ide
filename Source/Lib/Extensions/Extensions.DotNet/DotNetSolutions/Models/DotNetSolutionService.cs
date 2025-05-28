@@ -1,19 +1,25 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 public class DotNetSolutionService : IDotNetSolutionService
 {
+	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
+
 	private DotNetSolutionState _dotNetSolutionState = new();
 	
 	public event Action? DotNetSolutionStateChanged;
 	
 	public DotNetSolutionState GetDotNetSolutionState() => _dotNetSolutionState;
+	
+	public DotNetSolutionService(DotNetBackgroundTaskApi dotNetBackgroundTaskApi)
+	{
+		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
+	}
 
-    public void ReduceRegisterAction(
-    	DotNetSolutionModel argumentDotNetSolutionModel,
-    	DotNetSolutionIdeApi dotNetSolutionApi)
+    public void ReduceRegisterAction(DotNetSolutionModel argumentDotNetSolutionModel)
     {
     	var inState = GetDotNetSolutionState();
     
@@ -37,9 +43,7 @@ public class DotNetSolutionService : IDotNetSolutionService
         return;
     }
 
-    public void ReduceDisposeAction(
-    	Key<DotNetSolutionModel> dotNetSolutionModelKey,
-	    DotNetSolutionIdeApi dotNetSolutionApi)
+    public void ReduceDisposeAction(Key<DotNetSolutionModel> dotNetSolutionModelKey)
     {
     	var inState = GetDotNetSolutionState();
     
@@ -63,11 +67,11 @@ public class DotNetSolutionService : IDotNetSolutionService
         return;
     }
 
-    public void ReduceWithAction(DotNetSolutionIdeApi.IWithAction withActionInterface)
+    public void ReduceWithAction(DotNetBackgroundTaskApi.IWithAction withActionInterface)
     {
     	var inState = GetDotNetSolutionState();
     
-        var withAction = (DotNetSolutionIdeApi.WithAction)withActionInterface;
+        var withAction = (DotNetBackgroundTaskApi.WithAction)withActionInterface;
         _dotNetSolutionState = withAction.WithFunc.Invoke(inState);
         
         DotNetSolutionStateChanged?.Invoke();

@@ -227,9 +227,9 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion)
 	{
-		ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		ideBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
-			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
 			Message = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
 			OnAfterSubmitFunc = referencedProject =>
 			{

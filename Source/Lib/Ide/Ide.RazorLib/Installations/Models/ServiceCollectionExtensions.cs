@@ -61,7 +61,7 @@ public static class ServiceCollectionExtensions
                     };
 
                     var ideBackgroundTaskApi = fastParseArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    await ideBackgroundTaskApi.Editor.FastParseFunc(fastParseArgs);
+                    await ideBackgroundTaskApi.Editor_FastParseFunc(fastParseArgs);
                 },
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
@@ -79,7 +79,7 @@ public static class ServiceCollectionExtensions
                     };
 
                     var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    await ideBackgroundTaskApi.Editor.RegisterModelFunc(registerModelArgs);
+                    await ideBackgroundTaskApi.Editor_RegisterModelFunc(registerModelArgs);
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
@@ -97,12 +97,12 @@ public static class ServiceCollectionExtensions
                         tryRegisterViewModelArgs.ServiceProvider);
 
                     var ideBackgroundTaskApi = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return await ideBackgroundTaskApi.Editor.TryRegisterViewModelFunc(tryRegisterViewModelArgs);
+                    return await ideBackgroundTaskApi.Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
                 },
                 TryShowViewModelFunc = (tryShowViewModelArgs) =>
                 {
                     var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return ideBackgroundTaskApi.Editor.TryShowViewModelFunc(tryShowViewModelArgs);
+                    return ideBackgroundTaskApi.Editor_TryShowViewModelFunc(tryShowViewModelArgs);
                 },
             });
         }
