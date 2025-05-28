@@ -1,7 +1,5 @@
 @import '_content/Luthetus.Common/Luthetus.Common.bundle.scp.css';
-@import '_content/Luthetus.Extensions.Config/Luthetus.Extensions.Config.bundle.scp.css';
 @import '_content/Luthetus.Extensions.DotNet/Luthetus.Extensions.DotNet.bundle.scp.css';
-@import '_content/Luthetus.Extensions.Git/Luthetus.Extensions.Git.bundle.scp.css';
 @import '_content/Luthetus.ExtendCompilerServices/Luthetus.ExtendCompilerServices.bundle.scp.css';
 @import '_content/Luthetus.Ide.RazorLib/Luthetus.Ide.RazorLib.bundle.scp.css';
 @import '_content/Luthetus.TextEditor/Luthetus.TextEditor.bundle.scp.css';
