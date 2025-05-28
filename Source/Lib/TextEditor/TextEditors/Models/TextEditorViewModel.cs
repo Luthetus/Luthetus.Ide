@@ -60,12 +60,6 @@ public sealed class TextEditorViewModel : IDisposable
 		    getTabDisplayNameFunc: null,
 		    firstPresentationLayerKeysList: new(),
 		    lastPresentationLayerKeysList: new(),
-		    new DynamicViewModelAdapterTextEditor(
-	            viewModelKey,
-	            textEditorService,
-	            panelService,
-	            dialogService,
-	            commonBackgroundTaskApi),
 		    showFindOverlay: false,
 		    replaceValueInFindOverlay: string.Empty,
 		    showReplaceButtonInFindOverlay: false,
@@ -74,7 +68,10 @@ public sealed class TextEditorViewModel : IDisposable
 		    menuKind: MenuKind.None,
 	    	tooltipViewModel: null,
 		    shouldRevealCursor: false,
-			virtualAssociativityKind: VirtualAssociativityKind.None);
+			virtualAssociativityKind: VirtualAssociativityKind.None,
+			panelService,
+            dialogService,
+            commonBackgroundTaskApi);
     
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;

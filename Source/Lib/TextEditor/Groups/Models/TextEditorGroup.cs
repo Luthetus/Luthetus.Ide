@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.Models;
 
@@ -27,7 +28,7 @@ public record TextEditorGroup(
 
     public bool GetIsActive(ITab tab)
     {
-        if (tab is not ITabTextEditor textEditorTab)
+        if (tab is not TextEditorViewModelPersistentState textEditorTab)
             return false;
 
         return ActiveViewModelKey == textEditorTab.ViewModelKey;
@@ -35,7 +36,7 @@ public record TextEditorGroup(
 
     public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs)
     {
-        if (tab is not ITabTextEditor textEditorTab)
+        if (tab is not TextEditorViewModelPersistentState textEditorTab)
             return Task.CompletedTask;
 
         if (!GetIsActive(tab))
@@ -51,34 +52,30 @@ public record TextEditorGroup(
 
     public Task CloseAsync(ITab tab)
     {
-        if (tab is not ITabTextEditor textEditorTab)
+        if (tab is not TextEditorViewModelPersistentState textEditorTab)
             return Task.CompletedTask;
 
-        TextEditorService.GroupApi.RemoveViewModel(GroupKey, textEditorTab.ViewModelKey);
+		Close(textEditorTab.ViewModelKey);
         return Task.CompletedTask;
     }
 
-    public async Task CloseAllAsync()
+    public Task CloseAllAsync()
     {
         var localViewModelKeyList = ViewModelKeyList;
 
         foreach (var viewModelKey in localViewModelKeyList)
         {
-            await CloseAsync(new DynamicViewModelAdapterTextEditor(
-                    viewModelKey,
-                    TextEditorService,
-                    PanelService,
-                    DialogService,
-                    CommonBackgroundTaskApi))
-                .ConfigureAwait(false);
+            Close(viewModelKey);
         }
+        
+        return Task.CompletedTask;
     }
 
 	public async Task CloseOthersAsync(ITab safeTab)
     {
         var localViewModelKeyList = ViewModelKeyList;
 
-		if (safeTab is not ITabTextEditor safeTextEditorTab)
+		if (safeTab is not TextEditorViewModelPersistentState safeTextEditorTab)
 			return;
 		
 		// Invoke 'OnClickAsync' to set the active tab to the "safe tab"
@@ -90,15 +87,12 @@ public record TextEditorGroup(
 			var shouldClose = safeTextEditorTab.ViewModelKey != viewModelKey;
 
 			if (shouldClose)
-			{
-				await CloseAsync(new DynamicViewModelAdapterTextEditor(
-	                    viewModelKey,
-	                    TextEditorService,
-	                    PanelService,
-	                    DialogService,
-	                    CommonBackgroundTaskApi))
-	                .ConfigureAwait(false);
-			}
+				Close(viewModelKey);
         }
+    }
+    
+    private void Close(Key<TextEditorViewModel> viewModelKey)
+    {
+    	TextEditorService.GroupApi.RemoveViewModel(GroupKey, viewModelKey);
     }
 }
