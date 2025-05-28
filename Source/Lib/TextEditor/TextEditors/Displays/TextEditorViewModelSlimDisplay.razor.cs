@@ -95,8 +95,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	private Action<WheelEventArgs> _onWheelNonRenderingEventHandler;
 
     private Guid _textEditorHtmlElementId;
-    /// <summary>Using this lock in order to avoid the Dispose implementation decrementing when it shouldn't</summary>
-    private readonly object _linkedViewModelLock = new();
 
     private TextEditorComponentData _componentData = null!;
     public TextEditorRenderBatchConstants _textEditorRenderBatchConstants;
@@ -359,8 +357,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
             if (viewKeyChanged)
             {
-                _linkedViewModel?.PersistentState.DisplayTracker.DisposeComponentData(_componentData);
-                nextViewModel?.PersistentState.DisplayTracker.RegisterComponentData(_componentData);
+                _linkedViewModel?.PersistentState.DisplayTracker.DisposeComponentData(editContext, _componentData);
+                nextViewModel?.PersistentState.DisplayTracker.RegisterComponentData(editContext, _componentData);
 
                 _linkedViewModel = nextViewModel;
                 _linkedViewModelKey = _linkedViewModel.PersistentState.ViewModelKey;
@@ -894,13 +892,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         TextEditorService.OptionsApi.MeasuredStateChanged -= OnOptionMeasuredStateChanged;
 		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
-        lock (_linkedViewModelLock)
+		var linkedViewModel = _linkedViewModel;
+        if (linkedViewModel is not null)
         {
-            if (_linkedViewModel is not null)
-            {
-                _linkedViewModel.PersistentState.DisplayTracker.DisposeComponentData(_componentData);
-                _linkedViewModel = null;
-            }
+        	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+	    	{
+	    		linkedViewModel.PersistentState.DisplayTracker.DisposeComponentData(editContext, ComponentData);
+	    		_linkedViewModel = null;
+	    	});
         }
         
         TextEditorService.TextEditorState._componentDataMap.Remove(_componentData.ComponentDataKey);

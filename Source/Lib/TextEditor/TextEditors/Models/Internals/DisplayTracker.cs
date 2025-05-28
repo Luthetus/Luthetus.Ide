@@ -15,7 +15,6 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// </summary>
 public sealed class DisplayTracker : IDisposable
 {
-    private readonly object _componentLock = new();
     private readonly TextEditorService _textEditorService;
 	private readonly ResourceUri _resourceUri;
     private readonly Key<TextEditorViewModel> _viewModelKey;
@@ -57,13 +56,8 @@ public sealed class DisplayTracker : IDisposable
     /// the active ViewModel would have its <see cref="Links"/> decremented by 1 in a concurrency safe manner.
     /// </summary>
     public TextEditorComponentData? ComponentData { get; private set; }
-	/// <summary>
-    /// Since the UI logic is lazily calculated only for ViewModels which are currently rendered to the UI,
-    /// when a ViewModel becomes rendered it needs to have its calculations performed so it is up to date.
-    /// </summary>
-    public bool IsFirstDisplay { get; private set; } = true;
 
-    public void RegisterComponentData(TextEditorComponentData componentData)
+    public void RegisterComponentData(TextEditorEditContext editContext, TextEditorComponentData componentData)
     {
     	if (ComponentData is not null)
     	{
@@ -77,12 +71,8 @@ public sealed class DisplayTracker : IDisposable
     		return;
     	}
     
-        lock (_componentLock)
-        {
-            ComponentData = componentData;
-			IsFirstDisplay = true;
-			_textEditorService.AppDimensionService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
-        }
+        ComponentData = componentData;
+		_textEditorService.AppDimensionService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
 
 		// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
 		PostScrollAndRemeasure();
@@ -91,13 +81,9 @@ public sealed class DisplayTracker : IDisposable
 		{
 			_hasBeenDisplayedAtLeastOnceBefore = true;
 			
-			var uniqueTextEditorWork = new UniqueTextEditorWork(_textEditorService, editContext =>
-            {
-				var modelModifier = editContext.GetModelModifier(_resourceUri);
-
-				if (modelModifier is null)
-					return ValueTask.CompletedTask;
-				
+			var modelModifier = editContext.GetModelModifier(_resourceUri);
+			if (modelModifier is not null)
+			{
 				// If this 'ApplySyntaxHighlighting(...)' isn't redundantly invoked prior to
 				// the upcoming 'ResourceWasModified(...)' invocation,
 				// then there is an obnoxious "flicker" upon opening a file for the first time.
@@ -117,43 +103,25 @@ public sealed class DisplayTracker : IDisposable
 				
 				if (modelModifier.PersistentState.CompilerService is not null)	
 					modelModifier.PersistentState.CompilerService.ResourceWasModified(_resourceUri, Array.Empty<TextEditorTextSpan>());
-
-				return ValueTask.CompletedTask;
-            });
-			
-			_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+			}
 		}
     }
 
-    public void DisposeComponentData(TextEditorComponentData componentData)
+    public void DisposeComponentData(TextEditorEditContext editContext, TextEditorComponentData componentData)
     {
-        lock (_componentLock)
-        {
-        	if (componentData is null || ComponentData is null)
-        	{
-        		Console.WriteLine($"TODO: {nameof(DisplayTracker)} {nameof(DisposeComponentData)} - componentData is null || ComponentData is null.");
-    			return;
-        	}
-        	else if (componentData.TextEditorHtmlElementId != ComponentData.TextEditorHtmlElementId)
-        	{
-        		Console.WriteLine($"TODO: {nameof(DisplayTracker)} {nameof(DisposeComponentData)} - ComponentData.TextEditorHtmlElementId does not match.");
-    			return;
-        	}
-        
-            ComponentData = null;
-			_textEditorService.AppDimensionService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
-        }
-    }
-
-	public bool ConsumeIsFirstDisplay()
-    {
-        lock (_componentLock)
-        {
-            var localIsFirstDisplay = IsFirstDisplay;
-            IsFirstDisplay = false;
-
-            return localIsFirstDisplay;
-        }
+    	if (componentData is null || ComponentData is null)
+    	{
+    		Console.WriteLine($"TODO: {nameof(DisplayTracker)} {nameof(DisposeComponentData)} - componentData is null || ComponentData is null.");
+			return;
+    	}
+    	else if (componentData.TextEditorHtmlElementId != ComponentData.TextEditorHtmlElementId)
+    	{
+    		Console.WriteLine($"TODO: {nameof(DisplayTracker)} {nameof(DisposeComponentData)} - ComponentData.TextEditorHtmlElementId does not match.");
+			return;
+    	}
+    
+        ComponentData = null;
+		_textEditorService.AppDimensionService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
     }
 
     private void AppDimensionStateWrap_StateChanged()
@@ -180,7 +148,6 @@ public sealed class DisplayTracker : IDisposable
 		{
 			var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 			var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
-			
             if (modelModifier is null || viewModelModifier is null)
             {
             	Console.WriteLine("FAIL:PostScrollAndRemeasure()");
@@ -196,7 +163,6 @@ public sealed class DisplayTracker : IDisposable
 				.ConfigureAwait(false);
 	
 			viewModelModifier.TextEditorDimensions = textEditorDimensions;
-			
 			viewModelModifier.ShouldCalculateVirtualizationResult = true;
 			
 			// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
@@ -208,6 +174,9 @@ public sealed class DisplayTracker : IDisposable
 
     public void Dispose()
     {
-        DisposeComponentData(ComponentData);
+    	_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+    	{
+    		DisposeComponentData(editContext, ComponentData);
+    	});
     }
 }
