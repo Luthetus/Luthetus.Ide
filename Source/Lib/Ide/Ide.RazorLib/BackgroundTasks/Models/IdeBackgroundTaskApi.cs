@@ -1139,6 +1139,9 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 return Do_SetFolderExplorerState(workArgs.AbsolutePath);
             case IdeBackgroundTaskApiWorkKind.SetFolderExplorerTreeView:
                 return Do_SetFolderExplorerTreeView(workArgs.AbsolutePath);
+			case IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm:
+                return Do_RequestInputFileStateForm(
+                    workArgs.Message, workArgs.OnAfterSubmitFunc, workArgs.SelectionIsValidFunc, workArgs.InputFilePatterns);
             default:
                 Console.WriteLine($"{nameof(IdeBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
