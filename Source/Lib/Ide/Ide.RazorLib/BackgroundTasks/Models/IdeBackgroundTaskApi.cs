@@ -138,17 +138,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _luthetusHostingInformation = luthetusHostingInformation;
         _ideHeaderService = ideHeaderService;
         _serviceProvider = serviceProvider;
-
-        InputFile = new InputFileIdeApi(
-            this,
-            _ideComponentRenderers,
-            _backgroundTaskService,
-            _dialogService,
-            _inputFileService);
     }
     
-    public InputFileIdeApi InputFile { get; }
-
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
@@ -654,9 +645,9 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     
     public void Editor_ShowInputFile()
     {
-        InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        Enqueue(new IdeBackgroundTaskApiWorkArgs
         {
-        	WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+        	WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
             Message = "TextEditor",
             OnAfterSubmitFunc = absolutePath =>
             {
@@ -1080,9 +1071,9 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     public void FolderExplorer_ShowInputFile()
     {
-        InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        Enqueue(new IdeBackgroundTaskApiWorkArgs
         {
-        	WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+        	WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
             Message = "Folder Explorer",
             OnAfterSubmitFunc = async absolutePath =>
             {
@@ -1100,6 +1091,32 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
             ]
         });
+    }
+    
+    private ValueTask Do_RequestInputFileStateForm(
+        string message,
+        Func<AbsolutePath, Task> onAfterSubmitFunc,
+        Func<AbsolutePath, Task<bool>> selectionIsValidFunc,
+        List<InputFilePattern> inputFilePatternsList)
+    {
+        _inputFileService.StartInputFileStateForm(
+            message,
+            onAfterSubmitFunc,
+            selectionIsValidFunc,
+            inputFilePatternsList);
+
+        var inputFileDialog = new DialogViewModel(
+            DialogFacts.InputFileDialogKey,
+            "Input File",
+            _ideComponentRenderers.InputFileRendererType,
+            null,
+            Luthetus.Ide.RazorLib.Htmls.Models.HtmlFacts.Classes.DIALOG_PADDING_0,
+            true,
+            null);
+
+        _dialogService.ReduceRegisterAction(inputFileDialog);
+
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask HandleEvent()

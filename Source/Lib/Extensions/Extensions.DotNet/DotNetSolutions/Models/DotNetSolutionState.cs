@@ -31,9 +31,9 @@ public record DotNetSolutionState(
     	IdeBackgroundTaskApi ideBackgroundTaskApi,
     	DotNetBackgroundTaskApi dotNetBackgroundTaskApi)
     {
-        ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        ideBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
-			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
 			Message = "Solution Explorer",
             OnAfterSubmitFunc = absolutePath =>
             {

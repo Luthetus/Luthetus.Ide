@@ -492,9 +492,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 	private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
 	{
-		IdeBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
+		IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
-			WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
 			Message = "Existing C# Project to add to solution",
 			OnAfterSubmitFunc = absolutePath =>
 			{
