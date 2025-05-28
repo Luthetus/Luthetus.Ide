@@ -134,9 +134,9 @@ public class WebsiteInitializationBackgroundTaskGroup : IBackgroundTaskGroup
         // won't open the first file correctly without this.
         _textEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
 
-        _dotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+        _dotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetBackgroundTaskApiWorkArgs
         {
-        	WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+        	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
         	DotNetSolutionAbsolutePath = solutionAbsolutePath,
     	});
 

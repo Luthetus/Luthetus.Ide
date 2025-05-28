@@ -1,4 +1,7 @@
 using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 
@@ -12,4 +15,9 @@ public struct DotNetBackgroundTaskApiWorkArgs
 	public TreeViewProjectTestModel TreeViewProjectTestModel { get; set; }
 	public string FullyQualifiedName { get; set; }
 	public INugetPackageManagerQuery NugetPackageManagerQuery { get; set; }
+	public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
+	public string ProjectTemplateShortName { get; set; }
+	public string CSharpProjectName { get; set; }
+	public AbsolutePath CSharpProjectAbsolutePath { get; set; }
+    public AbsolutePath DotNetSolutionAbsolutePath { get; set; }
 }

@@ -108,9 +108,9 @@ public partial class LuthetusConfigInitializer : ComponentBase
             solutionMostRecent,
             false);
 
-        DotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+        DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
         {
-        	WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+        	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
         	DotNetSolutionAbsolutePath = slnAbsolutePath,
     	});
 

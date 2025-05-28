@@ -29,7 +29,7 @@ public record DotNetSolutionState(
 
     public static void ShowInputFile(
     	IdeBackgroundTaskApi ideBackgroundTaskApi,
-    	DotNetBackgroundTaskApi compilerServicesBackgroundTaskApi)
+    	DotNetBackgroundTaskApi dotNetBackgroundTaskApi)
     {
         ideBackgroundTaskApi.InputFile.Enqueue(new InputFileIdeApiWorkArgs
 		{
@@ -38,9 +38,9 @@ public record DotNetSolutionState(
             OnAfterSubmitFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
-                    compilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+                    dotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
                     {
-                    	WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+                    	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
                     	DotNetSolutionAbsolutePath = absolutePath,
                     });
 
