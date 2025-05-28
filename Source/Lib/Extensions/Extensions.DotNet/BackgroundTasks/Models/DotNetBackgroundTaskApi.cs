@@ -154,15 +154,11 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _dotNetCliOutputParser,
             _terminalService);
 
-        OutputService = new OutputService(this);
-            
-        Output = new OutputScheduler(
+        OutputService = new OutputService(
         	this,
-			_backgroundTaskService,
-			_dotNetCliOutputParser,
-			_treeViewService,
-			_environmentProvider,
-			OutputService);
+        	_dotNetCliOutputParser,
+        	_environmentProvider,
+        	_treeViewService);
 
         DotNetSolution = new DotNetSolutionIdeApi(
 			_ideBackgroundTaskApi,
@@ -195,7 +191,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	}
 
 	public DotNetSolutionIdeApi DotNetSolution { get; }
-    public OutputScheduler Output { get; }
     public IOutputService OutputService { get; }
     public ITestExplorerService TestExplorerService { get; }
     public IDotNetSolutionService DotNetSolutionService { get; }
