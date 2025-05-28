@@ -1,0 +1,1077 @@
+<div>
+                <div>v <em class="luth_em">0.9.7.41 </em> (2025-03-21)</div>
+                <ul>
+                	<li>
+                		LuthetusCommonInitializer.razor.cs changes.
+                		(the component is not thread safe, i.e.: only 1 should be rendered)
+                	</li>
+                	<li>
+                		TextEditorModelExtensionMethods.GetTabCountOnSameLineBeforeCursor
+                		use foreach instead of LINQ.
+                	</li>
+                	<li>
+                		VirtualizationSpan store the MarkupString
+                	</li>
+                	<li>
+                		VirtualizationGrid.cs use for loop instead of LINQ.
+                	</li>
+                	<li>
+                		TextEditorViewModelDisplay.razor for loop instead of LINQ.
+                	</li>
+                	<li>
+                		Pre-allocate TextEditorEditContext
+                	</li>
+                	<li>
+                		VirtualizationGrid.cs no longer nullable decoration byte in order to avoid boxing when reading the value.
+                	</li>
+                	<li>
+                		Share references to JsRuntimeCommonApi where possible
+                		to reduce object allocation count.
+                	</li>
+                	<li>
+                		VirtualizationLine.cs: no longer nullable in order to avoid boxing when reading the value.
+                	</li>
+                	<li>
+                		VirtualizationBoundary.cs: no longer nullable in order to avoid boxing when reading the value.
+                	</li>
+                	<li>
+                		TextEditorViewModelDisplay.razor.cs StringBuilder for css generation rather than string concatenation.
+                	</li>
+                	<li>
+                		Make TextEditorEditContext a struct
+                	</li>
+                	<li>
+						Adding NuGet Package v4.5.0
+						due to a bug in v4.4.0
+                    </li>
+                    <li>
+						24,457 less object allocations
+						when doing
+						a solution wide parse on Luthetus.Ide.sln (1,615 C# files in total)
+						by removing
+						'FunctionParametersListingNode.cs'
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.40 </em> (2025-03-14)</div>
+                <ul>
+                	<li>
+						181,707 less object allocations when doing
+						a solution wide parse on Luthetus.Ide.sln (1,614 C# files in total).
+                    </li>
+                    <li>
+                    	Non-ISyntaxNode related object allocation optimizations were also done
+                    	but were not counted.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.39 </em> (2025-03-13)</div>
+                <ul>
+                	<li>
+						Inline the type 'BinaryOperatorNode.cs'
+						on the type 'BinaryExpressionNode.cs'
+						this removes '38,470' object allocations
+						when doing a solution wide parse on Luthetus.Ide.sln
+						(1,621 C# files in total).
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.38 </em> (2025-03-09)</div>
+                <ul>
+                	<li>
+                		Everything gets a symbol (not just the things that are defined).
+                    </li>
+                    <li>
+                		Fix: Aaa.Bbb = ...; Bbb erroneously is TypeClauseNode
+                    </li>
+                    <li>
+                		Fix: predefined type clause node position index causing tooltip on them
+                    </li>
+                    <li>
+                		Massive using / namespace statements optimization. Reduced object allocations / boxing.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.37 </em> (2025-03-08)</div>
+                <ul>
+                	<li>
+                		Implicit sub-namespace usings.
+                	</li>
+                	<li>
+                		Namespace statement optimization, don't allocate a List.
+                	</li>
+                	<li>
+                		Expression Elvis operator no longer clobbers existing features.
+                	</li>
+                	<li>
+					    Null forgiving operator no longer clobbers existing features.
+					</li>
+					<li>
+					    Collection initialization syntax progress
+					</li>
+					<li>
+					    Generic constructor invocation no longer has parsing bug.
+                	</li>
+                	<li>
+                		With keyword left hand side property identifier tooltips
+                	</li>
+                	<li>
+                		Primary constructor syntax highlighting as property outside of the
+                		scope of the constructor itself.
+                	</li>
+                	<li>
+                		Object initialization left hand side property identifier tooltips
+                	</li>
+                	<li>
+                		C# Parser: check keyword and contextual keywords with a switch statement.
+                	</li>
+                    <li>
+                        Fix: Test Explorer details text editor
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.36 </em> (2025-03-05)</div>
+                <ul>
+                    <li>
+                        Text Editor NuGet Package v4.2.0 (by the end of the day I will publish this)
+                        <a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+                    </li>
+					<li>
+                		Re-write text editor a bit so it is more customizable
+                        via the ICompilerService containing the methods for the
+                        context menu / autocomplete / etc...
+                	</li>
+                	<li>
+                		Fix '.razor' from yesterday.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.35 </em> (2025-03-03)</div>
+                <ul>
+					<li>
+                		C# parser is 50% faster.
+                		I commented out a line in .razor parser
+                		so that I can accept this PR and show the C# changes.
+                		Will fix the .razor.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.34 </em> (2025-03-02)</div>
+                <ul>
+					<li>
+                		Reduce object allocations
+                	</li>
+                	<li>
+                		'ref' SyntaxToken for the Binder expressions specifically.
+                	</li>
+                	<li>
+                		Delete dead code.
+                	</li>
+                	<li>
+                		Change loopLimit.
+                	</li>
+                	<li>
+                		TokenWalker: stop boxing _deferredParsingTuple.
+                	</li>
+                	<li>
+                		Update README.md
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.33 </em> (2025-03-01)</div>
+                <ul>
+                	<li>
+                		C# parser is 10% faster after fixing a bug with deferred parsing.
+                	</li>
+                	<li>
+                		Boxing optimizations for
+                		
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Implementations/Scope.cs">
+                    		Scope.cs
+                    	</a>
+                    	
+                    	<ul>
+                    		<li>No interface wrapping the struct</li>
+                    		<li>Nullable ints use -1 instead of null</li>
+                    	</ul>
+                	</li>
+                	<li>
+                		Fix double variable declaration of lambdas.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.32 </em> (2025-02-28)</div>
+                <ul>
+                	<li>
+                		Fixed bug with deferred parsing.
+                		C# Parser is 33% faster.
+                	</li>
+                	<li>
+                		Fix: lambda expressions.
+                	</li>
+                	<li>
+						Fix: unit test running
+					</li>
+					<li>
+						Remove LuthetusCommonFactories
+					</li>
+					<li>
+						Update TextEditor's RegisterModelArgs.cs
+					</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.31 </em> (2025-02-15)</div>
+                <ul>
+                	<li>
+                		Remove most of the Immutable type usage.
+                		(it is believed to store data as a tree, where each entry in the collection
+                		 is a reference type 'Node' instance. Just using a List now).
+                	</li>
+                	<li>
+                		Many optimizations have been made.
+                		The IBackgroundTaskService no longer boxes the structs by way of
+                		IBackgroundTaskGroup.
+                	</li>
+                	<li>
+                		Fix: text editor initial parse race condition
+                	</li>
+                	<li>
+                		Fix: async lambdas breaking parse.
+                	</li>
+                	<li>
+                		Fix: 'async' and 'await' being used as TypeClauseNode(s) for variable declaration.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.30 </em> (2025-02-12)</div>
+                <ul>
+                	<li>
+                		All state is now handled directly, rather than through a state management library.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.29 </em> (2025-02-11)</div>
+                <ul>
+                	<li>
+                		Handle Luthetus.Ide.RazorLib.csproj state directly.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.28 </em> (2025-02-11)</div>
+                <ul>
+                	<li>
+                		Handle Luthetus.TextEditor.RazorLib.csproj state directly.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.27 </em> (2025-02-11)</div>
+                <ul>
+                	<li>
+                		Bug: Text Editor's initial solution wide parse has a rare race condition where
+                		it won't fininsh parsing it just stops at some % and sits there.
+                		
+                		This is rare and when it does happen I find that restarting the IDE
+                		will fix it.
+                	</li>
+                	<li>
+                		Handle Luthetus.Common.RazorLib.csproj state directly.
+                	</li>
+                	<li>
+                		Use a Queue instead of LinkedList
+                		for the IBackgroundTaskService.
+                		As well, completely disable batching for now.
+                	</li>
+                	<li>
+                		Async enqueue with TextEditorWorker
+                	</li>
+                	<li>
+                		Various states are now being handled directly.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.26 </em> (2025-02-09)</div>
+                <ul>
+                	<li>
+                		Rewrite
+                		
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/BackgroundTasks/Models/IBackgroundTaskService.cs">
+                    		IBackgroundTaskService
+                    	</a>
+                		
+                		with respect to
+                		Text Editor tasks, in order to avoid boxing of structs
+                		
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/BackgroundTasks/Models/TextEditorWorker.cs">
+                    		TextEditorWorker
+                    	</a>
+                		
+                		.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.25 </em> (2025-02-08)</div>
+                <ul>
+                	<li>
+                		Reduce overhead by handling text editor state directly rather than through a library.
+                	</li>
+                	<li>
+                		Extreme reduction in symbol boxing. (20 second parse went down to 13 seconds).
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.24 </em> (2025-02-06)</div>
+                <ul>
+                	<li>
+                		"infinite loop" protected/heuristic.
+                		If the 'statement while loop' iterates 3 * 'SyntaxToken Count'
+                		then presume an "infinite loop" and throw an exception.
+                		
+                		I'm working on the lambda expressions and I have a bug in the code.
+                		Presumably some "infinite loop" protection would be useful regardless
+                		so now is the time I'll add it.
+                		
+                		TODO: The UI should notify that 'SomeFile.cs' was detected to have an infinite loop,
+                		and therefore was cancelled for parsing.
+                		
+                		When dogfooding the IDE, out of '1,676' C# files, this exception is occurring for 7 of them at the moment.
+                		Going to continue working on the lambda expressions.
+                	</li>
+                	<li>
+                		Empty parameter list for lambda expression support.
+                	</li>
+                	<li>
+                		Massive reduction in value type boxing while parsing syntax tokens.
+                	</li>
+                	<li>
+                		Move 'CSharpCodeBlockBuilder.ParseChildScopeQueue' to be
+                		'CSharpParserModel.ParseChildScopeStack'.
+                		(one object instantiation for the "queue" per parse rather
+                		 than having an instance "per" code block builder).
+                	</li>
+                </ul>
+            </div>
+
+
+
+
+<div>
+                <div>v <em class="luth_em">0.9.7.23 </em> (2025-02-02)</div>
+                <ul>
+                	<li>
+                		Lambda expression with one or many statement body.
+                	</li>
+                	<li>
+                		Fix: function invocation as a statement where
+                		     any of the parameters are a lambda expression.
+                	</li>
+                	<li>
+                		Fix: 'typeof(...)' causing 'if(x.GetType() == typeof(...))'
+                		     to erroneously end the if statement predicate 1 CloseParenthesisToken too soon.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.22 </em> (2025-01-30)</div>
+                <ul>
+                	<li>
+                		Text editor seems many orders of magnitude faster when running single threaded.
+                		Maybe I'm just tired and need some sleep and not seeing this properly I
+                		will see what happens on github.
+                	</li>
+                	<li>
+                		Massively improve performance of TextEditorViewModelApi.CalculateVirtualizationResult(...)
+                		7x faster?
+                		
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/TextEditorViewModelApi.cs#L743">
+                    		TextEditorViewModelApi.cs (#L743)
+                    	</a>
+                	</li>
+                	<li>
+                		Consolidate the
+                	
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/TextEditorViewModelDisplay.razor">
+                    		TextEditorViewModelDisplay.razor
+                    	</a>
+                	
+                		component.
+                		
+                		(child components were inlined, this can (in rare cases) sometimes have a non-negligible performance improvement benefit,
+                		 since less parameter passing overhead, and less Blazor lifecycles,
+                		 I want to see the impact when this is published on the github page).
+                	</li>
+                	<li>
+                		Interpolated strings, major progress has been made on parsing the interpolated expressions themselves.
+                		It seems that 'raw string' multi-character interpolated expression delimiters are not working.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.21 </em> (2025-01-27)</div>
+                <ul>
+                	<li>
+                		Member access cross file function tooltip
+                	</li>
+                	<li>
+                		Expression bodied 'function' / 'constructor', definitions.
+                	</li>
+                	<li>
+                		Constructor "secondary syntax"
+						(Constructor invokes base constructor or another 'this').
+						The parameters to that second constructor invocation now bind properly to be references
+						of the first constructor's arguments.
+                	</li>
+                	<li>
+                		Member access function tooltip.
+                	</li>
+                	<li>
+                		Parse enum members.
+                	</li>
+                	<li>
+                		Fix: nested arbitrary code block nodes.
+                	</li>
+                	<li>
+                		Fix: TokenWalker exception
+                	</li>
+                	<li>
+                		Fix: ITextEditorModelApi.RegisterTemplated(...)
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.20 </em> (2025-01-25)</div>
+                <ul>
+                	<li>
+                		Luthetus.Common had many classes re-written as structs,
+                		to lessen the garbage collection load.
+                		
+                		(high "turnover" types were the focus).
+                		
+                		Frequent constructor invocation just to quickly stop using the reference
+                		and then construct another one kind of things.
+                	</li>
+                	<li>
+                		Combine EscapeCharacterList and CommentList
+                	</li>
+                	<li>
+                        Implicit type inference progress
+<pre>
+var x = "apple";
+// x is a 'string' TypeClauseNode.
+
+var person = new Person();
+// person is a 'Person' TypeClauseNode.
+</pre>
+                    </li>
+                    <li>
+                        Bubble up scope ending for nested "single statement body" code blocks.
+<pre>
+for (int i = 0; i &lt; 5; i++)
+	for (int q; q %lt; 5; q++)
+		for (int z; z &lt; 5; z++)
+			Console.WriteLine("Abc123");
+</pre>
+                    </li>
+                    <li>
+                    	Don't include comments in the TokenWalker.
+                    	
+                    	(Probably long term there is a better solution but
+                    	 previously comments being in 'various spots'
+                    	 would break the parser).
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.19 </em> (2025-01-22)</div>
+                <ul>
+                	<li>
+                        Text Editor NuGet Package v3.9.0 (by the end of the day I will publish this)
+                        <a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+                    </li>
+                	<li>
+                		Fix: primary constructor syntax with inheritance.
+                	</li>
+                	<li>
+                		Fix: primary constructor syntax.
+                	</li>
+                	<li>
+                		Fix: inheritance where the scope highlight is shown in UI
+                	</li>
+                	<li>
+                		Re-work AbsolutePath
+                	</li>
+                	<li>
+                		Fix: race condition exceptions from a lack of thread safety on UI List usage.
+                	</li>
+					<li>
+						TextEditorCursor and TextEditorSelection -> record struct
+					</li>
+					<li>
+						TextEditorTextModification -> record struct
+					</li>
+					<li>
+						CharAndLineMeasurements -> record struct
+					</li>
+					<li>
+						sealed: Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+					</li>
+					<li>
+						sealed: Luthetus.TextEditor.RazorLib.TextEditors.Models; (tons of rec… 
+					</li>
+					<li>
+						All text editor actions are now structs
+					</li>
+					<li>
+						Category -> record struct from sealed record
+					</li>
+					<li>
+						CursorModifierBagTextEditor to struct from sealed class
+					</li>
+					<li>
+						ScrollBarDimensions and TextEditorDimensions changed to 'record struct'
+					</li>
+					<li>
+						Optimize: ITextEditorRenderBatch
+					</li>
+                	<li>
+                		EditContext lazy cache.
+                	</li>
+                	<li>
+                		Iterate cache directly when writing changes.
+                	</li>
+                	<li>
+                		Large re-work of 'IBackgroundService'.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.18 </em> (2025-01-18)</div>
+                <ul>
+                	<li>CommandNoType: ValueTask instead of Task</li>
+                	<li>IBackgroundTask: ValueTask instead of Task</li>
+                	<li>
+                		Some "low hanging fruit" kind of UI optimizations were done.
+                	</li>
+                	<li>
+                		<a href="https://github.com/Luthetus/Luthetus.Ide/issues/279" target="_blank">
+                			C# Parser Scope
+                		</a>
+                		
+                		I'm crashing a bit, so I don't have everything working
+                		but I'll put this up then I need to catch my breath.
+                	</li>
+					<li>
+						Value Tuples
+					</li>
+                	<li>
+                		Updated the demo Person.cs file
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.17 </em> (2025-01-03)</div>
+                <ul>
+                	<li>
+                		Fix: multiple type definition nodes (more generally: multiple deferred child scopes
+                		that have scope in both directions)
+                		as top level statements within the same file.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.16 </em> (2024-12-31)</div>
+                <ul>
+                	<li>
+                		Many cases of Type vs Variable disambiguation were fixed.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.15 </em> (2024-12-29)</div>
+                <ul>
+                	<li>
+                		Rewrite how text is rendered.
+                		
+                		The UI used to receieve (in essence) a List&lt;List&lt;RichCharacter&gt&gt;
+                		
+                		(
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/Characters/Models/RichCharacter.cs">
+                    		RichCharacter.cs
+                    	</a>
+                    	).
+                    	
+                    	This was acceptable at the time because it was a subset of the file's text just for the UI to render.
+                    	
+                    	The actual 'TextEditorModel'
+                    	(
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/ITextEditorModel.cs">
+                    		ITextEditorModel.cs
+                    	</a>
+                    	)
+                    	stores the text as a flat List&lt;RichCharacter&gt.
+                    	
+                    	But, if one scrolls up and down very quickly it is possible to generate many virtualization results.
+                    	And as a result, many objects were being instantiated.
+                    	Since every row of text required a List&lt;RichCharacter&gt;
+                    	to be allocated, and added to a List&lt;List&lt;RichCharacter&gt&gt;.
+                    	
+                    	Now, the UI's virtualization result is flat 'List&lt;RichCharacter&gt;'.
+                    	
+                    	So, rendering the text is now easier on the garbage collector.
+                    	
+                    	As well, the UI used to do a lot of calculations everytime it rendered.
+                    	These calculations are now done when generating the virtualization result
+                    	and then re-used (provided that a new virtualization result isn't needed to be calculated).
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/Virtualizations/Models/VirtualizationGrid.cs#L84">
+                    		VirtualizationGrid.CreateCache(...)
+                    	</a>
+                    	)
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/Virtualizations/Models/VirtualizationGrid.cs">
+                    		VirtualizationGrid.cs
+                    	</a>
+                    	)
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/TextEditorViewModelApi.cs#L741">
+                    		TextEditorViewModelApi.CalculateVirtualizationResult(...)
+                    	</a>
+                    	)
+                	</li>
+                	<li>
+                		Progress: autocomplete dropdown populate with class members.
+                		Period after variable reference node see type members.
+                	</li>
+                	<li>
+                		AutocompleteEntry is now a struct (was a class).
+                	</li>
+                	<li>
+                		LineInformation is now a record struct (was a record).
+                	</li>
+                </ul>
+            </div>
+			<div>
+                <div>v <em class="luth_em">0.9.7.14 </em> (2024-12-26)</div>
+                <ul>
+                	<li>
+                		Member access expression tooltips.
+                		When accessing a property on an instance of a type
+                		one can goto definition the property definition by hovering for the tooltip
+                		then clicking on the text in the tooltip.
+                		<ul>
+                			<li>
+                				(this is an implementation of the simple case
+		                		 where the type is explicit on the left hand side
+		                		 of an assignment expression.)
+                			</li>
+                			<li>
+                				(TODO: 'var person = new Person();' and etc...)
+                			</li>
+                		</ul>
+<pre>
+Person person = new();
+person.FirstName;
+//     ^ put the cursor here
+</pre>
+                	</li>
+                	<li>Update demo website initial file that is opened to be more "interesting".</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.13 </em> (2024-12-23)</div>
+                <ul>
+                	<li>
+                		Fix: generic function definition
+                	</li>
+                	<li>
+                		Fix: property name is same as type so method args don't parse properly
+                	</li>
+                	<li>
+                		Fix: switch 'case' keyword
+                	</li>
+                	<li>
+                		Fix: 'try catch' variable declaration
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.12 </em> (2024-12-22)</div>
+                <ul>
+                	<li>
+                		Show scope of lambda expression
+                	</li>
+                	<li>
+                		Stop syntax highlighting member accesses as types erroneously.
+                		(this turns off any syntax highlighting other than function invocation
+                		but this turns out to be a massive quality of life improvement
+                		while the types are being fully parsed).
+                	</li>
+                	<li>
+                		DiscardSymbol (if '_' is a variable within scope it will be treated as
+                		a variable otherwise it will be treated as 'discard').
+                	</li>
+                	<li>
+                		Fix: is / is not pattern matching 'oldEvent is not RedundantTextEditorWork oldRedundantTextEditorWork' syntax.
+                	</li>
+                	<li>
+                		Fix: 'out' syntax
+                	</li>
+                	<li>
+                        FindOverlayDisplay fix bug if already open select then keybind wasn't populating
+                    </li>
+                    <li>
+                        Populate code search with text editor selection if there is one and keybind done from text editor focus
+                    </li>
+                    <li>
+                        Populate FindAll search if opened while focused on the text editor and have a text selection
+                    </li>
+                    <li>
+                        Identifiers as binary expression operands
+                    </li>
+                    <li>
+                		Bind lambda expression variables within its scope (expression body, statement does not work).
+                	</li>
+                    <li>
+                		SkipLambdaExpressionStatements(...) progress.
+                		In short, I have a statement-loop, and inside of that is the expression-loop.
+                		
+                		So, for Lambdas with statement-bodies, I need to go from the
+                			statement-loop -> expression-loop -> statement-loop
+                		
+                		All while not losing the state of any already existing loops. So it
+                		seems a bit complicated. (the parser is written via primitive recursion with
+                		a while loop, and I'd prefer to keep it that way.
+                		This might have to be an exception though I'm not sure).
+                		
+                		I want to focus on having the features that work... work
+                		rather than having the lambda statements clobber features
+                		that come after it (in a text file).
+                		
+                		Lambda statements will be supported in the future though.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.11 </em> (2024-12-20)</div>
+                <ul>
+                	<li>
+                        Text Editor NuGet Package v3.5.0 (by the end of the day I will publish this)
+                        <a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+                    </li>
+                	<li>
+						Fix: optional argument entry in function definition signature
+					</li>
+					<li>
+						Fix: named parameters in function invocation
+					</li>
+					<li>
+						Started logic for operator precedence.
+					</li>
+					<li>
+						Support more operators such as '||'.
+					</li>
+					<li>
+						Expressions are now parsed properly when terminated by the end of file
+						(rather than for example: a StatementDelimiterToken ';')
+					</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.10 </em> (2024-12-18)</div>
+                <ul>
+                	<li>
+                		Lex preprocessor directive
+                	</li>
+                	<li>
+                		Lex Pipe, PipePipe, Ampersand, AmpersandAmpersand
+                	</li>
+                	<li>
+                		Skip over BangToken without causing a BadExpressionNode
+                	</li>
+                	<li>
+                		Show array in type clause node tooltip
+                	</li>
+                	<li>
+                		Parse array type definition
+                	</li>
+                	<li>
+                		Add button: Test rediscovery only happens once
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.9 </em> (2024-12-17)</div>
+                <ul>
+                	<li>
+                		Fix: 'this' keyword in function arguments listing.
+                	</li>
+                	<li>
+                		Fix: primary constructor syntax.
+                	</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.8 </em> (2024-12-16)</div>
+                <ul>
+                	<li>
+                		Show function arguments in the tooltip.
+                	</li>
+                	<li>
+						Fix: single statement bodies 'if (true) aaa;'. This was breaking the scope logic.
+					</li>
+                	<li>
+						Fix: function invocation as a statement.
+					</li>
+					<li>
+						Invoke 'ResourceWasModified(...)' first open of file. This permits consistent go-to definition resolution cross file.
+					</li>
+					<li>
+						Out, in, ref, params in function arguments listing (maybe in future change to check for any keyword?).
+					</li>
+					<li>
+						GetNodePositionIndices(...) for ConstructorDefinitionNode so the tooltip works.
+					</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.7 </em> (2024-12-15)</div>
+                <ul>
+					<li>Reduce object allocations when parsing.</li>
+					<li>Reduce memory usage from parsing by 25%.</li>
+					<li>Fix: embedded C# in Razor files (bug occurred in v0.9.7.6)</li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.6 </em> (2024-12-13)</div>
+                <ul>
+					<li>Solution wide parse is 40% faster.</li>
+					<li>
+						Don't apply syntax highlighting during solution wide parse.
+						Instead, when a file is opened, apply the first syntax highlighting at that point.
+					</li>
+					<li>Reduce object allocation during parses.</li>
+					<li>Memory improvements.</li>
+                </ul>
+            </div>
+			<div>
+                <div>v <em class="luth_em">0.9.7.5 </em> (2024-12-10)</div>
+                <ul>
+					<li>Fix tooltip keyword types no longer erroneously render with the Type syntax highlighting</li>
+					<li>Symbols catch 'InvalidOperationException'</li>
+					<li>Tooltip onclick causes cursor to stop blinking for a moment</li>
+					<li>Interface keyword parses TypeDefinitionNode</li>
+					<li>Function definition tooltip for arguments (some cases are fixed)</li>
+					<li>Constructor definition tooltip for arguments (some cases are fixed)</li>
+                </ul>
+            </div>
+			<div>
+                <div>v <em class="luth_em">0.9.7.4 </em> (2024-12-05)</div>
+                <ul>
+                    <li>
+						Strings: interpolated, verbatim, raw.
+                    </li>
+                    <li>
+						Interpolated strings will have their expressions
+						syntax highlighted differently than the string content itself.
+                    </li>
+                    <li>
+						Verbatim strings will escape a double quote by putting two double quotes.
+						They will no longer erroneously escape '\n' and etc...
+                    </li>
+                    <li>
+						Raw strings are now supported.
+						Additionally raw string interpolation is supported.
+                    </li>
+                    <li>
+						Contiguous escaped characters will alternate their syntax highlighting
+						between a "primary" escape character color and a "secondary" escape character color.
+                    </li>
+                    <li>
+						The C# Parser is 40% faster.
+                    </li>
+                    <li>
+						Significant memory improvements have been observed.
+                    </li>
+                </ul>
+            </div>
+			<div>
+                <div>v <em class="luth_em">0.9.7.3 </em> (2024-11-28)</div>
+                <ul>
+                	<li>
+                        Text Editor NuGet Package v3.3.0
+                        <a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+                    </li>
+                    <li>
+                    	Change the UI for Text Editor Header based on the file extension of the
+                    	
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/ITextEditorModel.cs">
+                    		ITextEditorModel
+                    	</a>
+                    	
+                    	.
+                    
+                    	Use: 
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/ITextEditorHeaderRegistry.cs">
+                    		ITextEditorHeaderRegistry.cs
+                    	</a>
+                    	
+                    	,
+                    	
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/TextEditorFileExtensionHeaderDisplay.razor">
+                    		TextEditorFileExtensionHeaderDisplay.razor
+                    	</a>
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/TextEditorFileExtensionHeaderDisplay.razor.cs">
+                    		'.cs' codebehind
+                    	</a>
+                    	)
+                    	
+                    	, and
+
+						<pre>                    	
+private ViewModelDisplayOptions _viewModelDisplayOptions = new()
+{
+    HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
+};
+
+&lt;TextEditorGroupDisplay TextEditorGroupKey="EditorIdeApi.EditorTextEditorGroupKey"
+			ViewModelDisplayOptions="_viewModelDisplayOptions"/&gt;
+						</pre>
+                    </li>
+                    <li>
+                    	Show the nearest
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Syntax/Nodes/Interfaces/ICodeBlockOwner.cs">
+                    		ICodeBlockOwner.cs
+                    	</a>
+                    	that exists at the cursor with:
+                    
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/TextEditorCompilerServiceHeaderDisplay.razor">
+                    		TextEditorCompilerServiceHeaderDisplay.razor
+                    	</a>
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/TextEditorCompilerServiceHeaderDisplay.razor.cs">
+                    		'.cs' codebehind
+                    	</a>
+                    	)
+                    	
+                    	<pre>
+TextEditorHeaderRegistry.UpsertHeader("cs", typeof(TextEditorCompilerServiceHeaderDisplay));
+                    	</pre>
+                    </li>
+                    <li>
+                    	Updated
+                    
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/SymbolDisplay.razor">
+                    		SymbolDisplay.razor
+                    	</a>
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/SymbolDisplay.razor.cs">
+                    		'.cs' codebehind
+                    	</a>
+                    	)
+                    	
+                    	to map the hovered
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Syntax/Symbols/ISymbol.cs">
+                    		ISymbol.cs
+                    	</a>
+                    	
+                    	to its corresponding
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Syntax/ISyntaxNode.cs">
+                    		ISyntaxNode.cs
+                    	</a>
+                    	.
+                    	
+                    	If the corresponding node is a reference to a definition node,
+                    	then map to the definition node as well.
+                    	
+                    	If a definition is found, one can click the text inside the tooltip that renders to 'goto definition'.
+                    	If text has a definition backing it, then an underline will appear and the cursor will turn into a 'pointer'
+                    	to indicate that the text is clickable, when hovered.
+                    </li>
+                </ul>
+            </div>
+			<div>
+                <div>v <em class="luth_em">0.9.7.2 </em> (2024-11-18)</div>
+                <ul>
+                    <li>
+                    	Significant improvements to the
+                    	<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/ParserCase/CSharpParser.cs">
+                    		C# parser
+                    	</a>
+                    	have been made, and will continue being made.
+                    	(These improvements will be most noticeable to anyone who reads the source code itself).
+                    	Now that the parser is architected more sensibly, it is expected that
+                    	a great deal of C# parsing can start being supported.
+                    </li>
+                    <li>
+                    	Test explorer: identify which projects are tests before running the discovery command
+                    </li>
+                    <li>
+                    	Cancel button for parsing solution wide, and test discovery.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.1 </em> (2024-11-03)</div>
+                <ul>
+                    <li>
+                    	C# Parser:
+						<ul>
+							<li>Hover '=>' for lambda tooltip</li>
+							<li>Lambda expression/statement progress</li>
+							<li>out keyword variable declaration</li>
+							<li>is, is not, and their variable declarations</li>
+							<li>Function parameter modifiers: in, ref, out</li>
+							<li>Switch statement progress</li>
+							<li>ISymbol implementations are now 'record struct' (they used to be 'sealed record')</li>
+						</ul>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.9.7.0 </em> (2024-10-28)</div>
+                <ul>
+                    <li>
+                    	C# Parser:
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/ParserCase/Internals/ParseOthers.cs#L105">
+                    		expression parsing was re-rewritten
+                    	</a>
+                    	(see also: <a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/BinderCase/CSharpBinder.Expressions.cs">CSharpBinder.Expressions.cs</a>)
+                    	as well more improvements to expression parsing will come in the next update.
+                    </li>
+                    <li>
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/Debounce.cs">Created: Debounce.cs</a>
+                    </li>
+                    <li>
+                    	The scope highlighting is now debounced (<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/Debounce.cs">Debounce.cs</a>) rather than throttled (<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/ThrottleOptimized.cs">ThrottleOptimized.cs</a>).
+                    </li>
+                    <li>
+                    	Changes to <a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Interfaces/IScope.cs">IScope.cs</a>.
+                    	The 'public ResourceUri ResourceUri { get; }' was removed, and the Key&lt;IScope&gt; is now an int, of which is the scope's index within the IBinderSession's ScopeList.
+                    	So, IScope is a lighter datatype, and its lookups are directly into the list rather than searched for
+                    	(this is being said from the perspective of the Binder, the UI only has the positionIndex so it still has to search for the corresponding scope).
+                    </li>
+                </ul>
+            </div>
