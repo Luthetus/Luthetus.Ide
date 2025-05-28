@@ -4,5 +4,7 @@ public enum IdeBackgroundTaskApiWorkKind
 {
 	None,
     LuthetusIdeInitializerOnInit,
-    IdeHeaderOnInit
+    IdeHeaderOnInit,
+    FileContentsWereModifiedOnDisk,
+    
 }

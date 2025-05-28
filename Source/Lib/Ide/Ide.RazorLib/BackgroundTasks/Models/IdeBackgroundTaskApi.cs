@@ -22,14 +22,19 @@ using Luthetus.Common.RazorLib.FileSystems.Displays;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
@@ -47,6 +52,8 @@ namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 {
+	public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
+
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
@@ -132,22 +139,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _ideHeaderService = ideHeaderService;
         _serviceProvider = serviceProvider;
 
-        Editor = new EditorIdeApi(
-            this,
-            _backgroundTaskService,
-            _textEditorService,
-            _commonComponentRenderers,
-            _commonBackgroundTaskApi,
-            _ideComponentRenderers,
-            _fileSystemProvider,
-            _environmentProvider,
-            _decorationMapperRegistry,
-            _compilerServiceRegistry,
-            _dialogService,
-            _panelService,
-            _notificationService,
-            _serviceProvider);
-
         FileSystem = new FileSystemIdeApi(
             this,
             _fileSystemProvider,
@@ -173,7 +164,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _inputFileService);
     }
     
-    public EditorIdeApi Editor { get; }
     public FileSystemIdeApi FileSystem { get; }
     public FolderExplorerIdeApi FolderExplorer { get; }
     public InputFileIdeApi InputFile { get; }
@@ -476,7 +466,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 MenuOptionKind.Other,
                 () =>
                 {
-                    Editor.ShowInputFile();
+                    Editor_ShowInputFile();
                     return Task.CompletedTask;
                 });
 
@@ -691,10 +681,346 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             case IdeBackgroundTaskApiWorkKind.LuthetusIdeInitializerOnInit:
                 return Do_LuthetusIdeInitializerOnInit();
             case IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit:
-                return Do_IdeHeaderOnInit(workArgs.IdeHeader);
+            	return Do_IdeHeaderOnInit(workArgs.IdeHeader);
+            case IdeBackgroundTaskApiWorkKind.FileContentsWereModifiedOnDisk:
+	            return Editor_Do_FileContentsWereModifiedOnDisk(
+	                workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);   
             default:
                 Console.WriteLine($"{nameof(IdeBackgroundTaskApi)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
         }
+    }
+    
+    public void Editor_ShowInputFile()
+    {
+        InputFile.Enqueue(new InputFileIdeApiWorkArgs
+        {
+        	WorkKind = InputFileIdeApiWorkKind.RequestInputFileStateForm,
+            Message = "TextEditor",
+            OnAfterSubmitFunc = absolutePath =>
+            {
+            	// TODO: Why does 'isDirectory: false' not work?
+				_environmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
+            
+            	_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+				{
+					await _textEditorService.OpenInEditorAsync(
+						editContext,
+						absolutePath.Value,
+						true,
+						null,
+						new Category("main"),
+						Key<TextEditorViewModel>.NewKey());
+				});
+				return Task.CompletedTask;
+            },
+            SelectionIsValidFunc = absolutePath =>
+            {
+                if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
+                    return Task.FromResult(false);
+
+                return Task.FromResult(true);
+            },
+            InputFilePatterns = new()
+            {
+            	new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
+            }
+        });
+    }
+
+    public async Task Editor_FastParseFunc(FastParseArgs fastParseArgs)
+    {
+        var resourceUri = fastParseArgs.ResourceUri;
+
+        var compilerService = _compilerServiceRegistry.GetCompilerService(fastParseArgs.ExtensionNoPeriod);
+
+		compilerService.RegisterResource(
+			fastParseArgs.ResourceUri,
+			shouldTriggerResourceWasModified: false);
+			
+		var uniqueTextEditorWork = new UniqueTextEditorWork(_textEditorService, editContext =>
+			compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
+		
+		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+    }
+    
+    public async Task Editor_RegisterModelFunc(RegisterModelArgs registerModelArgs)
+    {
+        var model = _textEditorService.ModelApi.GetOrDefault(registerModelArgs.ResourceUri);
+        
+        if (model is not null)
+        {
+        	await Editor_CheckIfContentsWereModifiedAsync(
+	                registerModelArgs.ResourceUri.Value,
+	                model)
+	            .ConfigureAwait(false);
+	        return;
+        }
+			
+    	var resourceUri = registerModelArgs.ResourceUri;
+
+        var fileLastWriteTime = await _fileSystemProvider.File
+            .GetLastWriteTimeAsync(resourceUri.Value)
+            .ConfigureAwait(false);
+
+        var content = await _fileSystemProvider.File
+            .ReadAllTextAsync(resourceUri.Value)
+            .ConfigureAwait(false);
+
+        var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+        var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+        var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
+
+        model = new TextEditorModel(
+            resourceUri,
+            fileLastWriteTime,
+            absolutePath.ExtensionNoPeriod,
+            content,
+            decorationMapper,
+            compilerService,
+            _textEditorService);
+            
+        var modelModifier = new TextEditorModel(model);
+        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyOutPresentationModel);
+        
+        model = modelModifier;
+
+        _textEditorService.ModelApi.RegisterCustom(registerModelArgs.EditContext, model);
+        
+		model.PersistentState.CompilerService.RegisterResource(
+			model.PersistentState.ResourceUri,
+			shouldTriggerResourceWasModified: false);
+    	
+		modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
+
+		if (modelModifier is null)
+			return;
+
+		await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
+    }
+
+    public async Task<Key<TextEditorViewModel>> Editor_TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
+    {
+    	var viewModelKey = Key<TextEditorViewModel>.NewKey();
+    	
+		var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
+
+        if (model is null)
+        {
+        	NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(4));
+            return Key<TextEditorViewModel>.Empty;
+        }
+
+        var viewModel = _textEditorService.ModelApi
+            .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
+            .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
+
+        if (viewModel is not null)
+		    return viewModel.PersistentState.ViewModelKey;
+
+        viewModel = new TextEditorViewModel(
+            viewModelKey,
+            registerViewModelArgs.ResourceUri,
+            _textEditorService,
+            _panelService,
+            _dialogService,
+            _commonBackgroundTaskApi,
+            VirtualizationGrid.Empty,
+			new TextEditorDimensions(0, 0, 0, 0),
+			scrollLeft: 0,
+	    	scrollTop: 0,
+		    scrollWidth: 0,
+		    scrollHeight: 0,
+		    marginScrollHeight: 0,
+            registerViewModelArgs.Category);
+
+        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
+        {
+            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+            FindOverlayPresentationFacts.PresentationKey,
+        };
+
+        var absolutePath = _environmentProvider.AbsolutePathFactory(
+            registerViewModelArgs.ResourceUri.Value,
+            false);
+
+        viewModel.PersistentState.OnSaveRequested = Editor_HandleOnSaveRequested;
+        viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
+        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+        
+        _textEditorService.ViewModelApi.Register(registerViewModelArgs.EditContext, viewModel);
+        return viewModelKey;
+    }
+    
+    private void Editor_HandleOnSaveRequested(TextEditorModel innerTextEditor)
+    {
+        var innerContent = innerTextEditor.GetAllText();
+        
+        var absolutePath = _environmentProvider.AbsolutePathFactory(
+            innerTextEditor.PersistentState.ResourceUri.Value,
+            false);
+
+        FileSystem.Enqueue(new FileSystemIdeApiWorkArgs
+        {
+        	WorkKind = FileSystemIdeApiWorkKind.SaveFile,
+            AbsolutePath = absolutePath,
+            Content = innerContent,
+            OnAfterSaveCompletedWrittenDateTimeFunc = writtenDateTime =>
+            {
+                if (writtenDateTime is not null)
+                {
+                    _textEditorService.WorkerArbitrary.PostUnique(editContext =>
+                    {
+                    	var modelModifier = editContext.GetModelModifier(innerTextEditor.PersistentState.ResourceUri);
+                    	if (modelModifier is null)
+                    		return ValueTask.CompletedTask;
+                    
+                    	_textEditorService.ModelApi.SetResourceData(
+                    		editContext,
+                            modelModifier,
+                            writtenDateTime.Value);
+                        return ValueTask.CompletedTask;
+                    });
+                }
+
+                return Task.CompletedTask;
+            },
+            CancellationToken = CancellationToken.None
+        });
+    }
+
+    public async Task<bool> Editor_TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
+    {
+        _textEditorService.GroupApi.Register(EditorTextEditorGroupKey);
+
+        var viewModel = _textEditorService.ViewModelApi.GetOrDefault(showViewModelArgs.ViewModelKey);
+
+        if (viewModel is null)
+            return false;
+
+        if (viewModel.PersistentState.Category == new Category("main") &&
+            showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+        {
+            showViewModelArgs = new TryShowViewModelArgs(
+                showViewModelArgs.ViewModelKey,
+                EditorTextEditorGroupKey,
+                showViewModelArgs.ShouldSetFocusToEditor,
+                showViewModelArgs.ServiceProvider);
+        }
+
+        if (showViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
+            showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
+        {
+            return false;
+        }
+
+        _textEditorService.GroupApi.AddViewModel(
+            showViewModelArgs.GroupKey,
+            showViewModelArgs.ViewModelKey);
+
+        _textEditorService.GroupApi.SetActiveViewModel(
+            showViewModelArgs.GroupKey,
+            showViewModelArgs.ViewModelKey);
+            
+        if (showViewModelArgs.ShouldSetFocusToEditor)
+        {
+        	_textEditorService.WorkerArbitrary.PostUnique(editContext =>
+	        {
+	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
+	        	return viewModel.FocusAsync();
+	        });
+        }
+
+        return true;
+    }
+
+    private async Task Editor_CheckIfContentsWereModifiedAsync(
+        string inputFileAbsolutePathString,
+        TextEditorModel textEditorModel)
+    {
+        var fileLastWriteTime = await _fileSystemProvider.File
+            .GetLastWriteTimeAsync(inputFileAbsolutePathString)
+            .ConfigureAwait(false);
+
+        if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
+            _ideComponentRenderers.BooleanPromptOrCancelRendererType is not null)
+        {
+            var notificationInformativeKey = Key<IDynamicViewModel>.NewKey();
+
+            var notificationInformative = new NotificationViewModel(
+                notificationInformativeKey,
+                "File contents were modified on disk",
+                _ideComponentRenderers.BooleanPromptOrCancelRendererType,
+                new Dictionary<string, object?>
+                {
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.Message),
+                            "File contents were modified on disk"
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride),
+                            "Reload"
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
+                            new Func<Task>(() =>
+                            {
+                            	Enqueue(new IdeBackgroundTaskApiWorkArgs
+                            	{
+                            		WorkKind = IdeBackgroundTaskApiWorkKind.FileContentsWereModifiedOnDisk,
+                            		InputFileAbsolutePathString = inputFileAbsolutePathString,
+                            		TextEditorModel = textEditorModel,
+                            		FileLastWriteTime = fileLastWriteTime,
+                            		NotificationInformativeKey = notificationInformativeKey,
+                            	});
+
+								return Task.CompletedTask;
+							})
+                        },
+                        {
+                            nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc),
+                            new Func<Task>(() =>
+                            {
+                                _notificationService.ReduceDisposeAction(notificationInformativeKey);
+                                return Task.CompletedTask;
+                            })
+                        },
+                },
+                TimeSpan.FromSeconds(20),
+                true,
+                null);
+
+            _notificationService.ReduceRegisterAction(notificationInformative);
+        }
+    }
+
+    private async ValueTask Editor_Do_FileContentsWereModifiedOnDisk(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)
+    {
+        _notificationService.ReduceDisposeAction(notificationInformativeKey);
+
+        var content = await _fileSystemProvider.File
+            .ReadAllTextAsync(inputFileAbsolutePathString)
+            .ConfigureAwait(false);
+
+        _textEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
+            if (modelModifier is null)
+                return ValueTask.CompletedTask;
+
+            _textEditorService.ModelApi.Reload(
+                editContext,
+                modelModifier,
+                content,
+                fileLastWriteTime);
+
+            editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                editContext,
+                modelModifier);
+            return ValueTask.CompletedTask;
+        });
     }
 }

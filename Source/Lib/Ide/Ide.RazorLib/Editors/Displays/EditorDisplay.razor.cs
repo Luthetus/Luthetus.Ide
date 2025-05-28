@@ -11,7 +11,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Luthetus.Ide.RazorLib.Editors.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.Displays;
 
@@ -37,7 +37,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	private TabListDisplay? _tabListDisplay;
 
 	private string? _htmlId = null;
-	private string HtmlId => _htmlId ??= $"luth_te_group_{EditorIdeApi.EditorTextEditorGroupKey.Guid}";
+	private string HtmlId => _htmlId ??= $"luth_te_group_{IdeBackgroundTaskApi.EditorTextEditorGroupKey.Guid}";
 	
 	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
 	
@@ -64,7 +64,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     private async void TextEditorGroupWrapOnStateChanged()
     {
     	var textEditorGroup = TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
-	        x => x.GroupKey == EditorIdeApi.EditorTextEditorGroupKey);
+	        x => x.GroupKey == IdeBackgroundTaskApi.EditorTextEditorGroupKey);
 	        
 	    if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
 	    {
