@@ -307,7 +307,7 @@ public sealed class TextEditorComponentData
         RenderBatch = new TextEditorRenderBatch(
             model,
             viewModel,
-            TextEditorViewModelSlimDisplay._textEditorRenderBatchConstants);
+            TextEditorViewModelSlimDisplay._textEditorRenderBatchPersistentState);
         
         if (!RenderBatch.IsValid)
         {
@@ -817,15 +817,15 @@ public sealed class TextEditorComponentData
 
         UiStringBuilder.Append(LineHeightStyleCssString);
 
-        var widthInPixelsInvariantCulture = RenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.CursorWidthInPixels.ToCssValue();
+        var widthInPixelsInvariantCulture = RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions.CursorWidthInPixels.ToCssValue();
         UiStringBuilder.Append("width: ");
         UiStringBuilder.Append(widthInPixelsInvariantCulture);
         UiStringBuilder.Append("px;");
 
-        UiStringBuilder.Append(((ITextEditorKeymap)RenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.Keymap).GetCursorCssStyleString(
+        UiStringBuilder.Append(((ITextEditorKeymap)RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions.Keymap).GetCursorCssStyleString(
             RenderBatch.Model,
             RenderBatch.ViewModel,
-            RenderBatch.TextEditorRenderBatchConstants.TextEditorOptions));
+            RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions));
         
         // This feels a bit hacky, exceptions are happening because the UI isn't accessing
         // the text editor in a thread safe way.

@@ -11,18 +11,18 @@ public struct TextEditorRenderBatch
 	public TextEditorRenderBatch(
 	    TextEditorModel? model,
 	    TextEditorViewModel? viewModel,
-	    TextEditorRenderBatchConstants textEditorRenderBatchConstants)
+	    TextEditorRenderBatchPersistentState textEditorRenderBatchPersistentState)
 	{
 		Model = model;
 	    ViewModel = viewModel;
-	    TextEditorRenderBatchConstants = textEditorRenderBatchConstants;
+	    TextEditorRenderBatchPersistentState = textEditorRenderBatchPersistentState;
 	    
 	    Validate();
 	}
 
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
-    public TextEditorRenderBatchConstants TextEditorRenderBatchConstants { get; set; }
+    public TextEditorRenderBatchPersistentState TextEditorRenderBatchPersistentState { get; set; }
     
     public bool IsValid { get; private set; }
         
@@ -30,7 +30,7 @@ public struct TextEditorRenderBatch
     {
     	IsValid = Model is not null &&
 			      ViewModel is not null &&
-			      TextEditorRenderBatchConstants.TextEditorOptions is not null;
+			      TextEditorRenderBatchPersistentState.TextEditorOptions is not null;
 	    
 	    return IsValid;
     }

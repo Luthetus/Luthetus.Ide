@@ -228,7 +228,7 @@
 	    </div>
 	    
 	    <textarea id="@_componentData.PrimaryCursorContentId"
-				  tabindex="@_componentData.RenderBatch.TextEditorRenderBatchConstants.ViewModelDisplayOptions.TabIndex"
+				  tabindex="@_componentData.RenderBatch.TextEditorRenderBatchPersistentState.ViewModelDisplayOptions.TabIndex"
 				  class="@_componentData.BlinkAnimationCssClass"
 				  style="@_componentData.CursorCssStyle">
 		</textarea>
@@ -306,7 +306,7 @@
 	    {
 	        <div>The @nameof(TextEditorViewModel) was null</div>
 	    }
-	    else if (_componentData.RenderBatch.TextEditorRenderBatchConstants.TextEditorOptions is null)
+	    else if (_componentData.RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions is null)
 	    {
 	        <div>The @nameof(TextEditorOptions) was null</div>
 	    }

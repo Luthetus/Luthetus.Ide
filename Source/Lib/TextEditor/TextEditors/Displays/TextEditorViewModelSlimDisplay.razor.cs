@@ -97,7 +97,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     private Guid _textEditorHtmlElementId;
 
     private TextEditorComponentData _componentData = null!;
-    public TextEditorRenderBatchConstants _textEditorRenderBatchConstants;
+    public TextEditorRenderBatchPersistentState _textEditorRenderBatchPersistentState;
     
     public TextEditorViewModel? _linkedViewModel;
     
@@ -325,7 +325,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         else
         	fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
 		
-		_textEditorRenderBatchConstants = new TextEditorRenderBatchConstants(
+		_textEditorRenderBatchPersistentState = new TextEditorRenderBatchPersistentState(
 			textEditorOptions,
 			fontFamily,
 			fontSizeInPixels,
