@@ -718,7 +718,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         IDropdownService dropdownService)
     {
-    	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
     		return;
     
@@ -835,7 +835,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         IDropdownService dropdownService)
     {
-    	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
     		return;
     
@@ -921,7 +921,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorComponentData componentData,
         ILuthetusTextEditorComponentRenderers textEditorComponentRenderers)
     {
-    	componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
     		return;
     		
@@ -1400,7 +1400,7 @@ public class TextEditorCommandDefaultFunctions
 
         if (viewModel.PersistentState.ShowFindOverlay)
         {
-        	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+        	var componentData = viewModel.PersistentState.ComponentData;
 	    	if (componentData is null)
 	    		return;
     		

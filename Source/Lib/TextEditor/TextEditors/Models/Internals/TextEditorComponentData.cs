@@ -484,7 +484,7 @@ public sealed class TextEditorComponentData
 	        UiStringBuilder.Append("px;");
     		BodyStyle = UiStringBuilder.ToString();
 
-    		RenderBatch.ViewModel.PersistentState.DisplayTracker.PostScrollAndRemeasure();
+    		RenderBatch.ViewModel.PersistentState.PostScrollAndRemeasure();
     		
     		HORIZONTAL_GetScrollbarHorizontalStyleCss();
     		HORIZONTAL_GetSliderHorizontalStyleCss();

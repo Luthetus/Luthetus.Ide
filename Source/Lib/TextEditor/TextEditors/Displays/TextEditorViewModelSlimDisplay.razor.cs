@@ -357,8 +357,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
             if (viewKeyChanged)
             {
-                _linkedViewModel?.PersistentState.DisplayTracker.DisposeComponentData(editContext, _componentData);
-                nextViewModel?.PersistentState.DisplayTracker.RegisterComponentData(editContext, _componentData);
+                _linkedViewModel?.PersistentState.DisposeComponentData(editContext, _componentData);
+                nextViewModel?.PersistentState.RegisterComponentData(editContext, _componentData);
 
                 _linkedViewModel = nextViewModel;
                 _linkedViewModelKey = _linkedViewModel.PersistentState.ViewModelKey;
@@ -897,7 +897,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         {
         	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 	    	{
-	    		linkedViewModel.PersistentState.DisplayTracker.DisposeComponentData(editContext, ComponentData);
+	    		linkedViewModel.PersistentState.DisposeComponentData(editContext, ComponentData);
 	    		_linkedViewModel = null;
 	    	});
         }

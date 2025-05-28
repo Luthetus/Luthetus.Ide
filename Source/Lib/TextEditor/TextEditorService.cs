@@ -271,7 +271,7 @@ public sealed class TextEditorService
 
 			if (viewModelModifier.ShouldCalculateVirtualizationResult)
 			{
-				var componentData = viewModelModifier.PersistentState.DisplayTracker.ComponentData;
+				var componentData = viewModelModifier.PersistentState.ComponentData;
 				
 				if (componentData is not null)
 				{

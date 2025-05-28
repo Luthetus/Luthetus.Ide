@@ -330,7 +330,7 @@ public class CommandFactory : ICommandFactory
                     if (activeViewModel is null)
                         return;
 
-					var componentData = activeViewModel.PersistentState.DisplayTracker.ComponentData;
+					var componentData = activeViewModel.PersistentState.ComponentData;
 					if (componentData is not null)
 					{
 						await _commonBackgroundTaskApi.JsRuntimeCommonApi

@@ -52,10 +52,6 @@ public sealed class TextEditorViewModel : IDisposable
 		Category category)
     {
     	PersistentState = new TextEditorViewModelPersistentState(
-			new DisplayTracker(
-	            textEditorService,
-	            resourceUri,
-	            viewModelKey),
 		    viewModelKey,
 		    resourceUri,
 		    textEditorService,
@@ -182,7 +178,7 @@ public sealed class TextEditorViewModel : IDisposable
 
     public ValueTask FocusAsync()
     {
-    	var componentData = PersistentState.DisplayTracker.ComponentData;
+    	var componentData = PersistentState.ComponentData;
     	if (componentData is null)
     		return ValueTask.CompletedTask;
     	
@@ -242,6 +238,6 @@ public sealed class TextEditorViewModel : IDisposable
 
     public void Dispose()
     {
-        PersistentState.DisplayTracker.Dispose();
+        PersistentState.Dispose();
     }
 }

@@ -1565,7 +1565,7 @@ public sealed class TextEditorViewModelApi
     {
         var options = _textEditorService.OptionsApi.GetOptions();
         
-        var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+        var componentData = viewModel.PersistentState.ComponentData;
         if (componentData is null)
         	return;
 		
