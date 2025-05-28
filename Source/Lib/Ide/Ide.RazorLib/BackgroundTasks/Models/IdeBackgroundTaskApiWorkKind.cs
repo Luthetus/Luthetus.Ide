@@ -6,5 +6,5 @@ public enum IdeBackgroundTaskApiWorkKind
     LuthetusIdeInitializerOnInit,
     IdeHeaderOnInit,
     FileContentsWereModifiedOnDisk,
-    
+    SaveFile,
 }

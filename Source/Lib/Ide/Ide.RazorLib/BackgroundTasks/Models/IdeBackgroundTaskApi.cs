@@ -139,13 +139,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _ideHeaderService = ideHeaderService;
         _serviceProvider = serviceProvider;
 
-        FileSystem = new FileSystemIdeApi(
-            this,
-            _fileSystemProvider,
-            _commonComponentRenderers,
-            _backgroundTaskService,
-            _notificationService);
-
         FolderExplorer = new FolderExplorerIdeApi(
             this,
             _fileSystemProvider,
@@ -164,7 +157,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _inputFileService);
     }
     
-    public FileSystemIdeApi FileSystem { get; }
     public FolderExplorerIdeApi FolderExplorer { get; }
     public InputFileIdeApi InputFile { get; }
 
@@ -670,26 +662,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             },
             new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideHeader.RenderRunDropdownOnClick()));
     }
-
-    public ValueTask HandleEvent()
-    {
-        if (!_workQueue.TryDequeue(out IdeBackgroundTaskApiWorkArgs workArgs))
-            return ValueTask.CompletedTask;
-
-        switch (workArgs.WorkKind)
-        {
-            case IdeBackgroundTaskApiWorkKind.LuthetusIdeInitializerOnInit:
-                return Do_LuthetusIdeInitializerOnInit();
-            case IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit:
-            	return Do_IdeHeaderOnInit(workArgs.IdeHeader);
-            case IdeBackgroundTaskApiWorkKind.FileContentsWereModifiedOnDisk:
-	            return Editor_Do_FileContentsWereModifiedOnDisk(
-	                workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);   
-            default:
-                Console.WriteLine($"{nameof(IdeBackgroundTaskApi)} {nameof(HandleEvent)} default case");
-				return ValueTask.CompletedTask;
-        }
-    }
     
     public void Editor_ShowInputFile()
     {
@@ -863,9 +835,9 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             innerTextEditor.PersistentState.ResourceUri.Value,
             false);
 
-        FileSystem.Enqueue(new FileSystemIdeApiWorkArgs
+        Enqueue(new IdeBackgroundTaskApiWorkArgs
         {
-        	WorkKind = FileSystemIdeApiWorkKind.SaveFile,
+        	WorkKind = IdeBackgroundTaskApiWorkKind.SaveFile,
             AbsolutePath = absolutePath,
             Content = innerContent,
             OnAfterSaveCompletedWrittenDateTimeFunc = writtenDateTime =>
@@ -1022,5 +994,63 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 modelModifier);
             return ValueTask.CompletedTask;
         });
+    }
+    
+    private async ValueTask Do_SaveFile(
+        AbsolutePath absolutePath,
+        string content,
+        Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
+        CancellationToken cancellationToken = default)
+    {
+        if (cancellationToken.IsCancellationRequested)
+            return;
+
+        var absolutePathString = absolutePath.Value;
+
+        if (absolutePathString is not null &&
+            await _fileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
+        {
+            await _fileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
+        }
+        else
+        {
+            // TODO: Save As to make new file
+            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(7));
+        }
+
+        DateTime? fileLastWriteTime = null;
+
+        if (absolutePathString is not null)
+        {
+            fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
+                    absolutePathString,
+                    CancellationToken.None)
+                .ConfigureAwait(false);
+        }
+
+        if (onAfterSaveCompletedWrittenDateTimeFunc is not null)
+            await onAfterSaveCompletedWrittenDateTimeFunc.Invoke(fileLastWriteTime);
+    }
+    
+    public ValueTask HandleEvent()
+    {
+        if (!_workQueue.TryDequeue(out IdeBackgroundTaskApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
+
+        switch (workArgs.WorkKind)
+        {
+            case IdeBackgroundTaskApiWorkKind.LuthetusIdeInitializerOnInit:
+                return Do_LuthetusIdeInitializerOnInit();
+            case IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit:
+            	return Do_IdeHeaderOnInit(workArgs.IdeHeader);
+            case IdeBackgroundTaskApiWorkKind.FileContentsWereModifiedOnDisk:
+	            return Editor_Do_FileContentsWereModifiedOnDisk(
+	                workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
+			case IdeBackgroundTaskApiWorkKind.SaveFile:
+                return Do_SaveFile(workArgs.AbsolutePath, workArgs.Content, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
+            default:
+                Console.WriteLine($"{nameof(IdeBackgroundTaskApi)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
+        }
     }
 }
