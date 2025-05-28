@@ -346,7 +346,6 @@ public sealed class TextEditorComponentData
 	        if (VirtualizedCollapsePointListVersion != RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
 	        	_seenViewModelKey != RenderBatch.ViewModel.PersistentState.ViewModelKey)
 	        {
-	        	_seenViewModelKey = RenderBatch.ViewModel.PersistentState.ViewModelKey;
 	        	VirtualizedCollapsePointList.Clear();
 	        
 	        	for (int i = 0; i < RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
@@ -354,10 +353,11 @@ public sealed class TextEditorComponentData
 	        		VirtualizedCollapsePointList.Add(RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList[i]);
 	        	}
 	        	
+	        	GetInlineUiStyleList();
+	        	
+	        	_seenViewModelKey = RenderBatch.ViewModel.PersistentState.ViewModelKey;
 	        	VirtualizedCollapsePointListVersion = RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
 	        }
-	        
-	        GetInlineUiStyleList();
         }
         catch (Exception e)
         {

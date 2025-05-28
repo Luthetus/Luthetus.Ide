@@ -1069,6 +1069,7 @@ public class TextEditorCommandDefaultFunctions
     			}
 				
 				viewModel.ShouldCalculateVirtualizationResult = true;
+				viewModel.PersistentState.VirtualizedCollapsePointListVersion++;
 				return true;
 			}
 		}
