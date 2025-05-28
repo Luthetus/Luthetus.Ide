@@ -23,44 +23,6 @@ public class WebsiteDotNetCliHelper
 		IDialog dialogRecord,
 		ICommonComponentRenderers commonComponentRenderers)
 	{
-		var directoryContainingProject = environmentProvider
-			.JoinPaths(immutableView.ParentDirectoryNameValue, immutableView.CSharpProjectNameValue) +
-			environmentProvider.DirectorySeparatorChar;
-
-		await fileSystemProvider.Directory
-			.CreateDirectoryAsync(directoryContainingProject)
-			.ConfigureAwait(false);
-
-		var localCSharpProjectNameWithExtension = immutableView.CSharpProjectNameValue +
-			'.' +
-			ExtensionNoPeriodFacts.C_SHARP_PROJECT;
-
-		var cSharpProjectAbsolutePathString = environmentProvider.JoinPaths(
-			directoryContainingProject,
-			localCSharpProjectNameWithExtension);
-
-		await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
-				immutableView.ProjectTemplateShortNameValue,
-				cSharpProjectAbsolutePathString,
-				fileSystemProvider,
-				environmentProvider)
-			.ConfigureAwait(false);
-
-		var cSharpAbsolutePath = environmentProvider.AbsolutePathFactory(
-			cSharpProjectAbsolutePathString,
-			false);
-
-		compilerServicesBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
-		{
-			WorkKind = DotNetSolutionIdeWorkKind.Website_AddExistingProjectToSolution,
-			DotNetSolutionModelKey = immutableView.DotNetSolutionModel.Key,
-			ProjectTemplateShortName = immutableView.ProjectTemplateShortNameValue,
-			CSharpProjectName = immutableView.CSharpProjectNameValue,
-			CSharpProjectAbsolutePath = cSharpAbsolutePath,
-		});
-
-		// Close Dialog
-		dialogService.ReduceDisposeAction(dialogRecord.DynamicViewModelKey);
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", commonComponentRenderers, notificationService, TimeSpan.FromSeconds(7));
+		return;
 	}
 }

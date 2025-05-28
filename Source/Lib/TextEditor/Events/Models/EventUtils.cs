@@ -277,7 +277,7 @@ public static class EventUtils
         
 		for (int i = 0; i <= lineIndex; i++)
 		{
-			if (viewModel.HiddenLineIndexHashSet.Contains(i))
+			if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
 				lineIndex++;
 		}
         
@@ -291,7 +291,7 @@ public static class EventUtils
         var inlineUi = default(InlineUi);
         (int lineIndex, int columnIndex) inlineUiLineAndColumnPositionIndices = (-1, -1);
         
-        foreach (var inlineUiTuple in viewModel.InlineUiList)
+        foreach (var inlineUiTuple in viewModel.PersistentState.InlineUiList)
         {
         	inlineUiLineAndColumnPositionIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
         	

@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Extensions.DotNet\Luthetus.Extensions.DotNet.csproj" />
-    <ProjectReference Include="..\Extensions.Git\Luthetus.Extensions.Git.csproj" />
   </ItemGroup>
 
   <ItemGroup>

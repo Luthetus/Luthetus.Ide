@@ -6,6 +6,11 @@ using Luthetus.Common.RazorLib.Commands.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
+/*
+These IBackgroundTaskGroup "args" structs are a bit heavy at the moment.
+This is better than how things were, I need to find another moment
+to go through and lean these out.
+*/
 public struct CommonWorkArgs
 {
 	public string WriteToLocalStorage_Key { get; set; }

@@ -42,27 +42,41 @@ public class TextEditorViewModelLiason
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
 			
 			// TODO: Determine which viewmodel sent the event?
-			for (int i = 0; i < viewModel.InlineUiList.Count; i++)
+			for (int i = 0; i < viewModel.PersistentState.InlineUiList.Count; i++)
 			{
-				var inlineUiTuple = viewModel.InlineUiList[i];
+				var inlineUiTuple = viewModel.PersistentState.InlineUiList[i];
 				
 				if (initialCursorPositionIndex <= inlineUiTuple.InlineUi.PositionIndex)
 				{
 					if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Right)
 						continue;
 				
-					inlineUiTuple.InlineUi = viewModel.InlineUiList[i].InlineUi.WithIncrementPositionIndex(insertionLength);
-					viewModel.InlineUiList[i] = inlineUiTuple;
+					inlineUiTuple.InlineUi = viewModel.PersistentState.InlineUiList[i].InlineUi.WithIncrementPositionIndex(insertionLength);
+					viewModel.PersistentState.InlineUiList[i] = inlineUiTuple;
 				}
 			}
 			
-			if (lineEndPositionWasAdded && viewModel.PersistentState.DisplayTracker.ComponentData is not null)
+			/*
+				This error shouldn't be possible because you can only dispose the ComponentData
+				from within the editContext but nevertheless I got an NRE so I'm capturing the reference before null check.
+			
+				ERROR on (backgroundTask.Name was here): System.NullReferenceException: Object reference not set to an instance of an object.
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorViewModelLiason.InsertRepositionInlineUiList(Int32 initialCursorPositionIndex, Int32 insertionLength, List`1 viewModelKeyList, Int32 initialCursorLineIndex, Boolean lineEndPositionWasAdded) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorViewModelLiason.cs:line 65
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModel.InsertMetadata(String value, TextEditorViewModel viewModel) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModel.cs:line 1273
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModel.Insert(String value, TextEditorViewModel viewModel, Boolean shouldCreateEditHistory) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModel.cs:line 1063
+					   at Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefault.HandleEvent(TextEditorComponentData componentData, Key`1 viewModelKey, KeyboardEventArgs keyboardEventArgs) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\Keymaps\Models\Defaults\TextEditorKeymapDefault.cs:line 595
+					   at Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorWorkerUi.HandleEvent() in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\BackgroundTasks\Models\TextEditorWorkerUi.cs:line 123
+					   at Luthetus.Common.RazorLib.BackgroundTasks.Models.ContinuousBackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\ContinuousBackgroundTaskWorker.cs:line 41
+					PS C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Host.Photino\bin\Release\net8.0\publish>
+			*/
+			var componentData = viewModel.PersistentState.ComponentData;
+			if (lineEndPositionWasAdded && componentData is not null)
 			{
-				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_IsInvalid = true;
+				componentData.Virtualized_LineIndexCache_IsInvalid = true;
 			}
 			else
 			{
-				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Add(initialCursorLineIndex);
+				componentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Add(initialCursorLineIndex);
 			}
 		}
 	}
@@ -85,24 +99,38 @@ public class TextEditorViewModelLiason
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
 			
 			// TODO: Determine which viewmodel sent the event?
-			for (int i = 0; i < viewModel.InlineUiList.Count; i++)
+			for (int i = 0; i < viewModel.PersistentState.InlineUiList.Count; i++)
 			{
-				var inlineUiTuple = viewModel.InlineUiList[i];
+				var inlineUiTuple = viewModel.PersistentState.InlineUiList[i];
 				
 				if (endExclusiveIndex - 1 < inlineUiTuple.InlineUi.PositionIndex)
 				{
-					inlineUiTuple.InlineUi = viewModel.InlineUiList[i].InlineUi.WithDecrementPositionIndex(endExclusiveIndex - startInclusiveIndex);
-					viewModel.InlineUiList[i] = inlineUiTuple;
+					inlineUiTuple.InlineUi = viewModel.PersistentState.InlineUiList[i].InlineUi.WithDecrementPositionIndex(endExclusiveIndex - startInclusiveIndex);
+					viewModel.PersistentState.InlineUiList[i] = inlineUiTuple;
 				}
 			}
 			
-			if (lineEndPositionWasAdded && viewModel.PersistentState.DisplayTracker.ComponentData is not null)
+			/*
+				This error shouldn't be possible because you can only dispose the ComponentData
+				from within the editContext but nevertheless I got an NRE so I'm capturing the reference before null check.
+			
+				ERROR on (backgroundTask.Name was here): System.NullReferenceException: Object reference not set to an instance of an object.
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorViewModelLiason.InsertRepositionInlineUiList(Int32 initialCursorPositionIndex, Int32 insertionLength, List`1 viewModelKeyList, Int32 initialCursorLineIndex, Boolean lineEndPositionWasAdded) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorViewModelLiason.cs:line 65
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModel.InsertMetadata(String value, TextEditorViewModel viewModel) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModel.cs:line 1273
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModel.Insert(String value, TextEditorViewModel viewModel, Boolean shouldCreateEditHistory) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModel.cs:line 1063
+					   at Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefault.HandleEvent(TextEditorComponentData componentData, Key`1 viewModelKey, KeyboardEventArgs keyboardEventArgs) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\Keymaps\Models\Defaults\TextEditorKeymapDefault.cs:line 595
+					   at Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorWorkerUi.HandleEvent() in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\BackgroundTasks\Models\TextEditorWorkerUi.cs:line 123
+					   at Luthetus.Common.RazorLib.BackgroundTasks.Models.ContinuousBackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\ContinuousBackgroundTaskWorker.cs:line 41
+					PS C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Host.Photino\bin\Release\net8.0\publish>
+			*/
+			var componentData = viewModel.PersistentState.ComponentData;
+			if (lineEndPositionWasAdded && componentData is not null)
 			{
-				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_IsInvalid = true;
+				componentData.Virtualized_LineIndexCache_IsInvalid = true;
 			}
 			else
 			{
-				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Add(initialCursorLineIndex);
+				componentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Add(initialCursorLineIndex);
 			}
 		}
 	}
@@ -115,8 +143,22 @@ public class TextEditorViewModelLiason
 		{
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
 			
-			if (viewModel.PersistentState.DisplayTracker.ComponentData is not null)
-				viewModel.PersistentState.DisplayTracker.ComponentData.Virtualized_LineIndexCache_IsInvalid = true;
+			/*
+				This error shouldn't be possible because you can only dispose the ComponentData
+				from within the editContext but nevertheless I got an NRE so I'm capturing the reference before null check.
+			
+				ERROR on (backgroundTask.Name was here): System.NullReferenceException: Object reference not set to an instance of an object.
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorViewModelLiason.InsertRepositionInlineUiList(Int32 initialCursorPositionIndex, Int32 insertionLength, List`1 viewModelKeyList, Int32 initialCursorLineIndex, Boolean lineEndPositionWasAdded) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorViewModelLiason.cs:line 65
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModel.InsertMetadata(String value, TextEditorViewModel viewModel) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModel.cs:line 1273
+					   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModel.Insert(String value, TextEditorViewModel viewModel, Boolean shouldCreateEditHistory) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModel.cs:line 1063
+					   at Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefault.HandleEvent(TextEditorComponentData componentData, Key`1 viewModelKey, KeyboardEventArgs keyboardEventArgs) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\Keymaps\Models\Defaults\TextEditorKeymapDefault.cs:line 595
+					   at Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorWorkerUi.HandleEvent() in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\BackgroundTasks\Models\TextEditorWorkerUi.cs:line 123
+					   at Luthetus.Common.RazorLib.BackgroundTasks.Models.ContinuousBackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\ContinuousBackgroundTaskWorker.cs:line 41
+					PS C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Host.Photino\bin\Release\net8.0\publish>
+			*/
+			var componentData = viewModel.PersistentState.ComponentData;
+			if (componentData is not null)
+				componentData.Virtualized_LineIndexCache_IsInvalid = true;
 		}
 	}
 }

@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -73,8 +74,10 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     	{
     		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
-    			
-    		DotNetBackgroundTaskApi.Output.Enqueue(OutputSchedulerWorkKind.ConstructTreeView);
+    		
+    		BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+    			Key<IBackgroundTaskGroup>.Empty,
+    			DotNetBackgroundTaskApi.OutputService.Do_ConstructTreeView));
     		return Task.CompletedTask;
     	});
     }

@@ -271,7 +271,7 @@ public sealed class TextEditorService
 
 			if (viewModelModifier.ShouldCalculateVirtualizationResult)
 			{
-				var componentData = viewModelModifier.PersistentState.DisplayTracker.ComponentData;
+				var componentData = viewModelModifier.PersistentState.ComponentData;
 				
 				if (componentData is not null)
 				{
@@ -359,7 +359,7 @@ public sealed class TextEditorService
 		}
 
 		var totalHeight = (int)Math.Ceiling(
-			(modelModifier.LineEndList.Count - viewModelModifier.HiddenLineIndexHashSet.Count) *
+			(modelModifier.LineEndList.Count - viewModelModifier.PersistentState.HiddenLineIndexHashSet.Count) *
 			viewModelModifier.CharAndLineMeasurements.LineHeight);
 
 		// Add vertical margin so the user can scroll beyond the final line of content

@@ -1,15 +1,17 @@
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.AppDatas.Models;
-using Luthetus.Extensions.Config.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.Config.Installations.Displays;
@@ -29,15 +31,19 @@ public partial class LuthetusConfigInitializer : ComponentBase
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private ConfigBackgroundTaskApi ConfigBackgroundTaskApi { get; set; } = null!;
-	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]
 	private IInputFileService InputFileService { get; set; } = null!;
+	[Inject]
+	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{
-        ConfigBackgroundTaskApi.Enqueue(ConfigWorkKind.InitializeFooterJustifyEndComponents);
+        BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+        	Key<IBackgroundTaskGroup>.Empty,
+        	Do_InitializeFooterJustifyEndComponents));
 		base.OnInitialized();
 	}
 
@@ -56,6 +62,41 @@ public partial class LuthetusConfigInitializer : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
     
+    public ValueTask Do_InitializeFooterJustifyEndComponents()
+    {
+        /*_ideMainLayoutService.RegisterFooterJustifyEndComponent(
+            new FooterJustifyEndComponent(
+                Key<FooterJustifyEndComponent>.NewKey(),
+                typeof(GitInteractiveIconDisplay),
+                new Dictionary<string, object?>
+                {
+                    {
+                        nameof(GitInteractiveIconDisplay.CssStyleString),
+                        "margin-right: 15px;"
+                    }
+                }));*/
+
+        IdeMainLayoutService.RegisterFooterJustifyEndComponent(
+            new FooterJustifyEndComponent(
+                Key<FooterJustifyEndComponent>.NewKey(),
+                typeof(Luthetus.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriInteractiveIconDisplay),
+                new Dictionary<string, object?>
+                {
+                    {
+                        nameof(Luthetus.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriInteractiveIconDisplay.CssStyleString),
+                        "margin-right: 15px;"
+                    }
+                }));
+
+        IdeMainLayoutService.RegisterFooterJustifyEndComponent(
+            new FooterJustifyEndComponent(
+                Key<FooterJustifyEndComponent>.NewKey(),
+                typeof(Luthetus.Common.RazorLib.Notifications.Displays.NotificationsInteractiveIconDisplay),
+                ComponentParameterMap: null));
+
+        return ValueTask.CompletedTask;
+    }
+    
     private async Task SetSolution(DotNetAppData dotNetAppData)
     {
     	var solutionMostRecent = dotNetAppData?.SolutionMostRecent;
@@ -67,9 +108,9 @@ public partial class LuthetusConfigInitializer : ComponentBase
             solutionMostRecent,
             false);
 
-        DotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetSolutionIdeWorkArgs
+        DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
         {
-        	WorkKind = DotNetSolutionIdeWorkKind.SetDotNetSolution,
+        	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
         	DotNetSolutionAbsolutePath = slnAbsolutePath,
     	});
 

@@ -152,6 +152,9 @@ public sealed class TextEditorComponentData
     
     public List<string> SelectionStyleList { get; set; } = new List<string>();
     
+    public List<CollapsePoint> VirtualizedCollapsePointList { get; set; } = new();
+    public int VirtualizedCollapsePointListVersion { get; set; }
+    
     private List<TextEditorTextSpan> VirtualizedTextSpanList { get; set; } = new();
     private List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
     
@@ -286,6 +289,8 @@ public sealed class TextEditorComponentData
     /// </summary>
     public StringBuilder UiStringBuilder { get; set; } = new();
     
+    private Key<TextEditorViewModel> _seenViewModelKey = Key<TextEditorViewModel>.Empty;
+    
     public void CreateUi()
     {
     	TextEditorViewModel? viewModel;
@@ -307,7 +312,7 @@ public sealed class TextEditorComponentData
         RenderBatch = new TextEditorRenderBatch(
             model,
             viewModel,
-            TextEditorViewModelSlimDisplay._textEditorRenderBatchConstants);
+            TextEditorViewModelSlimDisplay._textEditorRenderBatchPersistentState);
         
         if (!RenderBatch.IsValid)
         {
@@ -338,7 +343,21 @@ public sealed class TextEditorComponentData
 	        	LastPresentationLayerGroupList,
 	        	LastPresentationLayerTextSpanList);
 	        
-	        GetInlineUiStyleList();
+	        if (VirtualizedCollapsePointListVersion != RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
+	        	_seenViewModelKey != RenderBatch.ViewModel.PersistentState.ViewModelKey)
+	        {
+	        	VirtualizedCollapsePointList.Clear();
+	        
+	        	for (int i = 0; i < RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
+	        	{
+	        		VirtualizedCollapsePointList.Add(RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointList[i]);
+	        	}
+	        	
+	        	GetInlineUiStyleList();
+	        	
+	        	_seenViewModelKey = RenderBatch.ViewModel.PersistentState.ViewModelKey;
+	        	VirtualizedCollapsePointListVersion = RenderBatch.ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
+	        }
         }
         catch (Exception e)
         {
@@ -484,7 +503,7 @@ public sealed class TextEditorComponentData
 	        UiStringBuilder.Append("px;");
     		BodyStyle = UiStringBuilder.ToString();
 
-    		RenderBatch.ViewModel.PersistentState.DisplayTracker.PostScrollAndRemeasure();
+    		RenderBatch.ViewModel.PersistentState.PostScrollAndRemeasure();
     		
     		HORIZONTAL_GetScrollbarHorizontalStyleCss();
     		HORIZONTAL_GetSliderHorizontalStyleCss();
@@ -518,7 +537,7 @@ public sealed class TextEditorComponentData
     		
     		for (; checkHiddenLineIndex < lineIndex; checkHiddenLineIndex++)
             {
-            	if (RenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
+            	if (RenderBatch.ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
             		hiddenLineCount++;
             }
             
@@ -555,7 +574,7 @@ public sealed class TextEditorComponentData
 	    		handledCursor = true;
 	    		i--;
 	    		
-	    		if (RenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(RenderBatch.ViewModel.LineIndex))
+	    		if (RenderBatch.ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(RenderBatch.ViewModel.LineIndex))
 	    			CursorIsOnHiddenLine = true;
 	    	}
     	}
@@ -591,7 +610,7 @@ public sealed class TextEditorComponentData
 					hiddenLineCount: 0));
 	    	}
 	    		
-    		if (RenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(RenderBatch.ViewModel.LineIndex))
+    		if (RenderBatch.ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(RenderBatch.ViewModel.LineIndex))
 	    		CursorIsOnHiddenLine = true;
     	}
     }
@@ -704,9 +723,9 @@ public sealed class TextEditorComponentData
 	
 		if (CursorIsOnHiddenLine)
 		{
-			for (int collapsePointIndex = 0; collapsePointIndex < RenderBatch.ViewModel.AllCollapsePointList.Count; collapsePointIndex++)
+			for (int collapsePointIndex = 0; collapsePointIndex < RenderBatch.ViewModel.PersistentState.AllCollapsePointList.Count; collapsePointIndex++)
 			{
-				var collapsePoint = RenderBatch.ViewModel.AllCollapsePointList[collapsePointIndex];
+				var collapsePoint = RenderBatch.ViewModel.PersistentState.AllCollapsePointList[collapsePointIndex];
 				
 				if (!collapsePoint.IsCollapsed)
 					continue;
@@ -778,9 +797,9 @@ public sealed class TextEditorComponentData
 	        
 	        leftInPixels += RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth * RenderBatch.ViewModel.ColumnIndex;
 	        
-	        for (int inlineUiTupleIndex = 0; inlineUiTupleIndex < RenderBatch.ViewModel.InlineUiList.Count; inlineUiTupleIndex++)
+	        for (int inlineUiTupleIndex = 0; inlineUiTupleIndex < RenderBatch.ViewModel.PersistentState.InlineUiList.Count; inlineUiTupleIndex++)
 			{
-				var inlineUiTuple = RenderBatch.ViewModel.InlineUiList[inlineUiTupleIndex];
+				var inlineUiTuple = RenderBatch.ViewModel.PersistentState.InlineUiList[inlineUiTupleIndex];
 				
 				var lineAndColumnIndices = RenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
 				
@@ -817,15 +836,15 @@ public sealed class TextEditorComponentData
 
         UiStringBuilder.Append(LineHeightStyleCssString);
 
-        var widthInPixelsInvariantCulture = RenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.CursorWidthInPixels.ToCssValue();
+        var widthInPixelsInvariantCulture = RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions.CursorWidthInPixels.ToCssValue();
         UiStringBuilder.Append("width: ");
         UiStringBuilder.Append(widthInPixelsInvariantCulture);
         UiStringBuilder.Append("px;");
 
-        UiStringBuilder.Append(((ITextEditorKeymap)RenderBatch.TextEditorRenderBatchConstants.TextEditorOptions.Keymap).GetCursorCssStyleString(
+        UiStringBuilder.Append(((ITextEditorKeymap)RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions.Keymap).GetCursorCssStyleString(
             RenderBatch.Model,
             RenderBatch.ViewModel,
-            RenderBatch.TextEditorRenderBatchConstants.TextEditorOptions));
+            RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions));
         
         // This feels a bit hacky, exceptions are happening because the UI isn't accessing
         // the text editor in a thread safe way.
@@ -1314,7 +1333,7 @@ public sealed class TextEditorComponentData
             
             for (; checkHiddenLineIndex < UseLowerBoundInclusiveLineIndex; checkHiddenLineIndex++)
             {
-            	if (RenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
+            	if (RenderBatch.ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
             		hiddenLineCount++;
             }
             
@@ -1322,7 +1341,7 @@ public sealed class TextEditorComponentData
 	        {
 	        	checkHiddenLineIndex++;
 	        
-	        	if (RenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+	        	if (RenderBatch.ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
 	        	{
 	        		hiddenLineCount++;
 	        		continue;
@@ -1491,7 +1510,7 @@ public sealed class TextEditorComponentData
                 
                 for (; checkHiddenLineIndex < boundsInLineIndexUnits.FirstLineToSelectDataInclusive; checkHiddenLineIndex++)
                 {
-                	if (RenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
+                	if (RenderBatch.ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
                 		hiddenLineCount++;
                 }
 
@@ -1501,7 +1520,7 @@ public sealed class TextEditorComponentData
                 {
                 	checkHiddenLineIndex++;
                 	
-                	if (RenderBatch.ViewModel.HiddenLineIndexHashSet.Contains(i))
+                	if (RenderBatch.ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
                 	{
                 		hiddenLineCount++;
                 		continue;
@@ -1537,9 +1556,9 @@ public sealed class TextEditorComponentData
     
     	InlineUiStyleList.Clear();
     	
-    	for (int inlineUiIndex = 0; inlineUiIndex < RenderBatch.ViewModel.InlineUiList.Count; inlineUiIndex++)
+    	for (int inlineUiIndex = 0; inlineUiIndex < RenderBatch.ViewModel.PersistentState.InlineUiList.Count; inlineUiIndex++)
     	{
-    		var entry = RenderBatch.ViewModel.InlineUiList[inlineUiIndex];
+    		var entry = RenderBatch.ViewModel.PersistentState.InlineUiList[inlineUiIndex];
     		
     		var lineAndColumnIndices = RenderBatch.Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
     		

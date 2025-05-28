@@ -718,7 +718,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         IDropdownService dropdownService)
     {
-    	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
     		return;
     
@@ -835,7 +835,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         IDropdownService dropdownService)
     {
-    	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
     		return;
     
@@ -921,7 +921,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorComponentData componentData,
         ILuthetusTextEditorComponentRenderers textEditorComponentRenderers)
     {
-    	componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+    	componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
     		return;
     		
@@ -958,25 +958,19 @@ public class TextEditorCommandDefaultFunctions
     	TextEditorModel modelModifier,
     	TextEditorViewModel viewModel)
     {
-    	var virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
+    	var virtualizedIndexCollapsePoint = viewModel.PersistentState.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
 		if (virtualizedIndexCollapsePoint != -1)
 		{
-			var allIndexCollapsePoint = viewModel.AllCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
+			var allIndexCollapsePoint = viewModel.PersistentState.AllCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
 			if (allIndexCollapsePoint != -1)
 			{
-				var virtualizedCollapsePoint = viewModel.VirtualizedCollapsePointList[virtualizedIndexCollapsePoint];
+				var virtualizedCollapsePoint = viewModel.PersistentState.VirtualizedCollapsePointList[virtualizedIndexCollapsePoint];
 				virtualizedCollapsePoint.IsCollapsed = !virtualizedCollapsePoint.IsCollapsed;
-				viewModel.VirtualizedCollapsePointList[virtualizedIndexCollapsePoint] = virtualizedCollapsePoint;
+				viewModel.PersistentState.VirtualizedCollapsePointList[virtualizedIndexCollapsePoint] = virtualizedCollapsePoint;
 				
-				var allCollapsePoint = viewModel.AllCollapsePointList[allIndexCollapsePoint];
+				var allCollapsePoint = viewModel.PersistentState.AllCollapsePointList[allIndexCollapsePoint];
 				allCollapsePoint.IsCollapsed = virtualizedCollapsePoint.IsCollapsed;
-				viewModel.AllCollapsePointList[allIndexCollapsePoint] = allCollapsePoint;
-				
-				if (!viewModel.HiddenLineIndexHashSetIsShallowCopy)
-				{
-					viewModel.HiddenLineIndexHashSet = new HashSet<int>(viewModel.HiddenLineIndexHashSet);
-					viewModel.HiddenLineIndexHashSetIsShallowCopy = true;
-				}
+				viewModel.PersistentState.AllCollapsePointList[allIndexCollapsePoint] = allCollapsePoint;
 				
 				if (allCollapsePoint.IsCollapsed)
 				{
@@ -984,7 +978,7 @@ public class TextEditorCommandDefaultFunctions
 					var upperExclusiveLimit = allCollapsePoint.EndExclusiveLineIndex - allCollapsePoint.AppendToLineIndex - 1;
 					for (var lineOffset = 0; lineOffset < upperExclusiveLimit; lineOffset++)
 					{
-						viewModel.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
+						viewModel.PersistentState.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
 						
 						if (viewModel.LineIndex == firstToHideLineIndex + lineOffset)
 						{
@@ -1009,22 +1003,22 @@ public class TextEditorCommandDefaultFunctions
 				}
 				else
 				{
-					viewModel.HiddenLineIndexHashSet.Clear();
-					foreach (var collapsePoint in viewModel.AllCollapsePointList)
+					viewModel.PersistentState.HiddenLineIndexHashSet.Clear();
+					foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
 					{
 						if (!collapsePoint.IsCollapsed)
 							continue;
 						var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
 						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
 						{
-							viewModel.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
+							viewModel.PersistentState.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
 						}
 					}
 				}
 				
 				if (virtualizedCollapsePoint.IsCollapsed)
     			{
-    				virtualizedIndexCollapsePoint = viewModel.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
+    				virtualizedIndexCollapsePoint = viewModel.PersistentState.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
     				
     				var lineInformation = modelModifier.GetLineInformation(virtualizedCollapsePoint.AppendToLineIndex);
     				
@@ -1044,7 +1038,7 @@ public class TextEditorCommandDefaultFunctions
     					}
     				}*/
     				
-    				viewModel.InlineUiList.Add(
+    				viewModel.PersistentState.InlineUiList.Add(
     					(
     						inlineUi,
             				Tag: virtualizedCollapsePoint.Identifier
@@ -1053,13 +1047,13 @@ public class TextEditorCommandDefaultFunctions
     			else
     			{
     				// TODO: Bad, this only permits one name regardless of scope
-    				var indexTagMatchedInlineUi = viewModel.InlineUiList.FindIndex(
+    				var indexTagMatchedInlineUi = viewModel.PersistentState.InlineUiList.FindIndex(
     					x => x.Tag == virtualizedCollapsePoint.Identifier);
     					
     				// var inlineUiTupleToRemove = viewModel.InlineUiList[indexTagMatchedInlineUi];
     					
     				if (indexTagMatchedInlineUi != -1)
-        				viewModel.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
+        				viewModel.PersistentState.InlineUiList.RemoveAt(indexTagMatchedInlineUi);
         				
     				/*// TODO: Decrement position of any InlineUi that have a position >= the removed inlineUi.
     				for (int i = 0; i < viewModel.InlineUiList.Count; i++)
@@ -1075,6 +1069,7 @@ public class TextEditorCommandDefaultFunctions
     			}
 				
 				viewModel.ShouldCalculateVirtualizationResult = true;
+				viewModel.PersistentState.VirtualizedCollapsePointListVersion++;
 				return true;
 			}
 		}
@@ -1296,7 +1291,7 @@ public class TextEditorCommandDefaultFunctions
 	
 			for (int i = 0; i < viewModel.LineIndex; i++)
 			{
-				if (viewModel.HiddenLineIndexHashSet.Contains(i))
+				if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
 					hiddenLineCount++;
 			}
         
@@ -1400,7 +1395,7 @@ public class TextEditorCommandDefaultFunctions
 
         if (viewModel.PersistentState.ShowFindOverlay)
         {
-        	var componentData = viewModel.PersistentState.DisplayTracker.ComponentData;
+        	var componentData = viewModel.PersistentState.ComponentData;
 	    	if (componentData is null)
 	    		return;
     		

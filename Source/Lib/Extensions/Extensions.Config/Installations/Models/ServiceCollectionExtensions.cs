@@ -5,8 +5,7 @@ using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Extensions.DotNet.Installations.Models;
 using Luthetus.Extensions.Config.CompilerServices;
 using Luthetus.Extensions.Config.Decorations;
-using Luthetus.Extensions.Git.Installations.Models;
-using Luthetus.Extensions.Config.BackgroundTasks.Models;
+// using Luthetus.Extensions.Git.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.Extensions.Config.Installations.Models;
@@ -20,9 +19,8 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddLuthetusExtensionsDotNetServices(hostingInformation, configure)
-            .AddLuthetusExtensionsGitServices(hostingInformation, configure)
+            // .AddLuthetusExtensionsGitServices(hostingInformation, configure)
             .AddScoped<ICompilerServiceRegistry, ConfigCompilerServiceRegistry>()
-            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
-            .AddScoped<ConfigBackgroundTaskApi>();
+            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>();
     }
 }
