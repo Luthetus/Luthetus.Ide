@@ -1,8 +1,19 @@
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
+using Luthetus.Ide.Wasm.Facts;
 
 namespace Luthetus.Website.RazorLib;
 
@@ -15,11 +26,9 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
-    private WebsiteInitializationBackgroundTaskGroup WebsiteInitializationBackgroundTaskGroup { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -28,6 +37,8 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -41,8 +52,9 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-            WebsiteInitializationBackgroundTaskGroup.Enqueue(
-            	WebsiteInitializationBackgroundTaskGroupWorkKind.LuthetusWebsiteInitializerOnAfterRenderAsync);
+        	BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+        		Key<IBackgroundTaskGroup>.Empty,
+        		Do_LuthetusWebsiteInitializerOnAfterRenderAsync));
         }
 
         return base.OnAfterRenderAsync(firstRender);
@@ -118,7 +130,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         // won't open the first file correctly without this.
         TextEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
 
-        DotNetBackgroundTaskApi.DotNetSolution.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+        DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
         {
         	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
         	DotNetSolutionAbsolutePath = solutionAbsolutePath,
@@ -129,9 +141,9 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
             false);
 
-		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
-			await _textEditorService.OpenInEditorAsync(
+			await TextEditorService.OpenInEditorAsync(
 				editContext,
 	            absolutePath.Value,
 	            false,
@@ -154,7 +166,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         {
             foreach (var directory in directories)
             {
-                var childDirectories = await _fileSystemProvider.Directory
+                var childDirectories = await FileSystemProvider.Directory
                     .GetDirectoriesAsync(directory)
                     .ConfigureAwait(false);
                 allFiles.AddRange(
